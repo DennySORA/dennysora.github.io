@@ -256,6 +256,14 @@ button:focus-visible {
   color: var(--color-text-primary);
 }
 
+.hero .hero-tagline {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  color: var(--color-text-tertiary);
+}
+
 .hero .summary {
   margin-top: 12px;
   max-width: 640px;
@@ -640,6 +648,298 @@ footer a:hover { color: var(--color-accent); }
   .scroll-progress { display: none; }
 }
 
+/* ---------- technical profile (detail page) ---------- */
+
+.hero .eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin-bottom: 12px;
+}
+
+.hero .role { font-size: clamp(22px, 3vw, 30px); max-width: 24ch; text-wrap: balance; }
+
+/* status badges — one hue family per semantic state */
+.status-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  border-radius: var(--r-pill);
+  padding: 2px 9px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.b-prod     { color: var(--color-success); border-color: rgba(74, 222, 128, 0.4); }
+.b-research { color: var(--color-accent);  border-color: var(--color-accent-line); }
+.b-study    { color: var(--color-link);    border-color: rgba(111, 198, 242, 0.35); }
+.b-dev      { color: var(--color-accent);  border-color: var(--color-accent-line); background: var(--color-accent-soft); }
+.b-exp      { color: rgba(255, 180, 84, 0.6); border-color: rgba(255, 180, 84, 0.25); }
+
+/* identity cards */
+.id-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.id-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  padding: 16px 18px 18px;
+  transition:
+    transform var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) ease,
+    box-shadow var(--t-fast) ease;
+}
+
+.id-card.in:hover,
+.id-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.id-card .label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin-bottom: 12px;
+}
+
+.id-card .desc {
+  margin-top: 12px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-body);
+}
+
+/* technical depth grid */
+.depth-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.tech-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  padding: 18px 20px 20px;
+  transition:
+    transform var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) ease,
+    box-shadow var(--t-fast) ease;
+}
+
+.tech-card.in:hover,
+.tech-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.tech-card.wide { grid-column: 1 / -1; }
+
+.tech-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-bottom: 10px;
+}
+
+.tech-card .label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.tech-card ul.diff { margin-top: 0; }
+.tech-card ul.diff + .tg { margin-top: 12px; }
+
+.tg {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-link);
+  margin: 12px 0 2px;
+}
+
+/* terminal blocks & diagrams */
+.term {
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  white-space: pre;
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.term .prompt { color: var(--color-accent); }
+.term .cmt { color: var(--color-text-tertiary); }
+
+/* research log cards */
+.research-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  transition:
+    transform var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) ease,
+    box-shadow var(--t-fast) ease;
+}
+
+.research-card.in:hover,
+.research-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+.rd-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rd-id {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-accent);
+}
+
+.rd-head .status-badge { margin-left: auto; }
+
+.research-card h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); margin-top: 16px; }
+
+.research-card .tagline {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+}
+
+.research-card .desc { margin-top: 12px; color: var(--color-text-secondary); font-size: var(--text-body); max-width: 68ch; }
+
+.research-card .chips { margin-top: 12px; }
+
+/* principles */
+.principle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  padding: 20px 24px;
+  margin-bottom: 14px;
+  transition:
+    border-color var(--t-fast) ease,
+    transform var(--t-fast) var(--ease-out);
+}
+
+.principle.in:hover,
+.principle:hover { border-color: var(--color-border-strong); transform: translateY(-2px); }
+
+.principle .p-body { flex: 1 1 300px; }
+
+.principle .p-num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+}
+
+.principle h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--text-md); margin: 4px 0 6px; text-transform: uppercase; letter-spacing: 0.01em; }
+
+.principle .desc { color: var(--color-text-secondary); font-size: var(--text-body); }
+
+.principle .p-visual { flex: 0 1 260px; }
+
+.principle .term { margin-top: 0; }
+
+/* exploring grid */
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.explore-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  transition:
+    border-color var(--t-fast) ease,
+    transform var(--t-fast) var(--ease-out);
+}
+
+.explore-card.in:hover,
+.explore-card:hover { border-color: var(--color-border-strong); transform: translateY(-2px); }
+
+.explore-card .label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* beyond engineering mini cards */
+.beyond-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.beyond-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+}
+
+.beyond-card .label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.beyond-card .desc { color: var(--color-text-secondary); font-size: var(--text-body); }
+
+/* contact row */
+.contact-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
 /* ---------- mobile ---------- */
 
 @media (max-width: 640px) {
@@ -679,7 +979,9 @@ footer a:hover { color: var(--color-accent); }
   .reveal { opacity: 1 !important; transform: none !important; }
   section { padding-top: 22px; }
   .hero { padding: 24px 0 16px; }
-  .release, .skill-card, .plain-card, .note-item { break-inside: avoid; }
+  .release, .skill-card, .plain-card, .note-item,
+  .tech-card, .research-card, .id-card, .principle, .explore-card, .beyond-card { break-inside: avoid; }
+  .term { white-space: pre-wrap; }
   footer { margin-top: 28px; }
   main a::after { content: " (" attr(href) ")"; font-family: var(--font-mono); font-size: 9.5px; color: var(--color-text-tertiary); }
 }
