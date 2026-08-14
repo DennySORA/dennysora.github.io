@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title class="t" data-en="DennySORA — Research &amp; Development" data-zh="李汶道 (DennySORA) — 研究與開發" data-ja="李汶道 (DennySORA) — 研究・開発">DennySORA — Research &amp; Development</title>
+<meta name="description" content="Independent LLM research by DennySORA (李汶道): trilingual language model from scratch, adaptive transformer research, Japanese speech evaluation.">
+<meta property="og:title" content="DennySORA — Research &amp; Development">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://dennysora.me/detail/research/">
+<link rel="canonical" href="https://dennysora.me/detail/research/">
+<link rel="icon" type="image/png" href="../../assets/favicon.png">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="scroll-progress" aria-hidden="true"></div>
+<main class="page">
+
+  <div class="statusbar">
+    <span class="dot"></span>
+    <span class="t" data-en="online" data-zh="在線" data-ja="オンライン">online</span>
+    <span class="sep">·</span>
+    <span class="t" data-en="Tokyo, Japan" data-zh="東京，日本" data-ja="東京・日本">Tokyo, Japan</span>
+    <span class="sep">·</span>
+    <span>UTC+9</span>
+    <span class="langswitch" role="group" aria-label="Language">
+      <button type="button" class="lang-btn" data-lang="zh" aria-label="繁體中文" title="繁體中文">繁</button>
+      <button type="button" class="lang-btn" data-lang="en" aria-label="English" title="English">EN</button>
+      <button type="button" class="lang-btn" data-lang="ja" aria-label="日本語" title="日本語">日</button>
+    </span>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow t" data-en="Technical Profile" data-zh="技術檔案" data-ja="技術プロフィール">Technical Profile</p>
+    <div class="hero-head">
+      <img class="avatar" src="../../assets/avatar.png" alt="DennySORA" width="88" height="88">
+      <h1 class="name"><span lang="zh-Hant">李汶道</span> <span lang="en">DennySORA</span>
+        <span class="handle">~/dennysora/detail/research</span>
+      </h1>
+    </div>
+    <p class="role t" data-en="Research &amp; Development" data-zh="研究與開發" data-ja="研究・開発">Research &amp; Development</p>
+    <p class="summary t"
+       data-en="Independent model research: a trilingual LLM trained from scratch, adaptive transformer concepts, and Japanese speech evaluation. Experimental work, clearly labeled."
+       data-zh="獨立的模型研究：從零訓練的三語 LLM、自適應 Transformer 概念與日語語音評估。實驗性工作皆有明確標示。"
+       data-ja="独立したモデル研究：ゼロから学習する三言語 LLM、適応型 Transformer のコンセプト、日本語音声評価。実験的作業はすべて明確にラベル付け。">Independent model research: a trilingual LLM trained from scratch, adaptive transformer concepts, and Japanese speech evaluation. Experimental work, clearly labeled.</p>
+    <div class="contacts">
+      <a href="../"><span class="sym">←</span> <span class="t" data-en="Back to Detail" data-zh="返回詳細索引" data-ja="詳細インデックスに戻る">Back to Detail</span></a>
+      <a href="../../index.html"><span class="sym">↖</span> <span class="t" data-en="Resume" data-zh="履歷首頁" data-ja="履歴書">Resume</span></a>
+    </div>
+  </header>
+
+  <section aria-labelledby="rnd-h">
+    <h2 id="rnd-h"><span class="t" data-en="Selected R&amp;D" data-zh="重點研究與開發" data-ja="研究・開発トピック">Selected R&amp;D</span></h2>
+
+    <article class="research-card">
+      <div class="rd-head">
+        <span class="rd-id">R&amp;D-001</span>
+        <span class="status-badge b-research t" data-en="ACTIVE RESEARCH" data-zh="進行中的研究" data-ja="研究進行中">ACTIVE RESEARCH</span>
+      </div>
+      <h3 class="t" data-en="TriLingual Language Model from Scratch" data-zh="從零訓練的三語語言模型" data-ja="ゼロから学習する三言語モデル">TriLingual Language Model from Scratch</h3>
+      <p class="tagline t" data-en="Chinese / English / Japanese · Decoder-only Transformer · SentencePiece · FP8 deployment research" data-zh="中／英／日三語 · Decoder-only Transformer · SentencePiece · FP8 部署研究" data-ja="中国語／英語／日本語 · decoder-only Transformer · SentencePiece · FP8 デプロイ研究">Chinese / English / Japanese · Decoder-only Transformer · SentencePiece · FP8 deployment research</p>
+      <p class="desc t"
+         data-en="An experimental decoder-only language model trained from scratch for Chinese, English and Japanese. The project is used to study the complete language-model stack: tokenization, Transformer architecture, pre-training, post-training, quantization and efficient inference."
+         data-zh="從零開始訓練的中、英、日三語 decoder-only 語言模型。這個專案用來實際研究完整的語言模型 stack：Tokenizer、Transformer 架構、Pre-training、Post-training、量化以及高效率推論。"
+         data-ja="中国語・英語・日本語を対象として、ゼロから学習している実験的な decoder-only 言語モデル。Tokenizer、Transformer アーキテクチャ、事前学習、ポストトレーニング、量子化、高速推論まで一連の LLM スタックを研究するためのプロジェクトです。">An experimental decoder-only language model trained from scratch for Chinese, English and Japanese. The project is used to study the complete language-model stack: tokenization, Transformer architecture, pre-training, post-training, quantization and efficient inference.</p>
+      <pre class="term"><span class="prompt">$ model.inspect</span>
+<span class="cmt t" data-en="# experimental architecture snapshot" data-zh="# 實驗架構快照" data-ja="# 実験的アーキテクチャのスナップショット"># experimental architecture snapshot</span>
+<span class="t" data-en="type          decoder-only dense transformer
+languages     zh / en / ja
+
+hidden_size   1280
+heads         16
+kv_heads      16
+
+position      RoPE + NoPE (hybrid layout)
+activation    SwiGLU + GEGLU (experimental hybrid)
+normalization RMSNorm
+tokenizer     SentencePiece Unigram" data-zh="類型           decoder-only 稠密 Transformer
+語言           中／英／日
+
+隱藏維度        1280
+注意力頭        16
+KV 頭          16
+
+位置編碼        RoPE + NoPE（混合配置）
+激活函數        SwiGLU + GEGLU（實驗性混合）
+正規化          RMSNorm
+分詞器          SentencePiece Unigram" data-ja="タイプ        decoder-only 密 Transformer
+言語          中／英／日
+
+隠れ次元      1280
+ヘッド数      16
+KV ヘッド     16
+
+位置符号化    RoPE + NoPE（ハイブリッド配置）
+活性化関数    SwiGLU + GEGLU（実験的ハイブリッド）
+正規化        RMSNorm
+トークナイザー SentencePiece Unigram">type          decoder-only dense transformer
+languages     zh / en / ja
+
+hidden_size   1280
+heads         16
+kv_heads      16
+
+position      RoPE + NoPE (hybrid layout)
+activation    SwiGLU + GEGLU (experimental hybrid)
+normalization RMSNorm
+tokenizer     SentencePiece Unigram</span></pre>
+      <p class="tg t" data-en="Attention Research" data-zh="注意力機制研究" data-ja="アテンションの研究">Attention Research</p>
+      <ul class="diff">
+        <li class="t" data-en="MHA / GQA / MQA trade-offs" data-zh="MHA／GQA／MQA 取捨" data-ja="MHA／GQA／MQA のトレードオフ">MHA / GQA / MQA trade-offs</li>
+        <li class="t" data-en="experimental latent-attention design" data-zh="實驗性 latent-attention 設計" data-ja="実験的な latent-attention 設計">experimental latent-attention design</li>
+        <li class="t" data-en="KV-cache implications" data-zh="KV cache 的影響" data-ja="KV キャッシュへの影響">KV-cache implications</li>
+        <li class="t" data-en="memory / throughput trade-offs" data-zh="記憶體／吞吐量取捨" data-ja="メモリ／スループットのトレードオフ">memory / throughput trade-offs</li>
+      </ul>
+      <pre class="term"><span class="cmt t" data-en="# historical experiment snapshot
+# values represent one experimental run,
+# not the latest model checkpoint" data-zh="# 歷史實驗快照
+# 數值為某一次實驗 run 的紀錄，
+# 並非最新模型 checkpoint" data-ja="# 過去の実験スナップショット
+# 値はある 1 回の実験 run の記録であり、
+# 最新のチェックポイントではない"># historical experiment snapshot
+# values represent one experimental run,
+# not the latest model checkpoint</span>
+<span class="t" data-en="step           1,597
+tokens         418,541,760
+validation     4.6082 loss
+ppl            100.31
+throughput     4,021 tokens/sec
+grad_norm      0.93" data-zh="步數            1,597
+tokens          418,541,760
+驗證            4.6082 loss
+困惑度          100.31
+吞吐量          4,021 tokens/sec
+梯度範數        0.93" data-ja="step           1,597
+tokens         418,541,760
+validation     4.6082 loss
+ppl            100.31
+throughput     4,021 tokens/sec
+grad_norm      0.93">step           1,597
+tokens         418,541,760
+validation     4.6082 loss
+ppl            100.31
+throughput     4,021 tokens/sec
+grad_norm      0.93</span></pre>
+      <p class="tg t" data-en="Deployment Research" data-zh="部署研究" data-ja="デプロイ研究">Deployment Research</p>
+      <pre class="term"><span class="t" data-en="BF16 training" data-zh="BF16 訓練" data-ja="BF16 学習">BF16 training</span>
+      │
+      ↓
+<span class="t" data-en="     PTQ" data-zh="     PTQ" data-ja="     PTQ">     PTQ</span>
+      │
+      ↓
+<span class="t" data-en=" FP8 inference" data-zh=" FP8 推論" data-ja=" FP8 推論"> FP8 inference</span>
+      │
+ ┌────┴──────────┐
+ ↓               ↓
+vLLM       TensorRT-LLM</pre>
+      <div class="chips">
+        <span class="chip">E4M3 · PTQ · KV precision</span>
+        <span class="chip">TensorRT-LLM · vLLM</span>
+        <span class="chip t" data-en="VRAM optimization" data-zh="VRAM 最佳化" data-ja="VRAM 最適化">VRAM optimization</span>
+        <span class="chip t" data-en="throughput optimization" data-zh="吞吐量最佳化" data-ja="スループット最適化">throughput optimization</span>
+      </div>
+    </article>
+
+    <article class="research-card">
+      <div class="rd-head">
+        <span class="rd-id">R&amp;D-002</span>
+        <span class="status-badge b-exp t" data-en="RESEARCH CONCEPT" data-zh="研究概念" data-ja="研究コンセプト">RESEARCH CONCEPT</span>
+      </div>
+      <h3 class="t" data-en="Adaptive &amp; Growing Transformer" data-zh="自適應成長式 Transformer" data-ja="適応型・成長型 Transformer">Adaptive &amp; Growing Transformer</h3>
+      <p class="desc t"
+         data-en="Exploring whether a Transformer can adapt its model capacity and computational depth rather than relying on a fixed layer stack. Topics include parameter growth, structured pruning, sequence-level layer routing, variable depth and routing constraints for preventing pathological loops."
+         data-zh="研究 Transformer 是否可以不固定深度與模型大小，而是根據訓練與輸入逐步調整可用參數與計算路徑。研究方向包含模型增長、結構化 pruning、sequence-level layer routing、variable computational depth，以及避免路由 loop 的約束機制。"
+         data-ja="Transformer が固定のレイヤースタックに依存せず、モデル容量と計算深度を適応できるかを探究。パラメータ成長、構造化プルーニング、sequence レベルのレイヤールーティング、可変計算深度、ループ防止のための制約などを研究。">Exploring whether a Transformer can adapt its model capacity and computational depth rather than relying on a fixed layer stack. Topics include parameter growth, structured pruning, sequence-level layer routing, variable depth and routing constraints for preventing pathological loops.</p>
+      <pre class="term"><span class="t" data-en="traditional" data-zh="傳統式" data-ja="従来型">traditional</span>
+L1 → L2 → L3 → L4 → L5 → OUT
+
+<span class="t" data-en="adaptive routing (concept)" data-zh="自適應路由（概念）" data-ja="適応ルーティング（概念）">adaptive routing (concept)</span>
+        ┌─────────┐
+        ↓         │
+L1 → L3 → L1 → L6 → OUT
+     │
+     └────→ L5 ─────→</pre>
+      <p class="tg t" data-en="Research Questions" data-zh="研究問題" data-ja="研究上の問い">Research Questions</p>
+      <ul class="diff">
+        <li class="t" data-en="How should routes be selected?" data-zh="路由該如何選擇？" data-ja="ルートはどう選ぶべきか？">How should routes be selected?</li>
+        <li class="t" data-en="How can loops be prevented?" data-zh="如何防止迴圈？" data-ja="ループをどう防ぐか？">How can loops be prevented?</li>
+        <li class="t" data-en="How should computation be penalized?" data-zh="計算量該如何計入代價？" data-ja="計算量にどうペナルティを与えるか？">How should computation be penalized?</li>
+        <li class="t" data-en="How can capacity grow safely?" data-zh="容量該如何安全增長？" data-ja="容量をどう安全に拡大するか？">How can capacity grow safely?</li>
+        <li class="t" data-en="When should layers be pruned?" data-zh="何時該修剪層？" data-ja="いつ層を刈り込むべきか？">When should layers be pruned?</li>
+      </ul>
+      <p class="tg t" data-en="Model Growth" data-zh="模型增長" data-ja="モデル成長">Model Growth</p>
+      <pre class="term"><span class="t" data-en="small model" data-zh="小模型" data-ja="小さなモデル">small model</span>
+    ↓
+<span class="t" data-en="capacity expansion" data-zh="容量擴張" data-ja="容量拡張">capacity expansion</span>
+    ↓
+<span class="t" data-en="continued training" data-zh="持續訓練" data-ja="継続学習">continued training</span>
+    ↓
+<span class="t" data-en="larger model" data-zh="更大的模型" data-ja="より大きなモデル">larger model</span></pre>
+      <p class="desc t" data-en="Research target: progressively grow toward multi-billion parameters." data-zh="研究目標：逐步成長至數十億參數規模。" data-ja="研究目標：数十億パラメータ規模への段階的な成長。">Research target: progressively grow toward multi-billion parameters.</p>
+    </article>
+
+    <article class="research-card">
+      <div class="rd-head">
+        <span class="rd-id">R&amp;D-003</span>
+        <span class="status-badge b-dev t" data-en="IN DEVELOPMENT" data-zh="開發中" data-ja="開発中">IN DEVELOPMENT</span>
+      </div>
+      <h3 class="t" data-en="Japanese Pronunciation &amp; Prosody Evaluation" data-zh="日語發音與韻律評估" data-ja="日本語の発音・韻律評価">Japanese Pronunciation &amp; Prosody Evaluation</h3>
+      <p class="desc t"
+         data-en="Evaluate Japanese speech beyond transcription accuracy — pronunciation correctness, phoneme / mora accuracy, pitch accent, intonation, fluency and rhythm."
+         data-zh="超越轉錄正確度，評估日語口說品質：發音正確性、音素／拍正確度、音調重音、語調、流暢度與節奏。"
+         data-ja="文字起こしの正確性を超えて日本語音声を評価：発音の正確性、音素・モーラの正確度、ピッチアクセント、イントネーション、流暢性、リズム。">Evaluate Japanese speech beyond transcription accuracy — pronunciation correctness, phoneme / mora accuracy, pitch accent, intonation, fluency and rhythm.</p>
+      <pre class="term"><span class="t" data-en="Microphone / Audio" data-zh="麥克風／音訊" data-ja="マイク／音声">Microphone / Audio</span>
+        │
+        ↓
+<span class="t" data-en=" Speech Encoder" data-zh=" 語音編碼器" data-ja=" 音声エンコーダー"> Speech Encoder</span>
+        │
+        ↓
+<span class="t" data-en="Forced / Learned Alignment" data-zh="強制／學習對齊" data-ja="強制／学習アライメント">Forced / Learned Alignment</span>
+        │
+        ├───────────────┐
+        ↓               ↓
+<span class="t" data-en="Phoneme / Mora        F0 / Pitch" data-zh="音素／拍正確度        F0／音高" data-ja="音素・モーラ精度      F0・ピッチ">Phoneme / Mora        F0 / Pitch</span>
+<span class="t" data-en="Accuracy              Contour" data-zh="                      輪廓" data-ja="                      輪郭">Accuracy              Contour</span>
+        │               │
+        └───────┬───────┘
+                ↓
+<span class="t" data-en="        Fluency / Rhythm" data-zh="        流暢度／節奏" data-ja="        流暢性／リズム">        Fluency / Rhythm</span>
+                │
+                ↓
+<span class="t" data-en="          Scoring Model" data-zh="          評分模型" data-ja="          スコアリングモデル">          Scoring Model</span>
+                │
+                ↓
+<span class="t" data-en="        Learner Feedback" data-zh="        學習者回饋" data-ja="        学習者フィードバック">        Learner Feedback</span></pre>
+      <p class="tg t" data-en="Planned Stack" data-zh="規劃中的技術堆疊" data-ja="予定スタック">Planned Stack</p>
+      <ul class="diff">
+        <li class="t" data-en="Frontend: Nuxt 4 + Tailwind CSS 4" data-zh="前端：Nuxt 4 + Tailwind CSS 4" data-ja="フロントエンド：Nuxt 4 + Tailwind CSS 4">Frontend: Nuxt 4 + Tailwind CSS 4</li>
+        <li class="t" data-en="Backend: Python · Storage: SQLite" data-zh="後端：Python · 儲存：SQLite" data-ja="バックエンド：Python · ストレージ：SQLite">Backend: Python · Storage: SQLite</li>
+        <li class="t" data-en="ML: PyTorch / speech models" data-zh="ML：PyTorch／語音模型" data-ja="ML：PyTorch／音声モデル">ML: PyTorch / speech models</li>
+      </ul>
+    </article>
+  </section>
+
+  <section aria-labelledby="exp-h">
+    <h2 id="exp-h"><span class="t" data-en="Currently Exploring" data-zh="正在探索" data-ja="現在探究中">Currently Exploring</span></h2>
+    <div class="explore-grid">
+      <div class="explore-card">
+        <p class="label t" data-en="LLM Architecture" data-zh="LLM 架構" data-ja="LLM アーキテクチャ">LLM Architecture</p>
+        <div class="chips">
+          <span class="chip t" data-en="efficient attention" data-zh="高效率注意力" data-ja="効率的なアテンション">efficient attention</span>
+          <span class="chip t" data-en="adaptive computation" data-zh="自適應計算" data-ja="適応的計算">adaptive computation</span>
+          <span class="chip t" data-en="dynamic depth" data-zh="動態深度" data-ja="動的デプス">dynamic depth</span>
+          <span class="chip t" data-en="parameter growth" data-zh="參數增長" data-ja="パラメータ成長">parameter growth</span>
+          <span class="chip t" data-en="structured pruning" data-zh="結構化修剪" data-ja="構造化プルーニング">structured pruning</span>
+        </div>
+      </div>
+      <div class="explore-card">
+        <p class="label t" data-en="Efficient Inference" data-zh="高效率推論" data-ja="効率的な推論">Efficient Inference</p>
+        <div class="chips">
+          <span class="chip">FP8 · MXFP8 · NVFP4</span>
+          <span class="chip t" data-en="KV-cache optimization" data-zh="KV cache 最佳化" data-ja="KV キャッシュ最適化">KV-cache optimization</span>
+          <span class="chip t" data-en="TensorRT-LLM" data-zh="TensorRT-LLM" data-ja="TensorRT-LLM">TensorRT-LLM</span>
+          <span class="chip t" data-en="serving efficiency" data-zh="服務效率" data-ja="サービング効率">serving efficiency</span>
+        </div>
+      </div>
+      <div class="explore-card">
+        <p class="label t" data-en="Interpretability" data-zh="可解釋性" data-ja="解釈可能性">Interpretability</p>
+        <div class="chips">
+          <span class="chip t" data-en="Sparse Autoencoders" data-zh="稀疏自動編碼器" data-ja="スパースオートエンコーダ">Sparse Autoencoders</span>
+          <span class="chip t" data-en="activation analysis" data-zh="激活分析" data-ja="アクティベーション分析">activation analysis</span>
+          <span class="chip t" data-en="circuits" data-zh="電路" data-ja="回路">circuits</span>
+          <span class="chip t" data-en="activation patching" data-zh="激活修補" data-ja="アクティベーションパッチング">activation patching</span>
+        </div>
+      </div>
+      <div class="explore-card">
+        <p class="label t" data-en="Post-training" data-zh="後訓練" data-ja="ポストトレーニング">Post-training</p>
+        <div class="chips">
+          <span class="chip t" data-en="preference optimization" data-zh="偏好最佳化" data-ja="選好最適化">preference optimization</span>
+          <span class="chip">DPO · GRPO</span>
+          <span class="chip t" data-en="PPO / TRPO family" data-zh="PPO／TRPO 系列" data-ja="PPO／TRPO 系列">PPO / TRPO family</span>
+          <span class="chip t" data-en="reward design" data-zh="獎勵設計" data-ja="報酬設計">reward design</span>
+        </div>
+      </div>
+      <div class="explore-card">
+        <p class="label">Speech AI</p>
+        <div class="chips">
+          <span class="chip t" data-en="Japanese phoneme / mora evaluation" data-zh="日語音素／拍評估" data-ja="日本語の音素・モーラ評価">Japanese phoneme / mora evaluation</span>
+          <span class="chip t" data-en="pitch accent" data-zh="音調重音" data-ja="ピッチアクセント">pitch accent</span>
+          <span class="chip t" data-en="prosody modeling" data-zh="韻律建模" data-ja="韻律モデリング">prosody modeling</span>
+          <span class="chip t" data-en="fluency evaluation" data-zh="流暢度評估" data-ja="流暢性評価">fluency evaluation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 <span lang="zh-Hant">李汶道</span> (DennySORA)</span>
+    <span>
+      <a href="../">detail</a>
+      <span style="margin:0 10px;color:var(--color-border-strong)">|</span>
+      <a href="../../index.html">home</a>
+      <span style="margin:0 10px;color:var(--color-border-strong)">|</span>
+      <a href="https://github.com/dennySORA/dennysora.github.io">source</a>
+    </span>
+  </footer>
+
+</main>
+
+<script src="../../lang.js"></script>
+<script src="../../site.js"></script>
+</body>
+</html>

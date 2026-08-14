@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title class="t" data-en="DennySORA — Technical Depth" data-zh="李汶道 (DennySORA) — 技術深度" data-ja="李汶道 (DennySORA) — 技術的深さ">DennySORA — Technical Depth</title>
+<meta name="description" content="Technical depth of DennySORA (李汶道): LLM architecture, training, inference and quantization, agentic AI, backend, cloud and security.">
+<meta property="og:title" content="DennySORA — Technical Depth">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://dennysora.me/detail/depth/">
+<link rel="canonical" href="https://dennysora.me/detail/depth/">
+<link rel="icon" type="image/png" href="../../assets/favicon.png">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="scroll-progress" aria-hidden="true"></div>
+<main class="page">
+
+  <div class="statusbar">
+    <span class="dot"></span>
+    <span class="t" data-en="online" data-zh="在線" data-ja="オンライン">online</span>
+    <span class="sep">·</span>
+    <span class="t" data-en="Tokyo, Japan" data-zh="東京，日本" data-ja="東京・日本">Tokyo, Japan</span>
+    <span class="sep">·</span>
+    <span>UTC+9</span>
+    <span class="langswitch" role="group" aria-label="Language">
+      <button type="button" class="lang-btn" data-lang="zh" aria-label="繁體中文" title="繁體中文">繁</button>
+      <button type="button" class="lang-btn" data-lang="en" aria-label="English" title="English">EN</button>
+      <button type="button" class="lang-btn" data-lang="ja" aria-label="日本語" title="日本語">日</button>
+    </span>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow t" data-en="Technical Profile" data-zh="技術檔案" data-ja="技術プロフィール">Technical Profile</p>
+    <div class="hero-head">
+      <img class="avatar" src="../../assets/avatar.png" alt="DennySORA" width="88" height="88">
+      <h1 class="name"><span lang="zh-Hant">李汶道</span> <span lang="en">DennySORA</span>
+        <span class="handle">~/dennysora/detail/depth</span>
+      </h1>
+    </div>
+    <p class="role t" data-en="Technical Depth" data-zh="技術深度" data-ja="技術的深さ">Technical Depth</p>
+    <p class="summary t"
+       data-en="How deep the knowledge goes: LLM architecture, training and post-training, inference and quantization, agentic AI, backend and distributed systems, cloud platforms and security."
+       data-zh="技術細節：LLM 架構、訓練與後訓練、推論與量化、代理式 AI、後端與分散式系統、雲端平台與資安。"
+       data-ja="LLM アーキテクチャ、学習・ポストトレーニング、推論・量子化、エージェンティック AI、バックエンドと分散システム、クラウド基盤、セキュリティ。">How deep the knowledge goes: LLM architecture, training and post-training, inference and quantization, agentic AI, backend and distributed systems, cloud platforms and security.</p>
+    <div class="contacts">
+      <a href="../"><span class="sym">←</span> <span class="t" data-en="Back to Detail" data-zh="返回詳細索引" data-ja="詳細インデックスに戻る">Back to Detail</span></a>
+      <a href="../../index.html"><span class="sym">↖</span> <span class="t" data-en="Resume" data-zh="履歷首頁" data-ja="履歴書">Resume</span></a>
+    </div>
+  </header>
+
+  <section aria-labelledby="depth-h">
+    <h2 id="depth-h"><span class="t" data-en="Technical Depth" data-zh="技術深度" data-ja="技術的深さ">Technical Depth</span></h2>
+    <div class="depth-grid">
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="LLM Architecture" data-zh="LLM 架構" data-ja="LLM アーキテクチャ">LLM Architecture</span>
+        </div>
+        <p class="tg t" data-en="Core" data-zh="核心" data-ja="コア">Core</p>
+        <ul class="diff">
+          <li class="t" data-en="Transformer architecture" data-zh="Transformer 架構" data-ja="Transformer アーキテクチャ">Transformer architecture</li>
+          <li class="t" data-en="Decoder-only language models" data-zh="Decoder-only 語言模型" data-ja="decoder-only 言語モデル">Decoder-only language models</li>
+        </ul>
+        <p class="tg t" data-en="Attention" data-zh="注意力機制" data-ja="アテンション">Attention</p>
+        <ul class="diff">
+          <li>MHA · GQA · MQA</li>
+          <li class="t" data-en="latent-attention variants" data-zh="latent-attention 變體" data-ja="latent-attention の亜種">latent-attention variants</li>
+        </ul>
+        <p class="tg t" data-en="Position Representation" data-zh="位置編碼" data-ja="位置エンコーディング">Position Representation</p>
+        <ul class="diff">
+          <li>RoPE · NoPE</li>
+          <li class="t" data-en="hybrid positional designs" data-zh="混合式位置設計" data-ja="ハイブリッドな位置設計">hybrid positional designs</li>
+        </ul>
+        <p class="tg t" data-en="Feed-forward" data-zh="前饋層" data-ja="フィードフォワード">Feed-forward</p>
+        <ul class="diff">
+          <li>SwiGLU · GEGLU</li>
+        </ul>
+        <p class="tg t" data-en="Normalization" data-zh="正規化" data-ja="正規化">Normalization</p>
+        <ul class="diff">
+          <li>RMSNorm</li>
+        </ul>
+        <p class="tg t" data-en="Residual Design" data-zh="殘差設計" data-ja="残差設計">Residual Design</p>
+        <ul class="diff">
+          <li class="t" data-en="standard residual paths" data-zh="標準殘差路徑" data-ja="標準的な残差パス">standard residual paths</li>
+          <li class="t" data-en="experimental attention-residual variants" data-zh="實驗性 attention-residual 變體" data-ja="実験的な attention-residual の亜種">experimental attention-residual variants</li>
+        </ul>
+        <p class="tg t" data-en="Tokenizer" data-zh="分詞器" data-ja="トークナイザー">Tokenizer</p>
+        <ul class="diff">
+          <li>SentencePiece · Unigram</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="Training &amp; Post-training" data-zh="訓練與後訓練" data-ja="学習とポストトレーニング">Training &amp; Post-training</span>
+        </div>
+        <p class="tg t" data-en="Pre-training" data-zh="預訓練" data-ja="事前学習">Pre-training</p>
+        <ul class="diff">
+          <li class="t" data-en="token / data pipeline" data-zh="token／資料管線" data-ja="トークン／データパイプライン">token / data pipeline</li>
+          <li class="t" data-en="optimization" data-zh="最佳化器" data-ja="最適化">optimization</li>
+          <li class="t" data-en="learning-rate scheduling" data-zh="學習率排程" data-ja="学習率スケジューリング">learning-rate scheduling</li>
+          <li class="t" data-en="checkpointing" data-zh="檢查點機制" data-ja="チェックポイント">checkpointing</li>
+          <li class="t" data-en="validation loss / perplexity" data-zh="驗證 loss／困惑度" data-ja="検証 loss／パープレキシティ">validation loss / perplexity</li>
+          <li class="t" data-en="throughput monitoring" data-zh="吞吐量監控" data-ja="スループット監視">throughput monitoring</li>
+        </ul>
+        <p class="tg t" data-en="Post-training · implemented" data-zh="後訓練・已實作" data-ja="ポストトレーニング・実装済み">Post-training · implemented</p>
+        <ul class="diff">
+          <li>SFT · DPO · GRPO</li>
+        </ul>
+        <p class="tg t" data-en="Studied / compared" data-zh="研究／比較過" data-ja="学習・比較済み">Studied / compared</p>
+        <ul class="diff">
+          <li>PPO · TRPO · DAPO</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="Inference &amp; Quantization" data-zh="推論與量化" data-ja="推論と量子化">Inference &amp; Quantization</span>
+        </div>
+        <p class="tg t" data-en="Precision" data-zh="精度" data-ja="精度">Precision</p>
+        <ul class="diff">
+          <li>FP16 · BF16 · FP8 · INT8 · INT4</li>
+        </ul>
+        <p class="tg t" data-en="Quantization Concepts" data-zh="量化概念" data-ja="量子化の概念">Quantization Concepts</p>
+        <ul class="diff">
+          <li class="t" data-en="W / A / KV precision" data-zh="W／A／KV 精度" data-ja="W／A／KV 精度">W / A / KV precision</li>
+          <li>PTQ · E4M3</li>
+          <li class="t" data-en="W8A16KV8-style configurations" data-zh="W8A16KV8 型配置" data-ja="W8A16KV8 型の構成">W8A16KV8-style configurations</li>
+        </ul>
+        <p class="tg t" data-en="Runtime / Serving" data-zh="執行環境／服務" data-ja="ランタイム／サービング">Runtime / Serving</p>
+        <ul class="diff">
+          <li>vLLM · TensorRT-LLM · Ollama</li>
+        </ul>
+        <p class="tg t" data-en="Performance" data-zh="效能" data-ja="パフォーマンス">Performance</p>
+        <ul class="diff">
+          <li>KV cache</li>
+          <li class="t" data-en="batching" data-zh="批次處理" data-ja="バッチング">batching</li>
+          <li class="t" data-en="context length" data-zh="上下文長度" data-ja="コンテキスト長">context length</li>
+          <li class="t" data-en="VRAM estimation" data-zh="VRAM 估算" data-ja="VRAM 見積もり">VRAM estimation</li>
+          <li class="t" data-en="throughput / tokens per second" data-zh="吞吐量／每秒 tokens" data-ja="スループット／tokens per second">throughput / tokens per second</li>
+        </ul>
+        <p class="tg t" data-en="Exploring" data-zh="探索中" data-ja="探究中">Exploring</p>
+        <ul class="diff">
+          <li>MXFP8 · NVFP4</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="Model Interpretability" data-zh="模型可解釋性" data-ja="モデル解釈可能性">Model Interpretability</span>
+          <span class="status-badge b-study t" data-en="CURRENT STUDY" data-zh="學習中" data-ja="学習中">CURRENT STUDY</span>
+        </div>
+        <ul class="diff">
+          <li class="t" data-en="Sparse Autoencoders (SAE)" data-zh="稀疏自動編碼器（SAE）" data-ja="スパースオートエンコーダ（SAE）">Sparse Autoencoders (SAE)</li>
+          <li>SVD</li>
+          <li class="t" data-en="activation analysis" data-zh="激活分析" data-ja="アクティベーション分析">activation analysis</li>
+          <li class="t" data-en="activation patching" data-zh="激活修補" data-ja="アクティベーションパッチング">activation patching</li>
+          <li class="t" data-en="circuit-level interpretation concepts" data-zh="電路層級解釋概念" data-ja="回路レベルの解釈の概念">circuit-level interpretation concepts</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="Agentic AI" data-zh="代理式 AI" data-ja="エージェンティック AI">Agentic AI</span>
+          <span class="status-badge b-prod t" data-en="PRODUCTION" data-zh="生產環境" data-ja="本番運用">PRODUCTION</span>
+        </div>
+        <ul class="diff">
+          <li>Google ADK</li>
+          <li class="t" data-en="Agent-to-Agent (A2A)" data-zh="Agent-to-Agent（A2A）" data-ja="Agent-to-Agent（A2A）">Agent-to-Agent (A2A)</li>
+          <li>LangGraph · CopilotKit</li>
+          <li class="t" data-en="AG-UI integration" data-zh="AG-UI 整合" data-ja="AG-UI 統合">AG-UI integration</li>
+          <li class="t" data-en="tool execution" data-zh="工具執行" data-ja="ツール実行">tool execution</li>
+          <li class="t" data-en="state management" data-zh="狀態管理" data-ja="状態管理">state management</li>
+          <li class="t" data-en="Human-in-the-Loop" data-zh="Human-in-the-Loop" data-ja="Human-in-the-Loop">Human-in-the-Loop</li>
+          <li class="t" data-en="streaming (SSE)" data-zh="串流（SSE）" data-ja="ストリーミング（SSE）">streaming (SSE)</li>
+          <li class="t" data-en="retries &amp; error handling" data-zh="重試與錯誤處理" data-ja="リトライとエラー処理">retries &amp; error handling</li>
+          <li class="t" data-en="dynamic agent configuration" data-zh="動態 Agent 設定" data-ja="動的エージェント設定">dynamic agent configuration</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="Backend &amp; Distributed Systems" data-zh="後端與分散式系統" data-ja="バックエンドと分散システム">Backend &amp; Distributed Systems</span>
+        </div>
+        <p class="tg t" data-en="Languages" data-zh="語言" data-ja="言語">Languages</p>
+        <ul class="diff">
+          <li>Go · Python · Rust</li>
+        </ul>
+        <p class="tg t" data-en="Backend" data-zh="後端" data-ja="バックエンド">Backend</p>
+        <ul class="diff">
+          <li>REST · FastAPI · Gin · Asyncio</li>
+        </ul>
+        <p class="tg t" data-en="Distributed Systems" data-zh="分散式系統" data-ja="分散システム">Distributed Systems</p>
+        <ul class="diff">
+          <li>Kafka · Redis · PostgreSQL</li>
+          <li class="t" data-en="event-driven systems" data-zh="事件驅動系統" data-ja="イベント駆動システム">event-driven systems</li>
+          <li class="t" data-en="asynchronous processing" data-zh="非同步處理" data-ja="非同期処理">asynchronous processing</li>
+        </ul>
+        <p class="tg t" data-en="Design" data-zh="設計" data-ja="設計">Design</p>
+        <ul class="diff">
+          <li class="t" data-en="modular architecture" data-zh="模組化架構" data-ja="モジュラーアーキテクチャ">modular architecture</li>
+          <li class="t" data-en="plugin architecture" data-zh="plugin 架構" data-ja="プラグインアーキテクチャ">plugin architecture</li>
+          <li class="t" data-en="microservices" data-zh="微服務" data-ja="マイクロサービス">microservices</li>
+          <li class="t" data-en="low-latency systems" data-zh="低延遲系統" data-ja="低遅延システム">low-latency systems</li>
+        </ul>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-head">
+          <span class="label t" data-en="Cloud &amp; Platform" data-zh="雲端與平台" data-ja="クラウドとプラットフォーム">Cloud &amp; Platform</span>
+        </div>
+        <p class="tg t" data-en="Infrastructure" data-zh="基礎設施" data-ja="インフラ">Infrastructure</p>
+        <ul class="diff">
+          <li>AWS · Kubernetes / EKS</li>
+          <li>Terraform · Helm</li>
+        </ul>
+        <p class="tg">CI/CD</p>
+        <ul class="diff">
+          <li>GitHub Actions · GitLab CI</li>
+        </ul>
+        <p class="tg t" data-en="Observability" data-zh="可觀測性" data-ja="オブザーバビリティ">Observability</p>
+        <ul class="diff">
+          <li>OpenTelemetry · Prometheus · Grafana · Loki · Tempo</li>
+        </ul>
+        <p class="tg t" data-en="Production Experience" data-zh="生產經驗" data-ja="本番経験">Production Experience</p>
+        <ul class="diff">
+          <li class="t" data-en="EKS node-group architecture" data-zh="EKS node-group 架構設計" data-ja="EKS ノードグループ設計">EKS node-group architecture</li>
+          <li class="t" data-en="ARM migration" data-zh="ARM 遷移" data-ja="ARM 移行">ARM migration</li>
+          <li class="t" data-en="CPU / memory optimized pools" data-zh="CPU／記憶體最佳化資源池" data-ja="CPU／メモリ最適化プール">CPU / memory optimized pools</li>
+          <li class="t" data-en="CNI troubleshooting" data-zh="CNI 問題排解" data-ja="CNI トラブルシューティング">CNI troubleshooting</li>
+          <li class="t" data-en="multi-tenant cluster stability" data-zh="多租戶叢集穩定性" data-ja="マルチテナントクラスタの安定化">multi-tenant cluster stability</li>
+          <li class="t" data-en="reusable Helm modules" data-zh="可重複使用的 Helm 模組" data-ja="再利用可能な Helm モジュール">reusable Helm modules</li>
+        </ul>
+      </div>
+
+      <div class="tech-card wide">
+        <div class="tech-head">
+          <span class="label t" data-en="Security" data-zh="資安" data-ja="セキュリティ">Security</span>
+        </div>
+        <ul class="diff">
+          <li class="t" data-en="PII protection &amp; redaction" data-zh="PII 保護與遮蔽" data-ja="PII 保護・マスキング">PII protection &amp; redaction</li>
+          <li class="t" data-en="policy enforcement" data-zh="政策強制" data-ja="ポリシー強制">policy enforcement</li>
+          <li class="t" data-en="tenant isolation" data-zh="租戶隔離" data-ja="テナント分離">tenant isolation</li>
+          <li class="t" data-en="access control" data-zh="存取控制" data-ja="アクセス制御">access control</li>
+          <li class="t" data-en="auditability" data-zh="可稽核性" data-ja="監査性">auditability</li>
+          <li class="t" data-en="security architecture" data-zh="資安架構" data-ja="セキュリティアーキテクチャ">security architecture</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section aria-labelledby="prin-h">
+    <h2 id="prin-h"><span class="t" data-en="Engineering Principles" data-zh="工程原則" data-ja="エンジニアリング原則">Engineering Principles</span></h2>
+
+    <div class="principle">
+      <div class="p-body">
+        <span class="p-num">01</span>
+        <h3 class="t" data-en="Understand the Abstraction Below" data-zh="理解抽象層之下的機制" data-ja="抽象化の下にある仕組みを理解する">Understand the Abstraction Below</h3>
+        <p class="desc t" data-en="Abstractions are useful, but debugging and optimization require understanding the mechanism underneath them." data-zh="抽象層很好用，但真正的除錯與最佳化，仍需要理解 abstraction 底下實際發生的事情。" data-ja="抽象化は便利だが、デバッグと最適化にはその下にある仕組みの理解が必要。">Abstractions are useful, but debugging and optimization require understanding the mechanism underneath them.</p>
+      </div>
+      <div class="p-visual">
+        <pre class="term">LLM API
+  ↓
+Inference Runtime
+  ↓
+KV Cache
+  ↓
+Attention / GEMM
+  ↓
+Memory / Precision
+  ↓
+GPU</pre>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="p-body">
+        <span class="p-num">02</span>
+        <h3 class="t" data-en="Deployment Is Part of Model Design" data-zh="部署是模型設計的一部分" data-ja="デプロイはモデル設計の一部">Deployment Is Part of Model Design</h3>
+        <p class="desc t" data-en="Architecture decisions affect memory, latency, throughput and deployment constraints." data-zh="架構決策直接影響記憶體、延遲、吞吐量與部署限制。" data-ja="アーキテクチャの判断はメモリ・レイテンシ・スループット・デプロイの制約に直結する。">Architecture decisions affect memory, latency, throughput and deployment constraints.</p>
+      </div>
+      <div class="p-visual">
+        <pre class="term">Architecture
+    │
+    ├── memory
+    ├── compute
+    ├── KV cache
+    ├── quantization
+    └── serving</pre>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="p-body">
+        <span class="p-num">03</span>
+        <h3 class="t" data-en="Measure Before Optimizing" data-zh="先量測，再最佳化" data-ja="最適化の前に計測する">Measure Before Optimizing</h3>
+        <p class="desc t" data-en="Optimization should start from observable bottlenecks, not assumptions." data-zh="最佳化應從可觀測的瓶頸開始，而不是假設。" data-ja="最適化は思い込みではなく、観測可能なボトルネックから始めるべき。">Optimization should start from observable bottlenecks, not assumptions.</p>
+      </div>
+      <div class="p-visual">
+        <pre class="term">latency
+throughput
+memory
+GPU utilization
+cost
+failure rate</pre>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="p-body">
+        <span class="p-num">04</span>
+        <h3 class="t" data-en="Security Is Architectural" data-zh="資安是架構性的" data-ja="セキュリティはアーキテクチャの一部">Security Is Architectural</h3>
+        <p class="desc t" data-en="Security should be part of system design rather than a middleware added at the end." data-zh="資安應內建於系統設計，而不是最後才補上的中介層。" data-ja="セキュリティは後付けのミドルウェアではなく、システム設計の一部であるべき。">Security should be part of system design rather than a middleware added at the end.</p>
+      </div>
+      <div class="p-visual">
+        <pre class="term">Security
+├── identity
+├── authorization
+├── isolation
+├── policy
+├── data handling
+└── observability</pre>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="p-body">
+        <span class="p-num">05</span>
+        <h3 class="t" data-en="Make Trade-offs Explicit" data-zh="明確化取捨" data-ja="トレードオフを明確にする">Make Trade-offs Explicit</h3>
+        <p class="desc t" data-en="There is rarely a universally best architecture. The important part is knowing which constraints a design is optimizing for." data-zh="很少有放諸四海皆準的最佳架構，重點是知道自己為哪些限制在最佳化。" data-ja="普遍的に最良のアーキテクチャは稀。重要なのは、どの制約に対して最適化しているかを知ること。">There is rarely a universally best architecture. The important part is knowing which constraints a design is optimizing for.</p>
+      </div>
+      <div class="p-visual">
+        <pre class="term">performance
+    ↕
+cost
+    ↕
+complexity
+    ↕
+reliability
+    ↕
+maintainability</pre>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="how-h">
+    <h2 id="how-h"><span class="t" data-en="How I Work" data-zh="工作方式" data-ja="仕事の進め方">How I Work</span></h2>
+    <pre class="term"><span class="prompt">$ dennysora --working-style</span>
+
+research_first       true
+prototype_fast       true
+benchmark_driven     true
+production_aware     true
+security_conscious   true
+
+<span class="t" data-en="default_loop:" data-zh="預設迴圈：" data-ja="デフォルトループ：">default_loop:</span>
+
+<span class="t" data-en="understand → implement → measure → refine → repeat" data-zh="理解 → 實作 → 量測 → 精煉 → 重複" data-ja="理解 → 実装 → 計測 → 改善 → 繰り返し">understand → implement → measure → refine → repeat</span></pre>
+  </section>
+
+  <footer>
+    <span>© 2026 <span lang="zh-Hant">李汶道</span> (DennySORA)</span>
+    <span>
+      <a href="../">detail</a>
+      <span style="margin:0 10px;color:var(--color-border-strong)">|</span>
+      <a href="../../index.html">home</a>
+      <span style="margin:0 10px;color:var(--color-border-strong)">|</span>
+      <a href="https://github.com/dennySORA/dennysora.github.io">source</a>
+    </span>
+  </footer>
+
+</main>
+
+<script src="../../lang.js"></script>
+<script src="../../site.js"></script>
+</body>
+</html>
