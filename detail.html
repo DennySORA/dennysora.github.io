@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title class="t" data-en="DennySORA (李汶道) — Detail" data-zh="李汶道 (DennySORA) — 詳細資料" data-ja="李汶道 (DennySORA) — 詳細情報">DennySORA (李汶道) — Detail</title>
 <meta name="description" content="DennySORA (李汶道) — community, paper exchange, and detailed activities.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A101E'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%23FFB454'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="scroll-progress" aria-hidden="true"></div>
 <main class="page">
 
   <!-- status strip -->
@@ -31,6 +33,7 @@
 
   <!-- hero -->
   <header class="hero">
+    <img class="logo" src="assets/logo.png" alt="DennySORA logo" width="720" height="392">
     <h1 class="name"><span lang="zh-Hant">李汶道</span> <span lang="en">DennySORA</span>
       <span class="handle">~/dennysora</span>
     </h1>
@@ -83,6 +86,36 @@
     </div>
   </section>
 
+  <!-- side project -->
+  <section aria-labelledby="proj-h">
+    <h2 id="proj-h"><span class="t" data-en="Side Project" data-zh="個人專案" data-ja="個人プロジェクト">Side Project</span></h2>
+    <div class="plain-card">
+      <h3><a class="t" href="https://github.com/dennySORA/DLsite-Classification" data-en="DLsite Auto Classification System" data-zh="DLsite 自動分類系統" data-ja="DLsite 自動分類システム">DLsite Auto Classification System</a></h3>
+      <p class="sub">github.com/dennySORA/DLsite-Classification</p>
+      <ul>
+        <li class="t" data-en="Created async Python app for content classification." data-zh="開發非同步 Python 應用程式，用於內容分類。" data-ja="コンテンツ分類のための非同期 Python アプリを開発。">Created async Python app for content classification.</li>
+        <li class="t" data-en="Implemented web scraping for metadata extraction." data-zh="實作網頁爬蟲以擷取 metadata。" data-ja="メタデータ抽出のための Web スクレイピングを実装。">Implemented web scraping for metadata extraction.</li>
+        <li class="t" data-en="Built RESTful APIs for content management." data-zh="建立內容管理用的 RESTful API。" data-ja="コンテンツ管理用の RESTful API を構築。">Built RESTful APIs for content management.</li>
+        <li class="t" data-en="Developed file deduplication system." data-zh="開發檔案去重系統。" data-ja="ファイル重複排除システムを開発。">Developed file deduplication system.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- tech notes -->
+  <section aria-labelledby="notes-h">
+    <h2 id="notes-h"><span class="t" data-en="Tech Note" data-zh="技術筆記" data-ja="技術ノート">Tech Note</span></h2>
+    <div class="note-list">
+      <div class="note-item">
+        <span class="title"><a class="t" href="https://ithelp.ithome.com.tw/users/20130205/ironman/3517" data-en="Boring Cryptography, Fun Encryption!" data-zh="無趣的密碼學，有趣的加密！" data-ja="退屈な暗号学、面白い暗号化！">Boring Cryptography, Fun Encryption!</a></span>
+        <span class="url">ithelp.ithome.com.tw</span>
+      </div>
+      <div class="note-item">
+        <span class="title"><a class="t" href="https://docs.google.com/presentation/d/1nrHkMwLe7SLEI3aPvYRaDyRPn18H2lghtUKnmVrkoWU" data-en="WebRTC Introduction" data-zh="WebRTC 介紹" data-ja="WebRTC 入門">WebRTC Introduction</a></span>
+        <span class="url">Google Slides</span>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <span>© 2026 <span lang="zh-Hant">李汶道</span> (DennySORA)</span>
     <span>
@@ -95,5 +128,6 @@
 </main>
 
 <script src="lang.js"></script>
+<script src="site.js"></script>
 </body>
 </html>
