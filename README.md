@@ -2,7 +2,7 @@
 
 李汶道 (DennySORA) — personal resume site, hosted on GitHub Pages.
 
-**Live:** https://dennysora.github.io
+**Live:** https://dennysora.me · https://dennysora.github.io
 
 - Trilingual resume: 繁體中文 / English / 日本語 (auto-detects browser language, choice persisted)
 - `index.html` — one-page resume (skills, experience, education)
