@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>李汶道 (DennySORA) — Senior Cloud Engineer</title>
+<meta name="description" content="DennySORA (李汶道) — Senior Cloud Engineer. Backend and infrastructure specialist: Kubernetes, cloud services, microservices, Go and Python.">
+<meta property="og:title" content="李汶道 (DennySORA) — Senior Cloud Engineer">
+<meta property="og:description" content="Backend and infrastructure specialist with expertise in Kubernetes, cloud services, and microservice development.">
+<meta property="og:type" content="profile">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A101E'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%23FFB454'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A101E;
+    --panel: #101A2C;
+    --panel-deep: #0D1524;
+    --border: #1D2A42;
+    --border-strong: #2A3B5C;
+    --ink: #E7EEF8;
+    --ink-dim: #93A6C4;
+    --ink-faint: #5E7192;
+    --amber: #FFB454;
+    --amber-soft: rgba(255, 180, 84, 0.14);
+    --amber-line: rgba(255, 180, 84, 0.35);
+    --green: #4ADE80;
+    --link: #6CC9F5;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Noto Sans JP", sans-serif;
+    --display: "Space Grotesk", var(--sans);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ambient glow behind the hero — the one atmospheric touch */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(720px 340px at 72% -8%, rgba(255, 180, 84, 0.07), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  ::selection { background: rgba(255, 180, 84, 0.3); }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  button { font: inherit; }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 24px 72px;
+  }
+
+  /* ---------- status strip ---------- */
+
+  .statusbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding: 10px 16px;
+    background: var(--panel-deep);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+    animation: pulse 2.6s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.45); }
+    70%  { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  }
+
+  .statusbar .sep { color: var(--ink-faint); }
+
+  /* language switcher */
+
+  .langswitch {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+
+  .lang-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+
+  .lang-btn:hover { color: var(--ink); border-color: var(--border-strong); }
+
+  .lang-btn.on {
+    color: var(--amber);
+    border-color: var(--amber-line);
+    background: var(--amber-soft);
+  }
+
+  .lang-btn:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero { padding: 56px 0 40px; }
+
+  .hero .name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(34px, 5.4vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .hero .name .handle {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: clamp(15px, 2vw, 18px);
+    color: var(--amber);
+    letter-spacing: 0.02em;
+    display: block;
+    margin-top: 8px;
+  }
+
+  .hero .role {
+    margin-top: 18px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--ink);
+  }
+
+  .hero .summary {
+    margin-top: 12px;
+    max-width: 640px;
+    color: var(--ink-dim);
+    font-size: 15.5px;
+  }
+
+  .contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .contacts a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: var(--panel-deep);
+    transition: border-color .18s ease, color .18s ease;
+  }
+
+  .contacts a:hover {
+    border-color: var(--amber-line);
+    color: var(--amber);
+    text-decoration: none;
+  }
+
+  .contacts .sym { color: var(--amber); }
+
+  /* ---------- sections ---------- */
+
+  section { padding-top: 44px; }
+
+  h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 22px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 21px;
+    letter-spacing: -0.005em;
+  }
+
+  h2::before {
+    content: "//";
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--amber);
+  }
+
+  /* ---------- skills ---------- */
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    gap: 14px;
+  }
+
+  .skill-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px 18px;
+  }
+
+  .skill-card .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    background: var(--amber-soft);
+    border: 1px solid var(--amber-line);
+    border-radius: 6px;
+    padding: 3px 9px;
+  }
+
+  .chip.note { color: var(--ink-dim); background: transparent; border-style: dashed; }
+
+  /* ---------- experience: release log ---------- */
+
+  .release {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px 6px;
+    margin-bottom: 16px;
+  }
+
+  .release-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ver {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--amber);
+  }
+
+  .release-title { font-family: var(--display); font-weight: 600; font-size: 17.5px; }
+
+  .release-title .soft { font-weight: 400; color: var(--ink-faint); font-size: 15px; }
+
+  .release-company { color: var(--ink-dim); font-size: 14.5px; }
+
+  .release-dates {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    border-radius: 999px;
+    padding: 2px 9px;
+    margin-left: 4px;
+  }
+
+  .group { padding: 18px 0 14px; }
+
+  .group + .group { border-top: 1px dashed var(--border); }
+
+  .group-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--amber-line);
+    border-radius: 5px;
+    padding: 2px 8px;
+    margin-bottom: 9px;
+  }
+
+  .group h3 { font-family: var(--sans); font-weight: 600; font-size: 15.5px; }
+
+  ul.diff { list-style: none; margin-top: 9px; }
+
+  ul.diff li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 5px;
+    color: var(--ink-dim);
+    font-size: 14px;
+  }
+
+  ul.diff li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--amber);
+  }
+
+  .group .ext {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+
+  .group .ext a { color: var(--amber); }
+
+  /* ---------- side project / notes / education ---------- */
+
+  .plain-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .plain-card h3 { font-family: var(--display); font-weight: 600; font-size: 16.5px; }
+  .plain-card h3 a { color: var(--ink); }
+  .plain-card h3 a:hover { color: var(--amber); text-decoration: none; }
+
+  .plain-card .sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 3px;
+    word-break: break-all;
+  }
+
+  .plain-card ul { list-style: none; margin-top: 10px; }
+  .plain-card li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 5px;
+    color: var(--ink-dim);
+    font-size: 14px;
+  }
+  .plain-card li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--amber);
+  }
+
+  .note-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .note-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+  }
+
+  .note-item .title { font-weight: 500; }
+
+  .note-item .url { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); word-break: break-all; }
+
+  .edu .where { color: var(--ink); font-weight: 600; }
+  .edu .meta { margin-top: 4px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); }
+
+  /* ---------- footer ---------- */
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  footer a { color: var(--ink-dim); }
+  footer a:hover { color: var(--amber); }
+
+  /* ---------- entrance motion ---------- */
+
+  .statusbar, .hero, section, footer { animation: rise .6s cubic-bezier(.2, .6, .2, 1) both; }
+  .hero      { animation-delay: .05s; }
+  section:nth-of-type(1) { animation-delay: .12s; }
+  section:nth-of-type(2) { animation-delay: .19s; }
+  section:nth-of-type(3) { animation-delay: .26s; }
+  section:nth-of-type(4) { animation-delay: .33s; }
+  section:nth-of-type(5) { animation-delay: .40s; }
+  footer     { animation-delay: .47s; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .dot { animation: none; }
+    .statusbar, .hero, section, footer { animation: none; }
+  }
+
+  /* ---------- mobile ---------- */
+
+  @media (max-width: 640px) {
+    .page { padding: 0 16px 56px; }
+    .hero { padding: 40px 0 28px; }
+    .release { padding: 18px 16px 4px; }
+    .release-dates { margin-left: 0; }
+    .plain-card { padding: 16px 18px; }
+    .langswitch { margin-left: 0; width: 100%; justify-content: flex-end; }
+  }
+
+  /* ---------- print: conventional paper resume ---------- */
+
+  @media print {
+    :root {
+      --bg: #FFFFFF;
+      --panel: #FFFFFF;
+      --panel-deep: #FFFFFF;
+      --border: #CBD5E1;
+      --border-strong: #94A3B8;
+      --ink: #111827;
+      --ink-dim: #334155;
+      --ink-faint: #64748B;
+      --amber: #B45309;
+      --amber-soft: #FFF7ED;
+      --amber-line: #FCD34D;
+      --green: #059669;
+      --link: #0369A1;
+    }
+    body::before { display: none; }
+    body { font-size: 11.5px; line-height: 1.5; }
+    .page { max-width: none; padding: 0; }
+    .statusbar { margin-top: 0; }
+    .langswitch { display: none; }
+    .statusbar, .hero, section, footer { animation: none; }
+    section { padding-top: 22px; }
+    .hero { padding: 24px 0 16px; }
+    .release, .skill-card, .plain-card, .note-item { break-inside: avoid; }
+    footer { margin-top: 28px; }
+    main a::after { content: " (" attr(href) ")"; font-family: var(--mono); font-size: 9.5px; color: var(--ink-faint); }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- status strip -->
+  <div class="statusbar" aria-hidden="false">
+    <span class="dot"></span>
+    <span class="t" data-en="online" data-zh="在線" data-ja="オンライン">online</span>
+    <span class="sep">·</span>
+    <span class="t" data-en="New Taipei City, Taiwan" data-zh="新北市，台灣" data-ja="台湾・新北市">New Taipei City, Taiwan</span>
+    <span class="sep">·</span>
+    <span>UTC+8</span>
+    <span class="langswitch" role="group" aria-label="Language">
+      <button type="button" class="lang-btn" data-lang="zh" aria-label="繁體中文" title="繁體中文">繁</button>
+      <button type="button" class="lang-btn" data-lang="en" aria-label="English" title="English">EN</button>
+      <button type="button" class="lang-btn" data-lang="ja" aria-label="日本語" title="日本語">日</button>
+    </span>
+  </div>
+
+  <!-- hero -->
+  <header class="hero">
+    <h1 class="name"><span lang="zh-Hant">李汶道</span> <span lang="en">DennySORA</span>
+      <span class="handle">~/dennysora</span>
+    </h1>
+    <p class="role t" data-en="Senior Cloud Engineer" data-zh="資深雲端工程師" data-ja="シニアクラウドエンジニア">Senior Cloud Engineer</p>
+    <p class="summary t"
+       data-en="Backend and infrastructure specialist with expertise in Kubernetes, cloud services, and microservice development. Proficient in Go and Python with demonstrated success in optimizing cloud costs and performance."
+       data-zh="後端與基礎設施專家，專精 Kubernetes、雲端服務與微服務開發。精通 Go 與 Python，在雲端成本與效能最佳化方面有實證成果。"
+       data-ja="バックエンドとインフラを専門とするエンジニア。Kubernetes、クラウドサービス、マイクロサービス開発に精通。Go と Python に熟練し、クラウドコストとパフォーマンスの最適化に実績あり。">Backend and infrastructure specialist with expertise in Kubernetes, cloud services, and microservice development. Proficient in Go and Python with demonstrated success in optimizing cloud costs and performance.</p>
+    <div class="contacts">
+      <a href="mailto:dennysora.main@gmail.com"><span class="sym">✉</span> dennysora.main@gmail.com</a>
+      <a href="https://github.com/dennySORA"><span class="sym">↗</span> github.com/dennySORA</a>
+    </div>
+  </header>
+
+  <!-- skills -->
+  <section aria-labelledby="skills-h">
+    <h2 id="skills-h"><span class="t" data-en="Skills" data-zh="技能" data-ja="スキル">Skills</span></h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <p class="label t" data-en="AI &amp; LLM Engineering" data-zh="AI 與 LLM 工程" data-ja="AI・LLM 開発">AI &amp; LLM Engineering</p>
+        <div class="chips">
+          <span class="chip t" data-en="Transformer Architecture" data-zh="Transformer 架構" data-ja="Transformer アーキテクチャ">Transformer Architecture</span>
+          <span class="chip t" data-en="Quantization (FP8 · INT4 · W/A/KV)" data-zh="量化（FP8 · INT4 · W/A/KV）" data-ja="量子化（FP8 · INT4 · W/A/KV）">Quantization (FP8 · INT4 · W/A/KV)</span>
+          <span class="chip">vLLM · TensorRT-LLM</span>
+          <span class="chip t" data-en="Post-Training (SFT · DPO · GRPO)" data-zh="後訓練（SFT · DPO · GRPO）" data-ja="ポストトレーニング（SFT · DPO · GRPO）">Post-Training (SFT · DPO · GRPO)</span>
+          <span class="chip note t" data-en="Interpretability (SAE · SVD)" data-zh="可解釋性（SAE · SVD）" data-ja="解釈可能性（SAE · SVD）">Interpretability (SAE · SVD)</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <p class="label t" data-en="Programming Languages" data-zh="程式語言" data-ja="プログラミング言語">Programming Languages</p>
+        <div class="chips">
+          <span class="chip">Go (Gin)</span>
+          <span class="chip">Python (FastAPI · Asyncio)</span>
+          <span class="chip">Rust</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <p class="label t" data-en="Cloud &amp; Infrastructure" data-zh="雲端與基礎設施" data-ja="クラウド＆インフラ">Cloud &amp; Infrastructure</p>
+        <div class="chips">
+          <span class="chip">AWS</span>
+          <span class="chip">Kubernetes (EKS)</span>
+          <span class="chip">Helm</span>
+          <span class="chip">Terraform</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <p class="label t" data-en="Data &amp; Messaging" data-zh="資料與訊息佇列" data-ja="データとメッセージング">Data &amp; Messaging</p>
+        <div class="chips">
+          <span class="chip">Apache Kafka</span>
+          <span class="chip">PostgreSQL</span>
+          <span class="chip">Redis</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <p class="label t" data-en="DevOps &amp; Observability" data-zh="DevOps 與可觀測性" data-ja="DevOps とオブザーバビリティ">DevOps &amp; Observability</p>
+        <div class="chips">
+          <span class="chip">GitHub Actions</span>
+          <span class="chip">GitLab CI</span>
+          <span class="chip">OpenTelemetry</span>
+          <span class="chip">Prometheus</span>
+          <span class="chip">Grafana</span>
+          <span class="chip">Loki</span>
+          <span class="chip">Tempo</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <p class="label t" data-en="Web &amp; API" data-zh="網頁與 API" data-ja="Web と API">Web &amp; API</p>
+        <div class="chips">
+          <span class="chip">Vue.js (Nuxt 4)</span>
+          <span class="chip">Tailwind CSS 4</span>
+          <span class="chip">RESTful API</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- experience -->
+  <section aria-labelledby="exp-h">
+    <h2 id="exp-h"><span class="t" data-en="Professional Experience" data-zh="工作經歷" data-ja="職務経歴">Professional Experience</span></h2>
+
+    <article class="release">
+      <div class="release-head">
+        <span class="ver">v3.0.0</span>
+        <span class="release-title"><span class="t" data-en="Senior Cloud Engineer" data-zh="資深雲端工程師" data-ja="シニアクラウドエンジニア">Senior Cloud Engineer</span></span>
+        <span class="release-company t" data-en="TrendMicro 趨勢科技" data-zh="趨勢科技 TrendMicro" data-ja="トレンドマイクロ Trend Micro">TrendMicro 趨勢科技</span>
+        <span class="release-dates t" data-en="2022.07 – PRESENT" data-zh="2022.07 – 至今" data-ja="2022.07 – 現在">2022.07 – PRESENT</span>
+        <span class="badge t" data-en="ACTIVE" data-zh="在職中" data-ja="在職中">ACTIVE</span>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Orchestration" data-zh="編排" data-ja="オーケストレーション">Orchestration</span>
+        <h3>Companion-Orchestrator Agent Center</h3>
+        <ul class="diff">
+          <li class="t" data-en="Designed and shipped an agent-orchestration platform on Google ADK with clear app architecture and module boundaries." data-zh="在 Google ADK 上設計並交付 Agent 編排平台，具備清晰的應用架構與模組邊界。" data-ja="Google ADK 上にエージェントオーケストレーションプラットフォームを設計・リリース。明確なアプリケーションアーキテクチャとモジュール境界を実現。">Designed and shipped an agent-orchestration platform on Google ADK with clear app architecture and module boundaries.</li>
+          <li class="t" data-en="Implemented Agent-to-Agent (A2A) communication to coordinate remote agents." data-zh="實作 Agent-to-Agent（A2A）通訊，協調遠端 Agent。" data-ja="Agent-to-Agent（A2A）通信を実装し、リモートエージェントを連携。">Implemented Agent-to-Agent (A2A) communication to coordinate remote agents.</li>
+          <li class="t" data-en="Built an LLM agent with tool use, state tracking, retries, and error handling." data-zh="打造具備工具呼叫、狀態追蹤、重試與錯誤處理的 LLM Agent。" data-ja="ツール呼び出し・状態追跡・リトライ・エラー処理を備えた LLM エージェントを構築。">Built an LLM agent with tool use, state tracking, retries, and error handling.</li>
+          <li class="t" data-en="Delivered a web Playground for scenario testing and prompt/tool debugging; frontend developed independently with AI-assisted workflows." data-zh="交付用於情境測試與提示詞／工具除錯的 Web Playground；前端以 AI 輔助工作流程獨立開發。" data-ja="シナリオテストとプロンプト／ツールのデバッグ用 Web Playground を提供。フロントエンドは AI 支援ワークフローで独立開発。">Delivered a web Playground for scenario testing and prompt/tool debugging; frontend developed independently with AI-assisted workflows.</li>
+          <li class="t" data-en="Created a CopilotKit adapter and composed multi-step LangGraph flows." data-zh="建立 CopilotKit adapter，並組合多步驟 LangGraph 流程。" data-ja="CopilotKit アダプターを作成し、多段階の LangGraph フローを構成。">Created a CopilotKit adapter and composed multi-step LangGraph flows.</li>
+          <li class="t" data-en="Enabled dynamic agent loading via database-backed configs for zero-downtime rollout." data-zh="透過資料庫驅動的設定實現動態 Agent 載入，支援零停機上線。" data-ja="DB 駆動の設定による動的エージェントローディングを実現し、ゼロダウンタイムでリリース。">Enabled dynamic agent loading via database-backed configs for zero-downtime rollout.</li>
+          <li class="t" data-en="Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator." data-zh="撰寫 ADK ↔ AGUI Middleware（Python 3.13+），提供 SSE 串流與 Human-in-the-Loop 工作流程，並與編排器整合。" data-ja="ADK ↔ AGUI Middleware（Python 3.13+）を開発。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、オーケストレーターと統合。">Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator.</li>
+          <li class="t" data-en="Achieved an end-to-end pipeline A2A → ADK → LangGraph → CopilotKit adopted cross-org with other teams." data-zh="達成端到端 pipeline（A2A → ADK → LangGraph → CopilotKit），並獲跨組織的其他團隊採用。" data-ja="A2A → ADK → LangGraph → CopilotKit のエンドツーエンドパイプラインを実現し、他チームに組織横断で採用。">Achieved an end-to-end pipeline A2A → ADK → LangGraph → CopilotKit adopted cross-org with other teams.</li>
+        </ul>
+        <p class="ext">→ <a href="https://github.com/trendmicro/adk-agui-middleware">ADK-AGUI Middleware (GitHub)</a></p>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Platform" data-zh="平台" data-ja="プラットフォーム">Platform</span>
+        <h3 class="t" data-en="Platform Development &amp; API Management" data-zh="平台開發與 API 管理" data-ja="プラットフォーム開発と API 管理">Platform Development &amp; API Management</h3>
+        <ul class="diff">
+          <li class="t" data-en="Built a plugin-based API platform that lets teams ship integrations without core changes; provided lifecycle hooks, auth, and rate limiting." data-zh="打造以 plugin 為基礎的 API 平台，讓團隊不需修改核心即可交付整合功能；提供生命週期 hooks、驗證與流量限制。" data-ja="プラグインベースの API プラットフォームを構築。コアを変更せずに統合機能をリリース可能にし、ライフサイクルフック・認証・レート制限を提供。">Built a plugin-based API platform that lets teams ship integrations without core changes; provided lifecycle hooks, auth, and rate limiting.</li>
+          <li class="t" data-en="Developed a Collector Manager for configurable log routing with backpressure and retry controls." data-zh="開發 Collector Manager，支援可設定的日誌路由、背壓與重試控制。" data-ja="バックプレッシャーとリトライ制御を備えた、設定可能なログルーティングの Collector Manager を開発。">Developed a Collector Manager for configurable log routing with backpressure and retry controls.</li>
+          <li class="t" data-en="Created a Mini-Companion system with GitHub-based sync for declarative workflows." data-zh="建立 Mini-Companion 系統，以 GitHub 同步支援宣告式工作流程。" data-ja="GitHub ベースの同期による宣言的ワークフローを実現する Mini-Companion システムを構築。">Created a Mini-Companion system with GitHub-based sync for declarative workflows.</li>
+          <li class="t" data-en="Implemented a Companion Proxy enforcing PII redaction and policy-based request filtering." data-zh="實作 Companion Proxy，強制執行 PII 遮蔽與基於政策的請求過濾。" data-ja="PII マスキングとポリシーベースのリクエストフィルタリングを強制する Companion Proxy を実装。">Implemented a Companion Proxy enforcing PII redaction and policy-based request filtering.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Infrastructure" data-zh="基礎設施" data-ja="インフラ">Infrastructure</span>
+        <h3 class="t" data-en="Cloud Infrastructure Optimization" data-zh="雲端基礎設施最佳化" data-ja="クラウドインフラ最適化">Cloud Infrastructure Optimization</h3>
+        <ul class="diff">
+          <li class="t" data-en="Re-architected EKS node groups: moved monitoring to ARM nodes for cost savings and introduced dedicated CPU-/memory-optimized pools." data-zh="重新架構 EKS node groups：將監控移至 ARM 節點以節省成本，並導入專用的 CPU／記憶體最佳化資源池。" data-ja="EKS ノードグループを再設計：監視を ARM ノードへ移行してコスト削減、CPU／メモリ最適化専用プールを導入。">Re-architected EKS node groups: moved monitoring to ARM nodes for cost savings and introduced dedicated CPU-/memory-optimized pools.</li>
+          <li class="t" data-en="Resolved Kubernetes compatibility defects in Stream Lake environments." data-zh="解決 Stream Lake 環境中的 Kubernetes 相容性缺陷。" data-ja="Stream Lake 環境の Kubernetes 互換性不具合を解消。">Resolved Kubernetes compatibility defects in Stream Lake environments.</li>
+          <li class="t" data-en="Authored modular Helm charts to standardize deployments across services." data-zh="撰寫模組化 Helm charts，標準化各服務的部署。" data-ja="モジュラー Helm チャートを作成し、サービス間のデプロイを標準化。">Authored modular Helm charts to standardize deployments across services.</li>
+          <li class="t" data-en="Fixed CNI IP exhaustion and routing issues to stabilize multi-tenant clusters." data-zh="修復 CNI IP 耗盡與路由問題，穩定多租戶叢集。" data-ja="CNI IP 枯渇とルーティング問題を修正し、マルチテナントクラスタを安定化。">Fixed CNI IP exhaustion and routing issues to stabilize multi-tenant clusters.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="AI &amp; Security" data-zh="AI 與資安" data-ja="AI とセキュリティ">AI &amp; Security</span>
+        <h3 class="t" data-en="AI Integration &amp; Data Security" data-zh="AI 整合與資料安全" data-ja="AI 統合とデータセキュリティ">AI Integration &amp; Data Security</h3>
+        <ul class="diff">
+          <li class="t" data-en="Built an AWS Comprehend PII pipeline that reduced costs by ~99% while preserving detection quality." data-zh="打造 AWS Comprehend PII 管線，成本降低約 99%，同時維持偵測品質。" data-ja="AWS Comprehend の PII パイプラインを構築し、検出品質を維持しながらコストを約 99% 削減。">Built an AWS Comprehend PII pipeline that reduced costs by ~99% while preserving detection quality.</li>
+          <li class="t" data-en="Created an AI Proxy Adapter with Amazon Bedrock integration and policy enforcement." data-zh="建立 AI Proxy Adapter，整合 Amazon Bedrock 並執行政策管控。" data-ja="Amazon Bedrock 統合とポリシー強制を備えた AI Proxy Adapter を作成。">Created an AI Proxy Adapter with Amazon Bedrock integration and policy enforcement.</li>
+          <li class="t" data-en="Developed a Kafka → Neptune pipeline for MITRE-aligned knowledge graphs." data-zh="開發 Kafka → Neptune 管線，建置符合 MITRE 框架的知識圖譜。" data-ja="MITRE 準拠のナレッジグラフ構築のため Kafka → Neptune パイプラインを開発。">Developed a Kafka → Neptune pipeline for MITRE-aligned knowledge graphs.</li>
+          <li class="t" data-en="Implemented fine-grained AI access controls with auditability and tenant isolation." data-zh="實作細緻的 AI 存取控制，具備可稽核性與租戶隔離。" data-ja="監査性とテナント分離を備えたきめ細かな AI アクセス制御を実装。">Implemented fine-grained AI access controls with auditability and tenant isolation.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Leadership" data-zh="領導" data-ja="リーダーシップ">Leadership</span>
+        <h3 class="t" data-en="Technical Leadership" data-zh="技術領導" data-ja="テクニカルリーダーシップ">Technical Leadership</h3>
+        <ul class="diff">
+          <li class="t" data-en="Produced executive-level AI demos for the CEO's NVIDIA presentation." data-zh="為 CEO 的 NVIDIA 簡報製作高階主管層級 AI 展示。" data-ja="CEO の NVIDIA プレゼンテーション向けにエグゼクティブレベルの AI デモを制作。">Produced executive-level AI demos for the CEO's NVIDIA presentation.</li>
+          <li class="t" data-en="Led internal workshops on AI tooling and best practices." data-zh="主辦 AI 工具與最佳實踐的內部工作坊。" data-ja="AI ツールとベストプラクティスの社内ワークショップを主導。">Led internal workshops on AI tooling and best practices.</li>
+          <li class="t" data-en="Recognized as Employee of the Quarter." data-zh="獲頒本季最佳員工（Employee of the Quarter）。" data-ja="Employee of the Quarter（四半期最優秀社員）に選出。">Recognized as Employee of the Quarter.</li>
+          <li class="t" data-en="Drove cross-functional enablement through reusable platform components." data-zh="透過可重複使用的平台元件，推動跨部門賦能。" data-ja="再利用可能なプラットフォームコンポーネントを通じて部門横断のイネーブルメントを推進。">Drove cross-functional enablement through reusable platform components.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="release">
+      <div class="release-head">
+        <span class="ver">v2.0.0</span>
+        <span class="release-title"><span class="t" data-en="Back-End Engineer" data-zh="後端工程師" data-ja="バックエンドエンジニア">Back-End Engineer</span></span>
+        <span class="release-company">KKStream</span>
+        <span class="release-dates">2021.06 – 2022.07</span>
+      </div>
+
+      <div class="group">
+        <span class="group-tag">DevOps</span>
+        <h3 class="t" data-en="DevOps &amp; Infrastructure" data-zh="DevOps 與基礎設施" data-ja="DevOps とインフラ">DevOps &amp; Infrastructure</h3>
+        <ul class="diff">
+          <li class="t" data-en="Optimized GitLab CI/CD pipelines, reducing deployment time by 40%." data-zh="最佳化 GitLab CI/CD 管線，部署時間縮短 40%。" data-ja="GitLab CI/CD パイプラインを最適化し、デプロイ時間を 40% 短縮。">Optimized GitLab CI/CD pipelines, reducing deployment time by 40%.</li>
+          <li class="t" data-en="Deployed Kubernetes clusters using Helm." data-zh="使用 Helm 部署 Kubernetes 叢集。" data-ja="Helm を使用して Kubernetes クラスタをデプロイ。">Deployed Kubernetes clusters using Helm.</li>
+          <li class="t" data-en="Implemented Terraform for infrastructure as code." data-zh="以 Terraform 實作基礎設施即程式碼。" data-ja="Terraform で Infrastructure as Code を実装。">Implemented Terraform for infrastructure as code.</li>
+          <li class="t" data-en="Managed Kubernetes clusters using Kops." data-zh="使用 Kops 管理 Kubernetes 叢集。" data-ja="Kops で Kubernetes クラスタを運用。">Managed Kubernetes clusters using Kops.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Architecture" data-zh="架構" data-ja="アーキテクチャ">Architecture</span>
+        <h3 class="t" data-en="System Architecture &amp; Development" data-zh="系統架構與開發" data-ja="システムアーキテクチャと開発">System Architecture &amp; Development</h3>
+        <ul class="diff">
+          <li class="t" data-en="Designed Kafka-based consumer service architecture." data-zh="設計以 Kafka 為基礎的 consumer 服務架構。" data-ja="Kafka ベースのコンシューマーサービスアーキテクチャを設計。">Designed Kafka-based consumer service architecture.</li>
+          <li class="t" data-en="Created Docker Compose development environment." data-zh="建立 Docker Compose 開發環境。" data-ja="Docker Compose 開発環境を構築。">Created Docker Compose development environment.</li>
+          <li class="t" data-en="Integrated multiple backend services and databases." data-zh="整合多個後端服務與資料庫。" data-ja="複数のバックエンドサービスとデータベースを統合。">Integrated multiple backend services and databases.</li>
+          <li class="t" data-en="Built low-latency streaming server using Golang." data-zh="以 Golang 開發低延遲串流伺服器。" data-ja="Golang で低遅延ストリーミングサーバーを開発。">Built low-latency streaming server using Golang.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Research" data-zh="研究" data-ja="調査">Research</span>
+        <h3 class="t" data-en="Research &amp; Implementation" data-zh="研究與實作" data-ja="調査と実装">Research &amp; Implementation</h3>
+        <ul class="diff">
+          <li class="t" data-en="Evaluated WebRTC Mesh and SFU technologies." data-zh="評估 WebRTC Mesh 與 SFU 技術。" data-ja="WebRTC Mesh／SFU 技術を評価。">Evaluated WebRTC Mesh and SFU technologies.</li>
+          <li class="t" data-en="Integrated Pydantic for robust data validation." data-zh="整合 Pydantic，強化資料驗證。" data-ja="Pydantic を導入し、堅牢なデータバリデーションを実現。">Integrated Pydantic for robust data validation.</li>
+          <li class="t" data-en="Refactored monolithic projects for better maintenance." data-zh="重構單體專案以提升可維護性。" data-ja="モノリシックなプロジェクトを保守性向上のためリファクタリング。">Refactored monolithic projects for better maintenance.</li>
+          <li class="t" data-en="Implemented CI/CD pipeline testing integration." data-zh="實作 CI/CD 管線測試整合。" data-ja="CI/CD パイプラインへのテスト統合を実装。">Implemented CI/CD pipeline testing integration.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="release">
+      <div class="release-head">
+        <span class="ver">v1.0.0</span>
+        <span class="release-title"><span class="t" data-en="Back-End Engineer" data-zh="後端工程師" data-ja="バックエンドエンジニア">Back-End Engineer</span> <span class="soft t" data-en="(Intern)" data-zh="（實習）" data-ja="（インターン）">(Intern)</span></span>
+        <span class="release-company" lang="zh-Hant">天堂遊戲有限公司</span>
+        <span class="release-dates">2019.01 – 2019.07</span>
+      </div>
+
+      <div class="group">
+        <span class="group-tag">API</span>
+        <h3 class="t" data-en="API Development &amp; Optimization" data-zh="API 開發與最佳化" data-ja="API 開発と最適化">API Development &amp; Optimization</h3>
+        <ul class="diff">
+          <li class="t" data-en="Optimized RESTful APIs using Golang PProf." data-zh="使用 Golang PProf 最佳化 RESTful API。" data-ja="Golang PProf で RESTful API を最適化。">Optimized RESTful APIs using Golang PProf.</li>
+          <li class="t" data-en="Reduced API response times by 30%." data-zh="API 回應時間縮短 30%。" data-ja="API 応答時間を 30% 短縮。">Reduced API response times by 30%.</li>
+          <li class="t" data-en="Refactored codebases for improved modularity." data-zh="重構程式碼以改善模組化。" data-ja="モジュール性向上のためコードベースをリファクタリング。">Refactored codebases for improved modularity.</li>
+        </ul>
+      </div>
+
+      <div class="group">
+        <span class="group-tag t" data-en="Research" data-zh="研究" data-ja="調査">Research</span>
+        <h3 class="t" data-en="Research &amp; Evaluation" data-zh="研究與評估" data-ja="調査と評価">Research &amp; Evaluation</h3>
+        <ul class="diff">
+          <li class="t" data-en="Implemented Apache Spark for data processing." data-zh="實作 Apache Spark 資料處理。" data-ja="Apache Spark によるデータ処理を実装。">Implemented Apache Spark for data processing.</li>
+          <li class="t" data-en="Demonstrated GraphQL API capabilities." data-zh="展示 GraphQL API 能力。" data-ja="GraphQL API の可能性をデモンストレーション。">Demonstrated GraphQL API capabilities.</li>
+          <li class="t" data-en="Evaluated emerging technologies for adoption." data-zh="評估新興技術的導入可行性。" data-ja="導入候補の新技術を評価。">Evaluated emerging technologies for adoption.</li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <!-- side project -->
+  <section aria-labelledby="proj-h">
+    <h2 id="proj-h"><span class="t" data-en="Side Project" data-zh="個人專案" data-ja="個人プロジェクト">Side Project</span></h2>
+    <div class="plain-card">
+      <h3><a class="t" href="https://github.com/dennySORA/DLsite-Classification" data-en="DLsite Auto Classification System" data-zh="DLsite 自動分類系統" data-ja="DLsite 自動分類システム">DLsite Auto Classification System</a></h3>
+      <p class="sub">github.com/dennySORA/DLsite-Classification</p>
+      <ul>
+        <li class="t" data-en="Created async Python app for content classification." data-zh="開發非同步 Python 應用程式，用於內容分類。" data-ja="コンテンツ分類のための非同期 Python アプリを開発。">Created async Python app for content classification.</li>
+        <li class="t" data-en="Implemented web scraping for metadata extraction." data-zh="實作網頁爬蟲以擷取 metadata。" data-ja="メタデータ抽出のための Web スクレイピングを実装。">Implemented web scraping for metadata extraction.</li>
+        <li class="t" data-en="Built RESTful APIs for content management." data-zh="建立內容管理用的 RESTful API。" data-ja="コンテンツ管理用の RESTful API を構築。">Built RESTful APIs for content management.</li>
+        <li class="t" data-en="Developed file deduplication system." data-zh="開發檔案去重系統。" data-ja="ファイル重複排除システムを開発。">Developed file deduplication system.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- tech notes -->
+  <section aria-labelledby="notes-h">
+    <h2 id="notes-h"><span class="t" data-en="Tech Note" data-zh="技術筆記" data-ja="技術ノート">Tech Note</span></h2>
+    <div class="note-list">
+      <div class="note-item">
+        <span class="title"><a class="t" href="https://ithelp.ithome.com.tw/users/20130205/ironman/3517" data-en="Boring Cryptography, Fun Encryption!" data-zh="無趣的密碼學，有趣的加密！" data-ja="退屈な暗号学、面白い暗号化！">Boring Cryptography, Fun Encryption!</a></span>
+        <span class="url">ithelp.ithome.com.tw</span>
+      </div>
+      <div class="note-item">
+        <span class="title"><a class="t" href="https://docs.google.com/presentation/d/1nrHkMwLe7SLEI3aPvYRaDyRPn18H2lghtUKnmVrkoWU" data-en="WebRTC Introduction" data-zh="WebRTC 介紹" data-ja="WebRTC 入門">WebRTC Introduction</a></span>
+        <span class="url">Google Slides</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- education -->
+  <section aria-labelledby="edu-h">
+    <h2 id="edu-h"><span class="t" data-en="Education" data-zh="學歷" data-ja="学歴">Education</span></h2>
+    <div class="plain-card edu">
+      <p class="where t" data-en="National Taipei University of Technology 台北科技大學" data-zh="台北科技大學 National Taipei University of Technology" data-ja="台北科技大学 National Taipei University of Technology">National Taipei University of Technology 台北科技大學</p>
+      <p class="meta t" data-en="2016 – 2020 · Electronic Engineering" data-zh="2016 – 2020 · 電子工程系" data-ja="2016 – 2020 · 電子工学">2016 – 2020 · Electronic Engineering</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 <span lang="zh-Hant">李汶道</span> (DennySORA)</span>
+    <span>
+      <a href="https://github.com/dennySORA/dennysora.github.io">source</a>
+    </span>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  var LANGS = ["en", "zh", "ja"];
+  var TITLES = {
+    en: "DennySORA (李汶道) — Senior Cloud Engineer",
+    zh: "李汶道 (DennySORA) — 資深雲端工程師",
+    ja: "李汶道 (DennySORA) — シニアクラウドエンジニア"
+  };
+
+  function apply(lang) {
+    document.documentElement.lang = (lang === "zh") ? "zh-Hant" : lang;
+    document.querySelectorAll(".t").forEach(function (el) {
+      var v = el.getAttribute("data-" + lang);
+      if (v != null) el.textContent = v;
+    });
+    document.title = TITLES[lang];
+    document.querySelectorAll(".lang-btn").forEach(function (btn) {
+      var on = btn.getAttribute("data-lang") === lang;
+      btn.classList.toggle("on", on);
+      btn.setAttribute("aria-pressed", String(on));
+    });
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem("lang"); } catch (e) {}
+  var initial = (saved && LANGS.indexOf(saved) >= 0) ? saved
+    : (/^zh/i.test(navigator.language)) ? "zh"
+    : (/^ja/i.test(navigator.language)) ? "ja"
+    : "en";
+
+  apply(initial);
+
+  document.querySelectorAll(".lang-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () { apply(btn.getAttribute("data-lang")); });
+  });
+})();
+</script>
+</body>
+</html>
