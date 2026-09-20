@@ -1,0 +1,44 @@
+{
+  "id": "trilingual-model-research",
+  "slug": "trilingual-model-research",
+  "author": "DennySORA",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-09-20",
+  "updatedAt": "2026-09-20",
+  "topics": ["ai"],
+  "featured": true,
+  "discussionNumber": null,
+  "source": {
+    "repo": "DennySORA/dennysora.github.io",
+    "commit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+    "path": "detail/research/index.html",
+    "url": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/research/index.html",
+    "kind": "profile-adaptation"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "從零訓練三語模型：研究與實驗紀錄",
+      "summary": "Tokenizer、Transformer、量化與推論：獨立研究中的問題與實驗快照。",
+      "publication": "published",
+      "translationState": "original",
+      "sourceRevision": "1ee99b349144bc6995977d271c237d5625da96b56821ffaa329298262e63bfa5",
+      "reviewEvidence": null
+    },
+    "en": {
+      "title": "Training a trilingual model from scratch",
+      "summary": "Tokenization, Transformers, quantization and inference: a snapshot of independent research.",
+      "publication": "published",
+      "translationState": "source-published",
+      "sourceRevision": "1ee99b349144bc6995977d271c237d5625da96b56821ffaa329298262e63bfa5",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/research/index.html"
+    },
+    "ja": {
+      "title": "三言語モデルをゼロから学習する",
+      "summary": "トークナイザー、Transformer、量子化、推論。個人研究の問いと実験記録。",
+      "publication": "published",
+      "translationState": "source-published",
+      "sourceRevision": "1ee99b349144bc6995977d271c237d5625da96b56821ffaa329298262e63bfa5",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/research/index.html"
+    }
+  }
+}

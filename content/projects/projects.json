@@ -1,0 +1,41 @@
+[
+  {
+    "id": "dgxtop",
+    "title": "dgxtop",
+    "url": "https://github.com/DennySORA/dgxtop",
+    "tags": ["GPU", "TUI", "Monitoring"],
+    "summary": {
+      "zh-hant": "NVIDIA DGX 系統的高效能互動式監控器——在漂亮的 TUI 中呈現 GPU、CPU、記憶體、磁碟與網路狀態。",
+      "en": "High-performance interactive system monitor for NVIDIA DGX systems — GPU, CPU, memory, disk and network in a beautiful TUI.",
+      "ja": "NVIDIA DGX 向けの高性能インタラクティブシステムモニター。GPU・CPU・メモリ・ディスク・ネットワークを美しい TUI で表示。"
+    },
+    "source": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html",
+    "kind": "open-source"
+  },
+  {
+    "id": "httpulse",
+    "title": "httpulse",
+    "url": "https://github.com/DennySORA/httpulse",
+    "tags": ["HTTP", "TUI", "Observability"],
+    "summary": {
+      "zh-hant": "即時 HTTP 延遲與網路品質監控的互動式 TUI——DNS、TLS、TTFB、RTT、抖動等指標。",
+      "en": "Real-time HTTP latency & network quality monitoring with an interactive TUI — DNS, TLS, TTFB, RTT, jitter and more.",
+      "ja": "リアルタイム HTTP レイテンシとネットワーク品質を監視するインタラクティブ TUI。DNS、TLS、TTFB、RTT、ジッターなどを追跡。"
+    },
+    "source": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html",
+    "kind": "open-source"
+  },
+  {
+    "id": "adk-agui-middleware",
+    "title": "ADK ↔ AGUI Middleware",
+    "url": "https://github.com/trendmicro/adk-agui-middleware",
+    "tags": ["Python", "SSE", "Agent"],
+    "summary": {
+      "zh-hant": "撰寫 ADK ↔ AGUI Middleware（Python 3.13+），提供 SSE 串流與 Human-in-the-Loop 工作流程，並與編排器整合。",
+      "en": "Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator.",
+      "ja": "ADK ↔ AGUI Middleware（Python 3.13+）を開発。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、オーケストレーターと統合。"
+    },
+    "source": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/index.html",
+    "kind": "production"
+  }
+]

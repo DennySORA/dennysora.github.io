@@ -1,0 +1,53 @@
+{
+  "name": "dennysora-site",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.18.0 <25"
+  },
+  "packageManager": "pnpm@11.6.0",
+  "scripts": {
+    "dev": "react-router dev --host 127.0.0.1",
+    "prepare": "react-router typegen",
+    "content:check": "node scripts/check-content.ts",
+    "build": "pnpm content:check && react-router build && node scripts/finalize-build.ts && node scripts/check-artifact.ts",
+    "preview": "node scripts/serve.ts",
+    "typecheck": "react-router typegen && tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write src scripts tests content data *.ts *.js *.json *.yaml .github/workflows/*.yml README.md",
+    "format:check": "prettier --check src scripts tests content data *.ts *.js *.json *.yaml .github/workflows/*.yml README.md",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e",
+    "research:import": "node scripts/import-research.ts"
+  },
+  "dependencies": {
+    "@react-router/node": "8.4.0",
+    "marked": "18.0.13",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router": "8.4.0",
+    "sanitize-html": "2.17.7",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.63.0",
+    "@react-router/dev": "8.4.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "24.13.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/sanitize-html": "2.16.1",
+    "eslint": "9.39.5",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.9.8",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vite": "8.3.0",
+    "vitest": "5.0.1"
+  }
+}

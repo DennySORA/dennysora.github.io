@@ -1,0 +1,44 @@
+{
+  "id": "engineering-principles",
+  "slug": "engineering-principles",
+  "author": "DennySORA",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-09-20",
+  "updatedAt": "2026-09-20",
+  "topics": ["engineering"],
+  "featured": true,
+  "discussionNumber": null,
+  "source": {
+    "repo": "DennySORA/dennysora.github.io",
+    "commit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+    "path": "detail/depth/index.html",
+    "url": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/depth/index.html",
+    "kind": "profile-adaptation"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "理解抽象層之下：我的工程原則",
+      "summary": "從量測、部署與資安出發，讓工程取捨變得清楚。",
+      "publication": "published",
+      "translationState": "original",
+      "sourceRevision": "d4dbbea4d631315a1a8cc4a0159855c5dd1af9b057770e9afdbc61d52c99fff5",
+      "reviewEvidence": null
+    },
+    "en": {
+      "title": "Below the abstraction: engineering principles",
+      "summary": "Measurement, deployment and security as foundations for explicit engineering trade-offs.",
+      "publication": "published",
+      "translationState": "source-published",
+      "sourceRevision": "d4dbbea4d631315a1a8cc4a0159855c5dd1af9b057770e9afdbc61d52c99fff5",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/depth/index.html"
+    },
+    "ja": {
+      "title": "抽象化の下へ：エンジニアリング原則",
+      "summary": "計測・デプロイ・セキュリティから、設計のトレードオフを明確にする。",
+      "publication": "published",
+      "translationState": "source-published",
+      "sourceRevision": "d4dbbea4d631315a1a8cc4a0159855c5dd1af9b057770e9afdbc61d52c99fff5",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/depth/index.html"
+    }
+  }
+}

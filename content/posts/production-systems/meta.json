@@ -1,0 +1,44 @@
+{
+  "id": "production-systems",
+  "slug": "production-systems",
+  "author": "DennySORA",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-09-20",
+  "updatedAt": "2026-09-20",
+  "topics": ["systems"],
+  "featured": true,
+  "discussionNumber": null,
+  "source": {
+    "repo": "DennySORA/dennysora.github.io",
+    "commit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+    "path": "detail/production/index.html",
+    "url": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/production/index.html",
+    "kind": "profile-adaptation"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "從 Agent 編排到雲端平台：生產系統實作",
+      "summary": "Agent 通訊、雲端基礎設施與資料保護的既有實作紀錄。",
+      "publication": "published",
+      "translationState": "original",
+      "sourceRevision": "b0b61c45007a940640ad2473ab9b0eceadc5d18a8e91da495dcb459fa05b31d0",
+      "reviewEvidence": null
+    },
+    "en": {
+      "title": "From agent orchestration to cloud platforms",
+      "summary": "Existing work on agent communication, cloud infrastructure and data protection.",
+      "publication": "published",
+      "translationState": "source-published",
+      "sourceRevision": "b0b61c45007a940640ad2473ab9b0eceadc5d18a8e91da495dcb459fa05b31d0",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/production/index.html"
+    },
+    "ja": {
+      "title": "エージェント連携からクラウド基盤へ",
+      "summary": "エージェント通信、クラウド基盤、データ保護の実装記録。",
+      "publication": "published",
+      "translationState": "source-published",
+      "sourceRevision": "b0b61c45007a940640ad2473ab9b0eceadc5d18a8e91da495dcb459fa05b31d0",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/production/index.html"
+    }
+  }
+}

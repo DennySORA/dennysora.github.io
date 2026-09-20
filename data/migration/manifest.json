@@ -1,0 +1,83 @@
+{
+  "profileSourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+  "adapted": [
+    {
+      "contentId": "engineering-principles",
+      "sourcePath": "detail/depth/index.html",
+      "sourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+      "sourceSha256": "1ac827ace72f4d0ff2f208d0106abb5d4443d5f583245f4add760e97f6744194",
+      "markdownSha256": {
+        "zh-hant": "d4dbbea4d631315a1a8cc4a0159855c5dd1af9b057770e9afdbc61d52c99fff5",
+        "en": "dd75c954d68226cb9a7a079eba7f4533f562181c990644201663457682cc5da7",
+        "ja": "0522bbb74418674620a32a6c0bda070657077774c2df31a54f7fd1cddaed2021"
+      },
+      "status": "adapted-existing-profile",
+      "note": "Not a recovered legacy blog post. Existing published translations retained; new titles and summaries are editorial adaptations."
+    },
+    {
+      "contentId": "trilingual-model-research",
+      "sourcePath": "detail/research/index.html",
+      "sourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+      "sourceSha256": "18b2ac81fc0ad2355d6e8cdfd0f11dc4468b6828cab7741f1f053e7df2b0fa63",
+      "markdownSha256": {
+        "zh-hant": "1ee99b349144bc6995977d271c237d5625da96b56821ffaa329298262e63bfa5",
+        "en": "cbc172fddcda509cda0cc57400eec8778ec0723915a6f80f19c53820952e56ba",
+        "ja": "8b638c1780d09fe6c2d38853f9ca78d2ba1caee2b25a7db851715ade58051298"
+      },
+      "status": "adapted-existing-profile",
+      "note": "Not a recovered legacy blog post. Existing published translations retained; new titles and summaries are editorial adaptations."
+    },
+    {
+      "contentId": "production-systems",
+      "sourcePath": "detail/production/index.html",
+      "sourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
+      "sourceSha256": "17e8303f456b8bc2dbe4fedda95ac9ea33310f3b09c41d6e900fc12b8aa6d467",
+      "markdownSha256": {
+        "zh-hant": "b0b61c45007a940640ad2473ab9b0eceadc5d18a8e91da495dcb459fa05b31d0",
+        "en": "cd44e649def1ed6b5f7b1c4072b1784981d3579bc3967a01c0a9dbb6901a9b12",
+        "ja": "8ebf670079bf4a5a0cf3e190f32f64a6d3f9cf00cca6cfb0ea5ffe9c04d929cc"
+      },
+      "status": "adapted-existing-profile",
+      "note": "Not a recovered legacy blog post. Existing published translations retained; new titles and summaries are editorial adaptations."
+    }
+  ],
+  "legacyBlog": {
+    "repo": "sorahane-kyoukai/personal-website",
+    "status": "source-deleted-by-owner",
+    "confirmedAt": "2026-09-20",
+    "missingSlugs": [
+      "tech-leadership-value-driven-discussion",
+      "pact-framework-technical-discussion",
+      "llm-context-window-three-tiers",
+      "sae-sparse-autoencoder-llm-interpretability",
+      "community-values-respect-technology"
+    ],
+    "importedCount": 0
+  },
+  "profileSources": [
+    {
+      "path": "index.html",
+      "sha256": "fb2f6834d51bd04ba73f60984d9ec88955038c6383592d087693fad0460326d5"
+    },
+    {
+      "path": "detail/index.html",
+      "sha256": "6c20cf5bcb670c2913ae38808a539d4fb519289cffba88dbb725573887084d37"
+    },
+    {
+      "path": "detail/about/index.html",
+      "sha256": "9ab56ffc9d585d6c41ee9e2b4b93930453b4e92cb721fb6a80b92d54767aa818"
+    },
+    {
+      "path": "detail/depth/index.html",
+      "sha256": "1ac827ace72f4d0ff2f208d0106abb5d4443d5f583245f4add760e97f6744194"
+    },
+    {
+      "path": "detail/production/index.html",
+      "sha256": "17e8303f456b8bc2dbe4fedda95ac9ea33310f3b09c41d6e900fc12b8aa6d467"
+    },
+    {
+      "path": "detail/research/index.html",
+      "sha256": "18b2ac81fc0ad2355d6e8cdfd0f11dc4468b6828cab7741f1f053e7df2b0fa63"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: 'tests/e2e',
+  fullyParallel: true,
+  forbidOnly: Boolean(process.env['CI']),
+  retries: 0,
+  workers: 3,
+  reporter: [['list'], ['html', { open: 'never' }]],
+  use: {
+    baseURL: 'http://127.0.0.1:4174',
+    browserName: 'chromium',
+    channel: 'chrome',
+    viewport: { width: 1440, height: 900 },
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+  },
+  webServer: {
+    command: 'PORT=4174 pnpm preview',
+    url: 'http://127.0.0.1:4174/en/',
+    reuseExistingServer: false,
+    timeout: 15000,
+  },
+});

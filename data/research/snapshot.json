@@ -1,0 +1,42 @@
+{
+  "sourceRepo": "DennySORA/daily-paper-report",
+  "sourceCommit": "0c9821facd9c7950bafd44ce1453b8a19ae8cb75",
+  "sourceUrl": "https://github.com/DennySORA/daily-paper-report/blob/0c9821facd9c7950bafd44ce1453b8a19ae8cb75/api/daily.json",
+  "generatedAt": "2026-09-17T08:23:50.518625+00:00",
+  "period": "2026-09-17",
+  "reports": [
+    {
+      "id": "arxiv:2609.18612",
+      "title": "Weakening Neurons: An Input-Output Functionality in Transformers with Outsize Influence",
+      "titleZh": "弱化神經元:Transformer 中影響力超乎尋常的輸入—輸出功能",
+      "publishedAt": "2026-09-16T13:03:12+00:00",
+      "originalUrl": "https://arxiv.org/abs/2609.18612",
+      "guideUrl": "https://paper.dennysora.me/day/2026-09-17.html",
+      "kind": "daily",
+      "language": "zh-Hant",
+      "review": "machine-generated"
+    },
+    {
+      "id": "arxiv:2609.18217",
+      "title": "Measuring and Exploiting Implicit Trust in LLM Tool-Calling Pipelines",
+      "titleZh": "量測與利用 LLM 工具呼叫管線中的隱含信任",
+      "publishedAt": "2026-09-16T06:47:10+00:00",
+      "originalUrl": "https://arxiv.org/abs/2609.18217",
+      "guideUrl": "https://paper.dennysora.me/day/2026-09-17.html",
+      "kind": "daily",
+      "language": "zh-Hant",
+      "review": "machine-generated"
+    },
+    {
+      "id": "arxiv:2609.18844",
+      "title": "ReFigBench: Benchmarking Scientific Figure Reconstruction as Editable PowerPoint Artifacts",
+      "titleZh": "ReFigBench：以可編輯 PowerPoint 產物為標的之科學圖表重建評測",
+      "publishedAt": "2026-09-16T15:51:51+00:00",
+      "originalUrl": "https://arxiv.org/abs/2609.18844",
+      "guideUrl": "https://paper.dennysora.me/day/2026-09-17.html",
+      "kind": "daily",
+      "language": "zh-Hant",
+      "review": "machine-generated"
+    }
+  ]
+}
