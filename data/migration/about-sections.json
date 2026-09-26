@@ -1,0 +1,83 @@
+{
+  "source": "content/profile/{zh-hant,en,ja}.md at fb4c89f92d59375d8582b020cf7dce6bea11292f",
+  "target": "content/profile/profile.json rendered by the structured About page",
+  "reviewedAt": "2026-09-26",
+  "sections": [
+    {
+      "legacyAnchor": "skills-h",
+      "headings": ["技能", "Skills", "スキル"],
+      "destination": "About › full record › skills (record.skills); each competency also lists 4–6 tools",
+      "status": "preserved"
+    },
+    {
+      "legacyAnchor": "exp-h",
+      "headings": ["經歷", "Experience", "経歴"],
+      "destination": "About › experience timeline (summary, 2–3 highlights and every original item in a disclosure)",
+      "status": "preserved",
+      "removed": [
+        "Version labels v1.0.0–v4.0.0 (UI/UX spec v2.1 §6.4)",
+        "Status badges (在學中 / ACTIVE / 在学中) — replaced by the current-status label on the Japanese study entry"
+      ]
+    },
+    {
+      "legacyAnchor": "edu-h",
+      "headings": ["學歷", "Education", "学歴"],
+      "destination": "About › beyond engineering › education",
+      "status": "preserved"
+    },
+    {
+      "legacyAnchor": "depth-h",
+      "headings": ["技術深度", "Technical Depth", "技術的深さ"],
+      "destination": "About › full record › technical depth (record.depth)",
+      "status": "preserved"
+    },
+    {
+      "legacyAnchor": "beyond-h",
+      "headings": ["工程之外", "Beyond Engineering", "エンジニアリングの外側"],
+      "destination": "About › beyond engineering (personal.interests)",
+      "status": "preserved"
+    },
+    {
+      "legacyAnchor": "proj-h",
+      "headings": [
+        "開源專案",
+        "Open-Source Projects",
+        "オープンソースプロジェクト"
+      ],
+      "destination": "Projects page (dgxtop, httpulse, ADK ↔ AGUI Middleware) and About › full record › open-source projects",
+      "status": "partially-withheld",
+      "removed": [
+        "GitHub star counts shown without a query time (UI/UX spec v2.1 §8.4)"
+      ],
+      "withheld": [
+        {
+          "item": "Ops-Tools",
+          "url": "https://github.com/DennySORA/Ops-Tools",
+          "reason": "Private repository: visibility confirmed with the owner's authenticated GitHub CLI on 2026-09-26, and unauthenticated requests return HTTP 404. Restore only if the owner makes it public."
+        },
+        {
+          "item": "Image-Tools",
+          "url": "https://github.com/DennySORA/Image-Tools",
+          "reason": "Private repository: visibility confirmed with the owner's authenticated GitHub CLI on 2026-09-26, and unauthenticated requests return HTTP 404. Restore only if the owner makes it public."
+        },
+        {
+          "item": "Auto-Video-Organize",
+          "url": "https://github.com/DennySORA/Auto-Video-Organize",
+          "reason": "Private repository: visibility confirmed with the owner's authenticated GitHub CLI on 2026-09-26, and unauthenticated requests return HTTP 404. Restore only if the owner makes it public."
+        }
+      ]
+    },
+    {
+      "legacyAnchor": "comm-h",
+      "headings": ["社群", "Community", "コミュニティ"],
+      "destination": "About › full record › community; the paper digest also has its own Papers page",
+      "status": "preserved"
+    },
+    {
+      "legacyAnchor": "notes-h",
+      "headings": ["技術筆記", "Tech Note", "技術ノート"],
+      "destination": "About › full record › other writing (record.writing)",
+      "status": "preserved"
+    }
+  ]
+}

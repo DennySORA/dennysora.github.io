@@ -2,40 +2,183 @@
   {
     "id": "dgxtop",
     "title": "dgxtop",
-    "url": "https://github.com/DennySORA/dgxtop",
-    "tags": ["GPU", "TUI", "Monitoring"],
-    "summary": {
-      "zh-hant": "NVIDIA DGX 系統的高效能互動式監控器——在漂亮的 TUI 中呈現 GPU、CPU、記憶體、磁碟與網路狀態。",
-      "en": "High-performance interactive system monitor for NVIDIA DGX systems — GPU, CPU, memory, disk and network in a beautiful TUI.",
-      "ja": "NVIDIA DGX 向けの高性能インタラクティブシステムモニター。GPU・CPU・メモリ・ディスク・ネットワークを美しい TUI で表示。"
+    "category": "open-source",
+    "status": "unknown",
+    "owner": "DennySORA / dgxtop",
+    "technologies": ["Rust", "TUI", "GPU"],
+    "domain": {
+      "zh-hant": "系統監控",
+      "en": "System monitoring",
+      "ja": "システム監視"
     },
-    "source": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html",
-    "kind": "open-source"
+    "headline": {
+      "zh-hant": "把系統狀態，放進可操作的終端介面。",
+      "en": "System state in an interactive terminal interface.",
+      "ja": "システムの状態を、操作できるターミナル画面に。"
+    },
+    "summary": {
+      "zh-hant": "NVIDIA DGX 系統的互動式監控工具，在 TUI 中集中檢視 GPU、CPU、記憶體、磁碟與網路資訊。",
+      "en": "An interactive monitoring tool for NVIDIA DGX systems that brings GPU, CPU, memory, disk and network information together in a TUI.",
+      "ja": "NVIDIA DGX システム向けのインタラクティブな監視ツール。GPU、CPU、メモリ、ディスク、ネットワークの情報を TUI にまとめて表示します。"
+    },
+    "role": {
+      "zh-hant": "個人開源專案",
+      "en": "Personal open-source project",
+      "ja": "個人のオープンソースプロジェクト"
+    },
+    "points": [
+      {
+        "title": {
+          "zh-hant": "工具用途",
+          "en": "What it is for",
+          "ja": "用途"
+        },
+        "text": {
+          "zh-hant": "查看運算資源與系統監控資訊。",
+          "en": "Checking compute resources and system monitoring information.",
+          "ja": "計算資源とシステム監視の情報を確認します。"
+        }
+      },
+      {
+        "title": {
+          "zh-hant": "可查看的內容",
+          "en": "What you can review",
+          "ja": "確認できるもの"
+        },
+        "text": {
+          "zh-hant": "公開 repository 中的程式碼與說明。",
+          "en": "The code and documentation in the public repository.",
+          "ja": "公開リポジトリのコードと説明。"
+        }
+      }
+    ],
+    "links": { "repository": "https://github.com/DennySORA/dgxtop" },
+    "caseStudy": null,
+    "relatedPostIds": [],
+    "sources": [
+      "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html"
+    ]
   },
   {
     "id": "httpulse",
     "title": "httpulse",
-    "url": "https://github.com/DennySORA/httpulse",
-    "tags": ["HTTP", "TUI", "Observability"],
-    "summary": {
-      "zh-hant": "即時 HTTP 延遲與網路品質監控的互動式 TUI——DNS、TLS、TTFB、RTT、抖動等指標。",
-      "en": "Real-time HTTP latency & network quality monitoring with an interactive TUI — DNS, TLS, TTFB, RTT, jitter and more.",
-      "ja": "リアルタイム HTTP レイテンシとネットワーク品質を監視するインタラクティブ TUI。DNS、TLS、TTFB、RTT、ジッターなどを追跡。"
+    "category": "open-source",
+    "status": "unknown",
+    "owner": "DennySORA / httpulse",
+    "technologies": ["Rust", "TUI", "HTTP"],
+    "domain": {
+      "zh-hant": "網路可觀測性",
+      "en": "Network observability",
+      "ja": "ネットワークの可観測性"
     },
-    "source": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html",
-    "kind": "open-source"
+    "headline": {
+      "zh-hant": "追蹤 HTTP 延遲與網路品質。",
+      "en": "Tracking HTTP latency and network quality.",
+      "ja": "HTTP のレイテンシとネットワーク品質を追跡する。"
+    },
+    "summary": {
+      "zh-hant": "即時 HTTP 延遲與網路品質的 TUI 監控工具，呈現 DNS、TLS、TTFB、RTT 等指標。",
+      "en": "A TUI tool for real-time HTTP latency and network quality monitoring, showing metrics such as DNS, TLS, TTFB and RTT.",
+      "ja": "HTTP のレイテンシとネットワーク品質をリアルタイムに監視する TUI ツール。DNS、TLS、TTFB、RTT などの指標を表示します。"
+    },
+    "role": {
+      "zh-hant": "個人開源專案",
+      "en": "Personal open-source project",
+      "ja": "個人のオープンソースプロジェクト"
+    },
+    "points": [
+      {
+        "title": {
+          "zh-hant": "工具用途",
+          "en": "What it is for",
+          "ja": "用途"
+        },
+        "text": {
+          "zh-hant": "觀察網路請求的不同階段與延遲。",
+          "en": "Observing the stages and latency of a network request.",
+          "ja": "ネットワークリクエストの各段階と遅延を観察します。"
+        }
+      },
+      {
+        "title": {
+          "zh-hant": "可查看的內容",
+          "en": "What you can review",
+          "ja": "確認できるもの"
+        },
+        "text": {
+          "zh-hant": "原始碼與使用說明，以 repository 為準。",
+          "en": "Source code and usage notes; the repository is authoritative.",
+          "ja": "ソースコードと使い方。内容はリポジトリを正とします。"
+        }
+      }
+    ],
+    "links": { "repository": "https://github.com/DennySORA/httpulse" },
+    "caseStudy": null,
+    "relatedPostIds": [],
+    "sources": [
+      "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html"
+    ]
   },
   {
     "id": "adk-agui-middleware",
     "title": "ADK ↔ AGUI Middleware",
-    "url": "https://github.com/trendmicro/adk-agui-middleware",
-    "tags": ["Python", "SSE", "Agent"],
-    "summary": {
-      "zh-hant": "撰寫 ADK ↔ AGUI Middleware（Python 3.13+），提供 SSE 串流與 Human-in-the-Loop 工作流程，並與編排器整合。",
-      "en": "Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator.",
-      "ja": "ADK ↔ AGUI Middleware（Python 3.13+）を開発。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、オーケストレーターと統合。"
+    "category": "work",
+    "status": "unknown",
+    "owner": "trendmicro / adk-agui-middleware",
+    "technologies": ["Python", "SSE", "Agent"],
+    "domain": {
+      "zh-hant": "Agent 串流整合",
+      "en": "Agent streaming integration",
+      "ja": "エージェントのストリーミング統合"
     },
-    "source": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/index.html",
-    "kind": "production"
+    "headline": {
+      "zh-hant": "連接 Agent 編排與互動工作流程。",
+      "en": "Connecting agent orchestration with interactive workflows.",
+      "ja": "エージェントのオーケストレーションと対話的なワークフローをつなぐ。"
+    },
+    "summary": {
+      "zh-hant": "連接 ADK 與 AG-UI 的中介實作，提供 SSE 串流與 Human-in-the-Loop 工作流程，並與 Agent 編排器整合。",
+      "en": "Middleware connecting ADK and AG-UI, providing SSE streaming and Human-in-the-Loop workflows, integrated with the agent orchestrator.",
+      "ja": "ADK と AG-UI をつなぐミドルウェア。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、エージェントのオーケストレーターと統合しています。"
+    },
+    "role": {
+      "zh-hant": "依公開履歷：於趨勢科技工作期間撰寫並整合",
+      "en": "Per the published résumé: authored and integrated while at Trend Micro",
+      "ja": "公開している経歴より：トレンドマイクロ在籍中に開発・統合"
+    },
+    "points": [
+      {
+        "title": {
+          "zh-hant": "角色與脈絡",
+          "en": "Role and context",
+          "ja": "役割と背景"
+        },
+        "text": {
+          "zh-hant": "工作中的系統實作，不是個人獨有的專案。",
+          "en": "Work done in a professional role, not a personally owned project.",
+          "ja": "業務としての実装であり、個人が所有するプロジェクトではありません。"
+        }
+      },
+      {
+        "title": {
+          "zh-hant": "公開來源",
+          "en": "Public source",
+          "ja": "公開ソース"
+        },
+        "text": {
+          "zh-hant": "程式碼位於 Trend Micro 組織的 repository。",
+          "en": "The code lives in a repository owned by the Trend Micro organization.",
+          "ja": "コードは Trend Micro 組織のリポジトリにあります。"
+        }
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/trendmicro/adk-agui-middleware"
+    },
+    "caseStudy": null,
+    "relatedPostIds": ["production-systems"],
+    "sources": [
+      "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/index.html"
+    ]
   }
 ]

@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-09-26",
+  "note": "Brand assets are published unchanged from assets/. No derivative, crop, recolour, vector trace or monogram is used.",
+  "assets": [
+    {
+      "path": "assets/logo.png",
+      "gitBlob": "93e2075975234eaecd74b3b223e8e5fa2c48f69a",
+      "bytes": 251550,
+      "width": 720,
+      "height": 392,
+      "alpha": true,
+      "visibleBounds": { "x": 191, "y": 0, "width": 342, "height": 392 },
+      "published": true,
+      "role": "Header and footer brand mark (illustrated figure; contains no wordmark, so the text name DennySORA sits beside it).",
+      "inspection": "Viewed at full size and on the #0B1020 background: transparent background, white sticker outline keeps the figure legible on the dark surface. Columns outside x=191–532 are fully transparent; the header aligns the figure with negative inline margins instead of cropping."
+    },
+    {
+      "path": "assets/logo_full.png",
+      "gitBlob": "5ea0af5ba70d21eac28f6b429117445906cadd16",
+      "bytes": 3136271,
+      "width": 2816,
+      "height": 1536,
+      "alpha": true,
+      "published": false,
+      "role": "Master artwork of the same figure. Kept in the repository and not shipped, to avoid transferring 3 MB for a 56 px mark."
+    },
+    {
+      "path": "assets/avatar.png",
+      "gitBlob": "1415e6a5ab543badb5f2b3213fc8e8f4c0519ea8",
+      "bytes": 113784,
+      "width": 256,
+      "height": 256,
+      "alpha": true,
+      "visibleBounds": { "x": 19, "y": 0, "width": 221, "height": 256 },
+      "published": true,
+      "role": "Author identity in bylines and the Open Graph image."
+    },
+    {
+      "path": "assets/favicon.png",
+      "gitBlob": "7e46175581b6e46eb045f44704eb623c361f0e74",
+      "bytes": 32487,
+      "width": 128,
+      "height": 128,
+      "alpha": true,
+      "published": true,
+      "role": "Favicon."
+    },
+    {
+      "path": "assets/apple-touch-icon.png",
+      "gitBlob": "561970576b82e187f2f67440b9988d0f11456f55",
+      "bytes": 60142,
+      "width": 180,
+      "height": 180,
+      "alpha": true,
+      "published": true,
+      "role": "Apple touch icon."
+    }
+  ]
+}

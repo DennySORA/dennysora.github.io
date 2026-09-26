@@ -1,0 +1,1756 @@
+{
+  "id": "dennysora",
+  "displayName": "DennySORA",
+  "publicName": "李汶道",
+  "reviewedAt": "2026-09-20",
+  "provenance": {
+    "sources": [
+      {
+        "url": "https://github.com/DennySORA/dennysora.github.io/blob/fb4c89f92d59375d8582b020cf7dce6bea11292f/content/profile/zh-hant.md",
+        "note": "Résumé details, skills, depth, interests, projects, community and writing are copied verbatim per locale."
+      },
+      {
+        "url": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html",
+        "note": "Original published profile page."
+      }
+    ],
+    "editorial": "Introduction, focus notes, competency descriptions, examples and experience summaries are v2.1 editorial adaptations of the published profile. The Traditional Chinese wording follows the approved UI/UX v2.1 package; English and Japanese wording was adapted from the existing published translations and still needs owner review.",
+    "withheld": "See data/migration/about-sections.json for removed version labels, star counts and repositories that are private (confirmed on 2026-09-26)."
+  },
+  "introduction": {
+    "role": {
+      "zh-hant": "後端、雲端與 AI 系統工程",
+      "en": "Backend, cloud and AI systems engineering",
+      "ja": "バックエンド、クラウド、AI システムのエンジニアリング"
+    },
+    "shortBio": {
+      "zh-hant": "我關注軟體與 AI 系統如何從概念走向可運作、可觀測、可維護的實作。過去的工作涵蓋後端服務、雲端平台與 Agent 整合；目前在東京學習日語，也持續進行 AI 與 LLM 相關實作。",
+      "en": "I care about how software and AI systems move from an idea to something that runs, can be observed and can be maintained. My work has covered backend services, cloud platforms and agent integration; I am currently studying Japanese in Tokyo while continuing hands-on work with AI and LLMs.",
+      "ja": "ソフトウェアと AI システムが、構想から「動き、観測でき、保守できる」実装になるまでに関心があります。これまでバックエンドサービス、クラウド基盤、エージェント統合に携わってきました。現在は東京で日本語を学びながら、AI と LLM の実装も続けています。"
+    },
+    "status": {
+      "zh-hant": "東京・日語學習中",
+      "en": "Tokyo · studying Japanese",
+      "ja": "東京・日本語を学習中"
+    }
+  },
+  "focusNote": {
+    "heading": {
+      "zh-hant": "不只列出技術，也說明我如何使用它。",
+      "en": "Not just a list of technologies — how I use them.",
+      "ja": "技術の一覧だけでなく、どう使っているかを。"
+    },
+    "items": [
+      {
+        "id": "practice",
+        "title": {
+          "zh-hant": "工程實務",
+          "en": "Engineering practice",
+          "ja": "業務での実践"
+        },
+        "text": {
+          "zh-hant": "後端、雲端基礎設施與 Agent 應用整合",
+          "en": "Backend, cloud infrastructure and agent integration",
+          "ja": "バックエンド、クラウド基盤、エージェント統合"
+        }
+      },
+      {
+        "id": "exploration",
+        "title": {
+          "zh-hant": "個人探索",
+          "en": "Personal exploration",
+          "ja": "個人での探究"
+        },
+        "text": {
+          "zh-hant": "語言模型、推論量化與開源工具",
+          "en": "Language models, inference and quantization, open-source tools",
+          "ja": "言語モデル、推論と量子化、オープンソースツール"
+        }
+      },
+      {
+        "id": "beyond",
+        "title": {
+          "zh-hant": "工程之外",
+          "en": "Beyond engineering",
+          "ja": "エンジニアリングの外側"
+        },
+        "text": {
+          "zh-hant": "日語、鋼琴與水肺潛水",
+          "en": "Japanese, piano and scuba diving",
+          "ja": "日本語、ピアノ、スキューバダイビング"
+        }
+      }
+    ]
+  },
+  "competencies": [
+    {
+      "id": "backend",
+      "levels": ["production"],
+      "title": {
+        "zh-hant": "後端與分散式系統",
+        "en": "Backend & distributed systems",
+        "ja": "バックエンドと分散システム"
+      },
+      "description": {
+        "zh-hant": "從 API 與事件處理，到模組化的服務邊界。關注非同步流程、失敗處理，以及系統如何長期維護。",
+        "en": "From APIs and event processing to modular service boundaries, with attention to asynchronous flows, failure handling and how a system stays maintainable over time.",
+        "ja": "API とイベント処理から、モジュール化されたサービス境界まで。非同期処理、障害時の扱い、そしてシステムを長く保守できるかに注目しています。"
+      },
+      "examples": [
+        {
+          "zh-hant": "以 plugin 為基礎的 API 平台（趨勢科技）",
+          "en": "A plugin-based API platform (Trend Micro)",
+          "ja": "プラグインベースの API プラットフォーム（トレンドマイクロ）"
+        },
+        {
+          "zh-hant": "Kafka consumer 服務架構與 Go 低延遲串流伺服器（KKStream）",
+          "en": "Kafka-based consumer services and a low-latency Go streaming server (KKStream)",
+          "ja": "Kafka ベースのコンシューマーサービスと Go による低遅延ストリーミングサーバー（KKStream）"
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "post",
+          "id": "production-systems"
+        },
+        {
+          "kind": "section",
+          "id": "experience"
+        }
+      ],
+      "tools": ["Go", "Python", "Rust", "Kafka", "PostgreSQL", "Redis"]
+    },
+    {
+      "id": "cloud",
+      "levels": ["production"],
+      "title": {
+        "zh-hant": "雲端平台與可觀測性",
+        "en": "Cloud platforms & observability",
+        "ja": "クラウド基盤とオブザーバビリティ"
+      },
+      "description": {
+        "zh-hant": "以 AWS、Kubernetes、Terraform 與可觀測性工具，處理部署、資源配置和基礎設施的實際問題。",
+        "en": "Solving real deployment, resource-allocation and infrastructure problems with AWS, Kubernetes, Terraform and observability tooling.",
+        "ja": "AWS、Kubernetes、Terraform とオブザーバビリティのツールで、デプロイ、リソース配分、インフラの実際の課題に取り組んでいます。"
+      },
+      "examples": [
+        {
+          "zh-hant": "重新架構 EKS node groups，並把監控移至 ARM 節點（趨勢科技）",
+          "en": "Re-architected EKS node groups and moved monitoring to ARM nodes (Trend Micro)",
+          "ja": "EKS ノードグループを再設計し、監視を ARM ノードへ移行（トレンドマイクロ）"
+        },
+        {
+          "zh-hant": "模組化 Helm charts 與 CNI 問題排解（趨勢科技）",
+          "en": "Modular Helm charts and CNI troubleshooting (Trend Micro)",
+          "ja": "モジュラー Helm チャートと CNI のトラブルシューティング（トレンドマイクロ）"
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "section",
+          "id": "experience"
+        },
+        {
+          "kind": "project",
+          "id": "httpulse"
+        }
+      ],
+      "tools": [
+        "AWS",
+        "Kubernetes (EKS)",
+        "Terraform",
+        "Helm",
+        "OpenTelemetry",
+        "Prometheus"
+      ]
+    },
+    {
+      "id": "ai",
+      "levels": ["production", "practice", "learning"],
+      "title": {
+        "zh-hant": "AI 系統與個人模型實作",
+        "en": "AI systems & personal model work",
+        "ja": "AI システムと個人でのモデル実装"
+      },
+      "description": {
+        "zh-hant": "工作中實作 Agent 編排與串流整合；個人研究聚焦三語模型、推論與量化，也持續學習模型可解釋性。",
+        "en": "At work I built agent orchestration and streaming integrations; my personal research focuses on a trilingual model, inference and quantization, and I am still learning model interpretability.",
+        "ja": "業務ではエージェントのオーケストレーションとストリーミング統合を実装しました。個人の研究では三言語モデル、推論、量子化に取り組み、モデルの解釈可能性も学習中です。"
+      },
+      "examples": [
+        {
+          "zh-hant": "ADK ↔ AGUI Middleware：SSE 串流與 Human-in-the-Loop（趨勢科技）",
+          "en": "ADK ↔ AGUI Middleware: SSE streaming and Human-in-the-Loop (Trend Micro)",
+          "ja": "ADK ↔ AGUI Middleware：SSE ストリーミングと Human-in-the-Loop（トレンドマイクロ）"
+        },
+        {
+          "zh-hant": "從零訓練中／英／日三語 decoder-only 模型（個人研究）",
+          "en": "Training a Chinese / English / Japanese decoder-only model from scratch (personal research)",
+          "ja": "中・英・日の三言語 decoder-only モデルをゼロから学習（個人研究）"
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "post",
+          "id": "trilingual-model-research"
+        },
+        {
+          "kind": "project",
+          "id": "adk-agui-middleware"
+        }
+      ],
+      "tools": [
+        "Google ADK",
+        "LangGraph",
+        "vLLM",
+        "TensorRT-LLM",
+        "SentencePiece"
+      ]
+    }
+  ],
+  "featuredProjectIds": ["dgxtop", "httpulse"],
+  "experience": [
+    {
+      "id": "naganuma",
+      "kind": "education",
+      "startDate": "2026-04",
+      "endDate": null,
+      "current": true,
+      "role": {
+        "zh-hant": "日語留學",
+        "en": "Japanese Language Study",
+        "ja": "日本語留学"
+      },
+      "organization": {
+        "zh-hant": "東京日本語學校（長沼スクール）",
+        "en": "Tokyo School of the Japanese Language (Naganuma School)",
+        "ja": "東京日本語学校（長沼スクール）"
+      },
+      "summary": {
+        "zh-hant": "於東京進行全日制日語學習。",
+        "en": "Full-time Japanese language study in Tokyo.",
+        "ja": "東京で日本語を集中的に学習中。"
+      },
+      "highlights": [],
+      "details": [],
+      "links": []
+    },
+    {
+      "id": "trend-micro",
+      "kind": "work",
+      "startDate": "2022-07",
+      "endDate": "2026-04",
+      "current": false,
+      "role": {
+        "zh-hant": "資深雲端工程師",
+        "en": "Senior Cloud Engineer",
+        "ja": "シニアクラウドエンジニア"
+      },
+      "organization": {
+        "zh-hant": "趨勢科技 TrendMicro",
+        "en": "TrendMicro 趨勢科技",
+        "ja": "トレンドマイクロ Trend Micro"
+      },
+      "summary": {
+        "zh-hant": "參與 Agent 編排、平台與 API 系統、雲端基礎設施及資料保護相關工作。",
+        "en": "Worked across agent orchestration, platform and API systems, cloud infrastructure and data protection.",
+        "ja": "エージェントのオーケストレーション、プラットフォームと API システム、クラウド基盤、データ保護に携わりました。"
+      },
+      "highlights": [
+        {
+          "zh-hant": "在 Google ADK 上設計並交付 Agent 編排平台，具備清晰的應用架構與模組邊界。",
+          "en": "Designed and shipped an agent-orchestration platform on Google ADK with clear app architecture and module boundaries.",
+          "ja": "Google ADK 上にエージェントオーケストレーションプラットフォームを設計・リリース。明確なアプリケーションアーキテクチャとモジュール境界を実現。"
+        },
+        {
+          "zh-hant": "撰寫 ADK ↔ AGUI Middleware（Python 3.13+），提供 SSE 串流與 Human-in-the-Loop 工作流程，並與編排器整合。",
+          "en": "Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator.",
+          "ja": "ADK ↔ AGUI Middleware（Python 3.13+）を開発。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、オーケストレーターと統合。"
+        },
+        {
+          "zh-hant": "重新架構 EKS node groups：將監控移至 ARM 節點以節省成本，並導入專用的 CPU／記憶體最佳化資源池。",
+          "en": "Re-architected EKS node groups: moved monitoring to ARM nodes for cost savings and introduced dedicated CPU-/memory-optimized pools.",
+          "ja": "EKS ノードグループを再設計：監視を ARM ノードへ移行してコスト削減、CPU／メモリ最適化専用プールを導入。"
+        }
+      ],
+      "details": [
+        {
+          "title": {
+            "zh-hant": "Companion-Orchestrator Agent Center",
+            "en": "Companion-Orchestrator Agent Center",
+            "ja": "Companion-Orchestrator Agent Center"
+          },
+          "items": [
+            {
+              "zh-hant": "在 Google ADK 上設計並交付 Agent 編排平台，具備清晰的應用架構與模組邊界。",
+              "en": "Designed and shipped an agent-orchestration platform on Google ADK with clear app architecture and module boundaries.",
+              "ja": "Google ADK 上にエージェントオーケストレーションプラットフォームを設計・リリース。明確なアプリケーションアーキテクチャとモジュール境界を実現。"
+            },
+            {
+              "zh-hant": "實作 Agent-to-Agent（A2A）通訊，協調遠端 Agent。",
+              "en": "Implemented Agent-to-Agent (A2A) communication to coordinate remote agents.",
+              "ja": "Agent-to-Agent（A2A）通信を実装し、リモートエージェントを連携。"
+            },
+            {
+              "zh-hant": "打造具備工具呼叫、狀態追蹤、重試與錯誤處理的 LLM Agent。",
+              "en": "Built an LLM agent with tool use, state tracking, retries, and error handling.",
+              "ja": "ツール呼び出し・状態追跡・リトライ・エラー処理を備えた LLM エージェントを構築。"
+            },
+            {
+              "zh-hant": "交付用於情境測試與提示詞／工具除錯的 Web Playground；前端以 AI 輔助工作流程獨立開發。",
+              "en": "Delivered a web Playground for scenario testing and prompt/tool debugging; frontend developed independently with AI-assisted workflows.",
+              "ja": "シナリオテストとプロンプト／ツールのデバッグ用 Web Playground を提供。フロントエンドは AI 支援ワークフローで独立開発。"
+            },
+            {
+              "zh-hant": "建立 CopilotKit adapter，並組合多步驟 LangGraph 流程。",
+              "en": "Created a CopilotKit adapter and composed multi-step LangGraph flows.",
+              "ja": "CopilotKit アダプターを作成し、多段階の LangGraph フローを構成。"
+            },
+            {
+              "zh-hant": "透過資料庫驅動的設定實現動態 Agent 載入，支援零停機上線。",
+              "en": "Enabled dynamic agent loading via database-backed configs for zero-downtime rollout.",
+              "ja": "DB 駆動の設定による動的エージェントローディングを実現し、ゼロダウンタイムでリリース。"
+            },
+            {
+              "zh-hant": "撰寫 ADK ↔ AGUI Middleware（Python 3.13+），提供 SSE 串流與 Human-in-the-Loop 工作流程，並與編排器整合。",
+              "en": "Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator.",
+              "ja": "ADK ↔ AGUI Middleware（Python 3.13+）を開発。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、オーケストレーターと統合。"
+            },
+            {
+              "zh-hant": "達成端到端 pipeline（A2A → ADK → LangGraph → CopilotKit），並獲跨組織的其他團隊採用。",
+              "en": "Achieved an end-to-end pipeline A2A → ADK → LangGraph → CopilotKit adopted cross-org with other teams.",
+              "ja": "A2A → ADK → LangGraph → CopilotKit のエンドツーエンドパイプラインを実現し、他チームに組織横断で採用。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "平台開發與 API 管理",
+            "en": "Platform Development & API Management",
+            "ja": "プラットフォーム開発と API 管理"
+          },
+          "items": [
+            {
+              "zh-hant": "打造以 plugin 為基礎的 API 平台，讓團隊不需修改核心即可交付整合功能；提供生命週期 hooks、驗證與流量限制。",
+              "en": "Built a plugin-based API platform that lets teams ship integrations without core changes; provided lifecycle hooks, auth, and rate limiting.",
+              "ja": "プラグインベースの API プラットフォームを構築。コアを変更せずに統合機能をリリース可能にし、ライフサイクルフック・認証・レート制限を提供。"
+            },
+            {
+              "zh-hant": "開發 Collector Manager，支援可設定的日誌路由、背壓與重試控制。",
+              "en": "Developed a Collector Manager for configurable log routing with backpressure and retry controls.",
+              "ja": "バックプレッシャーとリトライ制御を備えた、設定可能なログルーティングの Collector Manager を開発。"
+            },
+            {
+              "zh-hant": "建立 Mini-Companion 系統，以 GitHub 同步支援宣告式工作流程。",
+              "en": "Created a Mini-Companion system with GitHub-based sync for declarative workflows.",
+              "ja": "GitHub ベースの同期による宣言的ワークフローを実現する Mini-Companion システムを構築。"
+            },
+            {
+              "zh-hant": "實作 Companion Proxy，強制執行 PII 遮蔽與基於政策的請求過濾。",
+              "en": "Implemented a Companion Proxy enforcing PII redaction and policy-based request filtering.",
+              "ja": "PII マスキングとポリシーベースのリクエストフィルタリングを強制する Companion Proxy を実装。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "雲端基礎設施最佳化",
+            "en": "Cloud Infrastructure Optimization",
+            "ja": "クラウドインフラ最適化"
+          },
+          "items": [
+            {
+              "zh-hant": "重新架構 EKS node groups：將監控移至 ARM 節點以節省成本，並導入專用的 CPU／記憶體最佳化資源池。",
+              "en": "Re-architected EKS node groups: moved monitoring to ARM nodes for cost savings and introduced dedicated CPU-/memory-optimized pools.",
+              "ja": "EKS ノードグループを再設計：監視を ARM ノードへ移行してコスト削減、CPU／メモリ最適化専用プールを導入。"
+            },
+            {
+              "zh-hant": "解決 Stream Lake 環境中的 Kubernetes 相容性缺陷。",
+              "en": "Resolved Kubernetes compatibility defects in Stream Lake environments.",
+              "ja": "Stream Lake 環境の Kubernetes 互換性不具合を解消。"
+            },
+            {
+              "zh-hant": "撰寫模組化 Helm charts，標準化各服務的部署。",
+              "en": "Authored modular Helm charts to standardize deployments across services.",
+              "ja": "モジュラー Helm チャートを作成し、サービス間のデプロイを標準化。"
+            },
+            {
+              "zh-hant": "修復 CNI IP 耗盡與路由問題，穩定多租戶叢集。",
+              "en": "Fixed CNI IP exhaustion and routing issues to stabilize multi-tenant clusters.",
+              "ja": "CNI IP 枯渇とルーティング問題を修正し、マルチテナントクラスタを安定化。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "AI 整合與資料安全",
+            "en": "AI Integration & Data Security",
+            "ja": "AI 統合とデータセキュリティ"
+          },
+          "items": [
+            {
+              "zh-hant": "打造 AWS Comprehend PII 管線，成本降低約 99%，同時維持偵測品質。",
+              "en": "Built an AWS Comprehend PII pipeline that reduced costs by ~99% while preserving detection quality.",
+              "ja": "AWS Comprehend の PII パイプラインを構築し、検出品質を維持しながらコストを約 99% 削減。"
+            },
+            {
+              "zh-hant": "建立 AI Proxy Adapter，整合 Amazon Bedrock 並執行政策管控。",
+              "en": "Created an AI Proxy Adapter with Amazon Bedrock integration and policy enforcement.",
+              "ja": "Amazon Bedrock 統合とポリシー強制を備えた AI Proxy Adapter を作成。"
+            },
+            {
+              "zh-hant": "開發 Kafka → Neptune 管線，建置符合 MITRE 框架的知識圖譜。",
+              "en": "Developed a Kafka → Neptune pipeline for MITRE-aligned knowledge graphs.",
+              "ja": "MITRE 準拠のナレッジグラフ構築のため Kafka → Neptune パイプラインを開発。"
+            },
+            {
+              "zh-hant": "實作細緻的 AI 存取控制，具備可稽核性與租戶隔離。",
+              "en": "Implemented fine-grained AI access controls with auditability and tenant isolation.",
+              "ja": "監査性とテナント分離を備えたきめ細かな AI アクセス制御を実装。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "技術領導",
+            "en": "Technical Leadership",
+            "ja": "テクニカルリーダーシップ"
+          },
+          "items": [
+            {
+              "zh-hant": "為 CEO 的 NVIDIA 簡報製作高階主管層級 AI 展示。",
+              "en": "Produced executive-level AI demos for the CEO's NVIDIA presentation.",
+              "ja": "CEO の NVIDIA プレゼンテーション向けにエグゼクティブレベルの AI デモを制作。"
+            },
+            {
+              "zh-hant": "主辦 AI 工具與最佳實踐的內部工作坊。",
+              "en": "Led internal workshops on AI tooling and best practices.",
+              "ja": "AI ツールとベストプラクティスの社内ワークショップを主導。"
+            },
+            {
+              "zh-hant": "獲頒本季最佳員工（Employee of the Quarter）。",
+              "en": "Recognized as Employee of the Quarter.",
+              "ja": "Employee of the Quarter（四半期最優秀社員）に選出。"
+            },
+            {
+              "zh-hant": "透過可重複使用的平台元件，推動跨部門賦能。",
+              "en": "Drove cross-functional enablement through reusable platform components.",
+              "ja": "再利用可能なプラットフォームコンポーネントを通じて部門横断のイネーブルメントを推進。"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": {
+            "zh-hant": "ADK-AGUI Middleware (GitHub)",
+            "en": "ADK-AGUI Middleware (GitHub)",
+            "ja": "ADK-AGUI Middleware (GitHub)"
+          },
+          "url": "https://github.com/trendmicro/adk-agui-middleware"
+        }
+      ]
+    },
+    {
+      "id": "kkstream",
+      "kind": "work",
+      "startDate": "2021-06",
+      "endDate": "2022-07",
+      "current": false,
+      "role": {
+        "zh-hant": "後端工程師",
+        "en": "Back-End Engineer",
+        "ja": "バックエンドエンジニア"
+      },
+      "organization": {
+        "zh-hant": "KKStream",
+        "en": "KKStream",
+        "ja": "KKStream"
+      },
+      "summary": {
+        "zh-hant": "投入串流服務、Kafka consumer 架構與 CI/CD，並以基礎設施即程式碼支援部署流程。",
+        "en": "Worked on streaming services, a Kafka consumer architecture and CI/CD, supporting deployments with infrastructure as code.",
+        "ja": "ストリーミングサービス、Kafka コンシューマーのアーキテクチャ、CI/CD に取り組み、Infrastructure as Code でデプロイを支えました。"
+      },
+      "highlights": [
+        {
+          "zh-hant": "設計以 Kafka 為基礎的 consumer 服務架構。",
+          "en": "Designed Kafka-based consumer service architecture.",
+          "ja": "Kafka ベースのコンシューマーサービスアーキテクチャを設計。"
+        },
+        {
+          "zh-hant": "以 Golang 開發低延遲串流伺服器。",
+          "en": "Built low-latency streaming server using Golang.",
+          "ja": "Golang で低遅延ストリーミングサーバーを開発。"
+        },
+        {
+          "zh-hant": "以 Terraform 實作基礎設施即程式碼。",
+          "en": "Implemented Terraform for infrastructure as code.",
+          "ja": "Terraform で Infrastructure as Code を実装。"
+        }
+      ],
+      "details": [
+        {
+          "title": {
+            "zh-hant": "DevOps 與基礎設施",
+            "en": "DevOps & Infrastructure",
+            "ja": "DevOps とインフラ"
+          },
+          "items": [
+            {
+              "zh-hant": "最佳化 GitLab CI/CD 管線，部署時間縮短 40%。",
+              "en": "Optimized GitLab CI/CD pipelines, reducing deployment time by 40%.",
+              "ja": "GitLab CI/CD パイプラインを最適化し、デプロイ時間を 40% 短縮。"
+            },
+            {
+              "zh-hant": "使用 Helm 部署 Kubernetes 叢集。",
+              "en": "Deployed Kubernetes clusters using Helm.",
+              "ja": "Helm を使用して Kubernetes クラスタをデプロイ。"
+            },
+            {
+              "zh-hant": "以 Terraform 實作基礎設施即程式碼。",
+              "en": "Implemented Terraform for infrastructure as code.",
+              "ja": "Terraform で Infrastructure as Code を実装。"
+            },
+            {
+              "zh-hant": "使用 Kops 管理 Kubernetes 叢集。",
+              "en": "Managed Kubernetes clusters using Kops.",
+              "ja": "Kops で Kubernetes クラスタを運用。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "系統架構與開發",
+            "en": "System Architecture & Development",
+            "ja": "システムアーキテクチャと開発"
+          },
+          "items": [
+            {
+              "zh-hant": "設計以 Kafka 為基礎的 consumer 服務架構。",
+              "en": "Designed Kafka-based consumer service architecture.",
+              "ja": "Kafka ベースのコンシューマーサービスアーキテクチャを設計。"
+            },
+            {
+              "zh-hant": "建立 Docker Compose 開發環境。",
+              "en": "Created Docker Compose development environment.",
+              "ja": "Docker Compose 開発環境を構築。"
+            },
+            {
+              "zh-hant": "整合多個後端服務與資料庫。",
+              "en": "Integrated multiple backend services and databases.",
+              "ja": "複数のバックエンドサービスとデータベースを統合。"
+            },
+            {
+              "zh-hant": "以 Golang 開發低延遲串流伺服器。",
+              "en": "Built low-latency streaming server using Golang.",
+              "ja": "Golang で低遅延ストリーミングサーバーを開発。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "研究與實作",
+            "en": "Research & Implementation",
+            "ja": "調査と実装"
+          },
+          "items": [
+            {
+              "zh-hant": "評估 WebRTC Mesh 與 SFU 技術。",
+              "en": "Evaluated WebRTC Mesh and SFU technologies.",
+              "ja": "WebRTC Mesh／SFU 技術を評価。"
+            },
+            {
+              "zh-hant": "整合 Pydantic，強化資料驗證。",
+              "en": "Integrated Pydantic for robust data validation.",
+              "ja": "Pydantic を導入し、堅牢なデータバリデーションを実現。"
+            },
+            {
+              "zh-hant": "重構單體專案以提升可維護性。",
+              "en": "Refactored monolithic projects for better maintenance.",
+              "ja": "モノリシックなプロジェクトを保守性向上のためリファクタリング。"
+            },
+            {
+              "zh-hant": "實作 CI/CD 管線測試整合。",
+              "en": "Implemented CI/CD pipeline testing integration.",
+              "ja": "CI/CD パイプラインへのテスト統合を実装。"
+            }
+          ]
+        }
+      ],
+      "links": []
+    },
+    {
+      "id": "tiantang",
+      "kind": "work",
+      "startDate": "2019-01",
+      "endDate": "2019-07",
+      "current": false,
+      "role": {
+        "zh-hant": "後端工程師（實習）",
+        "en": "Back-End Engineer (Intern)",
+        "ja": "バックエンドエンジニア（インターン）"
+      },
+      "organization": {
+        "zh-hant": "天堂遊戲有限公司",
+        "en": "天堂遊戲有限公司",
+        "ja": "天堂遊戲有限公司"
+      },
+      "summary": {
+        "zh-hant": "以 Go 進行 RESTful API 開發與效能分析，參與資料處理與新技術評估。",
+        "en": "Developed and profiled RESTful APIs in Go, and took part in data processing and technology evaluation.",
+        "ja": "Go で RESTful API の開発とパフォーマンス分析を行い、データ処理と新技術の評価にも参加しました。"
+      },
+      "highlights": [
+        {
+          "zh-hant": "使用 Golang PProf 最佳化 RESTful API。",
+          "en": "Optimized RESTful APIs using Golang PProf.",
+          "ja": "Golang PProf で RESTful API を最適化。"
+        },
+        {
+          "zh-hant": "實作 Apache Spark 資料處理。",
+          "en": "Implemented Apache Spark for data processing.",
+          "ja": "Apache Spark によるデータ処理を実装。"
+        }
+      ],
+      "details": [
+        {
+          "title": {
+            "zh-hant": "API 開發與最佳化",
+            "en": "API Development & Optimization",
+            "ja": "API 開発と最適化"
+          },
+          "items": [
+            {
+              "zh-hant": "使用 Golang PProf 最佳化 RESTful API。",
+              "en": "Optimized RESTful APIs using Golang PProf.",
+              "ja": "Golang PProf で RESTful API を最適化。"
+            },
+            {
+              "zh-hant": "API 回應時間縮短 30%。",
+              "en": "Reduced API response times by 30%.",
+              "ja": "API 応答時間を 30% 短縮。"
+            },
+            {
+              "zh-hant": "重構程式碼以改善模組化。",
+              "en": "Refactored codebases for improved modularity.",
+              "ja": "モジュール性向上のためコードベースをリファクタリング。"
+            }
+          ]
+        },
+        {
+          "title": {
+            "zh-hant": "研究與評估",
+            "en": "Research & Evaluation",
+            "ja": "調査と評価"
+          },
+          "items": [
+            {
+              "zh-hant": "實作 Apache Spark 資料處理。",
+              "en": "Implemented Apache Spark for data processing.",
+              "ja": "Apache Spark によるデータ処理を実装。"
+            },
+            {
+              "zh-hant": "展示 GraphQL API 能力。",
+              "en": "Demonstrated GraphQL API capabilities.",
+              "ja": "GraphQL API の可能性をデモンストレーション。"
+            },
+            {
+              "zh-hant": "評估新興技術的導入可行性。",
+              "en": "Evaluated emerging technologies for adoption.",
+              "ja": "導入候補の新技術を評価。"
+            }
+          ]
+        }
+      ],
+      "links": []
+    }
+  ],
+  "currentFocus": {
+    "updatedAt": "2026-09-20",
+    "question": {
+      "zh-hant": "如何從零訓練能使用中文、英文與日文的模型？架構、量化與 KV cache 如何影響實際部署？這些是個人研究與實驗的方向，而不是已經完成的產品承諾。",
+      "en": "How do you train a model that works in Chinese, English and Japanese from scratch? How do architecture, quantization and the KV cache shape a real deployment? These are directions for personal research and experiments, not finished product commitments.",
+      "ja": "中国語・英語・日本語を扱えるモデルを、ゼロからどう学習するか。アーキテクチャ、量子化、KV キャッシュは実際のデプロイにどう影響するか。これらは個人の研究と実験の方向性であり、完成した製品の約束ではありません。"
+    },
+    "items": [
+      {
+        "id": "inference",
+        "title": {
+          "zh-hant": "高效率推論",
+          "en": "Efficient Inference",
+          "ja": "効率的な推論"
+        },
+        "text": {
+          "zh-hant": "FP8 · MXFP8 · NVFP4、KV cache 最佳化、TensorRT-LLM、服務效率",
+          "en": "FP8 · MXFP8 · NVFP4, KV-cache optimization, TensorRT-LLM, serving efficiency",
+          "ja": "FP8 · MXFP8 · NVFP4、KV キャッシュ最適化、TensorRT-LLM、サービング効率"
+        }
+      },
+      {
+        "id": "interpretability",
+        "title": {
+          "zh-hant": "可解釋性",
+          "en": "Interpretability",
+          "ja": "解釈可能性"
+        },
+        "text": {
+          "zh-hant": "稀疏自動編碼器、激活分析、電路、激活修補",
+          "en": "Sparse Autoencoders, activation analysis, circuits, activation patching",
+          "ja": "スパースオートエンコーダ、アクティベーション分析、回路、アクティベーションパッチング"
+        }
+      },
+      {
+        "id": "speech",
+        "title": {
+          "zh-hant": "Speech AI",
+          "en": "Speech AI",
+          "ja": "Speech AI"
+        },
+        "text": {
+          "zh-hant": "日語音素／拍評估、音調重音、韻律建模、流暢度評估",
+          "en": "Japanese phoneme / mora evaluation, pitch accent, prosody modeling, fluency evaluation",
+          "ja": "日本語の音素・モーラ評価、ピッチアクセント、韻律モデリング、流暢性評価"
+        }
+      }
+    ],
+    "postId": "trilingual-model-research"
+  },
+  "personal": {
+    "intro": {
+      "zh-hant": "我也花時間學日語、練鋼琴，並探索水肺潛水。比起只列出技術名詞，我希望這裡也保留一些生活的輪廓。",
+      "en": "I also spend time learning Japanese, practising piano and exploring scuba diving. Beyond a list of technical terms, I want this page to keep some outline of life outside work.",
+      "ja": "日本語の学習、ピアノの練習、スキューバダイビングにも時間を使っています。技術用語の一覧だけでなく、生活の輪郭も少し残しておきたいと思っています。"
+    },
+    "interests": [
+      {
+        "id": "japanese",
+        "title": {
+          "zh-hant": "日語",
+          "en": "Japanese",
+          "ja": "日本語"
+        },
+        "text": {
+          "zh-hant": "目前在東京的東京日本語學校（長沼スクール）學習日語。",
+          "en": "Currently studying Japanese in Tokyo at Tokyo School of the Japanese Language (Naganuma School).",
+          "ja": "現在、東京の東京日本語学校（長沼スクール）で日本語を勉強中。"
+        }
+      },
+      {
+        "id": "piano",
+        "title": {
+          "zh-hant": "鋼琴",
+          "en": "Piano",
+          "ja": "ピアノ"
+        },
+        "text": {
+          "zh-hant": "以鋼琴為長期興趣，目前著重視譜、和聲與流暢的讀譜能力。",
+          "en": "Learning piano as a long-term hobby, with current emphasis on sight-reading, harmony and fluent score reading.",
+          "ja": "長期的な趣味としてピアノを練習中。現在は初見演奏、和声、スムーズな読譜に注力。"
+        }
+      },
+      {
+        "id": "diving",
+        "title": {
+          "zh-hant": "水肺潛水",
+          "en": "Scuba Diving",
+          "ja": "スクーバダイビング"
+        },
+        "text": {
+          "zh-hant": "對日本各地特色潛點感興趣，特別喜歡沉船、大型海洋生物與具有在地特色的水下環境。",
+          "en": "Interested in distinctive dive sites around Japan, especially wrecks, large marine life and location-specific underwater environments.",
+          "ja": "日本の特徴的なダイビングポイントに興味。特に沈船、大型海洋生物、その場所ならではの水中環境が好き。"
+        }
+      }
+    ]
+  },
+  "education": [
+    {
+      "id": "naganuma",
+      "institution": {
+        "zh-hant": "東京日本語學校（長沼スクール）",
+        "en": "Tokyo School of the Japanese Language (Naganuma School)",
+        "ja": "東京日本語学校（長沼スクール）"
+      },
+      "period": {
+        "zh-hant": "2026.04 – 至今",
+        "en": "2026.04 – Present",
+        "ja": "2026.04 – 現在"
+      },
+      "detail": {
+        "zh-hant": "日本留學",
+        "en": "Japanese language study in Tokyo",
+        "ja": "日本留学"
+      }
+    },
+    {
+      "id": "ntut",
+      "institution": {
+        "zh-hant": "台北科技大學 National Taipei University of Technology",
+        "en": "National Taipei University of Technology 台北科技大學",
+        "ja": "台北科技大学 National Taipei University of Technology"
+      },
+      "period": {
+        "zh-hant": "2016 – 2020",
+        "en": "2016 – 2020",
+        "ja": "2016 – 2020"
+      },
+      "detail": {
+        "zh-hant": "電子工程系",
+        "en": "Electronic Engineering",
+        "ja": "電子工学"
+      }
+    }
+  ],
+  "record": {
+    "skills": [
+      {
+        "title": {
+          "zh-hant": "AI 與 LLM 工程",
+          "en": "AI & LLM Engineering",
+          "ja": "AI・LLM 開発"
+        },
+        "items": [
+          {
+            "zh-hant": "Transformer 架構",
+            "en": "Transformer Architecture",
+            "ja": "Transformer アーキテクチャ"
+          },
+          {
+            "zh-hant": "量化（FP8 · INT4 · W/A/KV）",
+            "en": "Quantization (FP8 · INT4 · W/A/KV)",
+            "ja": "量子化（FP8 · INT4 · W/A/KV）"
+          },
+          {
+            "zh-hant": "vLLM · TensorRT-LLM",
+            "en": "vLLM · TensorRT-LLM",
+            "ja": "vLLM · TensorRT-LLM"
+          },
+          {
+            "zh-hant": "後訓練（SFT · DPO · GRPO）",
+            "en": "Post-Training (SFT · DPO · GRPO)",
+            "ja": "ポストトレーニング（SFT · DPO · GRPO）"
+          },
+          {
+            "zh-hant": "可解釋性（SAE · SVD）",
+            "en": "Interpretability (SAE · SVD)",
+            "ja": "解釈可能性（SAE · SVD）"
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "程式語言",
+          "en": "Programming Languages",
+          "ja": "プログラミング言語"
+        },
+        "items": [
+          {
+            "zh-hant": "Go (Gin)",
+            "en": "Go (Gin)",
+            "ja": "Go (Gin)"
+          },
+          {
+            "zh-hant": "Python (FastAPI · Asyncio)",
+            "en": "Python (FastAPI · Asyncio)",
+            "ja": "Python (FastAPI · Asyncio)"
+          },
+          {
+            "zh-hant": "Rust",
+            "en": "Rust",
+            "ja": "Rust"
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "雲端與基礎設施",
+          "en": "Cloud & Infrastructure",
+          "ja": "クラウド＆インフラ"
+        },
+        "items": [
+          {
+            "zh-hant": "AWS",
+            "en": "AWS",
+            "ja": "AWS"
+          },
+          {
+            "zh-hant": "Kubernetes (EKS)",
+            "en": "Kubernetes (EKS)",
+            "ja": "Kubernetes (EKS)"
+          },
+          {
+            "zh-hant": "Helm",
+            "en": "Helm",
+            "ja": "Helm"
+          },
+          {
+            "zh-hant": "Terraform",
+            "en": "Terraform",
+            "ja": "Terraform"
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "資料與訊息佇列",
+          "en": "Data & Messaging",
+          "ja": "データとメッセージング"
+        },
+        "items": [
+          {
+            "zh-hant": "Apache Kafka",
+            "en": "Apache Kafka",
+            "ja": "Apache Kafka"
+          },
+          {
+            "zh-hant": "PostgreSQL",
+            "en": "PostgreSQL",
+            "ja": "PostgreSQL"
+          },
+          {
+            "zh-hant": "Redis",
+            "en": "Redis",
+            "ja": "Redis"
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "DevOps 與可觀測性",
+          "en": "DevOps & Observability",
+          "ja": "DevOps とオブザーバビリティ"
+        },
+        "items": [
+          {
+            "zh-hant": "GitHub Actions",
+            "en": "GitHub Actions",
+            "ja": "GitHub Actions"
+          },
+          {
+            "zh-hant": "GitLab CI",
+            "en": "GitLab CI",
+            "ja": "GitLab CI"
+          },
+          {
+            "zh-hant": "OpenTelemetry",
+            "en": "OpenTelemetry",
+            "ja": "OpenTelemetry"
+          },
+          {
+            "zh-hant": "Prometheus",
+            "en": "Prometheus",
+            "ja": "Prometheus"
+          },
+          {
+            "zh-hant": "Grafana",
+            "en": "Grafana",
+            "ja": "Grafana"
+          },
+          {
+            "zh-hant": "Loki",
+            "en": "Loki",
+            "ja": "Loki"
+          },
+          {
+            "zh-hant": "Tempo",
+            "en": "Tempo",
+            "ja": "Tempo"
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "網頁與 API",
+          "en": "Web & API",
+          "ja": "Web と API"
+        },
+        "items": [
+          {
+            "zh-hant": "Vue.js (Nuxt 4)",
+            "en": "Vue.js (Nuxt 4)",
+            "ja": "Vue.js (Nuxt 4)"
+          },
+          {
+            "zh-hant": "Tailwind CSS 4",
+            "en": "Tailwind CSS 4",
+            "ja": "Tailwind CSS 4"
+          },
+          {
+            "zh-hant": "RESTful API",
+            "en": "RESTful API",
+            "ja": "RESTful API"
+          }
+        ]
+      }
+    ],
+    "depth": [
+      {
+        "title": {
+          "zh-hant": "LLM 架構",
+          "en": "LLM Architecture",
+          "ja": "LLM アーキテクチャ"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "核心",
+              "en": "Core",
+              "ja": "コア"
+            },
+            "items": [
+              {
+                "zh-hant": "Transformer 架構",
+                "en": "Transformer architecture",
+                "ja": "Transformer アーキテクチャ"
+              },
+              {
+                "zh-hant": "Decoder-only 語言模型",
+                "en": "Decoder-only language models",
+                "ja": "decoder-only 言語モデル"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "注意力機制",
+              "en": "Attention",
+              "ja": "アテンション"
+            },
+            "items": [
+              {
+                "zh-hant": "MHA · GQA · MQA",
+                "en": "MHA · GQA · MQA",
+                "ja": "MHA · GQA · MQA"
+              },
+              {
+                "zh-hant": "latent-attention 變體",
+                "en": "latent-attention variants",
+                "ja": "latent-attention の亜種"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "位置編碼",
+              "en": "Position Representation",
+              "ja": "位置エンコーディング"
+            },
+            "items": [
+              {
+                "zh-hant": "RoPE · NoPE",
+                "en": "RoPE · NoPE",
+                "ja": "RoPE · NoPE"
+              },
+              {
+                "zh-hant": "混合式位置設計",
+                "en": "hybrid positional designs",
+                "ja": "ハイブリッドな位置設計"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "前饋層",
+              "en": "Feed-forward",
+              "ja": "フィードフォワード"
+            },
+            "items": [
+              {
+                "zh-hant": "SwiGLU · GEGLU",
+                "en": "SwiGLU · GEGLU",
+                "ja": "SwiGLU · GEGLU"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "正規化",
+              "en": "Normalization",
+              "ja": "正規化"
+            },
+            "items": [
+              {
+                "zh-hant": "RMSNorm",
+                "en": "RMSNorm",
+                "ja": "RMSNorm"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "殘差設計",
+              "en": "Residual Design",
+              "ja": "残差設計"
+            },
+            "items": [
+              {
+                "zh-hant": "標準殘差路徑",
+                "en": "standard residual paths",
+                "ja": "標準的な残差パス"
+              },
+              {
+                "zh-hant": "實驗性 attention-residual 變體",
+                "en": "experimental attention-residual variants",
+                "ja": "実験的な attention-residual の亜種"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "分詞器",
+              "en": "Tokenizer",
+              "ja": "トークナイザー"
+            },
+            "items": [
+              {
+                "zh-hant": "SentencePiece · Unigram",
+                "en": "SentencePiece · Unigram",
+                "ja": "SentencePiece · Unigram"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "訓練與後訓練",
+          "en": "Training & Post-training",
+          "ja": "学習とポストトレーニング"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "預訓練",
+              "en": "Pre-training",
+              "ja": "事前学習"
+            },
+            "items": [
+              {
+                "zh-hant": "token／資料管線",
+                "en": "token / data pipeline",
+                "ja": "トークン／データパイプライン"
+              },
+              {
+                "zh-hant": "最佳化器",
+                "en": "optimization",
+                "ja": "最適化"
+              },
+              {
+                "zh-hant": "學習率排程",
+                "en": "learning-rate scheduling",
+                "ja": "学習率スケジューリング"
+              },
+              {
+                "zh-hant": "檢查點機制",
+                "en": "checkpointing",
+                "ja": "チェックポイント"
+              },
+              {
+                "zh-hant": "驗證 loss／困惑度",
+                "en": "validation loss / perplexity",
+                "ja": "検証 loss／パープレキシティ"
+              },
+              {
+                "zh-hant": "吞吐量監控",
+                "en": "throughput monitoring",
+                "ja": "スループット監視"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "後訓練・已實作",
+              "en": "Post-training · implemented",
+              "ja": "ポストトレーニング・実装済み"
+            },
+            "items": [
+              {
+                "zh-hant": "SFT · DPO · GRPO",
+                "en": "SFT · DPO · GRPO",
+                "ja": "SFT · DPO · GRPO"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "研究／比較過",
+              "en": "Studied / compared",
+              "ja": "学習・比較済み"
+            },
+            "items": [
+              {
+                "zh-hant": "PPO · TRPO · DAPO",
+                "en": "PPO · TRPO · DAPO",
+                "ja": "PPO · TRPO · DAPO"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "推論與量化",
+          "en": "Inference & Quantization",
+          "ja": "推論と量子化"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "精度",
+              "en": "Precision",
+              "ja": "精度"
+            },
+            "items": [
+              {
+                "zh-hant": "FP16 · BF16 · FP8 · INT8 · INT4",
+                "en": "FP16 · BF16 · FP8 · INT8 · INT4",
+                "ja": "FP16 · BF16 · FP8 · INT8 · INT4"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "量化概念",
+              "en": "Quantization Concepts",
+              "ja": "量子化の概念"
+            },
+            "items": [
+              {
+                "zh-hant": "W／A／KV 精度",
+                "en": "W / A / KV precision",
+                "ja": "W／A／KV 精度"
+              },
+              {
+                "zh-hant": "PTQ · E4M3",
+                "en": "PTQ · E4M3",
+                "ja": "PTQ · E4M3"
+              },
+              {
+                "zh-hant": "W8A16KV8 型配置",
+                "en": "W8A16KV8-style configurations",
+                "ja": "W8A16KV8 型の構成"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "執行環境／服務",
+              "en": "Runtime / Serving",
+              "ja": "ランタイム／サービング"
+            },
+            "items": [
+              {
+                "zh-hant": "vLLM · TensorRT-LLM · Ollama",
+                "en": "vLLM · TensorRT-LLM · Ollama",
+                "ja": "vLLM · TensorRT-LLM · Ollama"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "效能",
+              "en": "Performance",
+              "ja": "パフォーマンス"
+            },
+            "items": [
+              {
+                "zh-hant": "KV cache",
+                "en": "KV cache",
+                "ja": "KV cache"
+              },
+              {
+                "zh-hant": "批次處理",
+                "en": "batching",
+                "ja": "バッチング"
+              },
+              {
+                "zh-hant": "上下文長度",
+                "en": "context length",
+                "ja": "コンテキスト長"
+              },
+              {
+                "zh-hant": "VRAM 估算",
+                "en": "VRAM estimation",
+                "ja": "VRAM 見積もり"
+              },
+              {
+                "zh-hant": "吞吐量／每秒 tokens",
+                "en": "throughput / tokens per second",
+                "ja": "スループット／tokens per second"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "探索中",
+              "en": "Exploring",
+              "ja": "探究中"
+            },
+            "items": [
+              {
+                "zh-hant": "MXFP8 · NVFP4",
+                "en": "MXFP8 · NVFP4",
+                "ja": "MXFP8 · NVFP4"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "模型可解釋性",
+          "en": "Model Interpretability",
+          "ja": "モデル解釈可能性"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "學習中",
+              "en": "CURRENT STUDY",
+              "ja": "学習中"
+            },
+            "items": [
+              {
+                "zh-hant": "稀疏自動編碼器（SAE）",
+                "en": "Sparse Autoencoders (SAE)",
+                "ja": "スパースオートエンコーダ（SAE）"
+              },
+              {
+                "zh-hant": "SVD",
+                "en": "SVD",
+                "ja": "SVD"
+              },
+              {
+                "zh-hant": "激活分析",
+                "en": "activation analysis",
+                "ja": "アクティベーション分析"
+              },
+              {
+                "zh-hant": "激活修補",
+                "en": "activation patching",
+                "ja": "アクティベーションパッチング"
+              },
+              {
+                "zh-hant": "電路層級解釋概念",
+                "en": "circuit-level interpretation concepts",
+                "ja": "回路レベルの解釈の概念"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "代理式 AI",
+          "en": "Agentic AI",
+          "ja": "エージェンティック AI"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "生產環境",
+              "en": "PRODUCTION",
+              "ja": "本番運用"
+            },
+            "items": [
+              {
+                "zh-hant": "Google ADK",
+                "en": "Google ADK",
+                "ja": "Google ADK"
+              },
+              {
+                "zh-hant": "Agent-to-Agent（A2A）",
+                "en": "Agent-to-Agent (A2A)",
+                "ja": "Agent-to-Agent（A2A）"
+              },
+              {
+                "zh-hant": "LangGraph · CopilotKit",
+                "en": "LangGraph · CopilotKit",
+                "ja": "LangGraph · CopilotKit"
+              },
+              {
+                "zh-hant": "AG-UI 整合",
+                "en": "AG-UI integration",
+                "ja": "AG-UI 統合"
+              },
+              {
+                "zh-hant": "工具執行",
+                "en": "tool execution",
+                "ja": "ツール実行"
+              },
+              {
+                "zh-hant": "狀態管理",
+                "en": "state management",
+                "ja": "状態管理"
+              },
+              {
+                "zh-hant": "Human-in-the-Loop",
+                "en": "Human-in-the-Loop",
+                "ja": "Human-in-the-Loop"
+              },
+              {
+                "zh-hant": "串流（SSE）",
+                "en": "streaming (SSE)",
+                "ja": "ストリーミング（SSE）"
+              },
+              {
+                "zh-hant": "重試與錯誤處理",
+                "en": "retries & error handling",
+                "ja": "リトライとエラー処理"
+              },
+              {
+                "zh-hant": "動態 Agent 設定",
+                "en": "dynamic agent configuration",
+                "ja": "動的エージェント設定"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "後端與分散式系統",
+          "en": "Backend & Distributed Systems",
+          "ja": "バックエンドと分散システム"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "語言",
+              "en": "Languages",
+              "ja": "言語"
+            },
+            "items": [
+              {
+                "zh-hant": "Go · Python · Rust",
+                "en": "Go · Python · Rust",
+                "ja": "Go · Python · Rust"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "後端",
+              "en": "Backend",
+              "ja": "バックエンド"
+            },
+            "items": [
+              {
+                "zh-hant": "REST · FastAPI · Gin · Asyncio",
+                "en": "REST · FastAPI · Gin · Asyncio",
+                "ja": "REST · FastAPI · Gin · Asyncio"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "分散式系統",
+              "en": "Distributed Systems",
+              "ja": "分散システム"
+            },
+            "items": [
+              {
+                "zh-hant": "Kafka · Redis · PostgreSQL",
+                "en": "Kafka · Redis · PostgreSQL",
+                "ja": "Kafka · Redis · PostgreSQL"
+              },
+              {
+                "zh-hant": "事件驅動系統",
+                "en": "event-driven systems",
+                "ja": "イベント駆動システム"
+              },
+              {
+                "zh-hant": "非同步處理",
+                "en": "asynchronous processing",
+                "ja": "非同期処理"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "設計",
+              "en": "Design",
+              "ja": "設計"
+            },
+            "items": [
+              {
+                "zh-hant": "模組化架構",
+                "en": "modular architecture",
+                "ja": "モジュラーアーキテクチャ"
+              },
+              {
+                "zh-hant": "plugin 架構",
+                "en": "plugin architecture",
+                "ja": "プラグインアーキテクチャ"
+              },
+              {
+                "zh-hant": "微服務",
+                "en": "microservices",
+                "ja": "マイクロサービス"
+              },
+              {
+                "zh-hant": "低延遲系統",
+                "en": "low-latency systems",
+                "ja": "低遅延システム"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "雲端與平台",
+          "en": "Cloud & Platform",
+          "ja": "クラウドとプラットフォーム"
+        },
+        "groups": [
+          {
+            "label": {
+              "zh-hant": "基礎設施",
+              "en": "Infrastructure",
+              "ja": "インフラ"
+            },
+            "items": [
+              {
+                "zh-hant": "AWS · Kubernetes / EKS",
+                "en": "AWS · Kubernetes / EKS",
+                "ja": "AWS · Kubernetes / EKS"
+              },
+              {
+                "zh-hant": "Terraform · Helm",
+                "en": "Terraform · Helm",
+                "ja": "Terraform · Helm"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "CI/CD",
+              "en": "CI/CD",
+              "ja": "CI/CD"
+            },
+            "items": [
+              {
+                "zh-hant": "GitHub Actions · GitLab CI",
+                "en": "GitHub Actions · GitLab CI",
+                "ja": "GitHub Actions · GitLab CI"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "可觀測性",
+              "en": "Observability",
+              "ja": "オブザーバビリティ"
+            },
+            "items": [
+              {
+                "zh-hant": "OpenTelemetry · Prometheus · Grafana · Loki · Tempo",
+                "en": "OpenTelemetry · Prometheus · Grafana · Loki · Tempo",
+                "ja": "OpenTelemetry · Prometheus · Grafana · Loki · Tempo"
+              }
+            ]
+          },
+          {
+            "label": {
+              "zh-hant": "生產經驗",
+              "en": "Production Experience",
+              "ja": "本番経験"
+            },
+            "items": [
+              {
+                "zh-hant": "EKS node-group 架構設計",
+                "en": "EKS node-group architecture",
+                "ja": "EKS ノードグループ設計"
+              },
+              {
+                "zh-hant": "ARM 遷移",
+                "en": "ARM migration",
+                "ja": "ARM 移行"
+              },
+              {
+                "zh-hant": "CPU／記憶體最佳化資源池",
+                "en": "CPU / memory optimized pools",
+                "ja": "CPU／メモリ最適化プール"
+              },
+              {
+                "zh-hant": "CNI 問題排解",
+                "en": "CNI troubleshooting",
+                "ja": "CNI トラブルシューティング"
+              },
+              {
+                "zh-hant": "多租戶叢集穩定性",
+                "en": "multi-tenant cluster stability",
+                "ja": "マルチテナントクラスタの安定化"
+              },
+              {
+                "zh-hant": "可重複使用的 Helm 模組",
+                "en": "reusable Helm modules",
+                "ja": "再利用可能な Helm モジュール"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": {
+          "zh-hant": "資安",
+          "en": "Security",
+          "ja": "セキュリティ"
+        },
+        "groups": [
+          {
+            "label": null,
+            "items": [
+              {
+                "zh-hant": "PII 保護與遮蔽",
+                "en": "PII protection & redaction",
+                "ja": "PII 保護・マスキング"
+              },
+              {
+                "zh-hant": "政策強制",
+                "en": "policy enforcement",
+                "ja": "ポリシー強制"
+              },
+              {
+                "zh-hant": "租戶隔離",
+                "en": "tenant isolation",
+                "ja": "テナント分離"
+              },
+              {
+                "zh-hant": "存取控制",
+                "en": "access control",
+                "ja": "アクセス制御"
+              },
+              {
+                "zh-hant": "可稽核性",
+                "en": "auditability",
+                "ja": "監査性"
+              },
+              {
+                "zh-hant": "資安架構",
+                "en": "security architecture",
+                "ja": "セキュリティアーキテクチャ"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "openSource": [
+      {
+        "name": "dgxtop",
+        "url": "https://github.com/DennySORA/dgxtop",
+        "language": "Rust",
+        "description": {
+          "zh-hant": "NVIDIA DGX 系統的高效能互動式監控器——在漂亮的 TUI 中呈現 GPU、CPU、記憶體、磁碟與網路狀態。",
+          "en": "High-performance interactive system monitor for NVIDIA DGX systems — GPU, CPU, memory, disk and network in a beautiful TUI.",
+          "ja": "NVIDIA DGX 向けの高性能インタラクティブシステムモニター。GPU・CPU・メモリ・ディスク・ネットワークを美しい TUI で表示。"
+        }
+      },
+      {
+        "name": "DLsite-Classification-Manager",
+        "url": "https://github.com/DennySORA/DLsite-Classification-Manager",
+        "language": "Python",
+        "description": {
+          "zh-hant": "高效率非同步 DLsite 作品分類與管理工具：現代網頁介面、自動 metadata 爬取與智慧搜尋。",
+          "en": "High-performance async DLsite work classification and management tool with a modern web interface, automatic metadata crawling and intelligent search.",
+          "ja": "高性能な非同期 DLsite 作品の分類・管理ツール。モダンな Web インターフェース、自動メタデータクローリング、インテリジェント検索を搭載。"
+        }
+      },
+      {
+        "name": "Chinese_Convert",
+        "url": "https://github.com/DennySORA/Chinese_Convert",
+        "language": null,
+        "description": {
+          "zh-hant": "批次轉換多檔案、多類型的簡體與繁體中文。",
+          "en": "Batch conversion between simplified and traditional Chinese across many files and types.",
+          "ja": "複数ファイル・複数タイプの中国語を簡体字と繁体字の間で一括変換。"
+        }
+      },
+      {
+        "name": "httpulse",
+        "url": "https://github.com/DennySORA/httpulse",
+        "language": "Rust",
+        "description": {
+          "zh-hant": "即時 HTTP 延遲與網路品質監控的互動式 TUI——DNS、TLS、TTFB、RTT、抖動等指標。",
+          "en": "Real-time HTTP latency & network quality monitoring with an interactive TUI — DNS, TLS, TTFB, RTT, jitter and more.",
+          "ja": "リアルタイム HTTP レイテンシとネットワーク品質を監視するインタラクティブ TUI。DNS、TLS、TTFB、RTT、ジッターなどを追跡。"
+        }
+      }
+    ],
+    "community": [
+      {
+        "title": {
+          "zh-hant": "硬核 AI 交流社 — Facebook 社團管理員",
+          "en": "硬核 AI 交流社 — Facebook Group Admin",
+          "ja": "硬核 AI 交流社 — Facebook グループ管理者"
+        },
+        "items": [
+          {
+            "zh-hant": "社團管理員，負責 AI 論文交流與討論。",
+            "en": "Admin of a Facebook group for AI paper exchange and discussion.",
+            "ja": "AI 論文の交流と議論を行う Facebook グループの管理者。"
+          }
+        ],
+        "link": {
+          "label": "facebook.com/groups/915613384421068",
+          "url": "https://www.facebook.com/groups/915613384421068"
+        }
+      },
+      {
+        "title": {
+          "zh-hant": "AI 論文日報 — paper.dennysora.me",
+          "en": "AI Paper Daily — paper.dennysora.me",
+          "ja": "AI 論文デイリー — paper.dennysora.me"
+        },
+        "items": [
+          {
+            "zh-hant": "每日收集 arXiv（11 個分類＋關鍵字查詢）、Hugging Face Daily Papers 與 AI 部落格論文。",
+            "en": "Collects papers daily from arXiv (11 categories + keyword queries), Hugging Face Daily Papers, and AI blogs.",
+            "ja": "arXiv（11 カテゴリ＋キーワード検索）、Hugging Face Daily Papers、AI ブログから論文を毎日収集。"
+          },
+          {
+            "zh-hant": "以 LLM 評分排序，精選論文翻譯為台灣繁體中文。",
+            "en": "LLM-scored and ranked; selected papers translated to Traditional Chinese.",
+            "ja": "LLM でスコアリング・ランキングし、注目論文を台湾繁体中国語に翻訳。"
+          },
+          {
+            "zh-hant": "自動發布日報／週報／月報至 GitHub Pages。",
+            "en": "Daily / weekly / monthly reports published automatically via GitHub Pages.",
+            "ja": "日次／週次／月次レポートを GitHub Pages に自動公開。"
+          }
+        ],
+        "link": {
+          "label": "paper.dennysora.me",
+          "url": "https://paper.dennysora.me"
+        }
+      }
+    ],
+    "writing": [
+      {
+        "title": {
+          "zh-hant": "無趣的密碼學，有趣的加密！",
+          "en": "Boring Cryptography, Fun Encryption!",
+          "ja": "退屈な暗号学、面白い暗号化！"
+        },
+        "url": "https://ithelp.ithome.com.tw/users/20130205/ironman/3517",
+        "host": "ithelp.ithome.com.tw"
+      },
+      {
+        "title": {
+          "zh-hant": "WebRTC 介紹",
+          "en": "WebRTC Introduction",
+          "ja": "WebRTC 入門"
+        },
+        "url": "https://docs.google.com/presentation/d/1nrHkMwLe7SLEI3aPvYRaDyRPn18H2lghtUKnmVrkoWU",
+        "host": "Google Slides"
+      }
+    ]
+  },
+  "contact": {
+    "email": "dennysora.main@gmail.com",
+    "github": "https://github.com/DennySORA"
+  }
+}

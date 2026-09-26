@@ -1,0 +1,22 @@
+[
+  {
+    "id": "essay",
+    "label": { "zh-hant": "工程隨筆", "en": "Essay", "ja": "エッセイ" }
+  },
+  {
+    "id": "tutorial",
+    "label": { "zh-hant": "教學", "en": "Tutorial", "ja": "チュートリアル" }
+  },
+  {
+    "id": "research-note",
+    "label": {
+      "zh-hant": "研究筆記",
+      "en": "Research note",
+      "ja": "研究ノート"
+    }
+  },
+  {
+    "id": "case-study",
+    "label": { "zh-hant": "實作紀錄", "en": "Case study", "ja": "実装記録" }
+  }
+]

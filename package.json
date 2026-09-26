@@ -10,7 +10,7 @@
     "dev": "react-router dev --host 127.0.0.1",
     "prepare": "react-router typegen",
     "content:check": "node scripts/check-content.ts",
-    "build": "pnpm content:check && react-router build && node scripts/finalize-build.ts && node scripts/check-artifact.ts",
+    "build": "pnpm content:check && react-router build && node scripts/finalize-build.ts && node scripts/build-search.ts && node scripts/check-artifact.ts",
     "preview": "node scripts/serve.ts",
     "typecheck": "react-router typegen && tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
@@ -23,11 +23,14 @@
   },
   "dependencies": {
     "@react-router/node": "8.4.0",
+    "katex": "0.18.9",
     "marked": "18.0.13",
+    "marked-footnote": "1.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-router": "8.4.0",
     "sanitize-html": "2.17.7",
+    "shiki": "4.4.3",
     "zod": "4.6.5"
   },
   "devDependencies": {
@@ -43,6 +46,7 @@
     "eslint": "9.39.5",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "7.1.1",
+    "pagefind": "1.5.2",
     "prettier": "3.9.8",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3",

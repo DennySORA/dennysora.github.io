@@ -1,0 +1,37 @@
+[
+  {
+    "id": "engineering",
+    "label": {
+      "zh-hant": "工程思考",
+      "en": "Engineering",
+      "ja": "エンジニアリング"
+    },
+    "description": {
+      "zh-hant": "工程原則、取捨與做事方法的長文與筆記。",
+      "en": "Essays and notes on engineering principles, trade-offs and ways of working.",
+      "ja": "エンジニアリングの原則、トレードオフ、仕事の進め方についての文章とノート。"
+    }
+  },
+  {
+    "id": "systems",
+    "label": {
+      "zh-hant": "系統與雲端",
+      "en": "Systems & cloud",
+      "ja": "システムとクラウド"
+    },
+    "description": {
+      "zh-hant": "後端、雲端平台與生產系統的實作紀錄。",
+      "en": "Implementation notes on backend services, cloud platforms and production systems.",
+      "ja": "バックエンド、クラウド基盤、本番システムの実装記録。"
+    }
+  },
+  {
+    "id": "ai",
+    "label": { "zh-hant": "AI 與 LLM", "en": "AI & LLMs", "ja": "AI と LLM" },
+    "description": {
+      "zh-hant": "語言模型、推論與 Agent 系統的研究筆記與實作。",
+      "en": "Research notes and implementation work on language models, inference and agent systems.",
+      "ja": "言語モデル、推論、エージェントシステムの研究ノートと実装。"
+    }
+  }
+]

@@ -28,26 +28,3 @@ export function requireEdition(post: Post, locale: Locale): Edition {
   if (!edition) throw new Error(`Missing edition: ${post.id}/${locale}`);
   return edition;
 }
-export const topicNames = {
-  ai: { 'zh-hant': 'AI 與模型', en: 'AI & Models', ja: 'AI とモデル' },
-  engineering: {
-    'zh-hant': '工程思考',
-    en: 'Engineering',
-    ja: 'エンジニアリング',
-  },
-  systems: { 'zh-hant': '系統與平台', en: 'Systems', ja: 'システム' },
-};
-export function discussionUrl(
-  number: number | null,
-  repository: string | null,
-): string | null {
-  if (
-    !repository ||
-    !/^DennySORA\/[A-Za-z0-9_.-]+$/.test(repository) ||
-    !number ||
-    !Number.isSafeInteger(number) ||
-    number < 1
-  )
-    return null;
-  return `https://github.com/${repository}/discussions/${number}`;
-}

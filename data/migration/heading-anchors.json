@@ -1,0 +1,281 @@
+{
+  "engineering-principles": {
+    "zh-hant": [
+      {
+        "id": "prin-h",
+        "text": "工程原則",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "理解抽象層之下的機制",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "部署是模型設計的一部分",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "先量測，再最佳化",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "資安是架構性的",
+        "level": 3
+      },
+      {
+        "id": "section-6",
+        "text": "明確化取捨",
+        "level": 3
+      },
+      {
+        "id": "how-h",
+        "text": "工作方式",
+        "level": 2
+      }
+    ],
+    "en": [
+      {
+        "id": "prin-h",
+        "text": "Engineering Principles",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "Understand the Abstraction Below",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "Deployment Is Part of Model Design",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "Measure Before Optimizing",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "Security Is Architectural",
+        "level": 3
+      },
+      {
+        "id": "section-6",
+        "text": "Make Trade-offs Explicit",
+        "level": 3
+      },
+      {
+        "id": "how-h",
+        "text": "How I Work",
+        "level": 2
+      }
+    ],
+    "ja": [
+      {
+        "id": "prin-h",
+        "text": "エンジニアリング原則",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "抽象化の下にある仕組みを理解する",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "デプロイはモデル設計の一部",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "最適化の前に計測する",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "セキュリティはアーキテクチャの一部",
+        "level": 3
+      },
+      {
+        "id": "section-6",
+        "text": "トレードオフを明確にする",
+        "level": 3
+      },
+      {
+        "id": "how-h",
+        "text": "仕事の進め方",
+        "level": 2
+      }
+    ]
+  },
+  "production-systems": {
+    "zh-hant": [
+      {
+        "id": "prod-h",
+        "text": "生產實績",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "Agent 編排平台",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "雲端基礎設施最佳化",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "AI 資安與資料保護",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "平台工程",
+        "level": 3
+      }
+    ],
+    "en": [
+      {
+        "id": "prod-h",
+        "text": "Production Evidence",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "Agent Orchestration Platform",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "Cloud Infrastructure Optimization",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "AI Security & Data Protection",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "Platform Engineering",
+        "level": 3
+      }
+    ],
+    "ja": [
+      {
+        "id": "prod-h",
+        "text": "本番実績",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "エージェントオーケストレーションプラットフォーム",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "クラウドインフラ最適化",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "AI セキュリティとデータ保護",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "プラットフォームエンジニアリング",
+        "level": 3
+      }
+    ]
+  },
+  "trilingual-model-research": {
+    "zh-hant": [
+      {
+        "id": "rnd-h",
+        "text": "重點研究與開發",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "從零訓練的三語語言模型",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "自適應成長式 Transformer",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "日語發音與韻律評估",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "正在探索",
+        "level": 2
+      }
+    ],
+    "en": [
+      {
+        "id": "rnd-h",
+        "text": "Selected R&D",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "TriLingual Language Model from Scratch",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "Adaptive & Growing Transformer",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "Japanese Pronunciation & Prosody Evaluation",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "Currently Exploring",
+        "level": 2
+      }
+    ],
+    "ja": [
+      {
+        "id": "rnd-h",
+        "text": "研究・開発トピック",
+        "level": 2
+      },
+      {
+        "id": "section-2",
+        "text": "ゼロから学習する三言語モデル",
+        "level": 3
+      },
+      {
+        "id": "section-3",
+        "text": "適応型・成長型 Transformer",
+        "level": 3
+      },
+      {
+        "id": "section-4",
+        "text": "日本語の発音・韻律評価",
+        "level": 3
+      },
+      {
+        "id": "section-5",
+        "text": "現在探究中",
+        "level": 2
+      }
+    ]
+  }
+}

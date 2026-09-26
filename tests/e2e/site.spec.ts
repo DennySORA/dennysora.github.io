@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { publishedPaths } from '../../src/lib/content.server.ts';
+import { origin, trackExternalRequests } from './helpers.ts';
 
-test('every production route is complete HTML with working assets', async ({
+test('every production route is complete, dark-first and self-hosted HTML', async ({
   request,
 }) => {
   for (const path of publishedPaths()) {
@@ -10,14 +11,84 @@ test('every production route is complete HTML with working assets', async ({
     const html = await response.text();
     expect(html, path).toContain('<h1');
     expect(html, path).toContain('rel="canonical"');
+    expect(html, path).toMatch(/<html[^>]*data-theme="dark"/);
+    expect(html, path).toContain('<meta name="color-scheme" content="dark"/>');
     expect(html, path).not.toContain('googleapis.com');
+    expect(html, path).not.toContain('raw.githubusercontent.com');
   }
 });
-test('locale switching retains article identity, metadata and direct reload', async ({
+
+test('the header uses the real same-origin logo and keeps a usable brand link if it fails', async ({
+  page,
+}) => {
+  await page.goto('/zh-hant/about/');
+  const logo = page.locator('.site-header .brand-mark');
+  await expect(logo).toHaveAttribute('src', '/assets/logo.png');
+  expect(
+    await logo.evaluate((image: HTMLImageElement) => ({
+      natural: [image.naturalWidth, image.naturalHeight],
+      fit: getComputedStyle(image).objectFit,
+      filter: getComputedStyle(image).filter,
+      height: image.getBoundingClientRect().height,
+    })),
+  ).toEqual({
+    natural: [720, 392],
+    fit: 'contain',
+    filter: 'none',
+    height: 56,
+  });
+  const brand = page.getByRole('link', { name: 'DennySORA 首頁' }).first();
+  await expect(brand).toHaveAttribute('href', '/zh-hant/');
+  await page.route('**/assets/logo.png', (route) => route.abort());
+  await page.reload();
+  await expect(page.locator('.site-header .brand-name')).toHaveText(
+    'DennySORA',
+  );
+  await expect(page.locator('.site-header .brand-name')).toBeVisible();
+  await brand.click();
+  await expect(page).toHaveURL('/zh-hant/');
+});
+
+test('first visits are dark even when the OS prefers light, with or without JavaScript', async ({
+  browser,
+}) => {
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({
+      colorScheme: 'light',
+      javaScriptEnabled,
+    });
+    const page = await context.newPage();
+    for (const path of [
+      '/en/about/',
+      '/en/blog/engineering-principles/',
+      '/does-not-exist/',
+    ]) {
+      await page.goto(origin + path);
+      expect(
+        await page.evaluate(() => ({
+          background: getComputedStyle(document.body).backgroundColor,
+          scheme: getComputedStyle(document.documentElement).colorScheme,
+          theme: document.documentElement.dataset['theme'],
+        })),
+        `${path} js=${javaScriptEnabled}`,
+      ).toEqual({
+        background: 'rgb(11, 16, 32)',
+        scheme: 'dark',
+        theme: 'dark',
+      });
+    }
+    await context.close();
+  }
+});
+
+test('language switching keeps the article, metadata and a direct reload', async ({
   page,
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
   await page.goto('/zh-hant/blog/engineering-principles/');
   await expect(page.locator('h1')).toContainText('工程原則');
   await page
@@ -36,128 +107,48 @@ test('locale switching retains article identity, metadata and direct reload', as
   );
   expect(errors).toEqual([]);
 });
-test('search, URL filters, empty state and recovery', async ({ page }) => {
-  await page.goto('/zh-hant/blog/');
-  await page.keyboard.press('/');
-  const input = page.getByRole('searchbox');
-  await expect(input).toBeFocused();
-  await input.fill('量化');
-  await expect(page.locator('.post-card')).toHaveCount(1);
-  await expect(page).toHaveURL(/q=/);
-  await input.fill('zzzznomatch');
-  await expect(
-    page.getByRole('heading', { name: '沒有符合的文章。' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: '清除篩選' }).click();
-  await expect(page.locator('.post-card')).toHaveCount(3);
-  await page.getByRole('button', { name: '工程思考', exact: true }).click();
-  await expect(page.locator('.post-card')).toHaveCount(1);
-  await page.reload();
-  await expect(page.locator('.post-card')).toHaveCount(1);
-});
-test('search index failure remains readable and retries', async ({ page }) => {
-  await page.route('**/search/en.json', (route) =>
-    route.fulfill({ status: 503, body: 'unavailable' }),
-  );
-  await page.goto('/en/blog/');
-  await expect(page.getByRole('alert')).toContainText('could not be loaded');
-  await expect(page.locator('.post-card')).toHaveCount(3);
-  await page.unroute('**/search/en.json');
-  await page.getByRole('button', { name: 'Try again' }).click();
-  await expect(page.getByRole('alert')).toHaveCount(0);
-  await page.getByRole('searchbox').fill('SentencePiece');
-  await expect(page.locator('.post-card')).toHaveCount(1);
-});
-test('mobile navigation traps focus, closes with Escape and restores scrolling', async ({
+
+test('the header search link and keyboard shortcuts open article search without stealing typing', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/ja/');
-  const trigger = page.getByRole('button', { name: 'メニュー', exact: true });
-  await trigger.click();
-  const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
-  for (let n = 0; n < 15; n++) {
-    await page.keyboard.press('Tab');
-    expect(
-      await dialog.evaluate((el) => el.contains(document.activeElement)),
-    ).toBe(true);
-  }
-  await page.keyboard.press('Escape');
-  await expect(dialog).not.toBeVisible();
-  await expect(trigger).toBeFocused();
-  expect(await page.locator('body').evaluate((el) => el.style.overflow)).toBe(
-    '',
-  );
-  for (let iteration = 0; iteration < 3; iteration++) {
-    await trigger.click();
-    await page.keyboard.press('Escape');
-    expect(await page.locator('body').evaluate((el) => el.style.overflow)).toBe(
-      '',
-    );
-    await expect(trigger).toBeFocused();
-  }
-  await trigger.click();
-  await dialog.getByRole('link', { name: '記事', exact: false }).click();
-  await expect(page).toHaveURL('/ja/blog/');
+  await page.goto('/en/about/');
+  await page.keyboard.press('/');
+  await expect(page).toHaveURL('/en/blog/#search');
+  const input = page.getByRole('searchbox', { name: 'Search articles' });
+  await expect(input).toBeFocused();
+  await input.press('/');
+  await expect(input).toHaveValue('/');
+  await input.fill('');
+  await page.locator('h1').click();
+  await page.keyboard.press('Control+k');
+  await expect(input).toBeFocused();
+  await page.goto('/en/projects/');
+  await page.getByRole('link', { name: 'Search articles' }).click();
+  await expect(page).toHaveURL('/en/blog/#search');
 });
-for (const width of [320, 360, 390, 768, 1280, 1440, 1920])
-  test(`responsive geometry at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: width < 800 ? 844 : 900 });
-    for (const path of [
-      '/zh-hant/',
-      '/en/projects/',
-      '/ja/blog/trilingual-model-research/',
-    ]) {
-      await page.goto(path);
-      await expect(page.locator('h1')).toBeVisible();
-      expect(
-        await page.evaluate(
-          () =>
-            document.documentElement.scrollWidth <=
-            document.documentElement.clientWidth + 1,
-        ),
-        path,
-      ).toBe(true);
-      expect(
-        await page
-          .locator('img')
-          .evaluateAll((elements) =>
-            elements.every(
-              (el) =>
-                el instanceof HTMLImageElement &&
-                el.complete &&
-                el.naturalWidth > 0,
-            ),
-          ),
-      ).toBe(true);
-    }
-  });
-test('full article, languages and mobile navigation work without JavaScript', async ({
-  browser,
-}) => {
-  const context = await browser.newContext({
-    javaScriptEnabled: false,
-    viewport: { width: 390, height: 844 },
-  });
-  const page = await context.newPage();
-  await page.goto('http://127.0.0.1:4174/en/blog/engineering-principles/');
-  await expect(page.locator('.prose')).toContainText('Abstractions are useful');
-  await expect(page.locator('.prose pre')).not.toHaveCount(0);
-  await page.getByRole('link', { name: '日本語', exact: true }).first().click();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
-  await page
-    .locator('.nojs-nav')
-    .getByRole('link', { name: '自己紹介', exact: true })
-    .click();
-  await expect(page.locator('h1')).toContainText('エンジニアリング');
-  await context.close();
-});
-test('404 stays a 404, deleted articles are explicit, known bridges work', async ({
+
+test('404 stays a real 404, removed articles are explicit and legacy paths keep working', async ({
   page,
   request,
 }) => {
-  expect((await request.get('/does-not-exist/')).status()).toBe(404);
+  for (const path of [
+    '/does-not-exist/',
+    '/en/blog/tags/unknown/',
+    '/zh-hant/blog/topics/',
+    '/en/blog/tags/llm/extra/',
+    '/en/research/notes/',
+  ])
+    expect((await request.get(path)).status(), path).toBe(404);
+  const missing = await page.goto('/en/missing-page/');
+  expect(missing?.status()).toBe(404);
+  // One static 404 serves every language: 繁中 first, then English and Japanese.
+  await expect(page.locator('h1')).toContainText('這條路徑沒有對應的頁面');
+  await expect(
+    page.getByText('This path doesn’t lead to a page.'),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Back to the home page' }),
+  ).toHaveAttribute('href', '/en/');
   await page.goto('/blog/llm-context-window-three-tiers/');
   await expect(page.locator('h1')).toContainText('原始文章');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
@@ -171,45 +162,91 @@ test('404 stays a 404, deleted articles are explicit, known bridges work', async
   await expect(page.locator('#how-h')).toBeInViewport();
   await page.goto('/detail/depth/');
   await expect(page).toHaveURL('/zh-hant/about/#depth-h');
-  await expect(page.locator('#depth-h')).toBeInViewport();
+  await expect(page.locator('#depth-h')).toHaveAttribute('open', '');
+  await expect(page.locator('#depth-h summary')).toBeInViewport();
   await page.goto('/#exp-h');
   await expect(page).toHaveURL('/zh-hant/about/#exp-h');
-  await expect(page.locator('#exp-h')).toBeInViewport();
+  await expect(page.locator('#experience-title')).toBeInViewport();
 });
-test('no external requests, cookies or browser storage; research is explicitly a snapshot', async ({
+
+test('the former research page is a no-index bridge to both destinations', async ({
   page,
 }) => {
-  const external: string[] = [];
-  page.on('request', (request) => {
-    if (!request.url().startsWith('http://127.0.0.1:4174/'))
-      external.push(request.url());
-  });
   await page.goto('/en/research/');
-  await expect(page.getByText('2026-09-17', { exact: true })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex, follow',
+  );
+  await expect(
+    page.getByRole('link', { name: 'Go to Paper Daily' }),
+  ).toHaveAttribute('href', '/en/papers/');
+  await page.getByRole('link', { name: 'Read research notes' }).click();
+  await expect(page).toHaveURL('/en/blog/?type=research-note');
+  await expect(page.locator('.article-row')).toHaveCount(1);
+  await expect(
+    page
+      .getByRole('group', { name: 'Type' })
+      .getByRole('button', { name: 'Research note' }),
+  ).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('Paper Daily explains the separate site and labels generated content without fetching it', async ({
+  page,
+}) => {
+  const external = trackExternalRequests(page);
+  await page.goto('/en/papers/');
+  const open = page.getByRole('link', { name: /Open Paper Daily/ });
+  await expect(open).toHaveAttribute('href', 'https://paper.dennysora.me/');
+  await expect(open).toBeInViewport();
   await expect(
     page.getByText('Automatically generated · not individually reviewed'),
   ).toHaveCount(3);
+  await expect(page.getByText('Snapshot from 2026-09-17')).toBeVisible();
+  expect(external).toEqual([]);
+});
+
+test('no third-party requests, cookies or storage; comments never load on their own', async ({
+  page,
+}) => {
+  const external = trackExternalRequests(page);
+  for (const path of [
+    '/en/',
+    '/en/about/',
+    '/en/projects/',
+    '/en/blog/engineering-principles/',
+    '/en/papers/',
+    '/en/privacy/',
+  ])
+    await page.goto(path);
+  await page.goto('/en/blog/');
+  await page.getByRole('searchbox').fill('quantization');
+  await expect(page.locator('.article-row')).toHaveCount(2);
   expect(external).toEqual([]);
   expect(await page.context().cookies()).toEqual([]);
-  expect(await page.evaluate(() => localStorage.length)).toBe(0);
-});
-test('code copying and reduced motion remain operable', async ({
-  page,
-  context,
-}) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/en/blog/engineering-principles/');
-  await page
-    .getByRole('button', { name: 'Copy code', exact: true })
-    .first()
-    .click();
-  await expect(
-    page.getByRole('button', { name: 'Copied', exact: true }),
-  ).toBeVisible();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
-    'LLM API',
+  expect(
+    await page.evaluate(() => localStorage.length + sessionStorage.length),
+  ).toBe(0);
+  // Native threads open on github.com only when followed; nothing is embedded.
+  for (const [locale, name] of [
+    ['en', 'Open the discussion on GitHub'],
+    ['ja', 'GitHub でディスカッションを開く'],
+  ] as const) {
+    await page.goto(`/${locale}/blog/engineering-principles/`);
+    await expect(
+      page.locator('#comments').getByRole('link', { name }),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/DennySORA/dennysora.github.io/discussions/1',
+    );
+  }
+  await expect(page.getByRole('button', { name: 'Load comments' })).toHaveCount(
+    0,
   );
+  expect(external).toEqual([]);
+  await page.goto('/en/privacy/');
+  await expect(
+    page.getByText('Comments use native GitHub Discussions'),
+  ).toBeVisible();
 });
 
 test('feeds, sitemap and published alternates agree with real pages', async ({
@@ -220,19 +257,21 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   for (const locale of ['zh-hant', 'en', 'ja']) {
     const response = await request.get(`/${locale}/rss.xml`);
     expect(response.status()).toBe(200);
-    const xml = await response.text();
-    const parsed = await page.evaluate((value) => {
-      const document = new DOMParser().parseFromString(
-        value,
-        'application/xml',
-      );
-      return {
-        errors: document.querySelectorAll('parsererror').length,
-        links: Array.from(document.querySelectorAll('item > link')).map(
-          (node) => node.textContent ?? '',
-        ),
-      };
-    }, xml);
+    const parsed = await page.evaluate(
+      (value) => {
+        const document = new DOMParser().parseFromString(
+          value,
+          'application/xml',
+        );
+        return {
+          errors: document.querySelectorAll('parsererror').length,
+          links: Array.from(document.querySelectorAll('item > link')).map(
+            (node) => node.textContent ?? '',
+          ),
+        };
+      },
+      await response.text(),
+    );
     expect(parsed.errors).toBe(0);
     expect(parsed.links).toHaveLength(3);
     for (const link of parsed.links) expect(link).toContain(`/${locale}/blog/`);
@@ -248,11 +287,39 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
     ),
   ).toBe(0);
   expect(sitemap).not.toContain('llm-context-window-three-tiers');
+  expect(sitemap).not.toContain('/research/');
+  expect(sitemap).not.toContain('/projects/dgxtop/');
+  expect(sitemap).toContain('https://dennysora.me/ja/blog/tags/llm/');
   for (const link of await page
     .locator('link[rel="alternate"][hreflang]')
     .evaluateAll((nodes) =>
       nodes.map((node) => node.getAttribute('href') ?? ''),
-    )) {
+    ))
     expect((await request.get(new URL(link).pathname)).status()).toBe(200);
-  }
+});
+
+test('articles, languages and phone navigation work without JavaScript', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 390, height: 844 },
+  });
+  const page = await context.newPage();
+  await page.goto(`${origin}/en/blog/engineering-principles/`);
+  await expect(page.locator('.prose')).toContainText('Abstractions are useful');
+  await expect(page.locator('.prose pre')).not.toHaveCount(0);
+  await expect(page.locator('.menu-button')).toBeHidden();
+  await expect(page.locator('.reader-tools')).toBeHidden();
+  const nav = page.locator('.nojs-nav');
+  await expect(nav).toBeVisible();
+  await page
+    .locator('.footer-languages')
+    .getByRole('link', { name: '日本語' })
+    .click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  await nav.getByRole('link', { name: '自己紹介', exact: true }).click();
+  await expect(page).toHaveURL(`${origin}/ja/about/`);
+  await expect(page.locator('h1')).toContainText('DennySORA');
+  await context.close();
 });

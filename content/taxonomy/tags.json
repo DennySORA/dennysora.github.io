@@ -1,0 +1,73 @@
+[
+  {
+    "id": "architecture",
+    "label": {
+      "zh-hant": "架構設計",
+      "en": "Architecture",
+      "ja": "アーキテクチャ"
+    },
+    "aliases": {
+      "zh-hant": ["架構", "系統設計", "architecture"],
+      "en": ["system design", "design trade-offs"],
+      "ja": ["設計", "architecture"]
+    }
+  },
+  {
+    "id": "llm",
+    "label": { "zh-hant": "LLM", "en": "LLM", "ja": "LLM" },
+    "aliases": {
+      "zh-hant": ["大型語言模型", "語言模型"],
+      "en": ["large language model", "language model"],
+      "ja": ["大規模言語モデル", "言語モデル"]
+    }
+  },
+  {
+    "id": "security",
+    "label": { "zh-hant": "資安", "en": "Security", "ja": "セキュリティ" },
+    "aliases": {
+      "zh-hant": ["資訊安全", "security"],
+      "en": ["infosec"],
+      "ja": ["情報セキュリティ", "security"]
+    }
+  },
+  {
+    "id": "quantization",
+    "label": { "zh-hant": "量化", "en": "Quantization", "ja": "量子化" },
+    "aliases": {
+      "zh-hant": ["quantization", "PTQ"],
+      "en": ["PTQ", "量化"],
+      "ja": ["quantization", "PTQ"]
+    }
+  },
+  {
+    "id": "inference",
+    "label": { "zh-hant": "推論", "en": "Inference", "ja": "推論" },
+    "aliases": {
+      "zh-hant": ["inference", "serving"],
+      "en": ["serving", "推論"],
+      "ja": ["inference", "サービング"]
+    }
+  },
+  {
+    "id": "agent",
+    "label": { "zh-hant": "Agent", "en": "Agents", "ja": "エージェント" },
+    "aliases": {
+      "zh-hant": ["代理", "agents"],
+      "en": ["agentic AI"],
+      "ja": ["agent", "エージェンティック"]
+    }
+  },
+  {
+    "id": "cloud",
+    "label": {
+      "zh-hant": "雲端平台",
+      "en": "Cloud platforms",
+      "ja": "クラウド基盤"
+    },
+    "aliases": {
+      "zh-hant": ["雲端", "Kubernetes", "cloud"],
+      "en": ["Kubernetes", "cloud infrastructure"],
+      "ja": ["クラウド", "Kubernetes", "cloud"]
+    }
+  }
+]
