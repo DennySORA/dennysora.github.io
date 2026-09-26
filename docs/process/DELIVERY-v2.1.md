@@ -78,9 +78,4 @@ Chrome 實際檢視（production build，loopback 預覽）：1280×800、1440×
 
 ## 需要擁有者決定或審閱
 
-- 是否接受 giscus 服務與 App 權限（規格第 13 節的服務決策）。接受的話，在 GitHub 網頁只為本 repository 安裝 giscus App，再依[寫作指南](../CONTENT_WORKFLOW.md#留言)把設定切成 `giscus`，之後人工驗收 C04、C06。
-- 至少一篇專案完整案例的內容。
-- About 新文案（定位、簡介、能力說明、經歷摘要）：繁中依交接包；英文與日文由既有公開譯文改寫，尚未經作者審閱。
-- Tag 與寫作類型的標注。
-- Ops-Tools、Image-Tools、Auto-Video-Organize 已確認是 private，未列入新 About；改為公開後可依[遷移對照](../../data/migration/about-sections.json)恢復。
-- `PROJECT_AGENT.md` 仍描述改版前的單頁 HTML 架構，未由本次修改。
+待決定與待審閱的事項、何時部署，以及未 commit 的本機檔案，集中在 [FOLLOW-UP-v2.1.md](FOLLOW-UP-v2.1.md)，處理後在該文件更新。
