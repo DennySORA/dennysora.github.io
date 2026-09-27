@@ -59,7 +59,7 @@ export function ProjectActions({
   );
 }
 
-/** Compact card used on Home and About. */
+/** Compact card used on the README. */
 export function ProjectTeaser({
   project,
   locale,
@@ -70,10 +70,13 @@ export function ProjectTeaser({
   const t = dictionaries[locale];
   return (
     <article className="project-teaser">
+      <div className="project-teaser-head">
+        <Icon name="package" size={18} />
+        <h3>{project.title}</h3>
+      </div>
       <p className="fine entity-kind">
         {categoryLabel(project.category, locale)} · {project.domain}
       </p>
-      <h3>{project.title}</h3>
       <p>{project.summary}</p>
       <div className="action-row">
         <a className="text-action resource-link" href={project.repository}>

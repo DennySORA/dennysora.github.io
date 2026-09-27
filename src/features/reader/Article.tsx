@@ -1,5 +1,6 @@
 import type { ViewData } from '../../app/page.tsx';
 import { taxonomyMaps } from '../../components/ArticleListItem.tsx';
+import { EndOfBuffer } from '../../components/Buffer.tsx';
 import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { Prose } from '../../components/Prose.tsx';
@@ -52,7 +53,7 @@ export function Article({
               aria-labelledby={pageIds.articleTitle}
             >
               <header className="reader-header">
-                <p className="eyebrow entity-kind">
+                <p className="ln eyebrow entity-kind">
                   {topic ? (
                     <span data-pagefind-filter={`topic:${topic}`}>
                       {maps.topics.get(topic)}
@@ -63,11 +64,11 @@ export function Article({
                     {maps.types.get(post.contentType)}
                   </span>
                 </p>
-                <h1 id={pageIds.articleTitle} className="article-title">
+                <h1 id={pageIds.articleTitle} className="ln article-title">
                   {edition.title}
                 </h1>
-                <p className="article-lede">{edition.summary}</p>
-                <p className="article-byline" data-pagefind-ignore="index">
+                <p className="ln article-lede">{edition.summary}</p>
+                <p className="ln article-byline" data-pagefind-ignore="index">
                   <span>{post.author}</span>
                   <span aria-hidden="true">·</span>
                   <span>
@@ -97,7 +98,7 @@ export function Article({
                   </span>
                 </p>
                 {post.tagIds.length ? (
-                  <ul className="tag-links" aria-label={t.tags}>
+                  <ul className="ln tag-links" aria-label={t.tags}>
                     {post.tagIds.map((id) => (
                       <li key={id}>
                         <a
@@ -137,6 +138,7 @@ export function Article({
               </header>
               <Prose html={body.html} locale={locale} />
             </article>
+            <EndOfBuffer />
 
             <aside className="source-note" aria-labelledby="source-title">
               <h2 id="source-title" className="source-title">
@@ -167,7 +169,7 @@ export function Article({
                   <span lang="zh-Hant">· {author.publicName}</span>
                 </p>
                 <p>{t.authorNote}</p>
-                <a className="text-action" href={`/${locale}/about/`}>
+                <a className="text-action" href={`/${locale}/`}>
                   {t.aboutAuthor}
                   <Icon name="arrow" size={18} />
                 </a>

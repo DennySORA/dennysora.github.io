@@ -71,7 +71,7 @@ gh api graphql \
 
 ## 自介與專案
 
-About 頁由 [`content/profile/profile.json`](../content/profile/profile.json) 驅動，不再整頁渲染 Markdown。`content/profile/*.md` 保留為遷移來源；工作經歷、技能、技術深度、興趣、開源專案、社群與寫作的每個項目都逐字保存在 JSON 中，單元測試會比對兩者。舊章節的去向與刻意不公開的項目（版本號、未附查詢時間的星數、目前無法公開存取的 repository）記在 [`data/migration/about-sections.json`](../data/migration/about-sections.json)。
+各語言首頁（`/<locale>/`，以 `README.md` 呈現）由 [`content/profile/profile.json`](../content/profile/profile.json) 驅動：YAML 式的基本資料與大型 Logo，接著是能力、代表作品、經歷、目前探索、最近的文章、完整紀錄與聯絡。舊的 `/<locale>/about/` 只是轉址頁，會保留 `#exp-h` 等錨點轉到首頁。首頁不整頁渲染 Markdown。`content/profile/*.md` 保留為遷移來源；工作經歷、技能、技術深度、興趣、開源專案、社群與寫作的每個項目都逐字保存在 JSON 中，單元測試會比對兩者。舊章節的去向與刻意不公開的項目（版本號、未附查詢時間的星數、目前無法公開存取的 repository）記在 [`data/migration/about-sections.json`](../data/migration/about-sections.json)。
 
 新增能力敘述時，每一項都要有真實證據（文章、專案或經歷），並只使用「工作實務／個人實作／學習探索」三種標記。
 
@@ -79,22 +79,11 @@ About 頁由 [`content/profile/profile.json`](../content/profile/profile.json) �
 
 ## 品牌素材
 
-Header／Footer 使用 `assets/logo.png` 原檔，不重畫、不染色、不裁切。[`data/brand-assets.json`](../data/brand-assets.json) 記錄每個素材的 Git blob、大小與尺寸；建置時的產物檢查會確認發布的檔案與紀錄一致，也禁止引用 GitHub raw 連結。3 MB 的 `logo_full.png` 只保留在 repo，不發布。
+標題列與頁尾使用 `assets/logo.png` 原檔，不重畫、不染色、不裁切。首頁的大型 Logo 是 `assets/logo-hero.webp`（1x）與 `assets/logo-hero@2x.webp`（2x）：由 3 MB 的 `logo_full.png` 只修掉左右透明欄、縮放並轉成 WebP，同一個人像，未改色或重繪。[`data/brand-assets.json`](../data/brand-assets.json) 記錄每個素材的 Git blob、大小、尺寸與衍生方式；建置時的產物檢查會確認發布的檔案與紀錄一致，也禁止引用 GitHub raw 連結。`logo_full.png` 本身只保留在 repo，不發布。
 
-## 論文日報快照
+## 論文日報
 
-「論文日報」頁（`/<locale>/papers/`）介紹外站並顯示一份固定快照；舊的 `/<locale>/research/` 改為不進索引的導引頁，分別連到研究筆記與論文日報。快照使用公開 metadata，顯示來源真實時間與「自動生成・未逐篇人工審閱」標記。網站建置及瀏覽時完全離線讀快照，不會啟動生成器或碰觸 Nano、state、資料庫或 credentials。
-
-更新時先唯讀核對 `DennySORA/daily-paper-report` 的 `gh-pages` 固定 commit；下載該 commit 的 `api/daily.json` 至本機暫存，然後執行：
-
-```sh
-pnpm research:import /tmp/public-daily.json VERIFIED_40_CHARACTER_COMMIT
-pnpm verify
-```
-
-第二個參數需替換為實際核對的 40 字元 SHA。匯入器只投影前三筆 top5 的核准 metadata，拒絕無效 schema、非核准 URL、空資料與超過 5 MB 的輸入。驗證完成後才原子替換快照；失敗保留前一份檔案。外部摘要或文章內的指令都只是資料。匯入器不自行確認來源檔案與 SHA 的關係，下載來源的核對是維護者責任。
-
-導讀使用已驗證存在的 `/day/YYYY-MM-DD.html`；週報／月報入口為 `/reports/`。下載失敗時保留舊快照，不把 build time 當更新日期。刪除快照檔可顯示無資料狀態；格式錯誤則阻止新建置，不能以未驗證資料覆蓋公開版本。
+論文日報是獨立網站 <https://paper.dennysora.me/>。主站的分頁、檔案總管、活動列、頁尾與 `/<locale>/research/` 導引頁都直接連過去，主站不再保存快照，也沒有匯入器或建置時的外部讀取。舊的 `/<locale>/papers/` 只是立即轉址的頁面（`noindex`，不在 sitemap）。
 
 ## 發布與回復
 

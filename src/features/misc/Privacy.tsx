@@ -1,4 +1,5 @@
 import type { ViewData } from '../../app/page.tsx';
+import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { PageHead } from '../../components/PageHead.tsx';
 import { dictionaries, type Locale } from '../../i18n/index.ts';
@@ -21,16 +22,16 @@ export function Privacy({
   return (
     <div className="container profile-layout privacy">
       <PageHead eyebrow={t.privacy} title={t.privacyTitle}>
-        <p className="page-intro">{t.privacyIntro}</p>
+        <p className="ln page-intro">{t.privacyIntro}</p>
       </PageHead>
       <div className="plain-text">
-        <p>{t.privacyStatic}</p>
-        <p>{t.privacySearch}</p>
-        <p>{t.privacyLinks}</p>
-        <h2>{t.commentsTitle}</h2>
-        <p>{comments}</p>
-        <p>{t.privacyPublic}</p>
-        <p>
+        <p className="ln">{t.privacyStatic}</p>
+        <p className="ln">{t.privacySearch}</p>
+        <p className="ln">{t.privacyLinks}</p>
+        <MdHeading level={2}>{t.commentsTitle}</MdHeading>
+        <p className="ln">{comments}</p>
+        <p className="ln">{t.privacyPublic}</p>
+        <p className="ln">
           <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">
             {t.githubPrivacy}
             <Icon name="external" size={15} />
@@ -38,6 +39,7 @@ export function Privacy({
           </a>
         </p>
       </div>
+      <EndOfBuffer />
     </div>
   );
 }

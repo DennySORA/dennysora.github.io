@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { TaxonomyLabels } from '../app/page.tsx';
 import { dictionaries, formatCompactDate, type Locale } from '../i18n/index.ts';
 import type { PostSummary } from '../lib/content.server.ts';
+import { Icon } from './Icon.tsx';
 import { TagLinks } from './TagLink.tsx';
 
 export function taxonomyMaps(taxonomy: TaxonomyLabels) {
@@ -19,7 +20,7 @@ export function taxonomyMaps(taxonomy: TaxonomyLabels) {
 }
 export type TaxonomyMaps = ReturnType<typeof taxonomyMaps>;
 
-/** Editorial row: type and date, title, summary, tags, reading time. */
+/** A post as a file in the blog folder: name, kind and date, then title and summary. */
 export function ArticleListItem({
   post,
   locale,
@@ -39,14 +40,18 @@ export function ArticleListItem({
   const Heading = headingLevel === 2 ? 'h2' : 'h3';
   const topic = post.topics[0];
   return (
-    <article className="article-row">
+    <article className="ln article-row">
       <p className="article-row-meta">
+        <span className="article-row-file" aria-hidden="true">
+          <Icon name="markdown" size={15} />
+          {post.slug}.md
+        </span>
         <span className="entity-kind">
           {topic ? maps.topics.get(topic) : null}
           {topic ? ' · ' : null}
           {maps.types.get(post.contentType)}
         </span>
-        <time dateTime={post.publishedAt}>
+        <time className="article-row-date" dateTime={post.publishedAt}>
           {formatCompactDate(post.publishedAt)}
         </time>
       </p>

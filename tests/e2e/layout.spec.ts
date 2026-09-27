@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { contrastOf } from './helpers.ts';
 
-test('About answers who, what and where to look first on desktop and phone', async ({
+test('the home README answers who, what and where to look first on desktop and phone', async ({
   page,
 }) => {
   for (const viewport of [
@@ -9,9 +9,14 @@ test('About answers who, what and where to look first on desktop and phone', asy
     { width: 390, height: 844 },
   ]) {
     await page.setViewportSize(viewport);
-    await page.goto('/zh-hant/about/');
+    await page.goto('/zh-hant/');
+    // The heading marker and line numbers are decoration, not part of the name.
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+      'DennySORA',
+    );
+    await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
     await expect(
-      page.getByRole('heading', { level: 1, name: /DennySORA/ }),
+      page.getByRole('img', { name: /DennySORA 標誌/ }),
     ).toBeInViewport();
     await expect(page.getByText('後端、雲端與 AI 系統工程')).toBeInViewport();
     await expect(
@@ -20,24 +25,49 @@ test('About answers who, what and where to look first on desktop and phone', asy
     await expect(
       page.getByRole('link', { name: '看看我的專案' }),
     ).toBeInViewport();
+    await expect(
+      page.getByRole('link', { name: /閱讀部落格/ }),
+    ).toHaveAttribute('href', '/zh-hant/blog/');
   }
   // Structured sections, not one long Markdown article with a full contents tree.
   await expect(page.locator('.prose, .toc-aside, .toc-inline')).toHaveCount(0);
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText([
+  const names = await page
+    .getByRole('heading', { level: 2 })
+    .evaluateAll((headings) =>
+      headings.map((heading) =>
+        (heading.textContent ?? '').replace(/^#+\s*/, ''),
+      ),
+    );
+  expect(names).toEqual([
     '我主要在做什麼',
     '用作品認識我',
     '一路走來',
     '還在探索的問題',
     '工程之外',
+    '最近的文章',
     '完整紀錄',
     '從一個具體的問題開始交流。',
   ]);
+  // Numbers share one gutter column: every numbered line is unpositioned and
+  // measured from the same buffer, however deeply it is nested.
+  const gutters = await page.locator('main .ln').evaluateAll((lines) => ({
+    count: lines.length,
+    positioned: lines.filter(
+      (line) => getComputedStyle(line).position !== 'static',
+    ).length,
+    parents: new Set(
+      lines.map((line) => (line as HTMLElement).offsetParent?.className),
+    ).size,
+  }));
+  expect(gutters.count).toBeGreaterThan(60);
+  expect(gutters.positioned).toBe(0);
+  expect(gutters.parents).toBe(1);
 });
 
 test('work history reads without expanding, and details open from the keyboard', async ({
   page,
 }) => {
-  await page.goto('/en/about/');
+  await page.goto('/en/');
   const entry = page.locator('.timeline-entry').nth(1);
   await expect(entry).toContainText('Senior Cloud Engineer');
   await expect(entry.locator('.timeline-highlights li')).toHaveCount(3);
@@ -57,13 +87,13 @@ test('work history reads without expanding, and details open from the keyboard',
   );
 });
 
-test('the mobile menu traps focus, closes with Escape and restores focus and scrolling', async ({
+test('the explorer drawer traps focus, closes with Escape and restores focus and scrolling', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/ja/');
-  const trigger = page.getByRole('button', { name: 'ナビゲーションを開く' });
-  const dialog = page.getByRole('dialog', { name: 'ナビゲーション' });
+  const trigger = page.getByRole('button', { name: 'エクスプローラーを開く' });
+  const dialog = page.getByRole('dialog', { name: 'エクスプローラー' });
   const overflow = () =>
     page.evaluate(() => document.documentElement.style.overflow);
   await trigger.click();
@@ -88,7 +118,12 @@ test('the mobile menu traps focus, closes with Escape and restores focus and scr
     await expect(trigger).toBeFocused();
   }
   await trigger.click();
-  await dialog.getByRole('link', { name: '記事と研究' }).click();
+  // The drawer lists the real files: the current README and every post.
+  await expect(
+    dialog.getByRole('link', { name: /README\.md/ }),
+  ).toHaveAttribute('aria-current', 'page');
+  await expect(dialog.getByRole('link', { name: /\.md —/ })).toHaveCount(3);
+  await dialog.getByRole('link', { name: /^blog/ }).click();
   await expect(page).toHaveURL('/ja/blog/');
   await page.goBack();
   await expect(page).toHaveURL('/ja/');
@@ -105,11 +140,18 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
         (element, name) => getComputedStyle(element).getPropertyValue(name),
         property,
       );
-  await page.goto('/zh-hant/about/');
-  expect(await colour('.about-hero .button-primary', 'background-color')).toBe(
+  await page.goto('/zh-hant/');
+  expect(await colour('.readme-hero .button-primary', 'background-color')).toBe(
     'rgb(103, 216, 239)',
   );
-  expect(await colour('.about-hero .button-primary')).toBe('rgb(11, 16, 32)');
+  expect(await colour('.readme-hero .button-primary')).toBe('rgb(11, 16, 32)');
+  // Front matter reads as YAML: keys in the entity colour, values as strings.
+  expect(await colour('.front-matter dt')).toBe('rgb(192, 153, 255)');
+  expect(await colour('.front-matter dd')).toBe('rgb(93, 217, 193)');
+  expect(await colour('.md-heading .md-mark')).toBe('rgb(122, 138, 166)');
+  expect(await colour('.status-mode', 'background-color')).toBe(
+    'rgb(103, 216, 239)',
+  );
   expect(await colour('.capability-evidence a')).toBe('rgb(130, 170, 255)');
   expect(await colour('.focus-note-title')).toBe('rgb(192, 153, 255)');
   expect(await colour('.capability .label')).toBe('rgb(192, 153, 255)');
@@ -119,12 +161,18 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
   await page.goto('/zh-hant/blog/engineering-principles/');
   expect(await colour('.code-label')).toBe('rgb(93, 217, 193)');
   expect(await colour('.reader-header .eyebrow')).toBe('rgb(192, 153, 255)');
-  expect(await colour('.site-header a[aria-current]')).toBe(
-    'rgb(130, 170, 255)',
-  );
-  expect(await colour('.site-header a[aria-current]', 'box-shadow')).toContain(
+  // The open file's tab is lit with the accent; its area stays marked.
+  expect(await colour('.tab[aria-current="page"]')).toBe('rgb(230, 237, 247)');
+  expect(await colour('.tab[aria-current="page"]', 'box-shadow')).toContain(
     'rgb(103, 216, 239)',
   );
+  expect(await colour('.tab[aria-current="true"]')).toBe('rgb(184, 197, 216)');
+  expect(
+    await colour(
+      '.sidebar .tree-link[aria-current="page"]',
+      'background-color',
+    ),
+  ).toBe('rgb(22, 44, 67)');
 });
 
 test('status colours appear only for real states, and nothing is dimmed with opacity or filters', async ({
@@ -132,11 +180,11 @@ test('status colours appear only for real states, and nothing is dimmed with opa
 }) => {
   for (const path of [
     '/zh-hant/',
-    '/zh-hant/about/',
+    '/en/',
     '/zh-hant/blog/',
     '/zh-hant/blog/engineering-principles/',
     '/zh-hant/projects/',
-    '/zh-hant/papers/',
+    '/zh-hant/privacy/',
   ]) {
     await page.goto(path);
     const offenders = await page.evaluate(() => {
@@ -177,8 +225,13 @@ test('text and controls keep contrast in normal, hover, focus and selected state
     ['.article-row-meta .entity-kind', 4.5],
     ['.article-row-meta time', 4.5],
     ['.tag-link', 4.5],
-    ['.site-header a[aria-current]', 4.5],
-    ['.primary-nav a:not([aria-current])', 4.5],
+    ['.tab[aria-current="page"]', 4.5],
+    ['.tab:not([aria-current])', 4.5],
+    ['.sidebar .tree-link[aria-current="page"]', 4.5],
+    ['.sidebar .tree-note', 4.5],
+    ['.breadcrumbs a', 4.5],
+    ['.status-item', 4.5],
+    ['.command-text', 4.5],
   ];
   for (const [selector, minimum] of checks)
     expect(
@@ -196,8 +249,14 @@ test('text and controls keep contrast in normal, hover, focus and selected state
     await contrastOf(topic, 'outline-color'),
     'focus ring',
   ).toBeGreaterThanOrEqual(3);
-  await page.goto('/zh-hant/about/');
-  const primary = page.locator('.about-hero .button-primary');
+  const tab = page.locator('.tab:not([aria-current])').first();
+  await tab.hover();
+  expect(await contrastOf(tab), 'tab hover').toBeGreaterThanOrEqual(4.5);
+  const file = page.locator('.sidebar .tree-link:not([aria-current])').first();
+  await file.hover();
+  expect(await contrastOf(file), 'explorer hover').toBeGreaterThanOrEqual(4.5);
+  await page.goto('/zh-hant/');
+  const primary = page.locator('.readme-hero .button-primary');
   await primary.hover();
   expect(await contrastOf(primary), 'primary hover').toBeGreaterThanOrEqual(
     4.5,
@@ -248,27 +307,47 @@ test('projects name their real destinations and never show an icon without a lin
   ).toBeVisible();
 });
 
-test('the home page leads with a concrete position and two entry points', async ({
+test('the workbench names the open file and links every area, with Paper Daily outside', async ({
   page,
 }) => {
-  await page.goto('/en/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Building and writing about backend, cloud and AI systems',
+  await page.goto('/en/blog/production-systems/');
+  const tabs = page.getByRole('navigation', { name: 'Main navigation' });
+  await expect(tabs.getByRole('link')).toHaveText([
+    /README\.md/,
+    /blog/,
+    /projects/,
+    /paper-daily/,
+  ]);
+  await expect(tabs.getByRole('link', { name: /paper-daily/ })).toHaveAttribute(
+    'href',
+    'https://paper.dennysora.me/',
+  );
+  await expect(tabs.getByRole('link', { name: /blog/ })).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
+  await expect(page.locator('.tab-preview')).toHaveText(
+    'production-systems.md',
   );
   await expect(
-    page.getByRole('link', { name: 'Read writing & research' }),
-  ).toBeInViewport();
-  await expect(
-    page.getByRole('link', { name: 'View projects' }).first(),
-  ).toBeInViewport();
-  await expect(page.getByRole('heading', { level: 2 })).toHaveText([
-    'Featured',
-    'Latest writing',
-    'Selected work',
-    'About DennySORA',
-    'Paper Daily',
-  ]);
-  await expect(page.locator('.article-row')).toHaveCount(3);
+    page
+      .getByRole('navigation', { name: 'Current location' })
+      .getByRole('link'),
+  ).toHaveText(['dennysora', 'blog']);
+  await expect(page.locator('.status-file')).toHaveText(
+    'blog/production-systems.md',
+  );
+  await expect(page.locator('.status-mode')).toHaveText('NORMAL');
+  await expect(page.locator('.status-position')).toHaveText('Top');
+  await page.mouse.wheel(0, 100_000);
+  await expect(page.locator('.status-position')).toHaveText('Bot');
+  // The recent files on the README open the same articles.
+  await page.goto('/en/');
+  await expect(page.locator('.file-list a')).toHaveCount(3);
+  await expect(page.locator('.file-list a').first()).toHaveAttribute(
+    'href',
+    /^\/en\/blog\/[a-z-]+\/$/,
+  );
 });
 
 for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
@@ -276,13 +355,12 @@ for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
     await page.setViewportSize({ width, height: width < 800 ? 844 : 900 });
     for (const path of [
       '/zh-hant/',
-      '/zh-hant/about/',
-      '/ja/about/',
+      '/ja/',
       '/en/projects/',
       '/ja/blog/',
       '/ja/blog/trilingual-model-research/',
-      '/en/papers/',
       '/zh-hant/blog/tags/',
+      '/en/privacy/',
     ]) {
       await page.goto(path);
       await expect(page.locator('h1').first()).toBeVisible();

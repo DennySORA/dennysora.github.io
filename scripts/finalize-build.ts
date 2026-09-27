@@ -18,6 +18,7 @@ import {
 import { dictionaries, locales, htmlLang } from '../src/i18n/index.ts';
 import { escapeHtml } from '../src/lib/html.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
+import { papersUrl } from '../src/lib/site.ts';
 import migration from '../data/migration/manifest.json' with { type: 'json' };
 import brand from '../data/brand-assets.json' with { type: 'json' };
 import { legacyDestinations } from '../src/lib/legacy-anchors.ts';
@@ -87,27 +88,44 @@ function noticePage(lang: string, title: string, body: string, head = '') {
 
 // Known old paths get explicit bridges, never a catch-all SPA redirect.
 const aliases: Record<string, string> = {
-  detail: '/zh-hant/about/',
-  'detail/about': '/zh-hant/about/',
+  detail: '/zh-hant/',
+  'detail/about': '/zh-hant/',
   'detail/production': '/zh-hant/blog/production-systems/',
   'detail/research': '/zh-hant/blog/trilingual-model-research/',
-  'detail/depth': '/zh-hant/about/#depth-h',
+  'detail/depth': '/zh-hant/#depth-h',
   blog: '/zh-hant/blog/',
 };
+// A bridge marked data-keep-hash carries its own fragment (the About page moved
+// to the locale home); the others resolve the former single-page anchors.
 write(
   'bridge.js',
-  `const link=document.querySelector('[data-destination]');if(link){const anchors=${JSON.stringify(legacyDestinations)};const old=location.hash.slice(1);const target=new URL(anchors[old]??link.getAttribute('href'),location.origin);if(target.origin===location.origin)location.replace(target.href);}`,
+  `const link=document.querySelector('[data-destination]');if(link){const anchors=${JSON.stringify(legacyDestinations)};const old=location.hash.slice(1);const base=link.getAttribute('href');const target=new URL(link.hasAttribute('data-keep-hash')?base+location.hash:anchors[old]??base,location.origin);if(target.origin===location.origin)location.replace(target.href);}`,
 );
+function movedPage(target: string, keepHash = false) {
+  return noticePage(
+    'zh-Hant',
+    '頁面已搬移',
+    `<p class="eyebrow">DennySORA</p><h1>這份內容有了新地址。</h1><p lang="en">This page has moved.</p><p lang="ja">このページは移動しました。</p><a href="${target}" data-destination${keepHash ? ' data-keep-hash' : ''}>繼續閱讀 / Continue / 続きを読む →</a><script src="/bridge.js"></script>`,
+    `<link rel="canonical" href="${siteUrl}${target}"><meta http-equiv="refresh" content="2;url=${target}">`,
+  );
+}
 for (const [old, target] of Object.entries(aliases))
+  write(`${old}/index.html`, movedPage(target));
+for (const locale of locales) {
+  // The profile is the locale home now; old About links keep their section anchor.
+  write(`${locale}/about/index.html`, movedPage(`/${locale}/`, true));
+  // Paper Daily is its own site; the former in-site page only forwards to it.
+  const t = dictionaries[locale];
   write(
-    `${old}/index.html`,
+    `${locale}/papers/index.html`,
     noticePage(
-      'zh-Hant',
-      '頁面已搬移',
-      `<p class="eyebrow">DennySORA</p><h1>這份內容有了新地址。</h1><p lang="en">This page has moved.</p><p lang="ja">このページは移動しました。</p><a href="${target}" data-destination>繼續閱讀 / Continue / 続きを読む →</a><script src="/bridge.js"></script>`,
-      `<link rel="canonical" href="${siteUrl}${target}"><meta http-equiv="refresh" content="2;url=${target}">`,
+      htmlLang[locale],
+      t.navPapers,
+      `<p class="eyebrow">DennySORA</p><h1>${escapeHtml(t.navPapers)}</h1><a href="${papersUrl}">${escapeHtml(papersUrl)} →</a>`,
+      `<meta http-equiv="refresh" content="0;url=${papersUrl}">`,
     ),
   );
+}
 for (const slug of migration.legacyBlog.missingSlugs)
   for (const prefix of ['blog', ...locales.map((locale) => `${locale}/blog`)]) {
     const locale = locales.find((item) => prefix.startsWith(item)) ?? 'zh-hant';

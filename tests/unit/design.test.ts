@@ -31,6 +31,13 @@ const reference: Record<string, string> = {
   // Local additions, not reference values; the stylesheet labels them as such.
   'border-decorative': '#27364a',
   'overlay-scrim': '#0b1020b3',
+  // Editor workbench layers (owner direction 2026-09-27), also local additions.
+  chrome: '#070b16',
+  sidebar: '#0a0f1d',
+  'tab-inactive': '#090e1b',
+  gutter: '#5b6b86',
+  'syntax-marker': '#7a8aa6',
+  'entity-folder': '#e0b565',
 };
 
 function luminance(hex: string) {
@@ -62,6 +69,7 @@ describe('semantic dark tokens', () => {
     expect(css).toMatch(
       /Local additions, not reference values: --color-border-decorative and\s+\* --color-overlay-scrim/,
     );
+    expect(css).toMatch(/Editor workbench layers \(owner direction 2026-09-27/);
   });
   it('keep text, actions and entity colours above 4.5:1 on their surfaces', () => {
     for (const role of [
@@ -80,6 +88,8 @@ describe('semantic dark tokens', () => {
         'surface',
         'surface-raised',
         'surface-selected',
+        'chrome',
+        'sidebar',
       ])
         expect(
           contrast(reference[role] ?? '', reference[surface] ?? ''),
@@ -101,8 +111,33 @@ describe('semantic dark tokens', () => {
     expect(
       contrast(reference.focus ?? '', reference.background ?? ''),
     ).toBeGreaterThanOrEqual(3);
+    // Markdown markers are read as text; line numbers are decoration but stay visible.
+    for (const surface of ['background', 'surface', 'chrome'])
+      expect(
+        contrast(reference['syntax-marker'] ?? '', reference[surface] ?? ''),
+      ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      contrast(reference.gutter ?? '', reference.background ?? ''),
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      contrast(reference['entity-folder'] ?? '', reference.sidebar ?? ''),
+    ).toBeGreaterThanOrEqual(4.5);
+    // The status line's mode chip keeps dark ink on both mode colours.
+    expect(
+      contrast(
+        reference['action-ink'] ?? '',
+        reference['status-success'] ?? '',
+      ),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+// PNG keeps its size in IHDR; an extended (VP8X) WebP stores canvas size minus one.
+function dimensions(bytes: Buffer): [number, number] {
+  if (bytes.toString('ascii', 12, 16) === 'VP8X')
+    return [bytes.readUIntLE(24, 3) + 1, bytes.readUIntLE(27, 3) + 1];
+  return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+}
 
 describe('brand assets', () => {
   it('are the recorded repository files, unchanged', () => {
@@ -114,10 +149,10 @@ describe('brand assets', () => {
         .digest('hex');
       expect(blob, asset.path).toBe(asset.gitBlob);
       expect(bytes.length, asset.path).toBe(asset.bytes);
-      expect(
-        [bytes.readUInt32BE(16), bytes.readUInt32BE(20)],
-        asset.path,
-      ).toEqual([asset.width, asset.height]);
+      expect(dimensions(bytes), asset.path).toEqual([
+        asset.width,
+        asset.height,
+      ]);
     }
     expect(
       brand.assets.find((asset) => asset.path === 'assets/logo_full.png')

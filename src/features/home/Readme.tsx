@@ -4,14 +4,19 @@ import type {
   ProjectCardData,
   ViewData,
 } from '../../app/page.tsx';
+import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
 import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { ProjectTeaser } from '../../components/ProjectCard.tsx';
-import { dictionaries, type Locale } from '../../i18n/index.ts';
+import {
+  dictionaries,
+  formatCompactDate,
+  type Locale,
+} from '../../i18n/index.ts';
 import { pageIds } from '../../lib/page-ids.ts';
 
-type AboutView = Extract<ViewData, { kind: 'about' }>;
-type PostLinks = AboutView['posts'];
+type HomeView = Extract<ViewData, { kind: 'home' }>;
+type PostLinks = HomeView['posts'];
 
 const yearMonth = (value: string) => value.replace('-', '.');
 
@@ -33,54 +38,111 @@ function useRevealHashTarget() {
   }, []);
 }
 
-export function About({ view, locale }: { view: AboutView; locale: Locale }) {
+/** The profile as the workspace README: front matter, logo, then the résumé. */
+export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
   useRevealHashTarget();
-  const { profile, projects, posts } = view;
+  const { profile, projects, posts, recent } = view;
   const t = dictionaries[locale];
   const featured = profile.featuredProjectIds
     .map((id) => projects.find((project) => project.id === id))
     .filter((project): project is ProjectCardData => Boolean(project));
   return (
-    <div className="container profile-layout about">
-      <section className="about-hero" aria-labelledby="about-title">
-        <div className="about-hero-copy">
-          <p className="eyebrow">{t.aboutEyebrow}</p>
-          <h1 id="about-title">
+    <div className="buffer readme">
+      <section className="readme-hero" aria-labelledby="readme-title">
+        <div className="readme-intro">
+          <p className="ln md-fence" aria-hidden="true">
+            ---
+          </p>
+          <dl className="front-matter">
+            <div className="ln">
+              <dt lang="en">name</dt>
+              <dd>{profile.displayName}</dd>
+            </div>
+            <div className="ln">
+              <dt lang="en">alias</dt>
+              <dd lang="zh-Hant">{profile.publicName}</dd>
+            </div>
+            <div className="ln">
+              <dt lang="en">role</dt>
+              <dd>{profile.introduction.role}</dd>
+            </div>
+            <div className="ln">
+              <dt lang="en">status</dt>
+              <dd>{profile.introduction.status}</dd>
+            </div>
+            <div className="ln">
+              <dt lang="en">github</dt>
+              <dd>
+                <a href={profile.contact.github}>
+                  {profile.contact.github.replace('https://', '')}
+                  <Icon name="external" size={14} />
+                  <span className="sr-only">（{t.newTab}）</span>
+                </a>
+              </dd>
+            </div>
+            <div className="ln">
+              <dt lang="en">email</dt>
+              <dd>
+                <a href={`mailto:${profile.contact.email}`}>
+                  {profile.contact.email}
+                </a>
+              </dd>
+            </div>
+          </dl>
+          <p className="ln md-fence" aria-hidden="true">
+            ---
+          </p>
+          <MdHeading level={1} id="readme-title">
             {profile.displayName}
-            <span className="hero-name" lang="zh-Hant">
-              {profile.publicName}
-            </span>
-          </h1>
-          <p className="hero-statement">{profile.introduction.role}</p>
-          <p className="hero-bio">{profile.introduction.shortBio}</p>
-          <div className="action-row">
-            <a className="button button-primary" href={`/${locale}/projects/`}>
-              {t.viewMyProjects}
+          </MdHeading>
+          <p className="ln readme-bio">{profile.introduction.shortBio}</p>
+          <div className="ln action-row">
+            <a className="button button-primary" href={`/${locale}/blog/`}>
+              {t.readBlog}
               <Icon name="arrow" size={18} />
+            </a>
+            <a className="button button-quiet" href={`/${locale}/projects/`}>
+              {t.viewMyProjects}
             </a>
             <a className="button button-quiet" href={`#${pageIds.contact}`}>
               {t.getInTouch}
             </a>
           </div>
-          <p className="hero-meta">
-            <span>{profile.introduction.status}</span>
-            <a href={profile.contact.github}>
-              GitHub
-              <Icon name="external" size={15} />
-              <span className="sr-only">（{t.newTab}）</span>
-            </a>
-          </p>
         </div>
-        <aside className="focus-note" aria-label={t.aboutOverview}>
-          <p className="focus-note-heading">{profile.focusNote.heading}</p>
-          {profile.focusNote.items.map((item) => (
-            <div className="focus-note-item" key={item.id}>
-              <p className="focus-note-title entity-kind">{item.title}</p>
-              <p>{item.text}</p>
-            </div>
-          ))}
-        </aside>
+        <figure className="readme-logo">
+          <img
+            src="/assets/logo-hero.webp"
+            srcSet="/assets/logo-hero.webp 1x, /assets/logo-hero@2x.webp 2x"
+            width={346}
+            height={392}
+            alt={t.logoAlt}
+            decoding="async"
+            fetchPriority="high"
+          />
+        </figure>
       </section>
+
+      <div className="md-comments">
+        <p className="ln md-comment">
+          <span className="md-mark" aria-hidden="true">
+            {'// '}
+          </span>
+          {profile.focusNote.heading}
+        </p>
+        <ul aria-label={profile.focusNote.heading}>
+          {profile.focusNote.items.map((item) => (
+            <li className="ln md-comment" key={item.id}>
+              <span className="md-mark" aria-hidden="true">
+                {'// '}
+              </span>
+              <strong className="focus-note-title">{item.title}</strong>
+              <span aria-hidden="true"> — </span>
+              <span className="sr-only">：</span>
+              {item.text}
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <Competencies
         profile={profile}
@@ -89,43 +151,45 @@ export function About({ view, locale }: { view: AboutView; locale: Locale }) {
         locale={locale}
       />
 
-      <section className="section" aria-labelledby="works-title">
-        <div className="section-intro">
-          <h2 id="works-title">{t.worksTitle}</h2>
-          <a className="text-action" href={`/${locale}/projects/`}>
-            {t.allProjects}
-            <Icon name="arrow" size={18} />
-          </a>
-        </div>
-        <div className="work-pair">
+      <section className="md-section" aria-labelledby="works-title">
+        <MdHeading level={2} id="works-title">
+          {t.worksTitle}
+        </MdHeading>
+        <div className="ln work-pair">
           {featured.map((project) => (
             <ProjectTeaser key={project.id} project={project} locale={locale} />
           ))}
         </div>
+        <p className="ln">
+          <a className="text-action" href={`/${locale}/projects/`}>
+            {t.allProjects}
+            <Icon name="arrow" size={18} />
+          </a>
+        </p>
       </section>
 
       <Experience profile={profile} locale={locale} />
 
       <section
-        className="section personal-grid"
+        className="md-section personal-grid"
         aria-label={`${t.exploringTitle} · ${t.beyondTitle}`}
       >
         <div id="exploring">
-          <h2>{t.exploringTitle}</h2>
-          <p>{profile.currentFocus.question}</p>
+          <MdHeading level={2}>{t.exploringTitle}</MdHeading>
+          <p className="ln">{profile.currentFocus.question}</p>
           <ul className="focus-list">
             {profile.currentFocus.items.map((item) => (
-              <li key={item.id}>
+              <li className="ln" key={item.id}>
                 <strong>{item.title}</strong>
                 <span>{item.text}</span>
               </li>
             ))}
           </ul>
-          <p className="fine">
+          <p className="ln fine">
             {t.exploringUpdated(profile.currentFocus.updatedAt)}
           </p>
-          <div className="stacked-actions">
-            {posts[profile.currentFocus.postId] ? (
+          {posts[profile.currentFocus.postId] ? (
+            <p className="ln">
               <a
                 className="text-action"
                 href={`/${locale}/blog/${posts[profile.currentFocus.postId]?.slug}/`}
@@ -133,20 +197,16 @@ export function About({ view, locale }: { view: AboutView; locale: Locale }) {
                 {t.readResearch}
                 <Icon name="arrow" size={18} />
               </a>
-            ) : null}
-            <a className="text-action" href={`/${locale}/papers/`}>
-              {t.seePapers}
-              <Icon name="arrow" size={18} />
-            </a>
-          </div>
+            </p>
+          ) : null}
         </div>
         <div id="beyond">
           <span id="beyond-h" className="anchor-alias" aria-hidden="true" />
-          <h2>{t.beyondTitle}</h2>
-          <p>{profile.personal.intro}</p>
+          <MdHeading level={2}>{t.beyondTitle}</MdHeading>
+          <p className="ln">{profile.personal.intro}</p>
           <dl className="interest-list">
             {profile.personal.interests.map((interest) => (
-              <div key={interest.id}>
+              <div className="ln" key={interest.id}>
                 <dt>{interest.title}</dt>
                 <dd>{interest.text}</dd>
               </div>
@@ -154,10 +214,10 @@ export function About({ view, locale }: { view: AboutView; locale: Locale }) {
           </dl>
           <div id="education" className="education">
             <span id="edu-h" className="anchor-alias" aria-hidden="true" />
-            <h3>{t.educationTitle}</h3>
+            <MdHeading level={3}>{t.educationTitle}</MdHeading>
             <ul>
               {profile.education.map((item) => (
-                <li key={item.id}>
+                <li className="ln" key={item.id}>
                   <span>{item.institution}</span>
                   <span className="fine">
                     {item.period} · {item.detail}
@@ -169,18 +229,46 @@ export function About({ view, locale }: { view: AboutView; locale: Locale }) {
         </div>
       </section>
 
+      {recent.length ? (
+        <section className="md-section" aria-labelledby="recent-title">
+          <MdHeading level={2} id="recent-title">
+            {t.recentTitle}
+          </MdHeading>
+          <ul className="file-list">
+            {recent.map((post) => (
+              <li className="ln" key={post.id}>
+                <a href={`/${locale}/blog/${post.slug}/`}>
+                  <Icon name="markdown" size={16} />
+                  <span className="file-list-name">{post.slug}.md</span>
+                  <span className="file-list-title">{post.title}</span>
+                  <time dateTime={post.publishedAt}>
+                    {formatCompactDate(post.publishedAt)}
+                  </time>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="ln">
+            <a className="text-action" href={`/${locale}/blog/`}>
+              {t.allArticles}
+              <Icon name="arrow" size={18} />
+            </a>
+          </p>
+        </section>
+      ) : null}
+
       <FullRecord profile={profile} locale={locale} />
 
       <section
-        className="contact-row"
+        className="md-section contact-row"
         id={pageIds.contact}
         aria-labelledby="contact-title"
       >
-        <div>
-          <h2 id="contact-title">{t.contactTitle}</h2>
-          <p>{t.contactText}</p>
-        </div>
-        <div className="action-row">
+        <MdHeading level={2} id="contact-title">
+          {t.contactTitle}
+        </MdHeading>
+        <p className="ln">{t.contactText}</p>
+        <div className="ln action-row">
           <a
             className="button button-primary"
             href={`mailto:${profile.contact.email}`}
@@ -204,6 +292,7 @@ export function About({ view, locale }: { view: AboutView; locale: Locale }) {
           </a>
         </div>
       </section>
+      <EndOfBuffer />
     </div>
   );
 }
@@ -226,29 +315,37 @@ function Competencies({
     learning: t.levelLearning,
   };
   return (
-    <section className="section" aria-labelledby="competencies-title">
-      <div className="section-intro">
-        <h2 id="competencies-title">{t.competenciesTitle}</h2>
-        <p>{t.competenciesIntro}</p>
-      </div>
+    <section className="md-section" aria-labelledby="competencies-title">
+      <MdHeading level={2} id="competencies-title">
+        {t.competenciesTitle}
+      </MdHeading>
+      <p className="ln md-lead">{t.competenciesIntro}</p>
       <div className="capabilities">
         {profile.competencies.map((competency) => (
           <article className="capability" key={competency.id}>
-            <ul className="level-labels">
-              {competency.levels.map((level) => (
-                <li key={level} className="label">
-                  {levelLabel[level]}
+            <h3 className="ln capability-title">
+              <span className="capability-name">{competency.title}</span>
+              <span className="level-labels">
+                {competency.levels.map((level) => (
+                  <span key={level} className="label">
+                    {levelLabel[level]}
+                  </span>
+                ))}
+              </span>
+            </h3>
+            <p className="ln">{competency.description}</p>
+            <ul className="capability-examples" aria-label={t.examples}>
+              {competency.examples.map((example) => (
+                <li className="ln" key={example}>
+                  {example}
                 </li>
               ))}
             </ul>
-            <h3>{competency.title}</h3>
-            <p>{competency.description}</p>
-            <ul className="capability-examples" aria-label={t.examples}>
-              {competency.examples.map((example) => (
-                <li key={example}>{example}</li>
-              ))}
-            </ul>
-            <ul className="capability-evidence">
+            <p className="ln capability-tools">
+              <span className="capability-tools-label">{t.tools}</span>
+              {competency.tools.join(' · ')}
+            </p>
+            <ul className="ln capability-evidence">
               {competency.evidence.map((evidence) => {
                 if (evidence.kind === 'section')
                   return (
@@ -283,10 +380,6 @@ function Competencies({
                 ) : null;
               })}
             </ul>
-            <p className="capability-tools">
-              <span className="capability-tools-label">{t.tools}</span>
-              {competency.tools.join(' · ')}
-            </p>
           </article>
         ))}
       </div>
@@ -294,6 +387,7 @@ function Competencies({
   );
 }
 
+/** Work history drawn as a commit graph: newest first, one node per role. */
 function Experience({
   profile,
   locale,
@@ -304,49 +398,64 @@ function Experience({
   const t = dictionaries[locale];
   return (
     <section
-      className="section"
+      className="md-section"
       id={pageIds.experience}
       aria-labelledby="experience-title"
     >
       <span id="exp-h" className="anchor-alias" aria-hidden="true" />
-      <div className="section-intro">
-        <h2 id="experience-title">{t.experienceTitle}</h2>
-        <p>{t.experienceIntro}</p>
-      </div>
-      {profile.experience.map((entry) => {
-        const count = entry.details.reduce(
-          (sum, group) => sum + group.items.length,
-          0,
-        );
-        return (
-          <article className="timeline-entry" key={entry.id}>
-            <p className="timeline-date">
-              <time dateTime={entry.startDate}>
-                {yearMonth(entry.startDate)}
-              </time>
-              {' — '}
-              {entry.endDate ? (
-                <time dateTime={entry.endDate}>{yearMonth(entry.endDate)}</time>
-              ) : entry.current ? (
-                t.present
-              ) : null}
-            </p>
-            <div className="timeline-body">
-              {entry.kind === 'education' ? (
-                <p className="label">{t.educationStatus}</p>
-              ) : null}
-              <h3>{entry.role}</h3>
-              <p className="timeline-org">{entry.organization}</p>
-              <p>{entry.summary}</p>
+      <MdHeading level={2} id="experience-title">
+        {t.experienceTitle}
+      </MdHeading>
+      <p className="ln md-lead">{t.experienceIntro}</p>
+      <ol className="git-log">
+        {profile.experience.map((entry) => {
+          const count = entry.details.reduce(
+            (sum, group) => sum + group.items.length,
+            0,
+          );
+          return (
+            <li
+              className="timeline-entry"
+              key={entry.id}
+              data-current={entry.current ? 'true' : undefined}
+              data-kind={entry.kind}
+            >
+              <p className="ln timeline-date">
+                <time dateTime={entry.startDate}>
+                  {yearMonth(entry.startDate)}
+                </time>
+                {' — '}
+                {entry.endDate ? (
+                  <time dateTime={entry.endDate}>
+                    {yearMonth(entry.endDate)}
+                  </time>
+                ) : entry.current ? (
+                  t.present
+                ) : null}
+                {entry.kind === 'education' ? (
+                  <span className="label">{t.educationStatus}</span>
+                ) : null}
+              </p>
+              <h3 className="ln timeline-role">
+                {entry.role}
+                <span className="timeline-org">
+                  <span aria-hidden="true"> @ </span>
+                  <span className="sr-only">，</span>
+                  {entry.organization}
+                </span>
+              </h3>
+              <p className="ln">{entry.summary}</p>
               {entry.highlights.length ? (
                 <ul className="timeline-highlights">
                   {entry.highlights.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li className="ln" key={item}>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               ) : null}
               {count ? (
-                <details className="timeline-details">
+                <details className="ln timeline-details">
                   <summary>{t.showAllWork(count)}</summary>
                   {entry.details.map((group) => (
                     <div className="timeline-group" key={group.title}>
@@ -371,10 +480,10 @@ function Experience({
                   ))}
                 </details>
               ) : null}
-            </div>
-          </article>
-        );
-      })}
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
@@ -390,15 +499,15 @@ function FullRecord({
   const { record } = profile;
   return (
     <section
-      className="section record"
+      className="md-section record"
       id="record"
       aria-labelledby="record-title"
     >
-      <div className="section-intro">
-        <h2 id="record-title">{t.recordTitle}</h2>
-        <p>{t.recordIntro}</p>
-      </div>
-      <details className="record-group" id="skills-h">
+      <MdHeading level={2} id="record-title">
+        {t.recordTitle}
+      </MdHeading>
+      <p className="ln md-lead">{t.recordIntro}</p>
+      <details className="ln record-group" id="skills-h">
         <summary>{t.recordSkills}</summary>
         <div className="record-grid">
           {record.skills.map((group) => (
@@ -413,7 +522,7 @@ function FullRecord({
           ))}
         </div>
       </details>
-      <details className="record-group" id="depth-h">
+      <details className="ln record-group" id="depth-h">
         <summary>{t.recordDepth}</summary>
         <div className="record-grid">
           {record.depth.map((area) => (
@@ -431,7 +540,7 @@ function FullRecord({
           ))}
         </div>
       </details>
-      <details className="record-group" id="open-source">
+      <details className="ln record-group" id="open-source">
         <summary>{t.recordOpenSource}</summary>
         <ul className="record-list">
           {record.openSource.map((repository) => (
@@ -449,7 +558,7 @@ function FullRecord({
           ))}
         </ul>
       </details>
-      <details className="record-group" id="comm-h">
+      <details className="ln record-group" id="comm-h">
         <summary>{t.recordCommunity}</summary>
         <ul className="record-list">
           {record.community.map((group) => (
@@ -469,7 +578,7 @@ function FullRecord({
           ))}
         </ul>
       </details>
-      <details className="record-group" id="writing">
+      <details className="ln record-group" id="writing">
         <summary>{t.recordWriting}</summary>
         <ul className="record-list">
           {record.writing.map((item) => (

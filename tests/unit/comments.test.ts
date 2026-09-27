@@ -6,13 +6,8 @@ import {
   parseGiscusMessage,
   type GiscusState,
 } from '../../src/lib/comments.ts';
-import {
-  loadComments,
-  loadPosts,
-  loadResearch,
-} from '../../src/lib/content.server.ts';
-import { importResearch } from '../../src/lib/research-import.server.ts';
-import { commentsConfigSchema, researchSchema } from '../../src/lib/schema.ts';
+import { loadComments, loadPosts } from '../../src/lib/content.server.ts';
+import { commentsConfigSchema } from '../../src/lib/schema.ts';
 
 const parsed = commentsConfigSchema.parse({
   mode: 'giscus',
@@ -206,56 +201,5 @@ describe('giscus runtime states', () => {
         frame,
       ),
     ).toEqual({ type: 'error', message: 'x'.repeat(200) });
-  });
-});
-
-describe('paper snapshot', () => {
-  it('imports only allowlisted metadata and refuses malformed input', () => {
-    const fixture = {
-      generated_at: '2026-09-17T08:23:50Z',
-      run_date: '2026-09-17',
-      top5: [
-        {
-          story_id: 'arxiv:1',
-          title: 'Paper',
-          title_zh: '論文',
-          published_at: '2026-09-16T13:03:12Z',
-          primary_link: { url: 'https://arxiv.org/abs/1' },
-          summary: '<script>not-public</script>',
-        },
-      ],
-      internal_state: 'not-public',
-    };
-    const result = importResearch(fixture, 'a'.repeat(40));
-    expect(result.reports[0]?.guideUrl).toBe(
-      'https://paper.dennysora.me/day/2026-09-17.html',
-    );
-    expect(result.reports[0]?.review).toBe('machine-generated');
-    expect(JSON.stringify(result)).not.toContain('not-public');
-    expect(() =>
-      importResearch({ ...fixture, top5: [] }, 'a'.repeat(40)),
-    ).toThrow();
-    expect(() => importResearch(fixture, '../branch')).toThrow();
-  });
-  it('accepts only a pinned public snapshot from approved hosts', () => {
-    const value = loadResearch();
-    if (!value) throw new Error('Fixture missing');
-    expect(value.sourceCommit).toMatch(/^[a-f0-9]{40}$/);
-    const report = value.reports[0];
-    if (!report) throw new Error('Fixture missing');
-    for (const originalUrl of [
-      'http://arxiv.org/abs/1',
-      'https://arxiv.org.evil.invalid/abs/1',
-      'javascript:alert(1)',
-    ])
-      expect(() =>
-        researchSchema.parse({
-          ...value,
-          reports: [{ ...report, originalUrl }],
-        }),
-      ).toThrow();
-    expect(() =>
-      researchSchema.parse({ ...value, secret: 'fixture-only' }),
-    ).toThrow();
   });
 });

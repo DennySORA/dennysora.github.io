@@ -54,6 +54,30 @@
       "alpha": true,
       "published": true,
       "role": "Apple touch icon."
+    },
+    {
+      "path": "assets/logo-hero.webp",
+      "gitBlob": "05a152c59f4ed27e1a375a0c2697d2fe9d9d29d0",
+      "bytes": 42906,
+      "width": 346,
+      "height": 392,
+      "alpha": true,
+      "published": true,
+      "derivedFrom": "assets/logo_full.png",
+      "role": "README hero logo (1x). Derived from the master artwork: transparent side columns trimmed to the figure (alpha bounds x=746–2087 of 2816, plus an 8 px margin), resized with Lanczos to 392 px high, WebP quality 88 with lossless alpha. Same figure, no recolouring or redrawing.",
+      "inspection": "Viewed at full size on the #0B1020 background: figure complete, edges clean, no halo. The master has no white sticker outline (logo.png does), so the page places a soft background glow behind it instead of filtering the image."
+    },
+    {
+      "path": "assets/logo-hero@2x.webp",
+      "gitBlob": "c2cb0b1e6b68a08d8a862752778a8e79409ee693",
+      "bytes": 110696,
+      "width": 693,
+      "height": 784,
+      "alpha": true,
+      "published": true,
+      "derivedFrom": "assets/logo_full.png",
+      "role": "README hero logo (2x). Derived from the master artwork: transparent side columns trimmed to the figure (alpha bounds x=746–2087 of 2816, plus an 8 px margin), resized with Lanczos to 784 px high, WebP quality 88 with lossless alpha. Same figure, no recolouring or redrawing.",
+      "inspection": "Viewed at full size on the #0B1020 background: figure complete, edges clean, no halo. The master has no white sticker outline (logo.png does), so the page places a soft background glow behind it instead of filtering the image."
     }
   ]
 }

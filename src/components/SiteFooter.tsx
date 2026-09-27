@@ -1,5 +1,5 @@
 import { dictionaries, type Locale } from '../i18n/index.ts';
-import { contactEmail, githubUrl } from '../lib/site.ts';
+import { contactEmail, githubUrl, papersUrl } from '../lib/site.ts';
 import { BrandLogo } from './BrandLogo.tsx';
 import { Icon } from './Icon.tsx';
 import { LanguageList, type LanguageLink } from './LanguageSwitch.tsx';
@@ -43,7 +43,11 @@ export function SiteFooter({
               </a>
             </li>
             <li>
-              <a href={`/${locale}/papers/`}>{t.navPapers}</a>
+              <a href={papersUrl}>
+                <Icon name="newspaper" size={18} />
+                {t.navPapers}
+                <span className="sr-only">（{t.newTab}）</span>
+              </a>
             </li>
             <li>
               <a href={`/${locale}/privacy/`}>{t.privacy}</a>

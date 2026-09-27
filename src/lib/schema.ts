@@ -350,44 +350,6 @@ export const commentsConfigSchema = z.discriminatedUnion('mode', [
 ]);
 export type CommentsConfig = z.infer<typeof commentsConfigSchema>;
 
-const originalUrl = https.refine(
-  (value) => ['arxiv.org'].includes(new URL(value).hostname),
-  'Unapproved paper host',
-);
-const guideUrl = https.refine(
-  (value) => new URL(value).hostname === 'paper.dennysora.me',
-  'Unapproved guide host',
-);
-export const researchSchema = z
-  .object({
-    sourceRepo: z.literal('DennySORA/daily-paper-report'),
-    sourceCommit: commit,
-    sourceUrl: https.refine(
-      (value) => new URL(value).hostname === 'github.com',
-    ),
-    generatedAt: z.iso.datetime({ offset: true }),
-    period: z.iso.date(),
-    reports: z
-      .array(
-        z
-          .object({
-            id: z.string().min(1),
-            title: z.string().min(1).max(400),
-            titleZh: z.string().min(1).max(400),
-            publishedAt: z.iso.datetime({ offset: true }),
-            originalUrl,
-            guideUrl,
-            kind: z.literal('daily'),
-            language: z.literal('zh-Hant'),
-            review: z.literal('machine-generated'),
-          })
-          .strict(),
-      )
-      .max(20),
-  })
-  .strict();
-export type Research = z.infer<typeof researchSchema>;
-
 export const headingAnchorsSchema = z.record(
   safeId,
   z.partialRecord(

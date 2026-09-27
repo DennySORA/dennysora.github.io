@@ -18,11 +18,11 @@ test('every production route is complete, dark-first and self-hosted HTML', asyn
   }
 });
 
-test('the header uses the real same-origin logo and keeps a usable brand link if it fails', async ({
+test('the title bar uses the real same-origin logo and keeps a usable brand link if it fails', async ({
   page,
 }) => {
-  await page.goto('/zh-hant/about/');
-  const logo = page.locator('.site-header .brand-mark');
+  await page.goto('/zh-hant/blog/');
+  const logo = page.locator('.titlebar .brand-mark');
   await expect(logo).toHaveAttribute('src', '/assets/logo.png');
   expect(
     await logo.evaluate((image: HTMLImageElement) => ({
@@ -35,18 +35,33 @@ test('the header uses the real same-origin logo and keeps a usable brand link if
     natural: [720, 392],
     fit: 'contain',
     filter: 'none',
-    height: 56,
+    height: 32,
   });
   const brand = page.getByRole('link', { name: 'DennySORA 首頁' }).first();
   await expect(brand).toHaveAttribute('href', '/zh-hant/');
   await page.route('**/assets/logo.png', (route) => route.abort());
   await page.reload();
-  await expect(page.locator('.site-header .brand-name')).toHaveText(
-    'DennySORA',
-  );
-  await expect(page.locator('.site-header .brand-name')).toBeVisible();
+  await expect(page.locator('.titlebar .brand-name')).toHaveText('DennySORA');
+  await expect(page.locator('.titlebar .brand-name')).toBeVisible();
   await brand.click();
   await expect(page).toHaveURL('/zh-hant/');
+  // The README shows the same figure large, sharp at 1x and 2x, unfiltered.
+  await page.unroute('**/assets/logo.png');
+  const hero = page.locator('.readme-logo img');
+  await expect(hero).toBeInViewport();
+  expect(
+    await hero.evaluate((image: HTMLImageElement) => ({
+      source: new URL(image.currentSrc).pathname,
+      set: image.getAttribute('srcset'),
+      loaded: image.complete && image.naturalWidth > 0,
+      filter: getComputedStyle(image).filter,
+    })),
+  ).toEqual({
+    source: '/assets/logo-hero.webp',
+    set: '/assets/logo-hero.webp 1x, /assets/logo-hero@2x.webp 2x',
+    loaded: true,
+    filter: 'none',
+  });
 });
 
 test('first visits are dark even when the OS prefers light, with or without JavaScript', async ({
@@ -111,7 +126,8 @@ test('language switching keeps the article, metadata and a direct reload', async
 test('the header search link and keyboard shortcuts open article search without stealing typing', async ({
   page,
 }) => {
-  await page.goto('/en/about/');
+  await page.goto('/en/');
+  await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
   await page.keyboard.press('/');
   await expect(page).toHaveURL('/en/blog/#search');
   const input = page.getByRole('searchbox', { name: 'Search articles' });
@@ -123,7 +139,10 @@ test('the header search link and keyboard shortcuts open article search without 
   await page.keyboard.press('Control+k');
   await expect(input).toBeFocused();
   await page.goto('/en/projects/');
-  await page.getByRole('link', { name: 'Search articles' }).click();
+  await page
+    .getByRole('banner')
+    .getByRole('link', { name: 'Search articles' })
+    .click();
   await expect(page).toHaveURL('/en/blog/#search');
 });
 
@@ -161,12 +180,18 @@ test('404 stays a real 404, removed articles are explicit and legacy paths keep 
   await expect(page).toHaveURL('/zh-hant/blog/engineering-principles/#how-h');
   await expect(page.locator('#how-h')).toBeInViewport();
   await page.goto('/detail/depth/');
-  await expect(page).toHaveURL('/zh-hant/about/#depth-h');
+  await expect(page).toHaveURL('/zh-hant/#depth-h');
   await expect(page.locator('#depth-h')).toHaveAttribute('open', '');
   await expect(page.locator('#depth-h summary')).toBeInViewport();
   await page.goto('/#exp-h');
-  await expect(page).toHaveURL('/zh-hant/about/#exp-h');
+  await expect(page).toHaveURL('/zh-hant/#exp-h');
   await expect(page.locator('#experience-title')).toBeInViewport();
+  // The profile moved to each language's home; old About links keep their anchor.
+  await page.goto('/ja/about/#exp-h');
+  await expect(page).toHaveURL('/ja/#exp-h');
+  await expect(page.locator('#experience-title')).toBeInViewport();
+  await page.goto('/en/about/');
+  await expect(page).toHaveURL('/en/');
 });
 
 test('the former research page is a no-index bridge to both destinations', async ({
@@ -178,8 +203,8 @@ test('the former research page is a no-index bridge to both destinations', async
     'noindex, follow',
   );
   await expect(
-    page.getByRole('link', { name: 'Go to Paper Daily' }),
-  ).toHaveAttribute('href', '/en/papers/');
+    page.getByRole('link', { name: /Go to Paper Daily/ }),
+  ).toHaveAttribute('href', 'https://paper.dennysora.me/');
   await page.getByRole('link', { name: 'Read research notes' }).click();
   await expect(page).toHaveURL('/en/blog/?type=research-note');
   await expect(page.locator('.article-row')).toHaveCount(1);
@@ -190,19 +215,35 @@ test('the former research page is a no-index bridge to both destinations', async
   ).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('Paper Daily explains the separate site and labels generated content without fetching it', async ({
+test('Paper Daily is its own site: every entry links straight to it and the old page only forwards', async ({
   page,
+  request,
 }) => {
   const external = trackExternalRequests(page);
-  await page.goto('/en/papers/');
-  const open = page.getByRole('link', { name: /Open Paper Daily/ });
-  await expect(open).toHaveAttribute('href', 'https://paper.dennysora.me/');
-  await expect(open).toBeInViewport();
-  await expect(
-    page.getByText('Automatically generated · not individually reviewed'),
-  ).toHaveCount(3);
-  await expect(page.getByText('Snapshot from 2026-09-17')).toBeVisible();
+  await page.goto('/en/');
+  for (const region of [
+    page.getByRole('navigation', { name: 'Main navigation' }),
+    page.getByRole('navigation', { name: 'Explorer' }),
+    page.getByRole('navigation', { name: 'Quick links' }),
+    page.getByRole('contentinfo'),
+  ])
+    await expect(
+      region.getByRole('link', { name: /paper-daily|Paper Daily/ }),
+    ).toHaveAttribute('href', 'https://paper.dennysora.me/');
   expect(external).toEqual([]);
+  // The former in-site page is a forwarding stub, not a page of its own.
+  for (const locale of ['zh-hant', 'en', 'ja']) {
+    const response = await request.get(`/${locale}/papers/`);
+    expect(response.status()).toBe(200);
+    const html = await response.text();
+    expect(html).toContain(
+      '<meta http-equiv="refresh" content="0;url=https://paper.dennysora.me/">',
+    );
+    expect(html).toContain('noindex');
+  }
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  expect(sitemap).not.toContain('/papers/');
+  expect(sitemap).not.toContain('/about/');
 });
 
 test('no third-party requests, cookies or storage; comments never load on their own', async ({
@@ -211,10 +252,9 @@ test('no third-party requests, cookies or storage; comments never load on their 
   const external = trackExternalRequests(page);
   for (const path of [
     '/en/',
-    '/en/about/',
+    '/ja/',
     '/en/projects/',
     '/en/blog/engineering-principles/',
-    '/en/papers/',
     '/en/privacy/',
   ])
     await page.goto(path);
@@ -311,15 +351,21 @@ test('articles, languages and phone navigation work without JavaScript', async (
   await expect(page.locator('.prose pre')).not.toHaveCount(0);
   await expect(page.locator('.menu-button')).toBeHidden();
   await expect(page.locator('.reader-tools')).toBeHidden();
-  const nav = page.locator('.nojs-nav');
-  await expect(nav).toBeVisible();
+  // The editor tabs are plain links, so every area stays reachable without scripts.
+  await expect(
+    page.getByRole('navigation', { name: 'Main navigation' }),
+  ).toBeVisible();
   await page
     .locator('.footer-languages')
     .getByRole('link', { name: '日本語' })
     .click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
-  await nav.getByRole('link', { name: '自己紹介', exact: true }).click();
-  await expect(page).toHaveURL(`${origin}/ja/about/`);
+  await page
+    .getByRole('navigation', { name: 'メインナビゲーション' })
+    .getByRole('link', { name: /README\.md/ })
+    .click();
+  await expect(page).toHaveURL(`${origin}/ja/`);
   await expect(page.locator('h1')).toContainText('DennySORA');
+  await expect(page.locator('.status-mode')).toHaveText('NORMAL');
   await context.close();
 });

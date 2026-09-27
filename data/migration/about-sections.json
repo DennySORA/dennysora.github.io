@@ -1,18 +1,18 @@
 {
   "source": "content/profile/{zh-hant,en,ja}.md at fb4c89f92d59375d8582b020cf7dce6bea11292f",
-  "target": "content/profile/profile.json rendered by the structured About page",
+  "target": "content/profile/profile.json rendered as the README on each language's home page",
   "reviewedAt": "2026-09-26",
   "sections": [
     {
       "legacyAnchor": "skills-h",
       "headings": ["技能", "Skills", "スキル"],
-      "destination": "About › full record › skills (record.skills); each competency also lists 4–6 tools",
+      "destination": "Home README › full record › skills (record.skills); each competency also lists 4–6 tools",
       "status": "preserved"
     },
     {
       "legacyAnchor": "exp-h",
       "headings": ["經歷", "Experience", "経歴"],
-      "destination": "About › experience timeline (summary, 2–3 highlights and every original item in a disclosure)",
+      "destination": "Home README › experience timeline (summary, 2–3 highlights and every original item in a disclosure)",
       "status": "preserved",
       "removed": [
         "Version labels v1.0.0–v4.0.0 (UI/UX spec v2.1 §6.4)",
@@ -22,19 +22,19 @@
     {
       "legacyAnchor": "edu-h",
       "headings": ["學歷", "Education", "学歴"],
-      "destination": "About › beyond engineering › education",
+      "destination": "Home README › beyond engineering › education",
       "status": "preserved"
     },
     {
       "legacyAnchor": "depth-h",
       "headings": ["技術深度", "Technical Depth", "技術的深さ"],
-      "destination": "About › full record › technical depth (record.depth)",
+      "destination": "Home README › full record › technical depth (record.depth)",
       "status": "preserved"
     },
     {
       "legacyAnchor": "beyond-h",
       "headings": ["工程之外", "Beyond Engineering", "エンジニアリングの外側"],
-      "destination": "About › beyond engineering (personal.interests)",
+      "destination": "Home README › beyond engineering (personal.interests)",
       "status": "preserved"
     },
     {
@@ -44,7 +44,7 @@
         "Open-Source Projects",
         "オープンソースプロジェクト"
       ],
-      "destination": "Projects page (dgxtop, httpulse, ADK ↔ AGUI Middleware) and About › full record › open-source projects",
+      "destination": "Projects page (dgxtop, httpulse, ADK ↔ AGUI Middleware) and Home README › full record › open-source projects",
       "status": "partially-withheld",
       "removed": [
         "GitHub star counts shown without a query time (UI/UX spec v2.1 §8.4)"
@@ -70,13 +70,13 @@
     {
       "legacyAnchor": "comm-h",
       "headings": ["社群", "Community", "コミュニティ"],
-      "destination": "About › full record › community; the paper digest also has its own Papers page",
+      "destination": "Home README › full record › community; the paper digest is linked as its own site (Paper Daily)",
       "status": "preserved"
     },
     {
       "legacyAnchor": "notes-h",
       "headings": ["技術筆記", "Tech Note", "技術ノート"],
-      "destination": "About › full record › other writing (record.writing)",
+      "destination": "Home README › full record › other writing (record.writing)",
       "status": "preserved"
     }
   ]

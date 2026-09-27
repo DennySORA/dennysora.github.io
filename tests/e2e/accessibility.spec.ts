@@ -15,7 +15,8 @@ async function violations(page: Page) {
 
 for (const path of [
   '/zh-hant/',
-  '/zh-hant/about/',
+  '/en/',
+  '/ja/',
   '/en/blog/',
   '/ja/blog/engineering-principles/',
   '/en/blog/tags/',
@@ -23,7 +24,6 @@ for (const path of [
   '/zh-hant/blog/topics/ai/',
   '/en/projects/',
   '/en/projects/adk-agui-middleware/',
-  '/en/papers/',
   '/zh-hant/research/',
   '/ja/privacy/',
   '/en/missing-page/',
@@ -33,12 +33,13 @@ for (const path of [
     expect(await violations(page)).toEqual([]);
   });
 
-test('accessible states: open details, filtered and empty library, mobile menu', async ({
+test('accessible states: open details, language menu, typing, filtered and empty library, explorer drawer', async ({
   page,
 }) => {
-  await page.goto('/en/about/');
-  for (const summary of await page.locator('details > summary').all())
+  await page.goto('/en/');
+  for (const summary of await page.locator('main details > summary').all())
     await summary.click();
+  await page.locator('.language-menu > summary').click();
   expect(await violations(page)).toEqual([]);
   await page.goto('/zh-hant/blog/?topic=ai&tag=llm&tag=quantization');
   await expect(page.locator('.article-row')).toHaveCount(1);
@@ -47,9 +48,12 @@ test('accessible states: open details, filtered and empty library, mobile menu',
   await expect(
     page.getByRole('heading', { name: '沒有符合這些條件的文章' }),
   ).toBeVisible();
+  // The status line is in INSERT mode while the search field has focus.
+  await expect(page.locator('.status-mode')).toHaveText('INSERT');
   expect(await violations(page)).toEqual([]);
   await page.setViewportSize({ width: 320, height: 720 });
   await page.goto('/en/');
-  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.getByRole('button', { name: 'Open explorer' }).click();
+  await expect(page.getByRole('dialog', { name: 'Explorer' })).toBeVisible();
   expect(await violations(page)).toEqual([]);
 });

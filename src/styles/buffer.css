@@ -1,0 +1,82 @@
+/*
+ * Markdown buffer: numbered lines in a gutter, visible heading markers and
+ * vim's `~` rows. A `.buffer` is the only positioned ancestor of its lines, so
+ * every number lands in one column however deeply the line is nested. Numbers
+ * and markers are decoration: `/ ""` gives them empty alternative text.
+ */
+@property --ln-box {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 28px;
+}
+
+main {
+  counter-reset: ln;
+}
+.buffer,
+.container {
+  position: relative;
+  padding-left: calc(var(--line-gutter) + var(--gutter));
+  padding-right: var(--gutter);
+}
+.ln,
+.prose > :not(ul, ol, .footnotes),
+.prose > :is(ul, ol) > li {
+  /* The first line box of this element, resolved here and inherited as px. */
+  --ln-box: 1lh;
+}
+.ln::before,
+.prose > :not(ul, ol, .footnotes)::before,
+.prose > :is(ul, ol) > li::before {
+  content: counter(ln);
+  content: counter(ln) / '';
+  counter-increment: ln;
+  position: absolute;
+  left: 0;
+  /* In a flex or grid line, the number stays on the first row. */
+  align-self: flex-start;
+  width: calc(var(--line-gutter) - 12px);
+  color: var(--color-gutter);
+  font-family: var(--font-code);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: var(--ln-box);
+  text-align: right;
+  text-transform: none;
+  pointer-events: none;
+  user-select: none;
+}
+.md-mark {
+  color: var(--color-syntax-marker);
+  font-weight: 400;
+}
+.md-heading {
+  font-family: var(--font-code);
+  letter-spacing: -0.01em;
+}
+.md-fence {
+  color: var(--color-syntax-marker);
+  font-family: var(--font-code);
+  font-size: 14px;
+  line-height: 1.7;
+}
+/* Vim draws these rows in its dim non-text colour; a solid token, never opacity. */
+.end-of-buffer {
+  display: grid;
+  margin-top: var(--space-6);
+  color: var(--color-gutter);
+  font-family: var(--font-code);
+  font-size: 14px;
+  line-height: 1.7;
+  user-select: none;
+}
+
+@media (max-width: 767px) {
+  .ln::before,
+  .prose > :not(ul, ol, .footnotes)::before,
+  .prose > :is(ul, ol) > li::before {
+    display: none;
+  }
+}

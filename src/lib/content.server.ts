@@ -9,7 +9,6 @@ import {
   postSchema,
   profileSchema,
   projectsSchema,
-  researchSchema,
   tagsSchema,
   topicsSchema,
   type ContentTypeId,
@@ -60,12 +59,6 @@ export const loadHeadingAnchors = once(() =>
     json(join(root, 'data/migration/heading-anchors.json')),
   ),
 );
-export function loadResearch() {
-  const path = join(root, 'data/research/snapshot.json');
-  if (!existsSync(path)) return null;
-  return researchSchema.parse(json(path));
-}
-
 export type LoadedPost = Post & { revision: string; editions: Locale[] };
 export const loadPosts = once((): LoadedPost[] => {
   const ids = new Set<string>();
@@ -240,11 +233,9 @@ export function publishedRoutes(): RouteDescriptor[] {
   for (const locale of locales) {
     routes.push(
       { kind: 'home', locale },
-      { kind: 'about', locale },
       { kind: 'projects', locale },
       { kind: 'library', locale },
       { kind: 'tags', locale },
-      { kind: 'papers', locale },
       { kind: 'research', locale },
       { kind: 'privacy', locale },
     );
@@ -349,7 +340,6 @@ export function validateContent(): void {
           `Unknown evidence ${evidence.kind}:${evidence.id} in ${competency.id}`,
         );
   loadComments();
-  loadResearch();
   const paths = publishedPaths();
   if (new Set(paths).size !== paths.length) problems.push('Duplicate route');
   if (problems.length)

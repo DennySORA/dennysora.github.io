@@ -1,5 +1,7 @@
 # 2026-09-26 UI／UX v2.1 交付紀錄
 
+> 更新：v2.1 已於 2026-09-26 依擁有者指示部署（`8bed0f9`）。2026-09-27 的編輯器工作台改版取代了本紀錄的三項決定（首頁與 About 分開、移除 IDE 外框、站內論文日報頁），見 [DELIVERY-v2.2.md](DELIVERY-v2.2.md)。以下保留 2026-09-26 當時的紀錄。
+
 依據：`DennySORA_UI_UX_v2.1_Package.zip`（`DennySORA_UI_UX_Spec_v2.1.md` 為唯一有效規格，`CODEX_HANDOFF.md` 為授權邊界）。網站變更在本機實作與驗證；GitHub 端的留言設定由擁有者明示指示後以 `gh` 完成（見〈GitHub 端設定〉）。未部署網站（[workflow](../../.github/workflows/site.yml) 只在手動觸發且 `deploy=true` 時發布），未改 DNS／Nano，未安裝 GitHub App，未發表任何留言。
 
 ## 基線（CP-00）

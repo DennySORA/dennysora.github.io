@@ -18,8 +18,7 @@
     "format:check": "prettier --check src scripts tests content data *.ts *.js *.json *.yaml .github/workflows/*.yml README.md",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e",
-    "research:import": "node scripts/import-research.ts"
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e"
   },
   "dependencies": {
     "@react-router/node": "8.4.0",

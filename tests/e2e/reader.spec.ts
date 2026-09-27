@@ -27,14 +27,14 @@ test('the table of contents follows reading without rewriting history', async ({
   await expect(page).toHaveURL(/#how-h$/);
   const heading = page.locator('#how-h');
   await expect(heading).toBeInViewport();
-  // The sticky header never covers the target heading.
+  // The sticky title bar, tabs and breadcrumbs never cover the target heading.
   const top = await heading.evaluate(
     (element) => element.getBoundingClientRect().top,
   );
-  const header = await page
-    .locator('.site-header')
+  const chrome = await page
+    .locator('.editor-head')
     .evaluate((element) => element.getBoundingClientRect().bottom);
-  expect(top).toBeGreaterThanOrEqual(header);
+  expect(top).toBeGreaterThanOrEqual(chrome);
 });
 
 test('short screens get a collapsed contents list before the text', async ({

@@ -1,4 +1,6 @@
 import type { ViewData } from '../../app/page.tsx';
+import { EndOfBuffer } from '../../components/Buffer.tsx';
+import { Icon } from '../../components/Icon.tsx';
 import { PageHead } from '../../components/PageHead.tsx';
 import {
   ProjectActions,
@@ -19,7 +21,7 @@ export function Projects({
   return (
     <div className="container profile-layout projects">
       <PageHead eyebrow={t.projectsEyebrow} title={t.projectsTitle}>
-        <p className="page-intro">{t.projectsIntro}</p>
+        <p className="ln page-intro">{t.projectsIntro}</p>
       </PageHead>
       <div className="project-list">
         {view.projects.map((project, index) => {
@@ -28,7 +30,7 @@ export function Projects({
             <article
               key={project.id}
               id={`project-${project.id}`}
-              className={`project-row${index === 0 ? ' featured' : ''}`}
+              className={`ln project-row${index === 0 ? ' featured' : ''}`}
               aria-labelledby={`project-${project.id}-title`}
             >
               <div className="project-row-side">
@@ -36,6 +38,7 @@ export function Projects({
                   className="project-title"
                   id={`project-${project.id}-title`}
                 >
+                  <Icon name="package" size={20} />
                   {project.title}
                 </h2>
                 <p className="project-owner entity-kind">{project.owner}</p>
@@ -72,7 +75,8 @@ export function Projects({
           );
         })}
       </div>
-      <p className="fine projects-note">{t.projectsNote}</p>
+      <p className="ln fine projects-note">{t.projectsNote}</p>
+      <EndOfBuffer />
     </div>
   );
 }

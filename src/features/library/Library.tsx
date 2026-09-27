@@ -6,6 +6,7 @@ import {
   taxonomyMaps,
   type TaxonomyMaps,
 } from '../../components/ArticleListItem.tsx';
+import { EndOfBuffer } from '../../components/Buffer.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { PageHead } from '../../components/PageHead.tsx';
 import { useHydrated } from '../../components/useHydrated.ts';
@@ -26,6 +27,7 @@ import {
 import { searchArticles, type SearchHit } from '../../lib/pagefind-client.ts';
 import { pageIds } from '../../lib/page-ids.ts';
 import { parseRoute } from '../../lib/route-manifest.ts';
+import { papersUrl } from '../../lib/site.ts';
 import { matchSearch } from '../../lib/search.ts';
 
 type LibraryView = Extract<ViewData, { kind: 'library' }>;
@@ -229,7 +231,7 @@ export function Library({
   return (
     <div className="container library-layout">
       <PageHead eyebrow={t.libraryEyebrow} title={t.libraryTitle}>
-        <p className="page-intro">{t.libraryIntro}</p>
+        <p className="ln page-intro">{t.libraryIntro}</p>
       </PageHead>
 
       <div className="search-block requires-js" id={pageIds.search}>
@@ -244,7 +246,7 @@ export function Library({
           <label className="sr-only" htmlFor={pageIds.searchInput}>
             {t.searchLabel}
           </label>
-          <div className="search-field">
+          <div className="ln search-field">
             <Icon name="search" />
             <input
               ref={input}
@@ -310,7 +312,7 @@ export function Library({
           />
         ) : null}
         <div
-          className="filter-row tag-filter"
+          className="ln filter-row tag-filter"
           role="group"
           aria-label={`${t.tagFilter}（${t.tagFilterHint}）`}
         >
@@ -362,7 +364,7 @@ export function Library({
         </div>
       ) : null}
 
-      <div className="results-head">
+      <div className="ln results-head">
         <p role="status" aria-live="polite" className="result-count">
           {status === 'loading' ? t.searching : t.articleCount(results.length)}
           {state.tags.length > 1 ? ` · ${t.anyTagSelected}` : null}
@@ -428,7 +430,7 @@ export function Library({
       </div>
 
       {results.length === 0 && status !== 'loading' ? (
-        <div className="empty-state">
+        <div className="ln empty-state">
           <h2>{t.emptyTitle}</h2>
           <p>{t.emptyText}</p>
           <button
@@ -455,11 +457,13 @@ export function Library({
           <h2 id="library-papers-title">{t.papersNoteTitle}</h2>
           <p>{t.papersNoteText}</p>
         </div>
-        <a className="text-action" href={`/${locale}/papers/`}>
+        <a className="text-action resource-link" href={papersUrl}>
           {t.goToPapers}
-          <Icon name="arrow" size={18} />
+          <Icon name="external" size={18} />
+          <span className="sr-only">（{t.newTab}）</span>
         </a>
       </aside>
+      <EndOfBuffer />
     </div>
   );
 }
@@ -478,7 +482,7 @@ function FilterRow({
   onSelect: (id: string | null) => void;
 }) {
   return (
-    <div className="filter-row" role="group" aria-label={label}>
+    <div className="ln filter-row" role="group" aria-label={label}>
       <span className="filter-label" aria-hidden="true">
         {label}
       </span>

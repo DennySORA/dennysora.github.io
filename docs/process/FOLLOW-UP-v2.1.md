@@ -1,6 +1,6 @@
 # UI／UX v2.1 後續待辦
 
-2026-09-26 建立。v2.1 已合併進 `main`，但尚未部署。以下是交付時留給擁有者處理的事項，完成一項就勾選或刪除。交付與驗收紀錄見 [DELIVERY-v2.1.md](DELIVERY-v2.1.md)。
+2026-09-26 建立。v2.1 已合併進 `main`，並於 2026-09-26 依擁有者指示部署（`8bed0f9`）。2026-09-27 的編輯器工作台改版（v2.2）在本機，尚未 commit 與部署，見 [DELIVERY-v2.2.md](DELIVERY-v2.2.md)。以下是留給擁有者處理的事項，完成一項就勾選或刪除。v2.1 的交付與驗收紀錄見 [DELIVERY-v2.1.md](DELIVERY-v2.1.md)。
 
 ## 需要擁有者決定
 
@@ -8,13 +8,14 @@
   - 接受：在 GitHub 網頁只為本 repository 安裝 [giscus App](https://github.com/apps/giscus)，依[寫作指南](../CONTENT_WORKFLOW.md#留言)把 [`data/comments.json`](../../data/comments.json) 改成 `giscus` 模式（設定值已列在指南；[`giscus.json`](../../giscus.json) 已限制只能內嵌在 `https://dennysora.me`），再人工驗收 C04、C06。
   - 不接受：維持 `github-native`。這表示放棄規格建議的內嵌目標，請在交付紀錄註明是擁有者的決定。
 - [ ] **至少一篇專案完整案例。** 驗收 P03 卡在這裡。在 [`content/projects/projects.json`](../../content/projects/projects.json) 的專案填入 `caseStudy`（`publication`、`locales`、`contentPath: content/projects/<id>/`）並提供真實內容；沒有案例的專案不會顯示「查看案例」。
-- [ ] **何時部署。** 線上網站仍是 `fb4c89f`（2026-09-20 部署）。push 到 `main` 只會跑驗證；要發布時執行 `gh workflow run site.yml --ref main -f deploy=true`，或在 GitHub Actions 手動執行「Verify and publish static site」並勾選 `deploy`。發布前可先處理下方的審閱項目。
+- [x] **部署 v2.1。** 2026-09-26 依擁有者指示執行 `gh workflow run site.yml --ref main -f deploy=true`（run 36253709040），線上為 `8bed0f9`。
+- [ ] **確認 v2.2 編輯器改版後 commit、push 與部署。** push 到 `main` 只會跑驗證；發布仍用上一行的指令，或在 GitHub Actions 手動執行「Verify and publish static site」並勾選 `deploy`。
 
 ## 需要擁有者審閱
 
-- [ ] About 新文案（定位、簡介、能力說明、經歷摘要），在 [`content/profile/profile.json`](../../content/profile/profile.json)：繁中依交接包，英文與日文由既有公開譯文改寫。
+- [ ] 首頁 README 的自介文案（定位、簡介、能力說明、經歷摘要），在 [`content/profile/profile.json`](../../content/profile/profile.json)：繁中依交接包，英文與日文由既有公開譯文改寫。
 - [ ] 各篇文章的 Tag 與寫作類型：`content/posts/*/meta.json` 的 `tagIds`、`contentType`；標籤名稱與別名在 [`content/taxonomy/`](../../content/taxonomy/)。
-- [ ] Ops-Tools、Image-Tools、Auto-Video-Organize 是 private，未列入 About；若改為公開，依 [`data/migration/about-sections.json`](../../data/migration/about-sections.json) 恢復。
+- [ ] Ops-Tools、Image-Tools、Auto-Video-Organize 是 private，未列入首頁履歷；若改為公開，依 [`data/migration/about-sections.json`](../../data/migration/about-sections.json) 恢復。
 
 ## 未 commit 的本機檔案
 

@@ -1,6 +1,7 @@
 import { Icon } from '../../components/Icon.tsx';
 import { PageHead } from '../../components/PageHead.tsx';
 import { dictionaries, type Locale } from '../../i18n/index.ts';
+import { papersUrl } from '../../lib/site.ts';
 
 /** The former Research page served two intents, so it offers both destinations. */
 export function ResearchBridge({ locale }: { locale: Locale }) {
@@ -18,9 +19,10 @@ export function ResearchBridge({ locale }: { locale: Locale }) {
           {t.researchBridgeNotes}
           <Icon name="arrow" size={18} />
         </a>
-        <a className="button button-quiet" href={`/${locale}/papers/`}>
+        <a className="button button-quiet resource-link" href={papersUrl}>
           {t.researchBridgePapers}
-          <Icon name="arrow" size={18} />
+          <Icon name="external" size={18} />
+          <span className="sr-only">（{t.newTab}）</span>
         </a>
       </div>
     </div>

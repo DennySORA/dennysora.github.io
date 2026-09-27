@@ -13,7 +13,6 @@ import {
   loadComments,
   loadProfile,
   loadProjects,
-  loadResearch,
   loadTaxonomy,
   relatedPosts,
   tagsInLocale,
@@ -30,14 +29,12 @@ import {
 } from '../lib/route-manifest.ts';
 import { siteUrl } from '../lib/site.ts';
 import { SiteLayout } from '../components/SiteLayout.tsx';
-import { Home } from '../features/home/Home.tsx';
-import { About } from '../features/about/About.tsx';
+import { Readme } from '../features/home/Readme.tsx';
 import { Projects } from '../features/projects/Projects.tsx';
 import { ProjectOverview } from '../features/projects/ProjectOverview.tsx';
 import { Library } from '../features/library/Library.tsx';
 import { TagIndex, TaxonomyPage } from '../features/library/TaxonomyPages.tsx';
 import { Article } from '../features/reader/Article.tsx';
-import { Papers } from '../features/papers/Papers.tsx';
 import { ResearchBridge } from '../features/research/ResearchBridge.tsx';
 import { Privacy } from '../features/misc/Privacy.tsx';
 import { NotFound } from '../features/misc/NotFound.tsx';
@@ -119,26 +116,16 @@ function postLinks(locale: Locale) {
 function loadView(route: RouteDescriptor) {
   const locale = routeLocale(route);
   switch (route.kind) {
+    // The locale home is the profile README: introduction, logo and résumé.
     case 'root':
-    case 'home': {
-      const posts = listPosts(locale);
-      const featured = posts.find((post) => post.featured) ?? null;
+    case 'home':
       return {
         kind: 'home' as const,
-        featured,
-        latest: posts.filter((post) => post.id !== featured?.id).slice(0, 3),
-        projects: projectCards(locale).filter((project) =>
-          loadProfile().featuredProjectIds.includes(project.id),
-        ),
-        taxonomy: taxonomyLabels(locale),
-      };
-    }
-    case 'about':
-      return {
-        kind: 'about' as const,
         profile: aboutProfile(locale),
         projects: projectCards(locale),
         posts: postLinks(locale),
+        recent: listPosts(locale).slice(0, 3),
+        taxonomy: taxonomyLabels(locale),
       };
     case 'projects':
       return {
@@ -243,8 +230,6 @@ function loadView(route: RouteDescriptor) {
         ),
       };
     }
-    case 'papers':
-      return { kind: 'papers' as const, research: loadResearch() };
     case 'research':
       return { kind: 'research' as const };
     case 'privacy':
@@ -280,12 +265,7 @@ function describe(view: ViewData, locale: Locale) {
   switch (view.kind) {
     case 'home':
       return {
-        title: `DennySORA — ${t.siteTagline}`,
-        description: t.homeIntro,
-      };
-    case 'about':
-      return {
-        title: withSite(t.navAbout),
+        title: `DennySORA · ${view.profile.publicName} — ${view.profile.introduction.role}`,
         description: view.profile.introduction.shortBio,
       };
     case 'projects':
@@ -317,8 +297,6 @@ function describe(view: ViewData, locale: Locale) {
         title: withSite(view.article.edition.title),
         description: view.article.edition.summary,
       };
-    case 'papers':
-      return { title: withSite(t.papersTitle), description: t.papersLead };
     case 'research':
       return {
         title: withSite(t.researchBridgeEyebrow),
@@ -346,9 +324,15 @@ export function loader({ params }: LoaderFunctionArgs) {
       ? routePath(withLocale(route, target))
       : null,
   }));
+  // The explorer lists the real files of this workspace on every page.
+  const workspace = {
+    posts: listPosts(locale).map(({ slug, title }) => ({ slug, title })),
+    projects: loadProjects().map(({ id, title }) => ({ id, title })),
+  };
   return {
     route,
     locale,
+    workspace,
     title,
     description,
     canonical,
@@ -442,11 +426,11 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
             author: {
               '@type': 'Person',
               name: article.post.author,
-              url: `${siteUrl}/${locale}/about/`,
+              url: `${siteUrl}/${locale}/`,
             },
             mainEntityOfPage: data.canonical,
           }
-        : view.kind === 'about'
+        : view.kind === 'home'
           ? {
               '@context': 'https://schema.org',
               '@type': 'ProfilePage',
@@ -456,7 +440,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
                 '@type': 'Person',
                 name: 'DennySORA',
                 alternateName: view.profile.publicName,
-                url: `${siteUrl}/${locale}/about/`,
+                url: `${siteUrl}/${locale}/`,
                 sameAs: [view.profile.contact.github],
               },
             }
@@ -484,9 +468,7 @@ function View({ data }: { data: PageData }) {
   const { view, locale } = data;
   switch (view.kind) {
     case 'home':
-      return <Home view={view} locale={locale} />;
-    case 'about':
-      return <About view={view} locale={locale} />;
+      return <Readme view={view} locale={locale} />;
     case 'projects':
       return <Projects view={view} locale={locale} />;
     case 'project':
@@ -500,8 +482,6 @@ function View({ data }: { data: PageData }) {
       return <TagIndex view={view} locale={locale} />;
     case 'article':
       return <Article view={view} locale={locale} />;
-    case 'papers':
-      return <Papers view={view} locale={locale} />;
     case 'research':
       return <ResearchBridge locale={locale} />;
     case 'privacy':

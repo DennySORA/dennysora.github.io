@@ -1,6 +1,6 @@
 # DennySORA — Engineering, writing & research
 
-A trilingual static personal site for 李汶道 (DennySORA), targeting [dennysora.me](https://dennysora.me). Built with React, TypeScript, React Router prerendering, Vite and Tailwind CSS. The website supports 繁體中文, English and 日本語 on desktop and mobile. The design follows the UI/UX v2.1 package: the existing logo, a semantic dark palette that is the default for every visitor, and three task layouts (profile, library and reader) instead of an editor-style frame.
+A trilingual static personal site for 李汶道 (DennySORA), targeting [dennysora.me](https://dennysora.me). Built with React, TypeScript, React Router prerendering, Vite and Tailwind CSS. The website supports 繁體中文, English and 日本語 on desktop and mobile. Every page sits in a code-editor workbench (title bar with search, activity bar, file explorer, editor tabs, breadcrumbs and a vim-style status line) on the semantic dark palette. Each page reads as an open Markdown buffer with line numbers; the chrome is made of real links and controls, and the document itself scrolls.
 
 ## Develop and verify
 
@@ -22,14 +22,13 @@ pnpm preview
 
 ## Content and routes
 
-- `/{zh-hant,en,ja}/`: home, About, Writing & research (`blog/`, with `blog/topics/<id>/`, `blog/tags/` and `blog/tags/<id>/`), Projects, Paper Daily (`papers/`) and Privacy. `research/` is a no-index bridge to research notes and Paper Daily.
+- `/{zh-hant,en,ja}/`: the profile as `README.md` (logo, introduction and résumé), the blog (`blog/`, with `blog/topics/<id>/`, `blog/tags/` and `blog/tags/<id>/`), Projects and Privacy. Paper Daily is its own site, [paper.dennysora.me](https://paper.dennysora.me/), linked directly. `about/` and `papers/` are forwarding stubs (to the home page with its anchor, and to Paper Daily); `research/` is a no-index bridge to research notes and Paper Daily.
 - `content/posts/<id>/`: `meta.json` and language-specific Markdown. Only valid published editions become routes, feeds or search entries. Topic, content type and tags use the stable IDs in `content/taxonomy/`.
-- `content/profile/profile.json`: the structured About page. The Markdown files beside it are the preserved source it was migrated from.
+- `content/profile/profile.json`: the structured profile shown on each language's home page. The Markdown files beside it are the preserved source it was migrated from.
 - `content/projects/projects.json`: source-backed project summaries, roles and repository links.
-- `data/research/snapshot.json`: validated public metadata from a pinned research repository commit. Builds and visitors do not fetch the research service.
 - `data/comments.json`: `unconfigured`, `github-native` or click-to-load `giscus`. It currently uses native threads in this repository's Discussions; each article's discussion number is shared across locales, and nothing loads from a third party until a reader chooses to.
-- `data/brand-assets.json` and `data/migration/`: brand asset provenance, frozen heading anchors and the About section migration map.
-- `scripts/`: content validation, build finalization, search indexing, artifact checks, public snapshot import and loopback preview.
+- `data/brand-assets.json` and `data/migration/`: brand asset provenance (including the home page's logo derivatives), frozen heading anchors and the profile section migration map.
+- `scripts/`: content validation, build finalization, search indexing, artifact checks and loopback preview.
 
 The former blog repository was deleted, as confirmed by its owner. Its five known articles were **not recovered**. Their old URLs explain the missing source and are excluded from search and sitemap. The three current notes adapt the existing profile, with immutable provenance in [the migration manifest](data/migration/manifest.json).
 
@@ -37,4 +36,4 @@ The former blog repository was deleted, as confirmed by its owner. Its five know
 
 Only `build/client` is deployable. The [GitHub Actions workflow](.github/workflows/site.yml) validates pull requests and pushes; deployment runs only through a manual dispatch on `main` with `deploy=true`. Pages must use GitHub Actions, and the `github-pages` environment should require owner approval. The custom domain remains `dennysora.me`; deployment publishes the verified static artifact, never the repository root.
 
-See [the writing and publication guide](docs/CONTENT_WORKFLOW.md), [the UI/UX v2.1 delivery record](docs/process/DELIVERY-v2.1.md), [the original implementation record](docs/process/IMPLEMENTATION.md) and [its delivery evidence](docs/process/DELIVERY.md). Maintainer documentation is English here and Traditional Chinese in the process guide; the public UI and content remain trilingual.
+See [the writing and publication guide](docs/CONTENT_WORKFLOW.md), [the editor workbench redesign record](docs/process/DELIVERY-v2.2.md), [the UI/UX v2.1 delivery record](docs/process/DELIVERY-v2.1.md), [the original implementation record](docs/process/IMPLEMENTATION.md) and [its delivery evidence](docs/process/DELIVERY.md). Maintainer documentation is English here and Traditional Chinese in the process guide; the public UI and content remain trilingual.

@@ -119,6 +119,10 @@ describe('route manifest', () => {
       '/en/blog/tags/llm/extra/',
       '/en/blog/topics/',
       '/en/about/details/',
+      // The profile is the locale home and Paper Daily its own site; both
+      // former pages are static bridges, not routes.
+      '/en/about/',
+      '/en/papers/',
       '/en/blog/Bad_Slug/',
       '/en/unknown/',
       '/en/research/notes/',
@@ -139,6 +143,7 @@ describe('route manifest', () => {
     expect(navSection({ kind: 'project', locale: 'en', projectId: 'x' })).toBe(
       'projects',
     );
+    expect(navSection({ kind: 'home', locale: 'en' })).toBe('home');
     expect(navSection({ kind: 'research', locale: 'en' })).toBeNull();
   });
   it('prerenders every published article, topic and non-empty tag', () => {
@@ -153,7 +158,8 @@ describe('route manifest', () => {
           expect(paths).toContain(`/${locale}/blog/topics/${topic}`);
       }
     for (const locale of locales) {
-      expect(paths).toContain(`/${locale}/papers`);
+      expect(paths).not.toContain(`/${locale}/papers`);
+      expect(paths).not.toContain(`/${locale}/about`);
       expect(paths).toContain(`/${locale}/research`);
       expect(paths).toContain(prerenderPath({ kind: 'tags', locale }));
     }
@@ -174,12 +180,21 @@ describe('route manifest', () => {
 
 describe('loader', () => {
   it('serves every route kind with canonical, robots and language links', () => {
-    const about = load('/zh-hant/about');
-    expect(about.view.kind).toBe('about');
-    expect(about.canonical).toBe('https://dennysora.me/zh-hant/about/');
-    expect(about.indexable).toBe(true);
+    const home = load('/zh-hant');
+    if (home.view.kind !== 'home') throw new Error('Expected the README home');
+    expect(home.canonical).toBe('https://dennysora.me/zh-hant/');
+    expect(home.indexable).toBe(true);
+    expect(home.view.profile.displayName).toBe('DennySORA');
+    expect(home.view.recent.length).toBeGreaterThan(0);
     // Internal provenance notes stay in the repository.
-    expect(JSON.stringify(about)).not.toContain('provenance');
+    expect(JSON.stringify(home)).not.toContain('provenance');
+    // The explorer lists the real files of the workspace on every page.
+    expect(home.workspace.posts.map((post) => post.slug)).toContain(
+      'engineering-principles',
+    );
+    expect(home.workspace.projects.map((project) => project.id)).toContain(
+      'dgxtop',
+    );
     const research = load('/en/research');
     expect(research.indexable).toBe(false);
     const tag = load('/ja/blog/tags/llm');
@@ -202,6 +217,8 @@ describe('loader', () => {
       '/en/blog/tags/unknown-tag',
       '/en/blog/topics/unknown',
       '/en/projects/unknown',
+      '/en/about',
+      '/en/papers',
       '/xx/about',
     ]) {
       let status = 0;

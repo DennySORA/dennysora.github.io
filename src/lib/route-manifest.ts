@@ -6,7 +6,6 @@ export type RouteDescriptor =
   | { kind: 'root' }
   | { kind: 'not-found' }
   | { kind: 'home'; locale: Locale }
-  | { kind: 'about'; locale: Locale }
   | { kind: 'projects'; locale: Locale }
   | { kind: 'project'; locale: Locale; projectId: string }
   | { kind: 'library'; locale: Locale }
@@ -14,11 +13,10 @@ export type RouteDescriptor =
   | { kind: 'topic'; locale: Locale; topicId: string }
   | { kind: 'tags'; locale: Locale }
   | { kind: 'tag'; locale: Locale; tagId: string }
-  | { kind: 'papers'; locale: Locale }
   | { kind: 'research'; locale: Locale }
   | { kind: 'privacy'; locale: Locale };
 export type RouteKind = RouteDescriptor['kind'];
-export type NavSection = 'library' | 'projects' | 'about' | 'papers';
+export type NavSection = 'home' | 'library' | 'projects';
 
 // Slugs that would collide with fixed Library routes.
 export const reservedSlugs = ['tags', 'topics'] as const;
@@ -35,8 +33,6 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
   if (!section) return { kind: 'home', locale };
   const [a, b] = rest;
   switch (section) {
-    case 'about':
-    case 'papers':
     case 'research':
     case 'privacy':
       return rest.length === 0 ? { kind: section, locale } : null;
@@ -107,6 +103,9 @@ export function withLocale(
 
 export function navSection(route: RouteDescriptor): NavSection | null {
   switch (route.kind) {
+    case 'root':
+    case 'home':
+      return 'home';
     case 'library':
     case 'article':
     case 'topic':
@@ -116,10 +115,6 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'projects':
     case 'project':
       return 'projects';
-    case 'about':
-      return 'about';
-    case 'papers':
-      return 'papers';
     default:
       return null;
   }

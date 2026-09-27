@@ -3,6 +3,7 @@ import {
   ArticleListItem,
   taxonomyMaps,
 } from '../../components/ArticleListItem.tsx';
+import { EndOfBuffer } from '../../components/Buffer.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { PageHead } from '../../components/PageHead.tsx';
 import { dictionaries, type Locale } from '../../i18n/index.ts';
@@ -31,10 +32,10 @@ export function TaxonomyPage({
         title={view.term.label}
       >
         {view.term.description ? (
-          <p className="page-intro">{view.term.description}</p>
+          <p className="ln page-intro">{view.term.description}</p>
         ) : null}
       </PageHead>
-      <div className="results-head">
+      <div className="ln results-head">
         <p className="result-count">{t.articleCount(view.posts.length)}</p>
         <a className="text-action" href={`/${locale}/blog/tags/`}>
           {t.allTags}
@@ -51,6 +52,7 @@ export function TaxonomyPage({
           />
         ))}
       </div>
+      <EndOfBuffer />
     </div>
   );
 }
@@ -64,11 +66,11 @@ export function TagIndex({ view, locale }: { view: TagsView; locale: Locale }) {
         {t.backToLibrary}
       </a>
       <PageHead eyebrow={t.libraryTitle} title={t.tagsTitle}>
-        <p className="page-intro">{t.tagsIntro}</p>
+        <p className="ln page-intro">{t.tagsIntro}</p>
       </PageHead>
       <ul className="tag-index">
         {view.tags.map((tag) => (
-          <li key={tag.id}>
+          <li className="ln" key={tag.id}>
             <a className="tag-link" href={`/${locale}/blog/tags/${tag.id}/`}>
               {tag.label}
             </a>
@@ -76,6 +78,7 @@ export function TagIndex({ view, locale }: { view: TagsView; locale: Locale }) {
           </li>
         ))}
       </ul>
+      <EndOfBuffer />
     </div>
   );
 }

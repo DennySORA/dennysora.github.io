@@ -13,6 +13,12 @@
   html:lang(ja) {
     font-family: var(--font-sans-ja);
   }
+  :root {
+    --font-code: var(--font-mono);
+  }
+  html:lang(ja) {
+    --font-code: var(--font-mono-ja);
+  }
   body {
     margin: 0;
     min-height: 100vh;
@@ -166,12 +172,13 @@
   height: 0;
   scroll-margin-top: calc(var(--header-height) + var(--space-5));
 }
+/* Eyebrows read as code comments above a heading. */
 .eyebrow {
-  margin: 0 0 var(--space-4);
-  color: var(--color-link);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 13px;
+  font-weight: 400;
 }
 .fine {
   color: var(--color-text-muted);
