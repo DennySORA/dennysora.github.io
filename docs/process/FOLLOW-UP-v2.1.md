@@ -1,6 +1,6 @@
 # UI／UX v2.1 後續待辦
 
-2026-09-26 建立。v2.1 已合併進 `main`，並於 2026-09-26 依擁有者指示部署（`8bed0f9`）。2026-09-27 的編輯器工作台改版（v2.2）在本機，尚未 commit 與部署，見 [DELIVERY-v2.2.md](DELIVERY-v2.2.md)。以下是留給擁有者處理的事項，完成一項就勾選或刪除。v2.1 的交付與驗收紀錄見 [DELIVERY-v2.1.md](DELIVERY-v2.1.md)。
+2026-09-26 建立。v2.1 已合併進 `main`，並於 2026-09-26 依擁有者指示部署（`8bed0f9`）。2026-09-27 的編輯器工作台改版（v2.2）已 commit（`fb70379`）並部署，見 [DELIVERY-v2.2.md](DELIVERY-v2.2.md)。以下是留給擁有者處理的事項，完成一項就勾選或刪除。v2.1 的交付與驗收紀錄見 [DELIVERY-v2.1.md](DELIVERY-v2.1.md)。
 
 ## 需要擁有者決定
 
@@ -9,7 +9,7 @@
   - 不接受：維持 `github-native`。這表示放棄規格建議的內嵌目標，請在交付紀錄註明是擁有者的決定。
 - [ ] **至少一篇專案完整案例。** 驗收 P03 卡在這裡。在 [`content/projects/projects.json`](../../content/projects/projects.json) 的專案填入 `caseStudy`（`publication`、`locales`、`contentPath: content/projects/<id>/`）並提供真實內容；沒有案例的專案不會顯示「查看案例」。
 - [x] **部署 v2.1。** 2026-09-26 依擁有者指示執行 `gh workflow run site.yml --ref main -f deploy=true`（run 36253709040），線上為 `8bed0f9`。
-- [ ] **確認 v2.2 編輯器改版後 commit、push 與部署。** push 到 `main` 只會跑驗證；發布仍用上一行的指令，或在 GitHub Actions 手動執行「Verify and publish static site」並勾選 `deploy`。
+- [x] **部署 v2.2 編輯器改版。** 2026-09-27 依擁有者指示 commit 到 `main`（`fb70379`）、push，push 的驗證（run 36328980973）通過後以同一指令部署（run 36329145107），線上為 `fb70379`。之後的發布方式相同：push 到 `main` 只跑驗證，發布要手動執行「Verify and publish static site」並勾選 `deploy`。
 
 ## 需要擁有者審閱
 
@@ -17,17 +17,14 @@
 - [ ] 各篇文章的 Tag 與寫作類型：`content/posts/*/meta.json` 的 `tagIds`、`contentType`；標籤名稱與別名在 [`content/taxonomy/`](../../content/taxonomy/)。
 - [ ] Ops-Tools、Image-Tools、Auto-Video-Organize 是 private，未列入首頁履歷；若改為公開，依 [`data/migration/about-sections.json`](../../data/migration/about-sections.json) 恢復。
 
-## 未 commit 的本機檔案
+## 本機檔案的處理（2026-09-27）
 
-以下檔案只在本機工作目錄、未納入版本控制；v2.1 沒有修改也沒有 commit 它們。
+原本只在本機、未納入版本控制的檔案都已處理，工作目錄沒有未追蹤的檔案：
 
-| 路徑 | 內容 | 待決定 |
-|---|---|---|
-| `AGENTS.md`、`CLAUDE.md`、`docs/AGENTS.md`、`docs/CLAUDE.md`、`docs/agent/` | 程式代理的工作規則與 playbook | 是否納入版本控制 |
-| `POLICY_VERSION`、`POLICY_MANIFEST.sha256` | 上列規則檔的版本與雜湊 | 與規則檔一起決定 |
-| `PROJECT_AGENT.md` | repository 描述檔，仍寫著改版前的 `index.html`／`style.css`／`lang.js` 架構，以及「沒有套件管理、產生器、linter 或測試指令」 | 先改寫成現況（React Router、pnpm、`pnpm verify`），再決定是否 commit |
-| `.serena/` | Serena 的專案設定；目錄內的 `.gitignore` 已排除 `cache/` 與 `project.local.yml`，加入時只會帶進 `project.yml` 與該 `.gitignore` | 是否共享 Serena 設定；不共享就在根目錄 `.gitignore` 排除 |
-| `DennySORA_UI_UX_v2.1_Package.zip` | v2.1 規格包（2.0 MB：規格、交接說明、參考畫面） | 移到 repository 外保存或加入 `.gitignore`；建置不需要它 |
+- 程式代理規則（`AGENTS.md`、`CLAUDE.md`、`docs/AGENTS.md`、`docs/CLAUDE.md`、`docs/agent/`，以及 `POLICY_VERSION` 1.2.0 與 `POLICY_MANIFEST.sha256`）：15 個檔案與 manifest 的 SHA-256 一致，原樣 commit（`28e1ce5`）。
+- [`PROJECT_AGENT.md`](../../PROJECT_AGENT.md)：改寫成現況（React Router 預渲染、pnpm、`pnpm verify`、編輯器工作台、手動部署）後 commit（`28e1ce5`）。
+- `.serena/`：Serena 的本機設定，不共享，加入根目錄 `.gitignore`。
+- `DennySORA_UI_UX_v2.1_Package.zip`：已不在 repository 資料夾中。
 
 ## 尚未完成的驗收
 
