@@ -147,24 +147,19 @@ for (const slug of migration.legacyBlog.missingSlugs)
 for (const post of loadPosts().filter((post) => post.editions.length === 0))
   for (const locale of locales) {
     const copy = {
-      'zh-hant': ['目前尚無文章', '原先的示範內容已移除。', '回到部落格'],
+      'zh-hant': ['原先的示範內容已移除。', '回到部落格'],
       en: [
-        'No posts yet',
         'The previous placeholder content has been removed.',
         'Back to the blog',
       ],
-      ja: [
-        '記事はまだありません',
-        '以前のサンプル内容は削除されました。',
-        'ブログに戻る',
-      ],
+      ja: ['以前のサンプル内容は削除されました。', 'ブログに戻る'],
     }[locale];
     write(
       `${locale}/blog/${post.slug}/index.html`,
       noticePage(
         htmlLang[locale],
-        copy[0]!,
-        `<h1>${copy[0]}</h1><p>${copy[1]}</p><a href="/${locale}/blog/">${copy[2]}</a>`,
+        dictionaries[locale].noPostsTitle,
+        `<h1>${escapeHtml(dictionaries[locale].noPostsTitle)}</h1><p>${copy[0]}</p><a href="/${locale}/blog/">${copy[1]}</a>`,
       ),
     );
   }
