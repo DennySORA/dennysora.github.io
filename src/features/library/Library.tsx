@@ -62,6 +62,7 @@ export function Library({
   locale: Locale;
 }) {
   const t = dictionaries[locale];
+  const hasPosts = view.posts.length > 0;
   const maps = useMemo(() => taxonomyMaps(view.taxonomy), [view.taxonomy]);
   const hydrated = useHydrated();
   const [params, setParams] = useSearchParams();
@@ -143,7 +144,7 @@ export function Library({
   const tagKey = state.tags.join('|');
   const searchKey = JSON.stringify([query, topic, type, tagKey, sort, attempt]);
   useEffect(() => {
-    if (!query) return;
+    if (!query || !hasPosts) return;
     let active = true;
     const filters = pagefindFilters({
       ...emptyLibraryState,
@@ -162,14 +163,15 @@ export function Library({
     return () => {
       active = false;
     };
-  }, [searchKey, query, topic, type, tagKey, sort]);
-  const status: SearchStatus = !query
-    ? 'idle'
-    : response?.key !== searchKey
-      ? 'loading'
-      : response.hits
-        ? 'ready'
-        : 'partial';
+  }, [searchKey, query, topic, type, tagKey, sort, hasPosts]);
+  const status: SearchStatus =
+    !query || !hasPosts
+      ? 'idle'
+      : response?.key !== searchKey
+        ? 'loading'
+        : response.hits
+          ? 'ready'
+          : 'partial';
   // While a new answer loads, the previous one stays visible.
   const hits = response?.hits ?? null;
 
@@ -231,7 +233,7 @@ export function Library({
   return (
     <div className="container library-layout">
       <PageHead eyebrow={t.libraryEyebrow} title={t.libraryTitle}>
-        <p className="ln page-intro">{t.libraryIntro}</p>
+        {hasPosts ? <p className="ln page-intro">{t.libraryIntro}</p> : null}
       </PageHead>
 
       <div className="search-block requires-js" id={pageIds.search}>
@@ -289,65 +291,71 @@ export function Library({
           </p>
         </form>
 
-        <FilterRow
-          label={t.topicFilter}
-          allLabel={t.allFilter}
-          options={view.available.topics.map((id) => ({
-            id,
-            label: maps.topics.get(id) ?? id,
-          }))}
-          selected={state.topic}
-          onSelect={(topic) => update({ topic })}
-        />
-        {view.available.types.length > 1 ? (
-          <FilterRow
-            label={t.typeFilter}
-            allLabel={t.allFilter}
-            options={view.available.types.map((id) => ({
-              id,
-              label: maps.types.get(id) ?? id,
-            }))}
-            selected={state.type}
-            onSelect={(type) => update({ type })}
-          />
-        ) : null}
-        <div
-          className="ln filter-row tag-filter"
-          role="group"
-          aria-label={`${t.tagFilter}（${t.tagFilterHint}）`}
-        >
-          <span className="filter-label" aria-hidden="true">
-            {t.tagFilter}
-          </span>
-          {view.available.tags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              className="tag-toggle"
-              aria-pressed={state.tags.includes(tag)}
-              onClick={() => navigate(toggleTag(state, tag), false)}
+        {hasPosts ? (
+          <>
+            <FilterRow
+              label={t.topicFilter}
+              allLabel={t.allFilter}
+              options={view.available.topics.map((id) => ({
+                id,
+                label: maps.topics.get(id) ?? id,
+              }))}
+              selected={state.topic}
+              onSelect={(topic) => update({ topic })}
+            />
+            {view.available.types.length > 1 ? (
+              <FilterRow
+                label={t.typeFilter}
+                allLabel={t.allFilter}
+                options={view.available.types.map((id) => ({
+                  id,
+                  label: maps.types.get(id) ?? id,
+                }))}
+                selected={state.type}
+                onSelect={(type) => update({ type })}
+              />
+            ) : null}
+            <div
+              className="ln filter-row tag-filter"
+              role="group"
+              aria-label={`${t.tagFilter}（${t.tagFilterHint}）`}
             >
-              <span className="tag-toggle-mark" aria-hidden="true">
-                {state.tags.includes(tag) ? '✓' : '#'}
+              <span className="filter-label" aria-hidden="true">
+                {t.tagFilter}
               </span>
-              {maps.tags.get(tag) ?? tag}
-            </button>
-          ))}
-        </div>
+              {view.available.tags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className="tag-toggle"
+                  aria-pressed={state.tags.includes(tag)}
+                  onClick={() => navigate(toggleTag(state, tag), false)}
+                >
+                  <span className="tag-toggle-mark" aria-hidden="true">
+                    {state.tags.includes(tag) ? '✓' : '#'}
+                  </span>
+                  {maps.tags.get(tag) ?? tag}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
 
-      <div className="no-js-only nojs-notice">
-        <p>{t.noJsSearch}</p>
-        <p>
-          <span>{t.browseByTopic}：</span>
-          {view.available.topics.map((id) => (
-            <a key={id} href={`/${locale}/blog/topics/${id}/`}>
-              {maps.topics.get(id)}
-            </a>
-          ))}
-          <a href={`/${locale}/blog/tags/`}>{t.allTags}</a>
-        </p>
-      </div>
+      {hasPosts ? (
+        <div className="no-js-only nojs-notice">
+          <p>{t.noJsSearch}</p>
+          <p>
+            <span>{t.browseByTopic}：</span>
+            {view.available.topics.map((id) => (
+              <a key={id} href={`/${locale}/blog/topics/${id}/`}>
+                {maps.topics.get(id)}
+              </a>
+            ))}
+            <a href={`/${locale}/blog/tags/`}>{t.allTags}</a>
+          </p>
+        </div>
+      ) : null}
 
       {status === 'partial' ? (
         <div className="notice requires-js" data-status="warning" role="status">
@@ -369,7 +377,7 @@ export function Library({
           {status === 'loading' ? t.searching : t.articleCount(results.length)}
           {state.tags.length > 1 ? ` · ${t.anyTagSelected}` : null}
         </p>
-        {query ? (
+        {query && hasPosts ? (
           <div
             className="sort-toggle requires-js"
             role="group"
@@ -389,7 +397,7 @@ export function Library({
         ) : null}
       </div>
 
-      {conditions.length ? (
+      {hasPosts && conditions.length ? (
         <ul
           className="active-conditions requires-js"
           aria-label={t.activeConditions}
@@ -431,15 +439,17 @@ export function Library({
 
       {results.length === 0 && status !== 'loading' ? (
         <div className="ln empty-state">
-          <h2>{t.emptyTitle}</h2>
-          <p>{t.emptyText}</p>
-          <button
-            type="button"
-            className="button button-quiet"
-            onClick={clearAll}
-          >
-            {t.clearAll}
-          </button>
+          <h2>{hasPosts ? t.emptyTitle : t.noPostsTitle}</h2>
+          <p>{hasPosts ? t.emptyText : t.noPostsText}</p>
+          {hasPosts ? (
+            <button
+              type="button"
+              className="button button-quiet"
+              onClick={clearAll}
+            >
+              {t.clearAll}
+            </button>
+          ) : null}
         </div>
       ) : null}
 

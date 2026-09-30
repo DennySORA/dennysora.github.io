@@ -30,7 +30,9 @@ pnpm preview
 - `data/brand-assets.json` and `data/migration/`: brand asset provenance (including the home page's logo derivatives), frozen heading anchors and the profile section migration map.
 - `scripts/`: content validation, build finalization, search indexing, artifact checks and loopback preview.
 
-The former blog repository was deleted, as confirmed by its owner. Its five known articles were **not recovered**. Their old URLs explain the missing source and are excluded from search and sitemap. The three current notes adapt the existing profile, with immutable provenance in [the migration manifest](data/migration/manifest.json).
+The former blog repository was deleted, as confirmed by its owner. Its five known articles were **not recovered**. Their old URLs explain the missing source and are excluded from search and sitemap. The former three profile adaptations are now unpublished, and the blog is empty until real posts are ready. Their former URLs show a no-index notice. Their source and immutable provenance remain in [the migration manifest](data/migration/manifest.json).
+
+Study notes live separately under `/{locale}/note/`. The Medicine folder links to the supplied Traditional Chinese pharmacology reference at `/zh-hant/note/medical/analgesics/`; unavailable translations are stated explicitly. The content fragment is maintained in `content/notes/medical.html` and contains no scripts. Reference scenarios use native details controls so they also work without JavaScript. The desktop Explorer can be collapsed and restored from the activity bar; phone navigation remains a dialog. There is no shared footer.
 
 ## Publication
 

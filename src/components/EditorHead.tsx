@@ -8,11 +8,13 @@ import {
   type Area,
   type AreaKey,
 } from '../lib/workspace.ts';
+import { noteCopy } from '../lib/notes-copy.ts';
 import { Icon, type IconName } from './Icon.tsx';
 
 const areaIcons: Record<AreaKey, IconName> = {
   home: 'markdown',
   library: 'folder',
+  notes: 'folder',
   projects: 'folder',
   papers: 'newspaper',
 };
@@ -33,17 +35,22 @@ export function EditorHead({
   const labels: Record<AreaKey, string> = {
     home: t.navAbout,
     library: t.navLibrary,
+    notes: noteCopy[locale].notes,
     projects: t.navProjects,
     papers: `${t.navPapers}（${t.newTab}）`,
   };
-  const landing = ['root', 'home', 'library', 'projects'].includes(route.kind);
+  const landing = ['root', 'home', 'library', 'projects', 'notes'].includes(
+    route.kind,
+  );
   const preview = landing ? null : path[path.length - 1];
   const previewAfter: AreaKey | null =
     route.kind === 'project'
       ? 'projects'
       : ['article', 'topic', 'tags', 'tag'].includes(route.kind)
         ? 'library'
-        : null;
+        : ['medical', 'medical-note'].includes(route.kind)
+          ? 'notes'
+          : null;
   const tabs = useRef<HTMLUListElement>(null);
   // Keep the active tab in view when the tab row scrolls on narrow screens.
   useEffect(() => {

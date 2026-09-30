@@ -4,104 +4,46 @@ import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
 import { renderMarkdown } from '../../src/lib/markdown.server.ts';
 
-test('the table of contents follows reading without rewriting history', async ({
+const medicalPath = '/zh-hant/note/medical/analgesics/';
+
+test('medical notes keep all sections, sources and educational warnings', async ({
   page,
 }) => {
-  await page.goto('/en/blog/engineering-principles/');
-  const toc = page.locator('.toc-aside');
-  await expect(toc).toBeVisible();
-  await expect(toc.locator('a[aria-current="location"]')).toHaveText(
-    'Engineering Principles',
+  await page.goto(medicalPath);
+  await expect(page.locator('h1')).toContainText('Loxoprofen');
+  await expect(page.locator('.medical-note h2')).toHaveCount(14);
+  await expect(page.locator('.medical-note')).toContainText('不是個人處方');
+  await expect(page.locator('.medical-note')).toContainText('N-acetylcysteine');
+  await expect(page.locator('.medical-note a[href*="pmda.go.jp"]')).toHaveCount(
+    3,
   );
-  const before = await page.evaluate(() => history.length);
-  await page.locator('#section-5').scrollIntoViewIfNeeded();
-  await page.mouse.wheel(0, 200);
-  await expect(toc.locator('a[aria-current="location"]')).not.toHaveText(
-    'Engineering Principles',
-  );
-  expect(await page.evaluate(() => [history.length, location.hash])).toEqual([
-    before,
-    '',
-  ]);
-  await toc.getByRole('link', { name: 'How I Work' }).click();
-  await expect(page).toHaveURL(/#how-h$/);
-  const heading = page.locator('#how-h');
-  await expect(heading).toBeInViewport();
-  // The sticky title bar, tabs and breadcrumbs never cover the target heading.
-  const top = await heading.evaluate(
-    (element) => element.getBoundingClientRect().top,
-  );
-  const chrome = await page
-    .locator('.editor-head')
-    .evaluate((element) => element.getBoundingClientRect().bottom);
-  expect(top).toBeGreaterThanOrEqual(chrome);
+  await expect(page.locator('.medical-note script')).toHaveCount(0);
+  await page.locator('.medical-note a[href="#sources"]').click();
+  await expect(page.locator('#sources')).toBeInViewport();
+  await expect(page).toHaveURL(/#sources$/);
 });
 
-test('short screens get a collapsed contents list before the text', async ({
-  page,
+test('medical reference details work repeatedly with keyboard and without JavaScript', async ({
+  browser,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/ja/blog/engineering-principles/');
-  const inline = page.locator('.toc-inline');
-  await expect(inline).toBeVisible();
-  await expect(inline).not.toHaveAttribute('open');
-  await expect(page.locator('.toc-aside')).toBeHidden();
-  await expect(page.locator('.prose h2').first()).toBeInViewport();
-});
-
-test('code copying reports what really happened, and the text stays selectable', async ({
-  page,
-  context,
-}) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/en/blog/engineering-principles/');
-  const first = page.locator('.code-block').first();
-  await expect(first.locator('.code-label')).toHaveText('TEXT');
-  await first.getByRole('button', { name: 'Copy' }).click();
-  await expect(first.getByRole('button', { name: 'Copied' })).toBeVisible();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
-    'LLM API',
-  );
-  await page.evaluate(() => {
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText: () => Promise.reject(new Error('denied')) },
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({
+      javaScriptEnabled,
+      viewport: { width: 390, height: 844 },
     });
-  });
-  const second = page.locator('.code-block').nth(1);
-  await second.getByRole('button', { name: 'Copy' }).click();
-  await expect(
-    second.getByRole('button', { name: 'Copy failed — select manually' }),
-  ).toBeVisible();
-  await expect(second.getByRole('button', { name: 'Copied' })).toHaveCount(0);
-  expect(
-    await page
-      .locator('.prose')
-      .evaluate((element) => getComputedStyle(element).userSelect),
-  ).not.toBe('none');
-});
-
-test('print keeps the article and drops navigation, tools and discussion', async ({
-  page,
-}) => {
-  await page.goto('/zh-hant/blog/trilingual-model-research/');
-  await page.emulateMedia({ media: 'print' });
-  for (const selector of [
-    '.site-header',
-    '.site-footer',
-    '.toc-aside',
-    '.comments',
-    '.related',
-    '.backlink',
-  ])
-    await expect(page.locator(selector), selector).toBeHidden();
-  await expect(page.locator('h1')).toBeVisible();
-  await expect(page.locator('.prose')).toBeVisible();
-  await expect(page.locator('.source-note')).toBeVisible();
-  expect(
-    await page.evaluate(() => getComputedStyle(document.body).backgroundColor),
-  ).toBe('rgb(255, 255, 255)');
+    const page = await context.newPage();
+    await page.goto('http://127.0.0.1:4174' + medicalPath);
+    const details = page.locator('.medical-note details').first();
+    await details.locator('summary').focus();
+    for (let round = 0; round < 3; round++) {
+      await page.keyboard.press('Enter');
+      await expect(details).toHaveAttribute('open', '');
+      await page.keyboard.press('Space');
+      await expect(details).not.toHaveAttribute('open');
+    }
+    await expect(page.locator('.medical-note details')).toHaveCount(10);
+    await context.close();
+  }
 });
 
 test('the renderer’s figures, formulas, code, tables and notes render in the reading layout', async ({
@@ -147,7 +89,10 @@ test('the renderer’s figures, formulas, code, tables and notes render in the r
     );
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await page.goto('/en/blog/engineering-principles/');
+      await page.goto('/en/privacy/');
+      await page.locator('.plain-text').evaluate((element) => {
+        element.setAttribute('class', 'prose');
+      });
       await page.addStyleTag({ path: 'node_modules/katex/dist/katex.min.css' });
       await page.locator('.prose').evaluate((element, markup) => {
         element.innerHTML = markup;

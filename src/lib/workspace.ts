@@ -29,6 +29,7 @@ export function areas(locale: Locale): Area[] {
   return [
     { key: 'home', file: 'README.md', href: `/${locale}/`, external: false },
     { key: 'library', file: 'blog', href: `/${locale}/blog/`, external: false },
+    { key: 'notes', file: 'note', href: `/${locale}/note/`, external: false },
     {
       key: 'projects',
       file: 'projects',
@@ -55,6 +56,21 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, { label: 'README.md', href: self }];
     case 'library':
       return [home, blog];
+    case 'notes':
+      return [home, { label: 'note', href: self }];
+    case 'medical':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'medical', href: self },
+      ];
+    case 'medical-note':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'medical', href: `/${locale}/note/medical/` },
+        { label: 'analgesics.md', href: self },
+      ];
     case 'article':
       return [home, blog, { label: `${route.slug}.md`, href: self }];
     case 'topic':
@@ -83,6 +99,8 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
 
 const folders: RouteDescriptor['kind'][] = [
   'library',
+  'notes',
+  'medical',
   'projects',
   'tags',
   'topic',
@@ -104,7 +122,7 @@ export function areaState(
   key: AreaKey,
 ): 'page' | 'true' | undefined {
   if (navSection(route) !== key) return undefined;
-  return ['root', 'home', 'library', 'projects'].includes(route.kind)
+  return ['root', 'home', 'library', 'projects', 'notes'].includes(route.kind)
     ? 'page'
     : 'true';
 }

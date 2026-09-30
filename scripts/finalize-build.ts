@@ -33,6 +33,9 @@ function write(path: string, body: string) {
 // Brand assets ship unchanged and same-origin; the 3 MB master stays in the repository.
 for (const asset of brand.assets.filter((item) => item.published))
   cpSync(asset.path, join(output, asset.path));
+cpSync('assets/illustrations', join(output, 'assets/illustrations'), {
+  recursive: true,
+});
 cpSync('CNAME', join(output, 'CNAME'));
 write('.nojekyll', '');
 write(
@@ -136,6 +139,32 @@ for (const slug of migration.legacyBlog.missingSlugs)
         htmlLang[locale],
         t.legacyMissingTitle,
         `<p class="eyebrow">DennySORA · ${escapeHtml(t.legacyStatus)}</p><h1>${escapeHtml(t.legacyMissingTitle)}</h1><p>${escapeHtml(t.legacyMissingText)}</p><a href="/${locale}/blog/">${escapeHtml(t.allArticles)} →</a>`,
+      ),
+    );
+  }
+
+// Former profile adaptations are unpublished; keep their URLs as honest notices.
+for (const post of loadPosts().filter((post) => post.editions.length === 0))
+  for (const locale of locales) {
+    const copy = {
+      'zh-hant': ['目前尚無文章', '原先的示範內容已移除。', '回到部落格'],
+      en: [
+        'No posts yet',
+        'The previous placeholder content has been removed.',
+        'Back to the blog',
+      ],
+      ja: [
+        '記事はまだありません',
+        '以前のサンプル内容は削除されました。',
+        'ブログに戻る',
+      ],
+    }[locale];
+    write(
+      `${locale}/blog/${post.slug}/index.html`,
+      noticePage(
+        htmlLang[locale],
+        copy[0]!,
+        `<h1>${copy[0]}</h1><p>${copy[1]}</p><a href="/${locale}/blog/">${copy[2]}</a>`,
       ),
     );
   }

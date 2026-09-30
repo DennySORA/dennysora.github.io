@@ -18,10 +18,10 @@ for (const path of [
   '/en/',
   '/ja/',
   '/en/blog/',
-  '/ja/blog/engineering-principles/',
+  '/en/note/',
+  '/ja/note/medical/',
+  '/zh-hant/note/medical/analgesics/',
   '/en/blog/tags/',
-  '/ja/blog/tags/llm/',
-  '/zh-hant/blog/topics/ai/',
   '/en/projects/',
   '/en/projects/adk-agui-middleware/',
   '/zh-hant/research/',
@@ -33,7 +33,7 @@ for (const path of [
     expect(await violations(page)).toEqual([]);
   });
 
-test('accessible states: open details, language menu, typing, filtered and empty library, explorer drawer', async ({
+test('accessible states: open details, language menu, typing, empty library, collapsed Explorer and explorer drawer', async ({
   page,
 }) => {
   await page.goto('/en/');
@@ -42,14 +42,18 @@ test('accessible states: open details, language menu, typing, filtered and empty
   await page.locator('.language-menu > summary').click();
   expect(await violations(page)).toEqual([]);
   await page.goto('/zh-hant/blog/?topic=ai&tag=llm&tag=quantization');
-  await expect(page.locator('.article-row')).toHaveCount(1);
+  await expect(page.locator('.article-row')).toHaveCount(0);
+  await expect(page.locator('.filter-row')).toHaveCount(0);
   expect(await violations(page)).toEqual([]);
   await page.getByRole('searchbox').fill('zzzznomatch');
   await expect(
-    page.getByRole('heading', { name: '沒有符合這些條件的文章' }),
+    page.getByRole('heading', { name: '目前還沒有文章' }),
   ).toBeVisible();
   // The status line is in INSERT mode while the search field has focus.
   await expect(page.locator('.status-mode')).toHaveText('INSERT');
+  expect(await violations(page)).toEqual([]);
+  await page.locator('.sidebar-collapse').click();
+  await expect(page.locator('#desktop-explorer')).toBeHidden();
   expect(await violations(page)).toEqual([]);
   await page.setViewportSize({ width: 320, height: 720 });
   await page.goto('/en/');

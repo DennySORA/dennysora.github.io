@@ -1,5 +1,6 @@
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import type { RouteDescriptor } from '../lib/route-manifest.ts';
+import { noteCopy } from '../lib/notes-copy.ts';
 import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
 import { Icon, type IconName } from './Icon.tsx';
@@ -98,6 +99,40 @@ export function Explorer({
                 />
               </li>
             ))}
+          </ul>
+        </li>
+        <li>
+          <TreeLink
+            href={`/${locale}/note/`}
+            icon="chevron-down"
+            name="note"
+            note={{ text: noteCopy[locale].notes, visible: true }}
+            current={areaState(route, 'notes')}
+            onNavigate={onNavigate}
+          />
+          <ul className="tree-children">
+            <li>
+              <TreeLink
+                href={`/${locale}/note/medical/`}
+                icon="folder"
+                name={noteCopy[locale].medical}
+                note={{ text: noteCopy[locale].medical, visible: false }}
+                current={page(route.kind === 'medical')}
+                onNavigate={onNavigate}
+              />
+              <ul className="tree-children">
+                <li>
+                  <TreeLink
+                    href="/zh-hant/note/medical/analgesics/"
+                    icon="markdown"
+                    name="analgesics.md"
+                    note={{ text: noteCopy[locale].article, visible: false }}
+                    current={page(route.kind === 'medical-note')}
+                    onNavigate={onNavigate}
+                  />
+                </li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li>

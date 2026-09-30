@@ -235,6 +235,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'home', locale },
       { kind: 'projects', locale },
       { kind: 'library', locale },
+      { kind: 'notes', locale },
+      { kind: 'medical', locale },
       { kind: 'tags', locale },
       { kind: 'research', locale },
       { kind: 'privacy', locale },
@@ -248,6 +250,7 @@ export function publishedRoutes(): RouteDescriptor[] {
     for (const project of loadProjects())
       routes.push({ kind: 'project', locale, projectId: project.id });
   }
+  routes.push({ kind: 'medical-note', locale: 'zh-hant' });
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
@@ -344,4 +347,16 @@ export function validateContent(): void {
   if (new Set(paths).size !== paths.length) problems.push('Duplicate route');
   if (problems.length)
     throw new Error(`Content validation failed:\n- ${problems.join('\n- ')}`);
+}
+
+/** Reviewed, repository-owned static educational content; no executable markup. */
+export function loadMedicalNote(): string {
+  const html = readFileSync(join(contentRoot, 'notes/medical.html'), 'utf8');
+  if (
+    /<(?:script|iframe|object|embed|form)\b|\son[a-z]+\s*=|javascript:/i.test(
+      html,
+    )
+  )
+    throw new Error('Executable markup in medical note');
+  return html;
 }

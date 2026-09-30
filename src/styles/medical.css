@@ -1,0 +1,473 @@
+/* Reviewed pharmacology notes inside the site's existing editor workbench. */
+.medical-note {
+  max-width: calc(1100px + var(--line-gutter) + 2 * var(--gutter));
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-8);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.medical-note article,
+.medical-note .medical-section {
+  min-width: 0;
+}
+
+.medical-note p {
+  margin: 0 0 var(--space-4);
+}
+
+.medical-note b,
+.medical-note strong {
+  font-weight: 650;
+}
+
+.medical-note h1,
+.medical-note h2,
+.medical-note h3 {
+  font-family: var(--font-code);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.medical-note h1 {
+  margin: var(--space-3) 0 var(--space-4);
+  font-size: clamp(24px, 2.8vw, 34px);
+}
+
+.medical-note h2 {
+  margin: var(--space-7) 0 var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-decorative);
+  font-size: 23px;
+}
+
+.medical-note h3 {
+  margin: var(--space-5) 0 var(--space-3);
+  font-size: 18px;
+}
+
+.medical-note [id] {
+  scroll-margin-top: calc(var(--header-height) + var(--space-5));
+}
+
+.medical-note a {
+  color: var(--color-link);
+  text-underline-offset: 4px;
+}
+
+.medical-note a:hover {
+  color: var(--color-action-hover);
+}
+
+.medical-note .medical-eyebrow {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  letter-spacing: 0.035em;
+}
+
+.medical-note .medical-lead {
+  max-width: 82ch;
+  color: var(--color-text-secondary);
+  font-size: 17px;
+}
+
+.medical-note .medical-lead b {
+  color: var(--color-text);
+}
+
+.medical-note .medical-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: var(--space-5) 0;
+}
+
+.medical-note .medical-chip {
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+
+.medical-note .medical-chip::before {
+  content: '· ';
+  color: var(--color-syntax-marker);
+}
+
+.medical-note .medical-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-4);
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--color-border-decorative);
+  font-family: var(--font-code);
+  font-size: 13px;
+}
+
+.medical-note .medical-toc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  text-decoration: none;
+}
+
+.medical-note .medical-toc a:hover {
+  text-decoration: underline;
+}
+
+.medical-note .medical-disclaimer,
+.medical-note .medical-callout {
+  margin: var(--space-5) 0;
+  padding: var(--space-4) var(--space-5);
+  border-left: 3px solid var(--color-status-warning);
+  background: var(--color-surface);
+}
+
+.medical-note .medical-disclaimer > b {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-status-warning);
+}
+
+.medical-note .medical-disclaimer p {
+  font-size: 15px;
+}
+
+.medical-note .medical-callout.medical-danger {
+  border-left-color: var(--color-status-danger);
+}
+
+.medical-note .medical-callout.medical-good {
+  border-left-color: var(--color-status-info);
+}
+
+.medical-note .medical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+
+.medical-note .medical-card {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+
+.medical-note .medical-card h3:first-child {
+  margin-top: 0;
+}
+
+.medical-note .medical-card .medical-big {
+  margin-bottom: var(--space-3);
+  color: var(--color-entity-file);
+  font-size: 19px;
+}
+
+.medical-note .medical-small,
+.medical-note .medical-caption,
+.medical-note .medical-translation {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.medical-note .medical-evidence {
+  display: block;
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+
+.medical-note .medical-figure {
+  margin: var(--space-5) 0;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+}
+
+.medical-note figcaption {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-decorative);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.medical-note figcaption b {
+  color: var(--color-entity-file);
+  font-family: var(--font-code);
+}
+
+.medical-note .medical-figure-scroll,
+.medical-note .medical-tablewrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.medical-note .medical-diagram {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 720px;
+  padding: var(--space-4);
+}
+
+.medical-note .medical-diagram-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.medical-note .medical-diagram-row > :not(.medical-diagram-arrow) {
+  flex: 1;
+  min-width: 0;
+}
+
+.medical-note .medical-diagram-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.medical-note .medical-diagram-node {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.medical-note .medical-diagram-node b {
+  color: var(--color-text);
+  font-size: 15px;
+}
+
+.medical-note .medical-diagram-arrow {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  font-size: 20px;
+}
+
+.medical-note .medical-caption {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+}
+
+.medical-note .medical-tablewrap {
+  margin: var(--space-5) 0 var(--space-3);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+}
+
+.medical-note table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.medical-note caption {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: left;
+}
+
+.medical-note th,
+.medical-note td {
+  padding: var(--space-3) var(--space-4);
+  border-block-start: 1px solid var(--color-border-decorative);
+  text-align: left;
+  vertical-align: top;
+}
+
+.medical-note th {
+  background: var(--color-surface);
+  font-weight: 650;
+}
+
+.medical-note th[scope='row'] {
+  min-width: 130px;
+}
+
+.medical-note .medical-disclosures {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 var(--space-5);
+}
+
+.medical-note details {
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+
+.medical-note summary {
+  min-height: 48px;
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.medical-note summary::marker {
+  color: var(--color-action-primary);
+}
+
+.medical-note summary:hover,
+.medical-note details[open] > summary {
+  background: var(--color-surface-selected);
+}
+
+.medical-note .medical-disclosure-body {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+}
+
+.medical-note .medical-sourcebox {
+  margin: var(--space-5) 0;
+}
+
+.medical-note .medical-source {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-decorative);
+  font-size: 14px;
+}
+
+.medical-note .medical-source b {
+  color: var(--color-text-secondary);
+}
+
+.medical-note ul {
+  margin: var(--space-3) 0;
+  padding-left: var(--space-5);
+  list-style: disc;
+}
+
+.medical-note li {
+  margin: var(--space-2) 0;
+}
+
+.medical-note .medical-card > :last-child,
+.medical-note .medical-callout > :last-child,
+.medical-note .medical-disclaimer > :last-child,
+.medical-note .medical-disclosure-body > :last-child {
+  margin-bottom: 0;
+}
+
+.medical-note :is(a, summary, [tabindex='0']):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .medical-note {
+    padding-top: var(--space-4);
+    font-size: 16px;
+  }
+
+  .medical-note h2 {
+    font-size: 21px;
+  }
+
+  .medical-note .medical-disclaimer,
+  .medical-note .medical-callout {
+    padding: var(--space-4);
+  }
+}
+
+/* Decorative icons follow the workbench's 24-unit outlined icon language. */
+.medical-note .medical-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-right: 0.45em;
+  color: currentColor;
+  vertical-align: -0.12em;
+}
+
+.medical-note h2 .medical-icon {
+  color: var(--color-entity-file);
+}
+
+/* Quiet, opaque panels and outline icons echo the owner's management UI. */
+.medical-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 230px;
+  object-fit: cover;
+  margin-bottom: var(--space-6);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: 10px;
+}
+.notes-directory {
+  padding-bottom: var(--space-7);
+}
+.notes-directory > ul {
+  padding: 0;
+  list-style: none;
+}
+.note-folder,
+.note-card {
+  border: 1px solid var(--color-border-decorative);
+  border-radius: 10px;
+  background: var(--color-surface);
+}
+.note-folder {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  color: var(--color-link);
+  text-decoration: none;
+  max-width: 400px;
+}
+.note-folder:hover {
+  background: var(--color-surface-raised);
+}
+.note-folder span {
+  flex: 1;
+}
+.note-card {
+  overflow: hidden;
+  max-width: 720px;
+}
+.note-card > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 210px;
+  object-fit: cover;
+}
+.note-card h2 {
+  padding: 0 var(--space-5);
+  font-size: 21px;
+}
+.note-card h2 a {
+  color: var(--color-link);
+}
+.note-card > p {
+  padding: 0 var(--space-5) var(--space-4);
+  color: var(--color-text-muted);
+}
+@media (max-width: 767px) {
+  .medical-cover {
+    max-height: 155px;
+    margin-bottom: var(--space-5);
+  }
+}

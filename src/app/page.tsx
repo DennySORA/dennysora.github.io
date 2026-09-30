@@ -10,6 +10,7 @@ import {
   isIndexable,
   listPosts,
   loadArticle,
+  loadMedicalNote,
   loadComments,
   loadProfile,
   loadProjects,
@@ -37,6 +38,9 @@ import { TagIndex, TaxonomyPage } from '../features/library/TaxonomyPages.tsx';
 import { Article } from '../features/reader/Article.tsx';
 import { ResearchBridge } from '../features/research/ResearchBridge.tsx';
 import { Privacy } from '../features/misc/Privacy.tsx';
+import { Notes } from '../features/notes/Notes.tsx';
+import { MedicalNote } from '../features/notes/MedicalNote.tsx';
+import { noteCopy } from '../lib/notes-copy.ts';
 import { NotFound } from '../features/misc/NotFound.tsx';
 
 function notFound(): never {
@@ -230,6 +234,11 @@ function loadView(route: RouteDescriptor) {
         ),
       };
     }
+    case 'notes':
+    case 'medical':
+      return { kind: route.kind };
+    case 'medical-note':
+      return { kind: 'medical-note' as const, html: loadMedicalNote() };
     case 'research':
       return { kind: 'research' as const };
     case 'privacy':
@@ -242,6 +251,8 @@ export type ViewData = ReturnType<typeof loadView>;
 
 function availableLocales(route: RouteDescriptor): Locale[] {
   switch (route.kind) {
+    case 'medical-note':
+      return ['zh-hant'];
     case 'article': {
       const article = loadArticle(route.locale, route.slug);
       return article ? article.post.editions : [];
@@ -296,6 +307,19 @@ function describe(view: ViewData, locale: Locale) {
       return {
         title: withSite(view.article.edition.title),
         description: view.article.edition.summary,
+      };
+    case 'notes':
+    case 'medical':
+    case 'medical-note':
+      return {
+        title: withSite(
+          view.kind === 'medical-note'
+            ? noteCopy[locale].article
+            : view.kind === 'medical'
+              ? noteCopy[locale].medical
+              : noteCopy[locale].notes,
+        ),
+        description: noteCopy[locale].intro,
       };
     case 'research':
       return {
@@ -482,6 +506,11 @@ function View({ data }: { data: PageData }) {
       return <TagIndex view={view} locale={locale} />;
     case 'article':
       return <Article view={view} locale={locale} />;
+    case 'notes':
+    case 'medical':
+      return <Notes locale={locale} medical={view.kind === 'medical'} />;
+    case 'medical-note':
+      return <MedicalNote html={view.html} locale={locale} />;
     case 'research':
       return <ResearchBridge locale={locale} />;
     case 'privacy':

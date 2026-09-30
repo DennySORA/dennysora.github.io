@@ -38,6 +38,7 @@ describe('workspace chrome', () => {
     expect(areas('ja').map((area) => area.href)).toEqual([
       '/ja/',
       '/ja/blog/',
+      '/ja/note/',
       '/ja/projects/',
       'https://paper.dennysora.me/',
     ]);

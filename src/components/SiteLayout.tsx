@@ -1,14 +1,24 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { PageData } from '../app/page.tsx';
-import { dictionaries } from '../i18n/index.ts';
+import { dictionaries, type Locale } from '../i18n/index.ts';
 import { legacyDestinations } from '../lib/legacy-anchors.ts';
 import { pageIds } from '../lib/page-ids.ts';
 import { ActivityBar } from './ActivityBar.tsx';
 import { EditorHead } from './EditorHead.tsx';
 import { Explorer } from './Explorer.tsx';
-import { SiteFooter } from './SiteFooter.tsx';
+import { Icon } from './Icon.tsx';
 import { StatusBar } from './StatusBar.tsx';
 import { TitleBar } from './TitleBar.tsx';
+
+const explorerLabels: Record<Locale, { collapse: string; expand: string }> = {
+  'zh-hant': { collapse: '收合檔案總管', expand: '展開檔案總管' },
+  en: { collapse: 'Collapse Explorer', expand: 'Expand Explorer' },
+  ja: {
+    collapse: 'エクスプローラーを折りたたむ',
+    expand: 'エクスプローラーを展開',
+  },
+};
+const explorerId = 'desktop-explorer';
 
 function isEditable(target: EventTarget | null) {
   return (
@@ -31,6 +41,16 @@ export function SiteLayout({
 }) {
   const { locale, route, languageLinks, workspace } = data;
   const t = dictionaries[locale];
+  const [explorerExpanded, setExplorerExpanded] = useState(true);
+  const explorerToggle = useRef<HTMLButtonElement>(null);
+  const explorerLabel = explorerExpanded
+    ? explorerLabels[locale].collapse
+    : explorerLabels[locale].expand;
+  function toggleExplorer() {
+    // Keep focus on an available control when the sidebar header disappears.
+    explorerToggle.current?.focus();
+    setExplorerExpanded((expanded) => !expanded);
+  }
   useEffect(() => {
     // Old single-page anchors such as /#exp-h continue to their new home.
     const legacy = legacyDestinations[window.location.hash.slice(1)];
@@ -66,7 +86,7 @@ export function SiteLayout({
       <a className="skip-link" href={`#${pageIds.main}`}>
         {t.skip}
       </a>
-      <div className="workbench">
+      <div className="workbench" data-explorer-expanded={explorerExpanded}>
         <TitleBar
           locale={locale}
           route={route}
@@ -74,13 +94,38 @@ export function SiteLayout({
           languageLinks={languageLinks}
         />
         <div className="activity-column">
-          <ActivityBar locale={locale} route={route} />
+          <ActivityBar
+            locale={locale}
+            route={route}
+            explorerId={explorerId}
+            explorerExpanded={explorerExpanded}
+            explorerLabel={explorerLabel}
+            explorerToggleRef={explorerToggle}
+            onToggleExplorer={toggleExplorer}
+          />
         </div>
-        <div className="sidebar-column">
+        <div
+          id={explorerId}
+          className="sidebar-column"
+          hidden={!explorerExpanded}
+        >
           <nav className="sidebar" aria-label={t.menuTitle}>
-            <p className="sidebar-title" aria-hidden="true">
-              {t.menuTitle}
-            </p>
+            <div className="sidebar-head">
+              <p className="sidebar-title" aria-hidden="true">
+                {t.menuTitle}
+              </p>
+              <button
+                type="button"
+                className="icon-button sidebar-collapse requires-js"
+                aria-controls={explorerId}
+                aria-expanded={explorerExpanded}
+                aria-label={explorerLabels[locale].collapse}
+                title={explorerLabels[locale].collapse}
+                onClick={toggleExplorer}
+              >
+                <Icon name="arrow-left" size={16} />
+              </button>
+            </div>
             <Explorer locale={locale} route={route} files={workspace} />
           </nav>
         </div>
@@ -89,11 +134,6 @@ export function SiteLayout({
           <main id={pageIds.main} tabIndex={-1}>
             {children}
           </main>
-          <SiteFooter
-            locale={locale}
-            languageLinks={languageLinks}
-            preserveSearch={route.kind === 'library'}
-          />
         </div>
         <StatusBar locale={locale} route={route} />
       </div>

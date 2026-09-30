@@ -44,7 +44,6 @@ test('the home README answers who, what and where to look first on desktop and p
     '一路走來',
     '還在探索的問題',
     '工程之外',
-    '最近的文章',
     '完整紀錄',
     '從一個具體的問題開始交流。',
   ]);
@@ -118,11 +117,16 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
     await expect(trigger).toBeFocused();
   }
   await trigger.click();
-  // The drawer lists the real files: the current README and every post.
+  // The drawer lists the real workspace and the published medical note.
   await expect(
     dialog.getByRole('link', { name: /README\.md/ }),
   ).toHaveAttribute('aria-current', 'page');
-  await expect(dialog.getByRole('link', { name: /\.md —/ })).toHaveCount(3);
+  await expect(
+    dialog.getByRole('link', { name: /analgesics\.md/ }),
+  ).toHaveAttribute('href', '/zh-hant/note/medical/analgesics/');
+  await expect(
+    dialog.locator('a[href*="/blog/"][href$="-principles/"]'),
+  ).toHaveCount(0);
   await dialog.getByRole('link', { name: /^blog/ }).click();
   await expect(page).toHaveURL('/ja/blog/');
   await page.goBack();
@@ -158,9 +162,10 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
   expect(await colour('.capability-evidence .resource-link .icon')).toBe(
     'rgb(93, 217, 193)',
   );
-  await page.goto('/zh-hant/blog/engineering-principles/');
-  expect(await colour('.code-label')).toBe('rgb(93, 217, 193)');
-  expect(await colour('.reader-header .eyebrow')).toBe('rgb(192, 153, 255)');
+  await page.goto('/zh-hant/note/medical/');
+  expect(await colour('.tab[data-area="notes"] > .icon')).toBe(
+    'rgb(224, 181, 101)',
+  );
   // The open file's tab is lit with the accent; its area stays marked.
   expect(await colour('.tab[aria-current="page"]')).toBe('rgb(230, 237, 247)');
   expect(await colour('.tab[aria-current="page"]', 'box-shadow')).toContain(
@@ -182,7 +187,7 @@ test('status colours appear only for real states, and nothing is dimmed with opa
     '/zh-hant/',
     '/en/',
     '/zh-hant/blog/',
-    '/zh-hant/blog/engineering-principles/',
+    '/zh-hant/note/medical/analgesics/',
     '/zh-hant/projects/',
     '/zh-hant/privacy/',
   ]) {
@@ -199,7 +204,9 @@ test('status colours appear only for real states, and nothing is dimmed with opa
           if (style.display === 'none' || style.visibility === 'hidden')
             return false;
           return (
-            status.includes(style.color) ||
+            (status.includes(style.color) &&
+              // The medical risk label and its inherited icon are real warnings.
+              !element.closest('.medical-disclaimer > b')) ||
             status.includes(style.backgroundColor) ||
             Number(style.opacity) < 1 ||
             style.filter !== 'none'
@@ -218,13 +225,12 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/zh-hant/blog/');
   const checks: [string, number][] = [
-    ['.page-intro', 4.5],
+    ['.empty-state p', 4.5],
     ['.search-scope', 4.5],
-    ['.filter-row button[aria-pressed="true"]', 4.5],
-    ['.filter-row button[aria-pressed="false"]', 4.5],
-    ['.article-row-meta .entity-kind', 4.5],
-    ['.article-row-meta time', 4.5],
-    ['.tag-link', 4.5],
+    ['.empty-state h2', 4.5],
+    ['.desktop-explorer-toggle button', 4.5],
+    ['.sidebar-collapse', 4.5],
+    ['.language-menu > summary', 4.5],
     ['.tab[aria-current="page"]', 4.5],
     ['.tab:not([aria-current])', 4.5],
     ['.sidebar .tree-link[aria-current="page"]', 4.5],
@@ -238,15 +244,17 @@ test('text and controls keep contrast in normal, hover, focus and selected state
       await contrastOf(page.locator(selector).first()),
       selector,
     ).toBeGreaterThanOrEqual(minimum);
-  const tag = page.locator('.tag-link').first();
-  await tag.hover();
-  expect(await contrastOf(tag), 'tag hover').toBeGreaterThanOrEqual(4.5);
-  const topic = page.locator('.filter-row button').nth(1);
-  await topic.focus();
+  const toggle = page.locator('.desktop-explorer-toggle button');
+  await toggle.hover();
+  expect(
+    await contrastOf(toggle),
+    'explorer toggle hover',
+  ).toBeGreaterThanOrEqual(4.5);
+  await toggle.focus();
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Tab');
   expect(
-    await contrastOf(topic, 'outline-color'),
+    await contrastOf(toggle, 'outline-color'),
     'focus ring',
   ).toBeGreaterThanOrEqual(3);
   const tab = page.locator('.tab:not([aria-current])').first();
@@ -310,11 +318,12 @@ test('projects name their real destinations and never show an icon without a lin
 test('the workbench names the open file and links every area, with Paper Daily outside', async ({
   page,
 }) => {
-  await page.goto('/en/blog/production-systems/');
-  const tabs = page.getByRole('navigation', { name: 'Main navigation' });
+  await page.goto('/zh-hant/note/medical/analgesics/');
+  const tabs = page.locator('.tabs');
   await expect(tabs.getByRole('link')).toHaveText([
     /README\.md/,
     /blog/,
+    /note/,
     /projects/,
     /paper-daily/,
   ]);
@@ -322,32 +331,27 @@ test('the workbench names the open file and links every area, with Paper Daily o
     'href',
     'https://paper.dennysora.me/',
   );
-  await expect(tabs.getByRole('link', { name: /blog/ })).toHaveAttribute(
+  await expect(tabs.getByRole('link', { name: /note/ })).toHaveAttribute(
     'aria-current',
     'true',
   );
-  await expect(page.locator('.tab-preview')).toHaveText(
-    'production-systems.md',
-  );
-  await expect(
-    page
-      .getByRole('navigation', { name: 'Current location' })
-      .getByRole('link'),
-  ).toHaveText(['dennysora', 'blog']);
+  await expect(page.locator('.tab-preview')).toHaveText('analgesics.md');
+  await expect(page.locator('.breadcrumbs').getByRole('link')).toHaveText([
+    'dennysora',
+    'note',
+    'medical',
+  ]);
   await expect(page.locator('.status-file')).toHaveText(
-    'blog/production-systems.md',
+    'note/medical/analgesics.md',
   );
   await expect(page.locator('.status-mode')).toHaveText('NORMAL');
   await expect(page.locator('.status-position')).toHaveText('Top');
   await page.mouse.wheel(0, 100_000);
   await expect(page.locator('.status-position')).toHaveText('Bot');
-  // The recent files on the README open the same articles.
+  // Unpublished placeholder articles must not reappear as recent files.
   await page.goto('/en/');
-  await expect(page.locator('.file-list a')).toHaveCount(3);
-  await expect(page.locator('.file-list a').first()).toHaveAttribute(
-    'href',
-    /^\/en\/blog\/[a-z-]+\/$/,
-  );
+  await expect(page.locator('.file-list a')).toHaveCount(0);
+  await expect(page.locator('#recent-title')).toHaveCount(0);
 });
 
 for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
@@ -358,7 +362,9 @@ for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
       '/ja/',
       '/en/projects/',
       '/ja/blog/',
-      '/ja/blog/trilingual-model-research/',
+      '/en/note/',
+      '/ja/note/medical/',
+      '/zh-hant/note/medical/analgesics/',
       '/zh-hant/blog/tags/',
       '/en/privacy/',
     ]) {
@@ -387,3 +393,67 @@ for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
       ).toBe(true);
     }
   });
+
+test('desktop Explorer repeatedly collapses and expands from keyboard controls without losing focus', async ({
+  page,
+}) => {
+  await page.goto('/en/');
+  await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
+  const toggle = page.locator('.desktop-explorer-toggle button');
+  const sidebar = page.locator('#desktop-explorer');
+  await expect(toggle).toHaveAttribute('aria-controls', 'desktop-explorer');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(sidebar).toBeVisible();
+  const expandedWidth = await page
+    .locator('.editor')
+    .evaluate((element) => element.getBoundingClientRect().width);
+  await toggle.focus();
+  for (const key of ['Enter', 'Space', 'Enter']) {
+    await toggle.press(key);
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle).toHaveAccessibleName('Expand Explorer');
+    await expect(sidebar).toBeHidden();
+    await expect(toggle).toBeFocused();
+    expect(
+      await page
+        .locator('.editor')
+        .evaluate((element) => element.getBoundingClientRect().width),
+    ).toBeGreaterThan(expandedWidth);
+    await toggle.press(key);
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(toggle).toHaveAccessibleName('Collapse Explorer');
+    await expect(sidebar).toBeVisible();
+    await expect(toggle).toBeFocused();
+  }
+  await page.locator('.sidebar-collapse').focus();
+  await page.keyboard.press('Enter');
+  await expect(sidebar).toBeHidden();
+  await expect(toggle).toBeFocused();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(toggle).toBeHidden();
+  await page.getByRole('button', { name: 'Open explorer' }).click();
+  await expect(page.getByRole('dialog', { name: 'Explorer' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(sidebar).toBeHidden();
+  await toggle.click();
+  await expect(sidebar).toBeVisible();
+  expect(
+    await page.evaluate(() => localStorage.length + sessionStorage.length),
+  ).toBe(0);
+});
+
+test('the shared footer is absent across the workbench', async ({ page }) => {
+  for (const path of [
+    '/en/',
+    '/ja/blog/',
+    '/en/projects/',
+    '/zh-hant/note/medical/analgesics/',
+    '/en/privacy/',
+  ]) {
+    await page.goto(path);
+    await expect(page.locator('.site-footer')).toHaveCount(0);
+    await expect(page.getByRole('contentinfo')).toHaveCount(0);
+    await expect(page.locator('.statusbar')).toBeVisible();
+  }
+});

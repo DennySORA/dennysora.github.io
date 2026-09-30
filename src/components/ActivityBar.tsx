@@ -1,3 +1,4 @@
+import type { Ref } from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import type { RouteDescriptor } from '../lib/route-manifest.ts';
 import { contactEmail, githubUrl, papersUrl } from '../lib/site.ts';
@@ -15,9 +16,19 @@ type Item = {
 export function ActivityBar({
   locale,
   route,
+  explorerId,
+  explorerExpanded,
+  explorerLabel,
+  explorerToggleRef,
+  onToggleExplorer,
 }: {
   locale: Locale;
   route: RouteDescriptor;
+  explorerId: string;
+  explorerExpanded: boolean;
+  explorerLabel: string;
+  explorerToggleRef: Ref<HTMLButtonElement>;
+  onToggleExplorer: () => void;
 }) {
   const t = dictionaries[locale];
   const top: Item[] = [
@@ -69,7 +80,22 @@ export function ActivityBar({
     ));
   return (
     <nav className="activitybar" aria-label={t.activityBar}>
-      <ul>{render(top)}</ul>
+      <ul>
+        <li className="desktop-explorer-toggle requires-js">
+          <button
+            ref={explorerToggleRef}
+            type="button"
+            aria-controls={explorerId}
+            aria-expanded={explorerExpanded}
+            aria-label={explorerLabel}
+            title={explorerLabel}
+            onClick={onToggleExplorer}
+          >
+            <Icon name="menu" size={22} />
+          </button>
+        </li>
+        {render(top)}
+      </ul>
       <ul>{render(bottom)}</ul>
     </nav>
   );

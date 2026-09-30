@@ -9,6 +9,9 @@ export type RouteDescriptor =
   | { kind: 'projects'; locale: Locale }
   | { kind: 'project'; locale: Locale; projectId: string }
   | { kind: 'library'; locale: Locale }
+  | { kind: 'notes'; locale: Locale }
+  | { kind: 'medical'; locale: Locale }
+  | { kind: 'medical-note'; locale: Locale }
   | { kind: 'article'; locale: Locale; slug: string }
   | { kind: 'topic'; locale: Locale; topicId: string }
   | { kind: 'tags'; locale: Locale }
@@ -16,7 +19,7 @@ export type RouteDescriptor =
   | { kind: 'research'; locale: Locale }
   | { kind: 'privacy'; locale: Locale };
 export type RouteKind = RouteDescriptor['kind'];
-export type NavSection = 'home' | 'library' | 'projects';
+export type NavSection = 'home' | 'library' | 'projects' | 'notes';
 
 // Slugs that would collide with fixed Library routes.
 export const reservedSlugs = ['tags', 'topics'] as const;
@@ -40,6 +43,13 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
       if (rest.length === 0) return { kind: 'projects', locale };
       return rest.length === 1 && a
         ? { kind: 'project', locale, projectId: a }
+        : null;
+    case 'note':
+      if (rest.length === 0) return { kind: 'notes', locale };
+      if (a !== 'medical') return null;
+      if (rest.length === 1) return { kind: 'medical', locale };
+      return rest.length === 2 && b === 'analgesics' && locale === 'zh-hant'
+        ? { kind: 'medical-note', locale }
         : null;
     case 'blog':
       if (rest.length === 0) return { kind: 'library', locale };
@@ -75,6 +85,12 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/blog/`;
     case 'article':
       return `/${route.locale}/blog/${route.slug}/`;
+    case 'notes':
+      return `/${route.locale}/note/`;
+    case 'medical':
+      return `/${route.locale}/note/medical/`;
+    case 'medical-note':
+      return `/${route.locale}/note/medical/analgesics/`;
     case 'topic':
       return `/${route.locale}/blog/topics/${route.topicId}/`;
     case 'tags':
@@ -115,6 +131,10 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'projects':
     case 'project':
       return 'projects';
+    case 'notes':
+    case 'medical':
+    case 'medical-note':
+      return 'notes';
     default:
       return null;
   }

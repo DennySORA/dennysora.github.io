@@ -1,84 +1,71 @@
 import { test, expect, type Page } from '@playwright/test';
+import { dictionaries, locales } from '../../src/i18n/index.ts';
 import { origin } from './helpers.ts';
 
 const rows = (page: Page) => page.locator('.article-row');
 
-test('topics, types and tags combine as AND across dimensions and OR within tags', async ({
+for (const locale of locales) {
+  test(`${locale} blog is genuinely empty, without example articles or filters`, async ({
+    page,
+  }) => {
+    const t = dictionaries[locale];
+    await page.goto(`/${locale}/blog/`);
+    await expect(
+      page.getByRole('heading', { name: t.noPostsTitle }),
+    ).toBeVisible();
+    await expect(page.getByText(t.noPostsText)).toBeVisible();
+    await expect(rows(page)).toHaveCount(0);
+    await expect(
+      page.getByRole('status').filter({ hasText: t.articleCount(0) }),
+    ).toBeVisible();
+    await expect(page.locator('.filter-row')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: t.clearAll })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: t.emptyTitle })).toHaveCount(
+      0,
+    );
+    await expect(page.locator('.nojs-notice')).toHaveCount(0);
+  });
+}
+
+test('searching an empty blog never requests an index or suggests a search failure', async ({
   page,
 }) => {
-  await page.goto('/zh-hant/blog/');
-  await expect(rows(page)).toHaveCount(3);
-  const topics = page.getByRole('group', { name: '主題' });
-  const tags = page.getByRole('group', { name: /^標籤/ });
-  await topics.getByRole('button', { name: 'AI 與 LLM' }).click();
-  await expect(rows(page)).toHaveCount(1);
-  await expect(page).toHaveURL(/\?topic=ai$/);
-  await topics.getByRole('button', { name: '全部' }).click();
-  await tags.getByRole('button', { name: '量化', exact: true }).click();
-  await tags.getByRole('button', { name: 'Agent', exact: true }).click();
-  await expect(rows(page)).toHaveCount(2);
+  const requests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/pagefind/')) requests.push(request.url());
+  });
+  await page.goto('/en/blog/?topic=ai&tag=llm&q=trilingual');
+  const input = page.getByRole('searchbox', { name: 'Search articles' });
+  await expect(input).toHaveValue('trilingual');
   await expect(
-    page.getByRole('status').filter({ hasText: '符合任一所選標籤' }),
+    page.getByRole('heading', { name: 'No posts yet' }),
   ).toBeVisible();
-  await expect(page).toHaveURL(/\?tag=quantization&tag=agent$/);
-  // Selection is shown by more than colour.
-  const pressed = tags.getByRole('button', { name: 'Agent', exact: true });
-  await expect(pressed).toHaveAttribute('aria-pressed', 'true');
-  expect(
-    await pressed.evaluate((button) => getComputedStyle(button).boxShadow),
-  ).not.toBe('none');
-  await expect(pressed.locator('.tag-toggle-mark')).toHaveText('✓');
-  await page
-    .getByRole('group', { name: '類型' })
-    .getByRole('button', { name: '實作紀錄' })
-    .click();
-  await expect(rows(page)).toHaveCount(1);
-  await page.reload();
-  await expect(rows(page)).toHaveCount(1);
-  await expect(pressed).toHaveAttribute('aria-pressed', 'true');
-  await page.goBack();
-  await expect(page).toHaveURL(/\?tag=quantization&tag=agent$/);
-  await expect(rows(page)).toHaveCount(2);
-  await page.getByRole('button', { name: '移除「量化」' }).click();
-  await expect(page).toHaveURL(/\?tag=agent$/);
-  await expect(rows(page)).toHaveCount(1);
+  await input.fill('SentencePiece');
+  await expect(page).toHaveURL(/\?q=SentencePiece$/);
+  await expect(rows(page)).toHaveCount(0);
+  await expect(page.locator('.notice')).toHaveCount(0);
+  await expect(page.locator('.sort-toggle')).toHaveCount(0);
+  await expect(page.locator('.active-conditions')).toHaveCount(0);
+  expect(requests).toEqual([]);
+  await page.getByRole('button', { name: 'Clear search' }).click();
+  await expect(input).toHaveValue('');
+  await expect(input).toBeFocused();
+  await expect(page).toHaveURL('/en/blog/');
 });
 
-test('full-text search ranks and highlights hits in the current language only', async ({
+test('the search shortcut still focuses the empty blog search field', async ({
   page,
 }) => {
-  await page.goto('/zh-hant/blog/');
-  const input = page.getByRole('searchbox', { name: '搜尋文章' });
-  await expect(page.getByText('搜尋已發布的繁體中文文章')).toBeVisible();
-  await input.fill('量化');
-  await expect(page).toHaveURL(/\?q=%E9%87%8F%E5%8C%96$/);
-  await expect(rows(page)).toHaveCount(1);
+  await page.goto('/en/');
+  await page
+    .locator('.activitybar')
+    .getByRole('link', { name: 'Search articles' })
+    .click();
+  await expect(page).toHaveURL('/en/blog/#search');
+  await expect(page.getByRole('searchbox')).toBeFocused();
   await expect(
-    rows(page)
-      .first()
-      .getByRole('link', { name: '從零訓練三語模型：研究與實驗紀錄' }),
+    page.getByRole('heading', { name: 'No posts yet' }),
   ).toBeVisible();
-  await expect(rows(page).first().locator('mark').first()).toHaveText('量化');
-  await expect(
-    rows(page).first().locator('.matched-sections a').first(),
-  ).toHaveAttribute('href', /#/);
-  // Controlled aliases let an English term find the Chinese edition.
-  await input.fill('quantization');
-  await expect(rows(page)).toHaveCount(2);
-  const sort = page.getByRole('group', { name: '排序' });
-  await expect(sort.getByRole('button', { name: '相關性' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
-  await sort.getByRole('button', { name: '最新' }).click();
-  await expect(page).toHaveURL(/sort=latest/);
-  await input.fill('zzzznomatch');
-  await expect(
-    page.getByRole('heading', { name: '沒有符合這些條件的文章' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: '移除「zzzznomatch」' }).click();
-  await expect(input).toHaveValue('');
-  await expect(rows(page)).toHaveCount(3);
 });
 
 test('typing replaces history, and a later query always wins', async ({
@@ -90,8 +77,7 @@ test('typing replaces history, and a later query always wins', async ({
   await input.pressSequentially('agent', { delay: 30 });
   await input.fill('SentencePiece');
   await expect(page).toHaveURL(/\?q=SentencePiece$/);
-  await expect(rows(page)).toHaveCount(1);
-  await expect(rows(page).first()).toContainText('trilingual');
+  await expect(rows(page)).toHaveCount(0);
   expect(await page.evaluate(() => history.length)).toBe(before);
 });
 
@@ -135,70 +121,58 @@ test('IME composition does not search until the text is committed', async ({
   expect(page.url()).not.toContain('q=');
   await compose('量子化', 'end');
   await expect(page).toHaveURL(/\?q=/);
-  await expect(rows(page)).toHaveCount(1);
+  await expect(rows(page)).toHaveCount(0);
 });
 
-test('a failed index says it searches titles and summaries only, then recovers', async ({
+test('language links preserve the blog query in the title bar', async ({
   page,
 }) => {
-  await page.route('**/pagefind/**', (route) =>
-    route.fulfill({ status: 503, body: 'unavailable' }),
-  );
-  await page.goto('/en/blog/');
-  const input = page.getByRole('searchbox');
-  await input.fill('trilingual');
-  const notice = page.getByText('only titles and summaries are searched');
-  await expect(notice).toBeVisible();
-  await expect(rows(page)).toHaveCount(1);
-  await input.fill('SentencePiece');
+  await page.goto('/zh-hant/blog/?q=model');
+  await page.locator('.header-language summary').click();
   await expect(
-    page.getByRole('heading', { name: 'No articles match these conditions' }),
-  ).toBeVisible();
-  await page.unroute('**/pagefind/**');
-  await page.getByRole('button', { name: 'Try again' }).click();
-  await expect(notice).toHaveCount(0);
-  await expect(rows(page)).toHaveCount(1);
+    page.locator('.header-language').getByRole('link', { name: 'English' }),
+  ).toHaveAttribute('href', '/en/blog/?q=model');
 });
 
-test('language links keep language-neutral filters and the query', async ({
-  page,
-}) => {
-  await page.goto('/zh-hant/blog/?tag=llm&q=model');
-  await expect(
-    page.locator('.footer-languages').getByRole('link', { name: 'English' }),
-  ).toHaveAttribute('href', '/en/blog/?tag=llm&q=model');
-  await page.goto('/en/blog/engineering-principles/');
-  await expect(
-    page.locator('.footer-languages').getByRole('link', { name: '日本語' }),
-  ).toHaveAttribute('href', '/ja/blog/engineering-principles/');
-});
-
-test('topic and tag pages, and the library itself, work without JavaScript', async ({
+test('the empty blog remains readable without JavaScript', async ({
   browser,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
-  const page = await context.newPage();
-  await page.goto(`${origin}/en/blog/`);
-  await expect(page.getByRole('searchbox')).toBeHidden();
-  await expect(
-    page.getByText('Full-text search needs JavaScript'),
-  ).toBeVisible();
-  await expect(rows(page)).toHaveCount(3);
-  await page
-    .locator('.nojs-notice')
-    .getByRole('link', { name: 'AI & LLMs' })
-    .click();
-  await expect(page).toHaveURL('/en/blog/topics/ai/');
-  await expect(rows(page)).toHaveCount(1);
-  await page.getByRole('link', { name: 'All tags' }).click();
-  await expect(page).toHaveURL('/en/blog/tags/');
-  await page.getByRole('link', { name: 'LLM', exact: true }).click();
-  await expect(page).toHaveURL('/en/blog/tags/llm/');
-  await expect(rows(page)).toHaveCount(2);
-  await rows(page)
-    .filter({ hasText: 'trilingual' })
-    .getByRole('link', { name: 'Quantization' })
-    .click();
-  await expect(page).toHaveURL('/en/blog/tags/quantization/');
-  await context.close();
+  try {
+    const page = await context.newPage();
+    await page.goto(`${origin}/en/blog/`);
+    await expect(page.getByRole('searchbox')).toBeHidden();
+    await expect(
+      page.getByRole('heading', { name: 'No posts yet' }),
+    ).toBeVisible();
+    await expect(rows(page)).toHaveCount(0);
+    await expect(page.locator('.nojs-notice')).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+});
+
+test('feeds and old example URLs contain no published blog posts', async ({
+  request,
+}) => {
+  for (const locale of locales) {
+    const feed = await request.get(`/${locale}/rss.xml`);
+    expect(feed.status()).toBe(200);
+    expect(await feed.text()).not.toContain('<item>');
+    for (const slug of [
+      'engineering-principles',
+      'production-systems',
+      'trilingual-model-research',
+    ]) {
+      const article = await request.get(`/${locale}/blog/${slug}/`);
+      expect(article.status()).toBe(200);
+      const notice = await article.text();
+      expect(notice).toContain('noindex');
+      expect(notice).not.toContain('data-pagefind-body');
+      expect(notice).toContain(dictionaries[locale].noPostsTitle);
+    }
+  }
+  expect((await request.get('/pagefind/pagefind-entry.json')).status()).toBe(
+    404,
+  );
 });

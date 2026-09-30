@@ -28,8 +28,10 @@ export type IconName =
   | 'chevron-down'
   | 'chevron-right'
   | 'hash'
-  | 'shield';
+  | 'shield'
+  | 'capsule';
 const paths: Record<IconName, string> = {
+  capsule: 'm9 4-5 5a6 6 0 0 0 8.5 8.5l5-5A6 6 0 0 0 9 4ZM7 7l8.5 8.5',
   arrow: 'M4 12h15m-6-6 6 6-6 6',
   'arrow-left': 'M20 12H5m6-6-6 6 6 6',
   'arrow-down': 'M12 4v15m-6-6 6 6 6-6',

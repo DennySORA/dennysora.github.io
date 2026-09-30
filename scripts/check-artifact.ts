@@ -4,6 +4,7 @@ import { join, extname, resolve, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import {
   isIndexable,
+  listPosts,
   publishedPaths,
   publishedRoutes,
   siteUrl,
@@ -88,16 +89,27 @@ const header = readFileSync(join(root, 'en/index.html'), 'utf8');
 if (!header.includes('src="/assets/logo.png"'))
   failures.push('Header does not use the same-origin logo');
 
-// The search bundle exists for every language and only for the final pages.
-const entryFile = join(root, 'pagefind/pagefind-entry.json');
-if (!existsSync(entryFile)) failures.push('Search index missing');
+// Only published blog articles belong in search. An empty blog emits no bundle.
+const searchCounts = Object.fromEntries(
+  locales.map((locale) => [locale, listPosts(locale).length]),
+);
+const hasArticles = Object.values(searchCounts).some((count) => count > 0);
+const searchDirectory = join(root, 'pagefind');
+const entryFile = join(searchDirectory, 'pagefind-entry.json');
+if (!hasArticles) {
+  if (existsSync(searchDirectory))
+    failures.push('Empty blog has a stale search index');
+} else if (!existsSync(entryFile)) failures.push('Search index missing');
 else {
   const entry = JSON.parse(readFileSync(entryFile, 'utf8')) as {
-    languages: Record<string, unknown>;
+    languages: Record<string, { page_count: number }>;
   };
-  for (const locale of locales)
-    if (!entry.languages[locale])
-      failures.push(`Search index missing language ${locale}`);
+  for (const [locale, count] of Object.entries(searchCounts))
+    if ((entry.languages[locale]?.page_count ?? 0) !== count)
+      failures.push(`Search index count differs for ${locale}`);
+  for (const locale of Object.keys(entry.languages))
+    if (!(locale in searchCounts))
+      failures.push(`Unexpected search index language ${locale}`);
 }
 
 // Sitemap and robots directives agree with the route manifest.

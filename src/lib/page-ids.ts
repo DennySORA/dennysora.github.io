@@ -14,6 +14,7 @@ export const pageIds = {
 
 export const reservedIds: ReadonlySet<string> = new Set([
   ...Object.values(pageIds),
+  'desktop-explorer',
   'top',
   'content',
   'footnote-label',
