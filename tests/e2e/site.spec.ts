@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { dictionaries } from '../../src/i18n/index.ts';
 import { publishedPaths } from '../../src/lib/content.server.ts';
 import { origin, trackExternalRequests } from './helpers.ts';
 
@@ -180,7 +181,9 @@ test('404 stays a real 404, removed articles are explicit and legacy paths keep 
   await expect(page).toHaveURL('/zh-hant/blog/production-systems/');
   await page.goto('/detail/depth/#how-h');
   await expect(page).toHaveURL('/zh-hant/blog/engineering-principles/#how-h');
-  await expect(page.locator('h1')).toHaveText('目前尚無文章');
+  await expect(page.locator('h1')).toHaveText(
+    dictionaries['zh-hant'].noPostsTitle,
+  );
   await expect(page.locator('.prose')).toHaveCount(0);
   await page.goto('/detail/depth/');
   await expect(page).toHaveURL('/zh-hant/#depth-h');
