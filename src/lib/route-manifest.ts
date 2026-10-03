@@ -7,8 +7,6 @@ export type RouteDescriptor =
   | { kind: 'root' }
   | { kind: 'not-found' }
   | { kind: 'home'; locale: Locale }
-  | { kind: 'projects'; locale: Locale }
-  | { kind: 'project'; locale: Locale; projectId: string }
   | { kind: 'library'; locale: Locale }
   | { kind: 'notes'; locale: Locale }
   | { kind: 'network'; locale: Locale }
@@ -19,10 +17,9 @@ export type RouteDescriptor =
   | { kind: 'topic'; locale: Locale; topicId: string }
   | { kind: 'tags'; locale: Locale }
   | { kind: 'tag'; locale: Locale; tagId: string }
-  | { kind: 'research'; locale: Locale }
-  | { kind: 'privacy'; locale: Locale };
+  | { kind: 'research'; locale: Locale };
 export type RouteKind = RouteDescriptor['kind'];
-export type NavSection = 'home' | 'library' | 'projects' | 'notes';
+export type NavSection = 'home' | 'library' | 'notes';
 
 // Slugs that would collide with fixed Library routes.
 export const reservedSlugs = ['tags', 'topics'] as const;
@@ -40,13 +37,7 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
   const [a, b] = rest;
   switch (section) {
     case 'research':
-    case 'privacy':
       return rest.length === 0 ? { kind: section, locale } : null;
-    case 'projects':
-      if (rest.length === 0) return { kind: 'projects', locale };
-      return rest.length === 1 && a
-        ? { kind: 'project', locale, projectId: a }
-        : null;
     case 'note':
       if (rest.length === 0) return { kind: 'notes', locale };
       if (a === 'network') {
@@ -90,8 +81,6 @@ export function routePath(route: RouteDescriptor): string {
       return '/404/';
     case 'home':
       return `/${route.locale}/`;
-    case 'project':
-      return `/${route.locale}/projects/${route.projectId}/`;
     case 'library':
       return `/${route.locale}/blog/`;
     case 'article':
@@ -143,9 +132,6 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'tags':
     case 'tag':
       return 'library';
-    case 'projects':
-    case 'project':
-      return 'projects';
     case 'notes':
     case 'medical':
     case 'medical-note':

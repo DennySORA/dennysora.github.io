@@ -13,7 +13,6 @@ import { papersUrl } from './site.ts';
 
 export type WorkspaceFiles = {
   posts: { slug: string; title: string }[];
-  projects: { id: string; title: string }[];
 };
 
 export type AreaKey = NavSection | 'papers';
@@ -30,12 +29,6 @@ export function areas(locale: Locale): Area[] {
     { key: 'home', file: 'README.md', href: `/${locale}/`, external: false },
     { key: 'library', file: 'blog', href: `/${locale}/blog/`, external: false },
     { key: 'notes', file: 'note', href: `/${locale}/note/`, external: false },
-    {
-      key: 'projects',
-      file: 'projects',
-      href: `/${locale}/projects/`,
-      external: false,
-    },
     { key: 'papers', file: 'paper-daily', href: papersUrl, external: true },
   ];
 }
@@ -47,7 +40,6 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
   const locale = routeLocale(route);
   const home: Crumb = { label: 'dennysora', href: `/${locale}/` };
   const blog: Crumb = { label: 'blog', href: `/${locale}/blog/` };
-  const projects: Crumb = { label: 'projects', href: `/${locale}/projects/` };
   const tags: Crumb = { label: 'tags', href: `/${locale}/blog/tags/` };
   const self = routePath(route);
   switch (route.kind) {
@@ -97,12 +89,6 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, blog, tags];
     case 'tag':
       return [home, blog, tags, { label: route.tagId, href: self }];
-    case 'projects':
-      return [home, projects];
-    case 'project':
-      return [home, projects, { label: route.projectId, href: self }];
-    case 'privacy':
-      return [home, { label: 'privacy.md', href: self }];
     case 'research':
       return [home, { label: 'research.md', href: self }];
     case 'not-found':
@@ -115,7 +101,6 @@ const folders: RouteDescriptor['kind'][] = [
   'notes',
   'medical',
   'network',
-  'projects',
   'tags',
   'topic',
   'tag',
@@ -136,7 +121,7 @@ export function areaState(
   key: AreaKey,
 ): 'page' | 'true' | undefined {
   if (navSection(route) !== key) return undefined;
-  return ['root', 'home', 'library', 'projects', 'notes'].includes(route.kind)
+  return ['root', 'home', 'library', 'notes'].includes(route.kind)
     ? 'page'
     : 'true';
 }

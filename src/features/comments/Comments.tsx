@@ -163,10 +163,7 @@ function GiscusComments({
               hint={t.newTab}
             />
           </div>
-          <p className="fine">
-            {t.commentsThirdParty}{' '}
-            <a href={`/${locale}/privacy/`}>{t.privacyLink}</a>
-          </p>
+          <p className="fine">{t.commentsThirdParty}</p>
         </>
       ) : null}
       {state.status === 'loading' ? (

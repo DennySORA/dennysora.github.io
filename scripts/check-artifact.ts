@@ -13,6 +13,7 @@ import {
 import { locales } from '../src/i18n/index.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
 import brand from '../data/brand-assets.json' with { type: 'json' };
+import navigation from '../data/navigation-assets.json' with { type: 'json' };
 
 const root = resolve('build/client');
 const failures: string[] = [];
@@ -24,6 +25,13 @@ function walk(directory: string): string[] {
   );
 }
 const files = walk(root);
+const navigationAsset = join(root, navigation.path);
+if (
+  !existsSync(navigationAsset) ||
+  createHash('sha256').update(readFileSync(navigationAsset)).digest('hex') !==
+    navigation.sha256
+)
+  failures.push('Navigation illustration missing or changed');
 for (const file of files) {
   const name = relative(root, file);
   if (
@@ -37,6 +45,14 @@ for (const file of files) {
     hasRawAsset(readFileSync(file, 'utf8'), extname(file))
   )
     failures.push(`Hot-linked GitHub raw asset in ${name}`);
+  if (extname(file) === '.css')
+    for (const match of readFileSync(file, 'utf8').matchAll(
+      /url\(['"]?(\/assets\/[^)'"]+)['"]?\)/g,
+    )) {
+      const asset = match[1];
+      if (asset && !existsSync(join(root, asset)))
+        failures.push(`Broken stylesheet asset in ${name}: ${asset}`);
+    }
   if (extname(file) !== '.html') continue;
   const html = readFileSync(file, 'utf8');
   if (!/<html lang="(?:zh-Hant|en|ja)"/.test(html))
@@ -54,6 +70,15 @@ for (const file of files) {
       failures.push(`Broken link in ${name}: ${url.pathname}`);
   }
 }
+// Removed pages must not survive as stale build output or published payloads.
+for (const locale of locales)
+  for (const section of ['projects', 'privacy'])
+    for (const suffix of ['', '.data'])
+      if (existsSync(join(root, locale, section + suffix)))
+        failures.push(
+          `Removed page still emitted: ${locale}/${section}${suffix}`,
+        );
+
 for (const path of publishedPaths()) {
   const file = join(root, path, 'index.html');
   if (!existsSync(file)) {

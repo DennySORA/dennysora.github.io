@@ -9,10 +9,12 @@ type Item = {
   href: string;
   icon: IconName;
   label: string;
+  caption: string;
+  sprite?: number;
   current?: 'page' | 'true' | undefined;
 };
 
-/** Icon-only quick links; every one has a visible tooltip and an accessible name. */
+/** Named quick links expose their destination without requiring a hover. */
 export function ActivityBar({
   locale,
   route,
@@ -31,39 +33,88 @@ export function ActivityBar({
   onToggleExplorer: () => void;
 }) {
   const t = dictionaries[locale];
+  const captions = {
+    'zh-hant': {
+      home: '自我介紹',
+      search: '搜尋',
+      blog: '部落格',
+      notes: '筆記',
+      papers: '論文日報',
+      mail: '電子郵件',
+      explorer: '總管',
+    },
+    en: {
+      home: 'About',
+      search: 'Search',
+      blog: 'Blog',
+      notes: 'Notes',
+      papers: 'Paper Daily',
+      mail: 'Email',
+      explorer: 'Explorer',
+    },
+    ja: {
+      home: '自己紹介',
+      search: '検索',
+      blog: 'ブログ',
+      notes: 'ノート',
+      papers: '論文デイリー',
+      mail: 'メール',
+      explorer: 'エクスプローラー',
+    },
+  }[locale];
   const top: Item[] = [
     {
       href: `/${locale}/`,
       icon: 'files',
       label: `README.md — ${t.navAbout}`,
+      caption: captions.home,
+      sprite: 0,
       current: areaState(route, 'home'),
     },
     {
       href: `/${locale}/blog/#search`,
       icon: 'search',
       label: t.searchArticles,
+      caption: captions.search,
+      sprite: 1,
     },
     {
       href: `/${locale}/blog/`,
       icon: 'book',
       label: t.navLibrary,
+      caption: captions.blog,
+      sprite: 2,
       current: areaState(route, 'library'),
     },
     {
-      href: `/${locale}/projects/`,
-      icon: 'package',
-      label: t.navProjects,
-      current: areaState(route, 'projects'),
+      href: `/${locale}/note/`,
+      icon: 'folder',
+      label: captions.notes,
+      caption: captions.notes,
+      sprite: 3,
+      current: areaState(route, 'notes'),
     },
     {
       href: papersUrl,
       icon: 'newspaper',
       label: `${t.navPapers}（${t.newTab}）`,
+      caption: captions.papers,
+      sprite: 4,
     },
   ];
   const bottom: Item[] = [
-    { href: githubUrl, icon: 'github', label: `GitHub（${t.newTab}）` },
-    { href: `mailto:${contactEmail}`, icon: 'mail', label: t.email },
+    {
+      href: githubUrl,
+      icon: 'github',
+      label: `GitHub（${t.newTab}）`,
+      caption: 'GitHub',
+    },
+    {
+      href: `mailto:${contactEmail}`,
+      icon: 'mail',
+      label: captions.mail,
+      caption: captions.mail,
+    },
   ];
   const render = (items: Item[]) =>
     items.map((item) => (
@@ -74,7 +125,23 @@ export function ActivityBar({
           title={item.label}
           aria-current={item.current}
         >
-          <Icon name={item.icon} size={22} />
+          {item.sprite === undefined ? (
+            <Icon name={item.icon} size={22} />
+          ) : (
+            <span
+              className="activity-art"
+              data-sprite={item.sprite}
+              aria-hidden="true"
+            />
+          )}
+          <span className="activity-label" aria-hidden="true">
+            {item.caption}
+          </span>
+          {item.href === papersUrl ? (
+            <span className="activity-external" aria-hidden="true">
+              ↗
+            </span>
+          ) : null}
         </a>
       </li>
     ));
@@ -92,6 +159,9 @@ export function ActivityBar({
             onClick={onToggleExplorer}
           >
             <Icon name="menu" size={22} />
+            <span className="activity-label" aria-hidden="true">
+              {captions.explorer}
+            </span>
           </button>
         </li>
         {render(top)}

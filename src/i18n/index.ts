@@ -46,7 +46,6 @@ const en = {
   brandHome: 'DennySORA home',
   mainNav: 'Main navigation',
   navLibrary: 'Blog',
-  navProjects: 'Projects',
   navAbout: 'About me',
   navPapers: 'Paper Daily',
   activityBar: 'Quick links',
@@ -65,13 +64,9 @@ const en = {
   github: 'GitHub',
   email: 'Email',
   rss: 'RSS',
-  privacy: 'Privacy',
   newTab: 'external site',
   unavailableTranslation: 'not available in this language yet',
   allArticles: 'All articles',
-  allProjects: 'All projects',
-  viewMyProjects: 'View my projects',
-  getInTouch: 'Get in touch',
   competenciesTitle: 'What I work on',
   competenciesIntro:
     'Professional practice, personal projects and what I am still learning are kept apart, so each ability has context and something you can check.',
@@ -83,53 +78,12 @@ const en = {
   seeExperience: 'See related experience',
   readPost: 'Read',
   projectSource: 'Source',
-  worksTitle: 'Get to know my work',
-  aboutProject: 'About this project',
   experienceTitle: 'Along the way',
   experienceIntro:
     'Roles and main work first; details for anyone who wants to go deeper. Based on the résumé already published on this site.',
   present: 'Present',
   educationStatus: 'Education · current status',
   showAllWork: (count: number) => `Show all ${count} work items`,
-  exploringTitle: 'Questions I am still exploring',
-  exploringUpdated: (date: string) => `Based on public notes as of ${date}`,
-  readResearch: 'Read the research notes',
-  beyondTitle: 'Beyond engineering',
-  educationTitle: 'Education',
-  recordTitle: 'Full record',
-  recordIntro:
-    'The complete skill list, technical depth and other public work from the previous profile, kept for anyone who wants every detail.',
-  recordSkills: 'Skills',
-  recordDepth: 'Technical depth',
-  recordOpenSource: 'Open-source repositories',
-  recordCommunity: 'Community',
-  recordWriting: 'Other writing',
-  contactTitle: 'Start with a concrete question.',
-  contactText:
-    'Technical discussion, open-source tools, or a different view on something I wrote.',
-  copyEmail: 'Copy email address',
-  emailCopied: 'Email address copied',
-  copyEmailFailed: 'Copy failed — select the address instead.',
-
-  projectsEyebrow: 'From idea to implementation',
-  projectsTitle: 'Projects',
-  projectsIntro:
-    'More than a list of repository names: what each tool is for, its scope, and where the source lives.',
-  categoryOpenSource: 'Open-source tool',
-  categoryWork: 'Work system',
-  categoryExperiment: 'Experiment',
-  sourceOnGitHub: 'Source on GitHub',
-  readCaseStudy: 'Read the case study',
-  tryDemo: 'Try the demo',
-  relatedWriting: 'Related writing',
-  projectsNote:
-    'Full case studies are still being written. Until one is published, each project links straight to its repository.',
-  projectOverviewNote:
-    'A full case study for this project has not been published yet. The repository is the authoritative source.',
-  projectRole: 'Role',
-  projectRepository: 'Repository',
-  projectTechnologies: 'Technologies',
-  backToProjects: 'Back to projects',
 
   libraryEyebrow: 'Writing & thinking',
   libraryTitle: 'Blog',
@@ -166,10 +120,6 @@ const en = {
     'Full-text search needs JavaScript. You can still browse every article by topic or tag.',
   browseByTopic: 'Browse by topic',
   allTags: 'All tags',
-  papersNoteTitle: 'Looking for automatically curated paper guides?',
-  papersNoteText:
-    'Paper Daily has its own entry and is kept separate from the articles I write.',
-  goToPapers: 'Go to Paper Daily',
   matchedSection: 'Matched section',
   previousPage: 'Previous page',
   nextPage: 'Next page',
@@ -239,7 +189,6 @@ const en = {
     count === 1 ? '1 comment' : `${count} comments`,
   commentsNative:
     'Discussion happens on GitHub, and every language version shares the same thread.',
-  privacyLink: 'Privacy note',
 
   researchBridgeEyebrow: 'This page has moved',
   researchBridgeTitle: 'Research notes are now part of the blog.',
@@ -247,25 +196,6 @@ const en = {
     'Automatically generated paper guides have their own entry. Choose where you want to go.',
   researchBridgeNotes: 'Read research notes',
   researchBridgePapers: 'Go to Paper Daily',
-
-  privacyTitle: 'Privacy & comments',
-  privacyIntro:
-    'A small, static corner of the web. No site accounts, advertising, or analytics.',
-  privacyStatic:
-    'Pages are served as static files by GitHub Pages. This site adds no analytics, advertising, cookies or browser storage. The hosting provider may process request metadata under its own privacy policy.',
-  privacySearch:
-    'Article search runs in your browser using an index served by this site; your query is not sent anywhere else.',
-  privacyLinks:
-    'External links, such as GitHub or Paper Daily, connect to those services only when you follow them.',
-  privacyCommentsUnconfigured:
-    'Article comments are not enabled yet, so no comment service is contacted.',
-  privacyCommentsNative:
-    'Comments use native GitHub Discussions on github.com. GitHub handles sign-in, public posts and moderation.',
-  privacyCommentsGiscus:
-    'Comments load only after you choose “Load comments”. The widget is provided by giscus.app and the comments are stored in GitHub Discussions. If you sign in through giscus, it keeps its own session in your browser.',
-  privacyPublic:
-    'Comments are public. Do not post credentials or private information.',
-  githubPrivacy: 'GitHub Privacy Statement',
 
   notFoundTitle: 'This path doesn’t lead to a page.',
   notFoundText:
@@ -288,7 +218,6 @@ const zh: Dictionary = {
   brandHome: 'DennySORA 首頁',
   mainNav: '主要導覽',
   navLibrary: '部落格',
-  navProjects: '專案',
   navAbout: '自我介紹',
   navPapers: '論文日報',
   activityBar: '快速連結',
@@ -307,13 +236,9 @@ const zh: Dictionary = {
   github: 'GitHub',
   email: 'Email',
   rss: 'RSS',
-  privacy: '隱私說明',
   newTab: '外部網站',
   unavailableTranslation: '尚無此語言版本',
   allArticles: '全部文章',
-  allProjects: '全部專案',
-  viewMyProjects: '看看我的專案',
-  getInTouch: '與我聯絡',
   competenciesTitle: '我主要在做什麼',
   competenciesIntro:
     '把工作實務、個人實作與正在學習的方向分開，讓能力有脈絡，也有可查看的例子。',
@@ -325,52 +250,12 @@ const zh: Dictionary = {
   seeExperience: '查看相關經歷',
   readPost: '閱讀',
   projectSource: '原始碼',
-  worksTitle: '用作品認識我',
-  aboutProject: '了解專案',
   experienceTitle: '一路走來',
   experienceIntro:
     '先看角色與主要工作，細節留給想深入了解的人。以下依本站既有的公開履歷整理。',
   present: '至今',
   educationStatus: '教育・目前狀態',
   showAllWork: (count: number) => `展開全部工作內容（${count} 項）`,
-  exploringTitle: '還在探索的問題',
-  exploringUpdated: (date: string) => `依 ${date} 的公開筆記整理`,
-  readResearch: '閱讀研究紀錄',
-  beyondTitle: '工程之外',
-  educationTitle: '學歷',
-  recordTitle: '完整紀錄',
-  recordIntro:
-    '原個人頁的完整技能清單、技術深度與其他公開作品，留給想看全部細節的人。',
-  recordSkills: '技能清單',
-  recordDepth: '技術深度',
-  recordOpenSource: '開源 repository',
-  recordCommunity: '社群',
-  recordWriting: '其他寫作',
-  contactTitle: '從一個具體的問題開始交流。',
-  contactText: '技術討論、開源工具，或對文章的不同觀點。',
-  copyEmail: '複製信箱',
-  emailCopied: '已複製信箱',
-  copyEmailFailed: '無法複製，請直接選取信箱。',
-
-  projectsEyebrow: '從想法到實作',
-  projectsTitle: '專案',
-  projectsIntro:
-    '不只是一列 repository 名稱。從用途、實作範圍與原始碼，了解這些工具和系統。',
-  categoryOpenSource: '開源工具',
-  categoryWork: '工作中的系統實作',
-  categoryExperiment: '個人實驗',
-  sourceOnGitHub: 'GitHub 原始碼',
-  readCaseStudy: '查看案例',
-  tryDemo: '使用 Demo',
-  relatedWriting: '閱讀相關實作紀錄',
-  projectsNote:
-    '完整案例仍在整理中；在正式發布之前，每個專案都直接連到它的 repository。',
-  projectOverviewNote:
-    '這個專案的完整案例尚未發布，請以 repository 的內容為準。',
-  projectRole: '角色',
-  projectRepository: 'Repository',
-  projectTechnologies: '技術',
-  backToProjects: '返回專案',
 
   libraryEyebrow: '寫作與思考',
   libraryTitle: '部落格',
@@ -404,9 +289,6 @@ const zh: Dictionary = {
   noJsSearch: '全文搜尋需要 JavaScript。你仍可以依主題或標籤瀏覽全部文章。',
   browseByTopic: '依主題瀏覽',
   allTags: '全部標籤',
-  papersNoteTitle: '想看自動整理的論文導讀？',
-  papersNoteText: '論文日報另有獨立入口，不和作者的文章混在一起。',
-  goToPapers: '前往論文日報',
   matchedSection: '命中章節',
   previousPage: '上一頁',
   nextPage: '下一頁',
@@ -472,29 +354,12 @@ const zh: Dictionary = {
   commentsEmpty: '目前還沒有留言。',
   commentsCount: (count: number) => `${count} 則留言`,
   commentsNative: '討論在 GitHub 進行，三種語言版本共用同一則討論串。',
-  privacyLink: '隱私說明',
 
   researchBridgeEyebrow: '頁面已整合',
   researchBridgeTitle: '研究筆記已整合至部落格。',
   researchBridgeText: '自動論文導讀則有獨立入口。請選擇你要前往的地方。',
   researchBridgeNotes: '閱讀研究筆記',
   researchBridgePapers: '前往論文日報',
-
-  privacyTitle: '隱私與留言說明',
-  privacyIntro: '一個簡單的靜態網站。沒有站內帳號、廣告或分析追蹤。',
-  privacyStatic:
-    '本站由 GitHub Pages 提供靜態檔案，不加入分析追蹤、廣告、Cookie 或瀏覽器儲存。託管服務可能依其隱私政策處理請求資訊。',
-  privacySearch:
-    '文章搜尋在你的瀏覽器中進行，使用本站提供的索引；查詢內容不會傳送到其他地方。',
-  privacyLinks:
-    'GitHub、論文日報等外部連結，只有在你開啟時才會連線到對應服務。',
-  privacyCommentsUnconfigured: '文章留言尚未啟用，因此不會連線到任何留言服務。',
-  privacyCommentsNative:
-    '留言使用 github.com 上的原生 GitHub Discussions；登入、公開發文與管理由 GitHub 處理。',
-  privacyCommentsGiscus:
-    '只有在你按下「載入留言」後才會載入留言。留言元件由 giscus.app 提供，內容存放在 GitHub Discussions；若透過 giscus 登入，它會在你的瀏覽器保存自己的工作階段。',
-  privacyPublic: '留言會公開顯示，請勿貼上憑證或私人資訊。',
-  githubPrivacy: 'GitHub 隱私聲明',
 
   notFoundTitle: '這條路徑沒有對應的頁面。',
   notFoundText: '網址可能已變更。你可以瀏覽部落格，或回到首頁。',
@@ -510,7 +375,6 @@ const ja: Dictionary = {
   brandHome: 'DennySORA ホーム',
   mainNav: 'メインナビゲーション',
   navLibrary: 'ブログ',
-  navProjects: 'プロジェクト',
   navAbout: '自己紹介',
   navPapers: '論文デイリー',
   activityBar: 'クイックリンク',
@@ -529,13 +393,9 @@ const ja: Dictionary = {
   github: 'GitHub',
   email: 'メール',
   rss: 'RSS',
-  privacy: 'プライバシー',
   newTab: '外部サイト',
   unavailableTranslation: 'この言語の版はまだありません',
   allArticles: 'すべての記事',
-  allProjects: 'すべてのプロジェクト',
-  viewMyProjects: 'プロジェクトを見る',
-  getInTouch: '連絡する',
   competenciesTitle: '主に取り組んでいること',
   competenciesIntro:
     '業務での実践、個人での実装、学習中のことを分けて示し、それぞれの能力に背景と確認できる例を添えています。',
@@ -547,52 +407,12 @@ const ja: Dictionary = {
   seeExperience: '関連する経歴を見る',
   readPost: '読む',
   projectSource: 'ソースコード',
-  worksTitle: '制作物から知る',
-  aboutProject: 'プロジェクトについて',
   experienceTitle: 'これまでの歩み',
   experienceIntro:
     'まず役割と主な仕事を、詳細は深く知りたい方のために。このサイトで公開済みの経歴をもとに整理しています。',
   present: '現在',
   educationStatus: '教育・現在の状況',
   showAllWork: (count: number) => `すべての業務内容を表示（${count} 件）`,
-  exploringTitle: 'まだ探究している問い',
-  exploringUpdated: (date: string) => `${date} 時点の公開ノートをもとに整理`,
-  readResearch: '研究記録を読む',
-  beyondTitle: 'エンジニアリングの外側',
-  educationTitle: '学歴',
-  recordTitle: '詳細な記録',
-  recordIntro:
-    '以前のプロフィールにあったスキル一覧、技術的深さ、その他の公開作品。すべての詳細を見たい方のために残しています。',
-  recordSkills: 'スキル一覧',
-  recordDepth: '技術的深さ',
-  recordOpenSource: 'オープンソースリポジトリ',
-  recordCommunity: 'コミュニティ',
-  recordWriting: 'その他の執筆',
-  contactTitle: '具体的な問いから話しましょう。',
-  contactText: '技術的な議論、オープンソースツール、記事への異なる視点など。',
-  copyEmail: 'メールアドレスをコピー',
-  emailCopied: 'メールアドレスをコピーしました',
-  copyEmailFailed: 'コピーできませんでした。アドレスを選択してください。',
-
-  projectsEyebrow: 'アイデアから実装へ',
-  projectsTitle: 'プロジェクト',
-  projectsIntro:
-    'リポジトリ名の一覧ではなく、用途、実装範囲、ソースコードから各ツールとシステムを紹介します。',
-  categoryOpenSource: 'オープンソースツール',
-  categoryWork: '業務でのシステム実装',
-  categoryExperiment: '個人の実験',
-  sourceOnGitHub: 'GitHub のソースコード',
-  readCaseStudy: '事例を読む',
-  tryDemo: 'デモを使う',
-  relatedWriting: '関連する実装記録を読む',
-  projectsNote:
-    '詳しい事例は準備中です。公開されるまでは、各プロジェクトからリポジトリへ直接リンクしています。',
-  projectOverviewNote:
-    'このプロジェクトの詳しい事例はまだ公開していません。内容はリポジトリを正とします。',
-  projectRole: '役割',
-  projectRepository: 'リポジトリ',
-  projectTechnologies: '技術',
-  backToProjects: 'プロジェクト一覧へ',
 
   libraryEyebrow: '執筆と思考',
   libraryTitle: 'ブログ',
@@ -628,10 +448,6 @@ const ja: Dictionary = {
     '全文検索には JavaScript が必要です。テーマやタグからすべての記事を閲覧できます。',
   browseByTopic: 'テーマから探す',
   allTags: 'すべてのタグ',
-  papersNoteTitle: '自動でまとめた論文ガイドをお探しですか？',
-  papersNoteText:
-    '論文デイリーには専用の入口があり、私が書いた記事とは分けています。',
-  goToPapers: '論文デイリーへ',
   matchedSection: '一致したセクション',
   previousPage: '前のページ',
   nextPage: '次のページ',
@@ -701,7 +517,6 @@ const ja: Dictionary = {
   commentsEmpty: 'まだコメントはありません。',
   commentsCount: (count: number) => `${count} 件のコメント`,
   commentsNative: '議論は GitHub で行い、各言語版で同じスレッドを共有します。',
-  privacyLink: 'プライバシーについて',
 
   researchBridgeEyebrow: 'このページは統合されました',
   researchBridgeTitle: '研究ノートはブログに統合されました。',
@@ -709,25 +524,6 @@ const ja: Dictionary = {
     '自動生成の論文ガイドには専用の入口があります。行き先を選んでください。',
   researchBridgeNotes: '研究ノートを読む',
   researchBridgePapers: '論文デイリーへ',
-
-  privacyTitle: 'プライバシーとコメント',
-  privacyIntro:
-    '小さな静的サイトです。サイト内のアカウント、広告、アクセス解析はありません。',
-  privacyStatic:
-    'このサイトは GitHub Pages から静的ファイルとして配信されます。アクセス解析、広告、Cookie、ブラウザーストレージは追加していません。ホスティング事業者は独自のプライバシーポリシーに従いリクエスト情報を処理する場合があります。',
-  privacySearch:
-    '記事検索は、このサイトが配信するインデックスを使ってブラウザー内で行われます。検索語が他の場所へ送信されることはありません。',
-  privacyLinks:
-    'GitHub や論文デイリーなどの外部リンクは、開いたときにのみ各サービスへ接続します。',
-  privacyCommentsUnconfigured:
-    '記事のコメントはまだ有効になっていないため、コメントサービスへは接続しません。',
-  privacyCommentsNative:
-    'コメントは github.com のネイティブな GitHub Discussions を使います。ログイン、公開投稿、管理は GitHub が行います。',
-  privacyCommentsGiscus:
-    '「コメントを読み込む」を選んだときにのみコメントを読み込みます。ウィジェットは giscus.app が提供し、コメントは GitHub Discussions に保存されます。giscus でログインすると、giscus は独自のセッションをブラウザーに保存します。',
-  privacyPublic:
-    'コメントは公開されます。認証情報や個人情報は投稿しないでください。',
-  githubPrivacy: 'GitHub プライバシーステートメント',
 
   notFoundTitle: 'このパスにページはありません。',
   notFoundText:

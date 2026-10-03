@@ -39,7 +39,6 @@ describe('workspace chrome', () => {
       '/ja/',
       '/ja/blog/',
       '/ja/note/',
-      '/ja/projects/',
       'https://paper.dennysora.me/',
     ]);
   });
@@ -53,7 +52,7 @@ describe('workspace chrome', () => {
       areaState({ kind: 'article', locale: 'en', slug: 'x' }, 'home'),
     ).toBeUndefined();
     expect(
-      areaState({ kind: 'privacy', locale: 'en' }, 'papers'),
+      areaState({ kind: 'research', locale: 'en' }, 'papers'),
     ).toBeUndefined();
   });
 });

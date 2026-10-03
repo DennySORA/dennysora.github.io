@@ -49,9 +49,6 @@ export function SiteFooter({
                 <span className="sr-only">（{t.newTab}）</span>
               </a>
             </li>
-            <li>
-              <a href={`/${locale}/privacy/`}>{t.privacy}</a>
-            </li>
           </ul>
         </nav>
         <LanguageList

@@ -157,7 +157,6 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
     'rgb(103, 216, 239)',
   );
   expect(await colour('.capability-evidence a')).toBe('rgb(130, 170, 255)');
-  expect(await colour('.focus-note-title')).toBe('rgb(192, 153, 255)');
   expect(await colour('.capability .label')).toBe('rgb(192, 153, 255)');
   expect(await colour('.capability-evidence .resource-link .icon')).toBe(
     'rgb(93, 217, 193)',
@@ -188,8 +187,6 @@ test('status colours appear only for real states, and nothing is dimmed with opa
     '/en/',
     '/zh-hant/blog/',
     '/zh-hant/note/medical/analgesics/',
-    '/zh-hant/projects/',
-    '/zh-hant/privacy/',
   ]) {
     await page.goto(path);
     const offenders = await page.evaluate(() => {
@@ -276,45 +273,6 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   ).toBe('rgb(145, 228, 245)');
 });
 
-test('projects name their real destinations and never show an icon without a link', async ({
-  page,
-}) => {
-  await page.goto('/en/projects/');
-  const repositories = await page
-    .locator('.project-row')
-    .evaluateAll((rows) =>
-      rows.map(
-        (row) => row.querySelector<HTMLAnchorElement>('a.resource-link')?.href,
-      ),
-    );
-  expect(repositories).toEqual([
-    'https://github.com/DennySORA/dgxtop',
-    'https://github.com/DennySORA/httpulse',
-    'https://github.com/trendmicro/adk-agui-middleware',
-  ]);
-  await expect(
-    page.getByRole('link', { name: 'Read the case study' }),
-  ).toHaveCount(0);
-  await expect(page.locator('#project-adk-agui-middleware')).toContainText(
-    'not a personally owned project',
-  );
-  expect(
-    await page
-      .locator('main svg path[d^="M14 4h6v6"]')
-      .evaluateAll((icons) => icons.every((icon) => icon.closest('a'))),
-  ).toBe(true);
-  await page.goto('/en/projects/dgxtop/');
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-    'content',
-    'noindex, follow',
-  );
-  await expect(
-    page.getByText(
-      'A full case study for this project has not been published yet.',
-    ),
-  ).toBeVisible();
-});
-
 test('the workbench names the open file and links every area, with Paper Daily outside', async ({
   page,
 }) => {
@@ -324,7 +282,6 @@ test('the workbench names the open file and links every area, with Paper Daily o
     /README\.md/,
     /blog/,
     /note/,
-    /projects/,
     /paper-daily/,
   ]);
   await expect(tabs.getByRole('link', { name: /paper-daily/ })).toHaveAttribute(
@@ -360,13 +317,11 @@ for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
     for (const path of [
       '/zh-hant/',
       '/ja/',
-      '/en/projects/',
       '/ja/blog/',
       '/en/note/',
       '/ja/note/medical/',
       '/zh-hant/note/medical/analgesics/',
       '/zh-hant/blog/tags/',
-      '/en/privacy/',
     ]) {
       await page.goto(path);
       await expect(page.locator('h1').first()).toBeVisible();
@@ -447,9 +402,7 @@ test('the shared footer is absent across the workbench', async ({ page }) => {
   for (const path of [
     '/en/',
     '/ja/blog/',
-    '/en/projects/',
     '/zh-hant/note/medical/analgesics/',
-    '/en/privacy/',
   ]) {
     await page.goto(path);
     await expect(page.locator('.site-footer')).toHaveCount(0);

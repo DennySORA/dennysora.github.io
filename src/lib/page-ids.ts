@@ -7,7 +7,6 @@ export const pageIds = {
   commentsTitle: 'comments-title',
   related: 'related',
   toc: 'toc',
-  contact: 'contact',
   experience: 'experience',
   articleTitle: 'article-title',
 } as const;

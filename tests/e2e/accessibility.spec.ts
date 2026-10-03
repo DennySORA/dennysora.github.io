@@ -22,10 +22,7 @@ for (const path of [
   '/ja/note/medical/',
   '/zh-hant/note/medical/analgesics/',
   '/en/blog/tags/',
-  '/en/projects/',
-  '/en/projects/adk-agui-middleware/',
   '/zh-hant/research/',
-  '/ja/privacy/',
   '/en/missing-page/',
 ])
   test(`accessible content: ${path}`, async ({ page }) => {

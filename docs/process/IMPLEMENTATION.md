@@ -34,3 +34,27 @@ React Router 預渲染／路由經 Context7 核對；三次查詢額度用於 SS
 - TypeScript 與 ESLint 選取當時 peer ranges 支援的最高 stable 相容版本；TypeScript 7 不在所選 typescript-eslint 的支援範圍，jsx-a11y 不支援 ESLint 10。ESLint 9 的 registry deprecation 訊號保留為維護風險，沒有強制覆寫 peer 限制。依賴 audit 沒有已知漏洞。
 - 原始 `index.html`、`detail/*/index.html`、`style.css`、`lang.js`、`site.js` 已由新來源取代。刪除前逐檔核對 HEAD 一致，未刪除使用者修改。原文固定 commit 與來源 checksum 記於 migration manifest；原始 assets 保留，但產物僅複製實際使用的三張圖片。
 - 主站完全靜態。研究頁使用已固定 commit 的公開資料，导讀 `.html` 與 `/reports/` HTTP 回讀 200；沒有操作外站 Vue 專案、Nano 或排程。
+
+## 2026-10-03｜SITE-REMOVE-01：移除 Projects、隱私頁並精簡首頁
+
+狀態：進行中；紀錄來源：`bootstrap_manual`／`agent_reported`。此環境沒有可呼叫的工作流程 engine；本紀錄沿用既有文件，不宣稱機器驗收。
+
+範圍：依擁有者最新指示，移除三語 Projects 與 `privacy.md` 頁面、導覽及入站連結；首頁移除作品、開頭註解、探索問題、工程之外、完整紀錄與最後聯絡區塊。保留核心自介、能力、經歷、既有部落格／筆記與 GitHub repositories。`privacy.md` 是 Explorer 顯示名稱，其來源為 `src/features/misc/Privacy.tsx`；不刪除 P2P privacy 筆記。
+
+基準：已查驗遠端 `main` 為 `25a1e05d8142dbd0982146526b1cccbe19a4b1d2`，本地 181 個 tracked files 與其完全一致；當時沒有 release tags。最新成功部署 run 為 `37109773040`（`96df79faa97510aad0861bad8dba12bcf2e61996`）。只保留既有日期 tag 發布例外，不改動 workflow。
+
+計畫：移除路由、頁面與首頁區塊；更新三語導覽、舊錨點、產物與回歸測試；執行格式、lint、types、unit、build、browser 檢查，再核對遠端並回報發布狀態。Context7 不可呼叫，使用 React Router／Playwright 官方文件核對預渲染與測試時限。
+
+新增範圍：瀏覽器語言偏好只用於 `/`；明確語言網址與手動切換優先，不新增 storage。首頁 front matter 修正為 `name: 李汶道`、`alias: DennySORA`，JSON-LD 同步；移除實際位於 Blog 的論文日報提示框。收合 Explorer 後將內容置中；左側活動列改為有可見文字、目的地提示與目前狀態的三語導覽。已檢視擁有者提供的按鈕截圖，確認是活動列，圖像資產另以隔離工作製作，不修改品牌 Logo。
+
+目前證據（同一份整合來源，圖像與導覽完成後）：`pnpm format:check`、`pnpm lint`、`pnpm typecheck` passed；`pnpm test` passed（12 files／96 tests）；`pnpm build` passed（26 prerendered routes、22 sitemap routes，local links、removed-page absence、圖像 SHA-256 及產物檢查通過；initial JS gzip 137.6 KiB）。首輪新增的首頁測試誤把已移除作品卡片的 dgxtop 當作保留能力區塊的連結，已依實際能力證據改測 httpulse，完整 96 tests 重跑通過。
+
+Browser gate：blocked，未宣稱畫面或互動驗收。原設定的 Google Chrome 不存在；改用已安裝 Chromium、保留 browser sandbox 的單一 focused test，在 normal 與一次核准的 shell escalation 均於啟動時因 `socket() failed: Operation not permitted` 結束，未載入頁面。沒有停用 sandbox、建立 tunnel 或變更測試門檻。新增的 browser cases 涵蓋三語刪除、可見導覽、偏好順序、明確語言優先、no-JavaScript 與 1280／1440／1920 置中及反覆切換；尚待可用瀏覽器執行。
+
+圖像：`assets/illustrations/navigation-icons-v1.png`，1983×793 RGBA、530874 bytes，由 imagegen 建立，實際像素及透明度已檢視；五格 CSS sprite 不改動原始 pixels，provenance／SHA-256 在 `data/navigation-assets.json`。沒有變更品牌圖或既有 P2P notes。
+
+下一步：核對最後 diff／遠端 main 後提交本次來源；日期 release tag 與實際部署仍待可用的 tag 發布管道。最終 https://dennysora.me/ 的新版 browser QA 未完成，不能把來源更新當作已部署。
+
+補充驗證：原設定 Playwright 的 HTTP-only `every production route` case passed（1 test／26 routes，1.9s）。這個 case 不啟動 browser，因此只證明真實 loopback 產物的 HTTP／HTML，不是視覺或互動 pass。最初以行首錨定的 grep 未匹配任何 test，已改用完整測試名稱重跑。
+
+最後整合重跑：format、lint、typecheck、99 unit tests（12 files）與完整 build／artifact passed。新增可見標籤必須包含在 accessible name 的三語回歸測試；未放寬 lint、型別或測試要求。以雲端瀏覽器實際開啟 https://dennysora.me/ 並檢視畫面，仍看到舊版 Projects、privacy.md、舊首頁段落及反向 name／alias；因此本次來源尚未對外部署。遠端 main 最後核對仍為 25a1e05，release tags 仍為空。GitHub 連線身份已確認符合 DennySORA；本地未設定 Git 身份，不修改 Git config，使用 GitHub Git database 組裝 commit 並在更新 main 前核對 raw commit identity/tree/parent。

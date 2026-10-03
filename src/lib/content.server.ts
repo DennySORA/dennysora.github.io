@@ -218,30 +218,17 @@ export function topicsInLocale(locale: Locale): TopicId[] {
     .filter((id) => used.has(id));
 }
 
-export function hasPublishedCaseStudy(
-  projectId: string,
-  locale: Locale,
-): boolean {
-  const project = loadProjects().find((item) => item.id === projectId);
-  return Boolean(
-    project?.caseStudy?.publication === 'published' &&
-    project.caseStudy.locales.includes(locale),
-  );
-}
-
 export function publishedRoutes(): RouteDescriptor[] {
   const routes: RouteDescriptor[] = [{ kind: 'root' }, { kind: 'not-found' }];
   for (const locale of locales) {
     routes.push(
       { kind: 'home', locale },
-      { kind: 'projects', locale },
       { kind: 'library', locale },
       { kind: 'notes', locale },
       { kind: 'medical', locale },
       { kind: 'network', locale },
       { kind: 'tags', locale },
       { kind: 'research', locale },
-      { kind: 'privacy', locale },
     );
     for (const post of listPosts(locale))
       routes.push({ kind: 'article', locale, slug: post.slug });
@@ -249,8 +236,6 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'topic', locale, topicId });
     for (const tagId of tagsInLocale(locale))
       routes.push({ kind: 'tag', locale, tagId });
-    for (const project of loadProjects())
-      routes.push({ kind: 'project', locale, projectId: project.id });
   }
   routes.push({ kind: 'medical-note', locale: 'zh-hant' });
   for (const noteId of networkNoteIds)
@@ -259,8 +244,6 @@ export function publishedRoutes(): RouteDescriptor[] {
 }
 export function isIndexable(route: RouteDescriptor): boolean {
   if (route.kind === 'not-found' || route.kind === 'research') return false;
-  if (route.kind === 'project')
-    return hasPublishedCaseStudy(route.projectId, route.locale);
   return true;
 }
 export function publishedPaths(): string[] {

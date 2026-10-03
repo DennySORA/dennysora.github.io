@@ -89,8 +89,8 @@ test('the renderer’s figures, formulas, code, tables and notes render in the r
     );
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await page.goto('/en/privacy/');
-      await page.locator('.plain-text').evaluate((element) => {
+      await page.goto('/en/');
+      await page.locator('.readme').evaluate((element) => {
         element.setAttribute('class', 'prose');
       });
       await page.addStyleTag({ path: 'node_modules/katex/dist/katex.min.css' });

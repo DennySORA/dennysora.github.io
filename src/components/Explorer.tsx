@@ -168,44 +168,11 @@ export function Explorer({
         </li>
         <li>
           <TreeLink
-            href={`/${locale}/projects/`}
-            icon="chevron-down"
-            name="projects"
-            note={{ text: t.navProjects, visible: true }}
-            current={areaState(route, 'projects')}
-            onNavigate={onNavigate}
-          />
-          <ul className="tree-children">
-            {files.projects.map((project) => (
-              <li key={project.id}>
-                <TreeLink
-                  href={`/${locale}/projects/#project-${project.id}`}
-                  icon="package"
-                  name={project.id}
-                  note={{ text: project.title, visible: false }}
-                  onNavigate={onNavigate}
-                />
-              </li>
-            ))}
-          </ul>
-        </li>
-        <li>
-          <TreeLink
             href={papersUrl}
             icon="newspaper"
             name="paper-daily"
             note={{ text: `${t.navPapers}（${t.newTab}）`, visible: false }}
             external
-            onNavigate={onNavigate}
-          />
-        </li>
-        <li>
-          <TreeLink
-            href={`/${locale}/privacy/`}
-            icon="shield"
-            name="privacy.md"
-            note={{ text: t.privacy, visible: true }}
-            current={page(route.kind === 'privacy')}
             onNavigate={onNavigate}
           />
         </li>

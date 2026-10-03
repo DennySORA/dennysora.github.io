@@ -144,9 +144,6 @@ describe('route manifest', () => {
     expect(navSection({ kind: 'tag', locale: 'en', tagId: 'x' })).toBe(
       'library',
     );
-    expect(navSection({ kind: 'project', locale: 'en', projectId: 'x' })).toBe(
-      'projects',
-    );
     expect(navSection({ kind: 'home', locale: 'en' })).toBe('home');
     expect(navSection({ kind: 'research', locale: 'en' })).toBeNull();
   });
@@ -170,11 +167,9 @@ describe('route manifest', () => {
     }
     for (const locale of locales) expect(tagsInLocale(locale)).toEqual([]);
   });
-  it('keeps bridges and projects without a case study out of the index', () => {
+  it('keeps bridges out of the index', () => {
     const routes = publishedRoutes();
-    for (const route of routes.filter(
-      (item) => item.kind === 'research' || item.kind === 'project',
-    ))
+    for (const route of routes.filter((item) => item.kind === 'research'))
       expect(isIndexable(route)).toBe(false);
     for (const route of routes.filter(
       (item) => item.kind === 'article' || item.kind === 'tag',
@@ -195,9 +190,7 @@ describe('loader', () => {
     expect(JSON.stringify(home)).not.toContain('provenance');
     // The explorer lists the real files of the workspace on every page.
     expect(home.workspace.posts).toEqual([]);
-    expect(home.workspace.projects.map((project) => project.id)).toContain(
-      'dgxtop',
-    );
+    expect(home.view.projects.map((project) => project.id)).toContain('dgxtop');
     const research = load('/en/research');
     expect(research.indexable).toBe(false);
     const blog = load('/ja/blog');

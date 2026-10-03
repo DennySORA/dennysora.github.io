@@ -319,52 +319,6 @@ mark {
   color: var(--color-text-secondary);
 }
 
-/* Project cards ------------------------------------------------------------ */
-.work-pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4);
-}
-.project-teaser {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--color-border-decorative);
-  border-radius: 6px;
-  background: var(--color-surface);
-}
-.project-teaser-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-.project-teaser-head .icon {
-  color: var(--color-entity-file);
-}
-.project-teaser h3 {
-  font-family: var(--font-code);
-  font-size: 17px;
-}
-.project-teaser p:not(.fine) {
-  color: var(--color-text-secondary);
-  font-size: 15px;
-  line-height: 1.8;
-}
-.project-teaser .fine {
-  font-family: var(--font-code);
-  font-size: 12.5px;
-}
-.project-teaser .action-row {
-  margin-top: auto;
-  gap: 0 var(--space-4);
-}
-.tech-list {
-  color: var(--color-text-muted);
-  font-family: var(--font-code);
-  font-size: 12.5px;
-}
-
 /* Search and filters: an editor search panel. ----------------------------- */
 .search-block {
   padding-bottom: var(--space-4);
@@ -535,23 +489,6 @@ mark {
   border-style: dashed;
   color: var(--color-text-muted);
 }
-.quiet-note {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  margin-top: var(--space-7);
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--color-border-decorative);
-}
-.quiet-note h2 {
-  font-family: var(--font-code);
-  font-size: 14.5px;
-}
-.quiet-note p {
-  color: var(--color-text-secondary);
-  font-size: 14.5px;
-}
 .tag-index {
   display: flex;
   flex-wrap: wrap;
@@ -587,9 +524,6 @@ mark {
   .tag-link {
     min-height: 36px;
   }
-  .work-pair {
-    grid-template-columns: 1fr;
-  }
   .article-row-title {
     font-size: 19px;
   }
@@ -608,9 +542,5 @@ mark {
   .pager button,
   .active-conditions button {
     min-height: 40px;
-  }
-  .quiet-note {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }

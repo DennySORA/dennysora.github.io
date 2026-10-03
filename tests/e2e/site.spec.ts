@@ -142,7 +142,7 @@ test('the header search link and keyboard shortcuts open article search without 
   await page.locator('h1').click();
   await page.keyboard.press('Control+k');
   await expect(input).toBeFocused();
-  await page.goto('/en/projects/');
+  await page.goto('/en/note/');
   await page
     .getByRole('banner')
     .getByRole('link', { name: 'Search articles' })
@@ -187,11 +187,10 @@ test('404 stays a real 404, removed articles are explicit and legacy paths keep 
   );
   await expect(page.locator('.prose')).toHaveCount(0);
   await page.goto('/detail/depth/');
-  await expect(page).toHaveURL('/zh-hant/#depth-h');
-  await expect(page.locator('#depth-h')).toHaveAttribute('open', '');
-  await expect(page.locator('#depth-h summary')).toBeInViewport();
+  await expect(page).toHaveURL('/zh-hant/#competencies-title');
+  await expect(page.locator('#competencies-title')).toBeInViewport();
   await page.goto('/#exp-h');
-  await expect(page).toHaveURL('/zh-hant/#exp-h');
+  await expect(page).toHaveURL('/en/#exp-h');
   await expect(page.locator('#experience-title')).toBeInViewport();
   // The profile moved to each language's home; old About links keep their anchor.
   await page.goto('/ja/about/#exp-h');
@@ -255,13 +254,7 @@ test('no third-party requests, cookies or storage; comments never load on their 
   page,
 }) => {
   const external = trackExternalRequests(page);
-  for (const path of [
-    '/en/',
-    '/ja/',
-    '/en/projects/',
-    '/en/blog/engineering-principles/',
-    '/en/privacy/',
-  ])
+  for (const path of ['/en/', '/ja/', '/en/blog/engineering-principles/'])
     await page.goto(path);
   await page.goto('/en/blog/');
   await page.getByRole('searchbox').fill('quantization');
@@ -285,10 +278,6 @@ test('no third-party requests, cookies or storage; comments never load on their 
     0,
   );
   expect(external).toEqual([]);
-  await page.goto('/en/privacy/');
-  await expect(
-    page.getByText('Comments use native GitHub Discussions'),
-  ).toBeVisible();
 });
 
 test('feeds, sitemap and published alternates agree with real pages', async ({
@@ -330,7 +319,8 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   ).toBe(0);
   expect(sitemap).not.toContain('llm-context-window-three-tiers');
   expect(sitemap).not.toContain('/research/');
-  expect(sitemap).not.toContain('/projects/dgxtop/');
+  expect(sitemap).not.toContain('/projects/');
+  expect(sitemap).not.toContain('/privacy/');
   expect(sitemap).not.toContain('/blog/engineering-principles/');
   expect(sitemap).not.toContain('/blog/production-systems/');
   expect(sitemap).not.toContain('/blog/trilingual-model-research/');

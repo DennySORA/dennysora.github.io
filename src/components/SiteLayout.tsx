@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { PageData } from '../app/page.tsx';
 import { dictionaries, type Locale } from '../i18n/index.ts';
+import { preferredLocale } from '../lib/preferred-locale.ts';
 import { legacyDestinations } from '../lib/legacy-anchors.ts';
 import { pageIds } from '../lib/page-ids.ts';
 import { ActivityBar } from './ActivityBar.tsx';
@@ -52,9 +53,26 @@ export function SiteLayout({
     setExplorerExpanded((expanded) => !expanded);
   }
   useEffect(() => {
-    // Old single-page anchors such as /#exp-h continue to their new home.
-    const legacy = legacyDestinations[window.location.hash.slice(1)];
-    if (route.kind === 'root' && legacy) window.location.replace(legacy);
+    // Only the language-neutral entry point follows browser preferences.
+    // Explicit locale URLs, including a manual switch, always keep their locale.
+    if (route.kind === 'root') {
+      const preferred = preferredLocale(
+        navigator.languages.length ? navigator.languages : [navigator.language],
+      );
+      const legacy = legacyDestinations[window.location.hash.slice(1)];
+      const target = legacy
+        ? new URL(
+            legacy.replace('/zh-hant/', `/${preferred}/`),
+            window.location.origin,
+          )
+        : new URL(
+            `/${preferred}/${window.location.hash}`,
+            window.location.origin,
+          );
+      target.search = window.location.search;
+      window.location.replace(target.href);
+      return;
+    }
     function shortcut(event: KeyboardEvent) {
       const command =
         (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';

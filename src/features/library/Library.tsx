@@ -27,7 +27,6 @@ import {
 import { searchArticles, type SearchHit } from '../../lib/pagefind-client.ts';
 import { pageIds } from '../../lib/page-ids.ts';
 import { parseRoute } from '../../lib/route-manifest.ts';
-import { papersUrl } from '../../lib/site.ts';
 import { matchSearch } from '../../lib/search.ts';
 
 type LibraryView = Extract<ViewData, { kind: 'library' }>;
@@ -462,17 +461,6 @@ export function Library({
         />
       ) : null}
 
-      <aside className="quiet-note" aria-labelledby="library-papers-title">
-        <div>
-          <h2 id="library-papers-title">{t.papersNoteTitle}</h2>
-          <p>{t.papersNoteText}</p>
-        </div>
-        <a className="text-action resource-link" href={papersUrl}>
-          {t.goToPapers}
-          <Icon name="external" size={18} />
-          <span className="sr-only">（{t.newTab}）</span>
-        </a>
-      </aside>
       <EndOfBuffer />
     </div>
   );

@@ -15,7 +15,6 @@ const areaIcons: Record<AreaKey, IconName> = {
   home: 'markdown',
   library: 'folder',
   notes: 'folder',
-  projects: 'folder',
   papers: 'newspaper',
 };
 
@@ -36,23 +35,22 @@ export function EditorHead({
     home: t.navAbout,
     library: t.navLibrary,
     notes: noteCopy[locale].notes,
-    projects: t.navProjects,
     papers: `${t.navPapers}（${t.newTab}）`,
   };
-  const landing = ['root', 'home', 'library', 'projects', 'notes'].includes(
-    route.kind,
-  );
+  const landing = ['root', 'home', 'library', 'notes'].includes(route.kind);
   const preview = landing ? null : path[path.length - 1];
-  const previewAfter: AreaKey | null =
-    route.kind === 'project'
-      ? 'projects'
-      : ['article', 'topic', 'tags', 'tag'].includes(route.kind)
-        ? 'library'
-        : ['medical', 'medical-note', 'network', 'network-note'].includes(
-              route.kind,
-            )
-          ? 'notes'
-          : null;
+  const previewAfter: AreaKey | null = [
+    'article',
+    'topic',
+    'tags',
+    'tag',
+  ].includes(route.kind)
+    ? 'library'
+    : ['medical', 'medical-note', 'network', 'network-note'].includes(
+          route.kind,
+        )
+      ? 'notes'
+      : null;
   const tabs = useRef<HTMLUListElement>(null);
   // Keep the active tab in view when the tab row scrolls on narrow screens.
   useEffect(() => {

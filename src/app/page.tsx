@@ -6,7 +6,6 @@ import type {
 import { useLoaderData } from 'react-router';
 import { dictionaries, htmlLang, locales, type Locale } from '../i18n/index.ts';
 import {
-  hasPublishedCaseStudy,
   isIndexable,
   listPosts,
   loadArticle,
@@ -32,13 +31,10 @@ import {
 import { siteUrl } from '../lib/site.ts';
 import { SiteLayout } from '../components/SiteLayout.tsx';
 import { Readme } from '../features/home/Readme.tsx';
-import { Projects } from '../features/projects/Projects.tsx';
-import { ProjectOverview } from '../features/projects/ProjectOverview.tsx';
 import { Library } from '../features/library/Library.tsx';
 import { TagIndex, TaxonomyPage } from '../features/library/TaxonomyPages.tsx';
 import { Article } from '../features/reader/Article.tsx';
 import { ResearchBridge } from '../features/research/ResearchBridge.tsx';
-import { Privacy } from '../features/misc/Privacy.tsx';
 import { Notes } from '../features/notes/Notes.tsx';
 import { MedicalNote } from '../features/notes/MedicalNote.tsx';
 import { noteCopy } from '../lib/notes-copy.ts';
@@ -70,21 +66,10 @@ function projectCards(locale: Locale) {
       {
         id: project.id,
         title: project.title,
-        category: project.category,
-        owner: project.owner,
-        technologies: project.technologies,
-        domain: project.domain,
-        headline: project.headline,
-        summary: project.summary,
-        role: project.role,
-        points: project.points,
         repository: project.links.repository,
-        demo: project.links.demo ?? null,
-        relatedPostIds: project.relatedPostIds,
       },
       locale,
     ),
-    hasCaseStudy: hasPublishedCaseStudy(project.id, locale),
   }));
 }
 export type ProjectCardData = ReturnType<typeof projectCards>[number];
@@ -97,14 +82,8 @@ function aboutProfile(locale: Locale) {
       displayName: profile.displayName,
       publicName: profile.publicName,
       introduction: profile.introduction,
-      focusNote: profile.focusNote,
       competencies: profile.competencies,
-      featuredProjectIds: profile.featuredProjectIds,
       experience: profile.experience,
-      currentFocus: profile.currentFocus,
-      personal: profile.personal,
-      education: profile.education,
-      record: profile.record,
       contact: profile.contact,
     },
     locale,
@@ -135,26 +114,6 @@ function loadView(route: RouteDescriptor) {
         recent: listPosts(locale).slice(0, 3),
         taxonomy: taxonomyLabels(locale),
       };
-    case 'projects':
-      return {
-        kind: 'projects' as const,
-        projects: projectCards(locale),
-        posts: postLinks(locale),
-      };
-    case 'project': {
-      const project = projectCards(locale).find(
-        (item) => item.id === route.projectId,
-      );
-      if (!project) notFound();
-      return {
-        kind: 'project' as const,
-        project,
-        related: listPosts(locale).filter((post) =>
-          project.relatedPostIds.includes(post.id),
-        ),
-        taxonomy: taxonomyLabels(locale),
-      };
-    }
     case 'library':
       return {
         kind: 'library' as const,
@@ -252,8 +211,6 @@ function loadView(route: RouteDescriptor) {
       return { kind: 'medical-note' as const, html: loadMedicalNote() };
     case 'research':
       return { kind: 'research' as const };
-    case 'privacy':
-      return { kind: 'privacy' as const, commentsMode: loadComments().mode };
     case 'not-found':
       return { kind: 'not-found' as const };
   }
@@ -290,13 +247,6 @@ function describe(view: ViewData, locale: Locale) {
       return {
         title: `DennySORA · ${view.profile.publicName} — ${view.profile.introduction.role}`,
         description: view.profile.introduction.shortBio,
-      };
-    case 'projects':
-      return { title: withSite(t.projectsTitle), description: t.projectsIntro };
-    case 'project':
-      return {
-        title: withSite(view.project.title),
-        description: view.project.summary,
       };
     case 'library':
       return { title: withSite(t.libraryTitle), description: t.libraryIntro };
@@ -348,8 +298,6 @@ function describe(view: ViewData, locale: Locale) {
         title: withSite(t.researchBridgeEyebrow),
         description: t.researchBridgeText,
       };
-    case 'privacy':
-      return { title: withSite(t.privacyTitle), description: t.privacyIntro };
     case 'not-found':
       return { title: withSite('404'), description: t.notFoundText };
   }
@@ -373,7 +321,6 @@ export function loader({ params }: LoaderFunctionArgs) {
   // The explorer lists the real files of this workspace on every page.
   const workspace = {
     posts: listPosts(locale).map(({ slug, title }) => ({ slug, title })),
-    projects: loadProjects().map(({ id, title }) => ({ id, title })),
   };
   return {
     route,
@@ -484,8 +431,8 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
               inLanguage: htmlLang[locale],
               mainEntity: {
                 '@type': 'Person',
-                name: 'DennySORA',
-                alternateName: view.profile.publicName,
+                name: view.profile.publicName,
+                alternateName: view.profile.displayName,
                 url: `${siteUrl}/${locale}/`,
                 sameAs: [view.profile.contact.github],
               },
@@ -515,10 +462,6 @@ function View({ data }: { data: PageData }) {
   switch (view.kind) {
     case 'home':
       return <Readme view={view} locale={locale} />;
-    case 'projects':
-      return <Projects view={view} locale={locale} />;
-    case 'project':
-      return <ProjectOverview view={view} locale={locale} />;
     case 'library':
       return <Library view={view} locale={locale} />;
     case 'topic':
@@ -539,8 +482,6 @@ function View({ data }: { data: PageData }) {
       return <NetworkNote html={view.html} />;
     case 'research':
       return <ResearchBridge locale={locale} />;
-    case 'privacy':
-      return <Privacy view={view} locale={locale} />;
     case 'not-found':
       return <NotFound locale={locale} />;
   }

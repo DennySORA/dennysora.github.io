@@ -1,0 +1,17 @@
+{
+  "path": "assets/illustrations/navigation-icons-v1.png",
+  "source": "imagegen",
+  "purpose": "Owner-requested illustrated navigation paired with visible localized labels",
+  "width": 1983,
+  "height": 793,
+  "bytes": 530874,
+  "sha256": "fa47c799d6f1bf00b4cc7f65e9b5b343c330a288b2b0a85cf8b2f72e21e60c42",
+  "alpha": true,
+  "order": ["about", "search", "blog", "notes", "paper-daily"],
+  "sprite": {
+    "columns": 5,
+    "cellSize": 396.6,
+    "top": 198.2
+  },
+  "verification": "Original RGBA image inspected; true transparency verified. Browser small-size review pending."
+}

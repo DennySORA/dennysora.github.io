@@ -95,7 +95,7 @@ const aliases: Record<string, string> = {
   'detail/about': '/zh-hant/',
   'detail/production': '/zh-hant/blog/production-systems/',
   'detail/research': '/zh-hant/blog/trilingual-model-research/',
-  'detail/depth': '/zh-hant/#depth-h',
+  'detail/depth': '/zh-hant/#competencies-title',
   blog: '/zh-hant/blog/',
 };
 // A bridge marked data-keep-hash carries its own fragment (the About page moved

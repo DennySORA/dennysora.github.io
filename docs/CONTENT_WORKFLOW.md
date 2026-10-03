@@ -75,7 +75,7 @@ gh api graphql \
 
 新增能力敘述時，每一項都要有真實證據（文章、專案或經歷），並只使用「工作實務／個人實作／學習探索」三種標記。
 
-專案在 `content/projects/projects.json`；卡片一律連到真實 repository。只有 `caseStudy` 為 `published` 且對應語言內容存在時才顯示「查看案例」，也才讓專案頁進入索引；尚無案例的專案頁保留舊網址但設為 `noindex`。
+`content/projects/projects.json` 保留首頁能力證據所使用的真實 repository 連結。2026-10-03 依擁有者指示移除 Projects 清單、專案詳情與 Privacy 頁，舊網址回傳 404，不再進入 sitemap 或導覽。首頁另移除作品、探索、工程之外、完整紀錄及最後聯絡區塊。
 
 ## 品牌素材
 

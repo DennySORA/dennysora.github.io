@@ -1,13 +1,10 @@
-import { useEffect } from 'react';
 import type {
   AboutProfile,
   ProjectCardData,
   ViewData,
 } from '../../app/page.tsx';
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
-import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
-import { ProjectTeaser } from '../../components/ProjectCard.tsx';
 import {
   dictionaries,
   formatCompactDate,
@@ -20,47 +17,27 @@ type PostLinks = HomeView['posts'];
 
 const yearMonth = (value: string) => value.replace('-', '.');
 
-/** Opens a collapsed record when an old or shared link points into it. */
-function useRevealHashTarget() {
-  useEffect(() => {
-    function reveal() {
-      const id = decodeURIComponent(window.location.hash.slice(1));
-      const target = id ? document.getElementById(id) : null;
-      const details = target?.closest('details');
-      if (target && details && !details.open) {
-        details.open = true;
-        target.scrollIntoView();
-      }
-    }
-    reveal();
-    window.addEventListener('hashchange', reveal);
-    return () => window.removeEventListener('hashchange', reveal);
-  }, []);
-}
-
 /** The profile as the workspace README: front matter, logo, then the résumé. */
 export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
-  useRevealHashTarget();
   const { profile, projects, posts, recent } = view;
   const t = dictionaries[locale];
-  const featured = profile.featuredProjectIds
-    .map((id) => projects.find((project) => project.id === id))
-    .filter((project): project is ProjectCardData => Boolean(project));
   return (
     <div className="buffer readme">
       <section className="readme-hero" aria-labelledby="readme-title">
         <div className="readme-intro">
+          <span id="beyond-h" className="anchor-alias" aria-hidden="true" />
+          <span id="comm-h" className="anchor-alias" aria-hidden="true" />
           <p className="ln md-fence" aria-hidden="true">
             ---
           </p>
           <dl className="front-matter">
             <div className="ln">
               <dt lang="en">name</dt>
-              <dd>{profile.displayName}</dd>
+              <dd lang="zh-Hant">{profile.publicName}</dd>
             </div>
             <div className="ln">
               <dt lang="en">alias</dt>
-              <dd lang="zh-Hant">{profile.publicName}</dd>
+              <dd>{profile.displayName}</dd>
             </div>
             <div className="ln">
               <dt lang="en">role</dt>
@@ -101,12 +78,6 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
               {t.readBlog}
               <Icon name="arrow" size={18} />
             </a>
-            <a className="button button-quiet" href={`/${locale}/projects/`}>
-              {t.viewMyProjects}
-            </a>
-            <a className="button button-quiet" href={`#${pageIds.contact}`}>
-              {t.getInTouch}
-            </a>
           </div>
         </div>
         <figure className="readme-logo">
@@ -122,28 +93,6 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
         </figure>
       </section>
 
-      <div className="md-comments">
-        <p className="ln md-comment">
-          <span className="md-mark" aria-hidden="true">
-            {'// '}
-          </span>
-          {profile.focusNote.heading}
-        </p>
-        <ul aria-label={profile.focusNote.heading}>
-          {profile.focusNote.items.map((item) => (
-            <li className="ln md-comment" key={item.id}>
-              <span className="md-mark" aria-hidden="true">
-                {'// '}
-              </span>
-              <strong className="focus-note-title">{item.title}</strong>
-              <span aria-hidden="true"> — </span>
-              <span className="sr-only">：</span>
-              {item.text}
-            </li>
-          ))}
-        </ul>
-      </div>
-
       <Competencies
         profile={profile}
         projects={projects}
@@ -151,83 +100,7 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
         locale={locale}
       />
 
-      <section className="md-section" aria-labelledby="works-title">
-        <MdHeading level={2} id="works-title">
-          {t.worksTitle}
-        </MdHeading>
-        <div className="ln work-pair">
-          {featured.map((project) => (
-            <ProjectTeaser key={project.id} project={project} locale={locale} />
-          ))}
-        </div>
-        <p className="ln">
-          <a className="text-action" href={`/${locale}/projects/`}>
-            {t.allProjects}
-            <Icon name="arrow" size={18} />
-          </a>
-        </p>
-      </section>
-
       <Experience profile={profile} locale={locale} />
-
-      <section
-        className="md-section personal-grid"
-        aria-label={`${t.exploringTitle} · ${t.beyondTitle}`}
-      >
-        <div id="exploring">
-          <MdHeading level={2}>{t.exploringTitle}</MdHeading>
-          <p className="ln">{profile.currentFocus.question}</p>
-          <ul className="focus-list">
-            {profile.currentFocus.items.map((item) => (
-              <li className="ln" key={item.id}>
-                <strong>{item.title}</strong>
-                <span>{item.text}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="ln fine">
-            {t.exploringUpdated(profile.currentFocus.updatedAt)}
-          </p>
-          {posts[profile.currentFocus.postId] ? (
-            <p className="ln">
-              <a
-                className="text-action"
-                href={`/${locale}/blog/${posts[profile.currentFocus.postId]?.slug}/`}
-              >
-                {t.readResearch}
-                <Icon name="arrow" size={18} />
-              </a>
-            </p>
-          ) : null}
-        </div>
-        <div id="beyond">
-          <span id="beyond-h" className="anchor-alias" aria-hidden="true" />
-          <MdHeading level={2}>{t.beyondTitle}</MdHeading>
-          <p className="ln">{profile.personal.intro}</p>
-          <dl className="interest-list">
-            {profile.personal.interests.map((interest) => (
-              <div className="ln" key={interest.id}>
-                <dt>{interest.title}</dt>
-                <dd>{interest.text}</dd>
-              </div>
-            ))}
-          </dl>
-          <div id="education" className="education">
-            <span id="edu-h" className="anchor-alias" aria-hidden="true" />
-            <MdHeading level={3}>{t.educationTitle}</MdHeading>
-            <ul>
-              {profile.education.map((item) => (
-                <li className="ln" key={item.id}>
-                  <span>{item.institution}</span>
-                  <span className="fine">
-                    {item.period} · {item.detail}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
 
       {recent.length ? (
         <section className="md-section" aria-labelledby="recent-title">
@@ -257,41 +130,6 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
         </section>
       ) : null}
 
-      <FullRecord profile={profile} locale={locale} />
-
-      <section
-        className="md-section contact-row"
-        id={pageIds.contact}
-        aria-labelledby="contact-title"
-      >
-        <MdHeading level={2} id="contact-title">
-          {t.contactTitle}
-        </MdHeading>
-        <p className="ln">{t.contactText}</p>
-        <div className="ln action-row">
-          <a
-            className="button button-primary"
-            href={`mailto:${profile.contact.email}`}
-          >
-            <Icon name="mail" size={18} />
-            {profile.contact.email}
-          </a>
-          <CopyButton
-            value={profile.contact.email}
-            label={t.copyEmail}
-            success={t.emailCopied}
-            failure={t.copyEmailFailed}
-          />
-          <a
-            className="text-action resource-link"
-            href={profile.contact.github}
-          >
-            GitHub
-            <Icon name="external" size={18} />
-            <span className="sr-only">（{t.newTab}）</span>
-          </a>
-        </div>
-      </section>
       <EndOfBuffer />
     </div>
   );
@@ -316,6 +154,9 @@ function Competencies({
   };
   return (
     <section className="md-section" aria-labelledby="competencies-title">
+      <span id="skills-h" className="anchor-alias" aria-hidden="true" />
+      <span id="depth-h" className="anchor-alias" aria-hidden="true" />
+      <span id="proj-h" className="anchor-alias" aria-hidden="true" />
       <MdHeading level={2} id="competencies-title">
         {t.competenciesTitle}
       </MdHeading>
@@ -403,6 +244,7 @@ function Experience({
       aria-labelledby="experience-title"
     >
       <span id="exp-h" className="anchor-alias" aria-hidden="true" />
+      <span id="edu-h" className="anchor-alias" aria-hidden="true" />
       <MdHeading level={2} id="experience-title">
         {t.experienceTitle}
       </MdHeading>
@@ -484,115 +326,6 @@ function Experience({
           );
         })}
       </ol>
-    </section>
-  );
-}
-
-function FullRecord({
-  profile,
-  locale,
-}: {
-  profile: AboutProfile;
-  locale: Locale;
-}) {
-  const t = dictionaries[locale];
-  const { record } = profile;
-  return (
-    <section
-      className="md-section record"
-      id="record"
-      aria-labelledby="record-title"
-    >
-      <MdHeading level={2} id="record-title">
-        {t.recordTitle}
-      </MdHeading>
-      <p className="ln md-lead">{t.recordIntro}</p>
-      <details className="ln record-group" id="skills-h">
-        <summary>{t.recordSkills}</summary>
-        <div className="record-grid">
-          {record.skills.map((group) => (
-            <div key={group.title}>
-              <h3>{group.title}</h3>
-              <ul className="record-items">
-                {group.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </details>
-      <details className="ln record-group" id="depth-h">
-        <summary>{t.recordDepth}</summary>
-        <div className="record-grid">
-          {record.depth.map((area) => (
-            <div key={area.title}>
-              <h3>{area.title}</h3>
-              <dl className="record-depth">
-                {area.groups.map((group, index) => (
-                  <div key={group.label ?? index}>
-                    {group.label ? <dt>{group.label}</dt> : null}
-                    <dd>{group.items.join(locale === 'en' ? ', ' : '、')}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          ))}
-        </div>
-      </details>
-      <details className="ln record-group" id="open-source">
-        <summary>{t.recordOpenSource}</summary>
-        <ul className="record-list">
-          {record.openSource.map((repository) => (
-            <li key={repository.name}>
-              <a href={repository.url}>
-                {repository.name}
-                <Icon name="external" size={15} />
-                <span className="sr-only">（{t.newTab}）</span>
-              </a>
-              {repository.language ? (
-                <span className="fine"> · {repository.language}</span>
-              ) : null}
-              <p>{repository.description}</p>
-            </li>
-          ))}
-        </ul>
-      </details>
-      <details className="ln record-group" id="comm-h">
-        <summary>{t.recordCommunity}</summary>
-        <ul className="record-list">
-          {record.community.map((group) => (
-            <li key={group.title}>
-              <h3>{group.title}</h3>
-              <ul className="record-items">
-                {group.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <a href={group.link.url}>
-                {group.link.label}
-                <Icon name="external" size={15} />
-                <span className="sr-only">（{t.newTab}）</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </details>
-      <details className="ln record-group" id="writing">
-        <summary>{t.recordWriting}</summary>
-        <ul className="record-list">
-          {record.writing.map((item) => (
-            <li key={item.url}>
-              <a href={item.url}>
-                {item.title}
-                <Icon name="external" size={15} />
-                <span className="sr-only">（{t.newTab}）</span>
-              </a>
-              <span className="fine"> · {item.host}</span>
-            </li>
-          ))}
-        </ul>
-      </details>
     </section>
   );
 }
