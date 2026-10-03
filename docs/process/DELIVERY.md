@@ -72,3 +72,13 @@ React/TypeScript/Vite/Tailwind/pnpm 靜態網站：三語首頁、自介、文�
 - 本機瀏覽器測試：blocked，設定的 `/opt/google/chrome/chrome` 不存在；未安裝全域瀏覽器。已新增網路筆記的互動／無 JS／可及性／320–1920px 測試，等待有 Chrome 的 runner 執行。雲端瀏覽器存取本機預覽回傳 `net::ERR_BLOCKED_BY_CLIENT`，所以發布前視覺驗收亦為 blocked；未改用 tunnel／proxy 繞過限制。
 - 工具限制：`tools project-quality`／workflow engine 與 Context7 不可用；使用既有 repository-native gates 與 React／pnpm 官方文件。Git skill 的 companion resources 無法讀取；提交需按 repo `GIT_COMMITS.md` 人工核對完整 diff、身份、訊息和實際物件，不能宣稱 helper 已通過。
 - 下一步：在既有明確授權下提交／推送，於有 Chrome 的 CI runner 執行完整 gate；部署須等待既有驗證與認證能力就緒，再核對 Pages 精確 commit 與實際公開頁面。不能以 source／build 通過替代瀏覽器驗收。
+
+## 2026-10-03｜P2P 筆記遠端驗證與日期 tag 發布規格
+
+筆記與後續可及性／窄視窗修正已提交至 main `96df79faa97510aad0861bad8dba12bcf2e61996`。[完整遠端驗證](https://github.com/DennySORA/dennysora.github.io/actions/runs/37109773040) 通過 79 項單元測試、62 項真實 Chrome E2E，以及格式、lint、型別與 build／artifact 檢查。最初兩次 E2E 發現的重複 landmark 標籤、研究提案框的寬度、無 JS 提示與既有 footer 契約均已修正；沒有停用原本的測試條件。CI 截圖因 runner 缺少中文字形，不作中文字體驗收依據；正式公開頁面仍待部署後驗收。
+
+擁有者最終指定：個人網站可保留 GitHub CI/CD 作為例外，但僅 build／deploy，觸發方式只有 `YYYY.MM.DD.N` 日期 tag。同日次數從 1 起，建立前查現有 tags。已用此規格取代先前未發布的前綴 tag 草稿；不建立發布分支，也不保留 main push、PR 或手動 dispatch 觸發。workflow 核對有效日期及 tag commit 等於遠端 main，鎖定依賴安裝後建置並檢查 artifact，再使用既有 Pages 權限部署。一般品質檢查留在本機執行。
+
+本機已通過 YAML 結構／權限比對、11 組日期／次數／main guard 測試、shell 語法及對現有遠端 main 的 guard 檢查；正式 build／artifact 檢查及發布前 diff／格式檢查也已通過。
+
+目前可用連接工具能提交 source 及更新分支，沒有建立 tag 的操作；此限制不代表已部署。實際發布要以建立日期 tag 後的 Pages workflow 結果及公開頁面驗收判定。

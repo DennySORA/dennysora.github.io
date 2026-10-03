@@ -2,6 +2,10 @@
 
 @AGENTS.md
 
+## Website publication exception
+
+Only the owner-approved `YYYY.MM.DD.N` tag-triggered build-and-deploy workflow is allowed for this personal website. Do not add general main-push or PR GitHub CI. Follow `AGENTS.md` and `PROJECT_AGENT.md` for the release contract and local quality gates.
+
 ## Claude Code-specific guidance
 
 - `AGENTS.md` is the canonical shared instruction file. Do not duplicate its stack, product, documentation, quality, or tool-routing rules here.
