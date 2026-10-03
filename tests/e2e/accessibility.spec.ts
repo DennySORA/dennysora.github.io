@@ -49,7 +49,7 @@ test('accessible states: open details, language menu, typing, empty library, col
   // The status line is in INSERT mode while the search field has focus.
   await expect(page.locator('.status-mode')).toHaveText('INSERT');
   expect(await violations(page)).toEqual([]);
-  await page.locator('.sidebar-collapse').click();
+  await page.locator('.desktop-explorer-toggle button').click();
   await expect(page.locator('#desktop-explorer')).toBeHidden();
   expect(await violations(page)).toEqual([]);
   await page.setViewportSize({ width: 320, height: 720 });

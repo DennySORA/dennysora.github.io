@@ -16,8 +16,11 @@
     background: #fff !important;
     color: #111 !important;
   }
-  .site-header,
-  .site-footer,
+  .tabline,
+  .sidebar-column,
+  .winbar,
+  .status-group,
+  .end-of-buffer,
   .skip-link,
   .toc-aside,
   .toc-inline,
@@ -30,6 +33,20 @@
   .search-block,
   .requires-js {
     display: none !important;
+  }
+  /* Paper gets the document alone: no grid, gutter or line numbers. */
+  .workbench {
+    display: block;
+    padding: 0;
+  }
+  .ln::before,
+  .prose > *::before {
+    display: none !important;
+  }
+  .buffer,
+  .container,
+  .reader-main {
+    padding-left: 0 !important;
   }
   .reader-shell,
   .reader-shell.has-toc {

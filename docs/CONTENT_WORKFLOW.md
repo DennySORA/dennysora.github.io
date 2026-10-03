@@ -44,7 +44,7 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 ## 搜尋
 
-標題列、活動列與 `/`／Ctrl+K／Cmd+K 開啟 `/<locale>/search/` 全站搜尋。建置從正式預渲染頁面的 main 正文產生同源 `site-search.json`，包含首頁、公開文章、筆記及目錄；不讀取草稿、移除的頁面或論文日報外站本文。標題、摘要與全文皆可搜尋，依文章／筆記／頁面分類。每份內容優先顯示目前語言，沒有翻譯時連向實際原文並明示語言。搜尋頁不進 sitemap；關鍵字與類型保留在 URL，可使用 Back／Forward 與語言切換。索引載入失敗可重試；無 JavaScript 時仍可透過首頁、部落格與筆記連結瀏覽。
+tabline 的搜尋入口、首頁 README 的開始選單與 `/`／Ctrl+K／Cmd+K 開啟 `/<locale>/search/` 全站搜尋。建置從正式預渲染頁面的 main 正文產生同源 `site-search.json`，包含首頁、公開文章、筆記及目錄；不讀取草稿、移除的頁面或論文日報外站本文。標題、摘要與全文皆可搜尋，依文章／筆記／頁面分類。每份內容優先顯示目前語言，沒有翻譯時連向實際原文並明示語言。搜尋頁不進 sitemap；關鍵字與類型保留在 URL，可使用 Back／Forward 與語言切換。索引載入失敗可重試；無 JavaScript 時仍可透過首頁、部落格與筆記連結瀏覽。
 
 以下 Pagefind 行為只適用於部落格內的文章搜尋：
 
@@ -83,11 +83,15 @@ gh api graphql \
 
 ## 品牌素材
 
-標題列與頁尾使用 `assets/logo.png` 原檔，不重畫、不染色、不裁切。首頁的大型 Logo 是 `assets/logo-hero.webp`（1x）與 `assets/logo-hero@2x.webp`（2x）：由 3 MB 的 `logo_full.png` 只修掉左右透明欄、縮放並轉成 WebP，同一個人像，未改色或重繪。[`data/brand-assets.json`](../data/brand-assets.json) 記錄每個素材的 Git blob、大小、尺寸與衍生方式；建置時的產物檢查會確認發布的檔案與紀錄一致，也禁止引用 GitHub raw 連結。`logo_full.png` 本身只保留在 repo，不發布。
+tabline 使用 `assets/logo.png` 原檔，不重畫、不染色、不裁切。首頁的大型 Logo 是 `assets/logo-hero.webp`（1x）與 `assets/logo-hero@2x.webp`（2x）：由 3 MB 的 `logo_full.png` 只修掉左右透明欄、縮放並轉成 WebP，同一個人像，未改色或重繪。[`data/brand-assets.json`](../data/brand-assets.json) 記錄每個素材的 Git blob、大小、尺寸與衍生方式；建置時的產物檢查會確認發布的檔案與紀錄一致，也禁止引用 GitHub raw 連結。`logo_full.png` 本身只保留在 repo，不發布。
+
+## 版面、圖示與插圖
+
+新增頁面、元件、圖示或插圖前先讀 [設計系統](DESIGN.md)；它對所有 UI 新增與修改都有約束力。文章與筆記內容不寫行內樣式或顏色，版面交給既有元件。插圖採用星座線稿風格，必須通過透明度驗收，並記錄在 [`data/illustration-assets.json`](../data/illustration-assets.json)；沒有紀錄或 bytes 不符的插圖會讓建置的產物檢查失敗。
 
 ## 論文日報
 
-論文日報是獨立網站 <https://paper.dennysora.me/>。主站的分頁、檔案總管、活動列、頁尾與 `/<locale>/research/` 導引頁都直接連過去，主站不再保存快照，也沒有匯入器或建置時的外部讀取。舊的 `/<locale>/papers/` 只是立即轉址的頁面（`noindex`，不在 sitemap）。
+論文日報是獨立網站 <https://paper.dennysora.me/>。主站的 buffer 分頁、檔案總管、首頁開始選單與 `/<locale>/research/` 導引頁都直接連過去，主站不再保存快照，也沒有匯入器或建置時的外部讀取。舊的 `/<locale>/papers/` 只是立即轉址的頁面（`noindex`，不在 sitemap）。
 
 ## 發布與回復
 

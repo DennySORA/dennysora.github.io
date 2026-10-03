@@ -47,8 +47,9 @@ test('the home README answers who, what and where to look first on desktop and p
       lines.map((line) => (line as HTMLElement).offsetParent?.className),
     ).size,
   }));
-  // The intentionally shortened résumé retains all of its numbered lines.
-  expect(gutters.count).toBe(56);
+  // The shortened résumé keeps all of its numbered lines; the start menu adds
+  // four (blog, notes, search, Paper Daily) in place of the single call to action.
+  expect(gutters.count).toBe(59);
   expect(gutters.positioned).toBe(0);
   expect(gutters.parents).toBe(1);
 });
@@ -135,38 +136,43 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
         property,
       );
   await page.goto('/zh-hant/');
-  expect(await colour('.readme-hero .button-primary', 'background-color')).toBe(
-    'rgb(103, 216, 239)',
-  );
-  expect(await colour('.readme-hero .button-primary')).toBe('rgb(11, 16, 32)');
+  // The start menu: action-family icons on readable labels.
+  expect(await colour('.dash-item > .icon')).toBe('rgb(150, 195, 255)');
+  expect(await colour('.dash-label')).toBe('rgb(230, 237, 245)');
   // Front matter reads as YAML: keys in the entity colour, values as strings.
-  expect(await colour('.front-matter dt')).toBe('rgb(192, 153, 255)');
-  expect(await colour('.front-matter dd')).toBe('rgb(93, 217, 193)');
-  expect(await colour('.md-heading .md-mark')).toBe('rgb(122, 138, 166)');
+  expect(await colour('.front-matter dt')).toBe('rgb(204, 175, 255)');
+  expect(await colour('.front-matter dd')).toBe('rgb(131, 216, 207)');
+  expect(await colour('.md-heading .md-mark')).toBe('rgb(133, 147, 168)');
+  // NORMAL mode is the blue action family with dark ink.
   expect(await colour('.status-mode', 'background-color')).toBe(
-    'rgb(103, 216, 239)',
+    'rgb(138, 184, 245)',
   );
-  expect(await colour('.capability-evidence a')).toBe('rgb(130, 170, 255)');
-  expect(await colour('.capability .label')).toBe('rgb(192, 153, 255)');
+  expect(await colour('.status-mode')).toBe('rgb(8, 17, 30)');
+  expect(await colour('.capability-evidence a')).toBe('rgb(150, 195, 255)');
+  expect(await colour('.capability .label')).toBe('rgb(204, 175, 255)');
   expect(await colour('.capability-evidence .resource-link .icon')).toBe(
-    'rgb(93, 217, 193)',
+    'rgb(131, 216, 207)',
   );
   await page.goto('/zh-hant/note/medical/');
+  // Folders carry the folder colour; files the file colour.
   expect(await colour('.tab[data-area="notes"] > .icon')).toBe(
-    'rgb(224, 181, 101)',
+    'rgb(145, 198, 255)',
   );
-  // The open file's tab is lit with the accent; its area stays marked.
-  expect(await colour('.tab[aria-current="page"]')).toBe('rgb(230, 237, 247)');
+  expect(await colour('.tree-link[data-kind="markdown"] > .tree-icon')).toBe(
+    'rgb(131, 216, 207)',
+  );
+  // The open buffer is lit with the accent marker; its area stays marked.
+  expect(await colour('.tab[aria-current="page"]')).toBe('rgb(230, 237, 245)');
   expect(await colour('.tab[aria-current="page"]', 'box-shadow')).toContain(
-    'rgb(103, 216, 239)',
+    'rgb(138, 184, 245)',
   );
-  expect(await colour('.tab[aria-current="true"]')).toBe('rgb(184, 197, 216)');
+  expect(await colour('.tab[aria-current="true"]')).toBe('rgb(184, 197, 214)');
   expect(
     await colour(
       '.sidebar .tree-link[aria-current="page"]',
       'background-color',
     ),
-  ).toBe('rgb(22, 44, 67)');
+  ).toBe('rgb(35, 61, 89)');
 });
 
 test('status colours appear only for real states, and nothing is dimmed with opacity or filters', async ({
@@ -181,9 +187,9 @@ test('status colours appear only for real states, and nothing is dimmed with opa
     await page.goto(path);
     const offenders = await page.evaluate(() => {
       const status = [
-        'rgb(123, 216, 143)',
-        'rgb(243, 201, 105)',
-        'rgb(255, 122, 144)',
+        'rgb(155, 210, 172)',
+        'rgb(237, 202, 139)',
+        'rgb(255, 168, 161)',
       ];
       return [...document.querySelectorAll('body *')]
         .filter((element) => {
@@ -216,7 +222,7 @@ test('text and controls keep contrast in normal, hover, focus and selected state
     ['.search-scope', 4.5],
     ['.empty-state h2', 4.5],
     ['.desktop-explorer-toggle button', 4.5],
-    ['.sidebar-collapse', 4.5],
+    ['.tree-empty', 4.5],
     ['.language-menu > summary', 4.5],
     ['.tab[aria-current="page"]', 4.5],
     ['.tab:not([aria-current])', 4.5],
@@ -224,7 +230,11 @@ test('text and controls keep contrast in normal, hover, focus and selected state
     ['.sidebar .tree-note', 4.5],
     ['.breadcrumbs a', 4.5],
     ['.status-item', 4.5],
-    ['.command-text', 4.5],
+    ['.status-mode', 4.5],
+    ['.status-position', 4.5],
+    ['.cmdline', 4.5],
+    ['.tabline-search-text', 4.5],
+    ['.winbar [aria-current]', 4.5],
   ];
   for (const [selector, minimum] of checks)
     expect(
@@ -250,24 +260,27 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   const file = page.locator('.sidebar .tree-link:not([aria-current])').first();
   await file.hover();
   expect(await contrastOf(file), 'explorer hover').toBeGreaterThanOrEqual(4.5);
-  await page.goto('/zh-hant/');
-  const primary = page.locator('.readme-hero .button-primary');
+  // The one primary action on the empty blog keeps dark ink on its hover fill.
+  const primary = page.locator('.empty-state .button-primary');
   await primary.hover();
+  // Reduced motion still runs a 0.01 ms transition; wait for its first frame.
+  await expect(primary).toHaveCSS('background-color', 'rgb(162, 203, 255)');
   expect(await contrastOf(primary), 'primary hover').toBeGreaterThanOrEqual(
     4.5,
   );
-  expect(
-    await primary.evaluate(
-      (element) => getComputedStyle(element).backgroundColor,
-    ),
-  ).toBe('rgb(145, 228, 245)');
+  const menu = page.locator('.dash-item').first();
+  await page.goto('/zh-hant/');
+  await menu.hover();
+  expect(await contrastOf(menu), 'start menu hover').toBeGreaterThanOrEqual(
+    4.5,
+  );
 });
 
 test('the workbench names the open file and links every area, with Paper Daily outside', async ({
   page,
 }) => {
   await page.goto('/zh-hant/note/medical/analgesics/');
-  const tabs = page.locator('.tabs');
+  const tabs = page.locator('.buffers');
   await expect(tabs.getByRole('link')).toHaveText([
     /README\.md/,
     /blog/,
@@ -370,8 +383,8 @@ test('desktop Explorer repeatedly collapses and expands from keyboard controls w
     await expect(sidebar).toBeVisible();
     await expect(toggle).toBeFocused();
   }
-  await page.locator('.sidebar-collapse').focus();
-  await page.keyboard.press('Enter');
+  // Collapsed state survives a trip through the phone layout.
+  await toggle.press('Enter');
   await expect(sidebar).toBeHidden();
   await expect(toggle).toBeFocused();
   await page.setViewportSize({ width: 390, height: 844 });

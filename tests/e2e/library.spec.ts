@@ -53,12 +53,12 @@ test('searching an empty blog never requests an index or suggests a search failu
   await expect(page).toHaveURL('/en/blog/');
 });
 
-test('the activity search opens global search even when the blog is empty', async ({
+test('the README start menu opens global search even when the blog is empty', async ({
   page,
 }) => {
   await page.goto('/en/');
   await page
-    .locator('.activitybar')
+    .locator('.dashboard')
     .getByRole('link', { name: 'Search the site' })
     .click();
   await expect(page).toHaveURL('/en/search/#search');

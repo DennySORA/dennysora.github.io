@@ -5,24 +5,25 @@
 - Product: DennySORA's public personal site and technical blog, trilingual (Traditional Chinese, English, Japanese), prerendered to a static artifact and served by GitHub Pages at `https://dennysora.me`.
 - Quality profile: `product`; use `release` evidence when publishing or changing the public domain, canonical URLs, routes, metadata or deployment behavior.
 - This established public website overrides the generic local-application default. It is a static, responsive site for desktop and phone visitors, not a local desktop application: keep it static, with no server runtime, accounts, forms, analytics or tracking.
-- Visual direction (owner, 2026-09-27): a code-editor workbench in the semantic dark palette. Every page sits in a title bar, activity bar, explorer, editor tabs, breadcrumbs and a vim-style status line, and reads as a Markdown buffer with line numbers. The chrome is real links and controls, never a simulated terminal.
+- Visual direction (owner, 2026-10-04): Moonlit Vim, a Neovim-style workbench in the semantic dark palette. Every page sits in a tabline of buffers, a neo-tree explorer, a winbar, a lualine-style status line and Vim's command line, and reads as a Markdown buffer with line numbers. The chrome is real links and controls, never a simulated terminal.
+- Design system: [`docs/DESIGN.md`](docs/DESIGN.md) is binding for every UI addition or change (tokens, shell structure, typography, icons, generated illustrations and their acceptance, component recipes and the review checklist). Changing one of its rules needs owner approval and updates the document, tokens and guarding tests together.
 
 ## Owners and sources of truth
 
 - Stack: React with React Router framework mode (prerendered, `ssr: false`), Vite, strict TypeScript, Tailwind CSS 4 (CSS-first), pnpm and Node. Versions live only in [`package.json`](package.json), [`pnpm-lock.yaml`](pnpm-lock.yaml) and [`.nvmrc`](.nvmrc).
 - Routes: [`src/lib/route-manifest.ts`](src/lib/route-manifest.ts) is the single route contract; [`src/app/page.tsx`](src/app/page.tsx) loads each view and its metadata.
 - Content: `content/posts/<id>/` (metadata plus per-locale Markdown), `content/profile/profile.json` (the home README résumé), `content/projects/`, `content/taxonomy/`. [`src/lib/content.server.ts`](src/lib/content.server.ts) and [`src/lib/schema.ts`](src/lib/schema.ts) load and validate them.
-- UI: workbench chrome in `src/components/`, pages in `src/features/`, strings for all three locales in [`src/i18n/index.ts`](src/i18n/index.ts), design tokens in [`src/styles/tokens.css`](src/styles/tokens.css).
+- UI: workbench chrome in `src/components/` (`TabLine`, `Explorer`, `WinBar`, `StatusLine`, composed by `SiteLayout`), pages in `src/features/`, strings for all three locales in [`src/i18n/index.ts`](src/i18n/index.ts), design tokens in [`src/styles/tokens.css`](src/styles/tokens.css), icons in [`src/components/Icon.tsx`](src/components/Icon.tsx).
 - Build: `scripts/` validates content, finalizes the prerender (feeds, sitemap, legacy bridges, 404), builds the Pagefind index and checks the artifact.
-- Data: `data/comments.json` (comment mode), `data/brand-assets.json` (brand asset provenance), `data/migration/` (frozen anchors and migration maps).
-- Documentation: [`README.md`](README.md) in English; [`docs/CONTENT_WORKFLOW.md`](docs/CONTENT_WORKFLOW.md) and `docs/process/` in Traditional Chinese.
+- Data: `data/comments.json` (comment mode), `data/brand-assets.json` (brand asset provenance), `data/illustration-assets.json` (every shipped illustration with provenance and SHA-256), `data/migration/` (frozen anchors and migration maps).
+- Documentation: [`README.md`](README.md) in English; [`docs/DESIGN.md`](docs/DESIGN.md), [`docs/CONTENT_WORKFLOW.md`](docs/CONTENT_WORKFLOW.md) and `docs/process/` in Traditional Chinese.
 
 ## Critical contracts
 
 - Every UI string exists in all three locales. Language links point only to published editions, and missing translations are stated, never invented.
 - Browsing makes no third-party requests and sets no cookies or storage. Comments are GitHub-native links; Paper Daily is the external site `https://paper.dennysora.me/`.
 - Existing URLs keep working: legacy paths and anchors are served by static bridges, published heading anchors are frozen, and unknown paths return a real 404.
-- Brand images are the recorded repository files or their recorded derivatives, byte-checked against `data/brand-assets.json`; never recoloured, redrawn or filtered.
+- Brand images are the recorded repository files or their recorded derivatives, byte-checked against `data/brand-assets.json`; never recoloured, redrawn or filtered. Generated illustrations pass the transparency acceptance and are recorded in `data/illustration-assets.json` (DESIGN.md §7).
 - Colour roles stay semantic: status colours only for real states, no opacity or filter dimming, WCAG 2.2 AA contrast.
 - Pages remain readable and navigable without JavaScript, with keyboard access, visible focus and reduced motion.
 - Public claims about the owner need repository evidence or explicit owner input.

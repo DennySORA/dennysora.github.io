@@ -1,45 +1,60 @@
 /*
- * DennySORA v2.1 — product-owned semantic dark tokens (the single theme owner).
- * Values: Ops-Tools frontend-product-design references/semantic-dark.css,
- * source blob 0b6fe8d1d2bf0557987fb2c369c673aa596caef0 (UI/UX spec v2.1 §4.3).
- * Local additions, not reference values: --color-border-decorative and
+ * DennySORA v3 — Moonlit Vim tokens, the single theme owner (docs/DESIGN.md).
+ * Owner direction 2026-10-04: a Neovim-style workbench in one dark palette.
+ * Canonical values: Noir Workbench roles (frontend-product-design
+ * references/color-system.md), mapped once into the established names below.
+ * Local additions, not canonical values: --color-entity-folder,
+ * --color-gutter, --color-syntax-marker, --color-syntax-constant and
  * --color-overlay-scrim. Status, entity and action roles stay separate even
  * where two share a value.
- * Editor workbench layers (owner direction 2026-09-27, local additions):
- * --color-chrome, --color-sidebar, --color-tab-inactive, --color-gutter,
- * --color-syntax-marker and --color-entity-folder.
  */
 @theme static {
-  --color-background: #0b1020;
-  --color-surface: #111a2b;
-  --color-surface-raised: #172337;
-  --color-surface-selected: #162c43;
-  --color-text: #e6edf7;
-  --color-text-secondary: #b8c5d8;
-  --color-text-muted: #94a3b8;
-  --color-action-primary: #67d8ef;
-  --color-action-hover: #91e4f5;
-  --color-action-ink: #0b1020;
-  --color-focus: #67d8ef;
-  --color-link: #82aaff;
-  --color-status-info: #82aaff;
-  --color-entity-kind: #c099ff;
-  --color-entity-file: #5dd9c1;
-  --color-status-success: #7bd88f;
-  --color-status-warning: #f3c969;
-  --color-status-danger: #ff7a90;
-  --color-control-border: #657893;
-  --color-border-decorative: #27364a;
-  --color-overlay-scrim: #0b1020b3;
+  /* Surfaces, darkest first: chrome fill, editor canvas, panels, overlays. */
+  --color-chrome: #080c12;
+  --color-sidebar: #080c12;
+  --color-tab-inactive: #080c12;
+  --color-background: #0c1118;
+  --color-surface: #131c27;
+  --color-surface-raised: #1b2736;
+  --color-surface-overlay: #233246;
+  --color-surface-selected: #233d59;
 
-  /* Workbench chrome is darker than the editor, as in a code editor. */
-  --color-chrome: #070b16;
-  --color-sidebar: #0a0f1d;
-  --color-tab-inactive: #090e1b;
-  /* Line numbers and markdown markers are decorative syntax, not status. */
-  --color-gutter: #5b6b86;
-  --color-syntax-marker: #7a8aa6;
-  --color-entity-folder: #e0b565;
+  /* Borders: dividers, window separators, emphasis, essential controls. */
+  --color-border-subtle: #253141;
+  --color-border-decorative: #35465c;
+  --color-border-strong: #526780;
+  --color-control-border: #8193ad;
+
+  --color-text: #e6edf5;
+  --color-text-secondary: #b8c5d6;
+  --color-text-muted: #a0b0c5;
+  --color-text-disabled: #748299;
+
+  /* One cool blue action family. */
+  --color-action-primary: #8ab8f5;
+  --color-action-hover: #a2cbff;
+  --color-action-active: #6ea0e4;
+  --color-action-ink: #08111e;
+  --color-link: #96c3ff;
+  --color-focus: #b2d5ff;
+
+  /* Facts: information, entity types and files. */
+  --color-status-info: #91c6ff;
+  --color-entity-kind: #ccafff;
+  --color-entity-file: #83d8cf;
+  --color-entity-folder: #91c6ff;
+
+  /* States, only for real observed states. */
+  --color-status-success: #9bd2ac;
+  --color-status-warning: #edca8b;
+  --color-status-danger: #ffa8a1;
+  --color-danger-fill: #ffaaa5;
+
+  /* Editor syntax: decoration and code, never status. */
+  --color-gutter: #5f6f86;
+  --color-syntax-marker: #8593a8;
+  --color-syntax-constant: #f2b48a;
+  --color-overlay-scrim: #000000ad;
 
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, 'PingFang TC',
@@ -62,17 +77,28 @@
 :root {
   color-scheme: dark;
 
+  /* Vim modes are real page states: focus in a field, or selected text. */
+  --mode-normal: var(--color-action-primary);
+  --mode-insert: var(--color-status-success);
+  --mode-visual: var(--color-entity-kind);
+
   /* Code tokens reuse the palette; they are syntax roles, not UI status. */
-  --code-comment: var(--color-text-muted);
+  --code-comment: var(--color-syntax-marker);
   --code-keyword: var(--color-entity-kind);
   --code-string: var(--color-entity-file);
   --code-function: var(--color-link);
   --code-type: var(--color-action-primary);
-  --code-constant: var(--color-action-hover);
+  --code-constant: var(--color-syntax-constant);
   --code-inserted: var(--color-status-success);
   --code-deleted: var(--color-status-danger);
 
-  /* Spacing scale 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 88 (spec §4.5). */
+  /* Material: only named raised panels and floats use these (DESIGN.md §5). */
+  --material-top: rgb(255 255 255 / 0.035);
+  --edge-highlight: inset 0 1px 0 rgb(255 255 255 / 0.045);
+  --panel-shadow: 0 6px 20px rgb(0 0 0 / 0.18);
+  --overlay-shadow: 0 16px 48px rgb(0 0 0 / 0.48);
+
+  /* 4 px rhythm: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 88. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -83,27 +109,27 @@
   --space-8: 64px;
   --space-9: 88px;
 
-  --radius-control: 8px;
-  --radius-card: 12px;
   --radius-chip: 4px;
+  --radius-control: 6px;
+  --radius-card: 10px;
 
   --width-profile: 960px;
   --width-library: 920px;
   --width-reader: 740px;
   --width-toc: 220px;
   --gutter: 32px;
-  --motion: 150ms ease-out;
+  --motion: 140ms ease-out;
 
-  /* Workbench geometry: the document stays the only scroller. */
-  --title-h: 40px;
-  --tabs-h: 40px;
-  --crumbs-h: 28px;
+  /* Neovim geometry: the document is the only scroller. */
+  --tabline-h: 38px;
+  --winbar-h: 28px;
   --status-h: 26px;
-  --activity-w: 76px;
-  --sidebar-w: 256px;
+  --cmdline-h: 24px;
+  --sidebar-w: 248px;
   --line-gutter: 56px;
   /* Everything sticky above the content; anchors land below it. */
-  --header-height: calc(var(--title-h) + var(--tabs-h) + var(--crumbs-h));
+  --header-height: calc(var(--tabline-h) + var(--winbar-h));
+  --footer-height: calc(var(--status-h) + var(--cmdline-h));
 }
 
 @media (max-width: 1099px) {
@@ -113,9 +139,12 @@
 }
 @media (max-width: 767px) {
   :root {
-    --title-h: 52px;
-    --tabs-h: 44px;
-    --crumbs-h: 0px;
+    /* Two tabline rows on a phone: title row, then the buffer row. */
+    --tabline-row: 52px;
+    --buffers-row: 44px;
+    --tabline-h: calc(var(--tabline-row) + var(--buffers-row));
+    --winbar-h: 0px;
+    --cmdline-h: 0px;
     --gutter: 20px;
     --line-gutter: 0px;
   }

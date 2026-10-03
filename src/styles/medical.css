@@ -26,7 +26,6 @@
 .medical-note h1,
 .medical-note h2,
 .medical-note h3 {
-  font-family: var(--font-code);
   font-weight: 650;
   letter-spacing: -0.015em;
   line-height: 1.5;
@@ -404,70 +403,26 @@
   color: var(--color-entity-file);
 }
 
-/* Quiet, opaque panels and outline icons echo the owner's management UI. */
+/* The cover is an image-preview float; the image itself is never filtered. */
 .medical-cover {
+  margin-bottom: var(--space-6);
+  overflow: hidden;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-chrome);
+}
+.medical-cover img {
   display: block;
   width: 100%;
   height: auto;
   max-height: 230px;
   object-fit: cover;
-  margin-bottom: var(--space-6);
-  border: 1px solid var(--color-border-decorative);
-  border-radius: 10px;
-}
-.notes-directory {
-  padding-bottom: var(--space-7);
-}
-.notes-directory > ul {
-  padding: 0;
-  list-style: none;
-}
-.note-folder,
-.note-card {
-  border: 1px solid var(--color-border-decorative);
-  border-radius: 10px;
-  background: var(--color-surface);
-}
-.note-folder {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  color: var(--color-link);
-  text-decoration: none;
-  max-width: 400px;
-}
-.note-folder:hover {
-  background: var(--color-surface-raised);
-}
-.note-folder span {
-  flex: 1;
-}
-.note-card {
-  overflow: hidden;
-  max-width: 720px;
-}
-.note-card > img {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: 210px;
-  object-fit: cover;
-}
-.note-card h2 {
-  padding: 0 var(--space-5);
-  font-size: 21px;
-}
-.note-card h2 a {
-  color: var(--color-link);
-}
-.note-card > p {
-  padding: 0 var(--space-5) var(--space-4);
-  color: var(--color-text-muted);
 }
 @media (max-width: 767px) {
   .medical-cover {
-    max-height: 155px;
     margin-bottom: var(--space-5);
+  }
+  .medical-cover img {
+    max-height: 155px;
   }
 }

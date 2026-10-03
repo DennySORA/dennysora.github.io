@@ -4,18 +4,27 @@ import type {
   ViewData,
 } from '../../app/page.tsx';
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
-import { Icon } from '../../components/Icon.tsx';
+import { Icon, type IconName } from '../../components/Icon.tsx';
+import { linkIcon } from '../../components/link-icon.ts';
 import {
   dictionaries,
   formatCompactDate,
   type Locale,
 } from '../../i18n/index.ts';
+import { noteCopy } from '../../lib/notes-copy.ts';
 import { pageIds } from '../../lib/page-ids.ts';
+import { papersUrl } from '../../lib/site.ts';
 
 type HomeView = Extract<ViewData, { kind: 'home' }>;
 type PostLinks = HomeView['posts'];
 
 const yearMonth = (value: string) => value.replace('-', '.');
+
+const competencyIcons: Record<string, IconName> = {
+  backend: 'server',
+  cloud: 'cloud',
+  ai: 'sparkles',
+};
 
 /** The profile as the workspace README: front matter, logo, then the résumé. */
 export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
@@ -52,7 +61,7 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
               <dd>
                 <a href={profile.contact.github}>
                   {profile.contact.github.replace('https://', '')}
-                  <Icon name="external" size={14} />
+                  <Icon name="arrow-up-right" size={14} />
                   <span className="sr-only">（{t.newTab}）</span>
                 </a>
               </dd>
@@ -73,14 +82,56 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
             {profile.displayName}
           </MdHeading>
           <p className="ln readme-bio">{profile.introduction.shortBio}</p>
-          <div className="ln action-row">
-            <a className="button button-primary" href={`/${locale}/blog/`}>
-              {t.readBlog}
-              <Icon name="arrow" size={18} />
-            </a>
-          </div>
+          {/* A start-screen menu: each entry is a real link; the hint is its path or real key. */}
+          <ul className="dashboard">
+            <li className="ln">
+              <a className="dash-item" href={`/${locale}/blog/`}>
+                <Icon name="pen" size={18} />
+                <span className="dash-label">{t.readBlog}</span>
+                <span className="dash-hint" aria-hidden="true">
+                  ~/blog
+                </span>
+              </a>
+            </li>
+            <li className="ln">
+              <a className="dash-item" href={`/${locale}/note/`}>
+                <Icon name="notebook" size={18} />
+                <span className="dash-label">{noteCopy[locale].notes}</span>
+                <span className="dash-hint" aria-hidden="true">
+                  ~/note
+                </span>
+              </a>
+            </li>
+            <li className="ln">
+              <a className="dash-item" href={`/${locale}/search/#search`}>
+                <Icon name="search" size={18} />
+                <span className="dash-label">{t.searchSite}</span>
+                <span className="dash-hint" aria-hidden="true">
+                  <kbd>/</kbd>
+                </span>
+              </a>
+            </li>
+            <li className="ln">
+              <a className="dash-item" href={papersUrl}>
+                <Icon name="newspaper" size={18} />
+                <span className="dash-label">
+                  {t.navPapers}
+                  <Icon name="arrow-up-right" size={14} />
+                  <span className="sr-only">（{t.newTab}）</span>
+                </span>
+                <span className="dash-hint" aria-hidden="true">
+                  paper.dennysora.me
+                </span>
+              </a>
+            </li>
+          </ul>
         </div>
         <figure className="readme-logo">
+          <div className="float-title" aria-hidden="true">
+            <Icon name="image" size={14} />
+            <span>logo-hero.webp</span>
+            <span className="float-meta">346×392</span>
+          </div>
           <img
             src="/assets/logo-hero.webp"
             srcSet="/assets/logo-hero.webp 1x, /assets/logo-hero@2x.webp 2x"
@@ -104,7 +155,7 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
 
       {recent.length ? (
         <section className="md-section" aria-labelledby="recent-title">
-          <MdHeading level={2} id="recent-title">
+          <MdHeading level={2} id="recent-title" icon="pen">
             {t.recentTitle}
           </MdHeading>
           <ul className="file-list">
@@ -157,7 +208,7 @@ function Competencies({
       <span id="skills-h" className="anchor-alias" aria-hidden="true" />
       <span id="depth-h" className="anchor-alias" aria-hidden="true" />
       <span id="proj-h" className="anchor-alias" aria-hidden="true" />
-      <MdHeading level={2} id="competencies-title">
+      <MdHeading level={2} id="competencies-title" icon="briefcase">
         {t.competenciesTitle}
       </MdHeading>
       <p className="ln md-lead">{t.competenciesIntro}</p>
@@ -165,6 +216,10 @@ function Competencies({
         {profile.competencies.map((competency) => (
           <article className="capability" key={competency.id}>
             <h3 className="ln capability-title">
+              <Icon
+                name={competencyIcons[competency.id] ?? 'package'}
+                size={18}
+              />
               <span className="capability-name">{competency.title}</span>
               <span className="level-labels">
                 {competency.levels.map((level) => (
@@ -192,8 +247,8 @@ function Competencies({
                   return (
                     <li key="experience">
                       <a href={`#${pageIds.experience}`}>
-                        {t.seeExperience}
                         <Icon name="arrow-down" size={16} />
+                        {t.seeExperience}
                       </a>
                     </li>
                   );
@@ -202,6 +257,7 @@ function Competencies({
                   return post ? (
                     <li key={evidence.id}>
                       <a href={`/${locale}/blog/${post.slug}/`}>
+                        <Icon name="markdown" size={16} />
                         {t.readPost}：{post.title}
                       </a>
                     </li>
@@ -213,8 +269,9 @@ function Competencies({
                 return project ? (
                   <li key={evidence.id}>
                     <a className="resource-link" href={project.repository}>
+                      <Icon name={linkIcon(project.repository)} size={16} />
                       {t.projectSource}：{project.title}
-                      <Icon name="external" size={16} />
+                      <Icon name="arrow-up-right" size={14} />
                       <span className="sr-only">（{t.newTab}）</span>
                     </a>
                   </li>
@@ -228,7 +285,7 @@ function Competencies({
   );
 }
 
-/** Work history drawn as a commit graph: newest first, one node per role. */
+/** Work history drawn as `git log --graph`: newest first, one commit per role. */
 function Experience({
   profile,
   locale,
@@ -245,7 +302,7 @@ function Experience({
     >
       <span id="exp-h" className="anchor-alias" aria-hidden="true" />
       <span id="edu-h" className="anchor-alias" aria-hidden="true" />
-      <MdHeading level={2} id="experience-title">
+      <MdHeading level={2} id="experience-title" icon="branch">
         {t.experienceTitle}
       </MdHeading>
       <p className="ln md-lead">{t.experienceIntro}</p>
@@ -263,6 +320,11 @@ function Experience({
               data-kind={entry.kind}
             >
               <p className="ln timeline-date">
+                {entry.current ? (
+                  <span className="git-head" aria-hidden="true">
+                    HEAD
+                  </span>
+                ) : null}
                 <time dateTime={entry.startDate}>
                   {yearMonth(entry.startDate)}
                 </time>
@@ -279,11 +341,17 @@ function Experience({
                 ) : null}
               </p>
               <h3 className="ln timeline-role">
-                {entry.role}
-                <span className="timeline-org">
-                  <span aria-hidden="true"> @ </span>
-                  <span className="sr-only">，</span>
-                  {entry.organization}
+                <Icon
+                  name={entry.kind === 'education' ? 'graduation' : 'briefcase'}
+                  size={18}
+                />
+                <span>
+                  {entry.role}
+                  <span className="timeline-org">
+                    <span aria-hidden="true"> @ </span>
+                    <span className="sr-only">，</span>
+                    {entry.organization}
+                  </span>
                 </span>
               </h3>
               <p className="ln">{entry.summary}</p>
@@ -297,8 +365,11 @@ function Experience({
                 </ul>
               ) : null}
               {count ? (
-                <details className="ln timeline-details">
-                  <summary>{t.showAllWork(count)}</summary>
+                <details className="ln timeline-details fold">
+                  <summary>
+                    <span className="fold-mark" aria-hidden="true" />
+                    {t.showAllWork(count)}
+                  </summary>
                   {entry.details.map((group) => (
                     <div className="timeline-group" key={group.title}>
                       <h4>{group.title}</h4>
@@ -315,8 +386,9 @@ function Experience({
                       key={link.url}
                       href={link.url}
                     >
+                      <Icon name={linkIcon(link.url)} size={16} />
                       {link.label}
-                      <Icon name="external" size={16} />
+                      <Icon name="arrow-up-right" size={14} />
                       <span className="sr-only">（{t.newTab}）</span>
                     </a>
                   ))}

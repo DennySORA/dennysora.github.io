@@ -1,8 +1,8 @@
 /*
- * Markdown buffer: numbered lines in a gutter, visible heading markers and
- * vim's `~` rows. A `.buffer` is the only positioned ancestor of its lines, so
- * every number lands in one column however deeply the line is nested. Numbers
- * and markers are decoration: `/ ""` gives them empty alternative text.
+ * Markdown buffer: numbered lines in a gutter, visible heading markers, folds
+ * and vim's `~` rows. A `.buffer` is the only positioned ancestor of its lines,
+ * so every number lands in one column however deeply the line is nested.
+ * Numbers and markers are decoration: `/ ""` gives them empty alternative text.
  */
 @property --ln-box {
   syntax: '<length>';
@@ -36,7 +36,7 @@ main {
   left: 0;
   /* In a flex or grid line, the number stays on the first row. */
   align-self: flex-start;
-  width: calc(var(--line-gutter) - 12px);
+  width: calc(var(--line-gutter) - 14px);
   color: var(--color-gutter);
   font-family: var(--font-code);
   font-size: 12px;
@@ -48,14 +48,32 @@ main {
   text-transform: none;
   pointer-events: none;
   user-select: none;
+  transition: color var(--motion);
+}
+/* CursorLineNr: the line under the pointer lights its number. */
+.ln:hover::before,
+.prose > :not(ul, ol, .footnotes):hover::before,
+.prose > :is(ul, ol) > li:hover::before {
+  color: var(--color-text);
+  font-weight: 650;
 }
 .md-mark {
   color: var(--color-syntax-marker);
+  font-family: var(--font-code);
   font-weight: 400;
 }
+/* Markdown headings: a mono marker, an optional icon, then sans text. */
 .md-heading {
-  font-family: var(--font-code);
-  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+}
+.md-heading > .icon {
+  align-self: center;
+  color: var(--color-link);
+}
+.md-heading-text {
+  min-width: 0;
 }
 .md-fence {
   color: var(--color-syntax-marker);
@@ -72,6 +90,49 @@ main {
   font-size: 14px;
   line-height: 1.7;
   user-select: none;
+}
+
+/* Folds: a closed <details> reads as Vim's `+--` fold line. */
+.fold > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+  transition:
+    background-color var(--motion),
+    border-color var(--motion),
+    color var(--motion);
+}
+.fold > summary::-webkit-details-marker {
+  display: none;
+}
+.fold > summary:hover {
+  border-color: var(--color-border-decorative);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.fold-mark::before {
+  content: '+--';
+  content: '+--' / '';
+  color: var(--color-syntax-marker);
+}
+.fold[open] .fold-mark::before {
+  content: '---';
+  content: '---' / '';
+}
+.fold[open] > summary {
+  margin-bottom: var(--space-3);
+  border-color: var(--color-border-decorative);
+  color: var(--color-text);
 }
 
 @media (max-width: 767px) {

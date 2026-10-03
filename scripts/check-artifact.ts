@@ -15,7 +15,7 @@ import {
 import { locales } from '../src/i18n/index.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
 import brand from '../data/brand-assets.json' with { type: 'json' };
-import navigation from '../data/navigation-assets.json' with { type: 'json' };
+import illustrations from '../data/illustration-assets.json' with { type: 'json' };
 
 const root = resolve('build/client');
 const failures: string[] = [];
@@ -43,13 +43,24 @@ try {
   failures.push(`Invalid site search index: ${String(error)}`);
 }
 
-const navigationAsset = join(root, navigation.path);
-if (
-  !existsSync(navigationAsset) ||
-  createHash('sha256').update(readFileSync(navigationAsset)).digest('hex') !==
-    navigation.sha256
-)
-  failures.push('Navigation illustration missing or changed');
+// Every shipped illustration is recorded with its final bytes (docs/DESIGN.md §7).
+const recorded = new Set<string>();
+for (const asset of illustrations.assets) {
+  const file = join(root, asset.path);
+  recorded.add(asset.path);
+  if (
+    !existsSync(file) ||
+    createHash('sha256').update(readFileSync(file)).digest('hex') !==
+      asset.sha256
+  )
+    failures.push(`Illustration missing or changed: ${asset.path}`);
+}
+for (const file of files)
+  if (
+    relative(root, file).startsWith('assets/illustrations/') &&
+    !recorded.has(relative(root, file))
+  )
+    failures.push(`Unrecorded illustration: ${relative(root, file)}`);
 for (const file of files) {
   const name = relative(root, file);
   if (

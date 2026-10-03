@@ -10,22 +10,27 @@ import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
 import { Icon, type IconName } from './Icon.tsx';
 
+type Kind = 'markdown' | 'folder' | 'external';
+const kindIcons: Record<Kind, IconName> = {
+  markdown: 'markdown',
+  folder: 'folder-open',
+  external: 'newspaper',
+};
+
 function TreeLink({
   href,
-  icon,
+  kind,
   name,
   note,
   current,
-  external = false,
   onNavigate,
 }: {
   href: string;
-  icon: IconName;
+  kind: Kind;
   name: string;
   /** Plain-language meaning of the file name, shown or announced beside it. */
   note: { text: string; visible: boolean };
   current?: 'page' | 'true' | undefined;
-  external?: boolean;
   onNavigate?: (() => void) | undefined;
 }) {
   return (
@@ -35,21 +40,26 @@ function TreeLink({
       aria-current={current}
       onClick={onNavigate}
       title={note.visible ? undefined : note.text}
-      data-icon={icon}
+      data-kind={kind}
     >
-      <Icon name={icon} size={16} />
+      {kind === 'folder' ? (
+        <Icon name="chevron-down" size={12} className="tree-expander" />
+      ) : (
+        <span className="tree-expander" aria-hidden="true" />
+      )}
+      <Icon name={kindIcons[kind]} size={16} className="tree-icon" />
       <span className="tree-name">{name}</span>{' '}
       {note.visible ? (
         <span className="tree-note">{note.text}</span>
       ) : (
         <span className="sr-only"> — {note.text}</span>
       )}
-      {external ? <Icon name="external" size={13} /> : null}
+      {kind === 'external' ? <Icon name="arrow-up-right" size={12} /> : null}
     </a>
   );
 }
 
-/** The site as a file tree: every entry is a real page or an outside link. */
+/** The site as a neo-tree: every entry is a real page or an outside link. */
 export function Explorer({
   locale,
   route,
@@ -66,14 +76,14 @@ export function Explorer({
   return (
     <div className="explorer">
       <p className="explorer-root" aria-hidden="true">
-        <Icon name="chevron-down" size={14} />
-        DENNYSORA
+        <Icon name="folder-open" size={14} />
+        ~/dennysora
       </p>
       <ul className="tree">
         <li>
           <TreeLink
             href={`/${locale}/`}
-            icon="markdown"
+            kind="markdown"
             name="README.md"
             note={{ text: t.navAbout, visible: true }}
             current={areaState(route, 'home')}
@@ -83,18 +93,21 @@ export function Explorer({
         <li>
           <TreeLink
             href={`/${locale}/blog/`}
-            icon="chevron-down"
+            kind="folder"
             name="blog"
             note={{ text: t.navLibrary, visible: true }}
             current={areaState(route, 'library')}
             onNavigate={onNavigate}
           />
           <ul className="tree-children">
+            {files.posts.length === 0 ? (
+              <li className="tree-empty">{t.emptyFolder}</li>
+            ) : null}
             {files.posts.map((post) => (
               <li key={post.slug}>
                 <TreeLink
                   href={`/${locale}/blog/${post.slug}/`}
-                  icon="markdown"
+                  kind="markdown"
                   name={`${post.slug}.md`}
                   note={{ text: post.title, visible: false }}
                   current={page(
@@ -109,7 +122,7 @@ export function Explorer({
         <li>
           <TreeLink
             href={`/${locale}/note/`}
-            icon="chevron-down"
+            kind="folder"
             name="note"
             note={{ text: noteCopy[locale].notes, visible: true }}
             current={areaState(route, 'notes')}
@@ -119,7 +132,7 @@ export function Explorer({
             <li>
               <TreeLink
                 href={`/${locale}/note/network/`}
-                icon="folder"
+                kind="folder"
                 name={networkCopy[locale].title}
                 note={{ text: networkCopy[locale].title, visible: false }}
                 current={page(route.kind === 'network')}
@@ -130,7 +143,7 @@ export function Explorer({
                   <li key={id}>
                     <TreeLink
                       href={`/zh-hant/note/network/${id}/`}
-                      icon="markdown"
+                      kind="markdown"
                       name={`${id}.md`}
                       note={{ text: networkNotes[id].title, visible: false }}
                       current={page(
@@ -145,7 +158,7 @@ export function Explorer({
             <li>
               <TreeLink
                 href={`/${locale}/note/medical/`}
-                icon="folder"
+                kind="folder"
                 name={noteCopy[locale].medical}
                 note={{ text: noteCopy[locale].medical, visible: false }}
                 current={page(route.kind === 'medical')}
@@ -155,7 +168,7 @@ export function Explorer({
                 <li>
                   <TreeLink
                     href="/zh-hant/note/medical/analgesics/"
-                    icon="markdown"
+                    kind="markdown"
                     name="analgesics.md"
                     note={{ text: noteCopy[locale].article, visible: false }}
                     current={page(route.kind === 'medical-note')}
@@ -169,10 +182,9 @@ export function Explorer({
         <li>
           <TreeLink
             href={papersUrl}
-            icon="newspaper"
+            kind="external"
             name="paper-daily"
             note={{ text: `${t.navPapers}（${t.newTab}）`, visible: false }}
-            external
             onNavigate={onNavigate}
           />
         </li>

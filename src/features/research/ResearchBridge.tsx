@@ -8,7 +8,11 @@ export function ResearchBridge({ locale }: { locale: Locale }) {
   const t = dictionaries[locale];
   return (
     <div className="container profile-layout bridge">
-      <PageHead eyebrow={t.researchBridgeEyebrow} title={t.researchBridgeTitle}>
+      <PageHead
+        eyebrow={t.researchBridgeEyebrow}
+        title={t.researchBridgeTitle}
+        icon="branch"
+      >
         <p className="page-intro">{t.researchBridgeText}</p>
       </PageHead>
       <div className="action-row">
@@ -16,12 +20,13 @@ export function ResearchBridge({ locale }: { locale: Locale }) {
           className="button button-primary"
           href={`/${locale}/blog/?type=research-note`}
         >
+          <Icon name="pen" size={18} />
           {t.researchBridgeNotes}
-          <Icon name="arrow" size={18} />
         </a>
         <a className="button button-quiet resource-link" href={papersUrl}>
+          <Icon name="newspaper" size={18} />
           {t.researchBridgePapers}
-          <Icon name="external" size={18} />
+          <Icon name="arrow-up-right" size={14} />
           <span className="sr-only">（{t.newTab}）</span>
         </a>
       </div>

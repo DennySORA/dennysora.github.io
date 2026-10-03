@@ -9,7 +9,7 @@ for (const locale of locales) {
   }) => {
     const t = searchCopy[locale];
     await page.goto(`/${locale}/`);
-    await page.locator('.command-center').click();
+    await page.locator('.tabline-search').click();
     await expect(page).toHaveURL(`/${locale}/search/#search`);
     const input = page.getByRole('searchbox', { name: t.title });
     await expect(input).toBeFocused();
@@ -69,8 +69,11 @@ test('search loading failure is retryable without losing the query', async ({
   await page.goto('/en/search/?q=Ibuprofen');
   await expect(page.getByRole('status')).toContainText('could not be loaded');
   await page.getByRole('button', { name: 'Try again' }).click();
+  // Folder pages that list the note match too; the note's own result is the target.
   await expect(
-    page.locator('.site-search-results li').filter({ hasText: 'Loxoprofen' }),
+    page.locator('.site-search-results li').filter({
+      has: page.locator('a[href="/zh-hant/note/medical/analgesics/"]'),
+    }),
   ).toBeVisible();
   await expect(page.getByRole('searchbox')).toHaveValue('Ibuprofen');
 });

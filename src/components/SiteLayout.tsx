@@ -1,24 +1,15 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { PageData } from '../app/page.tsx';
-import { dictionaries, type Locale } from '../i18n/index.ts';
+import { dictionaries } from '../i18n/index.ts';
 import { preferredLocale } from '../lib/preferred-locale.ts';
 import { legacyDestinations } from '../lib/legacy-anchors.ts';
 import { pageIds } from '../lib/page-ids.ts';
-import { ActivityBar } from './ActivityBar.tsx';
-import { EditorHead } from './EditorHead.tsx';
 import { Explorer } from './Explorer.tsx';
 import { Icon } from './Icon.tsx';
-import { StatusBar } from './StatusBar.tsx';
-import { TitleBar } from './TitleBar.tsx';
+import { StatusLine } from './StatusLine.tsx';
+import { TabLine } from './TabLine.tsx';
+import { WinBar } from './WinBar.tsx';
 
-const explorerLabels: Record<Locale, { collapse: string; expand: string }> = {
-  'zh-hant': { collapse: '收合檔案總管', expand: '展開檔案總管' },
-  en: { collapse: 'Collapse Explorer', expand: 'Expand Explorer' },
-  ja: {
-    collapse: 'エクスプローラーを折りたたむ',
-    expand: 'エクスプローラーを展開',
-  },
-};
 const explorerId = 'desktop-explorer';
 
 function isEditable(target: EventTarget | null) {
@@ -29,9 +20,10 @@ function isEditable(target: EventTarget | null) {
 }
 
 /**
- * A code-editor workbench: title bar, activity bar, explorer, editor (tabs,
- * breadcrumbs, the page) and a status line. The document itself scrolls; the
- * chrome is sticky, so links, find-in-page and history behave as on any page.
+ * A Neovim-style workbench: tabline, neo-tree explorer, a window with its
+ * winbar and the page, then the status line and command line. The document
+ * itself scrolls; the chrome is sticky, so links, find-in-page and history
+ * behave as on any page. See docs/DESIGN.md.
  */
 export function SiteLayout({
   data,
@@ -43,13 +35,10 @@ export function SiteLayout({
   const { locale, route, languageLinks, workspace } = data;
   const t = dictionaries[locale];
   const [explorerExpanded, setExplorerExpanded] = useState(true);
-  const explorerToggle = useRef<HTMLButtonElement>(null);
   const explorerLabel = explorerExpanded
-    ? explorerLabels[locale].collapse
-    : explorerLabels[locale].expand;
+    ? t.explorerCollapse
+    : t.explorerExpand;
   function toggleExplorer() {
-    // Keep focus on an available control when the sidebar header disappears.
-    explorerToggle.current?.focus();
     setExplorerExpanded((expanded) => !expanded);
   }
   useEffect(() => {
@@ -108,55 +97,38 @@ export function SiteLayout({
         {t.skip}
       </a>
       <div className="workbench" data-explorer-expanded={explorerExpanded}>
-        <TitleBar
+        <TabLine
           locale={locale}
           route={route}
           files={workspace}
           languageLinks={languageLinks}
+          explorer={{
+            id: explorerId,
+            expanded: explorerExpanded,
+            label: explorerLabel,
+            onToggle: toggleExplorer,
+          }}
         />
-        <div className="activity-column">
-          <ActivityBar
-            locale={locale}
-            route={route}
-            explorerId={explorerId}
-            explorerExpanded={explorerExpanded}
-            explorerLabel={explorerLabel}
-            explorerToggleRef={explorerToggle}
-            onToggleExplorer={toggleExplorer}
-          />
-        </div>
         <div
           id={explorerId}
           className="sidebar-column"
           hidden={!explorerExpanded}
         >
           <nav className="sidebar" aria-label={t.menuTitle}>
-            <div className="sidebar-head">
-              <p className="sidebar-title" aria-hidden="true">
-                {t.menuTitle}
-              </p>
-              <button
-                type="button"
-                className="icon-button sidebar-collapse requires-js"
-                aria-controls={explorerId}
-                aria-expanded={explorerExpanded}
-                aria-label={explorerLabels[locale].collapse}
-                title={explorerLabels[locale].collapse}
-                onClick={toggleExplorer}
-              >
-                <Icon name="arrow-left" size={16} />
-              </button>
-            </div>
+            <p className="sidebar-head" aria-hidden="true">
+              <Icon name="files" size={14} />
+              {t.menuTitle}
+            </p>
             <Explorer locale={locale} route={route} files={workspace} />
           </nav>
         </div>
         <div className="editor">
-          <EditorHead locale={locale} route={route} />
+          <WinBar locale={locale} route={route} />
           <main id={pageIds.main} tabIndex={-1}>
             {children}
           </main>
         </div>
-        <StatusBar locale={locale} route={route} />
+        <StatusLine locale={locale} route={route} />
       </div>
     </>
   );

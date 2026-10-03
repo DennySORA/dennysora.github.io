@@ -10,39 +10,61 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 38px;
+  min-height: 36px;
   padding: 6px 14px;
   border: 1px solid var(--color-control-border);
-  border-radius: 4px;
-  background: transparent;
-  color: var(--color-link);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
   font-family: var(--font-code);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.3;
   text-decoration: none;
   transition:
-    background var(--motion),
+    background-color var(--motion),
     border-color var(--motion),
     color var(--motion);
 }
 .button:hover {
-  border-color: var(--color-link);
-  background: var(--color-surface);
+  border-color: var(--color-text-muted);
+  background: var(--color-surface-overlay);
   text-decoration: none;
 }
 .button:active {
-  transform: translateY(1px);
+  background: var(--color-chrome);
 }
+.button-quiet {
+  border-color: var(--color-border-decorative);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.button-quiet:hover {
+  border-color: var(--color-control-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+/* The one primary action per region: a calm blue fill with dark ink. */
 .button-primary {
-  border-color: var(--color-action-primary);
-  background: var(--color-action-primary);
+  border-color: var(--color-action-active);
+  background-color: var(--color-action-primary);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-action-primary),
+    var(--color-action-active)
+  );
+  box-shadow: var(--edge-highlight);
   color: var(--color-action-ink);
 }
 .button-primary:hover {
   border-color: var(--color-action-hover);
-  background: var(--color-action-hover);
+  background-color: var(--color-action-hover);
+  background-image: none;
   color: var(--color-action-ink);
+}
+.button-primary:active {
+  background-color: var(--color-action-active);
+  background-image: none;
 }
 .button[data-status='success'] {
   color: var(--color-status-success);
@@ -58,11 +80,12 @@
   gap: 6px;
   min-height: 32px;
   font-family: var(--font-code);
-  font-size: 13.5px;
+  font-size: 13px;
   text-decoration: none;
 }
 .text-action:hover {
   text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .text-button {
   display: inline-flex;
@@ -112,9 +135,12 @@
 .label {
   display: inline-block;
   padding: 0 7px;
-  border: 1px solid var(--color-border-decorative);
-  border-radius: 3px;
-  background: var(--color-surface);
+  border-radius: var(--radius-chip);
+  background: color-mix(
+    in srgb,
+    var(--color-entity-kind) 12%,
+    var(--color-surface)
+  );
   color: var(--color-entity-kind);
   font-family: var(--font-code);
   font-size: 12px;
@@ -156,20 +182,34 @@
 .page-head {
   padding-bottom: var(--space-5);
 }
+.page-head.has-art {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-5);
+}
 .page-head h1 {
   font-size: 30px;
   line-height: 1.35;
+}
+.page-art {
+  display: block;
+  width: 112px;
+  height: auto;
+}
+.notes-directory .page-art {
+  width: 88px;
 }
 .page-intro {
   max-width: 720px;
   margin-top: var(--space-3);
   color: var(--color-text-secondary);
-  font-size: 16.5px;
+  font-size: 16px;
   line-height: 1.85;
 }
 .section {
   padding: var(--space-7) 0;
-  border-top: 1px solid var(--color-border-decorative);
+  border-top: 1px solid var(--color-border-subtle);
 }
 .section-intro {
   display: flex;
@@ -197,9 +237,9 @@
   gap: var(--space-3);
   margin: var(--space-5) 0;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border-decorative);
+  border: 1px solid var(--color-border-subtle);
   border-left: 3px solid currentColor;
-  border-radius: 4px;
+  border-radius: var(--radius-chip);
   background: var(--color-surface);
   font-size: 15px;
 }
@@ -221,9 +261,9 @@
 .nojs-notice {
   margin: var(--space-5) 0;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border-decorative);
+  border: 1px solid var(--color-border-subtle);
   border-left: 3px solid var(--color-status-info);
-  border-radius: 4px;
+  border-radius: var(--radius-chip);
   background: var(--color-surface);
   color: var(--color-text-secondary);
   font-size: 15px;
@@ -237,11 +277,11 @@
 
 /* Article rows: each post is a file in the blog folder. ------------------- */
 .article-list {
-  border-top: 1px solid var(--color-border-decorative);
+  border-top: 1px solid var(--color-border-subtle);
 }
 .article-row {
   padding: var(--space-5) 0;
-  border-bottom: 1px solid var(--color-border-decorative);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 .article-row:last-child {
   border-bottom: 0;
@@ -262,7 +302,7 @@
   color: var(--color-text-secondary);
 }
 .article-row-file .icon {
-  color: var(--color-link);
+  color: var(--color-entity-file);
 }
 .article-row-date {
   margin-left: auto;
@@ -308,7 +348,7 @@ mark {
 .matched-sections {
   margin-top: var(--space-3);
   padding-left: var(--space-4);
-  border-left: 1px solid var(--color-border-decorative);
+  border-left: 1px solid var(--color-border-subtle);
   list-style: none;
   font-size: 14.5px;
 }
@@ -319,7 +359,7 @@ mark {
   color: var(--color-text-secondary);
 }
 
-/* Search and filters: an editor search panel. ----------------------------- */
+/* Search: Vim's `/` prompt as a recessed field. --------------------------- */
 .search-block {
   padding-bottom: var(--space-4);
 }
@@ -330,9 +370,10 @@ mark {
   min-height: 40px;
   padding: 0 4px 0 var(--space-3);
   border: 1px solid var(--color-control-border);
-  border-radius: 4px;
-  background: var(--color-surface);
-  color: var(--color-text-muted);
+  border-radius: var(--radius-control);
+  background: var(--color-chrome);
+  color: var(--color-link);
+  transition: border-color var(--motion);
 }
 .search-field:focus-within {
   border-color: var(--color-focus);
@@ -381,13 +422,13 @@ mark {
   min-height: 30px;
   padding: 2px 10px;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: var(--radius-chip);
   background: transparent;
   color: var(--color-text-secondary);
   font-family: var(--font-code);
   font-size: 13px;
   transition:
-    background var(--motion),
+    background-color var(--motion),
     color var(--motion);
 }
 .filter-row button:hover,
@@ -399,7 +440,7 @@ mark {
 .sort-toggle button[aria-pressed='true'] {
   border-color: var(--color-control-border);
   background: var(--color-surface-selected);
-  color: var(--color-link);
+  color: var(--color-text);
   box-shadow: inset 0 -2px 0 var(--color-action-primary);
 }
 .tag-toggle-mark {
@@ -407,7 +448,7 @@ mark {
   color: var(--color-syntax-marker);
 }
 .tag-toggle[aria-pressed='true'] .tag-toggle-mark {
-  color: var(--color-action-primary);
+  color: var(--color-link);
 }
 .results-head {
   display: flex;
@@ -440,7 +481,7 @@ mark {
   min-height: 30px;
   padding: 2px 8px;
   border: 1px solid var(--color-control-border);
-  border-radius: 4px;
+  border-radius: var(--radius-chip);
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-code);
@@ -453,18 +494,34 @@ mark {
   border-style: dashed;
   color: var(--color-link);
 }
+
+/* Empty states: what is true now, and where to go next. ------------------ */
 .empty-state {
-  padding: var(--space-7) var(--space-5);
-  border-bottom: 1px solid var(--color-border-decorative);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5) var(--space-7);
+  border-bottom: 1px solid var(--color-border-subtle);
   text-align: center;
 }
+.empty-state > .icon {
+  color: var(--color-link);
+}
+.empty-art {
+  display: block;
+  width: min(320px, 100%);
+  height: auto;
+}
 .empty-state h2 {
-  font-family: var(--font-code);
-  font-size: 18px;
+  font-size: 19px;
 }
 .empty-state p {
-  margin: var(--space-2) 0 var(--space-5);
+  max-width: 560px;
   color: var(--color-text-secondary);
+}
+.empty-state .action-row {
+  justify-content: center;
+  margin-top: var(--space-2);
 }
 .pager {
   display: flex;
@@ -477,24 +534,31 @@ mark {
   font-size: 13px;
 }
 .pager button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 34px;
   padding: 4px 12px;
   border: 1px solid var(--color-control-border);
-  border-radius: 4px;
-  background: transparent;
-  color: var(--color-link);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
   font-family: var(--font-code);
 }
+.pager button:hover:not(:disabled) {
+  background: var(--color-surface-overlay);
+}
 .pager button:disabled {
-  border-style: dashed;
-  color: var(--color-text-muted);
+  border-color: var(--color-border-subtle);
+  background: transparent;
+  color: var(--color-text-disabled);
 }
 .tag-index {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-6);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-decorative);
+  border-top: 1px solid var(--color-border-subtle);
   list-style: none;
 }
 /* Each count stays beside its own tag. */
@@ -509,6 +573,14 @@ mark {
 @media (max-width: 767px) {
   .page-head h1 {
     font-size: 26px;
+  }
+  .page-head.has-art {
+    grid-template-columns: minmax(0, 1fr) 72px;
+    gap: var(--space-3);
+  }
+  .page-art,
+  .notes-directory .page-art {
+    width: 72px;
   }
   .page-intro {
     font-size: 16px;

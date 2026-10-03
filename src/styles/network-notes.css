@@ -31,7 +31,6 @@
 .network-note h1,
 .network-note h2,
 .network-note h3 {
-  font-family: var(--font-mono);
   color: var(--color-text);
 }
 
@@ -316,29 +315,6 @@
 .network-note .p2p-original-number {
   margin-right: 10px;
   color: var(--color-entity-kind);
-}
-.network-note-list {
-  padding: 0;
-  list-style: none;
-}
-.network-note-list li {
-  border-bottom: 1px solid var(--color-border-decorative);
-  padding: 24px 0;
-}
-.network-note-list h2 {
-  font-size: 20px;
-}
-.network-note-list h2 a {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-}
-.network-note-list p {
-  color: var(--color-text-secondary);
-  margin: 12px 0;
-}
-.network-note-list small {
-  color: var(--color-text-muted);
 }
 @media (max-width: 767px) {
   .network-note {

@@ -30,6 +30,7 @@ export function TaxonomyPage({
       <PageHead
         eyebrow={view.kind === 'topic' ? t.topicEyebrow : t.tagEyebrow}
         title={view.term.label}
+        icon={view.kind === 'topic' ? 'folder-open' : 'tag'}
       >
         {view.term.description ? (
           <p className="ln page-intro">{view.term.description}</p>
@@ -65,7 +66,7 @@ export function TagIndex({ view, locale }: { view: TagsView; locale: Locale }) {
         <Icon name="arrow-left" size={18} />
         {t.backToLibrary}
       </a>
-      <PageHead eyebrow={t.libraryTitle} title={t.tagsTitle}>
+      <PageHead eyebrow={t.libraryTitle} title={t.tagsTitle} icon="tag">
         <p className="ln page-intro">{t.tagsIntro}</p>
       </PageHead>
       <ul className="tag-index">

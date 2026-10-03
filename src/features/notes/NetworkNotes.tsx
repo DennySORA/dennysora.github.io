@@ -11,19 +11,39 @@ export function NetworkNotes({ locale }: { locale: Locale }) {
   const t = networkCopy[locale];
   return (
     <div className="container profile-layout notes-directory">
-      <MdHeading level={1}>{t.title}</MdHeading>
-      <p className="ln page-intro">{t.intro}</p>
-      <ul className="network-note-list ln">
+      <header className="page-head has-art">
+        <div className="page-head-text">
+          <MdHeading level={1} icon="network">
+            {t.title}
+          </MdHeading>
+          <p className="ln page-intro">{t.intro}</p>
+        </div>
+        <img
+          className="page-art"
+          src="/assets/illustrations/collection-network-v1.webp"
+          width={88}
+          height={88}
+          alt=""
+          decoding="async"
+        />
+      </header>
+      <ul className="network-note-list">
         {networkNoteIds.map((id) => (
           <li key={id}>
-            <h2>
+            <h2 className="ln">
               <a href={`/zh-hant/note/network/${id}/`} hrefLang="zh-Hant">
-                <Icon name="book" />{' '}
+                <Icon name="markdown" size={18} />
                 <span lang="zh-Hant">{networkNotes[id].title}</span>
               </a>
             </h2>
+            <p className="network-note-file" aria-hidden="true">
+              {id}.md
+            </p>
             <p lang="zh-Hant">{networkNotes[id].description}</p>
-            <small>{t.available}</small>
+            <small>
+              <Icon name="globe" size={14} />
+              {t.available}
+            </small>
           </li>
         ))}
       </ul>

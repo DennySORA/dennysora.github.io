@@ -28,6 +28,7 @@ import { searchArticles, type SearchHit } from '../../lib/pagefind-client.ts';
 import { pageIds } from '../../lib/page-ids.ts';
 import { parseRoute } from '../../lib/route-manifest.ts';
 import { matchSearch } from '../../lib/search.ts';
+import { papersUrl } from '../../lib/site.ts';
 
 type LibraryView = Extract<ViewData, { kind: 'library' }>;
 type SearchStatus = 'idle' | 'loading' | 'ready' | 'partial';
@@ -231,7 +232,7 @@ export function Library({
 
   return (
     <div className="container library-layout">
-      <PageHead eyebrow={t.libraryEyebrow} title={t.libraryTitle}>
+      <PageHead eyebrow={t.libraryEyebrow} title={t.libraryTitle} icon="pen">
         {hasPosts ? <p className="ln page-intro">{t.libraryIntro}</p> : null}
       </PageHead>
 
@@ -437,8 +438,20 @@ export function Library({
       </div>
 
       {results.length === 0 && status !== 'loading' ? (
-        <div className="ln empty-state">
-          <h2>{hasPosts ? t.emptyTitle : t.noPostsTitle}</h2>
+        <div className="empty-state">
+          {hasPosts ? (
+            <Icon name="search" size={28} />
+          ) : (
+            <img
+              className="empty-art"
+              src="/assets/illustrations/empty-blog-v1.webp"
+              width={320}
+              height={239}
+              alt=""
+              decoding="async"
+            />
+          )}
+          <h2 className="ln">{hasPosts ? t.emptyTitle : t.noPostsTitle}</h2>
           <p>{hasPosts ? t.emptyText : t.noPostsText}</p>
           {hasPosts ? (
             <button
@@ -446,9 +459,23 @@ export function Library({
               className="button button-quiet"
               onClick={clearAll}
             >
+              <Icon name="close" size={16} />
               {t.clearAll}
             </button>
-          ) : null}
+          ) : (
+            <div className="action-row">
+              <a className="button button-primary" href={`/${locale}/note/`}>
+                <Icon name="notebook" size={18} />
+                {t.browseNotes}
+              </a>
+              <a className="button button-quiet resource-link" href={papersUrl}>
+                <Icon name="newspaper" size={18} />
+                {t.researchBridgePapers}
+                <Icon name="arrow-up-right" size={14} />
+                <span className="sr-only">（{t.newTab}）</span>
+              </a>
+            </div>
+          )}
         </div>
       ) : null}
 
@@ -546,6 +573,7 @@ function Pager({
         disabled={page <= 1}
         onClick={() => onPage(page - 1)}
       >
+        <Icon name="arrow-left" size={16} />
         {t.previousPage}
       </button>
       <span>{t.pageStatus(page, total)}</span>
@@ -555,6 +583,7 @@ function Pager({
         onClick={() => onPage(page + 1)}
       >
         {t.nextPage}
+        <Icon name="arrow" size={16} />
       </button>
     </nav>
   );

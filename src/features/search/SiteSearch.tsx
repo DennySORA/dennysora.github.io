@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { PageHead } from '../../components/PageHead.tsx';
-import { Icon } from '../../components/Icon.tsx';
+import { Icon, type IconName } from '../../components/Icon.tsx';
 import { useHydrated } from '../../components/useHydrated.ts';
 import { htmlLang, localeNames, type Locale } from '../../i18n/index.ts';
 import { pageIds } from '../../lib/page-ids.ts';
@@ -14,6 +14,12 @@ import {
   type SiteSearchDocument,
 } from '../../lib/site-search.ts';
 import { searchCopy } from './search-copy.ts';
+
+const kindIcons: Record<SiteSearchDocument['kind'], IconName> = {
+  article: 'markdown',
+  note: 'notebook',
+  page: 'file',
+};
 
 export function SiteSearch({ locale }: { locale: Locale }) {
   const t = searchCopy[locale];
@@ -63,7 +69,15 @@ export function SiteSearch({ locale }: { locale: Locale }) {
   };
   return (
     <div className="container site-search">
-      <PageHead eyebrow="SEARCH" title={t.title}>
+      <PageHead
+        eyebrow="SEARCH"
+        title={t.title}
+        art={{
+          src: '/assets/illustrations/search-telescope-v1.webp',
+          width: 112,
+          height: 112,
+        }}
+      >
         <p className="ln page-intro">{t.intro}</p>
       </PageHead>
       <div id={pageIds.search} className="search-block requires-js">
@@ -88,8 +102,8 @@ export function SiteSearch({ locale }: { locale: Locale }) {
           <label className="sr-only" htmlFor={pageIds.searchInput}>
             {t.title}
           </label>
-          <div className="ln search-field">
-            <Icon name="search" />
+          <div className="ln search-field telescope-prompt">
+            <Icon name="prompt" />
             <input
               ref={input}
               id={pageIds.searchInput}
@@ -106,7 +120,10 @@ export function SiteSearch({ locale }: { locale: Locale }) {
             />
           </div>
           <div className="site-search-controls">
-            <label htmlFor="site-search-kind">{t.filter}</label>
+            <label htmlFor="site-search-kind">
+              <Icon name="list" size={16} />
+              {t.filter}
+            </label>
             <select
               ref={kindSelect}
               id="site-search-kind"
@@ -119,11 +136,17 @@ export function SiteSearch({ locale }: { locale: Locale }) {
                 </option>
               ))}
             </select>
-            <button type="submit" className="button">
+            <button type="submit" className="button button-primary">
+              <Icon name="search" size={16} />
               {t.submit}
             </button>
             {state.q || state.kind !== 'all' ? (
-              <button type="button" className="button" onClick={clear}>
+              <button
+                type="button"
+                className="button button-quiet"
+                onClick={clear}
+              >
+                <Icon name="close" size={16} />
                 {t.clear}
               </button>
             ) : null}
@@ -139,15 +162,26 @@ export function SiteSearch({ locale }: { locale: Locale }) {
             type="button"
             onClick={() => setAttempt((value) => value + 1)}
           >
+            <Icon name="retry" size={16} />
             {t.retry}
           </button>
         ) : null}
-        <section aria-label={t.title} aria-busy={loading}>
+        <section
+          className="telescope-results"
+          aria-label={t.title}
+          aria-busy={loading}
+        >
           {!loading && !failed && results.length === 0 ? (
             <div className="empty-state">
+              <Icon name="search" size={28} />
               <h2>{t.empty}</h2>
               <p>{t.emptyHint}</p>
-              <button type="button" className="button" onClick={clear}>
+              <button
+                type="button"
+                className="button button-quiet"
+                onClick={clear}
+              >
+                <Icon name="close" size={16} />
                 {t.clear}
               </button>
             </div>
@@ -157,6 +191,7 @@ export function SiteSearch({ locale }: { locale: Locale }) {
               ? results.map((result) => (
                   <li key={result.id}>
                     <p className="site-search-meta">
+                      <Icon name={kindIcons[result.kind]} size={14} />
                       {t[result.kind]} ·{' '}
                       <span lang={htmlLang[result.locale]}>
                         {localeNames[result.locale]}
@@ -180,13 +215,21 @@ export function SiteSearch({ locale }: { locale: Locale }) {
           </ul>
         </section>
       </div>
-      <noscript>
-        <p>{t.noJs}</p>
-      </noscript>
+      {/* Shown by the head's noscript style, like the blog's no-JS notice. */}
+      <p className="no-js-only nojs-notice">{t.noJs}</p>
       <nav className="site-search-browse" aria-label={t.title}>
-        <a href={`/${locale}/`}>{t.home}</a>
-        <a href={`/${locale}/blog/`}>{t.blog}</a>
-        <a href={`/${locale}/note/`}>{t.notes}</a>
+        <a href={`/${locale}/`}>
+          <Icon name="markdown" size={16} />
+          {t.home}
+        </a>
+        <a href={`/${locale}/blog/`}>
+          <Icon name="folder" size={16} />
+          {t.blog}
+        </a>
+        <a href={`/${locale}/note/`}>
+          <Icon name="notebook" size={16} />
+          {t.notes}
+        </a>
       </nav>
     </div>
   );

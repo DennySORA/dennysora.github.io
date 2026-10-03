@@ -28,7 +28,7 @@ export default function Root() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="dark" />
-        <meta name="theme-color" content="#0B1020" />
+        <meta name="theme-color" content="#080C12" />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <link rel="icon" href="/assets/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />

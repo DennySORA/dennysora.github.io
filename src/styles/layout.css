@@ -1,24 +1,28 @@
 /*
- * Workbench: a code-editor frame around every page. The document is the only
- * scroller; the title bar, activity bar, explorer and editor head are sticky,
- * and the status line is fixed on wide screens.
+ * Moonlit Vim shell (docs/DESIGN.md §3): tabline, neo-tree explorer, a window
+ * with its winbar, then a lualine-style status line and Vim's command line.
+ * The document is the only scroller; the chrome is sticky, and the status
+ * group is fixed on wide screens.
  */
 .workbench {
   display: grid;
-  grid-template-columns: var(--activity-w) var(--sidebar-w) minmax(0, 1fr);
-  grid-template-rows: var(--title-h) 1fr;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  grid-template-rows: var(--tabline-h) 1fr;
   grid-template-areas:
-    'title title title'
-    'activity sidebar editor';
+    'tabline tabline'
+    'sidebar editor';
   min-height: 100vh;
-  padding-bottom: var(--status-h);
+  padding-bottom: var(--footer-height);
 }
 @media (min-width: 1100px) {
   .workbench[data-explorer-expanded='false'] {
-    grid-template-columns: var(--activity-w) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      'title title'
-      'activity editor';
+      'tabline'
+      'editor';
+  }
+  .workbench[data-explorer-expanded='false'] .tabline-offset {
+    width: auto;
   }
   .workbench[data-explorer-expanded='false']
     .editor
@@ -39,22 +43,73 @@
   );
 }
 
-/* Title bar ---------------------------------------------------------------- */
-.titlebar {
-  grid-area: title;
+/* Shared chrome controls ------------------------------------------------ */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition:
+    background-color var(--motion),
+    color var(--motion);
+}
+.icon-button:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.icon-button:active {
+  background: var(--color-surface-selected);
+}
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 11px;
+  line-height: 1;
+}
+
+/* Tabline --------------------------------------------------------------- */
+.tabline {
+  grid-area: tabline;
   position: sticky;
   top: 0;
   z-index: 30;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 480px) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-4);
-  height: var(--title-h);
-  padding: 0 var(--space-2) 0 var(--space-3);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'offset buffers tools';
+  height: var(--tabline-h);
   border-bottom: 1px solid var(--color-border-decorative);
   background: var(--color-chrome);
   font-family: var(--font-code);
   font-size: 13px;
+}
+/* Over the explorer, as a bufferline offset: its toggle, then the brand. */
+.tabline-offset {
+  grid-area: offset;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: var(--sidebar-w);
+  min-width: 0;
+  padding: 0 var(--space-3) 0 var(--space-1);
+  border-right: 1px solid var(--color-border-decorative);
+  background: var(--color-sidebar);
+}
+.desktop-explorer-toggle {
+  display: inline-flex;
 }
 
 /*
@@ -63,12 +118,14 @@
  * mark optically; the image itself is never cropped, stretched or recoloured.
  */
 .brand {
-  --brand-height: 32px;
+  --brand-height: 30px;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  justify-self: start;
-  min-height: 32px;
+  min-width: 0;
+  min-height: 30px;
+  padding-right: var(--space-1);
+  border-radius: var(--radius-control);
   color: var(--color-text);
   text-decoration: none;
 }
@@ -82,85 +139,162 @@
     calc(var(--brand-height) * -0.4);
 }
 .brand-name {
+  overflow: hidden;
   font-family: var(--font-code);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .brand:hover .brand-name {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  color: var(--color-link);
 }
 
-/* A command-center search entry, centred like an editor's title bar. */
-.command-center {
+/* Buffers: one per area plus the open page; the row scrolls on its own and,
+   as the containing block, also clips the visually hidden tab labels. */
+.buffers {
+  grid-area: buffers;
+  min-width: 0;
+}
+.buffers ul {
+  position: relative;
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+}
+.buffers ul::-webkit-scrollbar {
+  display: none;
+}
+.tab {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  height: 28px;
-  padding: 0 6px 0 10px;
-  border: 1px solid var(--color-border-decorative);
-  border-radius: 6px;
+  gap: 7px;
+  height: 100%;
+  padding: 0 14px 0 12px;
+  border-right: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--motion),
+    color var(--motion);
+}
+a.tab:hover {
   background: var(--color-surface);
+  color: var(--color-text);
+}
+/* The open buffer takes the window's surface and carries the accent marker. */
+.tab[aria-current='page'] {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--color-action-primary);
+}
+/* The area that contains the open page stays lit, without the accent. */
+.tab[aria-current='true'] {
+  color: var(--color-text-secondary);
+}
+.tab .icon {
+  color: var(--color-text-muted);
+}
+.tab[data-area='home'] > .icon:first-child,
+.tab[data-kind='markdown'] > .icon:first-child {
+  color: var(--color-entity-file);
+}
+.tab:is([data-area='library'], [data-area='notes']) > .icon:first-child,
+.tab[data-kind='folder'] > .icon:first-child {
+  color: var(--color-entity-folder);
+}
+.tab[data-area='papers'] > .icon:first-child {
+  color: var(--color-entity-kind);
+}
+.tab[data-kind='search'] > .icon:first-child {
+  color: var(--color-link);
+}
+.tab[data-kind='missing'] > .icon:first-child {
+  color: var(--color-status-danger);
+}
+.tab:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Tools: search prompt, quick links, language, and the narrow-screen tree. */
+.tabline-tools {
+  grid-area: tools;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 var(--space-2);
+}
+.tabline-search {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: clamp(180px, 18vw, 260px);
+  height: 28px;
+  margin-right: var(--space-1);
+  padding: 0 5px 0 10px;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-control);
+  background: var(--color-background);
   color: var(--color-text-muted);
   text-decoration: none;
   transition:
     border-color var(--motion),
     color var(--motion);
 }
-.command-center:hover {
+.tabline-search:hover {
   border-color: var(--color-control-border);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
-.command-text {
+.tabline-search .icon {
+  color: var(--color-link);
+}
+.tabline-search-text {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
-  text-align: center;
+  font-size: 12.5px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-kbd {
-  display: inline-grid;
-  place-items: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border: 1px solid var(--color-border-decorative);
-  border-radius: 4px;
-  background: var(--color-surface-raised);
-  color: var(--color-text-secondary);
-  font-family: var(--font-code);
-  font-size: 11px;
-}
-.titlebar-tools {
+.quick-links ul {
   display: flex;
-  align-items: center;
-  justify-self: end;
   gap: 2px;
+  list-style: none;
 }
-.icon-button {
+.quick-links a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  min-height: 32px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: var(--radius-control);
   color: var(--color-text-secondary);
   transition:
-    background var(--motion),
+    background-color var(--motion),
     color var(--motion);
 }
-.icon-button:hover {
+.quick-links a:hover {
   background: var(--color-surface-raised);
   color: var(--color-text);
+}
+.quick-link-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .menu-button {
   display: none;
 }
 
+/* Language: a native details menu, so it also works without JavaScript. */
 .language-menu {
   position: relative;
 }
@@ -170,12 +304,15 @@ kbd {
   gap: 6px;
   min-height: 30px;
   padding: 0 var(--space-2);
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   color: var(--color-text-secondary);
   font-size: 12.5px;
   cursor: pointer;
   list-style: none;
   white-space: nowrap;
+  transition:
+    background-color var(--motion),
+    color var(--motion);
 }
 .language-menu > summary::-webkit-details-marker {
   display: none;
@@ -198,14 +335,14 @@ kbd {
   position: absolute;
   right: 0;
   top: calc(100% + 6px);
-  min-width: 168px;
+  z-index: 40;
+  min-width: 176px;
   padding: 4px;
   border: 1px solid var(--color-control-border);
-  border-radius: 6px;
-  background: var(--color-surface-raised);
-  box-shadow: 0 8px 24px #0006;
+  border-radius: 8px;
+  background: var(--color-surface-overlay);
+  box-shadow: var(--overlay-shadow);
   list-style: none;
-  z-index: 40;
 }
 .language-menu-list a,
 .language-menu-list .language-unavailable {
@@ -213,17 +350,17 @@ kbd {
   align-items: center;
   min-height: 32px;
   padding: 0 var(--space-3);
-  border-radius: 4px;
+  border-radius: var(--radius-chip);
   color: var(--color-text);
   font-size: 13px;
   text-decoration: none;
 }
 .language-menu-list a:hover {
-  background: var(--color-surface-selected);
+  background: var(--color-surface-raised);
 }
 .language-menu-list a[aria-current] {
   background: var(--color-surface-selected);
-  color: var(--color-link);
+  color: var(--color-text);
   box-shadow: inset 2px 0 0 var(--color-action-primary);
 }
 .language-unavailable {
@@ -231,102 +368,7 @@ kbd {
   cursor: default;
 }
 
-/* Activity bar -------------------------------------------------------------- */
-.activity-column {
-  grid-area: activity;
-  border-right: 1px solid var(--color-border-decorative);
-  background: var(--color-chrome);
-}
-.activitybar {
-  position: sticky;
-  top: var(--title-h);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: calc(100dvh - var(--title-h) - var(--status-h));
-  padding: 4px 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-.activitybar ul {
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-}
-.activitybar a,
-.activitybar button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 62px;
-  padding: 6px 3px;
-  position: relative;
-  flex-direction: column;
-  gap: 5px;
-  text-decoration: none;
-  border: 0;
-  background: transparent;
-  color: var(--color-text-muted);
-  transition: color var(--motion);
-}
-/* Five square cells from the original transparent navigation illustration. */
-.activity-art {
-  display: block;
-  flex: 0 0 28px;
-  width: 28px;
-  height: 28px;
-  background-image: url('/assets/illustrations/navigation-icons-v1.png');
-  background-repeat: no-repeat;
-  background-size: 500% 199.9495713565305%;
-  background-position: 0 50%;
-}
-.activity-art[data-sprite='1'] {
-  background-position-x: 25%;
-}
-.activity-art[data-sprite='2'] {
-  background-position-x: 50%;
-}
-.activity-art[data-sprite='3'] {
-  background-position-x: 75%;
-}
-.activity-art[data-sprite='4'] {
-  background-position-x: 100%;
-}
-.activity-label {
-  font-family: var(--font-code);
-  font-size: 11px;
-  line-height: 1.2;
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-.activity-external {
-  position: absolute;
-  top: 7px;
-  right: 9px;
-  font-size: 11px;
-}
-.activitybar a:hover,
-.activitybar button:hover {
-  color: var(--color-text);
-}
-.activitybar button[aria-expanded='true'] {
-  color: var(--color-text);
-  background: var(--color-surface);
-}
-.activitybar button:active {
-  background: var(--color-surface-selected);
-}
-.activitybar a[aria-current] {
-  color: var(--color-text);
-  box-shadow: inset 2px 0 0 var(--color-action-primary);
-}
-.activitybar a:focus-visible,
-.activitybar button:focus-visible {
-  outline-offset: -3px;
-}
-
-/* Explorer ------------------------------------------------------------------ */
+/* Explorer (neo-tree) ---------------------------------------------------- */
 .sidebar-column {
   grid-area: sidebar;
   min-width: 0;
@@ -335,8 +377,8 @@ kbd {
 }
 .sidebar {
   position: sticky;
-  top: var(--title-h);
-  height: calc(100dvh - var(--title-h) - var(--status-h));
+  top: var(--tabline-h);
+  height: calc(100dvh - var(--tabline-h) - var(--footer-height));
   overflow-y: auto;
   padding-bottom: var(--space-4);
   font-family: var(--font-code);
@@ -346,22 +388,12 @@ kbd {
 .sidebar-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  height: 36px;
-  padding: 0 var(--space-2) 0 20px;
-}
-.sidebar-title {
+  gap: 6px;
+  height: var(--winbar-h);
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
   color: var(--color-text-muted);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.sidebar-collapse {
-  flex-shrink: 0;
-}
-.sidebar-collapse:active {
-  background: var(--color-surface-selected);
+  font-size: 12px;
 }
 .explorer {
   font-family: var(--font-code);
@@ -370,59 +402,70 @@ kbd {
 .explorer-root {
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 26px;
-  padding: 0 8px;
+  gap: 6px;
+  height: 28px;
+  margin-top: var(--space-1);
+  padding: 0 var(--space-3);
   color: var(--color-text);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 12.5px;
+  font-weight: 650;
+}
+.explorer-root .icon {
+  color: var(--color-entity-folder);
 }
 .tree,
 .tree-children {
   list-style: none;
 }
-/* An indent guide runs down each open folder. */
+/* An indent guide runs down each open folder, under its expander. */
 .tree-children {
   background: linear-gradient(
-      var(--color-border-decorative),
-      var(--color-border-decorative)
+      var(--color-border-subtle),
+      var(--color-border-subtle)
     )
-    27px 0 / 1px 100% no-repeat;
+    18px 0 / 1px 100% no-repeat;
 }
 .tree-children .tree-children {
-  background-position: 43px 0;
+  background-position: 34px 0;
 }
 .tree-link {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   min-height: 26px;
-  padding: 0 12px 0 20px;
+  padding: 0 var(--space-3) 0 12px;
   color: var(--color-text-secondary);
   text-decoration: none;
   white-space: nowrap;
+  transition:
+    background-color var(--motion),
+    color var(--motion);
 }
 .tree-children .tree-link {
-  padding-left: 36px;
+  padding-left: 28px;
 }
 .tree-children .tree-children .tree-link {
-  padding-left: 52px;
+  padding-left: 44px;
+}
+.tree-expander {
+  flex: 0 0 12px;
+  width: 12px;
+  color: var(--color-text-muted);
 }
 .tree-link:hover {
-  background: var(--color-surface);
+  background: var(--color-surface-raised);
   color: var(--color-text);
 }
 .tree-link[aria-current='page'] {
   background: var(--color-surface-selected);
   color: var(--color-text);
-  box-shadow: inset 2px 0 0 var(--color-action-primary);
+  box-shadow: inset 2px 0 0 var(--color-link);
 }
 .tree-link[aria-current='true'] {
   color: var(--color-text);
 }
 .tree-link:focus-visible {
-  outline-offset: -3px;
+  outline-offset: -2px;
 }
 .tree-name {
   min-width: 0;
@@ -439,20 +482,25 @@ kbd {
 .tree-link .icon {
   color: var(--color-text-muted);
 }
-.tree-link[data-icon='markdown'] > .icon:first-child {
-  color: var(--color-link);
-}
-.tree-link[data-icon='package'] > .icon:first-child {
+.tree-link[data-kind='markdown'] > .tree-icon {
   color: var(--color-entity-file);
 }
-.tree-link[data-icon='newspaper'] > .icon:first-child {
+.tree-link[data-kind='folder'] > .tree-icon {
   color: var(--color-entity-folder);
 }
-.tree-link[data-icon='shield'] > .icon:first-child {
+.tree-link[data-kind='external'] > .tree-icon {
   color: var(--color-entity-kind);
 }
+.tree-empty {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding-left: 45px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
 
-/* Editor ---------------------------------------------------------------------- */
+/* Window: winbar, then the page ----------------------------------------- */
 .editor {
   grid-area: editor;
   display: flex;
@@ -460,117 +508,76 @@ kbd {
   min-width: 0;
   background: var(--color-background);
 }
-.editor-head {
+.winbar {
   position: sticky;
-  top: var(--title-h);
+  top: var(--tabline-h);
   z-index: 20;
-  background: var(--color-background);
-  font-family: var(--font-code);
-}
-/* The tab row scrolls on its own; as the containing block it also clips the
-   visually hidden labels inside its tabs, which would otherwise widen the page. */
-.tabs ul {
-  position: relative;
-  display: flex;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--color-border-decorative);
-  background: var(--color-tab-inactive);
-  list-style: none;
-  scrollbar-width: none;
-}
-.tabs ul::-webkit-scrollbar {
-  display: none;
-}
-.tab {
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: var(--tabs-h);
-  padding: 0 16px 0 12px;
-  border-right: 1px solid var(--color-border-decorative);
-  color: var(--color-text-muted);
-  font-size: 13px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background var(--motion),
-    color var(--motion);
-}
-a.tab:hover {
-  background: var(--color-sidebar);
-  color: var(--color-text);
-}
-.tab[aria-current='page'] {
-  margin-bottom: -1px;
-  padding-bottom: 1px;
-  background: var(--color-background);
-  color: var(--color-text);
-  box-shadow: inset 0 2px 0 var(--color-action-primary);
-}
-/* The area that contains the open preview stays lit, without the accent. */
-.tab[aria-current='true'] {
-  color: var(--color-text-secondary);
-}
-.tab-preview {
-  font-style: italic;
-}
-.tab .icon {
-  color: var(--color-text-muted);
-}
-.tab[data-area='home'] > .icon:first-child,
-.tab-preview > .icon {
-  color: var(--color-link);
-}
-.tab[data-area='library'] > .icon:first-child,
-.tab[data-area='notes'] > .icon:first-child,
-.tab[data-area='projects'] > .icon:first-child {
-  color: var(--color-entity-folder);
-}
-.tab[data-area='papers'] > .icon:first-child {
-  color: var(--color-entity-folder);
-}
-.tab:focus-visible {
-  outline-offset: -3px;
-}
-.breadcrumbs {
-  display: flex;
-  align-items: center;
-  height: var(--crumbs-h);
+  height: var(--winbar-h);
   padding: 0 var(--space-4);
-  border-bottom: 1px solid var(--color-border-decorative);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-background);
   color: var(--color-text-muted);
+  font-family: var(--font-code);
   font-size: 12.5px;
 }
-.breadcrumbs ol {
+.winbar ol {
   display: flex;
+  align-items: center;
   min-width: 0;
   overflow: hidden;
   list-style: none;
   white-space: nowrap;
 }
-.breadcrumbs li + li::before {
+.winbar li {
+  display: flex;
+  align-items: center;
+}
+.winbar li + li::before {
   content: '›';
   content: '›' / '';
-  margin: 0 7px;
+  margin: 0 8px;
   color: var(--color-gutter);
 }
-.breadcrumbs a {
+.winbar li > :is(a, span) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.winbar a {
   color: var(--color-text-muted);
   text-decoration: none;
 }
-.breadcrumbs a:hover {
+.winbar a:hover {
   color: var(--color-text);
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
-.breadcrumbs [aria-current] {
-  color: var(--color-text-secondary);
+.winbar .icon {
+  color: var(--color-entity-folder);
+}
+.winbar li:first-child .icon {
+  color: var(--color-text-muted);
+}
+.winbar [aria-current] {
+  color: var(--color-text);
+}
+.winbar [data-kind='markdown'] .icon {
+  color: var(--color-entity-file);
+}
+.winbar [data-kind='search'] .icon {
+  color: var(--color-link);
+}
+.winbar [data-kind='missing'] .icon {
+  color: var(--color-status-danger);
 }
 main {
   flex: 1 0 auto;
   padding-top: var(--space-6);
 }
 
-/* Explorer dialog (tablet and phone) ---------------------------------------- */
+/* Explorer dialog (tablet and phone) ------------------------------------- */
 .menu-dialog {
   inset: 0 auto 0 0;
   width: min(340px, calc(100vw - 48px));
@@ -579,8 +586,9 @@ main {
   margin: 0;
   padding: 0 0 var(--space-5);
   border: 0;
-  border-right: 1px solid var(--color-border-decorative);
+  border-right: 1px solid var(--color-control-border);
   background: var(--color-sidebar);
+  box-shadow: var(--overlay-shadow);
   color: var(--color-text);
   font-family: var(--font-code);
 }
@@ -591,134 +599,252 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: var(--title-h);
-  padding: 0 var(--space-2) 0 20px;
+  height: var(--tabline-row, 48px);
+  padding: 0 var(--space-2) 0 var(--space-4);
   border-bottom: 1px solid var(--color-border-decorative);
 }
 .menu-dialog-head h2 {
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 13px;
+  font-weight: 650;
 }
-.menu-dialog .explorer-root {
-  margin-top: var(--space-2);
+.menu-dialog-head h2 .icon {
+  color: var(--color-entity-folder);
 }
 .menu-dialog .tree-link {
   min-height: 44px;
   font-size: 14px;
 }
 .menu-dialog-label {
-  margin: var(--space-5) 20px var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: var(--space-5) var(--space-4) var(--space-2);
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border-decorative);
   color: var(--color-text-muted);
   font-size: 12px;
 }
-.menu-dialog-languages {
+.menu-dialog-languages,
+.menu-dialog-links ul {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  padding: 0 20px;
+  padding: 0 var(--space-4);
   list-style: none;
 }
 .menu-dialog-languages a,
-.menu-dialog-languages .language-unavailable {
+.menu-dialog-languages .language-unavailable,
+.menu-dialog-links a {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   min-height: 44px;
   padding: 0 var(--space-3);
   border: 1px solid var(--color-control-border);
-  border-radius: 4px;
+  border-radius: var(--radius-control);
   color: var(--color-text);
   font-size: 14px;
   text-decoration: none;
 }
 .menu-dialog-languages a[aria-current] {
   border-color: var(--color-action-primary);
-  color: var(--color-link);
+  background: var(--color-surface-selected);
 }
 .menu-dialog-languages .language-unavailable {
   border-style: dashed;
   color: var(--color-text-muted);
 }
+.menu-dialog-links {
+  margin-top: var(--space-3);
+}
+.menu-dialog-links .quick-link-text {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+}
 
-/* Status line ------------------------------------------------------------- */
-.statusbar {
+/* Status line and command line ------------------------------------------- */
+.status-group {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 30;
+}
+.statusbar {
   display: flex;
   align-items: stretch;
   height: var(--status-h);
   border-top: 1px solid var(--color-border-decorative);
-  background: var(--color-chrome);
+  background: var(--color-surface);
   color: var(--color-text-secondary);
   font-family: var(--font-code);
   font-size: 12px;
   line-height: 1;
 }
-.status-mode {
+.status-mode,
+.status-position {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 12px;
-  background: var(--color-action-primary);
+  background: var(--mode-normal);
   color: var(--color-action-ink);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
-.status-mode[data-mode='INSERT'] {
-  background: var(--color-status-success);
+.status-group[data-mode='INSERT'] :is(.status-mode, .status-position) {
+  background: var(--mode-insert);
+}
+.status-group[data-mode='VISUAL'] :is(.status-mode, .status-position) {
+  background: var(--mode-visual);
 }
 .status-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 0 10px;
   color: inherit;
   text-decoration: none;
   white-space: nowrap;
 }
-a.status-item:hover {
+.status-branch {
+  padding-left: 18px;
   background: var(--color-surface-raised);
   color: var(--color-text);
 }
+.status-branch .icon {
+  color: var(--color-entity-kind);
+}
+a.status-item:hover {
+  background: var(--color-surface-overlay);
+  color: var(--color-text);
+}
 a.status-item:focus-visible {
-  outline-offset: -3px;
+  outline-offset: -2px;
+}
+/* Powerline separators: each segment's own fill, cut into an arrow. */
+.status-mode::after,
+.status-branch::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -9px;
+  z-index: 1;
+  width: 9px;
+  height: 100%;
+  background: inherit;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.status-position::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -9px;
+  width: 9px;
+  height: 100%;
+  background: inherit;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
 }
 .status-file {
   min-width: 0;
+  padding-left: 18px;
+  color: var(--color-text-secondary);
+}
+.status-file-name {
+  min-width: 0;
   overflow: hidden;
-  color: var(--color-text-muted);
   text-overflow: ellipsis;
+}
+.status-file[data-kind='markdown'] .icon,
+.status-type .icon {
+  color: var(--color-entity-file);
+}
+.status-file[data-kind='folder'] .icon {
+  color: var(--color-entity-folder);
+}
+.status-file[data-kind='search'] .icon {
+  color: var(--color-link);
+}
+.status-file[data-kind='missing'] .icon {
+  color: var(--color-status-danger);
 }
 .status-spacer {
   flex: 1;
 }
-.status-position {
-  min-width: 52px;
-  justify-content: flex-end;
+.status-optional + .status-optional::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 0;
+  width: 1px;
+  background: var(--color-border-decorative);
+}
+/* After .status-item, so the segment keeps its dark ink on the mode fill;
+   the margin leaves room for its arrow. */
+.statusbar .status-position {
+  justify-content: center;
+  min-width: 56px;
+  margin-left: 9px;
+  color: var(--color-action-ink);
+}
+.cmdline {
+  display: flex;
+  align-items: center;
+  height: var(--cmdline-h);
+  padding: 0 12px;
+  overflow: hidden;
+  background: var(--color-chrome);
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.cmdline-file {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cmdline-mode {
   color: var(--color-text);
+  font-weight: 700;
 }
 
 @media (max-width: 1279px) {
-  .titlebar {
-    grid-template-columns: minmax(0, 1fr) minmax(200px, 360px) minmax(0, 1fr);
+  .tabline-search {
+    width: auto;
+  }
+  .tabline-search-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 @media (max-width: 1099px) {
   .workbench {
-    grid-template-columns: var(--activity-w) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      'title title'
-      'activity editor';
+      'tabline'
+      'editor';
   }
   .sidebar-column,
   .desktop-explorer-toggle {
     display: none;
+  }
+  .tabline-offset {
+    width: auto;
+    padding-left: var(--space-3);
   }
   .menu-button {
     display: inline-flex;
@@ -726,22 +852,27 @@ a.status-item:focus-visible {
 }
 @media (max-width: 767px) {
   .workbench {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: var(--title-h) 1fr auto;
+    grid-template-rows: var(--tabline-h) 1fr auto;
     grid-template-areas:
-      'title'
+      'tabline'
       'editor'
       'status';
     padding-bottom: 0;
   }
-  .activity-column,
-  .breadcrumbs {
-    display: none;
+  /* Two rows: brand and tools, then the buffers. */
+  .tabline {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: var(--tabline-row) var(--buffers-row);
+    grid-template-areas:
+      'offset tools'
+      'buffers buffers';
   }
-  .titlebar {
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: var(--space-1);
-    padding: 0 var(--space-1) 0 var(--space-3);
+  .tabline-offset {
+    border-right: 0;
+    background: transparent;
+  }
+  .buffers {
+    border-top: 1px solid var(--color-border-subtle);
   }
   .brand {
     --brand-height: 40px;
@@ -750,28 +881,26 @@ a.status-item:focus-visible {
   .brand-name {
     font-size: 15px;
   }
-  .command-center {
+  .tabline-tools {
+    gap: 0;
+    padding-right: var(--space-1);
+  }
+  .tabline-search {
     justify-content: center;
     width: 44px;
     height: 44px;
+    margin: 0;
     padding: 0;
     border: 0;
     background: transparent;
-    color: var(--color-text-secondary);
   }
-  .command-center .icon {
+  .tabline-search .icon {
     width: 20px;
     height: 20px;
   }
-  .command-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-  }
-  .command-center kbd {
+  .tabline-search kbd,
+  .quick-links,
+  .winbar {
     display: none;
   }
   .icon-button {
@@ -792,7 +921,7 @@ a.status-item:focus-visible {
     width: 1px;
     height: 1px;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
     white-space: nowrap;
   }
   .header-language .language-menu-list a,
@@ -806,11 +935,32 @@ a.status-item:focus-visible {
   main {
     padding-top: var(--space-5);
   }
-  .statusbar {
+  .status-group {
     grid-area: status;
     position: static;
   }
-  .status-optional {
+  .status-optional,
+  .cmdline {
     display: none;
+  }
+}
+
+/* Forced colours: keep the user's palette; current items keep a real outline. */
+@media (forced-colors: active) {
+  .status-mode::after,
+  .status-branch::after,
+  .status-position::before {
+    display: none;
+  }
+  .button-primary,
+  .readme-logo {
+    background-image: none;
+    box-shadow: none;
+  }
+  .tab[aria-current='page'],
+  .tree-link[aria-current='page'],
+  .language-menu-list a[aria-current] {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
   }
 }

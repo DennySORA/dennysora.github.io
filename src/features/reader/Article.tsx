@@ -3,6 +3,7 @@ import { taxonomyMaps } from '../../components/ArticleListItem.tsx';
 import { EndOfBuffer } from '../../components/Buffer.tsx';
 import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
+import { linkIcon } from '../../components/link-icon.ts';
 import { Prose } from '../../components/Prose.tsx';
 import {
   InlineTableOfContents,
@@ -69,9 +70,13 @@ export function Article({
                 </h1>
                 <p className="ln article-lede">{edition.summary}</p>
                 <p className="ln article-byline" data-pagefind-ignore="index">
-                  <span>{post.author}</span>
+                  <span>
+                    <Icon name="user" size={14} />
+                    {post.author}
+                  </span>
                   <span aria-hidden="true">·</span>
                   <span>
+                    <Icon name="clock" size={14} />
                     <span className="sr-only">{t.published} </span>
                     <time dateTime={post.publishedAt}>
                       {formatDate(post.publishedAt, locale)}
@@ -89,7 +94,10 @@ export function Article({
                     </>
                   ) : null}
                   <span aria-hidden="true">·</span>
-                  <span>{t.readingTime(body.minutes)}</span>
+                  <span>
+                    <Icon name="book" size={14} />
+                    {t.readingTime(body.minutes)}
+                  </span>
                   <span aria-hidden="true">·</span>
                   <span>
                     {edition.translationState === 'original'
@@ -142,14 +150,16 @@ export function Article({
 
             <aside className="source-note" aria-labelledby="source-title">
               <h2 id="source-title" className="source-title">
+                <Icon name="info" size={16} />
                 {t.provenanceTitle}
               </h2>
               {post.source.kind === 'profile-adaptation' ? (
                 <p>{t.adapted}</p>
               ) : null}
               <a href={post.source.url}>
+                <Icon name={linkIcon(post.source.url)} size={15} />
                 {t.viewSource}
-                <Icon name="external" size={15} />
+                <Icon name="arrow-up-right" size={14} />
                 <span className="sr-only">（{t.newTab}）</span>
               </a>
             </aside>
@@ -180,7 +190,10 @@ export function Article({
 
             {related.length ? (
               <section className="related" aria-labelledby="related-title">
-                <h2 id="related-title">{t.relatedTitle}</h2>
+                <h2 id="related-title">
+                  <Icon name="list" size={18} />
+                  {t.relatedTitle}
+                </h2>
                 <ul className="related-list">
                   {related.map((item) => (
                     <li key={item.id}>

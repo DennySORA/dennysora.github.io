@@ -117,6 +117,16 @@ export function filePath(route: RouteDescriptor): string {
   return folders.includes(route.kind) ? `${path}/` : path;
 }
 
+/** What the open page is in the workspace, which picks its icon and filetype. */
+export type FileKind = 'markdown' | 'folder' | 'search' | 'missing';
+
+export function fileKind(route: RouteDescriptor): FileKind {
+  if (folders.includes(route.kind)) return 'folder';
+  if (route.kind === 'search') return 'search';
+  if (route.kind === 'not-found') return 'missing';
+  return 'markdown';
+}
+
 /** Section landing pages are the current page; articles and tags sit inside one. */
 export function areaState(
   route: RouteDescriptor,

@@ -116,7 +116,7 @@ test('the renderer’s figures, formulas, code, tables and notes render in the r
           .locator('.tok-keyword')
           .first()
           .evaluate((element) => getComputedStyle(element).color),
-      ).toBe('rgb(192, 153, 255)');
+      ).toBe('rgb(204, 175, 255)');
       await expect(page.locator('.prose th[scope="col"]')).toHaveCount(4);
       await expect(page.locator('.prose .footnotes li')).toHaveCount(1);
       await expect(

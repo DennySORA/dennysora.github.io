@@ -1,0 +1,124 @@
+{
+  "checkedAt": "2026-10-04",
+  "note": "Every file in assets/illustrations/ that ships with the site. The build copies the directory; scripts/check-artifact.ts requires each listed file and its SHA-256. Style and generation rules: docs/DESIGN.md §7.",
+  "style": "Constellation line art: flat two-tone shapes, thin lines joining round nodes, a few four-point sparkles; palette limited to #526780, #8ab8f5, #b2d5ff, #e6edf5, #ccafff, #83d8cf and one moon-gold accent #edca8b; transparent background; no text, frame or plate.",
+  "assets": [
+    {
+      "path": "assets/illustrations/collection-network-v1.webp",
+      "purpose": "Feature icon for the Networks & P2P note collection (notes directory and the network folder page).",
+      "display": "88 px square",
+      "width": 192,
+      "height": 192,
+      "format": "webp",
+      "bytes": 16780,
+      "sha256": "117c9a26ffaf220c4c67dde07808484f7b02cd93e71cfa0d76189d5fb7f58d3c",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; composited over #0c1118, white and magenta with no fringe, halo or plate.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.160.0, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-04",
+        "brief": "Mesh of peer nodes as rounded hexagonal tiles; the central node wrapped in concentric translucent rings for layered privacy; one moon-gold node.",
+        "briefSha256": "8158dca3513968b94b956dedc98501ade7ca805354cd60476f1a483b8adaf21d"
+      },
+      "processing": "1254x1254 PNG cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha to 192x192, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/collection-medicine-v1.webp",
+      "purpose": "Feature icon for the Medicine note collection (notes directory and the medical folder page).",
+      "display": "88 px square",
+      "width": 192,
+      "height": 192,
+      "format": "webp",
+      "bytes": 14464,
+      "sha256": "71dd5d886c74157ff1415afc167a04674110ff3c213ccfbc044c043e8bff84d6",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; composited over #0c1118, white and magenta with no fringe, halo or plate.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.160.0, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-04",
+        "brief": "Two-tone capsule across a hexagonal molecule outline with node vertices and a small open book behind; one moon-gold node; no syringe, blood or medical cross.",
+        "briefSha256": "70d6166f07145f9f4054bc3cefeb74b483cdd1cc777c15de8016fa5bd26d7cc3"
+      },
+      "processing": "1254x1254 PNG cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha to 192x192, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/search-telescope-v1.webp",
+      "purpose": "Feature icon for site-wide search (search page header).",
+      "display": "112 px square",
+      "width": 240,
+      "height": 240,
+      "format": "webp",
+      "bytes": 16254,
+      "sha256": "f473dc64209a26bc2d687079e6f6baff1b68310daadaf15932eb77eefb748539",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; composited over #0c1118, white and magenta with no fringe, halo or plate.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.160.0, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-04",
+        "brief": "Refracting telescope on a small tripod aimed at a small constellation, one moon-gold star highlighted as the found target.",
+        "briefSha256": "83e27ab7a3a03576bd22d716a6cf809b4b76a600ec7a7df20729a4d16cea2bf0"
+      },
+      "processing": "Codex delivered 1254x1254 and scaled it uniformly to 1024x1024 with sips; cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha to 240x240, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/empty-blog-v1.webp",
+      "purpose": "Empty-state illustration for a blog with no published posts.",
+      "display": "up to 320 px wide",
+      "width": 640,
+      "height": 477,
+      "format": "webp",
+      "bytes": 43710,
+      "sha256": "568f0a8187125439f560bcaea94a47c1d37f4b51f8a508590f4877c1f88f8b8e",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; composited over #0c1118, white and magenta with no fringe, halo or plate. RGB under fully transparent pixels carried a soft glow colour; it is invisible when composited and was cleaned by the premultiplied resample and WebP encoding.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.160.0, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-04",
+        "brief": "Open notebook with blank pages, a block cursor on the first line, a fountain pen beside it and a moon-gold crescent rising behind, with a few constellation nodes.",
+        "briefSha256": "060895583f0a7b382c45041cd80f50dd170b35b8192abcfb0080a1853c272da0"
+      },
+      "processing": "1536x1024 PNG cropped to the alpha>8 subject plus 6% margin, Lanczos resample in premultiplied alpha to 640 px wide, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/not-found-v1.webp",
+      "purpose": "Illustration for the page-not-found (404) state.",
+      "display": "up to 360 px wide",
+      "width": 720,
+      "height": 246,
+      "format": "webp",
+      "bytes": 21396,
+      "sha256": "f371e6b4aa953396077afe2989af5c9b4d02d9ca5fa423820a66982cc3f4f4a3",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; composited over #0c1118, white and magenta with no fringe, halo or plate.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.160.0, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-04",
+        "brief": "Constellation path that breaks off in the middle with two loose dashed ends, a small drifting satellite and a moon-gold crescent; calm, no red or warning symbols.",
+        "briefSha256": "ac6d0482d0e36605722632fd059ce9f7ff9602ced86a7a6f9f9defdf500d5597"
+      },
+      "processing": "1536x1024 PNG cropped to the alpha>8 subject plus 6% margin, Lanczos resample in premultiplied alpha to 720 px wide, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/medical-notes.webp",
+      "purpose": "Cover of the medical folder page and the analgesics note.",
+      "display": "full content width, 1200:593",
+      "width": 1200,
+      "height": 593,
+      "format": "webp",
+      "bytes": 22868,
+      "sha256": "1a45af9a6834e35ff94c41050b21aa54a8aa4c2c33a96a2d488932714711980f",
+      "alpha": false,
+      "transparency": "Not applicable: an opaque cover image on its own dark ground.",
+      "source": {
+        "provider": "Pre-existing repository illustration added in c90e793 (2026-09-30); generator not recorded",
+        "model": "unknown"
+      },
+      "processing": "Unchanged."
+    }
+  ]
+}

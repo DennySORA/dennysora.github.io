@@ -24,7 +24,7 @@ test('the title bar uses the real same-origin logo and keeps a usable brand link
   page,
 }) => {
   await page.goto('/zh-hant/blog/');
-  const logo = page.locator('.titlebar .brand-mark');
+  const logo = page.locator('.tabline .brand-mark');
   await expect(logo).toHaveAttribute('src', '/assets/logo.png');
   expect(
     await logo.evaluate((image: HTMLImageElement) => ({
@@ -37,14 +37,14 @@ test('the title bar uses the real same-origin logo and keeps a usable brand link
     natural: [720, 392],
     fit: 'contain',
     filter: 'none',
-    height: 32,
+    height: 30,
   });
   const brand = page.getByRole('link', { name: 'DennySORA 首頁' }).first();
   await expect(brand).toHaveAttribute('href', '/zh-hant/');
   await page.route('**/assets/logo.png', (route) => route.abort());
   await page.reload();
-  await expect(page.locator('.titlebar .brand-name')).toHaveText('DennySORA');
-  await expect(page.locator('.titlebar .brand-name')).toBeVisible();
+  await expect(page.locator('.tabline .brand-name')).toHaveText('DennySORA');
+  await expect(page.locator('.tabline .brand-name')).toBeVisible();
   await brand.click();
   await expect(page).toHaveURL('/zh-hant/');
   // The README shows the same figure large, sharp at 1x and 2x, unfiltered.
@@ -89,7 +89,7 @@ test('first visits are dark even when the OS prefers light, with or without Java
         })),
         `${path} js=${javaScriptEnabled}`,
       ).toEqual({
-        background: 'rgb(11, 16, 32)',
+        background: 'rgb(12, 17, 24)',
         scheme: 'dark',
         theme: 'dark',
       });
@@ -229,11 +229,24 @@ test('Paper Daily is its own site: every entry links straight to it and the old 
   for (const region of [
     page.getByRole('navigation', { name: 'Main navigation' }),
     page.getByRole('navigation', { name: 'Explorer' }),
-    page.getByRole('navigation', { name: 'Quick links' }),
   ])
     await expect(
       region.getByRole('link', { name: /paper-daily|Paper Daily/ }),
     ).toHaveAttribute('href', 'https://paper.dennysora.me/');
+  await expect(
+    page.locator('.dashboard').getByRole('link', { name: /Paper Daily/ }),
+  ).toHaveAttribute('href', 'https://paper.dennysora.me/');
+  // Quick links hold the owner's own channels, each named by its visible label.
+  const quick = page.getByRole('navigation', { name: 'Quick links' });
+  await expect(quick.getByRole('link')).toHaveCount(2);
+  await expect(quick.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
+    'href',
+    'https://github.com/DennySORA',
+  );
+  await expect(quick.getByRole('link', { name: 'Email' })).toHaveAttribute(
+    'href',
+    'mailto:dennysora.main@gmail.com',
+  );
   expect(external).toEqual([]);
   // The former in-site page is a forwarding stub, not a page of its own.
   for (const locale of ['zh-hant', 'en', 'ja']) {
@@ -383,7 +396,6 @@ test('desktop Explorer remains visible and usable without JavaScript', async ({
   await page.goto(`${origin}/en/note/`);
   await expect(page.locator('#desktop-explorer')).toBeVisible();
   await expect(page.locator('.desktop-explorer-toggle')).toBeHidden();
-  await expect(page.locator('.sidebar-collapse')).toBeHidden();
   await page
     .locator('#desktop-explorer')
     .getByRole('link', { name: /analgesics\.md/ })

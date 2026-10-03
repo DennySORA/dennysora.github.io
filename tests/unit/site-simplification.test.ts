@@ -1,9 +1,9 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import type { LoaderFunctionArgs } from 'react-router';
+import { MemoryRouter, type LoaderFunctionArgs } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { loader, meta } from '../../src/app/page.tsx';
-import { ActivityBar } from '../../src/components/ActivityBar.tsx';
+import { TabLine } from '../../src/components/TabLine.tsx';
 import { Readme } from '../../src/features/home/Readme.tsx';
 import { locales } from '../../src/i18n/index.ts';
 import { publishedPaths } from '../../src/lib/content.server.ts';
@@ -33,30 +33,48 @@ describe('requested website simplification', () => {
         'papers',
       ]);
     });
-    it(`${locale} exposes a visible label matching every quick link's accessible name`, () => {
+    it(`${locale} names every quick link with its visible label and draws chrome icons as vectors`, () => {
+      // The language menu reads the location, so it renders inside a router.
       const html = renderToStaticMarkup(
-        createElement(ActivityBar, {
-          locale,
-          route: { kind: 'home', locale },
-          explorerId: 'desktop-explorer',
-          explorerExpanded: true,
-          explorerLabel: 'Explorer',
-          explorerToggleRef: { current: null },
-          onToggleExplorer: () => {},
-        }),
+        createElement(
+          MemoryRouter,
+          { initialEntries: [`/${locale}/`] },
+          createElement(TabLine, {
+            locale,
+            route: { kind: 'home', locale },
+            files: { posts: [] },
+            languageLinks: locales.map((target) => ({
+              locale: target,
+              href: `/${target}/`,
+            })),
+            explorer: {
+              id: 'desktop-explorer',
+              expanded: true,
+              label: 'Explorer',
+              onToggle: () => {},
+            },
+          }),
+        ),
       );
       const links = [
         ...html.matchAll(/<a[^>]*aria-label="([^"]+)"[^>]*>(.*?)<\/a>/g),
-      ];
-      expect(links).toHaveLength(7);
+      ].filter((link) => link[2]?.includes('quick-link-text'));
+      // Two quick links in the tabline and the same two in the explorer dialog.
+      expect(links).toHaveLength(4);
       for (const link of links) {
         const caption = link[2]?.match(
-          /class="activity-label"[^>]*>([^<]+)</,
+          /class="quick-link-text"[^>]*>([^<]+)</,
         )?.[1];
         expect(caption).toBeTruthy();
         expect(link[1]).toContain(caption);
       }
-      expect([...html.matchAll(/class="activity-art"/g)]).toHaveLength(5);
+      const buffers = html.match(/<nav class="buffers"[\s\S]*?<\/nav>/)?.[0];
+      expect(
+        [...(buffers ?? '').matchAll(/class="tab-name">([^<]+)</g)].map(
+          (match) => match[1],
+        ),
+      ).toEqual(['README.md', 'blog', 'note', 'paper-daily']);
+      expect(html).not.toMatch(/navigation-icons|activity-art|<img[^>]*sprite/);
     });
     it(`${locale} retains the core résumé, correct identity and repository evidence`, () => {
       const data = loader({

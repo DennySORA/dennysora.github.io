@@ -22,7 +22,7 @@ export function contrastOf(
       return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     };
     let node: Element | null = element;
-    let background = parse('rgb(11, 16, 32)');
+    let background = parse('rgb(12, 17, 24)');
     while (node) {
       const colour = parse(getComputedStyle(node).backgroundColor);
       if (colour.alpha >= 1) {

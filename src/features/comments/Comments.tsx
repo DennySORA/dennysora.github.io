@@ -27,7 +27,10 @@ export function Comments({
       id={pageIds.comments}
       aria-labelledby={pageIds.commentsTitle}
     >
-      <h2 id={pageIds.commentsTitle}>{t.commentsTitle}</h2>
+      <h2 id={pageIds.commentsTitle}>
+        <Icon name="mail" size={20} />
+        {t.commentsTitle}
+      </h2>
       <p className="comments-intro">{t.commentsIntro}</p>
       {view.kind === 'unconfigured' ? (
         <div className="comments-panel" data-state="unconfigured">
