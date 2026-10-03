@@ -1,0 +1,26 @@
+[
+  {
+    "id": "p2p-downloader",
+    "source": "P2P_Downloader_Core_Architecture_v2_3.zh-TW.html",
+    "sha256": "0fcf3836d903a4ce0a072ef09de7be133c7ac3de58669d0ce8ae8f7b63f7673c",
+    "sourceBytes": 459580,
+    "headings": 35,
+    "appendices": 25,
+    "externalLinks": 17,
+    "sourceDate": "2026-10-03",
+    "edition": "zh-hant",
+    "notes": "保留原始附錄文字及外部來源連結；頁面外框與樣式改用本站，互動改為站內離線漸進增強。原稿驗證紀錄不代表本站重新驗證。"
+  },
+  {
+    "id": "p2p-privacy",
+    "source": "p2p-privacy-research(1).html",
+    "sha256": "f2936e861b8cc07c255d99de5dbc7a2cb03b1c7439a95258335a4c36c502ff25",
+    "sourceBytes": 212127,
+    "headings": 87,
+    "appendices": 64,
+    "externalLinks": 24,
+    "sourceDate": "2026-10-03",
+    "edition": "zh-hant",
+    "notes": "保留原始附錄文字及外部來源連結；頁面外框與樣式改用本站，互動改為站內離線漸進增強。原稿驗證紀錄不代表本站重新驗證。"
+  }
+]

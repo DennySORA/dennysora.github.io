@@ -1,5 +1,10 @@
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import type { RouteDescriptor } from '../lib/route-manifest.ts';
+import {
+  networkCopy,
+  networkNoteIds,
+  networkNotes,
+} from '../lib/network-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
@@ -111,6 +116,32 @@ export function Explorer({
             onNavigate={onNavigate}
           />
           <ul className="tree-children">
+            <li>
+              <TreeLink
+                href={`/${locale}/note/network/`}
+                icon="folder"
+                name={networkCopy[locale].title}
+                note={{ text: networkCopy[locale].title, visible: false }}
+                current={page(route.kind === 'network')}
+                onNavigate={onNavigate}
+              />
+              <ul className="tree-children">
+                {networkNoteIds.map((id) => (
+                  <li key={id}>
+                    <TreeLink
+                      href={`/zh-hant/note/network/${id}/`}
+                      icon="markdown"
+                      name={`${id}.md`}
+                      note={{ text: networkNotes[id].title, visible: false }}
+                      current={page(
+                        route.kind === 'network-note' && route.noteId === id,
+                      )}
+                      onNavigate={onNavigate}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </li>
             <li>
               <TreeLink
                 href={`/${locale}/note/medical/`}

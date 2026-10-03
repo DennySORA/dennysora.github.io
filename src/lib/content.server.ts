@@ -1,3 +1,4 @@
+import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
@@ -237,6 +238,7 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'library', locale },
       { kind: 'notes', locale },
       { kind: 'medical', locale },
+      { kind: 'network', locale },
       { kind: 'tags', locale },
       { kind: 'research', locale },
       { kind: 'privacy', locale },
@@ -251,6 +253,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'project', locale, projectId: project.id });
   }
   routes.push({ kind: 'medical-note', locale: 'zh-hant' });
+  for (const noteId of networkNoteIds)
+    routes.push({ kind: 'network-note', locale: 'zh-hant', noteId });
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
@@ -358,5 +362,18 @@ export function loadMedicalNote(): string {
     )
   )
     throw new Error('Executable markup in medical note');
+  return html;
+}
+
+/** Only reviewed, repository-owned static fragments; never accepts a visitor path. */
+export function loadNetworkNote(id: NetworkNoteId): string {
+  if (!networkNoteIds.includes(id)) throw new Error('Unknown network note');
+  const html = readFileSync(join(contentRoot, `notes/${id}.html`), 'utf8');
+  if (
+    /<(?:script|iframe|object|embed|form|style|link)\b|\son[a-z]+\s*=|javascript:|\ssrc\s*=/i.test(
+      html,
+    )
+  )
+    throw new Error('Executable markup in network note');
   return html;
 }

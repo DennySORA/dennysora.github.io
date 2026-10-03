@@ -1,3 +1,4 @@
+import { hasRawAsset } from '../src/lib/asset-policy.ts';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, extname, resolve, relative } from 'node:path';
@@ -33,7 +34,7 @@ for (const file of files) {
     failures.push(`Forbidden artifact: ${name}`);
   if (
     /\.(?:html|js|css|xml|json)$/.test(name) &&
-    readFileSync(file, 'utf8').includes('raw.githubusercontent.com')
+    hasRawAsset(readFileSync(file, 'utf8'), extname(file))
   )
     failures.push(`Hot-linked GitHub raw asset in ${name}`);
   if (extname(file) !== '.html') continue;

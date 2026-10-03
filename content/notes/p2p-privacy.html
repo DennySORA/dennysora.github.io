@@ -1,0 +1,5974 @@
+<header class="p2p-hero" id="top">
+  <span class="p2p-eyebrow"
+    >NETWORK PRIVACY / FORENSICS / TRAFFIC ANALYSIS</span
+  >
+  <h1 id="network-title" class="ln">
+    <span class="md-mark" aria-hidden="true"># </span>P2P
+    匿名性：數位調查與端對端流量關聯
+  </h1>
+  <p class="p2p-hero-sub">
+    從「不洩漏住宅 IP」走向「活動不容易被連起來」。<br />一份由總覽到原理，再到防禦架構與驗證方法的研究重整。
+  </p>
+  <div class="p2p-hero-thesis">看不見真實 IP，不代表無法建立關聯。</div>
+  <div class="p2p-meta">
+    <span>底本版本 2026-08</span><span>查閱／審閱 2026-10-03</span
+    ><span>主文＋研究註記＋原稿對照</span>
+  </div>
+  <div class="p2p-stats">
+    <div class="p2p-stat"><b>2</b><span>核心安全邊界</span></div>
+    <div class="p2p-stat"><b>7</b><span>匿名性質</span></div>
+    <div class="p2p-stat"><b>12</b><span>重整主題</span></div>
+    <div class="p2p-stat"><b>63</b><span>原文章節保留</span></div>
+  </div>
+</header>
+<aside class="p2p-import-note">
+  <strong>閱讀範圍與來源版本</strong>
+  <p>
+    以下依提供的文件整理，保留原稿的版本日期、研究假設、限制與參考資料。原稿所載「已查證／通過測試」是原文件的交付記錄，並非本站重新進行實網或產品驗證。所有互動僅為本機數學或規則示例，不連線、不探測、不下載
+    P2P 資料。
+  </p>
+  <noscript
+    ><p>
+      JavaScript
+      未啟用：全文、表格、來源及折疊附錄仍可閱讀；試算顯示初始示例，控制項不會重新計算。
+    </p></noscript
+  >
+</aside>
+<details class="toc-inline">
+  <summary>本文目錄</summary>
+  <label for="note-section-search"
+    >搜尋本文章節<input
+      id="note-section-search"
+      type="search"
+      placeholder="章節、術語或內文"
+  /></label>
+  <p id="note-search-count" role="status"></p>
+  <nav aria-label="本文目錄">
+    <ol>
+      <li><a href="#chapter-1">先看全貌：你要切斷哪一種關聯？</a></li>
+      <li><a href="#chapter-2">匿名不是開關：七種目標與觀察者</a></li>
+      <li><a href="#chapter-3">BitTorrent 在哪些地方留下可觀察資料？</a></li>
+      <li><a href="#chapter-4">從網路線索到身分歸因：中間還差什麼？</a></li>
+      <li><a href="#chapter-5">第一道可驗收邊界：Fail-Closed 網路隔離</a></li>
+      <li>
+        <a href="#chapter-6">VPN、Seedbox、Tor、I2P：不要排成單一排行榜</a>
+      </li>
+      <li><a href="#chapter-7">Mullvad 與 DAITA：六種機制，六種不同意義</a></li>
+      <li><a href="#chapter-8">端對端流量關聯：不看內容，也能比形狀</a></li>
+      <li><a href="#chapter-9">防禦技術：改變什麼，又付出什麼？</a></li>
+      <li><a href="#chapter-10">原文研究構想：有界延遲的多流混合網路</a></li>
+      <li><a href="#chapter-11">如何驗證：隔離測試與匿名研究是兩套實驗</a></li>
+      <li>
+        <a href="#chapter-12">最後判斷：保留什麼、修正什麼、下一步驗證什麼</a>
+      </li>
+      <li><a href="#chapter-13">資料來源與查證範圍</a></li>
+      <li><a href="#chapter-14">術語速查</a></li>
+      <li><a href="#chapter-15">原文章節對照與全文</a></li>
+    </ol>
+  </nav>
+</details>
+<div class="p2p-method">
+  <div class="p2p-badges">
+    <span class="p2p-badge p2p-source">原文重整</span
+    ><span class="p2p-badge p2p-verified">一手資料查證</span
+    ><span class="p2p-badge p2p-review">審閱補註／研究提案</span>
+  </div>
+  <p>
+    閱讀方式：先看 01–02
+    章掌握全貌；想理解技術再往下讀。主文合併重複論述，但保留原文術語、研究問題及
+    63 節對照。新增的推導、限制與建議均另行標示；底本全文可在附錄 C 展開。
+  </p>
+  <p>
+    本文件討論合法資料交換與有授權的隱私研究。所有圖示為概念重繪；本次沒有執行網路測試或產生產品匿名性分數。
+  </p>
+</div>
+<section class="p2p-chapter" id="overview">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">01</span>
+    <div>
+      <p class="p2p-eyebrow">OVERVIEW · 兩條不同的安全邊界</p>
+      <h2 class="ln" id="chapter-1">
+        <span class="md-mark" aria-hidden="true">## </span
+        >先看全貌：你要切斷哪一種關聯？
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      這份報告真正討論的，不只是「開 VPN 是否有用」，而是：<strong
+        >別人能觀察到什麼、能把哪些事件連起來，以及最後能否把活動歸到一個人身上。</strong
+      >
+      原文的 63
+      節涵蓋協定、系統隔離、數位調查與匿名通訊研究；本版先把它們放回同一張問題地圖。
+    </p>
+    <div class="p2p-grid p2p-two">
+      <div class="p2p-card p2p-emphasis">
+        <span class="p2p-eyebrow">LAYER A / 洩漏防護</span>
+        <h3 class="ln">住宅 IP 有沒有直接出去？</h3>
+        <p>關心的是 P2P 封包走哪張介面、VPN 中斷後是否改走實體網路。</p>
+        <div class="p2p-formula p2p-small">P2P → VPN；VPN 中斷 → 停止對外</div>
+        <p class="p2p-muted">工具：介面綁定、防火牆、Network Namespace。</p>
+      </div>
+      <div class="p2p-card">
+        <span class="p2p-eyebrow">LAYER B / 關聯防護</span>
+        <h3 class="ln">不同活動會不會被認出是同一人？</h3>
+        <p>
+          即使出口 IP 已被替換，時間、流量形狀、帳號與裝置證據仍可能形成關聯。
+        </p>
+        <div class="p2p-formula p2p-small">
+          活動 + 時間 + 中繼資料 → 同一操作者？
+        </div>
+        <p class="p2p-muted">
+          研究：流量整形、混合、掩護流量、跨層不可連結性。
+        </p>
+      </div>
+    </div>
+    <p>
+      <strong
+        >本版的核心判斷：Layer A 是可明確定義、可測試的工程邊界；Layer B
+        是依賴觀察能力、資料分布與攻擊模型的安全問題。前者通過測試，不會自動替後者提供保證。</strong
+      >
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-9">§9</a>、<a href="#original-25">§25</a>、<a
+        href="#original-58"
+        >§58</a
+      >、<a href="#original-63">§63</a></span
+    >
+    <figure
+      class="p2p-flow-figure"
+      tabindex="0"
+      aria-label="概念流程圖，可水平捲動"
+    >
+      <div class="p2p-flow">
+        <div class="p2p-flow-node">
+          <strong>你的裝置</strong><small>應用、帳號、檔案</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>隧道入口</strong><small>住宅 IP／加密流量</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>VPN 或匿名網路</strong><small>中繼與信任邊界</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>出口與目的端</strong><small>對外活動／協定資料</small>
+        </div>
+      </div>
+      <figcaption>
+        系統地圖：調查資訊可以來自任何一層，不一定來自破解加密。
+      </figcaption>
+    </figure>
+    <h3 class="ln">三個閱讀問題</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>你想回答什麼？</th>
+            <th>先讀哪裡？</th>
+            <th>最後應得到的東西</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>P2P 會不會洩漏住宅 IP？</td>
+            <td>第 03、05 章</td>
+            <td>網路邊界與故障驗收條件</td>
+          </tr>
+          <tr>
+            <td>VPN、Tor、I2P、DAITA 各能做什麼？</td>
+            <td>第 02、06、07 章</td>
+            <td>有前提的能力比較，而非匿名排名</td>
+          </tr>
+          <tr>
+            <td>怎樣研究端對端流量關聯防禦？</td>
+            <td>第 08～11 章</td>
+            <td>可測試架構、攻擊基線與成本指標</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <aside class="p2p-callout p2p-source">
+      <strong>先把「加密」與「匿名」分開</strong>
+      <div>
+        加密主要保護內容；IP
+        分離改變對外位址；不可連結性限制活動之間的關係推斷。這三者可以互相配合，但不能相互替代。<span
+          class="p2p-refs p2p-original-refs"
+          >原文 <a href="#original-4">§4</a>、<a href="#original-61"
+            >§61</a
+          ></span
+        >
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="threat-model">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">02</span>
+    <div>
+      <p class="p2p-eyebrow">THREAT MODEL · 先說清楚保護誰、對抗誰</p>
+      <h2 class="ln" id="chapter-2">
+        <span class="md-mark" aria-hidden="true">## </span
+        >匿名不是開關：七種目標與觀察者
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文用七種 Security Properties
+      拆解「匿名」。保留這個分類，比用一個「匿名程度 90%」分數更有意義。
+    </p>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>安全性質</th>
+            <th>白話問題</th>
+            <th>不能混淆的地方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Real-IP Confidentiality</strong>／真實 IP 保密</td>
+            <td>Tracker、Peer 能否看到住宅或公司 WAN IP？</td>
+            <td>出口換成 VPN，不等於活動無法關聯。</td>
+          </tr>
+          <tr>
+            <td><strong>Identity Anonymity</strong>／身分匿名</td>
+            <td>觀察到活動後，是否知道操作者是誰？</td>
+            <td>位址、帳號、裝置與自然人不是同一件事。</td>
+          </tr>
+          <tr>
+            <td><strong>Activity Unlinkability</strong>／活動不可連結性</td>
+            <td>A、B、C 三個活動能否被歸為同一人？</td>
+            <td>即使不知道真名，也可能建立長期活動群。</td>
+          </tr>
+          <tr>
+            <td><strong>Cross-Layer Unlinkability</strong>／跨層不可連結性</td>
+            <td>網站帳號、瀏覽器與 P2P 活動能否被連起來？</td>
+            <td>VPN 不會移除應用層帳號或裝置紀錄。</td>
+          </tr>
+          <tr>
+            <td><strong>Fingerprint Minimization</strong>／減少指紋</td>
+            <td>軟體版本、Peer ID、協定擴充能否辨識客戶端？</td>
+            <td>減少欄位，不等於對方看不到網路端點。</td>
+          </tr>
+          <tr>
+            <td><strong>Traffic-Analysis Resistance</strong>／流量分析抵抗</td>
+            <td>能否用封包時間、方向與大小配對兩端？</td>
+            <td>不需要先解密內容，也可能有統計訊號。</td>
+          </tr>
+          <tr>
+            <td><strong>Longitudinal Anonymity</strong>／長期匿名</td>
+            <td>累積數百次活動後，候選人是否越來越少？</td>
+            <td>單次安全不代表長期安全。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-4">§4</a>、<a href="#original-8">§8</a></span
+    >
+    <h3 class="ln">觀察者能力，比產品名稱更重要</h3>
+    <p>
+      以下是本版依原文整理的分析矩陣。它不是固定的權限清單；實際可見性取決於路由、加密範圍、軟體行為與是否取得其他資料。
+    </p>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>觀察者</th>
+            <th>在一般「正確隔離的 VPN + BitTorrent」模型下</th>
+            <th>單靠這個位置通常不能直接推出</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Swarm 中的 Peer／Tracker</td>
+            <td>VPN 出口端點、參與的 torrent、協定與時間資訊</td>
+            <td>出口背後是哪個住宅使用者</td>
+          </tr>
+          <tr>
+            <td>本地網路或接取 ISP</td>
+            <td>使用者到 VPN 的連線、時間、封包大小及總量</td>
+            <td>僅憑隧道內容讀出完整 torrent 內容</td>
+          </tr>
+          <tr>
+            <td>VPN 服務端／其控制者</td>
+            <td>依架構可見入口、出口或即時轉送關係</td>
+            <td>「看得見」不等於「有永久歷史紀錄」</td>
+          </tr>
+          <tr>
+            <td>能觀察兩端的對手</td>
+            <td>入口與出口的流量序列，可嘗試配對</td>
+            <td>配對分數不等於自然人身分證明</td>
+          </tr>
+          <tr>
+            <td>取得端點或帳號資料的調查者</td>
+            <td>裝置檔案、應用狀態、登入與帳號關係等</td>
+            <td>必須逐項確認資料來源及歸屬，不能假定皆存在</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-5">§5</a>、<a href="#original-6">§6</a>、<a
+        href="#original-26"
+        >§26</a
+      >、<a href="#original-60">§60</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-01" title="查證資料 R01">[R01]</a
+      ><a href="#ref-02" title="查證資料 R02">[R02]</a
+      ><a href="#ref-09" title="查證資料 R09">[R09]</a></span
+    >
+    <div class="p2p-equation">
+      <div class="p2p-formula">H(U | O)</div>
+      <p>
+        U 是候選使用者，O
+        是已取得的觀察。原文用「觀察之後仍剩多少身分不確定性」描述匿名，而不是把加密演算法強度直接當成匿名程度。
+      </p>
+    </div>
+    <aside class="p2p-callout p2p-review">
+      <strong>審閱補註：候選集合大小不等於真正的不確定性</strong>
+      <div>
+        100 人的候選集合，若其中一人已被賦予 99% 的可能性，匿名性仍很弱。使用
+        H(U | O)
+        時，必須明確交代候選集合、先驗分布、觀察來源和時間範圍；本報告沒有量測任何真實使用者的熵值。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="p2p-surfaces">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">03</span>
+    <div>
+      <p class="p2p-eyebrow">PROTOCOL · 先找同伴，才交換內容</p>
+      <h2 class="ln" id="chapter-3">
+        <span class="md-mark" aria-hidden="true">## </span>BitTorrent
+        在哪些地方留下可觀察資料？
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      BitTorrent
+      的原生目的，是高效率找到其他節點並交換資料，不是把參與者藏起來。需要先分清楚
+      <strong
+        >Index／索引網站、Tracker／協調服務，以及真正交換內容的 Peer</strong
+      >：它們不是同一個服務，也不必由同一個單位控制。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-1">§1</a>、<a href="#original-2">§2</a></span
+    >
+    <div class="p2p-grid p2p-three">
+      <div class="p2p-card">
+        <span class="p2p-eyebrow">DISCOVERY</span>
+        <h3 class="ln">找得到其他人</h3>
+        <p>Tracker、DHT、PEX 提供或交換端點資訊；LPD 處理本地同伴發現。</p>
+      </div>
+      <div class="p2p-card">
+        <span class="p2p-eyebrow">TRANSFER</span>
+        <h3 class="ln">連線並交換片段</h3>
+        <p>
+          實際 Peer 連線會呈現對外端點與交換行為；路由決定對方看到住宅 IP
+          還是出口 IP。
+        </p>
+      </div>
+      <div class="p2p-card">
+        <span class="p2p-eyebrow">HISTORY</span>
+        <h3 class="ln">多次觀察形成歷史</h3>
+        <p>
+          端點、Infohash、時間和客戶端資訊可被整理成活動紀錄，但每筆紀錄仍要判斷可信度。
+        </p>
+      </div>
+    </div>
+    <h3 class="ln">三個關鍵發現機制</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>機制</th>
+            <th>協定在做什麼？</th>
+            <th>可見性與限制</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>UDP Tracker／BEP-15</strong></td>
+            <td>
+              Announce 可帶
+              <code>info_hash</code
+              >、<code>peer_id</code>、<code>downloaded</code>、<code>left</code>、<code>uploaded</code>、<code>event</code>、port。
+            </td>
+            <td>
+              Tracker
+              也可觀察封包來源端點；欄位是客戶端回報，不應一律視為驗證完成的事實。
+            </td>
+          </tr>
+          <tr>
+            <td><strong>DHT／BEP-5</strong></td>
+            <td>
+              <code>get_peers(info_hash)</code> 查詢同伴；<code
+                >announce_peer</code
+              >
+              宣告參與。
+            </td>
+            <td>
+              Token 驗證與查詢來源 IP 有關；接受 announce 的節點儲存來源 IP
+              和宣告／推定 port。
+            </td>
+          </tr>
+          <tr>
+            <td><strong>PEX／BEP-11</strong></td>
+            <td>已連線的 peers 交換其他 peer 的聯絡資訊。</td>
+            <td>它增加發現途徑，不會消除既有連線端點的可見性。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs"
+      ><a href="#ref-01" title="查證資料 R01">[R01]</a
+      ><a href="#ref-02" title="查證資料 R02">[R02]</a
+      ><a href="#ref-03" title="查證資料 R03">[R03]</a></span
+    >
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        (IP, port, Infohash, timestamp, observation type)
+      </div>
+      <p>
+        這是本版建議的「觀察紀錄」表達法；加入 port 與 observation
+        type，是為了避免把 tracker 列名、announce 和實際片段交換混成同一種證據。
+      </p>
+    </div>
+    <h3 class="ln">關閉 DHT／PEX，究竟改變什麼？</h3>
+    <p>
+      它減少特定的 <strong>peer discovery surface</strong>，但只要仍使用 Tracker
+      或直接連 Peer，對方仍會看到連線的網路端點。<strong
+        >要阻止住宅 IP 出現在
+        swarm，關鍵是完整的網路邊界，而不是只關閉發現功能。</strong
+      >
+    </p>
+    <h3 class="ln">Anonymous Mode，究竟改變什麼？</h3>
+    <p>
+      qBittorrent 官方把它定位為減少識別資訊暴露；實際行為依
+      qBittorrent、libtorrent 版本及 torrent 類型而異。不能把某個舊版「會停用
+      DHT」的行為套到所有版本，也不能把 Anonymous Mode 當成 VPN 或 fail-closed
+      防火牆。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-04" title="查證資料 R04">[R04]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-2">§2</a>、<a href="#original-4">§4</a></span
+    >
+    <aside class="p2p-callout p2p-review">
+      <strong>不要把 Infohash 誤讀為所有 P2P 系統通用的匿名身分</strong>
+      <div>
+        本文的協定例子以附件引用的 BitTorrent BEP 為主。Infohash 是 torrent
+        的識別資訊，不是自然人識別碼；其他協定或版本應另行確認其欄位與行為。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="attribution">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">04</span>
+    <div>
+      <p class="p2p-eyebrow">INVESTIGATION · 關聯不是定罪，也不等於解密</p>
+      <h2 class="ln" id="chapter-4">
+        <span class="md-mark" aria-hidden="true">## </span
+        >從網路線索到身分歸因：中間還差什麼？
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文把現代調查整理成：Network Evidence、Service Evidence、Endpoint
+      Evidence 先組成時間線，再進行 Entity
+      Resolution、候選排序與交叉佐證。這是一個分析框架，<strong>不是聲稱每個案件都能取得所有資料</strong>。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-5">§5</a>、<a href="#original-6">§6</a>、<a
+        href="#original-7"
+        >§7</a
+      ></span
+    >
+    <figure
+      class="p2p-flow-figure"
+      tabindex="0"
+      aria-label="概念流程圖，可水平捲動"
+    >
+      <div class="p2p-flow">
+        <div class="p2p-flow-node">
+          <strong>觀察事件</strong><small>網路／服務／端點</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>建立時間線</strong><small>對齊來源與誤差</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>形成候選關聯</strong><small>圖模型與假設</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>獨立佐證</strong><small>驗證或排除替代解釋</small>
+        </div>
+      </div>
+      <figcaption>
+        缺少的關聯必須保持「未知」，不能用合理故事補成已確認事實。
+      </figcaption>
+    </figure>
+    <h3 class="ln">4.1 圖模型：節點不是人，連線也不是證明</h3>
+    <p>
+      原文以 <code>G = (V, E)</code> 表達歸因。節點可以是人、帳號、裝置、IP、VPN
+      出口、Session、Torrent、付款或時間戳；邊可以是
+      <code>connected_from</code
+      >、<code>announced</code>、<code>same_device</code>、<code
+        >temporally_correlated</code
+      >
+      等。
+    </p>
+    <p>
+      <strong>審閱補註：</strong>
+      每條邊應另外標記「來源、時間範圍、誤差、可信度及是否為推論」。共同使用一個出口
+      IP，只能先形成候選關係，不能直接合併為同一人。
+    </p>
+    <h3 class="ln">4.2 貝氏更新：不要把同一份證據算兩次</h3>
+    <div class="p2p-equation">
+      <div class="p2p-formula">P(H | E₁, E₂, …, Eₙ)</div>
+      <p>
+        H 是「某候選人操作該活動」的假設。多項觀察可以改變對它的信任程度，但不同
+        E 可能源自同一次觀察或同一個共同原因。
+      </p>
+    </div>
+    <p>
+      同一份 tracker
+      資料匯出三種報表，不等於三項獨立佐證。原文特別提醒，不應無條件假設
+      <code>P(E₁,E₂ | H) = P(E₁ | H) × P(E₂ | H)</code
+      >。本版不給出沒有實證基礎的身分機率。
+    </p>
+    <h3 class="ln">4.3 交集攻擊：長期活動會縮小候選集合</h3>
+    <div class="p2p-equation">
+      <div class="p2p-formula">S* = S₁ ∩ S₂ ∩ … ∩ Sₙ</div>
+      <p>
+        若每次活動都需要操作者在線，長期觀察可逐步排除不符合條件的人。但離線觀測誤差、漏抓與替代連線都會影響交集；它不是必定收斂到單一人的演算法。
+      </p>
+    </div>
+    <span class="p2p-refs"
+      ><a href="#ref-11" title="查證資料 R11">[R11]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-7">§7</a>、<a href="#original-8">§8</a></span
+    >
+    <h3 class="ln">4.4 P2P 監測的歷史證據與誤判</h3>
+    <p>
+      2010 年 <em>Spying the World from Your Laptop</em> 報告，在 103
+      天觀察中蒐集約 1.48 億個 IP 與約 20
+      億次內容副本相關觀察。這證明當時可大規模建立 IP—內容關係；<strong
+        >不能把 IP
+        數當成不同自然人數，也不能外推成現在任何調查者的完整覆蓋率。</strong
+      >
+    </p>
+    <p>
+      2008 年
+      <em>Why My Printer Received a DMCA Takedown Notice</em>
+      則展示監測方法的誤歸因風險。因此應區分「被 tracker
+      列出」「完成連線」「交換可驗證內容」，以及再往後的「由哪個人操作」。這些是不同層次的主張，不是一條
+      IP 紀錄就全部成立。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-12" title="查證資料 R12">[R12]</a
+      ><a href="#ref-13" title="查證資料 R13">[R13]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-3">§3</a></span
+    >
+    <div class="p2p-case">
+      <span class="p2p-eyebrow">CASE STUDY / 一手公告與未知事項</span>
+      <h3 class="ln">2026 年 Nyaa／CODA／JHA 案例</h3>
+      <p>
+        CODA 的公告記載，2026 年 7 月 28 日京都府警逮捕一名涉嫌透過 Nyaa
+        首次散布 NHK 內容的人。公告說明：CODA 在 METI 支援的 CBEP 下調查
+        Nyaa，使用 Japan Hacker Association
+        開發的分析工具取得相關資訊，再由警方調查識別嫌疑人。
+      </p>
+      <p>
+        <strong
+          >公告支持的是調查與工具的存在；沒有揭露足以重建其演算法的技術細節。</strong
+        >
+        本版不把 CDN 紀錄、Cookies、VPN 日誌、特定流量關聯演算法，或「未監測
+        swarm」寫成已確認方法。原文的「索引＋tracker＋時間＋歷史觀察」只保留為可能的分析假設。
+      </p>
+      <span class="p2p-refs"
+        ><a href="#ref-14" title="查證資料 R14">[R14]</a></span
+      ><span class="p2p-refs p2p-original-refs"
+        >原文 <a href="#original-18">§18</a></span
+      >
+    </div>
+    <aside class="p2p-callout p2p-review">
+      <strong>技術歸因的邊界</strong>
+      <div>
+        本章討論證據支持到哪一步，不提供法律結論。IP、裝置、帳號與自然人之間的關係，應分別驗證；案件公告也不等於最終有罪判決。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="isolation">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">05</span>
+    <div>
+      <p class="p2p-eyebrow">ENGINEERING · 先確定沒有旁路，再談更強匿名</p>
+      <h2 class="ln" id="chapter-5">
+        <span class="md-mark" aria-hidden="true">## </span
+        >第一道可驗收邊界：Fail-Closed 網路隔離
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文最具可操作性的要求是：<strong
+        >凡屬於 P2P 的對外資料流，只能經過 VPN；VPN 不可用時，不得回落到普通
+        WAN。</strong
+      >
+      這是一個安全不變條件，不只是 UI 顯示「已連線」。
+    </p>
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        ∀ p ∈ P2P 對外資料流：允許路徑(p) ⊆ VPN 隧道
+      </div>
+      <p>
+        此處指應用資料平面。實體網卡仍然需要傳送加密後的 VPN
+        外層封包；「實體網卡完全零流量」不是正確驗收標準。
+      </p>
+    </div>
+    <div class="p2p-equation">
+      <div class="p2p-formula">VPN 不可用 ⇒ 不存在繞過隧道的 P2P 對外流量</div>
+      <p>
+        不把介面仍存在或圖示亮起，當成隧道可用；真正要防的是失效後的直連
+        fallback。
+      </p>
+    </div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-9">§9</a>、<a href="#original-10">§10</a>、<a
+        href="#original-11"
+        >§11</a
+      >、<a href="#original-12">§12</a>、<a href="#original-54">§54</a></span
+    >
+    <h3 class="ln">5.1 由弱到強，不是只多勾幾個選項</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>層次</th>
+            <th>它提供什麼？</th>
+            <th>仍需確認什麼？</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Routing-only VPN</td>
+            <td>把一般預設路由導入隧道。</td>
+            <td>更具體路由、例外路由或系統變動是否形成旁路。</td>
+          </tr>
+          <tr>
+            <td>Application Binding</td>
+            <td>qBittorrent 綁定指定 VPN 介面。</td>
+            <td>介面重建、版本行為、額外外連程式是否也被涵蓋。</td>
+          </tr>
+          <tr>
+            <td>Firewall Fail-Closed</td>
+            <td>明確阻擋不經隧道的受保護流量。</td>
+            <td>IPv4／IPv6、規則初始化與重載、所有出口和允許例外。</td>
+          </tr>
+          <tr>
+            <td>Network Namespace</td>
+            <td>讓 P2P 所處網路空間不具備一般 WAN 路徑。</td>
+            <td>管理介面、veth、DNS 或 host 權限是否重新打開旁路。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs"
+      ><a href="#ref-05" title="查證資料 R05">[R05]</a
+      ><a href="#ref-06" title="查證資料 R06">[R06]</a
+      ><a href="#ref-07" title="查證資料 R07">[R07]</a
+      ><a href="#ref-08" title="查證資料 R08">[R08]</a></span
+    >
+    <figure
+      class="p2p-namespace"
+      tabindex="0"
+      aria-label="網路命名空間架構圖，可水平捲動"
+    >
+      <div class="p2p-ns-box">
+        <span class="p2p-eyebrow">P2P NETWORK NAMESPACE</span>
+        <div class="p2p-ns-app">qBittorrent / P2P Engine</div>
+        <span class="p2p-down-arrow">↓</span>
+        <div class="p2p-ns-interface">wg0 · 唯一允許的 Internet 介面</div>
+        <p class="p2p-muted">
+          可有本地 loopback，但不應存在普通 WAN fallback。
+        </p>
+      </div>
+      <div class="p2p-ns-link">
+        <span>加密外層<br />傳輸</span
+        ><b aria-hidden="true" class="p2p-ns-arrow">→</b>
+      </div>
+      <div class="p2p-ns-box p2p-host">
+        <span class="p2p-eyebrow">HOST / PHYSICAL NAMESPACE</span>
+        <div class="p2p-ns-app">WireGuard UDP socket</div>
+        <span class="p2p-down-arrow">↓</span>
+        <div class="p2p-ns-interface">eth0 / wlan0 → VPN server</div>
+        <p class="p2p-muted">
+          WireGuard 官方模式利用介面建立時的 namespace 傳送外層 UDP。
+        </p>
+      </div>
+      <figcaption>
+        依 WireGuard 官方 Network Namespace 架構重繪；是 Linux
+        網路模型，不是所有作業系統的同名功能。
+      </figcaption>
+    </figure>
+    <h3 class="ln">5.2 為什麼只看 Routing Table 不夠？</h3>
+    <p>
+      <em>Bypassing Tunnels</em>（USENIX Security 2023）展示路由例外被濫用後的
+      VPN 漏流量；TunnelVision（CVE-2024-3661）展示 DHCP Option 121
+      與更具體路由造成的旁路風險。它們支持「路由狀態不等於完整隔離」，<strong
+        >不是證明今天所有 VPN 客戶端仍然存在同樣漏洞</strong
+      >。
+    </p>
+    <h3 class="ln">5.3 IPv6、DNS 與管理通道都要算進邊界</h3>
+    <p>
+      IPv4 經 VPN、IPv6 直出，仍然是失敗。DNS 也要有明確路徑；DNS
+      查詢洩漏可能揭露 tracker 網域，但不等於 ISP 直接拿到 torrent 的
+      Infohash。若透過本機 DNS 代理、WebUI
+      或額外搜尋／更新元件產生對外請求，這些路徑需另行驗證。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-06" title="查證資料 R06">[R06]</a
+      ><a href="#ref-07" title="查證資料 R07">[R07]</a
+      ><a href="#ref-08" title="查證資料 R08">[R08]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-13">§13</a>、<a href="#original-14">§14</a></span
+    >
+    <aside class="p2p-callout p2p-review">
+      <strong>審閱補註：Namespace 強，不等於整台主機都不可信也安全</strong>
+      <div>
+        上述邊界假設核心與主機管理權限未遭控制。具備足夠權限的程序仍可能改動
+        namespace、介面與規則；因此要把特權、啟動順序與管理通道納入設計。防火牆、綁定與
+        namespace 是互補的檢查點，而不是重複堆疊後自動得到「極高匿名」。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="comparison">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">06</span>
+    <div>
+      <p class="p2p-eyebrow">ARCHITECTURES · 先看路徑，再看信任分配</p>
+      <h2 class="ln" id="chapter-6">
+        <span class="md-mark" aria-hidden="true">## </span>
+        VPN、Seedbox、Tor、I2P：不要排成單一排行榜
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文第 57 節以「高／中／低」比較很多技術，同時也註明它不是統一
+      benchmark。本版保留比較目的，<strong>把容易誤讀的總分改成「作用、前提與未覆蓋風險」</strong>。
+    </p>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>架構／措施</th>
+            <th>主要作用</th>
+            <th>依賴的前提</th>
+            <th>不應聲稱的保證</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BitTorrent 協定加密</td>
+            <td>保護特定內容或協定交換的可讀性。</td>
+            <td>實際協定及設定正確。</td>
+            <td>不隱藏對等端點，不等於匿名協定。</td>
+          </tr>
+          <tr>
+            <td>qBittorrent Anonymous Mode</td>
+            <td>減少部分客戶端識別資訊。</td>
+            <td>版本與 torrent 類型符合預期。</td>
+            <td>不能替代 IP 路由隔離。</td>
+          </tr>
+          <tr>
+            <td>VPN</td>
+            <td>對外由 VPN 出口 IP 參與。</td>
+            <td>所有相關流量均進隧道。</td>
+            <td>不自動提供活動不可連結性。</td>
+          </tr>
+          <tr>
+            <td>VPN＋綁定＋防火牆／Namespace</td>
+            <td>降低意外直連與 fallback 風險。</td>
+            <td>邊界完整，故障測試通過。</td>
+            <td>不是端對端流量關聯防禦。</td>
+          </tr>
+          <tr>
+            <td>Seedbox</td>
+            <td>將 swarm 參與移到遠端主機。</td>
+            <td>家用端只透過預定的管理／取回通道。</td>
+            <td>信任轉向 hosting；帳號、端點及活動仍可關聯。</td>
+          </tr>
+          <tr>
+            <td>同供應商 Multihop</td>
+            <td>分散入口與出口觀察位置。</td>
+            <td>中間路徑與管理安排符合模型。</td>
+            <td>不等於多營運者信任分散；也不必然混合流量。</td>
+          </tr>
+          <tr>
+            <td>VPN＋DAITA</td>
+            <td>改變隧道封包形狀與部分流量指紋。</td>
+            <td>支援的應用／路徑，且攻擊模型與評估相符。</td>
+            <td>不等於已證明抵抗全域長期關聯。</td>
+          </tr>
+          <tr>
+            <td>Tor</td>
+            <td>透過多中繼分散路徑資訊。</td>
+            <td>正確應用使用方式及其威脅模型。</td>
+            <td>不保證抵抗同時觀察兩端的對手。</td>
+          </tr>
+          <tr>
+            <td>I2P-native P2P</td>
+            <td>
+              使用 overlay Destination 與隧道，而非把 clearnet IP 當應用 peer
+              身分。
+            </td>
+            <td>應用與 peer discovery 都在 I2P 模型內。</td>
+            <td>I2P 仍承認 timing、intersection 等限制。</td>
+          </tr>
+          <tr>
+            <td>Loopix／Mixnet</td>
+            <td>結合混合、延遲與掩護流量。</td>
+            <td>遵循該協定、安全模型及負載條件。</td>
+            <td>不能把訊息系統的結果直接套到高速 BitTorrent。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-15">§15</a>、<a href="#original-16">§16</a>、<a
+        href="#original-17"
+        >§17</a
+      >、<a href="#original-57">§57</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-04" title="查證資料 R04">[R04]</a
+      ><a href="#ref-06" title="查證資料 R06">[R06]</a
+      ><a href="#ref-09" title="查證資料 R09">[R09]</a
+      ><a href="#ref-11" title="查證資料 R11">[R11]</a
+      ><a href="#ref-17" title="查證資料 R17">[R17]</a
+      ><a href="#ref-18" title="查證資料 R18">[R18]</a
+      ><a href="#ref-23" title="查證資料 R23">[R23]</a></span
+    >
+    <div class="p2p-grid p2p-two">
+      <div class="p2p-card">
+        <h3 class="ln">Seedbox：改變資料所在位置</h3>
+        <div class="p2p-mini-path">Home → HTTPS／SSH → Seedbox → Swarm</div>
+        <p>
+          它把住宅網路與 swarm 分離，沒有消除遠端主機的資料、帳號與管理關係。
+        </p>
+      </div>
+      <div class="p2p-card">
+        <h3 class="ln">I2P：改變應用通訊模型</h3>
+        <div class="p2p-mini-path">
+          App → I2P Destination／Tunnels → I2P Peer
+        </div>
+        <p>
+          它不是把普通 clearnet swarm 原封不動套上一個 VPN 出口；overlay
+          身分與底層路由可見性也要分開。
+        </p>
+      </div>
+    </div>
+    <aside class="p2p-callout p2p-verified">
+      <strong>查證補充：Tor 官方不建議用 Torrent 客戶端透過 Tor</strong>
+      <div>
+        因此不能把「Tor 比單一 VPN 多幾跳」直接推導為「把 BitTorrent 指向 Tor
+        就更安全」。Tor 官方另外指出客戶端洩漏與志願出口節點負担等問題。<span
+          class="p2p-refs"
+          ><a href="#ref-10" title="查證資料 R10">[R10]</a></span
+        >
+      </div>
+    </aside>
+    <p>
+      <strong>本版結論：</strong> 若目的是一般 clearnet P2P 的住宅 IP
+      隔離，先驗證 VPN 邊界；若目的是匿名網路內的 P2P，研究對應的原生
+      overlay；若目的是強觀察者下的不可連結性，應討論 mixing、cover traffic
+      與成本，而不是只比較 VPN 跳數。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-58">§58</a>、<a href="#original-62">§62</a>、<a
+        href="#original-63"
+        >§63</a
+      ></span
+    >
+  </div>
+</section>
+<section class="p2p-chapter" id="mullvad">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">07</span>
+    <div>
+      <p class="p2p-eyebrow">DEPLOYMENT · 政策、基礎設施與流量防禦分開看</p>
+      <h2 class="ln" id="chapter-7">
+        <span class="md-mark" aria-hidden="true">## </span>
+        Mullvad 與 DAITA：六種機制，六種不同意義
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文把 Mullvad 定位成 privacy-oriented
+      VPN，而非「無法追蹤的通訊系統」。這個定位應保留。以下政策與部署資訊是在
+      <strong>2026-10-03 查閱的一手文件</strong
+      >；供應商聲明、論文實驗及本版推論分開標示。
+    </p>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>機制</th>
+            <th>在原文模型中的作用</th>
+            <th>限制與查證註記</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Shared exit</td>
+            <td>減少住宅 IP 與活動的直接對應。</td>
+            <td>共用出口不是完整的流量混合器。</td>
+          </tr>
+          <tr>
+            <td>Numbered account</td>
+            <td>不以傳統 email／使用者名稱註冊。</td>
+            <td>帳號、WireGuard 設定與付款資料仍需按各自政策理解。</td>
+          </tr>
+          <tr>
+            <td>No activity logs</td>
+            <td>降低事後以服務端歷史紀錄回查的可能。</td>
+            <td>不等於無即時連線狀態、無付款資料或無彙總監控。</td>
+          </tr>
+          <tr>
+            <td>RAM-only infrastructure</td>
+            <td>降低持久磁碟殘留風險。</td>
+            <td>不是「記憶體或網路中的流量永遠不可觀察」。</td>
+          </tr>
+          <tr>
+            <td>Multihop</td>
+            <td>將入口與出口配置在不同位置。</td>
+            <td>同一供應商不等於獨立營運者之間的信任分散。</td>
+          </tr>
+          <tr>
+            <td>DAITA</td>
+            <td>擾動封包大小、背景流量與流量形狀。</td>
+            <td>是流量分析防禦，不是把 WireGuard 換成更強的內容加密。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-19">§19</a>、<a href="#original-20">§20</a>、<a
+        href="#original-21"
+        >§21</a
+      >、<a href="#original-22">§22</a>、<a href="#original-23">§23</a>、<a
+        href="#original-24"
+        >§24</a
+      >、<a href="#original-59">§59</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-15" title="查證資料 R15">[R15]</a
+      ><a href="#ref-16" title="查證資料 R16">[R16]</a
+      ><a href="#ref-17" title="查證資料 R17">[R17]</a
+      ><a href="#ref-18" title="查證資料 R18">[R18]</a></span
+    >
+    <h3 class="ln">7.1 No-log 與付款資料：關聯鏈缺在哪裡？</h3>
+    <p>
+      Mullvad 政策聲稱不保存使用者流量、DNS、連線時間、IP
+      與使用者頻寬紀錄，並說明同時連線驗證的即時狀態；但同頁亦列有帳號設定、付款與彙總系統資料。某些支付紀錄可能支持「人
+      → 付款／帳號」，<strong
+        >不能因此直接補上「帳號 → 某時刻出口活動」那一段缺失的歷史關係</strong
+      >。
+    </p>
+    <p>
+      這是資料最小化的價值，也是其邊界：服務端少留資料，有助於降低可回查性；不等於第三方不能做即時觀察，也不等於端點資料消失。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-15" title="查證資料 R15">[R15]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-20">§20</a>、<a href="#original-21">§21</a>、<a
+        href="#original-22"
+        >§22</a
+      ></span
+    >
+    <h3 class="ln">7.2 DAITA v2：大小固定，不代表速率固定</h3>
+    <p>
+      DAITA 官方資料描述固定封包大小、隨機背景流量與模式擾動。v2
+      公告進一步描述依 VPN 連線分配動態防禦設定，以及降低 dummy packets
+      的用量。<strong
+        >「約減半」指公告所述那類 dummy
+        packets，不是所有流量開銷一律減半。</strong
+      >
+      動態設定的單位也不能直接等同每一條 BitTorrent peer flow。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-18" title="查證資料 R18">[R18]</a
+      ><a href="#ref-19" title="查證資料 R19">[R19]</a></span
+    >
+    <div class="p2p-grid p2p-two">
+      <div class="p2p-card">
+        <h3 class="ln">Constant packet size</h3>
+        <p>
+          把不同大小的封包填充為固定大小，減少尺寸訊號；封包何時出現、出現幾個，仍可能不同。
+        </p>
+      </div>
+      <div class="p2p-card">
+        <h3 class="ln">Constant transmission rate</h3>
+        <p>
+          即使沒有真實資料也維持發送節奏。這是更強、成本結構也不同的流量整形要求，不能從前者自動推出。
+        </p>
+      </div>
+    </div>
+    <h3 class="ln">7.3 2026 論文：支持部署，也提醒防禦有條件</h3>
+    <p>
+      <em>Ephemeral Network-Layer Fingerprinting Defenses</em>
+      研究每次連線可使用不同防禦，並報告與 WireGuard 整合、在 Mullvad
+      實際部署。其評估重點包含 circuit、website 與 video fingerprinting；<strong
+        >這不等於對所有 P2P 流量完成端對端關聯測試。</strong
+      >
+    </p>
+    <p>
+      同篇論文第 5.3
+      節指出，在特定封閉世界模擬中，給攻擊者足夠訓練資料與時間後，多種純 padding
+      防禦所剩保護有限；引入
+      blocking／延遲的防禦仍有作用，但效果也下降。這是對特定模型的結果，不應改寫成「所有
+      padding 都無用」，也不能只引用部署成功而省略這項限制。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-20" title="查證資料 R20">[R20]</a></span
+    >
+    <aside class="p2p-callout p2p-review">
+      <strong>本版審閱結論</strong>
+      <div>
+        Mullvad 的價值可分成「住宅 IP
+        分離」「供應商資料最小化」「部分流量指紋削弱」。三者都有意義，但都不支持把
+        DAITA 視為全域、長期、跨層匿名保證。原文比較表中無 benchmark
+        的「中／高」等級，應改以威脅模型和測量結果說明。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="correlation">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">08</span>
+    <div>
+      <p class="p2p-eyebrow">TRAFFIC CORRELATION · 從直覺到數學模型</p>
+      <h2 class="ln" id="chapter-8">
+        <span class="md-mark" aria-hidden="true">## </span
+        >端對端流量關聯：不看內容，也能比形狀
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      假設觀察者在使用者到 VPN 的一側取得序列 X，又在出口側取得多個候選序列
+      Y₁、Y₂…；問題是：<strong>哪一個出口候選，可能對應這個入口活動？</strong>
+      加密可以使內容難以讀取，卻不會自動移除封包時間、大小、方向、突發、閒置與持續時間。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-25">§25</a>、<a href="#original-26">§26</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-09" title="查證資料 R09">[R09]</a></span
+    >
+    <div class="p2p-equation">
+      <div class="p2p-formula">X = {(tᵢ, sᵢ, dᵢ)}；Y = {(t′ⱼ, s′ⱼ, d′ⱼ)}</div>
+      <p>
+        t 是時間、s 是大小、d 是方向。先定義觀察點：隧道外層封包、隧道內 IP
+        流量、單一應用 flow，不能在同一公式裡混用。
+      </p>
+    </div>
+    <figure class="p2p-trace-demo">
+      <div class="p2p-trace-label">
+        <strong>入口 X</strong><span>突發 → 空隙 → 突發</span>
+      </div>
+      <div class="p2p-trace-bars">
+        <i style="--h: 12%"></i><i style="--h: 14%"></i><i style="--h: 68%"></i
+        ><i style="--h: 95%"></i><i style="--h: 82%"></i><i style="--h: 43%"></i
+        ><i style="--h: 9%"></i><i style="--h: 7%"></i><i style="--h: 6%"></i
+        ><i style="--h: 9%"></i><i style="--h: 25%"></i><i style="--h: 88%"></i
+        ><i style="--h: 100%"></i><i style="--h: 63%"></i
+        ><i style="--h: 20%"></i><i style="--h: 8%"></i><i style="--h: 8%"></i
+        ><i style="--h: 16%"></i><i style="--h: 55%"></i><i style="--h: 75%"></i
+        ><i style="--h: 39%"></i><i style="--h: 9%"></i><i style="--h: 6%"></i
+        ><i style="--h: 5%"></i>
+      </div>
+      <div class="p2p-trace-label">
+        <strong>出口 Y</strong><span>延後、擾動，但仍可能相似</span>
+      </div>
+      <div class="p2p-trace-bars p2p-secondary">
+        <i style="--h: 4%"></i><i style="--h: 10%"></i><i style="--h: 15%"></i
+        ><i style="--h: 60%"></i><i style="--h: 88%"></i><i style="--h: 80%"></i
+        ><i style="--h: 48%"></i><i style="--h: 14%"></i><i style="--h: 8%"></i
+        ><i style="--h: 6%"></i><i style="--h: 7%"></i><i style="--h: 24%"></i
+        ><i style="--h: 80%"></i><i style="--h: 96%"></i><i style="--h: 66%"></i
+        ><i style="--h: 25%"></i><i style="--h: 9%"></i><i style="--h: 7%"></i
+        ><i style="--h: 17%"></i><i style="--h: 48%"></i><i style="--h: 72%"></i
+        ><i style="--h: 41%"></i><i style="--h: 10%"></i><i style="--h: 5%"></i>
+      </div>
+      <figcaption>
+        教學示意，不是擷取資料，也不代表任何產品的真實攻擊成功率。
+      </figcaption>
+    </figure>
+    <h3 class="ln">8.1 最基本的時間窗比對</h3>
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        xₖ = bytes(X, tₖ, tₖ + Δt)<br />yₖ = bytes(Y, tₖ, tₖ + Δt)<br />C(τ) =
+        Corr(xₖ, yₖ₊τ)
+      </div>
+      <p>
+        把流量切成時間窗，再容許時間偏移
+        τ。高分可用來排序候選；它本身不是身分證明，也不是機率已校準的「同一人信心」。
+      </p>
+    </div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-27">§27</a></span
+    >
+    <h3 class="ln">8.2 為什麼低延遲轉送容易保留訊號？</h3>
+    <p>
+      真實資料到達後，低延遲代理通常必須很快轉送，因而保留因果與時間結構。原文用累積資料量近似說明：
+    </p>
+    <div class="p2p-equation">
+      <div class="p2p-formula">Bᵧ(t + δ) ≈ Bₓ(t)</div>
+      <p>
+        δ 表示轉送延遲。這是對齊資料與觀察層次後的直覺近似，不是「任意入口 bytes
+        都等於某一出口 flow bytes」的嚴格定律。
+      </p>
+    </div>
+    <aside class="p2p-callout p2p-review">
+      <strong>審閱補註：Data Conservation 要先講清楚計數單位</strong>
+      <div>
+        VPN 封裝、padding、重傳、ACK、MTU、分段與多 flow
+        共用隧道，都可能改變觀察到的封包數與
+        bytes。守恆直覺適合說明「資訊仍需被送達」，不能直接當作跨層封包的一對一匹配公式。
+      </div>
+    </aside>
+    <h3 class="ln">8.3 被動觀察與主動擾動</h3>
+    <p>
+      被動對手只比較兩端現有訊號；主動對手則可能影響延遲、丟包或速率，讓另一側出現可辨識變化。兩者的能力不同，實驗不能只防住被動
+      baseline，就宣稱對主動對手同樣安全。
+    </p>
+    <h3 class="ln">8.4 流量指紋辨識，不等於流量配對</h3>
+    <p>
+      <strong>Website Fingerprinting（WF）</strong>
+      問「這段加密流量像哪個網站？」；<strong>Flow Correlation（FC）</strong>
+      問「這兩段流量是不是同一個通訊？」。兩者可共享特徵，但標籤、候選規模與攻擊觀察位置不同。DeTorrent
+      分別評估兩者，正好提醒我們不能直接互換指標。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-31">§31</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-21" title="查證資料 R21">[R21]</a></span
+    >
+    <h3 class="ln">8.5 Mutual Information：保留原文方向，但限制解讀</h3>
+    <p>
+      原文以 <code>Y = T(X) + N</code> 與
+      <code>I(X;Y) → 0</code>
+      表達降低兩端依賴性；這對理解研究動機很有用。但在正式實驗中，應先定義 X、Y
+      代表哪個隨機變數，以及共同的流量需求或外部負載是否造成依賴。
+    </p>
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        原文方向：min I(X; Y)<br />審閱補充：評估 I(M; O) 或 H(U | O)
+      </div>
+      <p>
+        M 可定義為真實的入口—出口對應關係，O
+        為對手觀察。補充目標不是替換原文，而是把「要隱藏的秘密」直接寫進模型；估計結果仍依賴模型與資料，不能當作無條件安全證明。
+      </p>
+    </div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-28">§28</a>、<a href="#original-29">§29</a>、<a
+        href="#original-52"
+        >§52</a
+      >、<a href="#original-63">§63</a></span
+    >
+  </div>
+</section>
+<section class="p2p-chapter" id="defenses">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">09</span>
+    <div>
+      <p class="p2p-eyebrow">TRADE-OFFS · 延遲、頻寬與匿名目標一起考慮</p>
+      <h2 class="ln" id="chapter-9">
+        <span class="md-mark" aria-hidden="true">## </span
+        >防禦技術：改變什麼，又付出什麼？
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文的 Anonymity Trilemma
+      直覺是：要隱藏「誰何時有資料」，通常得在沒有資料時也送掩護流量，或等更多資料到齊後再混合。前者花頻寬，後者花時間。
+    </p>
+    <p>
+      <em>Comprehensive Anonymity Trilemma</em
+      >（2020）把使用者協調納入更廣的形式模型，仍推得匿名與成本限制。<strong
+        >這是有匿名定義、對手能力及協定模型的理論結果，不是對所有匿名需求都有效的口號。</strong
+      >
+      它沒有否定在有限對手與實際預算下繼續改善系統的研究價值。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-22" title="查證資料 R22">[R22]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-32">§32</a>、<a href="#original-33">§33</a></span
+    >
+    <div class="p2p-tradeoff">
+      <div><b>強匿名性</b><span>更少可利用的關聯訊號</span></div>
+      <div><b>低延遲</b><span>更快送出真實資料</span></div>
+      <div><b>低頻寬開銷</b><span>更少 cover／dummy bytes</span></div>
+    </div>
+    <h3 class="ln">9.1 防禦機制矩陣</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>技術</th>
+            <th>改變的觀察特徵</th>
+            <th>主要成本／條件</th>
+            <th>必須保留的限制</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Constant-rate shaping</strong></td>
+            <td>壓平發送節奏與部分閒置訊號。</td>
+            <td>閒時送 dummy；負載超過固定速率時排隊。</td>
+            <td>
+              開始／結束、超載與策略切換仍可洩漏；不是只固定 packet size。
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Adaptive padding</strong></td>
+            <td>在特定時機插入掩護流量。</td>
+            <td>頻寬、CPU、可能的壅塞成本。</td>
+            <td>真實封包節奏未必被充分遮蔽；不主動延遲不等於零效能代價。</td>
+          </tr>
+          <tr>
+            <td><strong>Ephemeral shaping</strong></td>
+            <td>讓不同連線使用不同防禦設定。</td>
+            <td>設定分布、相容性、穩定性與評估成本。</td>
+            <td>對手可能學到防禦分布；隨機性本身不是安全證明。</td>
+          </tr>
+          <tr>
+            <td><strong>Mixing + delay</strong></td>
+            <td>延後與重排多來源訊息，削弱時間映射。</td>
+            <td>延遲、緩衝、協定設計。</td>
+            <td>需有足夠混合對象，並處理主動攻擊。</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-user aggregation</strong></td>
+            <td>多人的真實流量可成為相互掩護。</td>
+            <td>足夠同時在線的誠實使用者、混合排程。</td>
+            <td>共用 NAT 或共享出口本身，不等於 cryptographic mix。</td>
+          </tr>
+          <tr>
+            <td><strong>Traffic splitting／Multipath</strong></td>
+            <td>將觀察分散到多條路徑。</td>
+            <td>多路徑可用性、排序／重組、額外協調。</td>
+            <td>部分觀察者可能更難配對；全域觀察者可能重聚合。</td>
+          </tr>
+          <tr>
+            <td><strong>Egress transformation</strong></td>
+            <td>嘗試改變出口 flow 的拓撲或時序。</td>
+            <td>協作端點、重組層或新應用協定。</td>
+            <td>不能任意重寫普通 TCP 連線而不處理其狀態語意。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-34">§34</a>、<a href="#original-35">§35</a>、<a
+        href="#original-37"
+        >§37</a
+      >、<a href="#original-38">§38</a>、<a href="#original-40">§40</a>、<a
+        href="#original-41"
+        >§41</a
+      >、<a href="#original-42">§42</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-20" title="查證資料 R20">[R20]</a
+      ><a href="#ref-23" title="查證資料 R23">[R23]</a
+      ><a href="#ref-24" title="查證資料 R24">[R24]</a></span
+    >
+    <h3 class="ln">9.2 固定速率的直覺成本</h3>
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        真實速率 &lt; R₀：剩餘容量由 dummy 填補<br />真實速率 &gt;
+        R₀：若不丟棄，佇列與等待時間上升
+      </div>
+      <p>
+        這說明為什麼不能用一個很低的固定速率，同時承諾任意高吞吐、低延遲與完整流量隱藏。
+      </p>
+    </div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-34">§34</a></span
+    >
+    <h3 class="ln">9.3 DeTorrent：可學習的 padding-only 防禦</h3>
+    <p>
+      DeTorrent（PoPETs
+      2024）以競爭神經網路產生及評估掩護流量策略。論文摘要報告，在其 FC 設定的
+      <code>FPR = 10⁻⁵</code> 下，TPR 降至約 <code>0.12</code>，也測試了與 Tor
+      搭配的實際流量。<strong
+        >這是特定資料、攻擊器與設定下的結果，不是每個使用者只有 12%
+        風險。</strong
+      >「不延遲流量」描述其 padding-only
+      策略，不足以保證真實壅塞網路的端到端延遲完全不增加。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-21" title="查證資料 R21">[R21]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-36">§36</a></span
+    >
+    <h3 class="ln">9.4 Loopix：用混合與掩護流量換取更強的模型</h3>
+    <p>
+      Loopix（USENIX Security 2017）採用 Poisson mixing、隨機延遲、cover traffic
+      與 loop
+      messages，考慮全域網路觀察者及主動攻擊。原論文的整體訊息延遲為秒級；「相對低延遲」是相對
+      mix-system 而言，不能等同 VPN 的互動延遲。
+    </p>
+    <p>
+      <strong>審閱推論：</strong>
+      這使它較適合可容忍等待的訊息或非同步通訊。若要套到 P2P
+      大量持續傳輸，需要另外證明吞吐、排程與成本，不能直接移植其安全等級。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-23" title="查證資料 R23">[R23]</a></span
+    ><span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-38">§38</a>、<a href="#original-39">§39</a></span
+    >
+    <aside class="p2p-callout p2p-review">
+      <strong>不是「AI 加得越多越匿名」</strong>
+      <div>
+        學習式控制器能搜尋策略，但必須面對未知攻擊器、分布改變、長期觀察與資源限制。原文的研究方向值得保留；真正應比較的是一條可重現的「隱私—延遲—頻寬」折衷曲線，而不是單一
+        accuracy 數字。<span class="p2p-refs p2p-original-refs"
+          >原文 <a href="#original-49">§49</a>、<a href="#original-50">§50</a
+          >、<a href="#original-51">§51</a></span
+        >
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="research-design">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">10</span>
+    <div>
+      <p class="p2p-eyebrow">RESEARCH PROPOSAL · 保留構想，補上工程邊界</p>
+      <h2 class="ln" id="chapter-10">
+        <span class="md-mark" aria-hidden="true">## </span
+        >原文研究構想：有界延遲的多流混合網路
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <aside class="p2p-callout p2p-proposal">
+      <strong>研究提案，尚未驗證</strong>
+      <div>
+        Bounded-Latency Multi-Flow Mixing Network
+        是原文提出的組合式構想。本版只做架構審閱，沒有部署、封包測試、效能數據或匿名性證明；它也不是已確認具有文獻新穎性的演算法。<span
+          class="p2p-refs p2p-original-refs"
+          >原文 <a href="#original-43">§43</a>、<a href="#original-44">§44</a
+          >、<a href="#original-45">§45</a>、<a href="#original-46">§46</a>、<a
+            href="#original-47"
+            >§47</a
+          >、<a href="#original-48">§48</a>、<a href="#original-49">§49</a>、<a
+            href="#original-50"
+            >§50</a
+          ></span
+        >
+      </div>
+    </aside>
+    <p>
+      目標不是宣稱 perfect
+      anonymity，而是在延遲、頻寬與基礎設施預算內，降低對手可利用的入口—出口對應訊號。
+    </p>
+    <figure
+      class="p2p-flow-figure"
+      tabindex="0"
+      aria-label="概念流程圖，可水平捲動"
+    >
+      <div class="p2p-flow">
+        <div class="p2p-flow-node">
+          <strong>多使用者入口</strong><small>Entry Aggregator</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>暫態整形</strong><small>Ephemeral Shaper</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>有界延遲混合</strong><small>Bounded-Delay Mixer</small>
+        </div>
+      </div>
+      <figcaption>原文前半段：把多使用者與動態流量策略放在一起。</figcaption>
+    </figure>
+    <figure
+      class="p2p-flow-figure"
+      tabindex="0"
+      aria-label="概念流程圖，可水平捲動"
+    >
+      <div class="p2p-flow">
+        <div class="p2p-flow-node">
+          <strong>多條中繼路徑</strong><small>Path 1 / 2 / 3</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>出口混合／重組</strong><small>Egress Mixer</small>
+        </div>
+        <span aria-hidden="true" class="p2p-flow-arrow">→</span>
+        <div class="p2p-flow-node">
+          <strong>目的端</strong><small>依協定送達</small>
+        </div>
+      </div>
+      <figcaption>
+        原文後半段：路徑分散與出口變換；實作時要先確定哪些轉換可保留通訊語意。
+      </figcaption>
+    </figure>
+    <h3 class="ln">10.1 元件責任與待驗證事項</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>元件</th>
+            <th>原文責任</th>
+            <th>本版審閱後的必要條件</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Entry Aggregator</td>
+            <td>收集多使用者、多 flow。</td>
+            <td>
+              不能把所有可回溯對應集中記錄而不列入信任模型；需定義誰能看到來源與目的。
+            </td>
+          </tr>
+          <tr>
+            <td>Ephemeral Shaper</td>
+            <td>每 flow／連線選擇不同 padding、dummy、大小與 burst 策略。</td>
+            <td>
+              明確選擇作用單位；對手訓練需涵蓋新的策略實例，而不是只測已知參數。
+            </td>
+          </tr>
+          <tr>
+            <td>Bounded-Delay Mixer</td>
+            <td>在最大延遲內重排／等待。</td>
+            <td>
+              需要
+              deadline、最大佇列、壓力處理；只有單一誠實來源時，不能假裝仍有多人匿名集合。
+            </td>
+          </tr>
+          <tr>
+            <td>Multi-path</td>
+            <td>分散到不同路徑。</td>
+            <td>
+              區分邏輯路徑與實際獨立觀察位置；比較部分觀察與可重聚合觀察。
+            </td>
+          </tr>
+          <tr>
+            <td>Real-Traffic Cover</td>
+            <td>優先利用其他人的真實資料作掩護。</td>
+            <td>排除對手自身流量；只計節點數不足以代表有效匿名集合。</td>
+          </tr>
+          <tr>
+            <td>Egress Mixer／Transformation</td>
+            <td>合併、切分、重排或遷移流量。</td>
+            <td>
+              明確指定轉換在 overlay
+              內還是對外連線；需處理狀態、重組和端點相容性。
+            </td>
+          </tr>
+          <tr>
+            <td>Adaptive Privacy Controller</td>
+            <td>在隱私、延遲、頻寬之間調整策略。</td>
+            <td>
+              模型失效、缺乏掩護流量或資源耗盡時要有明示策略，不能靜默降級為直連。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-43">§43</a>、<a href="#original-44">§44</a>、<a
+        href="#original-45"
+        >§45</a
+      >、<a href="#original-46">§46</a>、<a href="#original-47">§47</a>、<a
+        href="#original-48"
+        >§48</a
+      >、<a href="#original-49">§49</a></span
+    >
+    <h3 class="ln">10.2 最值得先修正的工程問題：Egress Transformation</h3>
+    <p>
+      原文的
+      <code>split / merge / shuffle / connection migration</code>
+      是方向，不是已完成的傳輸層設計。TCP
+      是具有連線與排序狀態的位元組流；不能把一條普通 peer TCP
+      連線隨意拆成數條對外連線，還假設對端完全無感。
+    </p>
+    <p>
+      <strong>本版推導的最小可行做法：</strong> 先只在「入口代理 ↔
+      出口代理」的自有 overlay 內切分、混合、重組；到出口後，恢復原本對外 flow
+      的語意。這能先驗證中間網路的訊號擾動，但不代表已消除出口拓撲。真正改變對外連線結構，必須引入相容代理、協作端點或新協定。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-24" title="查證資料 R24">[R24]</a></span
+    >
+    <h3 class="ln">10.3 隱私控制器的目標函數</h3>
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        min<sub>π</sub> [ λₚ·L<sub>privacy</sub> + λₗ·L<sub>latency</sub> +
+        λᵦ·L<sub>bandwidth</sub> ]<br />subject to：L ≤ L<sub>max</sub>，O<sub
+          >B</sub
+        >
+        ≤ B<sub>max</sub>
+      </div>
+      <p>
+        原文的 constrained optimization 保留。審閱補註：各項先正規化，並說明 λ
+        的單位與用途；不能把任意尺度的 loss 相加後就稱為最佳隱私。
+      </p>
+    </div>
+    <p>
+      原文以
+      <code>min Defender / max Attacker</code> 表達對抗訓練。實作時要先定義 loss
+      的方向：若
+      <code>L_attack</code>
+      是攻擊成功效用，攻擊者最大化、防禦者最小化；若它是攻擊者分類錯誤損失，方向通常相反。<strong
+        >不能只保留 min–max 公式，而不定義 L 代表什麼。</strong
+      >
+    </p>
+    <h3 class="ln">10.4 三個實作前必答問題</h3>
+    <p>
+      <strong>第一，誰必須誠實？</strong>
+      入口與出口是否可串通？共同供應商能看到多少？混合是否至少需要一個誠實中繼或其他誠實使用者？
+    </p>
+    <p>
+      <strong>第二，預算耗盡怎麼辦？</strong>
+      延遲上限與匿名目標衝突時，是暫停、拒絕新流量，或在取得使用者同意後降低防禦？應與「VPN
+      不可用時禁止直連」分成兩種政策。
+    </p>
+    <p>
+      <strong>第三，原型到底承諾什麼？</strong>
+      先選定協定、觀察點、候選規模及負載類型，再聲稱某個模型下相對 baseline
+      的改善；不承諾未測量的全域匿名。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-45">§45</a>、<a href="#original-49">§49</a>、<a
+        href="#original-50"
+        >§50</a
+      ></span
+    >
+    <aside class="p2p-callout p2p-proposal">
+      <strong>審閱建議：先做消融，再做整合</strong>
+      <div>
+        先獨立測 shaping、bounded delay、multi-user
+        mixing，再測組合。否則即使最後分數下降，也不知道是哪一層有效、是哪一層造成效能成本，或是否只是訓練／測試資料不同。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="lab">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">11</span>
+    <div>
+      <p class="p2p-eyebrow">VALIDATION · 先量漏不漏，再量能不能被配對</p>
+      <h2 class="ln" id="chapter-11">
+        <span class="md-mark" aria-hidden="true">## </span
+        >如何驗證：隔離測試與匿名研究是兩套實驗
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <p>
+      原文的 P2P Privacy Lab 使用隨機測試檔、Linux ISO 或自產資料，在自己管理的
+      Client、VPN、Tracker、Peer 與 Observer 上量測。本版維持這個範圍：<strong
+        >只在有授權的環境蒐集流量，不把第三方真實使用者當成測試資料。</strong
+      >
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-53">§53</a></span
+    >
+    <h3 class="ln">11.1 實驗 A：Network Isolation Fault Injection</h3>
+    <p>
+      這套測試的主張是「指定故障下沒有 P2P
+      直出」，不是「匿名性已證明」。在主機實體介面、VPN 介面及測試 Tracker／Peer
+      同時觀察，確認只有預期的出口端點參與。
+    </p>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>故障類型</th>
+            <th>必測情境</th>
+            <th>驗收重點</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>啟動順序</td>
+            <td>P2P 先於 VPN、重新開機、服務重啟。</td>
+            <td>邊界未就緒前，不得發出直連 announce 或 peer 流量。</td>
+          </tr>
+          <tr>
+            <td>VPN 故障</td>
+            <td>中斷、daemon 當掉、伺服器無回應、重新連線。</td>
+            <td>不得改走普通 WAN；無回應不必然意味介面消失。</td>
+          </tr>
+          <tr>
+            <td>路由變化</td>
+            <td>預設／更具體路由變更、介面重建。</td>
+            <td>不可形成新增 fallback。</td>
+          </tr>
+          <tr>
+            <td>網路切換</td>
+            <td>Wi-Fi／Ethernet 切換、休眠／恢復。</td>
+            <td>規則、綁定與 namespace 仍成立。</td>
+          </tr>
+          <tr>
+            <td>協定旁路</td>
+            <td>啟用 IPv6、切換 DNS。</td>
+            <td>IPv4、IPv6 與 DNS 的實際路徑均符合要求。</td>
+          </tr>
+          <tr>
+            <td>管理與擴充</td>
+            <td>WebUI、搜尋元件、更新、helper process。</td>
+            <td>本版補測：任何允許例外都具明確目的，不能成為對外代理。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-54">§54</a></span
+    ><span class="p2p-refs"
+      ><a href="#ref-05" title="查證資料 R05">[R05]</a
+      ><a href="#ref-06" title="查證資料 R06">[R06]</a></span
+    >
+    <div class="p2p-check-panel">
+      <div>
+        <strong>驗收紀錄模板</strong>
+        <p>以下勾選只供人工檢查，不會掃描裝置，也不表示測試已通過。</p>
+      </div>
+      <div class="p2p-checks">
+        <label
+          ><input class="p2p-test-check" type="checkbox" />
+          <span>已記錄測試版本與拓撲</span></label
+        ><label
+          ><input class="p2p-test-check" type="checkbox" />
+          <span>已測 IPv4／IPv6／DNS</span></label
+        ><label
+          ><input class="p2p-test-check" type="checkbox" />
+          <span>已測啟動、中斷與重新連線</span></label
+        ><label
+          ><input class="p2p-test-check" type="checkbox" />
+          <span>已確認物理網卡只有允許的外層流量</span></label
+        ><label
+          ><input class="p2p-test-check" type="checkbox" />
+          <span>已比對 Tracker／Peer 看到的端點</span></label
+        ><label
+          ><input class="p2p-test-check" type="checkbox" />
+          <span>已保存測試設定、觀察範圍與限制</span></label
+        >
+      </div>
+    </div>
+    <h3 class="ln">11.2 實驗 B：Traffic Correlation</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>實驗組</th>
+            <th>目的</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Baseline：原始 WireGuard</td>
+            <td>建立原始可配對程度與效能基線。</td>
+          </tr>
+          <tr>
+            <td>A：Padding</td>
+            <td>單獨量測加入 dummy 的效益／成本。</td>
+          </tr>
+          <tr>
+            <td>B：Ephemeral shaping</td>
+            <td>測量動態策略是否能抵抗重新訓練的攻擊者。</td>
+          </tr>
+          <tr>
+            <td>C：Bounded delay</td>
+            <td>單獨量測時序改變的影響。</td>
+          </tr>
+          <tr>
+            <td>D：Multi-user mixing</td>
+            <td>比較低、中、高誠實使用者負載。</td>
+          </tr>
+          <tr>
+            <td>E：組合方案</td>
+            <td>判斷效果是否真的優於各單項與其成本。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <p>
+      「DAITA-like」只能表示仿照其方向的實驗組；沒有使用同一實作與設定，就不能把結果寫成
+      Mullvad／DAITA benchmark。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-55">§55</a></span
+    >
+    <h3 class="ln">11.3 不能只報 Accuracy</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>指標</th>
+            <th>怎麼解讀？</th>
+            <th>需一起交代</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TPR @ 固定 FPR</td>
+            <td>真正配對被找出的比例。</td>
+            <td>門檻、負例數、攻擊模型。</td>
+          </tr>
+          <tr>
+            <td>Precision／PPV</td>
+            <td>被判定為匹配的候選中，有多少是真的？</td>
+            <td>先驗／base rate、候選規模。</td>
+          </tr>
+          <tr>
+            <td>ROC、PR curve</td>
+            <td>不同門檻下的整體行為。</td>
+            <td>很低 FPR 的區域仍需足夠樣本。</td>
+          </tr>
+          <tr>
+            <td>Corr／估計 Mutual Information</td>
+            <td>可作輔助訊號或研究代理指標。</td>
+            <td>特徵、估計器、偏差與模型限制。</td>
+          </tr>
+          <tr>
+            <td>延遲 P50／P95／P99</td>
+            <td>典型與尾端使用體驗。</td>
+            <td>RTT、負載、重傳及基線。</td>
+          </tr>
+          <tr>
+            <td>Goodput、完成時間、資源占用</td>
+            <td>真正完成工作所付的代價。</td>
+            <td>本版補充；只看線路 bytes 會被 dummy 灌高。</td>
+          </tr>
+          <tr>
+            <td>Bandwidth overhead</td>
+            <td>相對真實資料增加多少 bytes。</td>
+            <td>相同觀察層、是否含 header／重傳／idle cover。</td>
+          </tr>
+          <tr>
+            <td>匿名集合與長期測試</td>
+            <td>多事件觀察後，候選是否持續縮小。</td>
+            <td>誠實使用者分布，不能只看總節點數。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-30">§30</a>、<a href="#original-51">§51</a>、<a
+        href="#original-52"
+        >§52</a
+      >、<a href="#original-56">§56</a></span
+    >
+    <div class="p2p-equation">
+      <div class="p2p-formula">
+        O<sub>B</sub> = Bytes<sub>defended</sub> / Bytes<sub>real</sub> − 1
+      </div>
+      <p>
+        使用相同測量區間與明確的 bytes
+        定義。當真實流量為零時，這個比值無定義，應另外報告每秒 idle-cover
+        bytes。
+      </p>
+    </div>
+    <h3 class="ln">11.4 互動試算：低誤報率，仍可能有很多錯誤候選</h3>
+    <p>
+      假設 N 個候選中剛好有一個真配對，則預期真陽性數為 TPR，預期假陽性數為
+      <code>(N − 1) × FPR</code
+      >。下方是本版的數學示例，不是案件數據，也不是任何匿名產品的實測。
+    </p>
+    <div class="p2p-calculator">
+      <div class="p2p-calc-inputs">
+        <label
+          >候選數 N<select id="candidate-n">
+            <option value="1000">1,000</option>
+            <option value="100000">100,000</option>
+            <option selected value="1000000">1,000,000</option>
+            <option value="10000000">10,000,000</option>
+          </select></label
+        ><label
+          >誤報率 FPR<select id="fpr">
+            <option value="0.001">10⁻³</option>
+            <option value="0.0001">10⁻⁴</option>
+            <option selected value="0.00001">10⁻⁵</option>
+            <option value="0.000001">10⁻⁶</option>
+          </select></label
+        ><label
+          >偵測率 TPR <output id="tpr-value">90%</output
+          ><input id="tpr" max="100" min="1" type="range" value="90"
+        /></label>
+      </div>
+      <div aria-live="polite" class="p2p-calc-results">
+        <div><span>預期假陽性</span><strong id="fp-out">10.00</strong></div>
+        <div><span>預期真陽性</span><strong id="tp-out">0.90</strong></div>
+        <div>
+          <span>PPV／陽性預測值</span><strong id="ppv-out">8.26%</strong>
+        </div>
+      </div>
+      <p class="p2p-muted">
+        PPV = TPR ÷ [TPR + (N − 1) ×
+        FPR]。以上是給定單一真配對與共同操作門檻的模型值，不是某筆結果的個人身分機率；真配對不在候選池時，應另設
+        open-world 判斷。
+      </p>
+    </div>
+    <h3 class="ln">11.5 本版新增的研究品質檢查</h3>
+    <p>
+      <strong>避免資料洩漏：</strong>
+      訓練、驗證、測試應按使用者／工作負載／session／時間或環境分組，避免同一活動的相鄰片段同時出現在訓練與測試。測試未知網站、檔案大小、網路壅塞與重傳狀況。
+    </p>
+    <p>
+      <strong>給攻擊者合理機會：</strong>
+      至少比較簡單統計與重新訓練後的學習式攻擊，並分開報告已知／未知防禦、被動／主動、短期／長期設定。2026
+      年 Ephemeral 論文的充分訓練結果，正是不能忽略這一步的理由。
+    </p>
+    <p>
+      <strong>低 FPR 要有足夠負例：</strong> 若 m
+      個近似獨立負例中觀察到零誤報，二項模型下單側 95% 上界是
+      <code>1 − 0.05^(1/m)</code>，約為 <code>3/m</code>。例如 m = 300,000
+      時，上界仍約為 <code>10⁻⁵</code>。這是本版的統計推導；大量共用相同 flow
+      的配對並不獨立，不能把所有 pair 當成同等證據量。
+    </p>
+    <span class="p2p-refs"
+      ><a href="#ref-20" title="查證資料 R20">[R20]</a></span
+    >
+    <aside class="p2p-callout p2p-review">
+      <strong>驗收措辭建議</strong>
+      <div>
+        應寫「在這些版本、這些故障和觀察點下，未觀察到直出」或「在此攻擊模型與成本下，TPR
+        降低多少」。不要寫「完全匿名」「不可能被追蹤」，也不要用手動勾選表代替實際測試紀錄。
+      </div>
+    </aside>
+  </div>
+</section>
+<section class="p2p-chapter" id="conclusions">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">12</span>
+    <div>
+      <p class="p2p-eyebrow">REVIEW SUMMARY · 從論述整理成可審核主張</p>
+      <h2 class="ln" id="chapter-12">
+        <span class="md-mark" aria-hidden="true">## </span>
+        最後判斷：保留什麼、修正什麼、下一步驗證什麼
+      </h2>
+    </div>
+  </header>
+  <div class="p2p-prose">
+    <h3 class="ln">12.1 保留原文的核心結論</h3>
+    <p>
+      <strong>第一，VPN 的直接價值是網路身分分離。</strong>
+      配合正確的介面綁定、防火牆與
+      namespace，可建立強而可驗收的防洩漏邊界，但不保證跨層不可連結性。
+    </p>
+    <p>
+      <strong>第二，調查不必破解加密。</strong>
+      中繼資料、時間、帳號與端點可形成多來源線索；每一條關係仍必須區分觀察、推論與獨立佐證。
+    </p>
+    <p>
+      <strong>第三，低延遲轉送會留下可研究的關聯訊號。</strong>
+      強防禦應直接量測對手能力與延遲、頻寬成本，不是只增加 VPN 跳數或加密層數。
+    </p>
+    <p>
+      <strong>第四，原文提出的組合架構是研究起點，而不是產品能力宣告。</strong>
+      Ephemeral shaping、bounded delay、multi-user aggregation、real-traffic
+      cover、egress transformation 都有明確待測條件。
+    </p>
+    <span class="p2p-refs p2p-original-refs"
+      >原文 <a href="#original-58">§58</a>、<a href="#original-59">§59</a>、<a
+        href="#original-60"
+        >§60</a
+      >、<a href="#original-61">§61</a>、<a href="#original-62">§62</a>、<a
+        href="#original-63"
+        >§63</a
+      ></span
+    >
+    <h3 class="ln">12.2 本次重要審閱註記</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>原文主張／容易產生的解讀</th>
+            <th>本版處理</th>
+            <th>依據與狀態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>「匿名」可概括成一種能力。</td>
+            <td>保留七種性質，分成防洩漏與防關聯兩條邊界。</td>
+            <td>原文分類重整。</td>
+          </tr>
+          <tr>
+            <td>第 57 節的高／中／低像統一評分。</td>
+            <td>改寫為作用、前提、成本與不保證事項；原表仍可在附錄查閱。</td>
+            <td>原文已註明非統一 benchmark；本版避免排名誤讀。</td>
+          </tr>
+          <tr>
+            <td>No-log／RAM-only 意味無任何可用資料。</td>
+            <td>區分歷史活動、即時狀態、付款、設定與彙總資料。</td>
+            <td>官方政策／基礎設施聲明。</td>
+          </tr>
+          <tr>
+            <td>DAITA 已部署，因此全面阻止端對端關聯。</td>
+            <td>
+              區分 fingerprinting、flow correlation
+              與具體評估；補入充分訓練下的限制。
+            </td>
+            <td>官方功能頁＋2026 論文。</td>
+          </tr>
+          <tr>
+            <td>Padding-only 不主動延遲，因此沒有延遲成本。</td>
+            <td>保留演算法層描述，補上壅塞、頻寬競爭與排隊影響。</td>
+            <td>論文模型與本版工程審閱。</td>
+          </tr>
+          <tr>
+            <td><code>Bᵧ(t+δ) ≈ Bₓ(t)</code> 是任意封包跨層守恆。</td>
+            <td>標示為有前提的因果直覺，先对齊觀察層次。</td>
+            <td>原文模型補註。</td>
+          </tr>
+          <tr>
+            <td><code>I(X;Y)</code> 可單獨證明匿名性。</td>
+            <td>保留研究方向，補上秘密 M、觀察 O 與身份不確定性的定義。</td>
+            <td>本版建模建議，尚非量測結果。</td>
+          </tr>
+          <tr>
+            <td>只要 split／merge 就能改變任意出口流。</td>
+            <td>將 overlay 內部變換與普通 TCP 對外語意分開。</td>
+            <td>TCP 規範＋本版工程推導。</td>
+          </tr>
+          <tr>
+            <td>Nyaa 案例已公開具體追蹤演算法。</td>
+            <td>只保留官方已確認事項，其餘明示未知或假設。</td>
+            <td>CODA 一手公告。</td>
+          </tr>
+          <tr>
+            <td>Anonymity Trilemma 否定任何改善可能。</td>
+            <td>指明模型條件，保留在實際預算下求更好折衷的研究問題。</td>
+            <td>2020 論文＋本版解讀。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <span class="p2p-refs"
+      ><a href="#ref-14" title="查證資料 R14">[R14]</a
+      ><a href="#ref-15" title="查證資料 R15">[R15]</a
+      ><a href="#ref-16" title="查證資料 R16">[R16]</a
+      ><a href="#ref-20" title="查證資料 R20">[R20]</a
+      ><a href="#ref-22" title="查證資料 R22">[R22]</a
+      ><a href="#ref-24" title="查證資料 R24">[R24]</a></span
+    >
+    <div class="p2p-verdict">
+      <span class="p2p-eyebrow">BOTTOM LINE</span>
+      <h3 class="ln">先讓封包沒有旁路，<br />再讓活動更難被關聯。</h3>
+      <p>
+        第一件事用系統邊界與故障注入驗收。第二件事用威脅模型、可重現攻擊與成本曲線驗證。它們應該互補，而不是被一個「匿名」標籤混為一談。
+      </p>
+    </div>
+    <h3 class="ln">12.3 建議的研究交付順序</h3>
+    <div
+      aria-label="可橫向捲動的比較表"
+      class="p2p-table-scroll"
+      tabindex="0"
+      role="region"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>階段</th>
+            <th>交付成果</th>
+            <th>進入下一階段的條件</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A／定義</td>
+            <td>寫清楚受保護對象、觀察者、路徑與成本上限。</td>
+            <td>不再使用未定義的「完全匿名」。</td>
+          </tr>
+          <tr>
+            <td>B／隔離</td>
+            <td>拓撲、最小權限、故障矩陣與封包觀察紀錄。</td>
+            <td>所列故障下沒有觀察到 P2P 直出。</td>
+          </tr>
+          <tr>
+            <td>C／基線</td>
+            <td>固定資料集、觀察點、統計及學習式攻擊。</td>
+            <td>指標與低 FPR 樣本量可解釋。</td>
+          </tr>
+          <tr>
+            <td>D／消融</td>
+            <td>逐項加入 padding、delay、mixing。</td>
+            <td>效益與成本可分離，未知環境也測過。</td>
+          </tr>
+          <tr>
+            <td>E／組合</td>
+            <td>多流混合原型與誠實／惡意使用者模型。</td>
+            <td>不破壞協定語意；提出有範圍的安全主張。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p2p-table-hint">表格可左右捲動 →</div>
+    <aside class="p2p-callout p2p-source">
+      <strong>本文件的完成範圍</strong>
+      <div>
+        已完成附件重組、重複概念合併、核心一手資料查閱與審閱註記。沒有對使用者設備做任何設定，也沒有執行匿名性實驗、效能
+        benchmark 或案件調查；所有示意圖與互動算式都不是實測數據。
+      </div>
+    </aside>
+  </div>
+</section>
+<section id="sources" class="p2p-chapter p2p-appendix">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">A</span>
+    <div>
+      <p class="p2p-eyebrow">PRIMARY SOURCES</p>
+      <h2 class="ln" id="chapter-13">
+        <span class="md-mark" aria-hidden="true">## </span>資料來源與查證範圍
+      </h2>
+    </div>
+  </header>
+  <p>
+    底本為使用者提供的《P2P
+    匿名性、數位調查與端對端流量關聯研究報告》（2026-08，63 節）。主文的「原文
+    §」連結可直接展開對照；[Rxx] 指向本節的一手資料。查閱日：2026-10-03。
+  </p>
+  <p class="p2p-muted">
+    官方政策是供應商聲明；論文結論依其實驗與威脅模型；本版推導不冒充外部研究結果。此清單不聲稱涵蓋所有最新研究，亦未對各產品作獨立稽核。
+  </p>
+  <div class="p2p-source-list">
+    <div class="p2p-source-item" id="ref-01">
+      <span class="p2p-ref-number">R01</span>
+      <div>
+        <span class="p2p-source-kind">協定規格</span>
+        <h3 class="ln">
+          <a
+            href="https://www.bittorrent.org/beps/bep_0015.html"
+            rel="noreferrer"
+            >BitTorrent BEP-15 · UDP Tracker
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>Announce 欄位與 tracker 交換格式。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-02">
+      <span class="p2p-ref-number">R02</span>
+      <div>
+        <span class="p2p-source-kind">協定規格</span>
+        <h3 class="ln">
+          <a
+            href="https://www.bittorrent.org/beps/bep_0005.html"
+            rel="noreferrer"
+            >BitTorrent BEP-5 · DHT <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>get_peers、announce_peer 與來源 IP／token 行為。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-03">
+      <span class="p2p-ref-number">R03</span>
+      <div>
+        <span class="p2p-source-kind">協定規格</span>
+        <h3 class="ln">
+          <a
+            href="https://www.bittorrent.org/beps/bep_0011.html"
+            rel="noreferrer"
+            >BitTorrent BEP-11 · Peer Exchange
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>已連線 peers 之間交換端點資訊。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-04">
+      <span class="p2p-ref-number">R04</span>
+      <div>
+        <span class="p2p-source-kind">官方 Wiki</span>
+        <h3 class="ln">
+          <a
+            href="https://github.com/qbittorrent/qBittorrent/wiki/Anonymous-Mode"
+            rel="noreferrer"
+            >qBittorrent · Anonymous Mode <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>功能目的、版本差異與不提供強隱私保證的警告。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-05">
+      <span class="p2p-ref-number">R05</span>
+      <div>
+        <span class="p2p-source-kind">官方 Wiki</span>
+        <h3 class="ln">
+          <a
+            href="https://github.com/qbittorrent/qBittorrent/wiki/How-to-bind-your-vpn-to-prevent-ip-leaks"
+            rel="noreferrer"
+            >qBittorrent · How to bind your VPN to prevent IP leaks
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>介面綁定作為額外防洩漏層。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-06">
+      <span class="p2p-ref-number">R06</span>
+      <div>
+        <span class="p2p-source-kind">官方架構文件</span>
+        <h3 class="ln">
+          <a href="https://www.wireguard.com/netns/" rel="noreferrer"
+            >WireGuard · Routing &amp; Network Namespaces
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>wg0 所在 namespace 與外層 UDP socket 的分離。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-07">
+      <span class="p2p-ref-number">R07</span>
+      <div>
+        <span class="p2p-source-kind">USENIX Security 2023</span>
+        <h3 class="ln">
+          <a
+            href="https://www.usenix.org/conference/usenixsecurity23/presentation/xue"
+            rel="noreferrer"
+            >Bypassing Tunnels: Leaking VPN Client Traffic by Abusing Routing
+            Tables <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>路由例外與 VPN bypass 的研究；不代表所有目前版本仍受影響。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-08">
+      <span class="p2p-ref-number">R08</span>
+      <div>
+        <span class="p2p-source-kind">研究發現者／Leviathan</span>
+        <h3 class="ln">
+          <a
+            href="https://www.leviathansecurity.com/blog/tunnelvision"
+            rel="noreferrer"
+            >TunnelVision · CVE-2024-3661 <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>DHCP Option 121 路由旁路與緩解討論。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-09">
+      <span class="p2p-ref-number">R09</span>
+      <div>
+        <span class="p2p-source-kind">官方支援文件</span>
+        <h3 class="ln">
+          <a
+            href="https://support.torproject.org/about-tor/security/attacks-on-onion-routing/"
+            rel="noreferrer"
+            >Tor · Limitations and remaining attacks
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>同時觀察入口與出口的流量關聯不在 Tor 的防禦保證內。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-10">
+      <span class="p2p-ref-number">R10</span>
+      <div>
+        <span class="p2p-source-kind">官方支援文件</span>
+        <h3 class="ln">
+          <a
+            href="https://support.torproject.org/about-tor/using-and-sharing/torrent/"
+            rel="noreferrer"
+            >Tor · Can I use Tor with Torrent?
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>不建議透過 Tor 使用 Torrent 客戶端。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-11">
+      <span class="p2p-ref-number">R11</span>
+      <div>
+        <span class="p2p-source-kind">官方威脅模型</span>
+        <h3 class="ln">
+          <a
+            href="https://i2p.net/en/docs/overview/threat-model/"
+            rel="noreferrer"
+            >I2P · Threat Model <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>Timing、intersection、Sybil 與流量分析等威脅。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-12">
+      <span class="p2p-ref-number">R12</span>
+      <div>
+        <span class="p2p-source-kind">USENIX LEET 2010</span>
+        <h3 class="ln">
+          <a
+            href="https://www.usenix.org/legacy/event/leet10/tech/full_papers/LeBlond.pdf"
+            rel="noreferrer"
+            >Spying the World from Your Laptop
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>
+          103 天、148 million IPs 與 2 billion copies；歷史觀察而非當代覆蓋率。
+        </p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-13">
+      <span class="p2p-ref-number">R13</span>
+      <div>
+        <span class="p2p-source-kind">USENIX HotSec 2008</span>
+        <h3 class="ln">
+          <a
+            href="https://www.usenix.org/legacy/event/hotsec08/tech/full_papers/piatek/piatek_html/"
+            rel="noreferrer"
+            >Why My Printer Received a DMCA Takedown Notice
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>監測方法與誤歸因問題。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-14">
+      <span class="p2p-ref-number">R14</span>
+      <div>
+        <span class="p2p-source-kind">CODA · 2026-07-28</span>
+        <h3 class="ln">
+          <a href="https://coda-cj.jp/en/news/920/" rel="noreferrer"
+            >First Uploader Using “Nyaa” Arrested
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>官方確認工具與調查合作，未揭露可重建的演算法。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-15">
+      <span class="p2p-ref-number">R15</span>
+      <div>
+        <span class="p2p-source-kind">官方政策 · 頁面更新 2026-06-17</span>
+        <h3 class="ln">
+          <a
+            href="https://mullvad.net/en/help/no-logging-data-policy"
+            rel="noreferrer"
+            >Mullvad · No-logging of user activity policy
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>活動紀錄、帳號設定、付款、即時狀態與彙總資料需分開理解。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-16">
+      <span class="p2p-ref-number">R16</span>
+      <div>
+        <span class="p2p-source-kind">官方基礎設施公告 · 2023</span>
+        <h3 class="ln">
+          <a
+            href="https://mullvad.net/en/blog/we-have-successfully-completed-our-migration-to-ram-only-vpn-infrastructure"
+            rel="noreferrer"
+            >Mullvad · Migration to RAM-only VPN infrastructure
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>供應商對 RAM-only 遷移的聲明。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-17">
+      <span class="p2p-ref-number">R17</span>
+      <div>
+        <span class="p2p-source-kind">官方功能文件</span>
+        <h3 class="ln">
+          <a
+            href="https://mullvad.net/en/help/multihop-wireguard"
+            rel="noreferrer"
+            >Mullvad · Multihop with WireGuard
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>入口與出口分離的設計目的。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-18">
+      <span class="p2p-ref-number">R18</span>
+      <div>
+        <span class="p2p-source-kind">官方功能介紹</span>
+        <h3 class="ln">
+          <a
+            href="https://mullvad.net/en/blog/daita-defense-against-ai-guided-traffic-analysis"
+            rel="noreferrer"
+            >Mullvad · DAITA: Defense Against AI-guided Traffic Analysis
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>固定封包大小、背景流量與模式擾動。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-19">
+      <span class="p2p-ref-number">R19</span>
+      <div>
+        <span class="p2p-source-kind">官方公告 · 2025-03-28</span>
+        <h3 class="ln">
+          <a
+            href="https://mullvad.net/en/blog/daita-version-2-now-available-on-all-platforms"
+            rel="noreferrer"
+            >Mullvad · DAITA version 2 <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>動態設定及 dummy packets 減量；不是全部開銷一律減半。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-20">
+      <span class="p2p-ref-number">R20</span>
+      <div>
+        <span class="p2p-source-kind">PoPETs 2026(1), pp. 426–449</span>
+        <h3 class="ln">
+          <a
+            href="https://petsymposium.org/popets/2026/popets-2026-0022.pdf"
+            rel="noreferrer"
+            >Pulls et al. · Ephemeral Network-Layer Fingerprinting Defenses
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>
+          第 1 頁：範圍與部署；§5.3／印刷頁 434：充分訓練下的 padding-only
+          限制。
+        </p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-21">
+      <span class="p2p-ref-number">R21</span>
+      <div>
+        <span class="p2p-source-kind">PoPETs 2024(1), pp. 98–115</span>
+        <h3 class="ln">
+          <a
+            href="https://petsymposium.org/popets/2024/popets-2024-0007.php"
+            rel="noreferrer"
+            >Holland et al. · DeTorrent <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>對抗式 padding-only 防禦，分開評估 WF 與 FC；數值僅適用論文設定。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-22">
+      <span class="p2p-ref-number">R22</span>
+      <div>
+        <span class="p2p-source-kind">PoPETs 2020(3), pp. 356–383</span>
+        <h3 class="ln">
+          <a
+            href="https://petsymposium.org/popets/2020/popets-2020-0056.pdf"
+            rel="noreferrer"
+            >Das et al. · Comprehensive Anonymity Trilemma
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>把使用者協調納入匿名與成本限制的形式模型。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-23">
+      <span class="p2p-ref-number">R23</span>
+      <div>
+        <span class="p2p-source-kind">USENIX Security 2017</span>
+        <h3 class="ln">
+          <a
+            href="https://www.usenix.org/conference/usenixsecurity17/technical-sessions/presentation/piotrowska"
+            rel="noreferrer"
+            >Piotrowska et al. · The Loopix Anonymity System
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>Poisson mixing、cover／loop traffic、威脅模型與秒級訊息延遲。</p>
+      </div>
+    </div>
+    <div class="p2p-source-item" id="ref-24">
+      <span class="p2p-ref-number">R24</span>
+      <div>
+        <span class="p2p-source-kind">IETF 網際網路標準</span>
+        <h3 class="ln">
+          <a
+            href="https://datatracker.ietf.org/doc/html/rfc9293"
+            rel="noreferrer"
+            >RFC 9293 · Transmission Control Protocol
+            <span aria-hidden="true">↗</span></a
+          >
+        </h3>
+        <p>TCP 連線、狀態與可靠排序的位元組流語意。</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="glossary" class="p2p-chapter p2p-appendix">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">B</span>
+    <div>
+      <p class="p2p-eyebrow">GLOSSARY</p>
+      <h2 class="ln" id="chapter-14">
+        <span class="md-mark" aria-hidden="true">## </span>術語速查
+      </h2>
+    </div>
+  </header>
+  <p class="p2p-muted">依附件用語整理；細部定義與限制以主文章節為準。</p>
+  <dl class="p2p-glossary">
+    <div>
+      <dt>Swarm</dt>
+      <dd>同一 torrent 的參與節點集合。</dd>
+    </div>
+    <div>
+      <dt>Peer</dt>
+      <dd>實際參與資料交換或協定通訊的對等節點。</dd>
+    </div>
+    <div>
+      <dt>Tracker</dt>
+      <dd>協助客戶端取得其他 peer 聯絡資訊的服務。</dd>
+    </div>
+    <div>
+      <dt>Infohash</dt>
+      <dd>識別 torrent 的雜湊資訊；不是使用者的身分識別碼。</dd>
+    </div>
+    <div>
+      <dt>DHT / PEX / LPD</dt>
+      <dd>分散式雜湊表／同伴交換／本地同伴發現：三種不同的發現途徑。</dd>
+    </div>
+    <div>
+      <dt>Ingress / Egress</dt>
+      <dd>某個系統邊界的入口／出口；必須指定觀察位置。</dd>
+    </div>
+    <div>
+      <dt>Endpoint</dt>
+      <dd>可指網路 IP:port，也可指使用者裝置；本文依上下文區分。</dd>
+    </div>
+    <div>
+      <dt>Metadata</dt>
+      <dd>不一定包含正文的周邊資料，例如時間、端點、長度與協定欄位。</dd>
+    </div>
+    <div>
+      <dt>Attribution / Entity Resolution</dt>
+      <dd>身分歸因／實體對齊：把不同觀察關聯到同一對象的分析過程。</dd>
+    </div>
+    <div>
+      <dt>Fail-closed</dt>
+      <dd>保護機制失效時停止受保護操作，不回落到不安全通道。</dd>
+    </div>
+    <div>
+      <dt>Network Namespace</dt>
+      <dd>Linux 網路資源隔離空間；不等同完整的主機安全沙箱。</dd>
+    </div>
+    <div>
+      <dt>Padding / Dummy / Cover traffic</dt>
+      <dd>
+        填充／虛設流量／掩護流量；概念相關但不完全同義，其他真實流量也可成為掩護。
+      </dd>
+    </div>
+    <div>
+      <dt>Mixing / Aggregation</dt>
+      <dd>
+        混合／聚合：前者著重破壞輸入輸出對應，後者只是把流量放在一起時，不保證同樣效果。
+      </dd>
+    </div>
+    <div>
+      <dt>WF / FC</dt>
+      <dd>網站指紋辨識／流量關聯：分類內容類型與配對兩端的不同任務。</dd>
+    </div>
+    <div>
+      <dt>TPR / FPR / PPV</dt>
+      <dd>真正配對的檢出率／非配對的誤報率／判為配對後的陽性預測值。</dd>
+    </div>
+    <div>
+      <dt>H(U | O) / I(X;Y)</dt>
+      <dd>
+        條件熵／互資訊：不確定性與相依程度的數學表示；必須先定義隨機變數與分布。
+      </dd>
+    </div>
+    <div>
+      <dt>QoS / Goodput</dt>
+      <dd>服務品質限制／有效資料吞吐；後者不把 dummy 當成有用工作。</dd>
+    </div>
+  </dl>
+</section>
+<section id="original" class="p2p-chapter p2p-appendix p2p-no-print">
+  <header class="p2p-chapter-heading">
+    <span class="p2p-chapter-num">C</span>
+    <div>
+      <p class="p2p-eyebrow">SOURCE ARCHIVE / 63 SECTIONS</p>
+      <h2 class="ln" id="chapter-15">
+        <span class="md-mark" aria-hidden="true">## </span>原文章節對照與全文
+      </h2>
+    </div>
+  </header>
+  <p>
+    原文逐章保留為
+    Markdown，包含原公式、圖例及比較表，不把審閱補註寫回底本。以下折疊內容僅是原稿存檔，不能視為本版對每句主張的重新確認。
+  </p>
+  <div
+    class="p2p-table-scroll"
+    tabindex="0"
+    role="region"
+    aria-label="原稿章節對照表，可水平捲動"
+  >
+    <table>
+      <thead>
+        <tr>
+          <th>重整主題</th>
+          <th>對應原文節次</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#overview">01 · 先看全貌：你要切斷哪一種關聯？</a></td>
+          <td>
+            <a href="#original-58">§58</a>、<a href="#original-59">§59</a>、<a
+              href="#original-60"
+              >§60</a
+            >、<a href="#original-61">§61</a>、<a href="#original-62">§62</a
+            >、<a href="#original-63">§63</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#threat-model">02 · 匿名不是開關：七種目標與觀察者</a>
+          </td>
+          <td>
+            <a href="#original-4">§4</a>、<a href="#original-5">§5</a>、<a
+              href="#original-8"
+              >§8</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#p2p-surfaces"
+              >03 · BitTorrent 在哪些地方留下可觀察資料？</a
+            >
+          </td>
+          <td>
+            <a href="#original-1">§1</a>、<a href="#original-2">§2</a>、<a
+              href="#original-3"
+              >§3</a
+            >、<a href="#original-4">§4</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#attribution">04 · 從網路線索到身分歸因：中間還差什麼？</a>
+          </td>
+          <td>
+            <a href="#original-3">§3</a>、<a href="#original-5">§5</a>、<a
+              href="#original-6"
+              >§6</a
+            >、<a href="#original-7">§7</a>、<a href="#original-8">§8</a>、<a
+              href="#original-18"
+              >§18</a
+            >、<a href="#original-60">§60</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#isolation">05 · 第一道可驗收邊界：Fail-Closed 網路隔離</a>
+          </td>
+          <td>
+            <a href="#original-9">§9</a>、<a href="#original-10">§10</a>、<a
+              href="#original-11"
+              >§11</a
+            >、<a href="#original-12">§12</a>、<a href="#original-13">§13</a
+            >、<a href="#original-14">§14</a>、<a href="#original-54">§54</a
+            >、<a href="#original-63">§63</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#comparison"
+              >06 · VPN、Seedbox、Tor、I2P：不要排成單一排行榜</a
+            >
+          </td>
+          <td>
+            <a href="#original-15">§15</a>、<a href="#original-16">§16</a>、<a
+              href="#original-17"
+              >§17</a
+            >、<a href="#original-57">§57</a>、<a href="#original-58">§58</a
+            >、<a href="#original-59">§59</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#mullvad">07 · Mullvad 與 DAITA：六種机制，六種不同意義</a>
+          </td>
+          <td>
+            <a href="#original-19">§19</a>、<a href="#original-20">§20</a>、<a
+              href="#original-21"
+              >§21</a
+            >、<a href="#original-22">§22</a>、<a href="#original-23">§23</a
+            >、<a href="#original-24">§24</a>、<a href="#original-37">§37</a
+            >、<a href="#original-59">§59</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#correlation">08 · 端對端流量關聯：不看內容，也能比形狀</a>
+          </td>
+          <td>
+            <a href="#original-25">§25</a>、<a href="#original-26">§26</a>、<a
+              href="#original-27"
+              >§27</a
+            >、<a href="#original-28">§28</a>、<a href="#original-29">§29</a
+            >、<a href="#original-30">§30</a>、<a href="#original-31">§31</a
+            >、<a href="#original-52">§52</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="#defenses">09 · 防禦技術：改變什麼，又付出什麼？</a></td>
+          <td>
+            <a href="#original-32">§32</a>、<a href="#original-33">§33</a>、<a
+              href="#original-34"
+              >§34</a
+            >、<a href="#original-35">§35</a>、<a href="#original-36">§36</a
+            >、<a href="#original-37">§37</a>、<a href="#original-38">§38</a
+            >、<a href="#original-39">§39</a>、<a href="#original-40">§40</a
+            >、<a href="#original-41">§41</a>、<a href="#original-42">§42</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#research-design"
+              >10 · 原文研究構想：有界延遲的多流混合網路</a
+            >
+          </td>
+          <td>
+            <a href="#original-43">§43</a>、<a href="#original-44">§44</a>、<a
+              href="#original-45"
+              >§45</a
+            >、<a href="#original-46">§46</a>、<a href="#original-47">§47</a
+            >、<a href="#original-48">§48</a>、<a href="#original-49">§49</a
+            >、<a href="#original-50">§50</a>、<a href="#original-62">§62</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#lab">11 · 如何驗證：隔離測試與匿名研究是兩套實驗</a>
+          </td>
+          <td>
+            <a href="#original-30">§30</a>、<a href="#original-51">§51</a>、<a
+              href="#original-52"
+              >§52</a
+            >、<a href="#original-53">§53</a>、<a href="#original-54">§54</a
+            >、<a href="#original-55">§55</a>、<a href="#original-56">§56</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#conclusions"
+              >12 · 最後判斷：保留什麼、修正什麼、下一步驗證什麼</a
+            >
+          </td>
+          <td>
+            <a href="#original-57">§57</a>、<a href="#original-58">§58</a>、<a
+              href="#original-59"
+              >§59</a
+            >、<a href="#original-60">§60</a>、<a href="#original-61">§61</a
+            >、<a href="#original-62">§62</a>、<a href="#original-63">§63</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="p2p-original-list">
+    <details id="original-0" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">序</span
+        ><strong>原文標題與摘要</strong><small>原文 L1–L62</small>
+      </summary>
+      <pre class="p2p-source-text">
+# P2P 匿名性、數位調查與端對端流量關聯研究報告
+
+**版本：2026-08**&#32;&#32;
+**主題：BitTorrent / VPN / Mullvad / Tor / I2P / Traffic Correlation / Traffic Analysis Defense**
+
+---
+
+## 摘要
+
+現代網路匿名性的核心問題，已經不能簡化成「是否隱藏真實 IP」。更完整的模型必須同時考慮：
+
+\[
+\text{Network Identity}
++
+\text{Protocol Metadata}
++
+\text{Session Linkability}
++
+\text{Temporal Correlation}
++
+\text{Behavioral Fingerprint}
++
+\text{Cross-Layer Identity}
++
+\text{Endpoint Evidence}
+\]
+
+匿名系統的目標，可以形式化為最大化：
+
+\[
+H(U\mid O)
+\]
+
+其中 \(U\) 是真實使用者，\(O\) 是攻擊者掌握的所有 observations；也就是在觀察網路、時間、帳號、裝置、協定等資訊之後，仍保留最大的身分不確定性。
+
+調查者則反過來，希望透過：
+
+\[
+O_1+O_2+\cdots+O_n
+\rightarrow
+\text{Entity Resolution}
+\rightarrow
+\text{Attribution}
+\]
+
+讓：
+
+\[
+H(U\mid O_1,\ldots,O_n)
+\downarrow
+\]
+
+因此，現代調查通常不是直接「破解 VPN」或「破解 WireGuard」，而是透過 **metadata correlation、timeline analysis、graph correlation、traffic analysis、account records、endpoint forensics 與多來源證據融合**逐漸縮小候選集合。
+
+本報告的核心結論是：
+
+&gt; **VPN 最擅長切斷「住宅 IP → Internet activity」這條直接關聯，但不能自動提供 activity unlinkability、traffic-analysis resistance 或 long-term anonymity。**
+
+而對於能同時觀察低延遲通訊兩端的強大攻擊者，目前仍沒有兼具**低延遲、低頻寬開銷、強匿名性**的實用通用解法。Tor 官方目前仍明確承認此限制；匿名通訊研究中的 Anonymity Trilemma 也進一步形式化了這種基本 trade-off。
+
+---
+
+</pre>
+    </details>
+    <details id="original-1" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">01</span
+        ><strong>P2P 的基本匿名性問題</strong><small>原文 L63–L116</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 1. P2P 的基本匿名性問題
+
+## 1.1 BitTorrent 本質上不是匿名協定
+
+BitTorrent 的首要目標是：
+
+&gt; 高效率地尋找其他 peers 並交換資料。
+
+而不是：
+
+&gt; 隱藏誰正在參與某個 swarm。
+
+因此 BitTorrent 原生存在多個可觀察面：
+
+```text
+                  ┌── Tracker
+                  │
+BitTorrent Client ├── DHT
+                  │
+                  ├── PEX
+                  │
+                  ├── Peers
+                  │
+                  └── Local Peer Discovery
+```
+
+標準 UDP Tracker announce 可包含：
+
+- `info_hash`
+- `peer_id`
+- `downloaded`
+- `left`
+- `uploaded`
+- `event`
+- listening port
+
+tracker 同時自然可以看到來源 network endpoint。
+
+因此 tracker 很容易形成：
+
+\[
+(IP,\ InfoHash,\ Timestamp)
+\]
+
+甚至：
+
+\[
+(IP,\ InfoHash,\ Uploaded,\ Left,\ Event,\ Timestamp)
+\]
+
+這是 BitTorrent protocol 的正常設計，而不是漏洞。
+
+---
+
+</pre>
+    </details>
+    <details id="original-2" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">02</span
+        ><strong>DHT 與 PEX 的暴露面</strong><small>原文 L117–L154</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 2. DHT 與 PEX 的暴露面
+
+BitTorrent DHT（BEP-5）是一個分散式 peer discovery 系統。
+
+其核心操作之一：
+
+\[
+get\_peers(info\_hash)
+\]
+
+可以取得某 torrent 對應的 peer contact information；而 `announce_peer` 則用來向 DHT 宣告自己正參與該 torrent。
+
+BEP-5 更要求 `announce_peer` 使用的 token 與發出查詢的來源 IP 綁定，查詢節點最後會把該來源 IP 與 port 儲存在對應 infohash 下。
+
+所以可以把 DHT 理解為：
+
+&gt; **分散式的 `infohash → peer endpoint` discovery database。**
+
+PEX 則在已建立 BitTorrent 連線的 peers 之間交換其他 peer 資訊，是另一個 peer discovery surface。
+
+因此：
+
+```text
+DHT OFF
+PEX OFF
+```
+
+確實可以降低公開 discovery surface，但不等於匿名：
+
+```text
+Tracker → 仍可看到 endpoint
+Peers   → 仍可看到 endpoint
+```
+
+真正決定「住宅 IP 是否暴露」的主要因素仍是 network routing boundary。
+
+---
+
+</pre>
+    </details>
+    <details id="original-3" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">03</span
+        ><strong>P2P 大規模監控已經不是理論問題</strong
+        ><small>原文 L155–L189</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 3. P2P 大規模監控已經不是理論問題
+
+2010 年 USENIX LEET 的 **Spying the World from Your Laptop** 已經展示，只使用單機與 BitTorrent 公開基礎設施，就可以長時間大規模建立使用者與 torrent 活動之間的 mapping。
+
+該研究在 103 天內蒐集約：
+
+- 1.48 億個 IP
+- 約 20 億次 content-copy observations
+
+並報告能對其觀察到的大量新 torrent 推測內容初始提供者。
+
+但反方向也有一項重要研究。
+
+HotSec 2008 的：
+
+**Why My Printer Received a DMCA Takedown Notice**
+
+證明單純根據 tracker 回傳的 IP 資訊可能產生 false attribution，甚至讓沒有實際參與資料交換的裝置收到侵權通知。
+
+因此 forensic evidence 必須區分：
+
+\[
+IP\ listed\ by\ tracker
+\]
+
+和：
+
+\[
+IP\ actually\ exchanged\ verified\ content
+\]
+
+兩者的證據強度不同。
+
+---
+
+</pre>
+    </details>
+    <details id="original-4" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">04</span
+        ><strong>匿名性應該拆成不同 Security Properties</strong
+        ><small>原文 L190–L332</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 4. 匿名性應該拆成不同 Security Properties
+
+「匿名」不是單一 Boolean。
+
+比較完整的模型可以寫成：
+
+\[
+P=
+(P_{IP},
+P_{identity},
+P_{activity},
+P_{cross},
+P_{fingerprint},
+P_{timing},
+P_{longitudinal})
+\]
+
+## 4.1 Real-IP Confidentiality
+
+希望：
+
+```text
+Tracker
+Peer
+DHT
+Website
+```
+
+看不到住宅／公司 WAN IP。
+
+VPN 最擅長解決這一層。
+
+---
+
+## 4.2 Identity Anonymity
+
+即使看到某個活動，也不知道：
+
+```text
+Activity X
+    ↓
+Who?
+```
+
+---
+
+## 4.3 Activity Unlinkability
+
+即使存在：
+
+```text
+Activity A
+Activity B
+Activity C
+Activity D
+```
+
+也不能容易判斷：
+
+\[
+A=B=C=D=\text{same actor}
+\]
+
+這比單純 IP hiding 更強。
+
+---
+
+## 4.4 Cross-Layer Unlinkability
+
+避免：
+
+```text
+Browser Identity
+      │
+      ├── Website account
+      │
+P2P Identity
+      │
+      └── Tracker/DHT
+```
+
+被證明屬於同一個 entity。
+
+---
+
+## 4.5 Fingerprint Minimization
+
+降低：
+
+```text
+client version
+peer ID pattern
+User-Agent
+protocol extensions
+OS/application behavior
+```
+
+等 software fingerprint。
+
+qBittorrent 的 Anonymous Mode 主要屬於這一類。官方明確指出它本身不提供強匿名性，而是減少 BitTorrent client 暴露的 identifying information。
+
+---
+
+## 4.6 Timing / Traffic-Analysis Resistance
+
+希望入口：
+
+\[
+X(t)
+\]
+
+與出口：
+
+\[
+Y(t)
+\]
+
+不容易被判斷為同一條 communication。
+
+這是 Tor、VPN 與大多數 low-latency anonymity systems 最難解決的問題之一。
+
+---
+
+## 4.7 Longitudinal Anonymity
+
+匿名不只是：
+
+&gt; 一次活動有沒有洩漏。
+
+而是：
+
+&gt; 進行數百、數千次活動後，歷史 observations 是否會逐漸把 identity 揭露出來？
+
+因此真正應研究：
+
+\[
+H(U\mid O^{(1)},O^{(2)},...,O^{(n)})
+\]
+
+而不是只有單一 session。
+
+---
+
+</pre>
+    </details>
+    <details id="original-5" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">05</span
+        ><strong>調查者的現代模型</strong><small>原文 L333–L373</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 5. 調查者的現代模型
+
+現代數位調查可以抽象成：
+
+```text
+                 Observable Event
+                       │
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+     Network        Service        Endpoint
+     Evidence       Evidence       Evidence
+        │              │              │
+        ├──────────────┼──────────────┤
+                       ▼
+                    Timeline
+                       │
+                       ▼
+                Entity Resolution
+                       │
+                       ▼
+                Candidate Ranking
+                       │
+                       ▼
+                 Corroboration
+                       │
+                       ▼
+                   Attribution
+```
+
+調查者不一定需要一項具有決定性的證據。
+
+更常見的是：
+
+\[
+E_1+E_2+E_3+\cdots+E_n
+\]
+
+全部支持同一 hypothesis。
+
+---
+
+</pre>
+    </details>
+    <details id="original-6" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">06</span
+        ><strong>Graph-based Attribution Model</strong
+        ><small>原文 L374–L431</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 6. Graph-based Attribution Model
+
+這個問題很適合建模成：
+
+\[
+G=(V,E)
+\]
+
+其中 nodes 可以包括：
+
+```text
+Person
+Account
+Device
+IP
+VPN Exit
+Session
+Browser
+Torrent
+Infohash
+Tracker Event
+Server
+Payment
+Email
+Timestamp
+```
+
+edges 則可以包括：
+
+```text
+connected_from
+logged_in_from
+observed_at
+announced
+created
+controlled_by
+paid_for
+same_session
+same_device
+temporally_correlated
+```
+
+調查的本質，就是從許多 disconnected components：
+
+```text
+A        B        C
+```
+
+逐漸找到可信的 cross-component edges：
+
+```text
+A ───── B ───── C
+```
+
+最後形成 entity cluster。
+
+---
+
+</pre>
+    </details>
+    <details id="original-7" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">07</span
+        ><strong>Bayesian Attribution</strong><small>原文 L432–L467</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 7. Bayesian Attribution
+
+假設：
+
+\[
+H_A=\text{Alice 是 Activity X 的操作者}
+\]
+
+有證據：
+
+\[
+E_1,E_2,\ldots,E_n
+\]
+
+則持續更新：
+
+\[
+P(H_A\mid E_1,\ldots,E_n)
+\]
+
+這很好地描述「大量弱訊號逐漸形成強 attribution」的過程。
+
+但實務上不能簡單假設：
+
+\[
+P(E_1,E_2|H)
+=
+P(E_1|H)P(E_2|H)
+\]
+
+因為很多 evidence 具有共因或來自同一 observation source。
+
+否則容易發生 **double counting evidence**。
+
+---
+
+</pre>
+    </details>
+    <details id="original-8" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">08</span
+        ><strong>Intersection Attack</strong><small>原文 L468–L523</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 8. Intersection Attack
+
+另一個很重要的匿名性模型是候選集合交集。
+
+假設：
+
+\[
+S_0
+\]
+
+是所有可能使用者。
+
+第一次事件發生時在線：
+
+\[
+S_1
+\]
+
+第二次：
+
+\[
+S_2
+\]
+
+持續：
+
+\[
+S^*
+=
+S_1\cap S_2\cap\dots\cap S_n
+\]
+
+可能形成：
+
+```text
+10000
+  ↓
+3000
+  ↓
+600
+  ↓
+80
+  ↓
+12
+  ↓
+2
+```
+
+I2P 自己的 threat model 也明確把 timing、intersection、predecessor、Sybil、traffic analysis 等列為需要考慮的匿名攻擊類型。
+
+因此：
+
+&gt; **長期、重複、具有規律的匿名活動，本身就是風險累積。**
+
+---
+
+</pre>
+    </details>
+    <details id="original-9" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">09</span
+        ><strong>P2P 的第一級防禦：Network Isolation</strong
+        ><small>原文 L524–L548</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 9. P2P 的第一級防禦：Network Isolation
+
+如果安全要求只是：
+
+&gt; **BitTorrent 的真實住宅 IP 絕不能進入 tracker、DHT 或 swarm。**
+
+工程上最可靠的 security invariant 應該是：
+
+\[
+\forall p\in P2PTraffic:
+OutgoingInterface(p)=VPN
+\]
+
+以及：
+
+\[
+VPN\downarrow
+\Rightarrow
+P2PTraffic=0
+\]
+
+也就是 **fail closed**。
+
+---
+
+</pre>
+    </details>
+    <details id="original-10" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">10</span
+        ><strong>VPN + Application Binding</strong><small>原文 L549–L567</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 10. VPN + Application Binding
+
+qBittorrent 可以將自身 bind 到指定 VPN network interface。
+
+官方文件把這項功能明確描述為 VPN kill-switch 之外額外的一層防洩漏保護：VPN interface 不存在時，qBittorrent 不應改走普通實體 interface。
+
+典型：
+
+```text
+eth0 = physical WAN
+wg0  = VPN
+
+qBittorrent
+     │
+     └── bind wg0
+```
+
+---
+
+</pre>
+    </details>
+    <details id="original-11" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">11</span
+        ><strong>Firewall Fail-Closed</strong><small>原文 L568–L597</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 11. Firewall Fail-Closed
+
+更進一步：
+
+\[
+P2P\ process
+\land
+oif\neq wg0
+\Rightarrow DROP
+\]
+
+也就是：
+
+```text
+               ┌── wg0  → ALLOW
+qBittorrent ───┤
+               └── eth0 → DROP
+```
+
+這可以保護：
+
+- VPN daemon crash
+- routing mistake
+- reconnect
+- interface changes
+
+等錯誤情境。
+
+---
+
+</pre>
+    </details>
+    <details id="original-12" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">12</span
+        ><strong>Network Namespace</strong><small>原文 L598–L636</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 12. Network Namespace
+
+更強的架構是：
+
+```text
+Physical Namespace
+│
+└── eth0 / wlan0
+        │
+        └── encrypted WireGuard socket
+
+
+P2P Namespace
+│
+├── qBittorrent
+└── wg0
+```
+
+P2P namespace 根本沒有：
+
+```text
+eth0
+wlan0
+```
+
+因此即使 VPN route 消失，也沒有普通 WAN fallback path。
+
+WireGuard 官方文件直接展示了這種模式：container/network namespace 中可以只有 `wg0`，因此唯一可用的 Internet route 就是 WireGuard。
+
+這比單純依賴：
+
+```text
+default route → VPN
+```
+
+更容易建立 kernel-level security invariant。
+
+---
+
+</pre>
+    </details>
+    <details id="original-13" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">13</span
+        ><strong>為什麼 Routing-only VPN 不夠理想</strong
+        ><small>原文 L637–L656</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 13. 為什麼 Routing-only VPN 不夠理想
+
+USENIX Security 2023 的 **Bypassing Tunnels** 研究證明，許多 VPN client 的安全邊界建立在 routing-table manipulation 上，而 routing exceptions 可以成為漏流量的攻擊面。研究者在多平台與多種 VPN client 上成功展示 routing-based VPN bypass。
+
+TunnelVision / CVE-2024-3661 又展示了透過 DHCP Option 121 注入更 specific routes，使某些 VPN 流量繞過 tunnel 的方式；研究者也把 Linux network namespace 列為很強的 mitigation。
+
+因此：
+
+```text
+VPN connected = true
+```
+
+不必然意味：
+
+```text
+∀ traffic → VPN
+```
+
+---
+
+</pre>
+    </details>
+    <details id="original-14" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">14</span
+        ><strong>IPv6、DNS 與其他旁路</strong><small>原文 L657–L689</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 14. IPv6、DNS 與其他旁路
+
+P2P isolation 必須同時處理：
+
+\[
+IPv4
+\]
+
+和：
+
+\[
+IPv6
+\]
+
+否則可能形成：
+
+```text
+IPv4 → VPN
+IPv6 → physical WAN
+```
+
+DNS 也應納入同一 network boundary。
+
+DNS leak 通常不代表 ISP 自動知道 torrent `infohash`，但可能暴露：
+
+```text
+tracker.example.org
+```
+
+等 service-level information。
+
+---
+
+</pre>
+    </details>
+    <details id="original-15" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">15</span><strong>Seedbox</strong
+        ><small>原文 L690–L739</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 15. Seedbox
+
+Seedbox 改變的是 network location：
+
+```text
+Home
+ │ HTTPS/SSH
+ ▼
+Seedbox
+ │
+ ▼
+BitTorrent Swarm
+```
+
+因此：
+
+\[
+ResidentialIP\notin Swarm
+\]
+
+但：
+
+```text
+Swarm → Seedbox IP
+```
+
+仍存在。
+
+因此 seedbox 提供的是：
+
+&gt; **network-location separation**
+
+而不是：
+
+&gt; perfect anonymity。
+
+信任邊界只是從：
+
+```text
+VPN provider
+```
+
+轉移到：
+
+```text
+hosting / seedbox provider
+```
+
+---
+
+</pre>
+    </details>
+    <details id="original-16" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">16</span><strong>Tor 與 P2P</strong
+        ><small>原文 L740–L759</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 16. Tor 與 P2P
+
+Tor 是低延遲匿名 communication network，其主要安全思想是避免單一 relay 同時知道：
+
+```text
+User
++
+Destination
+```
+
+但 Tor 官方明確指出：
+
+&gt; 如果攻擊者能同時觀察 communication channel 的兩端，目前沒有實用的 low-latency system 能可靠阻止利用 timing 和 volume 做 correlation。
+
+因此 Tor 的主要策略不是「消滅 correlation」，而是：
+
+&gt; 降低攻擊者同時取得兩端 observation position 的可能性。
+
+---
+
+</pre>
+    </details>
+    <details id="original-17" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">17</span><strong>I2P</strong
+        ><small>原文 L760–L783</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 17. I2P
+
+I2P 的 BitTorrent 模型與普通 clearnet BitTorrent 不同。
+
+其匿名 identity 不直接使用 clearnet：
+
+```text
+IP:port
+```
+
+作為 application peer identity，而是透過 I2P overlay 中的 Destination 與 tunnel infrastructure。
+
+因此這是：
+
+&gt; **protocol-level anonymous P2P overlay**
+
+而不是：
+
+&gt; clearnet BitTorrent + VPN。
+
+但 I2P 自己也明確承認 timing、intersection、traffic analysis 等攻擊仍是 threat model 的一部分。
+
+---
+
+</pre>
+    </details>
+    <details id="original-18" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">18</span
+        ><strong>Nyaa / CODA / JHA 案例</strong><small>原文 L784–L825</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 18. Nyaa / CODA / JHA 案例
+
+2026 年 7 月，日本京都府警逮捕一名涉嫌作為 Nyaa first uploader 分享 NHK 等內容的男子。
+
+CODA 官方確認：
+
+- CODA 在 METI 支援的 CBEP 計畫下調查 Nyaa；
+- Japan Hacker Association 開發了一套 analytical tool；
+- CODA 利用該工具取得與嫌疑人相關的資訊；
+- 京都府警基於相關資訊進一步調查並識別嫌疑人。
+
+但目前官方**沒有公開這套工具的 algorithm**。
+
+因此不能把：
+
+```text
+CDN logs
+Cookies
+Login history
+VPN logs
+```
+
+等具體方法當作已確認事實。
+
+比較合理的技術假設包括：
+
+```text
+Index metadata
+        +
+Tracker metadata
+        +
+Temporal correlation
+        +
+Historical observations
+        ↓
+Candidate identification
+```
+
+但這仍屬推論。
+
+---
+
+</pre>
+    </details>
+    <details id="original-19" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">19</span
+        ><strong>Mullvad 的匿名模型</strong><small>原文 L826–L850</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 19. Mullvad 的匿名模型
+
+Mullvad 是 privacy-oriented VPN，而不是完整 anonymous communication network。
+
+它主要解決：
+
+\[
+ResidentialIP
+\rightarrow
+InternetActivity
+\]
+
+的直接關聯問題。
+
+主要機制包括：
+
+- shared VPN exit
+- numbered account
+- no activity logs
+- Multihop
+- DAITA
+- RAM-only server infrastructure
+
+---
+
+</pre>
+    </details>
+    <details id="original-20" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">20</span
+        ><strong>Mullvad No-Log</strong><small>原文 L851–L874</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 20. Mullvad No-Log
+
+截至 2026 年 Mullvad 官方政策表示，不永久保存：
+
+- traffic
+- DNS requests
+- connection timestamps
+- disconnect timestamps
+- session duration
+- IP addresses
+- user bandwidth
+
+connection validation 所需的即時狀態在 temporary memory 中處理，而不是永久保存。
+
+因此 Mullvad 嘗試避免形成：
+
+\[
+(SourceIP,\ Account,\ ExitIP,\ Timestamp)
+\]
+
+的 retrospective connection table。
+
+---
+
+</pre>
+    </details>
+    <details id="original-21" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">21</span
+        ><strong>Numbered Account 與付款</strong><small>原文 L875–L910</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 21. Numbered Account 與付款
+
+Mullvad 不要求傳統 email/password identity。
+
+但 payment 本身仍可能構成另一個 attribution surface。
+
+例如某些付款方式會存在：
+
+```text
+Payment
+   ↓
+Mullvad account
+```
+
+相關記錄，且官方資料政策明確說明不同付款方式的資料保存方式。
+
+所以：
+
+\[
+Person\rightarrow Account
+\]
+
+有時可能建立。
+
+但若沒有 connection logs：
+
+\[
+Account
+\rightarrow
+ExitIP@time
+\]
+
+仍缺乏直接歷史 mapping。
+
+---
+
+</pre>
+    </details>
+    <details id="original-22" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">22</span
+        ><strong>Mullvad RAM-only Infrastructure</strong
+        ><small>原文 L911–L934</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 22. Mullvad RAM-only Infrastructure
+
+Mullvad 自 2023 年宣布完成 VPN infrastructure 的 RAM-only migration，VPN server 不再以一般 persistent disk 作為運作基礎；其 infrastructure audit 也針對這種 architecture 進行檢查。
+
+其安全意義是降低：
+
+```text
+server seizure
+   ↓
+historical disk artifacts
+```
+
+的資料殘留風險。
+
+但 RAM-only：
+
+\[
+\neq
+\]
+
+「所有攻擊者都無法即時觀察 traffic」。
+
+---
+
+</pre>
+    </details>
+    <details id="original-23" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">23</span
+        ><strong>Mullvad Multihop</strong><small>原文 L935–L969</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 23. Mullvad Multihop
+
+普通 VPN：
+
+```text
+User
+ │
+ ▼
+VPN
+ │
+ ▼
+Destination
+```
+
+Multihop：
+
+```text
+User
+ │
+ ▼
+Entry VPN
+ │
+ ▼
+Exit VPN
+ │
+ ▼
+Destination
+```
+
+Mullvad 官方指出，Multihop 的其中一個目的就是增加 incoming/outgoing traffic correlation 的難度，使不同 observation positions 分散在不同 server/location/provider。
+
+但這仍不是 Tor 式的多營運者 trust distribution。
+
+---
+
+</pre>
+    </details>
+    <details id="original-24" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">24</span><strong>DAITA</strong
+        ><small>原文 L970–L1006</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 24. DAITA
+
+DAITA：
+
+**Defense Against AI-guided Traffic Analysis**
+
+主要不是增加 cryptographic strength，而是修改 encrypted traffic 的 observable shape。
+
+Mullvad 官方列出的主要技術包括：
+
+- random background / dummy traffic
+- constant packet-size style padding
+- traffic pattern distortion
+- dynamic per-connection configurations
+
+DAITA v2 進一步降低 dummy traffic overhead，並讓不同 connection 使用不同 tunnel traffic characteristics。
+
+因此它主要作用於：
+
+\[
+TrafficFingerprint
+\]
+
+與：
+
+\[
+TrafficCorrelationSignal
+\]
+
+而不是：
+
+\[
+AES/WireGuardCryptography
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-25" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">25</span
+        ><strong>End-to-End Traffic Correlation</strong
+        ><small>原文 L1007–L1040</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 25. End-to-End Traffic Correlation
+
+這是整份報告最重要的技術問題。
+
+假設 ingress observation：
+
+\[
+X=\{(t_i,s_i,d_i)\}_{i=1}^{n}
+\]
+
+其中：
+
+- \(t_i\)：timestamp
+- \(s_i\)：packet size
+- \(d_i\)：direction
+
+出口：
+
+\[
+Y=\{(t'_j,s'_j,d'_j)\}_{j=1}^{m}
+\]
+
+攻擊者要解：
+
+\[
+Match(X,Y)?
+\]
+
+即：
+
+&gt; 入口 flow X 與哪個出口 flow 是同一個 communication？
+
+---
+
+</pre>
+    </details>
+    <details id="original-26" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">26</span
+        ><strong>Encryption 無法隱藏所有 Metadata</strong
+        ><small>原文 L1041–L1071</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 26. Encryption 無法隱藏所有 Metadata
+
+即使：
+
+\[
+C=Enc_K(M)
+\]
+
+攻擊者仍可能看到：
+
+```text
+packet timing
+packet count
+packet size
+direction
+burst structure
+idle intervals
+flow duration
+total volume
+```
+
+因此：
+
+\[
+Encryption\neq Traffic\ Unobservability
+\]
+
+這也是 Tor 官方明確承認端對端 correlation threat 的原因。
+
+---
+
+</pre>
+    </details>
+    <details id="original-27" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">27</span
+        ><strong>最基本的 Correlation Attack</strong
+        ><small>原文 L1072–L1112</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 27. 最基本的 Correlation Attack
+
+把時間切成 window：
+
+\[
+x_k=
+bytes(X,t_k,t_k+\Delta t)
+\]
+
+\[
+y_k=
+bytes(Y,t_k,t_k+\Delta t)
+\]
+
+可以計算 lagged correlation：
+
+\[
+C(\tau)
+=
+Corr(x_k,y_{k+\tau})
+\]
+
+如果：
+
+```text
+Candidate A = 0.17
+Candidate B = 0.10
+Candidate C = 0.91
+Candidate D = 0.05
+```
+
+則 C 明顯值得進一步分析。
+
+真正的 modern classifier 當然可以使用更複雜的 feature representation，但核心資訊來源沒有改變：
+
+\[
+Timing+Volume+Direction
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-28" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">28</span
+        ><strong>Data Conservation 是核心問題</strong
+        ><small>原文 L1113–L1137</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 28. Data Conservation 是核心問題
+
+定義 cumulative bytes：
+
+\[
+B_X(t)=
+\sum_{i:t_i\leq t}s_i
+\]
+
+低延遲 proxy 必須近乎即時把 ingress data 傳到 egress。
+
+因此通常存在：
+
+\[
+B_Y(t+\delta)\approx B_X(t)
+\]
+
+其中 \(\delta\) 是 network delay。
+
+真正資料不可能在 ingress 尚未收到之前就出現在 egress。
+
+因此 low-latency forwarding 本身創造了 causality constraint。
+
+---
+
+</pre>
+    </details>
+    <details id="original-29" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">29</span
+        ><strong>Mutual Information 模型</strong><small>原文 L1138–L1170</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 29. Mutual Information 模型
+
+理想匿名系統希望：
+
+\[
+I(X;Y)\rightarrow0
+\]
+
+也就是：
+
+&gt; 知道 ingress traffic 對推測 egress traffic 幾乎沒有額外資訊。
+
+但普通 VPN / Tor 可以抽象成：
+
+\[
+Y=T(X)+N
+\]
+
+其中：
+
+- \(T\)：relay/network transformation
+- \(N\)：jitter、congestion、packetization noise
+
+通常：
+
+\[
+I(X;Y)&gt;0
+\]
+
+而且可能相當高。
+
+---
+
+</pre>
+    </details>
+    <details id="original-30" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">30</span
+        ><strong>False Positive 與 Base Rate</strong
+        ><small>原文 L1171–L1216</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 30. False Positive 與 Base Rate
+
+Traffic-correlation 論文不能只看：
+
+\[
+TPR
+\]
+
+還必須看：
+
+\[
+FPR
+\]
+
+假設：
+
+\[
+FPR=10^{-3}
+\]
+
+在：
+
+\[
+10^7
+\]
+
+candidate comparisons 中仍可能得到：
+
+\[
+10^4
+\]
+
+false positives。
+
+因此：
+
+&gt; targeted hypothesis confirmation
+
+和：
+
+&gt; Internet-scale identification
+
+是非常不同的問題。
+
+---
+
+</pre>
+    </details>
+    <details id="original-31" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">31</span
+        ><strong>Passive 與 Active Correlation</strong
+        ><small>原文 L1217–L1245</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 31. Passive 與 Active Correlation
+
+### Passive
+
+只觀察：
+
+```text
+Ingress
+Egress
+```
+
+再做 statistical matching。
+
+### Active
+
+攻擊者能對 flow 注入：
+
+```text
+delay
+drop
+rate perturbation
+```
+
+使其形成特殊 temporal pattern，再觀察另一側是否出現相應 pattern。
+
+Active attack 通常比純 passive observation 更強。
+
+---
+
+</pre>
+    </details>
+    <details id="original-32" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">32</span
+        ><strong>Anonymity Trilemma</strong><small>原文 L1246–L1281</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 32. Anonymity Trilemma
+
+匿名通訊的一個根本 trade-off 可以寫成：
+
+### Strong anonymity
+
+\[
+I(X;Y)\rightarrow0
+\]
+
+### Low latency
+
+\[
+L\rightarrow0
+\]
+
+### Low bandwidth overhead
+
+\[
+B_{dummy}\rightarrow0
+\]
+
+研究結果指出，anonymous communication systems 不能同時取得：
+
+&gt; strong anonymity + low latency overhead + low bandwidth overhead。
+
+2020 年 PoPETs 的 Comprehensive Anonymity Trilemma 進一步把 impossibility result 擴展到包含 user coordination 的更廣泛匿名系統。
+
+這代表問題不只是：
+
+&gt; 「還沒有發明夠好的 padding algorithm。」
+
+而具有更根本的限制。
+
+---
+
+</pre>
+    </details>
+    <details id="original-33" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">33</span
+        ><strong>為什麼會形成 Trilemma？</strong><small>原文 L1282–L1333</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 33. 為什麼會形成 Trilemma？
+
+假設使用者目前 idle。
+
+若系統不希望 observer 判斷：
+
+```text
+User is idle
+```
+
+則需要持續送：
+
+\[
+DummyTraffic&gt;0
+\]
+
+因此：
+
+\[
+BandwidthOverhead\uparrow
+\]
+
+反之，Alice 突然產生大量 traffic。
+
+若不希望 output 立即反映 burst：
+
+### 方法 A
+
+延遲資料：
+
+\[
+Latency\uparrow
+\]
+
+### 方法 B
+
+平時就大量送 cover traffic：
+
+\[
+Bandwidth\uparrow
+\]
+
+所以：
+
+\[
+StrongPrivacy
+\]
+
+必然消耗某種資源。
+
+---
+
+</pre>
+    </details>
+    <details id="original-34" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">34</span
+        ><strong>Defense 1：Constant-Rate Shaping</strong
+        ><small>原文 L1334–L1400</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 34. Defense 1：Constant-Rate Shaping
+
+最強但最昂貴的方法之一：
+
+\[
+R(t)=R_0
+\]
+
+不管有沒有 real traffic：
+
+```text
+REAL
+DUMMY
+DUMMY
+REAL
+DUMMY
+```
+
+observer 永遠看到：
+
+```text
+████████████████████████
+```
+
+它可以大幅隱藏：
+
+- burst timing
+- packet count
+- volume shape
+- idle periods
+
+但是：
+
+若：
+
+\[
+R_{real}&lt;R_0
+\]
+
+則：
+
+\[
+BandwidthWaste=R_0-R_{real}
+\]
+
+若：
+
+\[
+R_{real}&gt;R_0
+\]
+
+則 queue：
+
+\[
+Q(t)\uparrow
+\]
+
+進而：
+
+\[
+Latency\uparrow
+\]
+
+這就是 Anonymity Trilemma 最直觀的實體化。
+
+---
+
+</pre>
+    </details>
+    <details id="original-35" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">35</span
+        ><strong>Defense 2：Adaptive Padding</strong
+        ><small>原文 L1401–L1428</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 35. Defense 2：Adaptive Padding
+
+較實際的方法是：
+
+\[
+X'=X+N
+\]
+
+其中 \(N\) 是 selective dummy traffic。
+
+不需要永遠 constant rate，而只在具有高 fingerprint information 的 traffic pattern 上增加 cover。
+
+優點：
+
+- latency 幾乎不增加
+- bandwidth overhead 可控制
+- 可以部署在現有 VPN/Tor
+
+缺點：
+
+\[
+I(X;X')&gt;0
+\]
+
+通常仍成立。
+
+---
+
+</pre>
+    </details>
+    <details id="original-36" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">36</span><strong>DeTorrent</strong
+        ><small>原文 L1429–L1458</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 36. DeTorrent
+
+PoPETs 2024 的 DeTorrent 使用 competing neural networks 自動設計 padding-only defense。
+
+Defender：
+
+\[
+D_\theta(X)
+\]
+
+Attacker：
+
+\[
+A_\phi(D_\theta(X))
+\]
+
+形成類似 adversarial optimization：
+
+\[
+\min_\theta\max_\phi L
+\]
+
+研究在其 flow-correlation 評估中顯示，在非常低 FPR operating point 下能明顯降低攻擊 TPR，且不需要延遲 real traffic。
+
+其價值在於：
+
+&gt; padding policy 不再完全由人工 heuristic 設計。
+
+---
+
+</pre>
+    </details>
+    <details id="original-37" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">37</span
+        ><strong>Defense 3：Ephemeral Defenses</strong
+        ><small>原文 L1459–L1488</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 37. Defense 3：Ephemeral Defenses
+
+固定 defense 本身也可能形成 fingerprint。
+
+例如所有使用者都使用：
+
+```text
+padding distribution = θ
+```
+
+攻擊者可以學：
+
+\[
+P(X'\mid\theta)
+\]
+
+2026 PoPETs 的 **Ephemeral Network-Layer Fingerprinting Defenses** 提出：
+
+\[
+\theta_i\sim P(\Theta)
+\]
+
+讓每個 connection 使用不同 traffic-defense configuration。
+
+該研究已將方法整合到 WireGuard，並報告曾在 Mullvad 環境實際部署服務大量日常使用者。
+
+Mullvad DAITA v2 的 dynamic configurations 正屬於相近方向。
+
+---
+
+</pre>
+    </details>
+    <details id="original-38" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">38</span
+        ><strong>Defense 4：Mixing + Delay</strong
+        ><small>原文 L1489–L1515</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 38. Defense 4：Mixing + Delay
+
+比 padding 更根本的方法：
+
+```text
+A ─┐
+B ─┼─► MIX
+C ─┤
+D ─┘
+      │
+      ├── delay
+      ├── reorder
+      └── cover traffic
+```
+
+讓：
+
+\[
+t_{out}
+\not\approx
+t_{in}+\delta
+\]
+
+這真正破壞 input/output timing dependency。
+
+---
+
+</pre>
+    </details>
+    <details id="original-39" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">39</span><strong>Loopix</strong
+        ><small>原文 L1516–L1549</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 39. Loopix
+
+Loopix 是這類方法的代表。
+
+它使用：
+
+- Poisson mixing
+- random delays
+- cover traffic
+- loop messages
+
+並針對包含 global network adversary 的 threat model 提供 traffic-analysis resistance。
+
+代價是整體 message latency 達到**秒級**，即使相對 mixnet 已經算低。
+
+因此它更適合：
+
+```text
+messaging
+async communication
+mail-like systems
+```
+
+而不是：
+
+```text
+gaming
+SSH
+remote desktop
+interactive low-latency web
+```
+
+---
+
+</pre>
+    </details>
+    <details id="original-40" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">40</span
+        ><strong>Defense 5：Multi-user Aggregation</strong
+        ><small>原文 L1550–L1595</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 40. Defense 5：Multi-user Aggregation
+
+另一個很重要的方向不是增加假 traffic，而是：
+
+&gt; 讓其他使用者的真實 traffic 成為自己的 cover traffic。
+
+例如：
+
+```text
+Alice ─┐
+Bob ───┤
+Carol ─┼── Aggregator/Mixer
+Dave ──┤
+Eve ───┘
+```
+
+輸入：
+
+\[
+X_A,X_B,X_C,\ldots
+\]
+
+共同形成：
+
+\[
+Y_1,Y_2,Y_3,\ldots
+\]
+
+調查者不再只需要解：
+
+\[
+X_A\leftrightarrow Y_A
+\]
+
+而要解 permutation / assignment problem。
+
+這可以增加：
+
+\[
+H(Y\mid X)
+\]
+
+而不需要所有 cover traffic 都是 dummy bytes。
+
+---
+
+</pre>
+    </details>
+    <details id="original-41" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">41</span
+        ><strong>Defense 6：Traffic Splitting</strong
+        ><small>原文 L1596–L1641</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 41. Defense 6：Traffic Splitting
+
+把一條 flow：
+
+\[
+X
+\]
+
+拆成：
+
+\[
+X_1,X_2,X_3
+\]
+
+經不同 path：
+
+```text
+             ┌── Path A
+Traffic ─────┼── Path B
+             └── Path C
+```
+
+如果 adversary 只能觀察部分 path：
+
+\[
+I(X;X_i)
+&lt;
+I(X;X_1+X_2+X_3)
+\]
+
+可以有效降低 correlation。
+
+但是對真正 global observer：
+
+\[
+X_1+X_2+X_3
+\]
+
+仍可能被重新聚合。
+
+所以 multipath 的主要優勢是：
+
+&gt; 對 partial observer 增加成本。
+
+---
+
+</pre>
+    </details>
+    <details id="original-42" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">42</span
+        ><strong>Defense 7：Egress Transformation</strong
+        ><small>原文 L1642–L1681</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 42. Defense 7：Egress Transformation
+
+傳統 padding 主要修改：
+
+```text
+Ingress shape
+```
+
+但出口 connection topology 可能仍保持：
+
+\[
+1\ ingress\ flow
+\leftrightarrow
+1\ egress\ flow
+\]
+
+更激進的設計可以：
+
+```text
+Real Flow
+   ↓
+split / shuffle
+   ↓
+Virtual Flow A
+Virtual Flow B
+Virtual Flow C
+```
+
+直接破壞：
+
+\[
+FlowTopology_{in}
+\approx
+FlowTopology_{out}
+\]
+
+這是比單純 packet padding 更值得研究的方向。
+
+---
+
+</pre>
+    </details>
+    <details id="original-43" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">43</span
+        ><strong>我認為值得研究的新架構</strong><small>原文 L1682–L1738</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 43. 我認為值得研究的新架構
+
+綜合目前研究，可以提出：
+
+# Bounded-Latency Multi-Flow Mixing Network
+
+架構：
+
+```text
+Users
+
+A ─┐
+B ─┤
+C ─┤
+D ─┼── Entry Aggregator
+E ─┤
+F ─┘
+          │
+          ▼
+   Ephemeral Shaper
+          │
+          ▼
+   Bounded-Delay Mixer
+          │
+     ┌────┼────┐
+     ▼    ▼    ▼
+   Path1 Path2 Path3
+     │    │    │
+     └────┼────┘
+          ▼
+      Egress Mixer
+          │
+          ▼
+ split / shuffle / merge
+          │
+          ▼
+     Destinations
+```
+
+目標不是達到 perfect anonymity，而是在：
+
+\[
+Latency&lt;L_{max}
+\]
+
+\[
+Bandwidth&lt;B_{max}
+\]
+
+條件下最小化：
+
+\[
+I(X;Y)
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-44" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">44</span
+        ><strong>Layer 1：Ephemeral Shaping</strong
+        ><small>原文 L1739–L1757</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 44. Layer 1：Ephemeral Shaping
+
+每個 flow：
+
+\[
+\theta_i\sim P(\Theta)
+\]
+
+隨機決定：
+
+- padding schedule
+- dummy distribution
+- packet-size policy
+- burst behavior
+
+避免形成固定 defense fingerprint。
+
+---
+
+</pre>
+    </details>
+    <details id="original-45" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">45</span
+        ><strong>Layer 2：Bounded Random Delay</strong
+        ><small>原文 L1758–L1784</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 45. Layer 2：Bounded Random Delay
+
+每個 packet/message：
+
+\[
+D_i\sim P_D
+\]
+
+但：
+
+\[
+D_i&lt;D_{max}
+\]
+
+例如不同 application class：
+
+```text
+Gaming       → very small Dmax
+Web          → small Dmax
+Streaming    → moderate Dmax
+Messaging    → large Dmax
+```
+
+也就是讓 privacy policy 成為 QoS-aware。
+
+---
+
+</pre>
+    </details>
+    <details id="original-46" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">46</span
+        ><strong>Layer 3：Multi-user Mixing</strong
+        ><small>原文 L1785–L1810</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 46. Layer 3：Multi-user Mixing
+
+利用 aggregation queue：
+
+```text
+A packet
+B packet
+C packet
+A packet
+D packet
+```
+
+重新 scheduling：
+
+```text
+C
+A
+B
+D
+A
+```
+
+在 latency budget 內破壞一對一 timing mapping。
+
+---
+
+</pre>
+    </details>
+    <details id="original-47" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">47</span
+        ><strong>Layer 4：Real Traffic as Cover</strong
+        ><small>原文 L1811–L1840</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 47. Layer 4：Real Traffic as Cover
+
+假設 queue 已經存在：
+
+\[
+X_A,X_B,X_C
+\]
+
+則優先利用：
+
+\[
+X_B,X_C
+\]
+
+作為 A 的 anonymity cover。
+
+只有 anonymity deficit 過高時才：
+
+\[
+inject\ dummy
+\]
+
+這可能顯著降低：
+
+\[
+DummyBandwidth
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-48" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">48</span
+        ><strong>Layer 5：Egress Flow Transformation</strong
+        ><small>原文 L1841–L1863</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 48. Layer 5：Egress Flow Transformation
+
+輸出時再執行：
+
+```text
+merge
+split
+shuffle
+connection migration
+```
+
+降低：
+
+\[
+IngressTopology
+\leftrightarrow
+EgressTopology
+\]
+
+的可識別程度。
+
+---
+
+</pre>
+    </details>
+    <details id="original-49" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">49</span
+        ><strong>Adaptive Privacy Controller</strong
+        ><small>原文 L1864–L1905</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 49. Adaptive Privacy Controller
+
+最值得使用 machine learning 的位置不是單純「隨機 padding」，而是做 constrained optimization：
+
+\[
+\min_\pi
+\left[
+\lambda_1L_{privacy}
++
+\lambda_2L_{latency}
++
+\lambda_3L_{bandwidth}
+\right]
+\]
+
+subject to：
+
+\[
+Latency&lt;L_{QoS}
+\]
+
+\[
+Bandwidth&lt;B_{budget}
+\]
+
+其中：
+
+\[
+L_{privacy}
+\]
+
+可以由：
+
+- attack ROC
+- contrastive matching accuracy
+- estimated mutual information
+- anonymity-set entropy
+
+共同近似。
+
+---
+
+</pre>
+    </details>
+    <details id="original-50" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">50</span
+        ><strong>Defender–Attacker Adversarial Training</strong
+        ><small>原文 L1906–L1962</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 50. Defender–Attacker Adversarial Training
+
+Defender：
+
+\[
+D_\theta(X)
+\]
+
+輸出 defended trace。
+
+Attacker：
+
+\[
+A_\phi(D_\theta(X),Y)
+\]
+
+輸出：
+
+\[
+P(match)
+\]
+
+研究問題可寫成：
+
+\[
+\min_\theta\max_\phi
+L_{attack}
+\]
+
+同時加入：
+
+\[
+L_{latency}
+\]
+
+與：
+
+\[
+L_{bandwidth}
+\]
+
+regularization / constraints。
+
+action space 不應只包含 padding，而可以包括：
+
+```text
+padding
+delay
+burst shaping
+multiplexing
+splitting
+reordering
+connection migration
+```
+
+---
+
+</pre>
+    </details>
+    <details id="original-51" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">51</span
+        ><strong>不應該只用 Classification Accuracy 當安全指標</strong
+        ><small>原文 L1963–L2003</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 51. 不應該只用 Classification Accuracy 當安全指標
+
+例如：
+
+```text
+Attack Accuracy:
+90% → 20%
+```
+
+不能直接證明安全。
+
+因為：
+
+&gt; 可能只是對某個固定 attacker architecture overfit。
+
+更完整的測試應包括：
+
+\[
+TPR
+\]
+
+\[
+FPR
+\]
+
+\[
+ROC
+\]
+
+\[
+Precision
+\]
+
+\[
+Recall
+\]
+
+以及 candidate population size。
+
+---
+
+</pre>
+    </details>
+    <details id="original-52" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">52</span
+        ><strong>Mutual Information 是更值得追求的方向</strong
+        ><small>原文 L2004–L2035</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 52. Mutual Information 是更值得追求的方向
+
+真正希望降低的是：
+
+\[
+I(X;Y)
+\]
+
+或者增加：
+
+\[
+H(X\mid Y)
+\]
+
+理想狀態：
+
+\[
+P(Y\mid X_A)
+\approx
+P(Y\mid X_B)
+\]
+
+也就是不同 ingress flow 對 observer 而言 increasingly indistinguishable。
+
+這比：
+
+&gt; 「讓某一個 CNN accuracy 下降」
+
+更接近真正 security property。
+
+---
+
+</pre>
+    </details>
+    <details id="original-53" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">53</span
+        ><strong>P2P Privacy Lab</strong><small>原文 L2036–L2072</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 53. P2P Privacy Lab
+
+若做研究，建議完全使用合法資料：
+
+```text
+random test files
+Linux ISO
+self-generated datasets
+```
+
+建立：
+
+```text
+Client VM
+   │
+   ▼
+VPN
+   │
+   ├── Tracker VM
+   ├── Peer VM
+   └── Observer VM
+```
+
+並在：
+
+```text
+Ingress
+VPN interface
+Physical NIC
+Tracker
+Peer
+```
+
+各 observation point capture traffic。
+
+---
+
+</pre>
+    </details>
+    <details id="original-54" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">54</span
+        ><strong>Network Isolation Fault Injection</strong
+        ><small>原文 L2073–L2099</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 54. Network Isolation Fault Injection
+
+應測試：
+
+```text
+VPN disconnect
+VPN server unreachable
+route mutation
+IPv6 activation
+DNS change
+Wi-Fi ↔ Ethernet handover
+suspend/resume
+reboot
+client starts before VPN
+VPN reconnect
+```
+
+核心 acceptance criterion：
+
+\[
+VPN\downarrow
+\Rightarrow
+P2PTraffic=0
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-55" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">55</span
+        ><strong>Traffic-Correlation Lab</strong><small>原文 L2100–L2154</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 55. Traffic-Correlation Lab
+
+再建立：
+
+```text
+Ingress capture:
+X
+
+Egress candidates:
+Y1
+Y2
+...
+Yn
+```
+
+比較：
+
+### Baseline
+
+```text
+WireGuard
+```
+
+### Defense A
+
+```text
+WireGuard + padding
+```
+
+### Defense B
+
+```text
+DAITA-like ephemeral shaping
+```
+
+### Defense C
+
+```text
+bounded delay
+```
+
+### Defense D
+
+```text
+multi-user aggregation
+```
+
+### Defense E
+
+```text
+aggregation + shaping + egress transform
+```
+
+---
+
+</pre>
+    </details>
+    <details id="original-56" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">56</span
+        ><strong>建議核心 Metrics</strong><small>原文 L2155–L2218</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 56. 建議核心 Metrics
+
+### Correlation
+
+\[
+Corr(X,Y)
+\]
+
+### Mutual Information
+
+\[
+I(X;Y)
+\]
+
+### Attack ROC
+
+\[
+TPR(FPR)
+\]
+
+尤其觀察：
+
+\[
+FPR=10^{-3}
+\]
+
+\[
+10^{-4}
+\]
+
+\[
+10^{-5}
+\]
+
+這類真正 attribution-sensitive operating regions。
+
+### Latency
+
+\[
+P50,P95,P99
+\]
+
+### Bandwidth overhead
+
+\[
+O_B=
+\frac{Bytes_{defended}}
+{Bytes_{real}}-1
+\]
+
+### Anonymity Set
+
+\[
+|S|
+\]
+
+或 entropy：
+
+\[
+H(U\mid O)
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-57" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">57</span><strong>防禦能力比較</strong
+        ><small>原文 L2219–L2240</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 57. 防禦能力比較
+
+| 架構 | Real-IP 防護 | Activity unlinkability | Timing resistance | 延遲 | 頻寬成本 |
+|---|---:|---:|---:|---:|---:|
+| BitTorrent encryption | 低 | 低 | 低 | 極低 | 極低 |
+| qBittorrent Anonymous Mode | 低 | 低 | 低 | 極低 | 極低 |
+| VPN | 高 | 低 | 低 | 低 | 低 |
+| VPN + bind + firewall | 很高 | 低 | 低 | 低 | 低 |
+| VPN + network namespace | 極高 | 低 | 低 | 低 | 低 |
+| Seedbox | 極高 | 低～中 | 低 | 低 | 中 |
+| Mullvad + Multihop | 極高 | 中 | 中低 | 低～中 | 低 |
+| Mullvad + DAITA | 極高 | 中 | 中 | 低 | 中 |
+| Constant-rate shaping | 高 | 中～高 | 高 | 中 | 非常高 |
+| Multi-path | 高 | 中 | 中 | 低～中 | 中 |
+| Bounded multi-user mixing | 高 | 高潛力 | 高潛力 | 中 | 中 |
+| Loopix / Mixnet | 高 | 高 | 高 | 秒級 | 中～高 |
+| I2P-native | 高 | 高於 clearnet VPN | 中～高 | 中 | 中 |
+
+此表是 threat-model 層級的相對分析，而不是統一 benchmark。
+
+---
+
+</pre>
+    </details>
+    <details id="original-58" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">58</span
+        ><strong>最重要的 Security Boundary</strong
+        ><small>原文 L2241–L2304</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 58. 最重要的 Security Boundary
+
+整個問題可以分成兩層。
+
+## Layer A：Network Deanonymization
+
+問題：
+
+\[
+VPN\ Exit
+\rightarrow
+RealIP?
+\]
+
+主要防禦：
+
+```text
+VPN
+routing isolation
+firewall
+network namespace
+interface binding
+```
+
+---
+
+## Layer B：Behavioral / Traffic Attribution
+
+問題：
+
+\[
+Activity_A
++
+Activity_B
++
+Timing
++
+Metadata
+\rightarrow
+SameActor?
+\]
+
+主要研究領域：
+
+```text
+traffic-analysis resistance
+mixing
+padding
+cover traffic
+intersection resistance
+cross-layer unlinkability
+behavioral privacy
+```
+
+前者做得完美：
+
+\[
+\nRightarrow
+\]
+
+後者自然安全。
+
+---
+
+</pre>
+    </details>
+    <details id="original-59" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">59</span
+        ><strong>Mullvad 的正確定位</strong><small>原文 L2305–L2357</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 59. Mullvad 的正確定位
+
+Mullvad 特別強的是：
+
+\[
+Network\ Identity\ Separation
+\]
+
++
+
+\[
+Provider\ Data\ Minimization
+\]
+
++
+
+\[
+Traffic\ Fingerprint\ Reduction
+\]
+
+也就是：
+
+```text
+Shared exit
+No activity logs
+Numbered account
+Multihop
+RAM-only
+DAITA
+```
+
+但它仍然是：
+
+&gt; **low-latency VPN architecture**
+
+而不是：
+
+&gt; traffic-analysis-proof anonymous communication system。
+
+因此即使 DAITA：
+
+\[
+I(X;Y)\downarrow
+\]
+
+也不能合理假設：
+
+\[
+I(X;Y)=0
+\]
+
+---
+
+</pre>
+    </details>
+    <details id="original-60" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">60</span
+        ><strong>現代調查者真正尋找的是「最弱的 Edge」</strong
+        ><small>原文 L2358–L2410</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 60. 現代調查者真正尋找的是「最弱的 Edge」
+
+假設：
+
+```text
+Cryptography       ██████████
+VPN routing        ██████████
+Real-IP isolation  ██████████
+```
+
+但：
+
+```text
+Application ID     █████
+Timing             ████
+Endpoint           ███
+Account            ███
+Operational error  ██
+```
+
+那強調查者沒有理由：
+
+&gt; 破解 WireGuard。
+
+而會：
+
+```text
+pivot
+```
+
+到：
+
+```text
+account
+device
+time
+behavior
+provider
+metadata
+```
+
+因此：
+
+\[
+Security(System)
+\approx
+\min_i Security(Component_i)
+\]
+
+雖然不是正式 security theorem，但非常適合描述實際 attribution attack surface。
+
+---
+
+</pre>
+    </details>
+    <details id="original-61" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">61</span><strong>核心研究結論</strong
+        ><small>原文 L2411–L2486</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 61. 核心研究結論
+
+整份研究最重要的概念可以壓縮成下面幾條。
+
+### 第一
+
+\[
+Encryption\neq Anonymity
+\]
+
+### 第二
+
+\[
+IP\ Hiding\neq Activity\ Unlinkability
+\]
+
+### 第三
+
+\[
+VPN\neq Anonymous\ Communication\ Network
+\]
+
+### 第四
+
+\[
+No\ Logs
+\]
+
+和：
+
+\[
+Strong\ Traffic\ Analysis\ Resistance
+\]
+
+是兩種不同 security properties。
+
+### 第五
+
+低延遲 anonymity 最大的根本問題是：
+
+\[
+Output(t)\approx Input(t-\delta)
+\]
+
+攻擊者利用的是這個 dependency。
+
+### 第六
+
+真正的 traffic-analysis defense 希望逼近：
+
+\[
+P(Y\mid X)\approx P(Y)
+\]
+
+也就是：
+
+\[
+I(X;Y)\rightarrow0
+\]
+
+### 第七
+
+但：
+
+\[
+Strong\ anonymity
++
+Low\ latency
++
+Low\ bandwidth
+\]
+
+存在根本 trade-off。
+
+---
+
+</pre>
+    </details>
+    <details id="original-62" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">62</span
+        ><strong>最值得繼續研究的方向</strong><small>原文 L2487–L2537</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 62. 最值得繼續研究的方向
+
+如果研究問題設定為：
+
+&gt; **如何在仍具有互動性的 latency budget 下，以最低 bandwidth overhead 最大程度降低 end-to-end traffic correlation？**
+
+我認為最值得研究的組合不是：
+
+```text
+More VPN hops
+```
+
+也不是：
+
+```text
+More encryption
+```
+
+而是：
+
+\[
+\boxed{
+Ephemeral\ Shaping
++
+Bounded\ Delay
++
+Multi-user\ Aggregation
++
+Real-Traffic\ Cover
++
+Egress\ Transformation
+}
+\]
+
+並透過：
+
+\[
+\min
+\left(
+I(X;Y)
++
+\lambda_L Latency
++
+\lambda_B Bandwidth
+\right)
+\]
+
+建立正式 optimization objective。
+
+---
+
+</pre>
+    </details>
+    <details id="original-63" class="p2p-original-block">
+      <summary>
+        <span class="p2p-original-number">63</span><strong>最終結論</strong
+        ><small>原文 L2538–L2661</small>
+      </summary>
+      <pre class="p2p-source-text">
+# 63. 最終結論
+
+對一般 P2P privacy：
+
+\[
+\boxed{
+VPN
++
+Interface\ Binding
++
+Firewall
++
+Network\ Namespace
+}
+\]
+
+已經可以非常強地處理：
+
+\[
+RealIP\ Leakage
+\]
+
+WireGuard 官方 network-namespace architecture 尤其適合作為 fail-closed engineering boundary。
+
+但如果 threat model 升級為：
+
+&gt; 攻擊者可以同時觀察通信入口與出口，並長期取得 network metadata。
+
+問題便不再是 VPN leak。
+
+而是：
+
+\[
+\boxed{
+Traffic\ Correlation
++
+Entity\ Resolution
++
+Longitudinal\ Attribution
+}
+\]
+
+這正是目前 low-latency anonymity systems 的核心限制。
+
+Tor 官方截至目前仍明確承認：對能同時觀察 communication channel 兩端的 adversary，研究界沒有已知實用的 low-latency architecture 能可靠阻止 timing/volume correlation。
+
+研究界真正有效的強防禦——例如 Poisson mixing、cover traffic、constant-rate transmission、multi-user mixing——幾乎都需要付出：
+
+\[
+Latency\uparrow
+\]
+
+或：
+
+\[
+Bandwidth\uparrow
+\]
+
+甚至改變 communication semantics。Loopix 就是典型案例：它能針對更強大的 network observer 提供 traffic-analysis resistance，但 message latency 進入秒級。
+
+因此，未來真正有研究價值的問題，不是：
+
+&gt; **「如何做一個完全無法追蹤的 VPN？」**
+
+因為這個問題本身定義錯誤。
+
+更正確的問題是：
+
+&gt; **「在給定 latency、bandwidth 與 infrastructure budget 下，可以把 ingress 與 egress 之間的 mutual information 降到多低？」**
+
+也就是研究：
+
+\[
+\boxed{
+\min I(X;Y)
+}
+\]
+
+subject to：
+
+\[
+Latency\le L_{max}
+\]
+
+\[
+BandwidthOverhead\le B_{max}
+\]
+
+這會把 VPN、DAITA、Tor、I2P、Mixnet、traffic shaping、multi-user aggregation 與未來 AI-driven traffic-defense 統一放進同一個可量化的研究框架。
+
+---
+
+## 主要研究資料
+
+**Protocol / Implementation**
+
+- BitTorrent Enhancement Proposals：BEP-5 DHT、BEP-11 PEX、BEP-15 UDP Tracker。
+- WireGuard Network Namespace Architecture。
+- qBittorrent Anonymous Mode 與 VPN Interface Binding。
+- I2P Threat Model。
+
+**P2P Monitoring / VPN Security**
+
+- Le Blond et al., *Spying the World from Your Laptop*, USENIX LEET 2010。
+- Piatek et al., *Why My Printer Received a DMCA Takedown Notice*, HotSec 2008。
+- Xue et al., *Bypassing Tunnels*, USENIX Security 2023。
+
+**Anonymous Communication / Traffic Analysis**
+
+- Piotrowska et al., *The Loopix Anonymity System*, USENIX Security 2017。
+- Das et al., *Comprehensive Anonymity Trilemma*, PoPETs 2020。
+- Holland et al., *DeTorrent*, PoPETs 2024。
+- Pulls et al., *Ephemeral Network-Layer Fingerprinting Defenses*, PoPETs 2026。
+
+**Current Deployment / Mullvad**
+
+- Mullvad No-Logging Policy，2026。
+- Mullvad Multihop。
+- Mullvad DAITA / DAITA v2。
+- Mullvad RAM-only VPN infrastructure。
+
+**Case Study**
+
+- CODA：2026 Nyaa First Uploader Arrest / JHA Analytical Tool。</pre>
+    </details>
+  </div>
+  <p class="p2p-muted p2p-archive-hash">
+    原稿
+    SHA-256：492c5921f53a5ea8e9947dd344a6b1c003f3293eeee20c496ccc75fa65d03d94
+  </p>
+</section>

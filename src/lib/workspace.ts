@@ -64,6 +64,19 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
         { label: 'note', href: `/${locale}/note/` },
         { label: 'medical', href: self },
       ];
+    case 'network':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'network', href: self },
+      ];
+    case 'network-note':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'network', href: `/${locale}/note/network/` },
+        { label: `${route.noteId}.md`, href: self },
+      ];
     case 'medical-note':
       return [
         home,
@@ -101,6 +114,7 @@ const folders: RouteDescriptor['kind'][] = [
   'library',
   'notes',
   'medical',
+  'network',
   'projects',
   'tags',
   'topic',

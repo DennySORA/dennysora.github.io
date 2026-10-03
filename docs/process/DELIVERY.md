@@ -58,3 +58,17 @@ React/TypeScript/Vite/Tailwind/pnpm 靜態網站：三語首頁、自介、文�
 [README](../../README.md) 提供啟動與驗證命令；[寫作指南](../CONTENT_WORKFLOW.md) 說明草稿、翻譯、原生討論、快照更新、人工發布與回復。PROJECT_AGENT 保留歷史架構紀錄，以 [IMPLEMENTATION](IMPLEMENTATION.md) 說明本次授權遷移；受管政策未改寫。
 
 清理結果：本次 Playwright CLI session 已關閉；4172 舊站比較 server 與 4173 production preview 均已停止，E2E 的 4174 server 已由 runner 清理。原始來源下載暫存已移除，保留本機截圖／驗證紀錄供交付檢視，未動個人瀏覽器或全域服務。
+
+## 2026-10-03｜P2P 筆記整合（本機完成，發布驗收待續）
+
+本次授權：整理兩份提供的 HTML，沿用個人網站風格加入筆記，驗證後 commit、push、部署。工作範圍限定網路與 P2P 筆記，不改其他專案或站台設定。
+
+- 路徑：`/{locale}/note/network/` 分類頁；兩篇原稿僅建立 `zh-hant` 版的 `p2p-downloader/`、`p2p-privacy/`。分類介面保留既有三語，未製造文章翻譯。
+- 設計：保留工作台外框、檔案總管、分頁、麵包屑與狀態列；正文使用既有語義暗色 tokens。章節目錄、正文、圖表、規則示例與折疊原稿依閱讀順序配置。頁面本身捲動；寬圖表有局部水平捲動。
+- 內容：保留架構25份原文契約附錄、6張架構圖、134筆未探測候選；隱私研究保留12個重整主題、63節原稿與序文、24筆來源。來源檔名、SHA-256 與匯入範圍記於 `data/note-imports.json`。原文附錄文字（套用 HTML pre 首換行規則）和原有外部來源連結均逐項比對一致。
+- 安全邊界：移除來源的獨立頂列、側欄、主題切換與可執行腳本。互動改為本站的離線漸進增強，不執行 P2P 連線、來源探測、HTTP 請求或瀏覽器持久儲存。原稿的查證與驗收日期明示為來源記錄，不當成本站重新驗證。
+- 建置修正：原有 artifact gate 把契約中的 GitHub raw 文字 URL 誤判成外連資產；改為檢查 HTML 實際載入的資產屬性及 CSS URL，JS／CSS 等檔案仍保留原來的禁止規則，並新增回歸測試。
+- 已通過：frozen-lockfile 安裝（未改 manifest／lock）、格式、ESLint、TypeScript、79項單元測試；41條 prerender 路由、28條 sitemap 路由、149個產物檔案的內部連結檢查，初始 JS gzip 142.6 KiB。
+- 本機瀏覽器測試：blocked，設定的 `/opt/google/chrome/chrome` 不存在；未安裝全域瀏覽器。已新增網路筆記的互動／無 JS／可及性／320–1920px 測試，等待有 Chrome 的 runner 執行。雲端瀏覽器存取本機預覽回傳 `net::ERR_BLOCKED_BY_CLIENT`，所以發布前視覺驗收亦為 blocked；未改用 tunnel／proxy 繞過限制。
+- 工具限制：`tools project-quality`／workflow engine 與 Context7 不可用；使用既有 repository-native gates 與 React／pnpm 官方文件。Git skill 的 companion resources 無法讀取；提交需按 repo `GIT_COMMITS.md` 人工核對完整 diff、身份、訊息和實際物件，不能宣稱 helper 已通過。
+- 下一步：在既有明確授權下提交／推送，於有 Chrome 的 CI runner 執行完整 gate；部署須等待既有驗證與認證能力就緒，再核對 Pages 精確 commit 與實際公開頁面。不能以 source／build 通過替代瀏覽器驗收。

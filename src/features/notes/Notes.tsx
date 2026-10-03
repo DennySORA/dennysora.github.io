@@ -1,6 +1,7 @@
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import type { Locale } from '../../i18n/index.ts';
+import { networkCopy } from '../../lib/network-notes.ts';
 import { noteCopy } from '../../lib/notes-copy.ts';
 
 export function Notes({
@@ -33,6 +34,13 @@ export function Notes({
         </section>
       ) : (
         <ul className="ln">
+          <li>
+            <a className="note-folder" href={`/${locale}/note/network/`}>
+              <Icon name="folder" size={28} />
+              <span>{networkCopy[locale].title}</span>
+              <Icon name="arrow" />
+            </a>
+          </li>
           <li>
             <a className="note-folder" href={`/${locale}/note/medical/`}>
               <Icon name="capsule" size={28} />

@@ -48,7 +48,9 @@ export function EditorHead({
       ? 'projects'
       : ['article', 'topic', 'tags', 'tag'].includes(route.kind)
         ? 'library'
-        : ['medical', 'medical-note'].includes(route.kind)
+        : ['medical', 'medical-note', 'network', 'network-note'].includes(
+              route.kind,
+            )
           ? 'notes'
           : null;
   const tabs = useRef<HTMLUListElement>(null);

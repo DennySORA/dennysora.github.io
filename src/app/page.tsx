@@ -11,6 +11,7 @@ import {
   listPosts,
   loadArticle,
   loadMedicalNote,
+  loadNetworkNote,
   loadComments,
   loadProfile,
   loadProjects,
@@ -41,6 +42,9 @@ import { Privacy } from '../features/misc/Privacy.tsx';
 import { Notes } from '../features/notes/Notes.tsx';
 import { MedicalNote } from '../features/notes/MedicalNote.tsx';
 import { noteCopy } from '../lib/notes-copy.ts';
+import { NetworkNotes } from '../features/notes/NetworkNotes.tsx';
+import { NetworkNote } from '../features/notes/NetworkNote.tsx';
+import { networkCopy, networkNotes } from '../lib/network-notes.ts';
 import { NotFound } from '../features/misc/NotFound.tsx';
 
 function notFound(): never {
@@ -236,7 +240,14 @@ function loadView(route: RouteDescriptor) {
     }
     case 'notes':
     case 'medical':
+    case 'network':
       return { kind: route.kind };
+    case 'network-note':
+      return {
+        kind: 'network-note' as const,
+        noteId: route.noteId,
+        html: loadNetworkNote(route.noteId),
+      };
     case 'medical-note':
       return { kind: 'medical-note' as const, html: loadMedicalNote() };
     case 'research':
@@ -252,6 +263,7 @@ export type ViewData = ReturnType<typeof loadView>;
 function availableLocales(route: RouteDescriptor): Locale[] {
   switch (route.kind) {
     case 'medical-note':
+    case 'network-note':
       return ['zh-hant'];
     case 'article': {
       const article = loadArticle(route.locale, route.slug);
@@ -320,6 +332,16 @@ function describe(view: ViewData, locale: Locale) {
               : noteCopy[locale].notes,
         ),
         description: noteCopy[locale].intro,
+      };
+    case 'network':
+      return {
+        title: withSite(networkCopy[locale].title),
+        description: networkCopy[locale].intro,
+      };
+    case 'network-note':
+      return {
+        title: withSite(networkNotes[view.noteId].title),
+        description: networkNotes[view.noteId].description,
       };
     case 'research':
       return {
@@ -511,6 +533,10 @@ function View({ data }: { data: PageData }) {
       return <Notes locale={locale} medical={view.kind === 'medical'} />;
     case 'medical-note':
       return <MedicalNote html={view.html} locale={locale} />;
+    case 'network':
+      return <NetworkNotes locale={locale} />;
+    case 'network-note':
+      return <NetworkNote html={view.html} />;
     case 'research':
       return <ResearchBridge locale={locale} />;
     case 'privacy':

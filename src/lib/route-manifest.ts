@@ -1,3 +1,4 @@
+import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
 import { isLocale, type Locale } from '../i18n/index.ts';
 
 // The single route contract shared by the loader, prerender list, sitemap,
@@ -10,6 +11,8 @@ export type RouteDescriptor =
   | { kind: 'project'; locale: Locale; projectId: string }
   | { kind: 'library'; locale: Locale }
   | { kind: 'notes'; locale: Locale }
+  | { kind: 'network'; locale: Locale }
+  | { kind: 'network-note'; locale: Locale; noteId: NetworkNoteId }
   | { kind: 'medical'; locale: Locale }
   | { kind: 'medical-note'; locale: Locale }
   | { kind: 'article'; locale: Locale; slug: string }
@@ -46,6 +49,14 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
         : null;
     case 'note':
       if (rest.length === 0) return { kind: 'notes', locale };
+      if (a === 'network') {
+        if (rest.length === 1) return { kind: 'network', locale };
+        return rest.length === 2 &&
+          locale === 'zh-hant' &&
+          networkNoteIds.some((id) => id === b)
+          ? { kind: 'network-note', locale, noteId: b as NetworkNoteId }
+          : null;
+      }
       if (a !== 'medical') return null;
       if (rest.length === 1) return { kind: 'medical', locale };
       return rest.length === 2 && b === 'analgesics' && locale === 'zh-hant'
@@ -87,6 +98,10 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/blog/${route.slug}/`;
     case 'notes':
       return `/${route.locale}/note/`;
+    case 'network':
+      return `/${route.locale}/note/network/`;
+    case 'network-note':
+      return `/${route.locale}/note/network/${route.noteId}/`;
     case 'medical':
       return `/${route.locale}/note/medical/`;
     case 'medical-note':
@@ -134,6 +149,8 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'notes':
     case 'medical':
     case 'medical-note':
+    case 'network':
+    case 'network-note':
       return 'notes';
     default:
       return null;
