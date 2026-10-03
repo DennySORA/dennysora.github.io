@@ -48,6 +48,8 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, { label: 'README.md', href: self }];
     case 'library':
       return [home, blog];
+    case 'search':
+      return [home, { label: 'search', href: self }];
     case 'notes':
       return [home, { label: 'note', href: self }];
     case 'medical':

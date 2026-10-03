@@ -8,6 +8,7 @@ export type RouteDescriptor =
   | { kind: 'not-found' }
   | { kind: 'home'; locale: Locale }
   | { kind: 'library'; locale: Locale }
+  | { kind: 'search'; locale: Locale }
   | { kind: 'notes'; locale: Locale }
   | { kind: 'network'; locale: Locale }
   | { kind: 'network-note'; locale: Locale; noteId: NetworkNoteId }
@@ -36,6 +37,7 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
   if (!section) return { kind: 'home', locale };
   const [a, b] = rest;
   switch (section) {
+    case 'search':
     case 'research':
       return rest.length === 0 ? { kind: section, locale } : null;
     case 'note':

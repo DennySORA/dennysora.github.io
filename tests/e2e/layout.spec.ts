@@ -23,9 +23,6 @@ test('the home README answers who, what and where to look first on desktop and p
       page.getByText('我關注軟體與 AI 系統如何從概念走向'),
     ).toBeInViewport();
     await expect(
-      page.getByRole('link', { name: '看看我的專案' }),
-    ).toBeInViewport();
-    await expect(
       page.getByRole('link', { name: /閱讀部落格/ }),
     ).toHaveAttribute('href', '/zh-hant/blog/');
   }
@@ -38,15 +35,7 @@ test('the home README answers who, what and where to look first on desktop and p
         (heading.textContent ?? '').replace(/^#+\s*/, ''),
       ),
     );
-  expect(names).toEqual([
-    '我主要在做什麼',
-    '用作品認識我',
-    '一路走來',
-    '還在探索的問題',
-    '工程之外',
-    '完整紀錄',
-    '從一個具體的問題開始交流。',
-  ]);
+  expect(names).toEqual(['我主要在做什麼', '一路走來']);
   // Numbers share one gutter column: every numbered line is unpositioned and
   // measured from the same buffer, however deeply it is nested.
   const gutters = await page.locator('main .ln').evaluateAll((lines) => ({
@@ -58,7 +47,8 @@ test('the home README answers who, what and where to look first on desktop and p
       lines.map((line) => (line as HTMLElement).offsetParent?.className),
     ).size,
   }));
-  expect(gutters.count).toBeGreaterThan(60);
+  // The intentionally shortened résumé retains all of its numbered lines.
+  expect(gutters.count).toBe(56);
   expect(gutters.positioned).toBe(0);
   expect(gutters.parents).toBe(1);
 });

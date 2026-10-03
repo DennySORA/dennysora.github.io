@@ -1,3 +1,5 @@
+import { buildSiteSearch } from '../src/lib/site-search.server.ts';
+import { parseSearchIndex } from '../src/lib/site-search.ts';
 import { hasRawAsset } from '../src/lib/asset-policy.ts';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -25,6 +27,22 @@ function walk(directory: string): string[] {
   );
 }
 const files = walk(root);
+try {
+  const search = parseSearchIndex(
+    JSON.parse(readFileSync(join(root, 'site-search.json'), 'utf8')),
+  );
+  if (
+    JSON.stringify(search) !==
+    JSON.stringify(buildSiteSearch(root, publishedRoutes()))
+  )
+    failures.push('Site search index does not match published page text');
+  for (const entry of search)
+    if (!existsSync(join(root, entry.href, 'index.html')))
+      failures.push(`Broken site search result: ${entry.href}`);
+} catch (error) {
+  failures.push(`Invalid site search index: ${String(error)}`);
+}
+
 const navigationAsset = join(root, navigation.path);
 if (
   !existsSync(navigationAsset) ||
@@ -40,9 +58,21 @@ for (const file of files) {
     )
   )
     failures.push(`Forbidden artifact: ${name}`);
+  // Search title/summary/text fields are displayed as text nodes. Validate the
+  // index against rendered pages above, and inspect only its navigable URLs here.
+  const assetSource =
+    name === 'site-search.json'
+      ? JSON.stringify(
+          parseSearchIndex(JSON.parse(readFileSync(file, 'utf8'))).map(
+            ({ href }) => href,
+          ),
+        )
+      : /\.(?:html|js|css|xml|json)$/.test(name)
+        ? readFileSync(file, 'utf8')
+        : '';
   if (
     /\.(?:html|js|css|xml|json)$/.test(name) &&
-    hasRawAsset(readFileSync(file, 'utf8'), extname(file))
+    hasRawAsset(assetSource, extname(file))
   )
     failures.push(`Hot-linked GitHub raw asset in ${name}`);
   if (extname(file) === '.css')

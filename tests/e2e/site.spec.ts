@@ -127,14 +127,14 @@ test('language switching keeps the note directory, metadata and a direct reload'
   expect(errors).toEqual([]);
 });
 
-test('the header search link and keyboard shortcuts open article search without stealing typing', async ({
+test('the header search link and keyboard shortcuts open global search without stealing typing', async ({
   page,
 }) => {
   await page.goto('/en/');
   await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
   await page.keyboard.press('/');
-  await expect(page).toHaveURL('/en/blog/#search');
-  const input = page.getByRole('searchbox', { name: 'Search articles' });
+  await expect(page).toHaveURL('/en/search/#search');
+  const input = page.getByRole('searchbox', { name: 'Search the site' });
   await expect(input).toBeFocused();
   await input.press('/');
   await expect(input).toHaveValue('/');
@@ -145,9 +145,9 @@ test('the header search link and keyboard shortcuts open article search without 
   await page.goto('/en/note/');
   await page
     .getByRole('banner')
-    .getByRole('link', { name: 'Search articles' })
+    .getByRole('link', { name: 'Search the site' })
     .click();
-  await expect(page).toHaveURL('/en/blog/#search');
+  await expect(page).toHaveURL('/en/search/#search');
 });
 
 test('404 stays a real 404, removed articles are explicit and legacy paths keep working', async ({

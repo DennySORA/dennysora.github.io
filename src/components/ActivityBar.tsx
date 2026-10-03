@@ -72,11 +72,12 @@ export function ActivityBar({
       current: areaState(route, 'home'),
     },
     {
-      href: `/${locale}/blog/#search`,
+      href: `/${locale}/search/#search`,
       icon: 'search',
-      label: t.searchArticles,
+      label: t.searchSite,
       caption: captions.search,
       sprite: 1,
+      current: route.kind === 'search' ? 'page' : undefined,
     },
     {
       href: `/${locale}/blog/`,

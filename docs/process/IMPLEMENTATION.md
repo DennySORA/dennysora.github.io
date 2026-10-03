@@ -68,3 +68,15 @@ Browser gate：blocked，未宣稱畫面或互動驗收。原設定的 Google Ch
 計畫：驗證 workflow 結構與既有 build；僅提交這次七個路徑的差異到 main，核對 raw commit 與遠端 ref，再從該 commit 建立 release。觀察 exact-head 的 Actions build／deploy 結果，最後檢查正式網站。沒有放寬環境保護或新增憑證。
 
 發布前驗證：workflow YAML 成功解析，確認只接受 `push.branches: [release]`、build 只讀權限、deploy 的 needs／最小權限／環境與同一 artifact；七個修改路徑的基準 blob 均與遠端 f540959 一致，文件相對連結存在。`pnpm format:check`、`pnpm lint`、`pnpm typecheck`、`pnpm test`（12 files／99 tests）、`pnpm build`（26 routes／121 files／137.6 KiB initial JS）及 `git diff --check` passed。本次沒有修改 UI；前節 browser 啟動限制仍存在，不宣稱新的 browser suite pass。下一步是提交已驗證來源與建立 release，部署成功須以後續 Actions／正式站證據判定。
+
+發布結果（本地 checkpoint，尚未另行提交）：commit `abb4f47ec9ddd163e072cf2002767300636e39ce` 的 raw tree／parent／身份已核對，main 與新建 release 均回讀一致。Push 觸發 [Actions run 37143961071](https://github.com/DennySORA/dennysora.github.io/actions/runs/37143961071)：build 及 github-pages artifact upload 成功，deploy 在 runner 啟動前失敗。GitHub 正式 run 頁註記：`Branch "release" is not allowed to deploy to github-pages due to environment protection rules.` 未停用、繞過或修改環境保護，未重試相同失敗。狀態為 blocked；下一步是由具備權限的擁有者，僅將 release 加入既有 github-pages 環境允許發布的 branch，保留其他保護；完成後重新執行這次失敗的 deploy job，再核對正式站。發布來源及三語 UI 目前仍不能宣稱已部署。
+
+## 2026-10-03｜SITE-SEARCH-01：全站搜尋涵蓋筆記
+
+狀態：進行中；紀錄來源：`bootstrap_manual`／`agent_reported`。前一發布阻擋已由擁有者處理，run 37143961071 attempt 2 於 18:34 UTC 成功，main／release 均為 abb4f47。正式站已由瀏覽器驗證顯示新版。擁有者回報搜尋仍進入部落格；實際來源的標題列、活動列與快捷鍵皆指向 blog/#search，原 Pagefind 只索引已發布文章，沒有文章時跳過全部索引。
+
+方案：新增三語 /search/ 頁，使用已預渲染公開頁面的正文建立本機靜態搜尋索引；包含首頁、文章、筆記與目錄，不索引搜尋頁、404、已移除頁面或外站內容。依目前語言優先選同一內容的版本；缺少翻譯時明示原文語言並連向實際存在的頁面。搜尋載入、失敗／重試、空查詢、無結果、分類、URL／Back 狀態與鍵盤入口都要有驗證。沿用既有 React、深色樣式與最小 Pages workflow，完成後 main → release 非強制更新並確認部署。
+
+驗證：`pnpm format:check`、`pnpm lint`、`pnpm typecheck`、105 unit tests（13 files）及完整 build passed；29 prerendered routes、22 sitemap routes、128 artifact files、initial JS gzip 140.2 KiB。全站索引 421153 bytes、21 個公開頁面版本，其中 3 份筆記；依語言去重後顯示正確目的地。初次 artifact check 把筆記內原本可見的 raw GitHub URL 程式碼當成載入資產，已將搜尋 JSON 的檢查限於可導航 href；每份 index 仍必須逐字符合由公開 main 抽取的內容，顯示文字只使用 React text nodes。沒有放寬 HTML／JS／CSS 的資產規則。
+
+HTTP-only Playwright passed（2 cases）：29 個正式 routes、三語 search noindex 與導覽連結、全站索引、正文專有詞 ngosang 可找到 downloader 筆記。新增 browser tests 覆蓋三語入口、note 目的地、分類／無結果、Back、語言切換、載入失敗重試與 no-JavaScript 導覽；先前 Chrome／Chromium 啟動限制仍存在，尚未執行這批 browser cases。同步修正一個殘留舊首頁章節的 layout assertion，反映已核准刪除後的兩個核心區塊及 56 個 numbered lines。下一步：核對遠端 main／release，提交本次差異並 fast-forward release，驗證 exact-head Actions 後做正式站搜尋互動檢查。

@@ -31,7 +31,7 @@ export function TitleBar({
   languageLinks: LanguageLink[];
 }) {
   const t = dictionaries[locale];
-  const preserveSearch = route.kind === 'library';
+  const preserveSearch = route.kind === 'library' || route.kind === 'search';
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   function closeMenu() {
@@ -79,9 +79,9 @@ export function TitleBar({
   return (
     <header className="titlebar">
       <BrandLogo placement="header" locale={locale} />
-      <a className="command-center" href={`/${locale}/blog/#search`}>
+      <a className="command-center" href={`/${locale}/search/#search`}>
         <Icon name="search" size={15} />
-        <span className="command-text">{t.searchArticles}</span>
+        <span className="command-text">{t.searchSite}</span>
         <kbd aria-hidden="true">/</kbd>
       </a>
       <div className="titlebar-tools">

@@ -224,6 +224,7 @@ export function publishedRoutes(): RouteDescriptor[] {
     routes.push(
       { kind: 'home', locale },
       { kind: 'library', locale },
+      { kind: 'search', locale },
       { kind: 'notes', locale },
       { kind: 'medical', locale },
       { kind: 'network', locale },
@@ -243,7 +244,12 @@ export function publishedRoutes(): RouteDescriptor[] {
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
-  if (route.kind === 'not-found' || route.kind === 'research') return false;
+  if (
+    route.kind === 'not-found' ||
+    route.kind === 'research' ||
+    route.kind === 'search'
+  )
+    return false;
   return true;
 }
 export function publishedPaths(): string[] {

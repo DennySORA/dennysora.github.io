@@ -87,9 +87,12 @@ export function SiteLayout({
       )
         return;
       event.preventDefault();
-      const input = document.getElementById(pageIds.searchInput);
+      const input =
+        route.kind === 'search'
+          ? document.getElementById(pageIds.searchInput)
+          : null;
       if (input) input.focus();
-      else window.location.assign(`/${locale}/blog/#search`);
+      else window.location.assign(`/${locale}/search/#search`);
     }
     document.addEventListener('keydown', shortcut);
     // Marks when `/` and Ctrl/Cmd+K are live; they need the hydrated page.

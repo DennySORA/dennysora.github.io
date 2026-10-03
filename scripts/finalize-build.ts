@@ -23,6 +23,8 @@ import migration from '../data/migration/manifest.json' with { type: 'json' };
 import brand from '../data/brand-assets.json' with { type: 'json' };
 import { legacyDestinations } from '../src/lib/legacy-anchors.ts';
 
+import { buildSiteSearch } from '../src/lib/site-search.server.ts';
+
 const output = join(process.cwd(), 'build/client');
 function write(path: string, body: string) {
   const file = join(output, path);
@@ -79,6 +81,7 @@ for (const locale of locales) {
 
 const routes = publishedRoutes();
 const indexable = routes.filter(isIndexable);
+write('site-search.json', JSON.stringify(buildSiteSearch(output, routes)));
 write(
   'sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${indexable.map((route) => `<url><loc>${siteUrl}${routePath(route)}</loc></url>`).join('')}</urlset>`,

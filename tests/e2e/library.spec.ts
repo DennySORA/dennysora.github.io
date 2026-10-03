@@ -53,18 +53,18 @@ test('searching an empty blog never requests an index or suggests a search failu
   await expect(page).toHaveURL('/en/blog/');
 });
 
-test('the search shortcut still focuses the empty blog search field', async ({
+test('the activity search opens global search even when the blog is empty', async ({
   page,
 }) => {
   await page.goto('/en/');
   await page
     .locator('.activitybar')
-    .getByRole('link', { name: 'Search articles' })
+    .getByRole('link', { name: 'Search the site' })
     .click();
-  await expect(page).toHaveURL('/en/blog/#search');
+  await expect(page).toHaveURL('/en/search/#search');
   await expect(page.getByRole('searchbox')).toBeFocused();
   await expect(
-    page.getByRole('heading', { name: 'No posts yet' }),
+    page.getByRole('heading', { name: 'Search the site' }),
   ).toBeVisible();
 });
 

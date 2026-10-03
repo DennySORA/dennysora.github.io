@@ -31,6 +31,8 @@ import {
 import { siteUrl } from '../lib/site.ts';
 import { SiteLayout } from '../components/SiteLayout.tsx';
 import { Readme } from '../features/home/Readme.tsx';
+import { SiteSearch } from '../features/search/SiteSearch.tsx';
+import { searchCopy } from '../features/search/search-copy.ts';
 import { Library } from '../features/library/Library.tsx';
 import { TagIndex, TaxonomyPage } from '../features/library/TaxonomyPages.tsx';
 import { Article } from '../features/reader/Article.tsx';
@@ -114,6 +116,8 @@ function loadView(route: RouteDescriptor) {
         recent: listPosts(locale).slice(0, 3),
         taxonomy: taxonomyLabels(locale),
       };
+    case 'search':
+      return { kind: 'search' as const };
     case 'library':
       return {
         kind: 'library' as const,
@@ -247,6 +251,11 @@ function describe(view: ViewData, locale: Locale) {
       return {
         title: `DennySORA · ${view.profile.publicName} — ${view.profile.introduction.role}`,
         description: view.profile.introduction.shortBio,
+      };
+    case 'search':
+      return {
+        title: withSite(searchCopy[locale].title),
+        description: searchCopy[locale].intro,
       };
     case 'library':
       return { title: withSite(t.libraryTitle), description: t.libraryIntro };
@@ -462,6 +471,8 @@ function View({ data }: { data: PageData }) {
   switch (view.kind) {
     case 'home':
       return <Readme view={view} locale={locale} />;
+    case 'search':
+      return <SiteSearch locale={locale} />;
     case 'library':
       return <Library view={view} locale={locale} />;
     case 'topic':

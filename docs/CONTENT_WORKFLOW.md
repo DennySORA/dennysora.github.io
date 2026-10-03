@@ -44,6 +44,10 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 ## 搜尋
 
+標題列、活動列與 `/`／Ctrl+K／Cmd+K 開啟 `/<locale>/search/` 全站搜尋。建置從正式預渲染頁面的 main 正文產生同源 `site-search.json`，包含首頁、公開文章、筆記及目錄；不讀取草稿、移除的頁面或論文日報外站本文。標題、摘要與全文皆可搜尋，依文章／筆記／頁面分類。每份內容優先顯示目前語言，沒有翻譯時連向實際原文並明示語言。搜尋頁不進 sitemap；關鍵字與類型保留在 URL，可使用 Back／Forward 與語言切換。索引載入失敗可重試；無 JavaScript 時仍可透過首頁、部落格與筆記連結瀏覽。
+
+以下 Pagefind 行為只適用於部落格內的文章搜尋：
+
 文章搜尋使用 [Pagefind](https://pagefind.app/)，在預渲染完成後由 `scripts/build-search.ts` 對最終 HTML 建立索引。只有文章的標題區與正文（`data-pagefind-body`）會被收錄；導覽、頁尾、留言、相關文章、程式碼工具列不進索引。每種語言各自一份索引，建置會確認收錄筆數等於已發布的文章版本數。
 
 Topic、type、Tag 以 ID 作為篩選值；多個 Tag 使用 Pagefind 的 `any`（符合任一），不同維度之間為 AND。`tags.json` 的別名會隨 Tag 連結一起被收錄，讓「量化」與 quantization 互相找得到。索引無法載入時，介面明示「只搜尋標題與摘要」並提供重試。
