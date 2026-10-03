@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { dictionaries } from '../../src/i18n/index.ts';
 import { publishedPaths } from '../../src/lib/content.server.ts';
+import { hasRawAsset } from '../../src/lib/asset-policy.ts';
 import { origin, trackExternalRequests } from './helpers.ts';
 
 test('every production route is complete, dark-first and self-hosted HTML', async ({
@@ -15,7 +16,7 @@ test('every production route is complete, dark-first and self-hosted HTML', asyn
     expect(html, path).toMatch(/<html[^>]*data-theme="dark"/);
     expect(html, path).toContain('<meta name="color-scheme" content="dark"/>');
     expect(html, path).not.toContain('googleapis.com');
-    expect(html, path).not.toContain('raw.githubusercontent.com');
+    expect(hasRawAsset(html, '.html'), path).toBe(false);
   }
 });
 

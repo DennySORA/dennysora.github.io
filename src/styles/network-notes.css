@@ -220,7 +220,7 @@
 .network-note details[open] summary {
   margin-bottom: 16px;
 }
-.network-note :is(.p2p-flow, .p2p-namespace, .p2p-proposal) {
+.network-note :is(.p2p-flow, .p2p-namespace) {
   display: flex;
   gap: 12px;
   align-items: center;

@@ -98,7 +98,8 @@ test('both complete source archives remain available without JavaScript', async 
   });
   const page = await context.newPage();
   await page.goto(base + 'p2p-downloader/');
-  await expect(page.locator('.network-note noscript')).toContainText('全文');
+  await expect(page.locator('.network-note .no-js-only')).toContainText('全文');
+  await expect(page.locator('.network-note .no-js-only')).toBeVisible();
   await expect(page.locator('#catalog-body tr')).toHaveCount(134);
   await page.locator('#attachment-19 summary').click();
   await expect(page.locator('#attachment-19 pre')).toBeVisible();

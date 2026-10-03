@@ -60,7 +60,7 @@ export function StatusBar({
     () => 'Top',
   );
   return (
-    <div className="statusbar">
+    <footer className="statusbar">
       <span className="status-mode" data-mode={mode} aria-hidden="true">
         {mode}
       </span>
@@ -88,6 +88,6 @@ export function StatusBar({
       <span className="status-item status-position" aria-hidden="true">
         {position}
       </span>
-    </div>
+    </footer>
   );
 }
