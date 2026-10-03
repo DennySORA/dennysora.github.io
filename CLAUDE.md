@@ -4,7 +4,7 @@
 
 ## Website publication exception
 
-Only the owner-approved `YYYY.MM.DD.N` tag-triggered build-and-deploy workflow is allowed for this personal website. Do not add general main-push or PR GitHub CI. Follow `AGENTS.md` and `PROJECT_AGENT.md` for the release contract and local quality gates.
+Only the owner-approved build-and-deploy workflow triggered by pushes to `release` is allowed for this personal website. Do not add main-push, PR, tag, scheduled or manual-dispatch GitHub CI. Follow `AGENTS.md` and `PROJECT_AGENT.md` for the release contract and local quality gates.
 
 ## Claude Code-specific guidance
 

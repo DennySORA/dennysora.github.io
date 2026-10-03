@@ -104,4 +104,4 @@ If a referenced playbook is missing, continue from repository evidence and repor
 
 ## 10. Owner-approved website publication exception
 
-This repository is the explicit personal-website exception to the owner's general no-GitHub-CI rule. Keep only the build-and-deploy workflow in `.github/workflows/site.yml`, triggered exclusively by authorized `YYYY.MM.DD.N` tags targeting current `main`. Do not add PR, branch-push, scheduled or manual-dispatch CI triggers. Local quality gates still apply before publication. Read `PROJECT_AGENT.md` for the release contract; publishing a tag remains an external action requiring authorization.
+This repository is the explicit personal-website exception to the owner's general no-GitHub-CI rule. Keep only the build-and-deploy workflow in `.github/workflows/site.yml`, triggered by pushes to the `release` branch, including merges into it. Do not add main-push, PR, tag, scheduled or manual-dispatch CI triggers. Local quality gates still apply before publication. Read `PROJECT_AGENT.md` for the release contract; creating or advancing `release` publishes the site and requires authorization.

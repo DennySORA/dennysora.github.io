@@ -89,6 +89,6 @@ gh api graphql \
 
 公開資料夾只有 `build/client`；不要發布 repo root、`build/server`、原始 content、政策、ZIP 或暫存資料。`build/server` 是預渲染中間產物，不是託管需求。
 
-[workflow](../.github/workflows/site.yml) 是擁有者「不使用 GitHub CI」原則的個人網站例外，只負責 build 與 deploy。正式發布僅接受 `年.月.日.次數`，即 `YYYY.MM.DD.N` 格式的 tag；例如 `2026.10.03.1`，同日再次發布前先查現有 tags，再把正整數次數加一。Tag 必須指向執行時的遠端 main，日期格式／日期值或 commit 不符就停止。一般 branch push、PR 和人工 workflow dispatch 都不觸發。發布前在本機跑 `pnpm verify`；遠端只安裝 lockfile 所定依賴、執行含內容／產物檢查的 build，再把同一次產物部署。Tag 的建立或推送本身就是發布動作，仍需明確授權。Pages 必須使用 GitHub Actions；既有 `github-pages` 環境保護若限制 tag，需由擁有者按既有審批流程處理，不能自行放寬。現有 CNAME 保持 `dennysora.me`。
+[workflow](../.github/workflows/site.yml) 是擁有者「不使用 GitHub CI」原則的個人網站例外，只負責 build 與 deploy。每次 push 到 `release`（包含 merge 到該 branch）都會建置該次 commit，並部署同一次建置通過檢查的 `build/client`。Main push、PR、tag、排程與人工 workflow dispatch 都不觸發。發布前在本機跑 `pnpm verify`；來源先提交到 `main`，獲得發布授權後，再從已驗證 commit 建立或 fast-forward `release`。若 branch 已分歧，先檢視並正常合併，不用 force push 覆寫歷史。建立或更新 `release` 本身就是發布動作。遠端只安裝 lockfile 所定依賴、執行含內容／產物檢查的 build，再部署該產物。Pages 必須使用 GitHub Actions；既有 `github-pages` 環境保護若不允許 `release`，需由擁有者按既有審批流程處理，不能自行放寬。現有 CNAME 保持 `dennysora.me`。
 
 若部署後發現問題，停止後續部署，從擁有者確認的上一個正常 commit 重新驗證並發布；不要 reset 工作目錄、覆寫新內容或啟用第二個研究 writer。本次只提供此回復程序，未對遠端做回滾演練。舊版 profile 的來源 commit 與 checksum 已記在 [migration manifest](../data/migration/manifest.json)，可以透過 Git 歷史查閱；已刪除 blog 的五篇本文不在本機恢復範圍。

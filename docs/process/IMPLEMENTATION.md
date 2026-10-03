@@ -58,3 +58,13 @@ Browser gate：blocked，未宣稱畫面或互動驗收。原設定的 Google Ch
 補充驗證：原設定 Playwright 的 HTTP-only `every production route` case passed（1 test／26 routes，1.9s）。這個 case 不啟動 browser，因此只證明真實 loopback 產物的 HTTP／HTML，不是視覺或互動 pass。最初以行首錨定的 grep 未匹配任何 test，已改用完整測試名稱重跑。
 
 最後整合重跑：format、lint、typecheck、99 unit tests（12 files）與完整 build／artifact passed。新增可見標籤必須包含在 accessible name 的三語回歸測試；未放寬 lint、型別或測試要求。以雲端瀏覽器實際開啟 https://dennysora.me/ 並檢視畫面，仍看到舊版 Projects、privacy.md、舊首頁段落及反向 name／alias；因此本次來源尚未對外部署。遠端 main 最後核對仍為 25a1e05，release tags 仍為空。GitHub 連線身份已確認符合 DennySORA；本地未設定 Git 身份，不修改 Git config，使用 GitHub Git database 組裝 commit 並在更新 main 前核對 raw commit identity/tree/parent。
+
+## 2026-10-03｜SITE-RELEASE-01：改由 release branch 發布
+
+狀態：進行中；紀錄來源：`bootstrap_manual`／`agent_reported`。擁有者最新指示以 `release` branch push／merge 自動 build 與 deploy，取代前節的日期 tag 發布契約。前節來源已提交至 `f540959fa094c5a7f64c1ee633878602bae38886`；本次開始時遠端 main 仍為該 commit，尚無 `release` branch。
+
+範圍：只調整 `.github/workflows/site.yml` 的名稱、觸發條件與移除日期 tag／current main guard，並同步現行 README、發布文件與 Agent 指令。保留鎖定的官方 Actions、最小 Pages／OIDC 權限、`github-pages` 環境與 build/client 產物契約。現有測試沒有 tag 發布契約；不為單純 YAML 鏡像增加測試。Context7 MCP／受管理 CLI 不可用，已核對 GitHub 官方 push branch filter 與 Pages custom workflow 文件。
+
+計畫：驗證 workflow 結構與既有 build；僅提交這次七個路徑的差異到 main，核對 raw commit 與遠端 ref，再從該 commit 建立 release。觀察 exact-head 的 Actions build／deploy 結果，最後檢查正式網站。沒有放寬環境保護或新增憑證。
+
+發布前驗證：workflow YAML 成功解析，確認只接受 `push.branches: [release]`、build 只讀權限、deploy 的 needs／最小權限／環境與同一 artifact；七個修改路徑的基準 blob 均與遠端 f540959 一致，文件相對連結存在。`pnpm format:check`、`pnpm lint`、`pnpm typecheck`、`pnpm test`（12 files／99 tests）、`pnpm build`（26 routes／121 files／137.6 KiB initial JS）及 `git diff --check` passed。本次沒有修改 UI；前節 browser 啟動限制仍存在，不宣稱新的 browser suite pass。下一步是提交已驗證來源與建立 release，部署成功須以後續 Actions／正式站證據判定。
