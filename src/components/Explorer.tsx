@@ -1,3 +1,4 @@
+import { useId, useState, type ReactNode } from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import type { RouteDescriptor } from '../lib/route-manifest.ts';
 import {
@@ -24,14 +25,7 @@ const kindIcons: Record<Kind, IconName> = {
   external: 'newspaper',
 };
 
-function TreeLink({
-  href,
-  kind,
-  name,
-  note,
-  current,
-  onNavigate,
-}: {
+type TreeLinkProps = {
   href: string;
   kind: Kind;
   name: string;
@@ -39,7 +33,18 @@ function TreeLink({
   note: { text: string; visible: boolean };
   current?: 'page' | 'true' | undefined;
   onNavigate?: (() => void) | undefined;
-}) {
+  expanded?: boolean;
+};
+
+function TreeLink({
+  href,
+  kind,
+  name,
+  note,
+  current,
+  onNavigate,
+  expanded = true,
+}: TreeLinkProps) {
   return (
     <a
       className="tree-link"
@@ -49,12 +54,12 @@ function TreeLink({
       title={note.visible ? undefined : note.text}
       data-kind={kind}
     >
-      {kind === 'folder' ? (
-        <Icon name="chevron-down" size={12} className="tree-expander" />
-      ) : (
-        <span className="tree-expander" aria-hidden="true" />
-      )}
-      <Icon name={kindIcons[kind]} size={16} className="tree-icon" />
+      <span className="tree-expander" aria-hidden="true" />
+      <Icon
+        name={kind === 'folder' && !expanded ? 'folder' : kindIcons[kind]}
+        size={16}
+        className="tree-icon"
+      />
       <span className="tree-name">{name}</span>{' '}
       {note.visible ? (
         <span className="tree-note">{note.text}</span>
@@ -63,6 +68,42 @@ function TreeLink({
       )}
       {kind === 'external' ? <Icon name="arrow-up-right" size={12} /> : null}
     </a>
+  );
+}
+
+/** Disclosure and navigation are separate controls; hiding keeps child state. */
+function TreeFolder({
+  locale,
+  children,
+  ...link
+}: Omit<TreeLinkProps, 'kind' | 'expanded'> & {
+  locale: Locale;
+  children: ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(true);
+  const childrenId = useId();
+  const t = dictionaries[locale];
+  const label = `${expanded ? t.folderCollapse : t.folderExpand}: ${link.name}`;
+  return (
+    <>
+      <div className="tree-folder-row">
+        <button
+          className="tree-folder-toggle requires-js"
+          type="button"
+          aria-expanded={expanded}
+          aria-controls={childrenId}
+          aria-label={label}
+          title={label}
+          onClick={() => setExpanded((open) => !open)}
+        >
+          <Icon name={expanded ? 'chevron-down' : 'chevron-right'} size={12} />
+        </button>
+        <TreeLink {...link} kind="folder" expanded={expanded} />
+      </div>
+      <ul id={childrenId} className="tree-children" hidden={!expanded}>
+        {children}
+      </ul>
+    </>
   );
 }
 
@@ -98,15 +139,14 @@ export function Explorer({
           />
         </li>
         <li>
-          <TreeLink
+          <TreeFolder
+            locale={locale}
             href={`/${locale}/blog/`}
-            kind="folder"
             name="blog"
             note={{ text: t.navLibrary, visible: true }}
             current={areaState(route, 'library')}
             onNavigate={onNavigate}
-          />
-          <ul className="tree-children">
+          >
             {files.posts.length === 0 ? (
               <li className="tree-empty">{t.emptyFolder}</li>
             ) : null}
@@ -124,28 +164,26 @@ export function Explorer({
                 />
               </li>
             ))}
-          </ul>
+          </TreeFolder>
         </li>
         <li>
-          <TreeLink
+          <TreeFolder
+            locale={locale}
             href={`/${locale}/note/`}
-            kind="folder"
             name="note"
             note={{ text: noteCopy[locale].notes, visible: true }}
             current={areaState(route, 'notes')}
             onNavigate={onNavigate}
-          />
-          <ul className="tree-children">
+          >
             <li>
-              <TreeLink
+              <TreeFolder
+                locale={locale}
                 href={`/${locale}/note/network/`}
-                kind="folder"
                 name={networkCopy[locale].title}
                 note={{ text: networkCopy[locale].title, visible: false }}
                 current={page(route.kind === 'network')}
                 onNavigate={onNavigate}
-              />
-              <ul className="tree-children">
+              >
                 {networkNoteIds.map((id) => (
                   <li key={id}>
                     <TreeLink
@@ -160,23 +198,22 @@ export function Explorer({
                     />
                   </li>
                 ))}
-              </ul>
+              </TreeFolder>
             </li>
             <li>
-              <TreeLink
+              <TreeFolder
+                locale={locale}
                 href={`/${locale}/note/medical/`}
-                kind="folder"
                 name={noteCopy[locale].medical}
                 note={{ text: noteCopy[locale].medical, visible: false }}
                 current={page(route.kind === 'medical')}
                 onNavigate={onNavigate}
-              />
-              <ul className="tree-children">
+              >
                 {medicalCategories.map((category) => (
                   <li key={category}>
-                    <TreeLink
+                    <TreeFolder
+                      locale={locale}
                       href={`/${locale}/note/medical/${category}/`}
-                      kind="folder"
                       name={medicalCategoryCopy[locale][category].title}
                       note={{
                         text: medicalCategoryCopy[locale][category].intro,
@@ -187,8 +224,7 @@ export function Explorer({
                           route.category === category,
                       )}
                       onNavigate={onNavigate}
-                    />
-                    <ul className="tree-children">
+                    >
                       {medicalNoteIds
                         .filter((id) => medicalNotes[id].category === category)
                         .map((id) => (
@@ -209,12 +245,12 @@ export function Explorer({
                             />
                           </li>
                         ))}
-                    </ul>
+                    </TreeFolder>
                   </li>
                 ))}
-              </ul>
+              </TreeFolder>
             </li>
-          </ul>
+          </TreeFolder>
         </li>
         <li>
           <TreeLink
