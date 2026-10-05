@@ -39,6 +39,7 @@ import { Article } from '../features/reader/Article.tsx';
 import { ResearchBridge } from '../features/research/ResearchBridge.tsx';
 import { Notes } from '../features/notes/Notes.tsx';
 import { MedicalNote } from '../features/notes/MedicalNote.tsx';
+import { medicalCategoryCopy, medicalNotes } from '../lib/medical-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { NetworkNotes } from '../features/notes/NetworkNotes.tsx';
 import { NetworkNote } from '../features/notes/NetworkNote.tsx';
@@ -205,6 +206,8 @@ function loadView(route: RouteDescriptor) {
     case 'medical':
     case 'network':
       return { kind: route.kind };
+    case 'medical-category':
+      return { kind: route.kind, category: route.category };
     case 'network-note':
       return {
         kind: 'network-note' as const,
@@ -212,7 +215,11 @@ function loadView(route: RouteDescriptor) {
         html: loadNetworkNote(route.noteId),
       };
     case 'medical-note':
-      return { kind: 'medical-note' as const, html: loadMedicalNote() };
+      return {
+        kind: 'medical-note' as const,
+        noteId: route.noteId,
+        html: loadMedicalNote(route.noteId),
+      };
     case 'research':
       return { kind: 'research' as const };
     case 'not-found':
@@ -285,12 +292,24 @@ function describe(view: ViewData, locale: Locale) {
       return {
         title: withSite(
           view.kind === 'medical-note'
-            ? noteCopy[locale].article
+            ? medicalNotes[view.noteId].title[locale]
             : view.kind === 'medical'
               ? noteCopy[locale].medical
               : noteCopy[locale].notes,
         ),
-        description: noteCopy[locale].intro,
+        description:
+          view.kind === 'medical-note'
+            ? medicalNotes[view.noteId].description
+            : noteCopy[locale].intro,
+      };
+    case 'medical-category':
+      return {
+        title: withSite(
+          medicalCategoryCopy[locale][view.category].title +
+            ' · ' +
+            noteCopy[locale].medical,
+        ),
+        description: medicalCategoryCopy[locale][view.category].intro,
       };
     case 'network':
       return {
@@ -485,8 +504,16 @@ function View({ data }: { data: PageData }) {
     case 'notes':
     case 'medical':
       return <Notes locale={locale} medical={view.kind === 'medical'} />;
+    case 'medical-category':
+      return <Notes locale={locale} medical category={view.category} />;
     case 'medical-note':
-      return <MedicalNote html={view.html} locale={locale} />;
+      return (
+        <MedicalNote
+          html={view.html}
+          locale={locale}
+          showCover={view.noteId === 'analgesics'}
+        />
+      );
     case 'network':
       return <NetworkNotes locale={locale} />;
     case 'network-note':

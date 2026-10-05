@@ -1,3 +1,4 @@
+import { medicalNotes } from './medical-notes.ts';
 import type { Locale } from '../i18n/index.ts';
 import {
   navSection,
@@ -71,12 +72,23 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
         { label: 'network', href: `/${locale}/note/network/` },
         { label: `${route.noteId}.md`, href: self },
       ];
+    case 'medical-category':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'medical', href: `/${locale}/note/medical/` },
+        { label: route.category, href: self },
+      ];
     case 'medical-note':
       return [
         home,
         { label: 'note', href: `/${locale}/note/` },
         { label: 'medical', href: `/${locale}/note/medical/` },
-        { label: 'analgesics.md', href: self },
+        {
+          label: medicalNotes[route.noteId].category,
+          href: `/${locale}/note/medical/${medicalNotes[route.noteId].category}/`,
+        },
+        { label: `${route.noteId}.md`, href: self },
       ];
     case 'article':
       return [home, blog, { label: `${route.slug}.md`, href: self }];
@@ -102,6 +114,7 @@ const folders: RouteDescriptor['kind'][] = [
   'library',
   'notes',
   'medical',
+  'medical-category',
   'network',
   'tags',
   'topic',

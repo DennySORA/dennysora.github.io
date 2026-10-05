@@ -14,7 +14,11 @@
   },
   {
     "id": "llm",
-    "label": { "zh-hant": "LLM", "en": "LLM", "ja": "LLM" },
+    "label": {
+      "zh-hant": "LLM",
+      "en": "LLM",
+      "ja": "LLM"
+    },
     "aliases": {
       "zh-hant": ["大型語言模型", "語言模型"],
       "en": ["large language model", "language model"],
@@ -23,7 +27,11 @@
   },
   {
     "id": "security",
-    "label": { "zh-hant": "資安", "en": "Security", "ja": "セキュリティ" },
+    "label": {
+      "zh-hant": "資安",
+      "en": "Security",
+      "ja": "セキュリティ"
+    },
     "aliases": {
       "zh-hant": ["資訊安全", "security"],
       "en": ["infosec"],
@@ -32,7 +40,11 @@
   },
   {
     "id": "quantization",
-    "label": { "zh-hant": "量化", "en": "Quantization", "ja": "量子化" },
+    "label": {
+      "zh-hant": "量化",
+      "en": "Quantization",
+      "ja": "量子化"
+    },
     "aliases": {
       "zh-hant": ["quantization", "PTQ"],
       "en": ["PTQ", "量化"],
@@ -41,7 +53,11 @@
   },
   {
     "id": "inference",
-    "label": { "zh-hant": "推論", "en": "Inference", "ja": "推論" },
+    "label": {
+      "zh-hant": "推論",
+      "en": "Inference",
+      "ja": "推論"
+    },
     "aliases": {
       "zh-hant": ["inference", "serving"],
       "en": ["serving", "推論"],
@@ -50,7 +66,11 @@
   },
   {
     "id": "agent",
-    "label": { "zh-hant": "Agent", "en": "Agents", "ja": "エージェント" },
+    "label": {
+      "zh-hant": "Agent",
+      "en": "Agents",
+      "ja": "エージェント"
+    },
     "aliases": {
       "zh-hant": ["代理", "agents"],
       "en": ["agentic AI"],
@@ -68,6 +88,136 @@
       "zh-hant": ["雲端", "Kubernetes", "cloud"],
       "en": ["Kubernetes", "cloud infrastructure"],
       "ja": ["クラウド", "Kubernetes", "cloud"]
+    }
+  },
+  {
+    "id": "p2p",
+    "label": {
+      "zh-hant": "P2P",
+      "en": "P2P",
+      "ja": "P2P"
+    },
+    "aliases": {
+      "zh-hant": ["peer-to-peer", "點對點", "ピアツーピア"],
+      "en": ["peer-to-peer", "點對點", "ピアツーピア"],
+      "ja": ["peer-to-peer", "點對點", "ピアツーピア"]
+    }
+  },
+  {
+    "id": "networking",
+    "label": {
+      "zh-hant": "網路通訊",
+      "en": "Networking",
+      "ja": "ネットワーク通信"
+    },
+    "aliases": {
+      "zh-hant": ["網路", "網絡", "networks", "ネットワーク"],
+      "en": ["網路", "網絡", "networks", "ネットワーク"],
+      "ja": ["網路", "網絡", "networks", "ネットワーク"]
+    }
+  },
+  {
+    "id": "privacy",
+    "label": {
+      "zh-hant": "隱私",
+      "en": "Privacy",
+      "ja": "プライバシー"
+    },
+    "aliases": {
+      "zh-hant": ["匿名性", "anonymity", "privacy"],
+      "en": ["匿名性", "anonymity", "privacy"],
+      "ja": ["匿名性", "anonymity", "privacy"]
+    }
+  },
+  {
+    "id": "medicine",
+    "label": {
+      "zh-hant": "醫學",
+      "en": "Medicine",
+      "ja": "医学"
+    },
+    "aliases": {
+      "zh-hant": ["medical", "醫療", "医療"],
+      "en": ["medical", "醫療", "医療"],
+      "ja": ["medical", "醫療", "医療"]
+    }
+  },
+  {
+    "id": "pharmacology",
+    "label": {
+      "zh-hant": "藥理學",
+      "en": "Pharmacology",
+      "ja": "薬理学"
+    },
+    "aliases": {
+      "zh-hant": ["藥理", "pharmacology", "薬理"],
+      "en": ["藥理", "pharmacology", "薬理"],
+      "ja": ["藥理", "pharmacology", "薬理"]
+    }
+  },
+  {
+    "id": "analgesics",
+    "label": {
+      "zh-hant": "止痛藥",
+      "en": "Analgesics",
+      "ja": "鎮痛薬"
+    },
+    "aliases": {
+      "zh-hant": ["pain medicine", "painkillers", "鎮痛劑"],
+      "en": ["pain medicine", "painkillers", "鎮痛劑"],
+      "ja": ["pain medicine", "painkillers", "鎮痛劑"]
+    }
+  },
+  {
+    "id": "drug-safety",
+    "label": {
+      "zh-hant": "用藥安全",
+      "en": "Drug safety",
+      "ja": "医薬品の安全性"
+    },
+    "aliases": {
+      "zh-hant": ["medication safety", "藥物安全", "薬物安全性"],
+      "en": ["medication safety", "藥物安全", "薬物安全性"],
+      "ja": ["medication safety", "藥物安全", "薬物安全性"]
+    }
+  },
+  {
+    "id": "pathology",
+    "label": {
+      "zh-hant": "病理學",
+      "en": "Pathology",
+      "ja": "病理学"
+    },
+    "aliases": {
+      "zh-hant": ["病理", "pathology"],
+      "en": ["病理", "pathology"],
+      "ja": ["病理", "pathology"]
+    }
+  },
+  {
+    "id": "brain-tumors",
+    "label": {
+      "zh-hant": "腦與中樞神經腫瘤",
+      "en": "Brain & CNS tumors",
+      "ja": "脳・中枢神経系腫瘍"
+    },
+    "aliases": {
+      "zh-hant": ["brain tumors", "CNS tumors", "腦瘤", "脳腫瘍"],
+      "en": ["brain tumors", "CNS tumors", "腦瘤", "脳腫瘍"],
+      "ja": ["brain tumors", "CNS tumors", "腦瘤", "脳腫瘍"]
+    }
+  },
+  {
+    "id": "glioma",
+    "label": {
+      "zh-hant": "膠質瘤",
+      "en": "Glioma",
+      "ja": "グリオーマ"
+    },
+    "aliases": {
+      "zh-hant": ["gliomas", "神經膠質瘤", "神経膠腫"],
+      "en": ["gliomas", "神經膠質瘤", "神経膠腫"],
+      "ja": ["gliomas", "神經膠質瘤", "神経膠腫"]
     }
   }
 ]

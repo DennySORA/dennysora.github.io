@@ -65,9 +65,13 @@ function Buffers({
     route.kind,
   )
     ? 'library'
-    : ['medical', 'medical-note', 'network', 'network-note'].includes(
-          route.kind,
-        )
+    : [
+          'medical',
+          'medical-category',
+          'medical-note',
+          'network',
+          'network-note',
+        ].includes(route.kind)
       ? 'notes'
       : null;
   const list = useRef<HTMLUListElement>(null);

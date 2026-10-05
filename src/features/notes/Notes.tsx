@@ -6,6 +6,14 @@ import {
   networkNoteIds,
   networkNotes,
 } from '../../lib/network-notes.ts';
+import {
+  medicalCategories,
+  medicalCategoryCopy,
+  medicalNoteIds,
+  medicalNotes,
+  medicalNotePath,
+  type MedicalCategory,
+} from '../../lib/medical-notes.ts';
 import { noteCopy } from '../../lib/notes-copy.ts';
 
 /** One note collection as a folder preview: what it holds, and its files. */
@@ -70,41 +78,55 @@ function Collection({
 export function Notes({
   locale,
   medical,
+  category,
 }: {
   locale: Locale;
   medical: boolean;
+  category?: MedicalCategory;
 }) {
   const t = noteCopy[locale];
   const network = networkCopy[locale];
   return (
     <div className="container profile-layout notes-directory">
       <MdHeading level={1} icon={medical ? 'capsule' : 'notebook'}>
-        {medical ? t.medical : t.notes}
+        {category
+          ? medicalCategoryCopy[locale][category].title
+          : medical
+            ? t.medical
+            : t.notes}
       </MdHeading>
-      <p className="ln page-intro">{medical ? t.medicalIntro : t.intro}</p>
+      <p className="ln page-intro">
+        {category
+          ? medicalCategoryCopy[locale][category].intro
+          : medical
+            ? t.medicalIntro
+            : t.intro}
+      </p>
       {medical ? (
-        <section className="ln note-card">
-          <div className="float-title" aria-hidden="true">
-            <Icon name="image" size={14} />
-            <span>medical-notes.webp</span>
-          </div>
-          <img
-            src="/assets/illustrations/medical-notes.webp"
-            width={1200}
-            height={593}
-            alt=""
-            decoding="async"
-          />
-          <h2>
-            <a href="/zh-hant/note/medical/analgesics/" hrefLang="zh-Hant">
-              <Icon name="markdown" /> {t.article}
-            </a>
-          </h2>
-          <p>
-            <Icon name="globe" size={14} />
-            {t.available}
-          </p>
-        </section>
+        <ul className="ln collections">
+          {(category ? [category] : medicalCategories).map((group) => (
+            <Collection
+              key={group}
+              art="/assets/illustrations/collection-medicine-v1.webp"
+              href={`/${locale}/note/medical/${group}/`}
+              title={medicalCategoryCopy[locale][group].title}
+              count={t.count(
+                medicalNoteIds.filter(
+                  (id) => medicalNotes[id].category === group,
+                ).length,
+              )}
+              intro={medicalCategoryCopy[locale][group].intro}
+              files={medicalNoteIds
+                .filter((id) => medicalNotes[id].category === group)
+                .map((id) => ({
+                  href: medicalNotePath(id),
+                  name: `${id}.md`,
+                  title: medicalNotes[id].title['zh-hant'],
+                }))}
+              available={t.available}
+            />
+          ))}
+        </ul>
       ) : (
         <ul className="ln collections">
           <Collection
@@ -124,15 +146,13 @@ export function Notes({
             art="/assets/illustrations/collection-medicine-v1.webp"
             href={`/${locale}/note/medical/`}
             title={t.medical}
-            count={t.count(1)}
+            count={t.count(medicalNoteIds.length)}
             intro={t.medicalIntro}
-            files={[
-              {
-                href: '/zh-hant/note/medical/analgesics/',
-                name: 'analgesics.md',
-                title: noteCopy['zh-hant'].article,
-              },
-            ]}
+            files={medicalNoteIds.map((id) => ({
+              href: medicalNotePath(id),
+              name: `${id}.md`,
+              title: medicalNotes[id].title['zh-hant'],
+            }))}
             available={t.available}
           />
         </ul>

@@ -1,9 +1,15 @@
 import { isLocale, type Locale } from '../i18n/index.ts';
 import { matchSearch } from './search.ts';
 import { parseRoute } from './route-manifest.ts';
+import type { LocalizedText } from './schema.ts';
 
 export const searchKinds = ['all', 'article', 'note', 'page'] as const;
 export type SearchKind = (typeof searchKinds)[number];
+export type SiteSearchTag = {
+  id: string;
+  label: LocalizedText;
+  aliases: string[];
+};
 export type SiteSearchDocument = {
   id: string;
   locale: Locale;
@@ -12,12 +18,14 @@ export type SiteSearchDocument = {
   title: string;
   summary: string;
   text: string;
+  tags: SiteSearchTag[];
 };
 export function parseSiteSearch(params: URLSearchParams) {
   const kind = params.get('kind');
   return {
     q: (params.get('q') ?? '').slice(0, 160).trim(),
     kind: searchKinds.find((item) => item === kind) ?? 'all',
+    tag: (params.get('tag') ?? '').slice(0, 80).trim(),
   };
 }
 export function parseSearchIndex(value: unknown): SiteSearchDocument[] {
@@ -30,6 +38,27 @@ export function parseSearchIndex(value: unknown): SiteSearchDocument[] {
         ['id', 'href', 'title', 'summary', 'text'].every(
           (key) => typeof (item as Record<string, unknown>)[key] === 'string',
         ) &&
+        'tags' in item &&
+        Array.isArray(item.tags) &&
+        item.tags.every((tag: unknown) => {
+          if (typeof tag !== 'object' || tag === null) return false;
+          const value = tag as Record<string, unknown>;
+          return (
+            typeof value['id'] === 'string' &&
+            /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value['id']) &&
+            typeof value['label'] === 'object' &&
+            value['label'] !== null &&
+            ['zh-hant', 'en', 'ja'].every(
+              (locale) =>
+                typeof (value['label'] as Record<string, unknown>)[locale] ===
+                'string',
+            ) &&
+            Array.isArray(value['aliases']) &&
+            value['aliases'].every(
+              (alias: unknown) => typeof alias === 'string',
+            )
+          );
+        }) &&
         'locale' in item &&
         typeof item.locale === 'string' &&
         isLocale(item.locale) &&
@@ -69,6 +98,7 @@ export function searchSite(
   query: string,
   kind: SearchKind,
   locale: Locale,
+  tag = '',
 ): SiteSearchDocument[] {
   const q = query.slice(0, 160).trim();
   const score = (document: SiteSearchDocument) => {
@@ -81,12 +111,17 @@ export function searchSite(
     .filter(
       (document) =>
         (kind === 'all' || document.kind === kind) &&
+        (!tag || document.tags.some((item) => item.id === tag)) &&
         matchSearch(
           {
             id: document.id,
             title: document.title,
             text: `${document.summary} ${document.text}`,
-            tags: [],
+            tags: document.tags.flatMap((item) => [
+              item.id,
+              ...Object.values(item.label),
+              ...item.aliases,
+            ]),
           },
           q,
           locale,
@@ -95,6 +130,18 @@ export function searchSite(
     .sort(
       (a, b) => score(b) - score(a) || a.title.localeCompare(b.title, locale),
     );
+}
+
+export function siteSearchTags(
+  documents: SiteSearchDocument[],
+  locale: Locale,
+) {
+  const tags = new Map<string, SiteSearchTag>();
+  for (const document of localizedDocuments(documents, locale))
+    for (const tag of document.tags) tags.set(tag.id, tag);
+  return [...tags.values()].sort((a, b) =>
+    a.label[locale].localeCompare(b.label[locale], locale),
+  );
 }
 
 export function searchExcerpt(document: SiteSearchDocument, query: string) {

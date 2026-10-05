@@ -5,6 +5,13 @@ import {
   networkNoteIds,
   networkNotes,
 } from '../lib/network-notes.ts';
+import {
+  medicalCategories,
+  medicalCategoryCopy,
+  medicalNoteIds,
+  medicalNotes,
+  medicalNotePath,
+} from '../lib/medical-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
@@ -165,16 +172,46 @@ export function Explorer({
                 onNavigate={onNavigate}
               />
               <ul className="tree-children">
-                <li>
-                  <TreeLink
-                    href="/zh-hant/note/medical/analgesics/"
-                    kind="markdown"
-                    name="analgesics.md"
-                    note={{ text: noteCopy[locale].article, visible: false }}
-                    current={page(route.kind === 'medical-note')}
-                    onNavigate={onNavigate}
-                  />
-                </li>
+                {medicalCategories.map((category) => (
+                  <li key={category}>
+                    <TreeLink
+                      href={`/${locale}/note/medical/${category}/`}
+                      kind="folder"
+                      name={medicalCategoryCopy[locale][category].title}
+                      note={{
+                        text: medicalCategoryCopy[locale][category].intro,
+                        visible: false,
+                      }}
+                      current={page(
+                        route.kind === 'medical-category' &&
+                          route.category === category,
+                      )}
+                      onNavigate={onNavigate}
+                    />
+                    <ul className="tree-children">
+                      {medicalNoteIds
+                        .filter((id) => medicalNotes[id].category === category)
+                        .map((id) => (
+                          <li key={id}>
+                            <TreeLink
+                              href={medicalNotePath(id)}
+                              kind="markdown"
+                              name={`${id}.md`}
+                              note={{
+                                text: medicalNotes[id].title[locale],
+                                visible: false,
+                              }}
+                              current={page(
+                                route.kind === 'medical-note' &&
+                                  route.noteId === id,
+                              )}
+                              onNavigate={onNavigate}
+                            />
+                          </li>
+                        ))}
+                    </ul>
+                  </li>
+                ))}
               </ul>
             </li>
           </ul>

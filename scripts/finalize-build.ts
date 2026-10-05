@@ -117,6 +117,19 @@ function movedPage(target: string, keepHash = false) {
 }
 for (const [old, target] of Object.entries(aliases))
   write(`${old}/index.html`, movedPage(target));
+// Keep the complete source note and all old anchors for readers without scripts.
+// The early classic script redirects before the deferred application hydrates.
+const analgesicsTarget = '/zh-hant/note/medical/drugs/analgesics/';
+const analgesicsFallback = readFileSync(
+  join(output, analgesicsTarget, 'index.html'),
+  'utf8',
+)
+  .replace('</head>', '<meta name="robots" content="noindex,follow"></head>')
+  .replace(
+    /(<body\b[^>]*>)/,
+    `$1<a href="${analgesicsTarget}" data-destination data-keep-hash hidden>繼續閱讀</a><script src="/bridge.js"></script>`,
+  );
+write('zh-hant/note/medical/analgesics/index.html', analgesicsFallback);
 for (const locale of locales) {
   // The profile is the locale home now; old About links keep their section anchor.
   write(`${locale}/about/index.html`, movedPage(`/${locale}/`, true));

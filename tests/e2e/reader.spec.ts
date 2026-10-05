@@ -4,13 +4,13 @@ import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
 import { renderMarkdown } from '../../src/lib/markdown.server.ts';
 
-const medicalPath = '/zh-hant/note/medical/analgesics/';
+const medicalPath = '/zh-hant/note/medical/drugs/analgesics/';
 
 test('medical notes keep all sections, sources and educational warnings', async ({
   page,
 }) => {
   await page.goto(medicalPath);
-  await expect(page.locator('h1')).toContainText('Loxoprofen');
+  await expect(page.locator('h1')).toContainText('止痛藥指南');
   await expect(page.locator('.medical-note h2')).toHaveCount(14);
   await expect(page.locator('.medical-note')).toContainText('不是個人處方');
   await expect(page.locator('.medical-note')).toContainText('N-acetylcysteine');

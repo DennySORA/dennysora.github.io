@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sanitizeHtml from 'sanitize-html';
 import { decodeEntities } from './html.ts';
+import { loadTaxonomy } from './content.server.ts';
 import {
   routeLocale,
   routePath,
@@ -55,6 +56,21 @@ export function buildSiteSearch(
         title,
         summary,
         text: searchableText(main),
+        tags: [
+          ...new Set(
+            [...main.matchAll(/\bdata-content-tag="([^"]+)"/g)].map((match) =>
+              decodeEntities(match[1] ?? ''),
+            ),
+          ),
+        ].map((id) => {
+          const tag = loadTaxonomy().tags.find((item) => item.id === id);
+          if (!tag) throw new Error(`Unknown searchable tag: ${id}`);
+          return {
+            id,
+            label: tag.label,
+            aliases: [...new Set(Object.values(tag.aliases).flat())],
+          };
+        }),
       } satisfies SiteSearchDocument,
     ];
   });

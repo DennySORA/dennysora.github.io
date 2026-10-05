@@ -11,6 +11,7 @@ import {
   searchExcerpt,
   searchKinds,
   searchSite,
+  siteSearchTags,
   type SiteSearchDocument,
 } from '../../lib/site-search.ts';
 import { searchCopy } from './search-copy.ts';
@@ -28,10 +29,12 @@ export function SiteSearch({ locale }: { locale: Locale }) {
   const state = parseSiteSearch(hydrated ? params : new URLSearchParams());
   const input = useRef<HTMLInputElement>(null);
   const kindSelect = useRef<HTMLSelectElement>(null);
+  const tagSelect = useRef<HTMLSelectElement>(null);
   useEffect(() => {
     if (input.current) input.current.value = state.q;
     if (kindSelect.current) kindSelect.current.value = state.kind;
-  }, [state.q, state.kind]);
+    if (tagSelect.current) tagSelect.current.value = state.tag;
+  }, [state.q, state.kind, state.tag]);
   const [attempt, setAttempt] = useState(0);
   const [response, setResponse] = useState<{
     attempt: number;
@@ -61,8 +64,10 @@ export function SiteSearch({ locale }: { locale: Locale }) {
   const loading = response?.attempt !== attempt;
   const failed = !loading && response?.documents === null;
   const results = response?.documents
-    ? searchSite(response.documents, state.q, state.kind, locale)
+    ? searchSite(response.documents, state.q, state.kind, locale, state.tag)
     : [];
+  const tags = siteSearchTags(response?.documents ?? [], locale);
+  const unknownTag = state.tag && !tags.some((tag) => tag.id === state.tag);
   const clear = () => {
     void setParams({}, { preventScrollReset: true });
     input.current?.focus();
@@ -89,6 +94,7 @@ export function SiteSearch({ locale }: { locale: Locale }) {
             const next = new URLSearchParams();
             const queryValue = values.get('q');
             const kindValue = values.get('kind');
+            const tagValue = values.get('tag');
             const q =
               typeof queryValue === 'string'
                 ? queryValue.slice(0, 160).trim()
@@ -96,6 +102,8 @@ export function SiteSearch({ locale }: { locale: Locale }) {
             const kind = typeof kindValue === 'string' ? kindValue : 'all';
             if (q) next.set('q', q);
             if (kind !== 'all') next.set('kind', kind);
+            if (typeof tagValue === 'string' && tagValue)
+              next.set('tag', tagValue);
             void setParams(next, { preventScrollReset: true });
           }}
         >
@@ -136,11 +144,32 @@ export function SiteSearch({ locale }: { locale: Locale }) {
                 </option>
               ))}
             </select>
+            <label htmlFor="site-search-tag">
+              <Icon name="tag" size={16} />
+              {t.tagFilter}
+            </label>
+            <select
+              key={`${attempt}:${loading}`}
+              ref={tagSelect}
+              id="site-search-tag"
+              name="tag"
+              defaultValue={state.tag}
+            >
+              <option value="">{t.allTags}</option>
+              {unknownTag ? (
+                <option value={state.tag}>{state.tag}</option>
+              ) : null}
+              {tags.map((tag) => (
+                <option key={tag.id} value={tag.id}>
+                  {tag.label[locale]}
+                </option>
+              ))}
+            </select>
             <button type="submit" className="button button-primary">
               <Icon name="search" size={16} />
               {t.submit}
             </button>
-            {state.q || state.kind !== 'all' ? (
+            {state.q || state.kind !== 'all' || state.tag ? (
               <button
                 type="button"
                 className="button button-quiet"

@@ -12,12 +12,18 @@ import {
   parseSiteSearch,
   searchExcerpt,
   searchSite,
+  siteSearchTags,
   type SiteSearchDocument,
 } from '../../src/lib/site-search.ts';
 import { publishedRoutes } from '../../src/lib/content.server.ts';
 import { parseRoute, routePath } from '../../src/lib/route-manifest.ts';
 import { locales } from '../../src/i18n/index.ts';
 
+const architecture = {
+  id: 'architecture',
+  label: { 'zh-hant': '架構設計', en: 'Architecture', ja: 'アーキテクチャ' },
+  aliases: ['system design', '系統設計'],
+};
 const note: SiteSearchDocument = {
   id: '/note/network/p2p-downloader/',
   locale: 'zh-hant',
@@ -26,6 +32,7 @@ const note: SiteSearchDocument = {
   title: 'P2P Downloader',
   summary: '連線治理',
   text: 'A body-only mention of choke_lease. 使用可恢復命令。',
+  tags: [architecture],
 };
 const home: SiteSearchDocument = {
   id: '/',
@@ -35,6 +42,7 @@ const home: SiteSearchDocument = {
   title: 'DennySORA',
   summary: 'Software engineer',
   text: 'Rust cloud engineering',
+  tags: [],
 };
 const article: SiteSearchDocument = {
   id: '/blog/p2p/',
@@ -44,6 +52,7 @@ const article: SiteSearchDocument = {
   title: 'P2P in practice',
   summary: 'Networks',
   text: 'BitTorrent protocol',
+  tags: [architecture],
 };
 const fixtures = [home, note, article];
 const temp: string[] = [];
@@ -63,6 +72,28 @@ describe('global site search', () => {
     expect(searchSite(fixtures, 'impossible-query', 'all', 'en')).toEqual([]);
     expect(searchSite(fixtures, '', 'all', 'en')).toHaveLength(3);
     expect(searchExcerpt(note, 'choke_lease')).toContain('choke_lease');
+  });
+  it('matches tag aliases in every language and exact tags across notes and articles', () => {
+    for (const query of ['system design', '架構設計', 'アーキテクチャ'])
+      expect(searchSite(fixtures, query, 'all', 'en')).toHaveLength(2);
+    expect(searchSite(fixtures, '', 'all', 'en', 'architecture')).toHaveLength(
+      2,
+    );
+    expect(searchSite(fixtures, '', 'note', 'en', 'architecture')).toEqual([
+      note,
+    ]);
+    expect(
+      searchSite(fixtures, 'BitTorrent', 'article', 'ja', 'architecture'),
+    ).toEqual([article]);
+    expect(searchSite(fixtures, '', 'all', 'en', 'unknown')).toEqual([]);
+    expect(siteSearchTags(fixtures, 'ja')).toEqual([architecture]);
+    expect(parseSiteSearch(new URLSearchParams('tag=architecture')).tag).toBe(
+      'architecture',
+    );
+    expect(() => parseSearchIndex([{ ...note, tags: [{}] }])).toThrow();
+    expect(() =>
+      parseSearchIndex([{ ...note, tags: 'architecture' }]),
+    ).toThrow();
   });
   it('uses one preferred edition and keeps the actual original note URL', () => {
     const translated = {
@@ -91,6 +122,7 @@ describe('global site search', () => {
     expect(parseSiteSearch(new URLSearchParams('q=+P2P+&kind=note'))).toEqual({
       q: 'P2P',
       kind: 'note',
+      tag: '',
     });
     expect(parseSiteSearch(new URLSearchParams('kind=private')).kind).toBe(
       'all',
@@ -120,14 +152,19 @@ describe('global site search', () => {
       mkdirSync(directory, { recursive: true });
       writeFileSync(
         join(directory, 'index.html'),
-        '<html><head><title>Title — DennySORA</title><meta name="description" content="Summary &amp; evidence"></head><body><nav>unrelated chrome</nav><main><p>choke_lease</p></main><footer>not indexed</footer></body></html>',
+        '<html><head><title>Title — DennySORA</title><meta name="description" content="Summary &amp; evidence"></head><body><nav>unrelated chrome</nav><main><p>choke_lease</p><a data-content-tag="architecture">架構設計</a></main><footer>not indexed</footer></body></html>',
       );
     }
     const index = buildSiteSearch(output, routes);
     expect(index).toHaveLength(2);
     expect(index.some((item) => item.kind === 'note')).toBe(true);
-    expect(index.every((item) => item.text === 'choke_lease')).toBe(true);
+    expect(index.every((item) => item.text === 'choke_lease 架構設計')).toBe(
+      true,
+    );
     expect(index[0]?.summary).toBe('Summary & evidence');
+    expect(index[0]?.tags[0]?.id).toBe('architecture');
+    expect(index[0]?.tags[0]?.label.en).toBe('Architecture');
+    expect(searchSite(index, 'system design', 'note', 'en')).toHaveLength(1);
     expect(index.map((item) => item.href)).not.toContain('/en/search/');
     expect(searchSite(index, 'choke_lease', 'note', 'en')).toHaveLength(1);
   });

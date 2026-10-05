@@ -1,3 +1,10 @@
+import {
+  medicalCategories,
+  medicalNoteIds,
+  medicalNotes,
+  type MedicalCategory,
+  type MedicalNoteId,
+} from './medical-notes.ts';
 import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
 import { isLocale, type Locale } from '../i18n/index.ts';
 
@@ -13,7 +20,8 @@ export type RouteDescriptor =
   | { kind: 'network'; locale: Locale }
   | { kind: 'network-note'; locale: Locale; noteId: NetworkNoteId }
   | { kind: 'medical'; locale: Locale }
-  | { kind: 'medical-note'; locale: Locale }
+  | { kind: 'medical-category'; locale: Locale; category: MedicalCategory }
+  | { kind: 'medical-note'; locale: Locale; noteId: MedicalNoteId }
   | { kind: 'article'; locale: Locale; slug: string }
   | { kind: 'topic'; locale: Locale; topicId: string }
   | { kind: 'tags'; locale: Locale }
@@ -35,7 +43,7 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
   const locale = first;
   if (rest.some((part) => !segment.test(part))) return null;
   if (!section) return { kind: 'home', locale };
-  const [a, b] = rest;
+  const [a, b, c] = rest;
   switch (section) {
     case 'search':
     case 'research':
@@ -52,8 +60,17 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
       }
       if (a !== 'medical') return null;
       if (rest.length === 1) return { kind: 'medical', locale };
-      return rest.length === 2 && b === 'analgesics' && locale === 'zh-hant'
-        ? { kind: 'medical-note', locale }
+      if (!medicalCategories.some((category) => category === b)) return null;
+      if (rest.length === 2)
+        return {
+          kind: 'medical-category',
+          locale,
+          category: b as MedicalCategory,
+        };
+      return rest.length === 3 &&
+        locale === 'zh-hant' &&
+        medicalNoteIds.some((id) => id === c && medicalNotes[id].category === b)
+        ? { kind: 'medical-note', locale, noteId: c as MedicalNoteId }
         : null;
     case 'blog':
       if (rest.length === 0) return { kind: 'library', locale };
@@ -95,8 +112,10 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/note/network/${route.noteId}/`;
     case 'medical':
       return `/${route.locale}/note/medical/`;
+    case 'medical-category':
+      return `/${route.locale}/note/medical/${route.category}/`;
     case 'medical-note':
-      return `/${route.locale}/note/medical/analgesics/`;
+      return `/${route.locale}/note/medical/${medicalNotes[route.noteId].category}/${route.noteId}/`;
     case 'topic':
       return `/${route.locale}/blog/topics/${route.topicId}/`;
     case 'tags':
@@ -136,6 +155,7 @@ export function navSection(route: RouteDescriptor): NavSection | null {
       return 'library';
     case 'notes':
     case 'medical':
+    case 'medical-category':
     case 'medical-note':
     case 'network':
     case 'network-note':

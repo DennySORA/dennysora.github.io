@@ -349,3 +349,13 @@
 .network-note .p2p-flow-node small {
   display: block;
 }
+
+/* Header taxonomy links use the shared tag treatment, not prose list spacing. */
+.network-note .content-tags {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+.network-note .content-tags li {
+  margin: 0;
+}

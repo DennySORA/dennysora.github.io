@@ -4,16 +4,21 @@ export const networkNoteIds = ['p2p-downloader', 'p2p-privacy'] as const;
 export type NetworkNoteId = (typeof networkNoteIds)[number];
 export const networkNotes = {
   'p2p-downloader': {
+    tagIds: ['p2p', 'architecture', 'networking'],
     title: 'P2P Downloader v2.3：核心架構與連線治理',
     description:
       '持續探索、彈性下載池、逐連線治理與可恢復命令；保留設計限制、25 份契約附錄和離線規則示例。',
   },
   'p2p-privacy': {
+    tagIds: ['p2p', 'privacy', 'security'],
     title: 'P2P 匿名性：數位調查與端對端流量關聯',
     description:
       '從防洩漏到防關聯：威脅模型、網路隔離、DAITA、mixnet 與研究驗證；保留 63 節原稿及一手來源。',
   },
-} satisfies Record<NetworkNoteId, { title: string; description: string }>;
+} satisfies Record<
+  NetworkNoteId,
+  { title: string; description: string; tagIds: readonly string[] }
+>;
 export const networkCopy: Record<
   Locale,
   { title: string; intro: string; available: string }

@@ -285,7 +285,7 @@ test('no third-party requests, cookies or storage; comments never load on their 
     await page.goto(`/${locale}/blog/engineering-principles/`);
     await expect(page.locator('#comments, iframe')).toHaveCount(0);
   }
-  await page.goto('/zh-hant/note/medical/analgesics/');
+  await page.goto('/zh-hant/note/medical/drugs/analgesics/');
   await expect(page.locator('iframe')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Load comments' })).toHaveCount(
     0,
@@ -339,7 +339,7 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   expect(sitemap).not.toContain('/blog/trilingual-model-research/');
   expect(sitemap).toContain('https://dennysora.me/ja/note/');
   expect(sitemap).toContain(
-    'https://dennysora.me/zh-hant/note/medical/analgesics/',
+    'https://dennysora.me/zh-hant/note/medical/drugs/analgesics/',
   );
   await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(3);
   for (const link of await page
@@ -358,8 +358,8 @@ test('notes, languages and phone navigation work without JavaScript', async ({
     viewport: { width: 390, height: 844 },
   });
   const page = await context.newPage();
-  await page.goto(`${origin}/zh-hant/note/medical/analgesics/`);
-  await expect(page.locator('h1')).toContainText('Loxoprofen');
+  await page.goto(`${origin}/zh-hant/note/medical/drugs/analgesics/`);
+  await expect(page.locator('h1')).toContainText('止痛藥指南');
   await expect(page.locator('main')).toContainText('Acetaminophen');
   await page.goto(`${origin}/en/note/medical/`);
   await expect(page.locator('h1')).toContainText('Medicine');
@@ -400,7 +400,9 @@ test('desktop Explorer remains visible and usable without JavaScript', async ({
     .locator('#desktop-explorer')
     .getByRole('link', { name: /analgesics\.md/ })
     .click();
-  await expect(page).toHaveURL(`${origin}/zh-hant/note/medical/analgesics/`);
-  await expect(page.locator('h1')).toContainText('Loxoprofen');
+  await expect(page).toHaveURL(
+    `${origin}/zh-hant/note/medical/drugs/analgesics/`,
+  );
+  await expect(page.locator('h1')).toContainText('止痛藥指南');
   await context.close();
 });

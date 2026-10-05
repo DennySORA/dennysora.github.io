@@ -5,6 +5,7 @@ import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { linkIcon } from '../../components/link-icon.ts';
 import { Prose } from '../../components/Prose.tsx';
+import { TagLinks } from '../../components/TagLink.tsx';
 import {
   InlineTableOfContents,
   TableOfContents,
@@ -68,6 +69,14 @@ export function Article({
                 <h1 id={pageIds.articleTitle} className="ln article-title">
                   {edition.title}
                 </h1>
+                <TagLinks
+                  tagIds={post.tagIds}
+                  labels={maps.tags}
+                  locale={locale}
+                  label={t.tags}
+                  aliases={aliases}
+                  siteSearch
+                />
                 <p className="ln article-lede">{edition.summary}</p>
                 <p className="ln article-byline" data-pagefind-ignore="index">
                   <span>
@@ -105,23 +114,6 @@ export function Article({
                       : t.translationInherited}
                   </span>
                 </p>
-                {post.tagIds.length ? (
-                  <ul className="ln tag-links" aria-label={t.tags}>
-                    {post.tagIds.map((id) => (
-                      <li key={id}>
-                        <a
-                          className="tag-link"
-                          href={`/${locale}/blog/tags/${id}/`}
-                          data-pagefind-filter={`tag:${id}`}
-                          data-search-aliases={(aliases[id] ?? []).join(' ')}
-                          data-pagefind-index-attrs="data-search-aliases"
-                        >
-                          {maps.tags.get(id) ?? id}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
                 <div
                   className="reader-tools requires-js"
                   data-pagefind-ignore="all"

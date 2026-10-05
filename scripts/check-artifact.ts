@@ -130,6 +130,28 @@ for (const path of publishedPaths()) {
   if (!/<h1[ >]/.test(html)) failures.push(`Empty prerender ${path}`);
   if (!/rel="canonical"/.test(html)) failures.push(`Missing canonical ${path}`);
 }
+// The renamed medical note must retain every section for no-JavaScript readers.
+const legacyMedical = readFileSync(
+  join(root, 'zh-hant/note/medical/analgesics/index.html'),
+  'utf8',
+);
+const canonicalMedical = readFileSync(
+  join(root, 'zh-hant/note/medical/drugs/analgesics/index.html'),
+  'utf8',
+);
+for (const match of canonicalMedical.matchAll(/\sid="([^"]+)"/g))
+  if (!legacyMedical.includes(`id="${match[1]}"`))
+    failures.push(`Legacy medical note lost anchor: ${match[1]}`);
+if (
+  !legacyMedical.includes('data-keep-hash') ||
+  !legacyMedical.includes('content="noindex,follow"') ||
+  /http-equiv="refresh"/i.test(legacyMedical) ||
+  !legacyMedical.includes(
+    `rel="canonical" href="${siteUrl}/zh-hant/note/medical/drugs/analgesics/"`,
+  )
+)
+  failures.push('Legacy medical note lacks a readable canonical fallback');
+
 // Published brand assets must be byte-identical to the recorded repository sources.
 for (const asset of brand.assets) {
   const built = join(root, asset.path);

@@ -49,7 +49,7 @@ export const postSchema = z
     updatedAt: z.iso.date(),
     topics: z.array(z.enum(topicIds)).min(1),
     contentType: z.enum(contentTypeIds),
-    tagIds: z.array(safeId).max(4),
+    tagIds: z.array(safeId).min(1).max(4),
     featured: z.boolean(),
     // Shared by every edition of the content group; never per locale.
     discussionNumber: z.number().int().positive().nullable(),

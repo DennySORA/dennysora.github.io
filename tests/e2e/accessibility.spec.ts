@@ -20,7 +20,7 @@ for (const path of [
   '/en/blog/',
   '/en/note/',
   '/ja/note/medical/',
-  '/zh-hant/note/medical/analgesics/',
+  '/zh-hant/note/medical/drugs/analgesics/',
   '/en/blog/tags/',
   '/zh-hant/research/',
   '/en/missing-page/',

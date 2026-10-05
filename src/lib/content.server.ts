@@ -1,4 +1,15 @@
-import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
+import {
+  medicalCategories,
+  medicalNoteIds,
+  medicalNotes,
+  type MedicalNoteId,
+} from './medical-notes.ts';
+import {
+  networkNoteIds,
+  networkNotes,
+  type NetworkNoteId,
+} from './network-notes.ts';
+import { addNoteTags } from './note-tags.server.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
@@ -231,6 +242,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'tags', locale },
       { kind: 'research', locale },
     );
+    for (const category of medicalCategories)
+      routes.push({ kind: 'medical-category', locale, category });
     for (const post of listPosts(locale))
       routes.push({ kind: 'article', locale, slug: post.slug });
     for (const topicId of topicsInLocale(locale))
@@ -238,7 +251,8 @@ export function publishedRoutes(): RouteDescriptor[] {
     for (const tagId of tagsInLocale(locale))
       routes.push({ kind: 'tag', locale, tagId });
   }
-  routes.push({ kind: 'medical-note', locale: 'zh-hant' });
+  for (const noteId of medicalNoteIds)
+    routes.push({ kind: 'medical-note', locale: 'zh-hant', noteId });
   for (const noteId of networkNoteIds)
     routes.push({ kind: 'network-note', locale: 'zh-hant', noteId });
   return routes;
@@ -270,6 +284,16 @@ export function validateContent(): void {
     problems.push('Duplicate topic id');
   if (new Set(types.map((type) => type.id)).size !== types.length)
     problems.push('Duplicate content type id');
+  for (const [id, note] of Object.entries({
+    ...medicalNotes,
+    ...networkNotes,
+  })) {
+    if (note.tagIds.length === 0) problems.push(`Missing tags in note ${id}`);
+    if (new Set(note.tagIds).size !== note.tagIds.length)
+      problems.push(`Duplicate tags in note ${id}`);
+    for (const tag of note.tagIds)
+      if (!tagIds.has(tag)) problems.push(`Unknown tag ${tag} in note ${id}`);
+  }
   const slugs = new Set<string>();
   for (const post of posts) {
     if (slugs.has(post.slug)) problems.push(`Duplicate slug: ${post.slug}`);
@@ -343,15 +367,20 @@ export function validateContent(): void {
 }
 
 /** Reviewed, repository-owned static educational content; no executable markup. */
-export function loadMedicalNote(): string {
-  const html = readFileSync(join(contentRoot, 'notes/medical.html'), 'utf8');
+export function loadMedicalNote(id: MedicalNoteId = 'analgesics'): string {
+  if (!medicalNoteIds.includes(id)) throw new Error('Unknown medical note');
+  const path =
+    id === 'analgesics'
+      ? 'notes/medical.html'
+      : 'notes/medical/pathology/brain-cns-tumors.html';
+  const html = readFileSync(join(contentRoot, path), 'utf8');
   if (
-    /<(?:script|iframe|object|embed|form)\b|\son[a-z]+\s*=|javascript:/i.test(
+    /<(?:script|iframe|object|embed|form|style|link)\b|\son[a-z]+\s*=|javascript:/i.test(
       html,
     )
   )
     throw new Error('Executable markup in medical note');
-  return html;
+  return addNoteTags(html, medicalNotes[id].tagIds, loadTaxonomy().tags);
 }
 
 /** Only reviewed, repository-owned static fragments; never accepts a visitor path. */
@@ -364,5 +393,5 @@ export function loadNetworkNote(id: NetworkNoteId): string {
     )
   )
     throw new Error('Executable markup in network note');
-  return html;
+  return addNoteTags(html, networkNotes[id].tagIds, loadTaxonomy().tags);
 }

@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { medicalNoteIds } from '../../src/lib/medical-notes.ts';
+import { networkNoteIds } from '../../src/lib/network-notes.ts';
 import { locales } from '../../src/i18n/index.ts';
 import { searchCopy } from '../../src/features/search/search-copy.ts';
 import { origin } from './helpers.ts';
@@ -72,7 +74,7 @@ test('search loading failure is retryable without losing the query', async ({
   // Folder pages that list the note match too; the note's own result is the target.
   await expect(
     page.locator('.site-search-results li').filter({
-      has: page.locator('a[href="/zh-hant/note/medical/analgesics/"]'),
+      has: page.locator('a[href="/zh-hant/note/medical/drugs/analgesics/"]'),
     }),
   ).toBeVisible();
   await expect(page.getByRole('searchbox')).toHaveValue('Ibuprofen');
@@ -89,7 +91,9 @@ test('search has useful no-JavaScript navigation and an index with note body con
     kind: string;
     text: string;
   }[];
-  expect(index.filter((entry) => entry.kind === 'note')).toHaveLength(3);
+  expect(index.filter((entry) => entry.kind === 'note')).toHaveLength(
+    medicalNoteIds.length + networkNoteIds.length,
+  );
   expect(
     index.find((entry) => entry.href.endsWith('/p2p-privacy/'))?.text,
   ).toContain('DAITA');

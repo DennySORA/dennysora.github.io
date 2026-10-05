@@ -8,7 +8,7 @@
 
 - `topics`：主要領域（`engineering`、`systems`、`ai`），ID 固定，只調整顯示名稱。
 - `contentType`：寫作形式（`essay`、`tutorial`、`research-note`、`case-study`）。人工研究筆記用 `research-note`，不另開目錄。
-- `tagIds`：最多 4 個具體技術或概念，只標注文章真正討論的內容。新 Tag 先加入 `tags.json`（穩定 kebab-case ID、三語名稱與受控搜尋別名）；未知 Tag、關聯 ID 或保留字 slug（`tags`、`topics`）會讓建置失敗。
+- `tagIds`：1–4 個具體技術或概念，只標注文章真正討論的內容。新 Tag 先加入 `tags.json`（穩定 kebab-case ID、三語名稱與受控搜尋別名）；未知 Tag、關聯 ID 或保留字 slug（`tags`、`topics`）會讓建置失敗。
 - `relatedPostIds`／`relatedProjectIds`：明確關聯優先，其餘相關文章依共同 Tag 與主題排序。
 - `commentsEnabled`：作者是否開放留言；與留言服務是否設定是兩件事。
 
@@ -42,9 +42,20 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 草稿不產生文章 URL，也不進列表、搜尋、RSS、sitemap 或公開 loader payload。`archived` 目前同樣不公開；若需保留公開歷史文章，維持 published 並在內容中說明歷史狀態。語系切換只連到已發布的版本；未發布語系會顯示不可用提示。
 
+## 學習筆記與醫學分類
+
+筆記與部落格文章分開發布。`src/lib/medical-notes.ts` 與 `src/lib/network-notes.ts` 保存筆記標題、摘要及實際內容對應的 `tagIds`；標籤須存在於受控 taxonomy，且至少一個，不可重複。筆記標題下的標籤由建置時加入，保留原有章節錨點，不在內容片段加入 script 或行內色彩。
+
+醫學依 `src/lib/medical-notes.ts` 的分類契約整理：
+
+- 藥物：`/zh-hant/note/medical/drugs/analgesics/`，原文維持在 `content/notes/medical.html`。舊的 `/zh-hant/note/medical/analgesics/` 保留完整靜態正文與既有 fragment（canonical 指向新頁、noindex）；啟用 JavaScript 時帶原 fragment 轉址，無 JavaScript 時可直接閱讀原錨點。
+- 病理：`/zh-hant/note/medical/pathology/brain-cns-tumors/`，原文位於 `content/notes/medical/pathology/brain-cns-tumors.html`。
+
+分類入口及標籤名稱支援三語；筆記仍只有已提供的繁體中文原文。新增譯文之前，不建立不存在的英、日文筆記網址。醫學筆記需保留教育用途聲明、可核對來源、統計適用範圍與推論限制。
+
 ## 搜尋
 
-tabline 的搜尋入口、首頁 README 的開始選單與 `/`／Ctrl+K／Cmd+K 開啟 `/<locale>/search/` 全站搜尋。建置從正式預渲染頁面的 main 正文產生同源 `site-search.json`，包含首頁、公開文章、筆記及目錄；不讀取草稿、移除的頁面或論文日報外站本文。標題、摘要與全文皆可搜尋，依文章／筆記／頁面分類。每份內容優先顯示目前語言，沒有翻譯時連向實際原文並明示語言。搜尋頁不進 sitemap；關鍵字與類型保留在 URL，可使用 Back／Forward 與語言切換。索引載入失敗可重試；無 JavaScript 時仍可透過首頁、部落格與筆記連結瀏覽。
+tabline 的搜尋入口、首頁 README 的開始選單與 `/`／Ctrl+K／Cmd+K 開啟 `/<locale>/search/` 全站搜尋。建置從正式預渲染頁面的 main 正文產生同源 `site-search.json`，包含首頁、公開文章、筆記及目錄；不讀取草稿、移除的頁面或論文日報外站本文。標題、摘要、標籤（含三語名稱與受控別名）與全文皆可搜尋，依文章／筆記／頁面分類。每篇文章與筆記在主標題下方顯示標籤；點擊進入 `/<locale>/search/?tag=<id>` 的精確標籤篩選，可再搭配關鍵字與內容類型。未知標籤顯示空結果，不退回全部內容。每份內容優先顯示目前語言，沒有翻譯時連向實際原文並明示語言。搜尋頁不進 sitemap；關鍵字與類型保留在 URL，可使用 Back／Forward 與語言切換。索引載入失敗可重試；無 JavaScript 時仍可透過首頁、部落格與筆記連結瀏覽。
 
 以下 Pagefind 行為只適用於部落格內的文章搜尋：
 

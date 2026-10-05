@@ -114,7 +114,7 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
   ).toHaveAttribute('aria-current', 'page');
   await expect(
     dialog.getByRole('link', { name: /analgesics\.md/ }),
-  ).toHaveAttribute('href', '/zh-hant/note/medical/analgesics/');
+  ).toHaveAttribute('href', '/zh-hant/note/medical/drugs/analgesics/');
   await expect(
     dialog.locator('a[href*="/blog/"][href$="-principles/"]'),
   ).toHaveCount(0);
@@ -182,7 +182,7 @@ test('status colours appear only for real states, and nothing is dimmed with opa
     '/zh-hant/',
     '/en/',
     '/zh-hant/blog/',
-    '/zh-hant/note/medical/analgesics/',
+    '/zh-hant/note/medical/drugs/analgesics/',
   ]) {
     await page.goto(path);
     const offenders = await page.evaluate(() => {
@@ -279,7 +279,7 @@ test('text and controls keep contrast in normal, hover, focus and selected state
 test('the workbench names the open file and links every area, with Paper Daily outside', async ({
   page,
 }) => {
-  await page.goto('/zh-hant/note/medical/analgesics/');
+  await page.goto('/zh-hant/note/medical/drugs/analgesics/');
   const tabs = page.locator('.buffers');
   await expect(tabs.getByRole('link')).toHaveText([
     /README\.md/,
@@ -300,9 +300,10 @@ test('the workbench names the open file and links every area, with Paper Daily o
     'dennysora',
     'note',
     'medical',
+    'drugs',
   ]);
   await expect(page.locator('.status-file')).toHaveText(
-    'note/medical/analgesics.md',
+    'note/medical/drugs/analgesics.md',
   );
   await expect(page.locator('.status-mode')).toHaveText('NORMAL');
   await expect(page.locator('.status-position')).toHaveText('Top');
@@ -323,7 +324,7 @@ for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
       '/ja/blog/',
       '/en/note/',
       '/ja/note/medical/',
-      '/zh-hant/note/medical/analgesics/',
+      '/zh-hant/note/medical/drugs/analgesics/',
       '/zh-hant/blog/tags/',
     ]) {
       await page.goto(path);
@@ -405,7 +406,7 @@ test('the shared footer is absent across the workbench', async ({ page }) => {
   for (const path of [
     '/en/',
     '/ja/blog/',
-    '/zh-hant/note/medical/analgesics/',
+    '/zh-hant/note/medical/drugs/analgesics/',
   ]) {
     await page.goto(path);
     await expect(page.locator('.site-footer')).toHaveCount(0);
