@@ -71,6 +71,9 @@ function Buffers({
           'medical-note',
           'network',
           'network-note',
+          'hardware',
+          'hardware-category',
+          'hardware-note',
         ].includes(route.kind)
       ? 'notes'
       : null;

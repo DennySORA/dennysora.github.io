@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { medicalNoteIds } from '../../src/lib/medical-notes.ts';
 import { networkNoteIds } from '../../src/lib/network-notes.ts';
+import { hardwareNoteIds } from '../../src/lib/hardware-notes.ts';
 import { locales } from '../../src/i18n/index.ts';
 import { searchCopy } from '../../src/features/search/search-copy.ts';
 import { origin } from './helpers.ts';
@@ -92,7 +93,7 @@ test('search has useful no-JavaScript navigation and an index with note body con
     text: string;
   }[];
   expect(index.filter((entry) => entry.kind === 'note')).toHaveLength(
-    medicalNoteIds.length + networkNoteIds.length,
+    medicalNoteIds.length + networkNoteIds.length + hardwareNoteIds.length,
   );
   expect(
     index.find((entry) => entry.href.endsWith('/p2p-privacy/'))?.text,

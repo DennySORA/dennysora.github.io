@@ -219,5 +219,51 @@
       "en": ["gliomas", "神經膠質瘤", "神経膠腫"],
       "ja": ["gliomas", "神經膠質瘤", "神経膠腫"]
     }
+  },
+  {
+    "id": "hardware",
+    "label": {
+      "zh-hant": "硬體",
+      "en": "Hardware",
+      "ja": "ハードウェア"
+    },
+    "aliases": {
+      "zh-hant": ["電腦硬體", "PC hardware", "PC パーツ", "ハード"],
+      "en": ["電腦硬體", "PC hardware", "PC パーツ", "ハード"],
+      "ja": ["電腦硬體", "PC hardware", "PC パーツ", "ハード"]
+    }
+  },
+  {
+    "id": "pc-cooling",
+    "label": {
+      "zh-hant": "電腦散熱",
+      "en": "PC cooling",
+      "ja": "PC 冷却"
+    },
+    "aliases": {
+      "zh-hant": [
+        "散熱",
+        "cooling",
+        "冷却",
+        "radiator",
+        "冷排",
+        "ラジエーター"
+      ],
+      "en": ["散熱", "cooling", "冷却", "radiator", "冷排", "ラジエーター"],
+      "ja": ["散熱", "cooling", "冷却", "radiator", "冷排", "ラジエーター"]
+    }
+  },
+  {
+    "id": "case-fans",
+    "label": {
+      "zh-hant": "機殼風扇",
+      "en": "Case fans",
+      "ja": "ケースファン"
+    },
+    "aliases": {
+      "zh-hant": ["風扇", "fans", "ファン", "140mm", "PWM fan", "靜音", "静音"],
+      "en": ["風扇", "fans", "ファン", "140mm", "PWM fan", "靜音", "静音"],
+      "ja": ["風扇", "fans", "ファン", "140mm", "PWM fan", "靜音", "静音"]
+    }
   }
 ]

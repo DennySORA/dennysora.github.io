@@ -6,6 +6,13 @@ import {
   type MedicalNoteId,
 } from './medical-notes.ts';
 import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
+import {
+  hardwareCategories,
+  hardwareNoteIds,
+  hardwareNotes,
+  type HardwareCategory,
+  type HardwareNoteId,
+} from './hardware-notes.ts';
 import { isLocale, type Locale } from '../i18n/index.ts';
 
 // The single route contract shared by the loader, prerender list, sitemap,
@@ -22,6 +29,9 @@ export type RouteDescriptor =
   | { kind: 'medical'; locale: Locale }
   | { kind: 'medical-category'; locale: Locale; category: MedicalCategory }
   | { kind: 'medical-note'; locale: Locale; noteId: MedicalNoteId }
+  | { kind: 'hardware'; locale: Locale }
+  | { kind: 'hardware-category'; locale: Locale; category: HardwareCategory }
+  | { kind: 'hardware-note'; locale: Locale; noteId: HardwareNoteId }
   | { kind: 'article'; locale: Locale; slug: string }
   | { kind: 'topic'; locale: Locale; topicId: string }
   | { kind: 'tags'; locale: Locale }
@@ -56,6 +66,23 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
           locale === 'zh-hant' &&
           networkNoteIds.some((id) => id === b)
           ? { kind: 'network-note', locale, noteId: b as NetworkNoteId }
+          : null;
+      }
+      if (a === 'hardware') {
+        if (rest.length === 1) return { kind: 'hardware', locale };
+        if (!hardwareCategories.some((category) => category === b)) return null;
+        if (rest.length === 2)
+          return {
+            kind: 'hardware-category',
+            locale,
+            category: b as HardwareCategory,
+          };
+        return rest.length === 3 &&
+          locale === 'zh-hant' &&
+          hardwareNoteIds.some(
+            (id) => id === c && hardwareNotes[id].category === b,
+          )
+          ? { kind: 'hardware-note', locale, noteId: c as HardwareNoteId }
           : null;
       }
       if (a !== 'medical') return null;
@@ -116,6 +143,12 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/note/medical/${route.category}/`;
     case 'medical-note':
       return `/${route.locale}/note/medical/${medicalNotes[route.noteId].category}/${route.noteId}/`;
+    case 'hardware':
+      return `/${route.locale}/note/hardware/`;
+    case 'hardware-category':
+      return `/${route.locale}/note/hardware/${route.category}/`;
+    case 'hardware-note':
+      return `/${route.locale}/note/hardware/${hardwareNotes[route.noteId].category}/${route.noteId}/`;
     case 'topic':
       return `/${route.locale}/blog/topics/${route.topicId}/`;
     case 'tags':
@@ -159,6 +192,9 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'medical-note':
     case 'network':
     case 'network-note':
+    case 'hardware':
+    case 'hardware-category':
+    case 'hardware-note':
       return 'notes';
     default:
       return null;

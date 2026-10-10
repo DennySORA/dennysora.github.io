@@ -9,6 +9,12 @@ import {
   networkNotes,
   type NetworkNoteId,
 } from './network-notes.ts';
+import {
+  hardwareCategories,
+  hardwareNoteIds,
+  hardwareNotes,
+  type HardwareNoteId,
+} from './hardware-notes.ts';
 import { addNoteTags } from './note-tags.server.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -239,11 +245,14 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'notes', locale },
       { kind: 'medical', locale },
       { kind: 'network', locale },
+      { kind: 'hardware', locale },
       { kind: 'tags', locale },
       { kind: 'research', locale },
     );
     for (const category of medicalCategories)
       routes.push({ kind: 'medical-category', locale, category });
+    for (const category of hardwareCategories)
+      routes.push({ kind: 'hardware-category', locale, category });
     for (const post of listPosts(locale))
       routes.push({ kind: 'article', locale, slug: post.slug });
     for (const topicId of topicsInLocale(locale))
@@ -255,6 +264,8 @@ export function publishedRoutes(): RouteDescriptor[] {
     routes.push({ kind: 'medical-note', locale: 'zh-hant', noteId });
   for (const noteId of networkNoteIds)
     routes.push({ kind: 'network-note', locale: 'zh-hant', noteId });
+  for (const noteId of hardwareNoteIds)
+    routes.push({ kind: 'hardware-note', locale: 'zh-hant', noteId });
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
@@ -287,6 +298,7 @@ export function validateContent(): void {
   for (const [id, note] of Object.entries({
     ...medicalNotes,
     ...networkNotes,
+    ...hardwareNotes,
   })) {
     if (note.tagIds.length === 0) problems.push(`Missing tags in note ${id}`);
     if (new Set(note.tagIds).size !== note.tagIds.length)
@@ -394,4 +406,23 @@ export function loadNetworkNote(id: NetworkNoteId): string {
   )
     throw new Error('Executable markup in network note');
   return addNoteTags(html, networkNotes[id].tagIds, loadTaxonomy().tags);
+}
+
+/** A reviewed static fragment: inline SVG charts and tables, no scripts, styles or remote assets. */
+export function loadHardwareNote(id: HardwareNoteId): string {
+  if (!hardwareNoteIds.includes(id)) throw new Error('Unknown hardware note');
+  const html = readFileSync(
+    join(
+      contentRoot,
+      `notes/hardware/${hardwareNotes[id].category}/${id}.html`,
+    ),
+    'utf8',
+  );
+  if (
+    /<(?:script|iframe|object|embed|form|style|link|img)\b|\son[a-z]+\s*=|javascript:|\s(?:src|style)\s*=/i.test(
+      html,
+    )
+  )
+    throw new Error('Executable or styled markup in hardware note');
+  return addNoteTags(html, hardwareNotes[id].tagIds, loadTaxonomy().tags);
 }

@@ -182,6 +182,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 |---|---|---|
 | `collection-network-v1.webp` | 「網路與 P2P」筆記集合 | 88px |
 | `collection-medicine-v1.webp` | 「醫學」筆記集合 | 88px |
+| `collection-hardware-v1.webp` | 「硬體」筆記集合與分類 | 88px |
 | `search-telescope-v1.webp` | 全站搜尋頁首 | 112px |
 | `empty-blog-v1.webp` | 部落格沒有文章時 | ≤320px 寬 |
 | `not-found-v1.webp` | 404 | ≤360px 寬 |
@@ -251,6 +252,8 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 空狀態 | `.empty-state` | 插圖或圖示＋h2＋說明＋**下一步動作** | 不可只留一句「沒有資料」 |
 | 錯誤晶片 | `.vim-error` | `danger-fill` 底、深色字、`circle-x`＋代碼 | — |
 | 程式碼區塊 | `.code-block` | `chrome` 底、`surface` 標題列（語言或檔名）、自身橫向捲動 | 複製按鈕回報真實結果 |
+| 筆記資料圖表 | `.hw-chart`（`hardware-notes.css`） | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表 | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動 |
+| 推薦卡片 | `.hw-pick` | `surface` 卡片＋名次（mono、`entity-file`）＋標題＋定位（`entity-kind`）＋數據列＋理由與注意＋證據標籤＋來源 | 單欄排列，每張卡片只有標題一個行號 |
 
 ## 10. 互動、狀態與動態
 

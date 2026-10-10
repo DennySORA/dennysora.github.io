@@ -9,6 +9,7 @@ import {
   isIndexable,
   listPosts,
   loadArticle,
+  loadHardwareNote,
   loadMedicalNote,
   loadNetworkNote,
   loadComments,
@@ -44,6 +45,12 @@ import { noteCopy } from '../lib/notes-copy.ts';
 import { NetworkNotes } from '../features/notes/NetworkNotes.tsx';
 import { NetworkNote } from '../features/notes/NetworkNote.tsx';
 import { networkCopy, networkNotes } from '../lib/network-notes.ts';
+import { HardwareNote } from '../features/notes/HardwareNote.tsx';
+import {
+  hardwareCategoryCopy,
+  hardwareCopy,
+  hardwareNotes,
+} from '../lib/hardware-notes.ts';
 import { NotFound } from '../features/misc/NotFound.tsx';
 
 function notFound(): never {
@@ -205,8 +212,11 @@ function loadView(route: RouteDescriptor) {
     case 'notes':
     case 'medical':
     case 'network':
+    case 'hardware':
       return { kind: route.kind };
     case 'medical-category':
+      return { kind: route.kind, category: route.category };
+    case 'hardware-category':
       return { kind: route.kind, category: route.category };
     case 'network-note':
       return {
@@ -220,6 +230,12 @@ function loadView(route: RouteDescriptor) {
         noteId: route.noteId,
         html: loadMedicalNote(route.noteId),
       };
+    case 'hardware-note':
+      return {
+        kind: 'hardware-note' as const,
+        noteId: route.noteId,
+        html: loadHardwareNote(route.noteId),
+      };
     case 'research':
       return { kind: 'research' as const };
     case 'not-found':
@@ -232,6 +248,7 @@ function availableLocales(route: RouteDescriptor): Locale[] {
   switch (route.kind) {
     case 'medical-note':
     case 'network-note':
+    case 'hardware-note':
       return ['zh-hant'];
     case 'article': {
       const article = loadArticle(route.locale, route.slug);
@@ -320,6 +337,25 @@ function describe(view: ViewData, locale: Locale) {
       return {
         title: withSite(networkNotes[view.noteId].title),
         description: networkNotes[view.noteId].description,
+      };
+    case 'hardware':
+      return {
+        title: withSite(hardwareCopy[locale].title),
+        description: hardwareCopy[locale].intro,
+      };
+    case 'hardware-category':
+      return {
+        title: withSite(
+          hardwareCategoryCopy[locale][view.category].title +
+            ' · ' +
+            hardwareCopy[locale].title,
+        ),
+        description: hardwareCategoryCopy[locale][view.category].intro,
+      };
+    case 'hardware-note':
+      return {
+        title: withSite(hardwareNotes[view.noteId].title[locale]),
+        description: hardwareNotes[view.noteId].description,
       };
     case 'research':
       return {
@@ -502,10 +538,27 @@ function View({ data }: { data: PageData }) {
     case 'article':
       return <Article view={view} locale={locale} />;
     case 'notes':
+      return <Notes locale={locale} view={{ collection: 'all' }} />;
     case 'medical':
-      return <Notes locale={locale} medical={view.kind === 'medical'} />;
+      return <Notes locale={locale} view={{ collection: 'medical' }} />;
     case 'medical-category':
-      return <Notes locale={locale} medical category={view.category} />;
+      return (
+        <Notes
+          locale={locale}
+          view={{ collection: 'medical', category: view.category }}
+        />
+      );
+    case 'hardware':
+      return <Notes locale={locale} view={{ collection: 'hardware' }} />;
+    case 'hardware-category':
+      return (
+        <Notes
+          locale={locale}
+          view={{ collection: 'hardware', category: view.category }}
+        />
+      );
+    case 'hardware-note':
+      return <HardwareNote html={view.html} />;
     case 'medical-note':
       return (
         <MedicalNote

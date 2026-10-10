@@ -21,7 +21,8 @@ describe('folder disclosures', () => {
       const buttons = [...html.matchAll(/<button\b[^>]*>/g)].map(
         (match) => match[0],
       );
-      expect(buttons).toHaveLength(6);
+      // blog, note, network, medical (+2 categories), hardware (+1 category)
+      expect(buttons).toHaveLength(8);
       for (const button of buttons) {
         expect(attribute(button, 'type')).toBe('button');
         expect(attribute(button, 'aria-expanded')).toBe('true');
@@ -41,11 +42,12 @@ describe('folder disclosures', () => {
       );
       expect(
         links.filter((link) => link.includes('data-kind="folder"')),
-      ).toHaveLength(6);
+      ).toHaveLength(8);
       expect(links.every((link) => !link.includes('<button'))).toBe(true);
       expect(html).not.toContain(' hidden');
       expect(html).toContain('brain-cns-tumors.md');
       expect(html).toContain('analgesics.md');
+      expect(html).toContain('140mm-case-fans.md');
       expect(html).toContain(dictionaries[locale].emptyFolder);
     });
   }
@@ -66,7 +68,7 @@ describe('folder disclosures', () => {
     const ids = [...html.matchAll(/aria-controls="([^"]+)"/g)].map(
       (match) => match[1],
     );
-    expect(ids).toHaveLength(12);
+    expect(ids).toHaveLength(16);
     expect(new Set(ids).size).toBe(ids.length);
     const current = [...html.matchAll(/<a\b[^>]*aria-current="page"[^>]*>/g)];
     expect(current).toHaveLength(2);

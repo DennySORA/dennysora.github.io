@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-04",
+  "checkedAt": "2026-10-10",
   "note": "Every file in assets/illustrations/ that ships with the site. The build copies the directory; scripts/check-artifact.ts requires each listed file and its SHA-256. Style and generation rules: docs/DESIGN.md §7.",
   "style": "Constellation line art: flat two-tone shapes, thin lines joining round nodes, a few four-point sparkles; palette limited to #526780, #8ab8f5, #b2d5ff, #e6edf5, #ccafff, #83d8cf and one moon-gold accent #edca8b; transparent background; no text, frame or plate.",
   "assets": [
@@ -40,6 +40,26 @@
         "generatedAt": "2026-10-04",
         "brief": "Two-tone capsule across a hexagonal molecule outline with node vertices and a small open book behind; one moon-gold node; no syringe, blood or medical cross.",
         "briefSha256": "70d6166f07145f9f4054bc3cefeb74b483cdd1cc777c15de8016fa5bd26d7cc3"
+      },
+      "processing": "1254x1254 PNG cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha to 192x192, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/collection-hardware-v1.webp",
+      "purpose": "Feature icon for the Hardware note collection (notes directory, the hardware folder page and its categories).",
+      "display": "88 px square",
+      "width": 192,
+      "height": 192,
+      "format": "webp",
+      "bytes": 12454,
+      "sha256": "e1ef15c64f88260a04d5ce3a91729b114c4d6538296e84160b38d950ecd61591",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; composited over #0c1118, white and magenta with no fringe, halo or plate.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.162.1, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-10",
+        "brief": "Square PC case fan seen from the front, overlapping a small CPU chip outline; thin airflow lines leave the fan as constellation links ending in round nodes; one moon-gold node and two four-point sparkles.",
+        "briefSha256": "7a6a778d5dd6d4f54a66550c59b73db50588c0ec71aa8c92361dc69b783aaaf7"
       },
       "processing": "1254x1254 PNG cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha to 192x192, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
     },

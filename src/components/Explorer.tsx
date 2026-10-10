@@ -13,6 +13,14 @@ import {
   medicalNotes,
   medicalNotePath,
 } from '../lib/medical-notes.ts';
+import {
+  hardwareCategories,
+  hardwareCategoryCopy,
+  hardwareCopy,
+  hardwareNoteIds,
+  hardwareNotes,
+  hardwareNotePath,
+} from '../lib/hardware-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
@@ -239,6 +247,56 @@ export function Explorer({
                               }}
                               current={page(
                                 route.kind === 'medical-note' &&
+                                  route.noteId === id,
+                              )}
+                              onNavigate={onNavigate}
+                            />
+                          </li>
+                        ))}
+                    </TreeFolder>
+                  </li>
+                ))}
+              </TreeFolder>
+            </li>
+            <li>
+              <TreeFolder
+                locale={locale}
+                href={`/${locale}/note/hardware/`}
+                name={hardwareCopy[locale].title}
+                note={{ text: hardwareCopy[locale].title, visible: false }}
+                current={page(route.kind === 'hardware')}
+                onNavigate={onNavigate}
+              >
+                {hardwareCategories.map((category) => (
+                  <li key={category}>
+                    <TreeFolder
+                      locale={locale}
+                      href={`/${locale}/note/hardware/${category}/`}
+                      name={hardwareCategoryCopy[locale][category].title}
+                      note={{
+                        text: hardwareCategoryCopy[locale][category].intro,
+                        visible: false,
+                      }}
+                      current={page(
+                        route.kind === 'hardware-category' &&
+                          route.category === category,
+                      )}
+                      onNavigate={onNavigate}
+                    >
+                      {hardwareNoteIds
+                        .filter((id) => hardwareNotes[id].category === category)
+                        .map((id) => (
+                          <li key={id}>
+                            <TreeLink
+                              href={hardwareNotePath(id)}
+                              kind="markdown"
+                              name={`${id}.md`}
+                              note={{
+                                text: hardwareNotes[id].title[locale],
+                                visible: false,
+                              }}
+                              current={page(
+                                route.kind === 'hardware-note' &&
                                   route.noteId === id,
                               )}
                               onNavigate={onNavigate}

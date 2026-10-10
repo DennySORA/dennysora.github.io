@@ -1,4 +1,5 @@
 import { medicalNotes } from './medical-notes.ts';
+import { hardwareNotes } from './hardware-notes.ts';
 import type { Locale } from '../i18n/index.ts';
 import {
   navSection,
@@ -90,6 +91,30 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
         },
         { label: `${route.noteId}.md`, href: self },
       ];
+    case 'hardware':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'hardware', href: self },
+      ];
+    case 'hardware-category':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'hardware', href: `/${locale}/note/hardware/` },
+        { label: route.category, href: self },
+      ];
+    case 'hardware-note':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: 'hardware', href: `/${locale}/note/hardware/` },
+        {
+          label: hardwareNotes[route.noteId].category,
+          href: `/${locale}/note/hardware/${hardwareNotes[route.noteId].category}/`,
+        },
+        { label: `${route.noteId}.md`, href: self },
+      ];
     case 'article':
       return [home, blog, { label: `${route.slug}.md`, href: self }];
     case 'topic':
@@ -116,6 +141,8 @@ const folders: RouteDescriptor['kind'][] = [
   'medical',
   'medical-category',
   'network',
+  'hardware',
+  'hardware-category',
   'tags',
   'topic',
   'tag',

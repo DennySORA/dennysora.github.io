@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { TagLinks } from '../../src/components/TagLink.tsx';
 import { locales } from '../../src/i18n/index.ts';
 import {
+  loadHardwareNote,
   loadMedicalNote,
   loadNetworkNote,
   loadPosts,
@@ -11,13 +12,17 @@ import {
 } from '../../src/lib/content.server.ts';
 import { medicalNoteIds, medicalNotes } from '../../src/lib/medical-notes.ts';
 import { networkNoteIds, networkNotes } from '../../src/lib/network-notes.ts';
+import {
+  hardwareNoteIds,
+  hardwareNotes,
+} from '../../src/lib/hardware-notes.ts';
 import { addNoteTags } from '../../src/lib/note-tags.server.ts';
 import { postSchema } from '../../src/lib/schema.ts';
 
 const taxonomy = loadTaxonomy().tags;
 
 describe('article and note header tags', () => {
-  it('puts every medical and network note tag directly below its existing title', () => {
+  it('puts every medical, network and hardware note tag directly below its existing title', () => {
     const notes = [
       ...medicalNoteIds.map((id) => ({
         html: loadMedicalNote(id),
@@ -26,6 +31,10 @@ describe('article and note header tags', () => {
       ...networkNoteIds.map((id) => ({
         html: loadNetworkNote(id),
         tags: networkNotes[id].tagIds,
+      })),
+      ...hardwareNoteIds.map((id) => ({
+        html: loadHardwareNote(id),
+        tags: hardwareNotes[id].tagIds,
       })),
     ];
     for (const { html, tags } of notes) {

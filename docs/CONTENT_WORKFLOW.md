@@ -42,16 +42,22 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 草稿不產生文章 URL，也不進列表、搜尋、RSS、sitemap 或公開 loader payload。`archived` 目前同樣不公開；若需保留公開歷史文章，維持 published 並在內容中說明歷史狀態。語系切換只連到已發布的版本；未發布語系會顯示不可用提示。
 
-## 學習筆記與醫學分類
+## 學習筆記與分類
 
-筆記與部落格文章分開發布。`src/lib/medical-notes.ts` 與 `src/lib/network-notes.ts` 保存筆記標題、摘要及實際內容對應的 `tagIds`；標籤須存在於受控 taxonomy，且至少一個，不可重複。筆記標題下的標籤由建置時加入，保留原有章節錨點，不在內容片段加入 script 或行內色彩。
+筆記與部落格文章分開發布。`src/lib/medical-notes.ts`、`src/lib/network-notes.ts` 與 `src/lib/hardware-notes.ts` 保存筆記標題、摘要及實際內容對應的 `tagIds`；標籤須存在於受控 taxonomy，且至少一個，不可重複。筆記標題下的標籤由建置時加入，保留原有章節錨點，不在內容片段加入 script 或行內色彩。
 
 醫學依 `src/lib/medical-notes.ts` 的分類契約整理：
 
 - 藥物：`/zh-hant/note/medical/drugs/analgesics/`，原文維持在 `content/notes/medical.html`。舊的 `/zh-hant/note/medical/analgesics/` 保留完整靜態正文與既有 fragment（canonical 指向新頁、noindex）；啟用 JavaScript 時帶原 fragment 轉址，無 JavaScript 時可直接閱讀原錨點。
 - 病理：`/zh-hant/note/medical/pathology/brain-cns-tumors/`，原文位於 `content/notes/medical/pathology/brain-cns-tumors.html`。
 
+硬體依 `src/lib/hardware-notes.ts` 的分類契約整理：
+
+- 電腦：`/zh-hant/note/hardware/computer/140mm-case-fans/`，原文位於 `content/notes/hardware/computer/140mm-case-fans.html`。內容是由研究報告重整的 140 mm 風扇評估與前 10 推薦，並在 2026-10-10 逐項回查來源；正文的「核對紀錄」列出與原報告的差異。
+
 分類入口及標籤名稱支援三語；筆記仍只有已提供的繁體中文原文。新增譯文之前，不建立不存在的英、日文筆記網址。醫學筆記需保留教育用途聲明、可核對來源、統計適用範圍與推論限制。
+
+硬體筆記的圖表是內嵌 SVG，只用 `src/styles/hardware-notes.css` 的 class 取 token 色，不寫 `style`、字面色碼或 script；每張圖都要有可展開或並列的資料表。載入器拒絕 script、style、img、`src`／`style` 屬性等標記。互動工具（型號篩選、工作點滑桿、數量試算）由 `src/features/notes/hardware-note-tools.ts` 在本機重算，靜態 HTML 先寫好預設結果，沒有 JavaScript 時仍可讀；工具用到的報價放在 `data-*` 屬性，改價格時只改內容檔。性能數字分平台標示（Cybenetics、Tweakers、HWCooling 不混用絕對值），價格與庫存註明觀測日。
 
 ## 搜尋
 

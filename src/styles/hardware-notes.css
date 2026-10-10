@@ -1,0 +1,726 @@
+/* Hardware notes: reviewed static fragments with token-only charts and tables. */
+.hardware-note {
+  max-width: calc(1100px + var(--line-gutter) + 2 * var(--gutter));
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-8);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+.hardware-note article,
+.hardware-note section {
+  min-width: 0;
+}
+.hardware-note p {
+  margin: 0 0 var(--space-4);
+}
+.hardware-note :is(b, strong) {
+  font-weight: 650;
+}
+.hardware-note :is(h1, h2, h3, h4) {
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.hardware-note h1 {
+  margin: var(--space-3) 0 var(--space-4);
+  font-size: clamp(24px, 2.8vw, 34px);
+}
+.hardware-note h2 {
+  margin: var(--space-8) 0 var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-decorative);
+  font-size: 23px;
+}
+.hardware-note h3 {
+  margin: var(--space-6) 0 var(--space-3);
+  font-size: 18px;
+}
+.hardware-note h4 {
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: 16px;
+}
+.hardware-note [id] {
+  scroll-margin-top: calc(var(--header-height) + var(--space-5));
+}
+.hardware-note a {
+  color: var(--color-link);
+  text-underline-offset: 4px;
+}
+.hardware-note a:hover {
+  color: var(--color-action-hover);
+}
+.hardware-note ul,
+.hardware-note ol {
+  margin: var(--space-3) 0 var(--space-4);
+  padding-left: var(--space-5);
+}
+.hardware-note ul {
+  list-style: disc;
+}
+.hardware-note ol {
+  list-style: decimal;
+}
+.hardware-note li {
+  margin: var(--space-2) 0;
+}
+.hardware-note code {
+  padding: 1px 5px;
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+  font-family: var(--font-code);
+  font-size: 0.88em;
+}
+.hardware-note .hw-small,
+.hardware-note .hw-caption {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.hardware-note .hw-cite {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.hardware-note .hw-cite a {
+  text-decoration: none;
+}
+.hardware-note .hw-cite a:hover {
+  text-decoration: underline;
+}
+
+/* Head: comment-style kicker, lead, real counts and scope chips. */
+.hardware-note .hw-kicker {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  letter-spacing: 0.035em;
+}
+.hardware-note .hw-lead {
+  max-width: 82ch;
+  color: var(--color-text-secondary);
+  font-size: 17px;
+}
+.hardware-note .hw-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.hardware-note .hw-stats li {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+.hardware-note .hw-stats b {
+  display: block;
+  color: var(--color-entity-file);
+  font-size: 22px;
+  line-height: 1.35;
+}
+.hardware-note .hw-stats span {
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.hardware-note .hw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+}
+.hardware-note .hw-chips li {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.hardware-note .hw-chips li::before {
+  content: '· ';
+  content: '· ' / '';
+  color: var(--color-syntax-marker);
+}
+.hardware-note .hw-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-4);
+  margin: var(--space-5) 0;
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--color-border-decorative);
+  font-family: var(--font-code);
+  font-size: 13px;
+}
+.hardware-note .hw-toc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  text-decoration: none;
+}
+.hardware-note .hw-toc a:hover {
+  text-decoration: underline;
+}
+.hardware-note .hw-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-right: 0.45em;
+  vertical-align: -0.12em;
+}
+.hardware-note h2 .hw-icon {
+  color: var(--color-link);
+}
+.hardware-note .hw-section-kicker {
+  margin: var(--space-8) 0 calc(-1 * var(--space-4));
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+
+/* Callouts: info for scope notes, warning only for real purchase failures. */
+.hardware-note .hw-callout {
+  margin: var(--space-5) 0;
+  padding: var(--space-4) var(--space-5);
+  border-left: 3px solid var(--color-status-info);
+  background: var(--color-surface);
+}
+.hardware-note .hw-callout[data-status='warning'] {
+  border-left-color: var(--color-status-warning);
+}
+.hardware-note .hw-callout-title {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+.hardware-note .hw-callout > :last-child,
+.hardware-note .hw-card > :last-child,
+.hardware-note .hw-tool > :last-child {
+  margin-bottom: 0;
+}
+.hardware-note .hw-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.hardware-note .hw-flow li {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.hardware-note .hw-flow b {
+  display: block;
+  color: var(--color-text);
+  font-size: 15px;
+}
+.hardware-note .hw-flow li:not(:last-child) b::after {
+  content: ' →';
+  content: ' →' / '';
+  color: var(--color-link);
+  font-weight: 400;
+}
+.hardware-note .hw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.hardware-note .hw-card {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+.hardware-note .hw-card h3 {
+  margin-top: 0;
+}
+
+/* Top 10: one ranked card per line so every heading keeps one line number. */
+.hardware-note .hw-top10 {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.hardware-note .hw-pick {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  column-gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--edge-highlight);
+}
+.hardware-note .hw-rank {
+  margin: 0;
+  color: var(--color-entity-file);
+  font-family: var(--font-code);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.hardware-note .hw-pick-body {
+  min-width: 0;
+}
+.hardware-note .hw-pick h3 {
+  margin: 0;
+  font-size: 19px;
+}
+.hardware-note .hw-role {
+  margin: 2px 0 var(--space-3);
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.hardware-note .hw-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--color-border-subtle);
+}
+.hardware-note .hw-figures div {
+  min-width: 0;
+}
+.hardware-note .hw-figures dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.hardware-note .hw-figures dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.hardware-note .hw-reasons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-2) var(--space-5);
+  margin: 0 0 var(--space-2);
+}
+.hardware-note .hw-reasons dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.hardware-note .hw-reasons dd {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.75;
+}
+.hardware-note .hw-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.hardware-note .hw-badges li {
+  margin: 0;
+  padding: 1px 8px;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* Tables scroll inside their own focusable region, never the page. */
+.hardware-note .hw-table {
+  max-width: 100%;
+  margin: var(--space-5) 0 var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+}
+.hardware-note table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.75;
+  /* Words break only when a cell has no other room; columns keep real widths. */
+  overflow-wrap: break-word;
+}
+.hardware-note .hw-table-compact table {
+  min-width: 520px;
+}
+.hardware-note caption {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: left;
+}
+.hardware-note th,
+.hardware-note td {
+  padding: var(--space-2) var(--space-3);
+  border-block-start: 1px solid var(--color-border-decorative);
+  text-align: left;
+  vertical-align: top;
+}
+.hardware-note thead th {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 650;
+}
+.hardware-note tbody th {
+  min-width: 9.5em;
+  font-weight: 600;
+}
+.hardware-note :is(th, td).num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.hardware-note .hw-nowrap {
+  white-space: nowrap;
+}
+.hardware-note td small,
+.hardware-note th small {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.hardware-note tr[data-top] > th:first-child {
+  box-shadow: inset 2px 0 0 var(--color-action-primary);
+}
+
+/* Charts: inline SVG coloured by token classes; data tables stay beside them. */
+.hardware-note .hw-figure {
+  margin: var(--space-5) 0;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+}
+.hardware-note .hw-figure figcaption {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-decorative);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.hardware-note .hw-figure figcaption b {
+  color: var(--color-text);
+  font-size: 14px;
+}
+.hardware-note .hw-figure > .hw-caption {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+}
+.hardware-note .hw-chart-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: var(--space-3) var(--space-2);
+}
+.hardware-note .hw-chart-box {
+  padding: var(--space-3) var(--space-3) var(--space-2);
+}
+.hardware-note .hw-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+}
+/* Bar lists and small multiples fit a 320 px screen; only the wide chart scrolls. */
+.hardware-note .hw-chart-list {
+  max-width: 440px;
+}
+.hardware-note .hw-chart-small {
+  max-width: 420px;
+}
+.hardware-note .hw-chart-wide {
+  min-width: 480px;
+  max-width: 760px;
+}
+.hardware-note .hw-chart-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.hardware-note .hw-chart-pair .hw-figure {
+  margin: 0;
+}
+.hardware-note .hw-multiples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.hardware-note .hw-multiples .hw-figure {
+  margin: 0;
+}
+.hardware-note .hw-chart text {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.hardware-note .hw-chart .hw-t-muted {
+  fill: var(--color-text-muted);
+  font-size: 12px;
+}
+.hardware-note .hw-chart .hw-t-value {
+  fill: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.hardware-note .hw-chart .hw-t-strong {
+  fill: var(--color-text);
+  font-weight: 650;
+}
+.hardware-note .hw-chart .hw-gridline {
+  stroke: var(--color-border-subtle);
+  stroke-width: 1;
+}
+.hardware-note .hw-chart .hw-axis {
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.hardware-note .hw-chart .hw-bar {
+  fill: var(--color-entity-file);
+}
+.hardware-note .hw-chart .hw-bar-muted {
+  fill: var(--color-border-strong);
+}
+.hardware-note .hw-chart .hw-whisker {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.hardware-note .hw-chart .hw-curve {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hardware-note .hw-chart .hw-curve-focus {
+  stroke: var(--color-entity-file);
+  stroke-width: 2;
+}
+.hardware-note .hw-chart .hw-system {
+  fill: none;
+  stroke: var(--color-entity-kind);
+  stroke-width: 2;
+  stroke-dasharray: 7 5;
+  stroke-linecap: round;
+}
+.hardware-note .hw-chart .hw-key-system {
+  stroke: var(--color-entity-kind);
+  stroke-width: 2;
+  stroke-dasharray: 7 5;
+}
+.hardware-note .hw-chart .hw-key-fan {
+  stroke: var(--color-entity-file);
+  stroke-width: 2;
+}
+.hardware-note .hw-chart .hw-dot {
+  fill: var(--color-entity-file);
+  stroke: var(--color-chrome);
+  stroke-width: 2;
+}
+.hardware-note .hw-chart .hw-point {
+  fill: var(--color-text);
+  stroke: var(--color-chrome);
+  stroke-width: 2;
+}
+
+/* Local tools: real controls, shown only where JavaScript can run them. */
+.hardware-note .hw-tool {
+  margin: var(--space-5) 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.hardware-note .hw-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-3);
+}
+.hardware-note .hw-controls label {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.hardware-note .hw-controls :is(input:not([type='range']), select) {
+  min-height: 36px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-chrome);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.hardware-note .hw-controls input[type='search'] {
+  width: min(100%, 280px);
+}
+.hardware-note .hw-controls input[type='number'] {
+  width: 96px;
+}
+.hardware-note .hw-controls input[type='range'] {
+  width: min(100%, 320px);
+  min-height: 36px;
+  accent-color: var(--color-action-primary);
+}
+.hardware-note .hw-controls output {
+  color: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 13px;
+}
+.hardware-note .hw-result {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text);
+  font-size: 15px;
+}
+.hardware-note .hw-status {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+
+/* Folds keep long reference data available without crowding the reading path. */
+.hardware-note .fold {
+  margin: var(--space-3) 0;
+}
+.hardware-note .fold > summary {
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.hardware-note .hw-fold-body {
+  padding: 0 0 var(--space-2);
+}
+.hardware-note .hw-spec-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+}
+.hardware-note .hw-spec-list .fold {
+  margin: 0;
+}
+.hardware-note .hw-spec-list .hw-specs,
+.hardware-note .hw-spec-list .hw-cite {
+  padding: 0 var(--space-3);
+}
+.hardware-note .hw-specs {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.hardware-note .hw-specs div {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr);
+  gap: var(--space-2);
+}
+.hardware-note .hw-specs dt {
+  color: var(--color-text-muted);
+}
+.hardware-note .hw-specs dd {
+  margin: 0;
+}
+
+/* Sources: stable ids for every citation in the text. */
+.hardware-note .hw-sources {
+  display: grid;
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+.hardware-note .hw-sources li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.hardware-note .hw-sid {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  line-height: 1.85;
+}
+.hardware-note .hw-sources small {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+}
+
+.hardware-note .content-tags {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+.hardware-note .content-tags li {
+  margin: 0;
+}
+.hardware-note
+  :is(a, summary, button, input, select, [tabindex='0']):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .hardware-note {
+    padding-top: var(--space-4);
+  }
+  .hardware-note h2 {
+    margin-top: var(--space-7);
+    font-size: 21px;
+  }
+  .hardware-note .hw-callout,
+  .hardware-note .hw-tool {
+    padding: var(--space-4);
+  }
+  .hardware-note .hw-pick {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+  .hardware-note .hw-rank {
+    font-size: 20px;
+  }
+  .hardware-note .hw-section-kicker {
+    margin-top: var(--space-7);
+  }
+}
