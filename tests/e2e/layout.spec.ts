@@ -285,6 +285,7 @@ test('the workbench names the open file and links every area, with Paper Daily o
     /README\.md/,
     /blog/,
     /note/,
+    /projects/,
     /paper-daily/,
   ]);
   await expect(tabs.getByRole('link', { name: /paper-daily/ })).toHaveAttribute(
@@ -326,6 +327,8 @@ for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])
       '/ja/note/medical/',
       '/zh-hant/note/medical/drugs/analgesics/',
       '/zh-hant/blog/tags/',
+      '/en/projects/',
+      '/ja/projects/tools/',
     ]) {
       await page.goto(path);
       await expect(page.locator('h1').first()).toBeVisible();

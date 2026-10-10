@@ -112,13 +112,12 @@ for (const file of files) {
   }
 }
 // Removed pages must not survive as stale build output or published payloads.
+// Projects returned as folders of project pages; the old flat project URL did not.
 for (const locale of locales)
-  for (const section of ['projects', 'privacy'])
+  for (const page of ['privacy', 'projects/dgxtop'])
     for (const suffix of ['', '.data'])
-      if (existsSync(join(root, locale, section + suffix)))
-        failures.push(
-          `Removed page still emitted: ${locale}/${section}${suffix}`,
-        );
+      if (existsSync(join(root, locale, page + suffix)))
+        failures.push(`Removed page still emitted: ${locale}/${page}${suffix}`);
 
 for (const path of publishedPaths()) {
   const file = join(root, path, 'index.html');

@@ -2,6 +2,7 @@ import { useEffect, useRef, type KeyboardEvent } from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import type { RouteDescriptor } from '../lib/route-manifest.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
+import { projectsCopy } from '../lib/project-pages.ts';
 import { contactEmail, githubUrl } from '../lib/site.ts';
 import {
   areas,
@@ -33,6 +34,7 @@ const areaIcons: Record<AreaKey, IconName> = {
   home: 'markdown',
   library: 'folder',
   notes: 'folder',
+  projects: 'folder',
   papers: 'newspaper',
 };
 
@@ -57,9 +59,12 @@ function Buffers({
     home: t.navAbout,
     library: t.navLibrary,
     notes: noteCopy[locale].notes,
+    projects: projectsCopy[locale].title,
     papers: `${t.navPapers}（${t.newTab}）`,
   };
-  const landing = ['root', 'home', 'library', 'notes'].includes(route.kind);
+  const landing = ['root', 'home', 'library', 'notes', 'projects'].includes(
+    route.kind,
+  );
   const current = landing ? null : path[path.length - 1];
   const after: AreaKey | null = ['article', 'topic', 'tags', 'tag'].includes(
     route.kind,
@@ -76,7 +81,9 @@ function Buffers({
           'hardware-note',
         ].includes(route.kind)
       ? 'notes'
-      : null;
+      : ['project-category', 'project'].includes(route.kind)
+        ? 'projects'
+        : null;
   const list = useRef<HTMLUListElement>(null);
   // Keep the open buffer in view when the row scrolls on narrow screens.
   useEffect(() => {
@@ -100,7 +107,8 @@ function Buffers({
   ) : null;
   const tab = (area: Area) => {
     const state = areaState(route, area.key);
-    const folder = area.key === 'library' || area.key === 'notes';
+    const folder =
+      area.key === 'library' || area.key === 'notes' || area.key === 'projects';
     return (
       <li key={area.key}>
         <a

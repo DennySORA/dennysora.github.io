@@ -3,6 +3,7 @@ import type {
   MetaFunction,
   ShouldRevalidateFunctionArgs,
 } from 'react-router';
+import { Suspense, use } from 'react';
 import { useLoaderData } from 'react-router';
 import { dictionaries, htmlLang, locales, type Locale } from '../i18n/index.ts';
 import {
@@ -52,6 +53,25 @@ import {
   hardwareNotes,
 } from '../lib/hardware-notes.ts';
 import { NotFound } from '../features/misc/NotFound.tsx';
+import { Projects } from '../features/projects/Projects.tsx';
+import { loadProjectPageModule } from '../features/projects/project-page-module.ts';
+import {
+  hasProjectEdition,
+  projectCategoryCopy,
+  projectPages,
+  projectsCopy,
+  type ProjectPageId,
+} from '../lib/project-pages.ts';
+
+/** A project page from its own chunk; prerendering resolves it before rendering. */
+function ProjectPageChunk(
+  props: Parameters<
+    Awaited<ReturnType<typeof loadProjectPageModule>>['ProjectPage']
+  >[0],
+) {
+  const { ProjectPage } = use(loadProjectPageModule());
+  return <ProjectPage {...props} />;
+}
 
 function notFound(): never {
   throw new Response('Not found', { status: 404 });
@@ -100,6 +120,17 @@ function aboutProfile(locale: Locale) {
   );
 }
 export type AboutProfile = ReturnType<typeof aboutProfile>;
+
+// Header tags with their localized labels and the aliases search indexes.
+function projectTags(projectId: ProjectPageId, locale: Locale) {
+  const labels = taxonomyLabels(locale).tags;
+  return projectPages[projectId].tagIds.map((id) => {
+    const tag = loadTaxonomy().tags.find((item) => item.id === id);
+    const label = labels.find((item) => item.id === id)?.label;
+    if (!tag || !label) throw new Error(`Unknown project tag: ${id}`);
+    return { id, label, aliases: tag.aliases[locale] };
+  });
+}
 
 function postLinks(locale: Locale) {
   return Object.fromEntries(
@@ -236,6 +267,16 @@ function loadView(route: RouteDescriptor) {
         noteId: route.noteId,
         html: loadHardwareNote(route.noteId),
       };
+    case 'projects':
+      return { kind: 'projects' as const };
+    case 'project-category':
+      return { kind: 'project-category' as const, category: route.category };
+    case 'project':
+      return {
+        kind: 'project' as const,
+        projectId: route.projectId,
+        tags: projectTags(route.projectId, locale),
+      };
     case 'research':
       return { kind: 'research' as const };
     case 'not-found':
@@ -250,6 +291,8 @@ function availableLocales(route: RouteDescriptor): Locale[] {
     case 'network-note':
     case 'hardware-note':
       return ['zh-hant'];
+    case 'project':
+      return [...projectPages[route.projectId].editions];
     case 'article': {
       const article = loadArticle(route.locale, route.slug);
       return article ? article.post.editions : [];
@@ -357,6 +400,28 @@ function describe(view: ViewData, locale: Locale) {
         title: withSite(hardwareNotes[view.noteId].title[locale]),
         description: hardwareNotes[view.noteId].description,
       };
+    case 'projects':
+      return {
+        title: withSite(projectsCopy[locale].title),
+        description: projectsCopy[locale].intro,
+      };
+    case 'project-category':
+      return {
+        title: withSite(
+          projectCategoryCopy[locale][view.category].title +
+            ' · ' +
+            projectsCopy[locale].title,
+        ),
+        description: projectCategoryCopy[locale][view.category].intro,
+      };
+    case 'project': {
+      const project = projectPages[view.projectId];
+      if (!hasProjectEdition(view.projectId, locale)) notFound();
+      return {
+        title: withSite(project.title[locale]),
+        description: project.description[locale],
+      };
+    }
     case 'research':
       return {
         title: withSite(t.researchBridgeEyebrow),
@@ -571,6 +636,18 @@ function View({ data }: { data: PageData }) {
       return <NetworkNotes locale={locale} />;
     case 'network-note':
       return <NetworkNote html={view.html} />;
+    case 'projects':
+      return <Projects locale={locale} />;
+    case 'project-category':
+      return <Projects locale={locale} category={view.category} />;
+    case 'project':
+      if (!hasProjectEdition(view.projectId, locale))
+        throw new Error(`No ${locale} edition of ${view.projectId}`);
+      return (
+        <Suspense fallback={null}>
+          <ProjectPageChunk view={view} locale={locale} />
+        </Suspense>
+      );
     case 'research':
       return <ResearchBridge locale={locale} />;
     case 'not-found':

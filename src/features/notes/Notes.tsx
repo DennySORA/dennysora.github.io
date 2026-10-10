@@ -1,5 +1,9 @@
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
-import { Icon, type IconName } from '../../components/Icon.tsx';
+import {
+  Collection,
+  type CollectionFile,
+} from '../../components/Collection.tsx';
+import type { IconName } from '../../components/Icon.tsx';
 import type { Locale } from '../../i18n/index.ts';
 import {
   networkCopy,
@@ -30,66 +34,12 @@ export type NotesView =
   | { collection: 'medical'; category?: MedicalCategory }
   | { collection: 'hardware'; category?: HardwareCategory };
 
-type NoteFile = { href: string; name: string; title: string };
-
-/** One note collection as a folder preview: what it holds, and its files. */
-function Collection({
-  art,
-  href,
-  title,
-  count,
-  intro,
-  files,
-  available,
-}: {
-  art: string;
-  href: string;
-  title: string;
-  count: string;
-  intro: string;
-  files: NoteFile[];
-  available: string;
-}) {
-  return (
-    <li className="collection">
-      <img
-        className="collection-art"
-        src={art}
-        width={88}
-        height={88}
-        alt=""
-        decoding="async"
-      />
-      <div className="collection-body">
-        <h2 className="collection-title">
-          <a href={href}>
-            <Icon name="folder-open" size={18} />
-            <span>{title}</span>
-          </a>
-          <span className="collection-count">{count}</span>
-        </h2>
-        <p className="collection-intro">{intro}</p>
-        <ul className="collection-files">
-          {files.map((file) => (
-            <li key={file.href}>
-              <a href={file.href} hrefLang="zh-Hant">
-                <Icon name="markdown" size={16} />
-                <span className="collection-file">{file.name}</span>
-                <span className="collection-file-title" lang="zh-Hant">
-                  {file.title}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <p className="collection-meta">
-          <Icon name="globe" size={14} />
-          {available}
-        </p>
-      </div>
-    </li>
-  );
-}
+// Notes are written in Traditional Chinese; every file is titled in it.
+type NoteFile = Omit<CollectionFile, 'lang'>;
+const noteFile = (file: NoteFile): CollectionFile => ({
+  ...file,
+  lang: 'zh-Hant',
+});
 
 /** A collection split into category folders, each listing its own notes. */
 type Grouped = {
@@ -172,7 +122,7 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
                 title={folder.title}
                 count={t.count(files.length)}
                 intro={folder.intro}
-                files={files}
+                files={files.map(noteFile)}
                 available={group.available}
               />
             );
@@ -196,11 +146,13 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
           title={network.title}
           count={t.count(networkNoteIds.length)}
           intro={network.intro}
-          files={networkNoteIds.map((id) => ({
-            href: `/zh-hant/note/network/${id}/`,
-            name: `${id}.md`,
-            title: networkNotes[id].title,
-          }))}
+          files={networkNoteIds.map((id) =>
+            noteFile({
+              href: `/zh-hant/note/network/${id}/`,
+              name: `${id}.md`,
+              title: networkNotes[id].title,
+            }),
+          )}
           available={network.available}
         />
         {(['medical', 'hardware'] as const).map((collection) => {
@@ -213,7 +165,7 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
               title={group.title}
               count={t.count(group.notes.length)}
               intro={group.intro}
-              files={[...group.notes]}
+              files={group.notes.map(noteFile)}
               available={group.available}
             />
           );

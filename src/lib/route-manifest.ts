@@ -13,6 +13,14 @@ import {
   type HardwareCategory,
   type HardwareNoteId,
 } from './hardware-notes.ts';
+import {
+  hasProjectEdition,
+  projectCategories,
+  projectPageIds,
+  projectPages,
+  type ProjectCategory,
+  type ProjectPageId,
+} from './project-pages.ts';
 import { isLocale, type Locale } from '../i18n/index.ts';
 
 // The single route contract shared by the loader, prerender list, sitemap,
@@ -32,13 +40,16 @@ export type RouteDescriptor =
   | { kind: 'hardware'; locale: Locale }
   | { kind: 'hardware-category'; locale: Locale; category: HardwareCategory }
   | { kind: 'hardware-note'; locale: Locale; noteId: HardwareNoteId }
+  | { kind: 'projects'; locale: Locale }
+  | { kind: 'project-category'; locale: Locale; category: ProjectCategory }
+  | { kind: 'project'; locale: Locale; projectId: ProjectPageId }
   | { kind: 'article'; locale: Locale; slug: string }
   | { kind: 'topic'; locale: Locale; topicId: string }
   | { kind: 'tags'; locale: Locale }
   | { kind: 'tag'; locale: Locale; tagId: string }
   | { kind: 'research'; locale: Locale };
 export type RouteKind = RouteDescriptor['kind'];
-export type NavSection = 'home' | 'library' | 'notes';
+export type NavSection = 'home' | 'library' | 'notes' | 'projects';
 
 // Slugs that would collide with fixed Library routes.
 export const reservedSlugs = ['tags', 'topics'] as const;
@@ -99,6 +110,25 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
         medicalNoteIds.some((id) => id === c && medicalNotes[id].category === b)
         ? { kind: 'medical-note', locale, noteId: c as MedicalNoteId }
         : null;
+    case 'projects':
+      if (rest.length === 0) return { kind: 'projects', locale };
+      if (!projectCategories.some((category) => category === a)) return null;
+      if (rest.length === 1)
+        return {
+          kind: 'project-category',
+          locale,
+          category: a as ProjectCategory,
+        };
+      // A page answers only in the languages it was written in.
+      return rest.length === 2 &&
+        projectPageIds.some(
+          (id) =>
+            id === b &&
+            projectPages[id].category === a &&
+            hasProjectEdition(id, locale),
+        )
+        ? { kind: 'project', locale, projectId: b as ProjectPageId }
+        : null;
     case 'blog':
       if (rest.length === 0) return { kind: 'library', locale };
       if (a === 'tags')
@@ -149,6 +179,12 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/note/hardware/${route.category}/`;
     case 'hardware-note':
       return `/${route.locale}/note/hardware/${hardwareNotes[route.noteId].category}/${route.noteId}/`;
+    case 'projects':
+      return `/${route.locale}/projects/`;
+    case 'project-category':
+      return `/${route.locale}/projects/${route.category}/`;
+    case 'project':
+      return `/${route.locale}/projects/${projectPages[route.projectId].category}/${route.projectId}/`;
     case 'topic':
       return `/${route.locale}/blog/topics/${route.topicId}/`;
     case 'tags':
@@ -196,6 +232,10 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'hardware-category':
     case 'hardware-note':
       return 'notes';
+    case 'projects':
+    case 'project-category':
+    case 'project':
+      return 'projects';
     default:
       return null;
   }

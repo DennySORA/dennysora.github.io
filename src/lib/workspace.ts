@@ -1,5 +1,6 @@
 import { medicalNotes } from './medical-notes.ts';
 import { hardwareNotes } from './hardware-notes.ts';
+import { projectPages } from './project-pages.ts';
 import type { Locale } from '../i18n/index.ts';
 import {
   navSection,
@@ -31,6 +32,12 @@ export function areas(locale: Locale): Area[] {
     { key: 'home', file: 'README.md', href: `/${locale}/`, external: false },
     { key: 'library', file: 'blog', href: `/${locale}/blog/`, external: false },
     { key: 'notes', file: 'note', href: `/${locale}/note/`, external: false },
+    {
+      key: 'projects',
+      file: 'projects',
+      href: `/${locale}/projects/`,
+      external: false,
+    },
     { key: 'papers', file: 'paper-daily', href: papersUrl, external: true },
   ];
 }
@@ -115,6 +122,23 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
         },
         { label: `${route.noteId}.md`, href: self },
       ];
+    case 'projects':
+      return [home, { label: 'projects', href: self }];
+    case 'project-category':
+      return [
+        home,
+        { label: 'projects', href: `/${locale}/projects/` },
+        { label: route.category, href: self },
+      ];
+    case 'project': {
+      const { category } = projectPages[route.projectId];
+      return [
+        home,
+        { label: 'projects', href: `/${locale}/projects/` },
+        { label: category, href: `/${locale}/projects/${category}/` },
+        { label: `${route.projectId}.md`, href: self },
+      ];
+    }
     case 'article':
       return [home, blog, { label: `${route.slug}.md`, href: self }];
     case 'topic':
@@ -143,6 +167,8 @@ const folders: RouteDescriptor['kind'][] = [
   'network',
   'hardware',
   'hardware-category',
+  'projects',
+  'project-category',
   'tags',
   'topic',
   'tag',
@@ -173,7 +199,7 @@ export function areaState(
   key: AreaKey,
 ): 'page' | 'true' | undefined {
   if (navSection(route) !== key) return undefined;
-  return ['root', 'home', 'library', 'notes'].includes(route.kind)
+  return ['root', 'home', 'library', 'notes', 'projects'].includes(route.kind)
     ? 'page'
     : 'true';
 }

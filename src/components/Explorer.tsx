@@ -22,6 +22,15 @@ import {
   hardwareNotePath,
 } from '../lib/hardware-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
+import {
+  projectCategories,
+  projectCategoryCopy,
+  projectEdition,
+  projectPageIds,
+  projectPagePath,
+  projectPages,
+  projectsCopy,
+} from '../lib/project-pages.ts';
 import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
 import { Icon, type IconName } from './Icon.tsx';
@@ -308,6 +317,57 @@ export function Explorer({
                 ))}
               </TreeFolder>
             </li>
+          </TreeFolder>
+        </li>
+        <li>
+          <TreeFolder
+            locale={locale}
+            href={`/${locale}/projects/`}
+            name="projects"
+            note={{ text: projectsCopy[locale].title, visible: true }}
+            current={areaState(route, 'projects')}
+            onNavigate={onNavigate}
+          >
+            {projectCategories.map((category) => (
+              <li key={category}>
+                <TreeFolder
+                  locale={locale}
+                  href={`/${locale}/projects/${category}/`}
+                  name={projectCategoryCopy[locale][category].title}
+                  note={{
+                    text: projectCategoryCopy[locale][category].intro,
+                    visible: false,
+                  }}
+                  current={page(
+                    route.kind === 'project-category' &&
+                      route.category === category,
+                  )}
+                  onNavigate={onNavigate}
+                >
+                  {projectPageIds
+                    .filter((id) => projectPages[id].category === category)
+                    .map((id) => (
+                      <li key={id}>
+                        <TreeLink
+                          href={projectPagePath(id, locale)}
+                          kind="markdown"
+                          name={`${id}.md`}
+                          note={{
+                            text: projectPages[id].title[
+                              projectEdition(id, locale)
+                            ],
+                            visible: false,
+                          }}
+                          current={page(
+                            route.kind === 'project' && route.projectId === id,
+                          )}
+                          onNavigate={onNavigate}
+                        />
+                      </li>
+                    ))}
+                </TreeFolder>
+              </li>
+            ))}
           </TreeFolder>
         </li>
         <li>

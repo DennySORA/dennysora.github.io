@@ -98,9 +98,17 @@ test('search has useful no-JavaScript navigation and an index with note body con
   expect(
     index.find((entry) => entry.href.endsWith('/p2p-privacy/'))?.text,
   ).toContain('DAITA');
+  expect(index.some((entry) => /\/privacy\//.test(entry.href))).toBe(false);
+  // A project page is indexed in each language it was written in, and only those.
   expect(
-    index.some((entry) => /\/projects\/|\/privacy\//.test(entry.href)),
-  ).toBe(false);
+    index
+      .filter((entry) => entry.href.endsWith('/projects/tools/dgxtop/'))
+      .map((entry) => entry.href)
+      .sort(),
+  ).toEqual(['/en/projects/tools/dgxtop/', '/zh-hant/projects/tools/dgxtop/']);
+  expect(
+    index.find((entry) => entry.href === '/en/projects/tools/dgxtop/')?.text,
+  ).toContain('source conflict');
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();

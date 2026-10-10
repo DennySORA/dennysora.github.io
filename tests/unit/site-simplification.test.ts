@@ -12,9 +12,14 @@ import { areas } from '../../src/lib/workspace.ts';
 
 describe('requested website simplification', () => {
   for (const locale of locales) {
-    it(`${locale} removes Projects and privacy from routes and navigation`, () => {
+    it(`${locale} keeps privacy and the old flat project URL removed, with Projects as an area`, () => {
+      // Projects returned as folders (projects/tools/dgxtop); the removed
+      // flat project page and privacy stay real 404s.
+      expect(parseRoute(`/${locale}/projects/`)).toEqual({
+        kind: 'projects',
+        locale,
+      });
       for (const path of [
-        `/${locale}/projects/`,
         `/${locale}/projects/dgxtop/`,
         `/${locale}/privacy/`,
       ]) {
@@ -30,6 +35,7 @@ describe('requested website simplification', () => {
         'home',
         'library',
         'notes',
+        'projects',
         'papers',
       ]);
     });
@@ -73,7 +79,7 @@ describe('requested website simplification', () => {
         [...(buffers ?? '').matchAll(/class="tab-name">([^<]+)</g)].map(
           (match) => match[1],
         ),
-      ).toEqual(['README.md', 'blog', 'note', 'paper-daily']);
+      ).toEqual(['README.md', 'blog', 'note', 'projects', 'paper-daily']);
       expect(html).not.toMatch(/navigation-icons|activity-art|<img[^>]*sprite/);
     });
     it(`${locale} retains the core résumé, correct identity and repository evidence`, () => {

@@ -98,6 +98,15 @@ gh api graphql \
 
 `content/projects/projects.json` 保留首頁能力證據所使用的真實 repository 連結。2026-10-03 依擁有者指示移除 Projects 清單、專案詳情與 Privacy 頁，舊網址回傳 404，不再進入 sitemap 或導覽。首頁另移除作品、探索、工程之外、完整紀錄及最後聯絡區塊。
 
+2026-10-11 依擁有者指示新增「專案／工具」：`/{locale}/projects/` 與分類資料夾 `/{locale}/projects/tools/` 三語都有；專案頁只在實際撰寫的語言發布。目前是 dgxtop 的架構與設計說明（繁體中文與英文：`/zh-hant/projects/tools/dgxtop/`、`/en/projects/tools/dgxtop/`），日文資料夾明示沒有日文版並連到英文版。舊的扁平網址 `/<locale>/projects/dgxtop/` 與 Privacy 仍回傳 404。
+
+新增專案頁的方式：
+
+- 在 [`src/lib/project-pages.ts`](../src/lib/project-pages.ts) 登記分類、`editions`（實際寫好的語言）、`tagIds`、標題、摘要與截圖清單（檔名與真實像素尺寸）。
+- 正文放在 `src/features/projects/<id>/`：文字集中在 copy 檔，每個語言一份；圖表用 `src/styles/projects.css` 的 `.dg` 配方畫成真正的文字，只用 token class，不寫字面色碼。
+- 截圖放在 `assets/projects/<id>/`，只有頁面列出的檔案才會發布；截圖裡的序號、UUID、權杖等可識別資訊先打碼。生成的插圖照 [設計系統 §7](DESIGN.md#7-插圖與生成圖片) 處理，不拿來當內容圖。
+- 專案頁的程式碼是獨立 chunk，只在專案網址載入；預先渲染會先等它載好，所以靜態 HTML 有完整內容，沒有 JavaScript 也能讀。
+
 ## 品牌素材
 
 tabline 使用 `assets/logo.png` 原檔，不重畫、不染色、不裁切。首頁的大型 Logo 是 `assets/logo-hero.webp`（1x）與 `assets/logo-hero@2x.webp`（2x）：由 3 MB 的 `logo_full.png` 只修掉左右透明欄、縮放並轉成 WebP，同一個人像，未改色或重繪。[`data/brand-assets.json`](../data/brand-assets.json) 記錄每個素材的 Git blob、大小、尺寸與衍生方式；建置時的產物檢查會確認發布的檔案與紀錄一致，也禁止引用 GitHub raw 連結。`logo_full.png` 本身只保留在 repo，不發布。

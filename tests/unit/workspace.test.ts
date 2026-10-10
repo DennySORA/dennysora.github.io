@@ -39,6 +39,7 @@ describe('workspace chrome', () => {
       '/ja/',
       '/ja/blog/',
       '/ja/note/',
+      '/ja/projects/',
       'https://paper.dennysora.me/',
     ]);
   });

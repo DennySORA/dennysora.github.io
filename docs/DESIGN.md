@@ -86,7 +86,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 ```text
 +------------------+--------------------------------------------------------------------------+
-| [=] (o) DennySORA| |README.md  [d] blog  [d] note  paper-daily^   [/ search  /] GH @ lang   |  <- tabline
+| [=] (o) DennySORA| |README.md [d] blog [d] note [d] projects paper-daily^ [/] GH @ lang     |  <- tabline
 +------------------+--------------------------------------------------------------------------+
 | Explorer         | ~ dennysora > [d] note > [md] analgesics.md                              |  <- winbar
 | ~/dennysora      |   1  ---                                                                 |
@@ -183,6 +183,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | `collection-network-v1.webp` | 「網路與 P2P」筆記集合 | 88px |
 | `collection-medicine-v1.webp` | 「醫學」筆記集合 | 88px |
 | `collection-hardware-v1.webp` | 「硬體」筆記集合與分類 | 88px |
+| `collection-tools-v1.webp` | 「專案／工具」目錄與工具資料夾 | 88px |
 | `search-telescope-v1.webp` | 全站搜尋頁首 | 112px |
 | `empty-blog-v1.webp` | 部落格沒有文章時 | ≤320px 寬 |
 | `not-found-v1.webp` | 404 | ≤360px 寬 |
@@ -254,6 +255,8 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 程式碼區塊 | `.code-block` | `chrome` 底、`surface` 標題列（語言或檔名）、自身橫向捲動 | 複製按鈕回報真實結果 |
 | 筆記資料圖表 | `.hw-chart`（`hardware-notes.css`） | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表 | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動 |
 | 推薦卡片 | `.hw-pick` | `surface` 卡片＋名次（mono、`entity-file`）＋標題＋定位（`entity-kind`）＋數據列＋理由與注意＋證據標籤＋來源 | 單欄排列，每張卡片只有標題一個行號 |
+| 專案截圖 | `.project-shot`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋真實檔名＋真實像素尺寸）、`chrome` 底、`--edge-highlight`，不加陰影；截圖連到原尺寸檔；說明在下方 | 截圖不裁切、不加濾鏡，可識別資訊（序號、UUID）先打碼；只有第一張 eager，其餘 lazy；畫廊每列最少 420px |
+| 專案架構圖 | `.dg`（`projects.css`） | 標題列（粗體標題＋一句讀法）＋由真正文字組成的節點與箭頭（清單，時間軸用內嵌 SVG）；資料路徑 `entity-file` 實線、控制路徑 `entity-kind` 虛線、節點 `surface`、晶片 `border-subtle` | 不用狀態色（圖裡沒有真實狀態）；窄螢幕流程改成直向 ↓，SVG 在自身可聚焦區域捲動；整張圖只有一個行號 |
 
 ## 10. 互動、狀態與動態
 
@@ -302,7 +305,8 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 檢查 | 守護內容 |
 |---|---|
 | [`tests/unit/design.test.ts`](../tests/unit/design.test.ts) | tokens 數值與單一來源、全部文字角色的對比、模式色與主要按鈕的對比、品牌圖 bytes |
-| [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts) | buffers 是四個區域；快速連結的名稱包含可見標籤；外框不再有點陣圖符號 |
+| [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts) | buffers 是五個區域（README.md、blog、note、projects、paper-daily）；快速連結的名稱包含可見標籤；外框不再有點陣圖符號 |
+| [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖尺寸與宣告相符；320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts) | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合 |
 | [`tests/e2e/site.spec.ts`](../tests/e2e/site.spec.ts) | 第一次載入就是深色（含無 JavaScript）、Logo 原檔、快速連結、無第三方請求 |
 | [`tests/e2e/accessibility.spec.ts`](../tests/e2e/accessibility.spec.ts) | axe 的 WCAG 2.2 AA 檢查（各頁與各種狀態） |

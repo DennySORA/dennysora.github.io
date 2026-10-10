@@ -15,6 +15,11 @@ import {
   hardwareNotes,
   type HardwareNoteId,
 } from './hardware-notes.ts';
+import {
+  projectCategories,
+  projectPageIds,
+  projectPages,
+} from './project-pages.ts';
 import { addNoteTags } from './note-tags.server.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -246,6 +251,7 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'medical', locale },
       { kind: 'network', locale },
       { kind: 'hardware', locale },
+      { kind: 'projects', locale },
       { kind: 'tags', locale },
       { kind: 'research', locale },
     );
@@ -253,6 +259,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'medical-category', locale, category });
     for (const category of hardwareCategories)
       routes.push({ kind: 'hardware-category', locale, category });
+    for (const category of projectCategories)
+      routes.push({ kind: 'project-category', locale, category });
     for (const post of listPosts(locale))
       routes.push({ kind: 'article', locale, slug: post.slug });
     for (const topicId of topicsInLocale(locale))
@@ -266,6 +274,10 @@ export function publishedRoutes(): RouteDescriptor[] {
     routes.push({ kind: 'network-note', locale: 'zh-hant', noteId });
   for (const noteId of hardwareNoteIds)
     routes.push({ kind: 'hardware-note', locale: 'zh-hant', noteId });
+  // A project page is published only in the languages it was written in.
+  for (const projectId of projectPageIds)
+    for (const locale of projectPages[projectId].editions)
+      routes.push({ kind: 'project', locale, projectId });
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
@@ -299,6 +311,7 @@ export function validateContent(): void {
     ...medicalNotes,
     ...networkNotes,
     ...hardwareNotes,
+    ...projectPages,
   })) {
     if (note.tagIds.length === 0) problems.push(`Missing tags in note ${id}`);
     if (new Set(note.tagIds).size !== note.tagIds.length)

@@ -265,5 +265,104 @@
       "en": ["風扇", "fans", "ファン", "140mm", "PWM fan", "靜音", "静音"],
       "ja": ["風扇", "fans", "ファン", "140mm", "PWM fan", "靜音", "静音"]
     }
+  },
+  {
+    "id": "rust",
+    "label": {
+      "zh-hant": "Rust",
+      "en": "Rust",
+      "ja": "Rust"
+    },
+    "aliases": {
+      "zh-hant": ["Rust 語言", "Rust言語", "cargo", "crate"],
+      "en": ["Rust 語言", "Rust言語", "cargo", "crate"],
+      "ja": ["Rust 語言", "Rust言語", "cargo", "crate"]
+    }
+  },
+  {
+    "id": "gpu",
+    "label": {
+      "zh-hant": "GPU",
+      "en": "GPU",
+      "ja": "GPU"
+    },
+    "aliases": {
+      "zh-hant": [
+        "NVIDIA",
+        "NVML",
+        "CUDA",
+        "DGX",
+        "DGX Spark",
+        "GB10",
+        "顯示卡",
+        "グラフィックボード"
+      ],
+      "en": [
+        "NVIDIA",
+        "NVML",
+        "CUDA",
+        "DGX",
+        "DGX Spark",
+        "GB10",
+        "顯示卡",
+        "グラフィックボード"
+      ],
+      "ja": [
+        "NVIDIA",
+        "NVML",
+        "CUDA",
+        "DGX",
+        "DGX Spark",
+        "GB10",
+        "顯示卡",
+        "グラフィックボード"
+      ]
+    }
+  },
+  {
+    "id": "system-monitoring",
+    "label": {
+      "zh-hant": "系統監控",
+      "en": "System monitoring",
+      "ja": "システム監視"
+    },
+    "aliases": {
+      "zh-hant": [
+        "monitor",
+        "monitoring",
+        "top",
+        "htop",
+        "nvtop",
+        "TUI",
+        "監控",
+        "モニタリング",
+        "終端介面",
+        "ターミナル"
+      ],
+      "en": [
+        "monitor",
+        "monitoring",
+        "top",
+        "htop",
+        "nvtop",
+        "TUI",
+        "監控",
+        "モニタリング",
+        "終端介面",
+        "ターミナル"
+      ],
+      "ja": [
+        "monitor",
+        "monitoring",
+        "top",
+        "htop",
+        "nvtop",
+        "TUI",
+        "監控",
+        "モニタリング",
+        "終端介面",
+        "ターミナル"
+      ]
+    }
   }
 ]

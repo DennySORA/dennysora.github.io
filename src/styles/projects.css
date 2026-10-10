@@ -1,0 +1,567 @@
+/* Project pages: an open buffer with screenshots and token-only diagrams. */
+.project-page {
+  max-width: calc(1100px + var(--line-gutter) + 2 * var(--gutter));
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-8);
+}
+.project-page .page-head {
+  padding-bottom: var(--space-2);
+}
+.project-page .content-tags {
+  margin: var(--space-2) 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+.project-page .content-tags li {
+  margin: 0;
+}
+.project-lead {
+  max-width: 760px;
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: 17px;
+  line-height: 1.85;
+}
+.project-lead:lang(en) {
+  line-height: 1.78;
+}
+.project-page .front-matter dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Section links read like a fold list: real anchors, one row that wraps. */
+.project-sections {
+  margin: var(--space-4) 0 var(--space-6);
+}
+.project-sections ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-sections li {
+  margin: 0;
+}
+.project-sections a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  color: var(--color-link);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  text-decoration: none;
+  transition:
+    background-color var(--motion),
+    border-color var(--motion);
+}
+.project-sections a:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-raised);
+}
+
+/* The body is prose; text keeps a reading width, figures and tables use all of it. */
+.project-body > :is(p, ul, ol) {
+  max-width: 760px;
+}
+.project-body h2 {
+  scroll-margin-top: calc(var(--header-height) + var(--space-5));
+}
+.project-body .md-heading > .icon {
+  color: var(--color-link);
+}
+.project-body .table-scroll th,
+.project-body .table-scroll td {
+  white-space: normal;
+}
+.project-body .table-scroll table {
+  min-width: 620px;
+  font-size: 15px;
+}
+.project-body .table-scroll caption {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  text-align: left;
+}
+.project-body .table-scroll td:first-child {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.project-body .table-scroll .num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.project-links a {
+  overflow-wrap: anywhere;
+}
+/* Preflight draws SVG as a block; a link's trailing icon stays on its line. */
+.project-links .icon {
+  display: inline-block;
+  margin-left: 4px;
+  vertical-align: -2px;
+}
+
+/* Screenshots: an image-preview float with the real file name and size. */
+.project-body .project-shot {
+  margin: var(--space-5) 0 var(--space-6);
+}
+.project-shot-frame {
+  overflow: hidden;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-chrome);
+  box-shadow: var(--edge-highlight);
+}
+.project-shot-frame > a {
+  display: block;
+}
+.project-shot-frame > a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.project-body .project-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-chrome);
+}
+.project-body .project-shot figcaption {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: var(--space-5);
+  margin: var(--space-5) 0 var(--space-6);
+}
+.project-body .project-gallery .project-shot {
+  margin: 0;
+}
+
+/*
+ * Diagrams are figures of real text: lists of nodes and arrows coloured only
+ * by token roles. The data path is entity-file, the control path entity-kind
+ * (dashed); status colours never appear, because nothing here is a live state.
+ */
+.project-body .dg {
+  margin: var(--space-5) 0 var(--space-6);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+}
+.project-body .dg > figcaption {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-decorative);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.project-body .dg > figcaption b {
+  color: var(--color-text);
+  font-size: 14.5px;
+  font-weight: 650;
+}
+.dg-body {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dg-path {
+  --path-colour: var(--color-entity-file);
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.dg-path[data-path='control'] {
+  --path-colour: var(--color-entity-kind);
+}
+.project-body .dg-path-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.dg-path-label::before {
+  content: '';
+  width: 28px;
+  border-top: 2px solid var(--path-colour);
+}
+.dg-path[data-path='control'] .dg-path-label::before {
+  border-top-style: dashed;
+}
+.project-body .dg-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-body .dg-flow > li {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+.project-body .dg-flow > li + li::before {
+  content: '→';
+  content: '→' / '';
+  align-self: center;
+  color: var(--path-colour, var(--color-text-muted));
+  font-family: var(--font-code);
+  font-size: 15px;
+}
+.dg-node {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-decorative);
+  border-left: 2px solid var(--path-colour, var(--color-border-strong));
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+.dg-path[data-path='control'] .dg-node {
+  border-left-style: dashed;
+}
+.dg-node-title {
+  color: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.dg-node-text {
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.dg-node-value {
+  color: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+.project-body .dg-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.project-body .dg-chips > li {
+  margin: 0;
+  padding: 0 6px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 11.5px;
+  line-height: 1.8;
+}
+.project-body .dg-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.dg-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* Runtime: the parent's threads, the pipes, and one process per adapter. */
+.dg-panel {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+}
+.project-body .dg-panel-title {
+  margin: 0;
+  color: var(--color-link);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.project-body .dg-threads {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-body .dg-threads > li {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+}
+.project-body .dg-hosts {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-body .dg-hosts > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-border-subtle);
+  border-left: 2px solid var(--color-entity-file);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.project-body .dg-hosts > li[data-late] {
+  border-style: dashed;
+  border-left-color: var(--color-border-strong);
+}
+.dg-host-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-muted);
+  font-size: 11.5px;
+}
+.project-body .dg-pipe {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Arbitration: two readings in, nine numbered steps, five possible outcomes. */
+.dg-arbitration {
+  grid-template-columns: minmax(0, 1fr);
+}
+.project-body .dg-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: dg-step;
+}
+.project-body .dg-steps > li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+  counter-increment: dg-step;
+}
+.project-body .dg-steps > li::before {
+  content: counter(dg-step);
+  content: counter(dg-step) / '';
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 12px;
+  font-weight: 650;
+}
+.project-body .dg-outcomes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-body .dg-outcomes > li {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.project-body .dg-outcomes > li[data-chosen] {
+  border-color: var(--color-entity-file);
+  color: var(--color-text);
+}
+.project-body .dg-outcomes > li[data-conflict] {
+  border-color: var(--color-entity-kind);
+  color: var(--color-text);
+}
+.project-body .dg-outcomes s {
+  color: var(--color-text-muted);
+}
+
+/* Workspace: the composition root, six crates, one contract crate. */
+.project-body .dg-crates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-body .dg-crates > li {
+  margin: 0;
+}
+.dg-crates .dg-node {
+  height: 100%;
+}
+.dg-depends {
+  color: var(--color-entity-file);
+  font-family: var(--font-code);
+  font-size: 11.5px;
+}
+.dg-core {
+  border-left-color: var(--color-entity-kind);
+  text-align: center;
+}
+
+/* History: a small timeline drawn as inline SVG with token classes. */
+.dg-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.dg-scroll:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.dg-svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  max-width: 820px;
+  height: auto;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+}
+.dg-svg text {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.dg-svg .dg-svg-strong {
+  fill: var(--color-text);
+  font-family: var(--font-code);
+  font-weight: 600;
+}
+.dg-svg .dg-svg-muted {
+  fill: var(--color-text-muted);
+  font-size: 12px;
+}
+.dg-svg .dg-svg-bucket {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.dg-svg .dg-svg-axis {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+.dg-svg .dg-svg-interval {
+  stroke: var(--color-entity-file);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.dg-svg .dg-svg-bridge {
+  stroke: var(--color-entity-kind);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.dg-svg .dg-svg-sample {
+  fill: var(--color-entity-file);
+  stroke: var(--color-chrome);
+  stroke-width: 2;
+}
+.dg-svg .dg-svg-bracket {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.2;
+}
+.dg-svg .dg-svg-hatch {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+.dg-svg .dg-svg-gap {
+  stroke: var(--color-border-strong);
+  stroke-dasharray: 4 4;
+  stroke-width: 1;
+}
+
+.project-page :is(a, [tabindex='0']):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .project-page {
+    padding-top: var(--space-4);
+  }
+  .project-body .dg-flow,
+  .project-body .dg-flow > li {
+    flex-direction: column;
+  }
+  .project-body .dg-flow > li + li::before {
+    content: '↓';
+    content: '↓' / '';
+    align-self: flex-start;
+    padding-left: var(--space-3);
+  }
+  .dg-body {
+    padding: var(--space-3);
+  }
+}

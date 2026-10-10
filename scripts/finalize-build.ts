@@ -19,6 +19,11 @@ import { dictionaries, locales, htmlLang } from '../src/i18n/index.ts';
 import { escapeHtml } from '../src/lib/html.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
 import { papersUrl } from '../src/lib/site.ts';
+import {
+  projectPageIds,
+  projectPages,
+  projectShotUrl,
+} from '../src/lib/project-pages.ts';
 import migration from '../data/migration/manifest.json' with { type: 'json' };
 import brand from '../data/brand-assets.json' with { type: 'json' };
 import { legacyDestinations } from '../src/lib/legacy-anchors.ts';
@@ -38,6 +43,13 @@ for (const asset of brand.assets.filter((item) => item.published))
 cpSync('assets/illustrations', join(output, 'assets/illustrations'), {
   recursive: true,
 });
+// Project screenshots ship only when a published project page lists them.
+for (const id of projectPageIds)
+  for (const shot of projectPages[id].shots)
+    cpSync(
+      join('assets/projects', id, shot.file),
+      join(output, projectShotUrl(id, shot)),
+    );
 cpSync('CNAME', join(output, 'CNAME'));
 write('.nojekyll', '');
 write(

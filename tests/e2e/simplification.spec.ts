@@ -22,8 +22,9 @@ for (const locale of locales)
         '#works-title, #exploring, #beyond, #record, #contact, .md-comments',
       ),
     ).toHaveCount(0);
+    // The résumé itself links no project page; Projects is its own area.
     await expect(
-      page.locator('a[href*="/projects/"], a[href*="/privacy/"]'),
+      page.locator('main a[href*="/projects/"], a[href*="/privacy/"]'),
     ).toHaveCount(0);
     // The tabline lists the areas as buffers; the open one is current, and
     // Paper Daily is marked as leaving the site.
@@ -32,6 +33,7 @@ for (const locale of locales)
       'README.md',
       'blog',
       'note',
+      'projects',
       'paper-daily',
     ]);
     await expect(buffers.locator(`a[href="/${locale}/"]`)).toHaveAttribute(
@@ -42,7 +44,7 @@ for (const locale of locales)
       buffers.locator('a[href="https://paper.dennysora.me/"] svg'),
     ).toHaveCount(2);
     await expect(page.locator('img[src*="navigation-icons"]')).toHaveCount(0);
-    for (const path of ['projects/', 'projects/dgxtop/', 'privacy/'])
+    for (const path of ['projects/dgxtop/', 'privacy/'])
       expect((await request.get(`/${locale}/${path}`)).status()).toBe(404);
     await page.goto(`/${locale}/blog/`);
     await expect(

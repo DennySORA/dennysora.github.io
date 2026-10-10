@@ -332,7 +332,12 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   ).toBe(0);
   expect(sitemap).not.toContain('llm-context-window-three-tiers');
   expect(sitemap).not.toContain('/research/');
-  expect(sitemap).not.toContain('/projects/');
+  expect(sitemap).toContain('https://dennysora.me/en/projects/tools/dgxtop/');
+  expect(sitemap).toContain(
+    'https://dennysora.me/zh-hant/projects/tools/dgxtop/',
+  );
+  expect(sitemap).not.toContain('/ja/projects/tools/dgxtop/');
+  expect(sitemap).not.toContain('/projects/dgxtop/');
   expect(sitemap).not.toContain('/privacy/');
   expect(sitemap).not.toContain('/blog/engineering-principles/');
   expect(sitemap).not.toContain('/blog/production-systems/');
