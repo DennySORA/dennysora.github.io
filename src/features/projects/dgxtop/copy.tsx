@@ -135,7 +135,7 @@ const en: DgxtopCopy = {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
       'Linux x86_64 / aarch64 (glibc 2.34+) · tested on a DGX Spark (GB10) and on an RTX 5080 + RTX 3060 workstation',
-    status: 'v2.0.0, released 2026-10-11',
+    status: 'v2.0.1, released 2026-10-11',
   },
   sectionsLabel: 'Sections',
   openImage: 'Open the full-size image',
@@ -562,9 +562,8 @@ const en: DgxtopCopy = {
         Format, lint, 1,373 tests (1,372 on aarch64), the dependency boundaries
         and the real-hardware suites pass on a Debian 13 workstation with an RTX
         5080 and an RTX 3060, and on a DGX Spark. The acceptance report tracks
-        40 cases: 12 pass, 24 are not run yet (mostly opt-in end-to-end suites),
-        and 4 are blocked: two until the v2.0.0 release run is recorded as
-        evidence, two on three 30-minute benchmark runs and a 72-hour soak.
+        40 cases: 14 pass, 24 are not run yet (mostly opt-in end-to-end suites),
+        and 2 are blocked on three 30-minute benchmark runs and a 72-hour soak.
         Until those exist, no platform is called validated, and the performance
         numbers stay targets.
       </>,
@@ -624,8 +623,8 @@ const en: DgxtopCopy = {
       href: `${repository}/tree/main/spec/dgxtop-v2`,
     },
     {
-      label: 'Release v2.0.0: install script and binaries',
-      href: `${repository}/releases/tag/v2.0.0`,
+      label: 'Latest release: install script and binaries',
+      href: `${repository}/releases/latest`,
     },
     {
       label: 'Implementation decisions D-01 to D-61',
@@ -645,7 +644,7 @@ const zh: DgxtopCopy = {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
       'Linux x86_64／aarch64（glibc 2.34 以上）· 已在 DGX Spark（GB10）與 RTX 5080 + RTX 3060 工作站上測試',
-    status: 'v2.0.0，2026-10-11 發佈',
+    status: 'v2.0.1，2026-10-11 發佈',
   },
   sectionsLabel: '章節',
   openImage: '開啟原尺寸圖片',
@@ -1041,9 +1040,9 @@ const zh: DgxtopCopy = {
       <>
         格式、lint、1,373 項測試（aarch64 上 1,372
         項）、依賴邊界與真實硬體測試，在裝有 RTX 5080 與 RTX 3060 的 Debian 13
-        工作站和 DGX Spark 上都通過。驗收報告追蹤 40 個案例：12 個通過、24
-        個尚未執行（多半是需要另外啟動的端對端測試），4 個受阻：2 個要等 v2.0.0
-        的 release 執行紀錄成證據，2 個要等 3 次 30 分鐘的效能基準與 72 小時
+        工作站和 DGX Spark 上都通過。驗收報告追蹤 40 個案例：14 個通過、24
+        個尚未執行（多半是需要另外啟動的端對端測試），2 個要等 3 次 30
+        分鐘的效能基準與 72 小時
         soak。在這些完成之前，沒有任何平台被宣稱為已驗收，效能數字也仍只是目標。
       </>,
     ],
@@ -1100,8 +1099,8 @@ const zh: DgxtopCopy = {
       href: `${repository}/tree/main/spec/dgxtop-v2`,
     },
     {
-      label: '發佈版 v2.0.0：安裝指令與執行檔',
-      href: `${repository}/releases/tag/v2.0.0`,
+      label: '最新發佈版：安裝指令與執行檔',
+      href: `${repository}/releases/latest`,
     },
     {
       label: '實作決策 D-01 到 D-61',
@@ -1121,7 +1120,7 @@ const ja: DgxtopCopy = {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
       'Linux x86_64／aarch64（glibc 2.34 以降）· DGX Spark（GB10）と RTX 5080 + RTX 3060 搭載ワークステーションでテスト済み',
-    status: 'v2.0.0（2026-10-11 リリース）',
+    status: 'v2.0.1（2026-10-11 リリース）',
   },
   sectionsLabel: '目次',
   openImage: '原寸の画像を開く',
@@ -1549,11 +1548,10 @@ const ja: DgxtopCopy = {
         フォーマット、lint、1,373 件のテスト（aarch64 では 1,372
         件）、依存関係の境界、実機テストは、RTX 5080 と RTX 3060 を搭載する
         Debian 13 ワークステーションと DGX Spark
-        の両方で合格しています。受け入れ報告は 40 ケースを追跡しており、12
+        の両方で合格しています。受け入れ報告は 40 ケースを追跡しており、14
         件が合格、24
-        件が未実行（多くは明示的な起動を要するエンドツーエンドテスト）、4
-        件が保留中です。2 件は v2.0.0 のリリース実行を証拠として記録するのを、2
-        件は 30 分のベンチマーク 3 回と 72
+        件が未実行（多くは明示的な起動を要するエンドツーエンドテスト）、2 件が
+        30 分のベンチマーク 3 回と 72
         時間の連続稼働テストを待っています。これらがそろうまでは、どのプラットフォームも受け入れ検証済みとはせず、性能値も目標値のままです。
       </>,
     ],
@@ -1615,8 +1613,8 @@ const ja: DgxtopCopy = {
       href: `${repository}/tree/main/spec/dgxtop-v2`,
     },
     {
-      label: 'リリース v2.0.0：インストールスクリプトとバイナリ',
-      href: `${repository}/releases/tag/v2.0.0`,
+      label: '最新リリース：インストールスクリプトとバイナリ',
+      href: `${repository}/releases/latest`,
     },
     {
       label: '実装判断 D-01～D-61',
