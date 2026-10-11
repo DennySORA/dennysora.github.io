@@ -80,3 +80,48 @@ Browser gate：blocked，未宣稱畫面或互動驗收。原設定的 Google Ch
 驗證：`pnpm format:check`、`pnpm lint`、`pnpm typecheck`、105 unit tests（13 files）及完整 build passed；29 prerendered routes、22 sitemap routes、128 artifact files、initial JS gzip 140.2 KiB。全站索引 421153 bytes、21 個公開頁面版本，其中 3 份筆記；依語言去重後顯示正確目的地。初次 artifact check 把筆記內原本可見的 raw GitHub URL 程式碼當成載入資產，已將搜尋 JSON 的檢查限於可導航 href；每份 index 仍必須逐字符合由公開 main 抽取的內容，顯示文字只使用 React text nodes。沒有放寬 HTML／JS／CSS 的資產規則。
 
 HTTP-only Playwright passed（2 cases）：29 個正式 routes、三語 search noindex 與導覽連結、全站索引、正文專有詞 ngosang 可找到 downloader 筆記。新增 browser tests 覆蓋三語入口、note 目的地、分類／無結果、Back、語言切換、載入失敗重試與 no-JavaScript 導覽；先前 Chrome／Chromium 啟動限制仍存在，尚未執行這批 browser cases。同步修正一個殘留舊首頁章節的 layout assertion，反映已核准刪除後的兩個核心區塊及 56 個 numbered lines。下一步：核對遠端 main／release，提交本次差異並 fast-forward release，驗證 exact-head Actions 後做正式站搜尋互動檢查。
+
+## 2026-10-11｜筆記與資料三語補齊
+
+狀態：本機實作與驗證完成；後續發布前核對見下節。紀錄來源：`agent_reported`。基準 `488ca2523cdadfd5c21dd2f1a3e725751cf7cd72`，開始時工作樹乾淨。擁有者要求深度盤點並實作缺漏的多語內容；範圍是本站既有繁體中文、英文、日文，不包含外站論文日報，也未授權 commit、push 或發布。
+
+盤點：五篇 HTML 筆記只有中文正文；路由、目錄與 Explorer 固定導向中文，摘要與互動結果仍有單語文字；dgxtop 專案頁缺日文。profile、三篇 posts、taxonomy 已有三語結構；三篇 posts 各語系均為 draft，本次保留既有發布狀態。先補全文、圖表／無障礙文字和互動文案，再串接三語路由、搜尋、metadata 與語言切換；保留原文、數字、URL、章節 ID 和原始驗證界線。
+
+分工：三個原生 worker 只在隔離暫存目錄草擬 downloader、privacy、hardware 的英日譯文；主 agent 是工作樹唯一整合者，負責醫學、專案、載入機制及驗證。翻譯以來源文字對照，建置時缺漏或陳舊對照直接失敗，禁止靜默退回中文。Context7 已核對 React Router prerender 與 loader 契約；不升級依賴。
+
+驗證計畫：既有 unit suite 沒有 coverage 門檻，與 browser suite 分開，沒有刪除測試的必要；使用現有 format、lint、typecheck、內容檢查、unit tests、production build。新增對照完整性、跳脫、三語路由與深連結回歸。依本次明示提供的 repository 規則，補上本機隔離 Chrome 的英日互動、搜尋、語言切換與既有寬度矩陣驗證；此規則優先於 Skill 的通用 browser opt-in 預設。完成後補實際命令與結果。
+
+實作盤點：
+
+| 內容 | 原狀態 | 本次結果 |
+|---|---|---|
+| 鎮痛藥指南、腦與中樞神經腫瘤 | 只有中文全文 | 每篇繁中、英文、日文全文 |
+| P2P Downloader、P2P 隱私研究 | 只有中文全文 | 每篇三語全文，包含原有契約／研究附錄 |
+| 140 mm 風扇評估 | 只有中文全文 | 三語正文、表格、圖表與互動訊息 |
+| dgxtop 架構與設計 | 繁中、英文 | 補齊日文正文、圖表、截圖說明與替代文字 |
+| profile、taxonomy、三篇 posts | 已有三語資料 | 保留資料；posts 的三語 draft 狀態不變 |
+
+五份 JSON 共 4,404 組 `source`／`en`／`ja` 對照；原 HTML 未變更。中文變更會觸發缺漏／陳舊對照檢查，原有英語說明另列明確對照。所有 15 份筆記版本的 ID、來源連結與 `data-*` 均由回歸測試逐項核對。目錄、Explorer、metadata、alternate links、語言切換、標籤與全站搜尋同步導向讀者選定的語言；沒有新增未發布文章。
+
+修正過程：初次 build 的 initial JS 超過既有 150 KiB 門檻，將含互動工具的筆記元件沿用專案頁模式分塊載入，build-time 先載入模組以保留完整靜態 HTML；未提高門檻。實際 Chrome 檢查發現英日 SVG 標籤超界及圖例重疊，已精簡圖內標籤且保留限定語意，新增 viewport、文字碰撞與流程方塊邊界檢查。dgxtop 的 bridge 原本就跨越時間桶，不能把時間桶誤當文字容器；此項以來源結構與截圖核對，方塊容納規則限定於網路流程圖。
+
+靜態與內容結果：`pnpm format:check`、`pnpm lint`、`pnpm typecheck` passed；`pnpm test` passed（18 files／141 tests）。最後 `pnpm build` passed：62 個 prerender routes、55 個 sitemap routes、212 個產物檔，initial JS gzip 145.1 KiB；內容完整性、local links、anchors、品牌資產與搜尋內容契約通過。建置顯示「Search index skipped」指沒有已發布 blog 文章可供 Pagefind 索引；全站搜尋的筆記索引仍正常產生並測試。
+
+瀏覽器環境：使用已安裝 Google Chrome 的隔離新 profile、保留 sandbox；只將這次 build/client 的 212 個一般檔案逐檔複製至任務暫存目錄，拒絕 symlink，另存 SHA-256 manifest，伺服器僅綁定 loopback。沒有操作日常瀏覽器、擴充套件、儲存資料或遠端網站。Context7 用於 React Router；後續文件查詢額度不足以完成 Playwright 解析加查詢，改查 [官方 CLI](https://playwright.dev/docs/test-cli) 與 [webServer](https://playwright.dev/docs/test-webserver) 文件，沒有安裝新的 lookup client。
+
+視覺證據：已人工檢視英日鎮痛藥頁首在 320／390／768／1280／1440／1920 px、英日 downloader／privacy／風扇頁首在 1440 px、英文 dgxtop 頁首的同一六寬度矩陣，以及英日 downloader 架構、風扇圖例與 dgxtop 履歷圖。首屏未見正文裁切或重疊；SVG 檢查另量測全部圖表文字。此證據不等於逐頁全文的人工視覺審查。翻譯依原稿保留劑量、否定、數據、日期及證據限制，經 agent 交叉抽查；沒有宣稱醫師或其他領域專家重新審查，也沒有更新原研究或價格。
+
+全站 browser 回歸：`pnpm exec playwright test` 使用上述隔離設定與 `--max-failures=3 --global-timeout=60000`，99 cases 中 98 passed、1 failed（50.8s）。失敗是無 JavaScript 醫學目錄的來源連結被 fixed 狀態列攔住；在醫學目錄連結加入使用既有 footer token 的 [scroll-margin-bottom](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-margin-bottom)，保留正常 click 與原本限制，並將同一案例擴為三語、確認目的標題進入 viewport。另補齊英文跨 inline 標籤接縫空格；沒有改動原中文 HTML、程式識別字或數據。
+
+最終影響範圍重測：`medical-notes.spec.ts` 與 `note-translations.spec.ts`，以 `--grep 'translated diagram labels|note tools|brain guide is accessible' --max-failures=1 --global-timeout=20000` 選取四個案例，4 passed（11.5s）。涵蓋英日互動、搜尋／無結果、輸入失敗、匯出、語言切換、無 JS 正文與三語來源跳轉、SVG 邊界／碰撞。加強目的地檢查時曾誤用 `#sources h2`，已依原稿實際 `h2#sources` 改正後重測。未把中斷案例當 pass，未再次整套重跑；原 98 個通過案例加上修正後定向結果是本次 evidence boundary。
+
+最後重新執行 format、lint、typecheck、141 unit tests 與 production build，全部 passed。全站搜尋檔有 54 個公開頁面版本，其中 15 份筆記（每語言 5 份）；文章仍為 draft，沒有 Pagefind 文章索引是預期狀態。五份原始 HTML 與 HEAD 逐 bytes 一致；本次維持原 500,000-byte JSON 檔案上限。README 與兩份更新文件共 31 個相對連結皆存在，`git diff --check` passed。截圖、測試 log、browser profile、build 產物均未加入版本控制。commit、push、release branch 與正式站均未變更。
+
+
+## 2026-10-11｜多語內容發布前核對
+
+擁有者後續明確授權「commit and merge to release and push」。Fetch 後 `main`、`origin/main`、`origin/release` 同為 `488ca2523cdadfd5c21dd2f1a3e725751cf7cd72`，沒有分歧，可採非強制 fast-forward。提交維持既有 DennySORA 身份與 OpenPGP 簽章設定；不改 Git 設定、workflow、依賴或 Pages 保護規則。
+
+重新核對 production artifact 的 212 個 SHA-256 均與上一節最終產物一致。為本次 publication 執行完整 Playwright suite（隔離 Chrome／產物設定，`--max-failures=1 --global-timeout=55000`），99／99 passed，39.8s；這是一次完整通過的批次，先前失敗與定向重測的歷史紀錄保留。既有 141 unit tests、format、lint、typecheck、production build 及已檢視的畫面證據對應同一產品來源；本節僅新增發布核對紀錄。
+
+唯讀 worker 核對提交範圍，確認沒有 browser profile、截圖、log 或 build 產物；release-only workflow 與環境保護未變。主 agent 保留唯一 Git 寫入權。Git fast-forward／atomic refs 契約由 Context7 核對；Actions 查詢使用已安裝 `gh` 的官方 help。下一個操作是提交已驗證來源、fast-forward release、atomic push main／release，再回讀遠端 HEAD 與該 commit 的 Actions build／deploy；此段不提前宣稱已推送或已部署。

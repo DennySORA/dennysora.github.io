@@ -21,6 +21,7 @@ import {
   projectPages,
 } from './project-pages.ts';
 import { addNoteTags } from './note-tags.server.ts';
+import { translateNote, type NoteTranslation } from './note-translations.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
@@ -267,13 +268,13 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'topic', locale, topicId });
     for (const tagId of tagsInLocale(locale))
       routes.push({ kind: 'tag', locale, tagId });
+    for (const noteId of medicalNoteIds)
+      routes.push({ kind: 'medical-note', locale, noteId });
+    for (const noteId of networkNoteIds)
+      routes.push({ kind: 'network-note', locale, noteId });
+    for (const noteId of hardwareNoteIds)
+      routes.push({ kind: 'hardware-note', locale, noteId });
   }
-  for (const noteId of medicalNoteIds)
-    routes.push({ kind: 'medical-note', locale: 'zh-hant', noteId });
-  for (const noteId of networkNoteIds)
-    routes.push({ kind: 'network-note', locale: 'zh-hant', noteId });
-  for (const noteId of hardwareNoteIds)
-    routes.push({ kind: 'hardware-note', locale: 'zh-hant', noteId });
   // A project page is published only in the languages it was written in.
   for (const projectId of projectPageIds)
     for (const locale of projectPages[projectId].editions)
@@ -385,6 +386,12 @@ export function validateContent(): void {
           `Unknown evidence ${evidence.kind}:${evidence.id} in ${competency.id}`,
         );
   loadComments();
+  // A route is publishable only when its complete translated body is loadable.
+  for (const locale of locales) {
+    for (const id of medicalNoteIds) loadMedicalNote(id, locale);
+    for (const id of networkNoteIds) loadNetworkNote(id, locale);
+    for (const id of hardwareNoteIds) loadHardwareNote(id, locale);
+  }
   const paths = publishedPaths();
   if (new Set(paths).size !== paths.length) problems.push('Duplicate route');
   if (problems.length)
@@ -392,7 +399,10 @@ export function validateContent(): void {
 }
 
 /** Reviewed, repository-owned static educational content; no executable markup. */
-export function loadMedicalNote(id: MedicalNoteId = 'analgesics'): string {
+export function loadMedicalNote(
+  id: MedicalNoteId = 'analgesics',
+  locale: Locale = 'zh-hant',
+): string {
   if (!medicalNoteIds.includes(id)) throw new Error('Unknown medical note');
   const path =
     id === 'analgesics'
@@ -405,11 +415,19 @@ export function loadMedicalNote(id: MedicalNoteId = 'analgesics'): string {
     )
   )
     throw new Error('Executable markup in medical note');
-  return addNoteTags(html, medicalNotes[id].tagIds, loadTaxonomy().tags);
+  return addNoteTags(
+    noteEdition(html, id, locale),
+    medicalNotes[id].tagIds,
+    loadTaxonomy().tags,
+    locale,
+  );
 }
 
 /** Only reviewed, repository-owned static fragments; never accepts a visitor path. */
-export function loadNetworkNote(id: NetworkNoteId): string {
+export function loadNetworkNote(
+  id: NetworkNoteId,
+  locale: Locale = 'zh-hant',
+): string {
   if (!networkNoteIds.includes(id)) throw new Error('Unknown network note');
   const html = readFileSync(join(contentRoot, `notes/${id}.html`), 'utf8');
   if (
@@ -418,11 +436,19 @@ export function loadNetworkNote(id: NetworkNoteId): string {
     )
   )
     throw new Error('Executable markup in network note');
-  return addNoteTags(html, networkNotes[id].tagIds, loadTaxonomy().tags);
+  return addNoteTags(
+    noteEdition(html, id, locale),
+    networkNotes[id].tagIds,
+    loadTaxonomy().tags,
+    locale,
+  );
 }
 
 /** A reviewed static fragment: inline SVG charts and tables, no scripts, styles or remote assets. */
-export function loadHardwareNote(id: HardwareNoteId): string {
+export function loadHardwareNote(
+  id: HardwareNoteId,
+  locale: Locale = 'zh-hant',
+): string {
   if (!hardwareNoteIds.includes(id)) throw new Error('Unknown hardware note');
   const html = readFileSync(
     join(
@@ -437,5 +463,19 @@ export function loadHardwareNote(id: HardwareNoteId): string {
     )
   )
     throw new Error('Executable or styled markup in hardware note');
-  return addNoteTags(html, hardwareNotes[id].tagIds, loadTaxonomy().tags);
+  return addNoteTags(
+    noteEdition(html, id, locale),
+    hardwareNotes[id].tagIds,
+    loadTaxonomy().tags,
+    locale,
+  );
+}
+
+function noteEdition(html: string, id: string, locale: Locale): string {
+  if (locale === 'zh-hant') return html;
+  const entries = json(join(contentRoot, `notes/translations/${id}.json`));
+  if (!Array.isArray(entries))
+    throw new Error(`Invalid note translations: ${id}`);
+  // translateNote checks every field, rejects duplicates and requires exact coverage.
+  return translateNote(html, entries as NoteTranslation[], locale);
 }

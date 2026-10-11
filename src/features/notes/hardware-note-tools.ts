@@ -1,10 +1,11 @@
+import type { Locale } from '../../i18n/index.ts';
+import { hardwareToolCopy } from './note-tool-copy.ts';
+
 // Progressive enhancement only: no requests, storage or telemetry. Every
 // number comes from the note's own static markup, which already shows the
 // default result when JavaScript is unavailable.
 
 type Point = [q: number, p: number];
-
-const yen = (value: number) => `¥${Math.round(value).toLocaleString('en-US')}`;
 
 /** Fan curve × square-law system curve, both in CFM and mmH₂O. */
 export function operatingPoint(points: Point[], dropAt40: number): Point {
@@ -49,7 +50,11 @@ export function quantityCost(
   };
 }
 
-export function enhanceHardwareNote(root: HTMLElement): () => void {
+export function enhanceHardwareNote(
+  root: HTMLElement,
+  locale: Locale = 'zh-hant',
+): () => void {
+  const t = hardwareToolCopy[locale];
   const abort = new AbortController();
   const { signal } = abort;
   const get = <T extends HTMLElement>(id: string) =>
@@ -94,12 +99,7 @@ export function enhanceHardwareNote(root: HTMLElement): () => void {
       if (fold) fold.hidden = !visible;
       if (visible) shown++;
     }
-    set(
-      'hw-catalog-count',
-      shown
-        ? `顯示 ${shown} / ${rows.length} 款。`
-        : `顯示 0 / ${rows.length} 款：沒有符合的型號，請放寬條件或重設。`,
-    );
+    set('hw-catalog-count', t.catalogCount(shown, rows.length));
   };
   const resetCatalog = () => {
     const query = get<HTMLInputElement>('hw-catalog-query');
@@ -158,7 +158,7 @@ export function enhanceHardwareNote(root: HTMLElement): () => void {
       set('hw-resistance-value', `${drop.toFixed(2)} mmH₂O`);
       set(
         'hw-wp-result',
-        `假設 40 CFM 時壓降 ${drop.toFixed(2)} mmH₂O：工作點約 ${q.toFixed(1)} CFM、${p.toFixed(2)} mmH₂O。`,
+        t.operatingPoint(drop.toFixed(2), q.toFixed(1), p.toFixed(2)),
       );
     };
     listen('hw-resistance', 'input', draw);
@@ -179,14 +179,11 @@ export function enhanceHardwareNote(root: HTMLElement): () => void {
     const quote = () => {
       const count = Number(get<HTMLInputElement>('hw-fan-count')?.value);
       if (!Number.isInteger(count) || count < 1 || count > 20) {
-        set('hw-qty-result', '請輸入 1–20 的整數顆數。');
+        set('hw-qty-result', t.invalidQuantity);
         return;
       }
       const cost = quantityCost(count, offer);
-      set(
-        'hw-qty-result',
-        `P14 Pro PST ${count} 顆：Bic ${yen(cost.bic)}；Tsukumo ${yen(cost.tsukumo)}（含運），${cost.bic <= cost.tsukumo ? 'Bic' : 'Tsukumo'} 較便宜。NF-A14x25 G2 棕色 ${count} 顆：${yen(cost.g2)}。`,
-      );
+      set('hw-qty-result', t.quantity(count, cost.bic, cost.tsukumo, cost.g2));
     };
     listen('hw-fan-count', 'input', quote);
     quote();

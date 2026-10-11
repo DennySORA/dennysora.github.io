@@ -7,7 +7,7 @@ import { searchCopy } from '../../src/features/search/search-copy.ts';
 import { origin } from './helpers.ts';
 
 for (const locale of locales) {
-  test(`${locale} global search finds real notes and opens their source edition`, async ({
+  test(`${locale} global search finds real notes and opens the selected language edition`, async ({
     page,
   }) => {
     const t = searchCopy[locale];
@@ -19,16 +19,16 @@ for (const locale of locales) {
     await input.fill('DAITA');
     await input.press('Enter');
     await expect(input).toBeFocused();
-    const result = page
-      .locator('.site-search-results li')
-      .filter({ hasText: 'P2P 匿名性' });
+    const result = page.locator('.site-search-results li').filter({
+      has: page.locator(`a[href="/${locale}/note/network/p2p-privacy/"]`),
+    });
     await expect(result).toBeVisible();
     await expect(result.locator('a')).toHaveAttribute(
       'href',
-      '/zh-hant/note/network/p2p-privacy/',
+      `/${locale}/note/network/p2p-privacy/`,
     );
     await expect(result.locator('.site-search-meta')).toContainText(t.note);
-    if (locale !== 'zh-hant') await expect(result).toContainText(t.fallback);
+    await expect(result).not.toContainText(t.fallback);
     await result.locator('a').click();
     await expect(page.locator('#network-title')).toBeVisible();
   });
@@ -75,7 +75,7 @@ test('search loading failure is retryable without losing the query', async ({
   // Folder pages that list the note match too; the note's own result is the target.
   await expect(
     page.locator('.site-search-results li').filter({
-      has: page.locator('a[href="/zh-hant/note/medical/drugs/analgesics/"]'),
+      has: page.locator('a[href="/en/note/medical/drugs/analgesics/"]'),
     }),
   ).toBeVisible();
   await expect(page.getByRole('searchbox')).toHaveValue('Ibuprofen');
@@ -93,7 +93,8 @@ test('search has useful no-JavaScript navigation and an index with note body con
     text: string;
   }[];
   expect(index.filter((entry) => entry.kind === 'note')).toHaveLength(
-    medicalNoteIds.length + networkNoteIds.length + hardwareNoteIds.length,
+    (medicalNoteIds.length + networkNoteIds.length + hardwareNoteIds.length) *
+      locales.length,
   );
   expect(
     index.find((entry) => entry.href.endsWith('/p2p-privacy/'))?.text,
@@ -105,7 +106,11 @@ test('search has useful no-JavaScript navigation and an index with note body con
       .filter((entry) => entry.href.endsWith('/projects/tools/dgxtop/'))
       .map((entry) => entry.href)
       .sort(),
-  ).toEqual(['/en/projects/tools/dgxtop/', '/zh-hant/projects/tools/dgxtop/']);
+  ).toEqual([
+    '/en/projects/tools/dgxtop/',
+    '/ja/projects/tools/dgxtop/',
+    '/zh-hant/projects/tools/dgxtop/',
+  ]);
   expect(
     index.find((entry) => entry.href === '/en/projects/tools/dgxtop/')?.text,
   ).toContain('source conflict');
@@ -134,7 +139,7 @@ test('static search pages and full-text note index are served from the productio
   const documents = (await response.json()) as Parameters<typeof searchSite>[0];
   expect(
     searchSite(documents, 'ngosang', 'note', 'en').map((item) => item.href),
-  ).toContain('/zh-hant/note/network/p2p-downloader/');
+  ).toContain('/en/note/network/p2p-downloader/');
   for (const locale of locales) {
     const page = await request.get(`/${locale}/search/`);
     expect(page.status()).toBe(200);

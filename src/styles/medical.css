@@ -111,6 +111,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 36px;
+  scroll-margin-bottom: calc(var(--footer-height) + var(--space-4));
   text-decoration: none;
 }
 

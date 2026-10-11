@@ -26,7 +26,7 @@ import { crumbs, filePath, fileKind } from '../../src/lib/workspace.ts';
 const notePath = '/zh-hant/note/hardware/computer/140mm-case-fans/';
 
 describe('hardware notes', () => {
-  it('files the fan note under Hardware / Computers in its source language only', () => {
+  it('files the fan note under Hardware / Computers in all three languages', () => {
     const route = {
       kind: 'hardware-note',
       locale: 'zh-hant',
@@ -45,7 +45,10 @@ describe('hardware notes', () => {
       '140mm-case-fans.md',
     ]);
     for (const locale of ['en', 'ja'])
-      expect(parseRoute(notePath.replace('zh-hant', locale))).toBeNull();
+      expect(parseRoute(notePath.replace('zh-hant', locale))).toEqual({
+        ...route,
+        locale,
+      });
     expect(parseRoute('/zh-hant/note/hardware/phones/')).toBeNull();
     expect(
       parseRoute('/zh-hant/note/hardware/computer/unknown-note/'),
@@ -64,6 +67,8 @@ describe('hardware notes', () => {
     expect(data.view.kind).toBe('hardware-note');
     expect(data.languageLinks.filter((link) => link.href)).toEqual([
       { locale: 'zh-hant', href: notePath },
+      { locale: 'en', href: notePath.replace('zh-hant', 'en') },
+      { locale: 'ja', href: notePath.replace('zh-hant', 'ja') },
     ]);
   });
 
@@ -141,7 +146,7 @@ describe('hardware notes', () => {
     );
     expect(all).toContain('href="/en/note/hardware/"');
     expect(all).toContain('/assets/illustrations/collection-hardware-v1.webp');
-    expect(all).toContain(`href="${notePath}"`);
+    expect(all).toContain(`href="${notePath.replace('zh-hant', 'en')}"`);
     const category = renderToStaticMarkup(
       createElement(Notes, {
         locale: 'ja',

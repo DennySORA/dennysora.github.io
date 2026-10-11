@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { trackExternalRequests } from './helpers.ts';
 
 const brain = '/zh-hant/note/medical/pathology/brain-cns-tumors/';
-test('medical categories, original URL and source-only guide remain navigable', async ({
+test('medical categories, original URL and translated guide remain navigable', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
@@ -27,9 +27,9 @@ test('medical categories, original URL and source-only guide remain navigable', 
     .getByRole('link', { name: '症狀與警訊' })
     .click();
   await expect(page).toHaveURL(/#symptoms$/);
-  await expect(page.locator('a[hreflang="en"][rel="alternate"]')).toHaveCount(
-    0,
-  );
+  await expect(
+    page.locator('link[hreflang="en"][rel="alternate"]'),
+  ).toHaveCount(1);
   await page.goto('/zh-hant/note/medical/analgesics/#mechanism');
   await expect(page).toHaveURL(/\/medical\/drugs\/analgesics\/#mechanism$/);
   await expect(page.locator('#medical-title')).toContainText('止痛藥指南');
@@ -70,13 +70,16 @@ test('brain guide is accessible, responsive and readable without JavaScript', as
     'https://dennysora.me/zh-hant/note/medical/drugs/analgesics/',
   );
   await expect(staticPage.locator('meta[http-equiv="refresh"]')).toHaveCount(0);
-  await staticPage.goto(brain);
-  await expect(staticPage.locator('#medical-title')).toBeVisible();
-  await staticPage
-    .locator('.medical-toc')
-    .getByRole('link', { name: '來源', exact: true })
-    .click();
-  await expect(staticPage).toHaveURL(/#sources$/);
-  await expect(staticPage.locator('#sources')).toBeVisible();
+  for (const locale of ['zh-hant', 'en', 'ja']) {
+    await staticPage.goto(brain.replace('/zh-hant/', `/${locale}/`));
+    await expect(staticPage.locator('#medical-title')).toBeVisible();
+    const sources = staticPage.locator('.medical-toc a[href="#sources"]');
+    await sources.click();
+    await expect(staticPage).toHaveURL(/#sources$/);
+    await expect(staticPage.locator('#sources')).toBeInViewport();
+    await staticPage.screenshot({
+      path: testInfo.outputPath(`${locale}-brain-sources-nojs.png`),
+    });
+  }
   await context.close();
 });

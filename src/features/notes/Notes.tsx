@@ -4,7 +4,7 @@ import {
   type CollectionFile,
 } from '../../components/Collection.tsx';
 import type { IconName } from '../../components/Icon.tsx';
-import type { Locale } from '../../i18n/index.ts';
+import { htmlLang, type Locale } from '../../i18n/index.ts';
 import {
   networkCopy,
   networkNoteIds,
@@ -34,11 +34,10 @@ export type NotesView =
   | { collection: 'medical'; category?: MedicalCategory }
   | { collection: 'hardware'; category?: HardwareCategory };
 
-// Notes are written in Traditional Chinese; every file is titled in it.
 type NoteFile = Omit<CollectionFile, 'lang'>;
-const noteFile = (file: NoteFile): CollectionFile => ({
+const noteFile = (file: NoteFile, locale: Locale): CollectionFile => ({
   ...file,
-  lang: 'zh-Hant',
+  lang: htmlLang[locale],
 });
 
 /** A collection split into category folders, each listing its own notes. */
@@ -69,9 +68,9 @@ function grouped(locale: Locale, collection: 'medical' | 'hardware'): Grouped {
       })),
       notes: medicalNoteIds.map((id) => ({
         category: medicalNotes[id].category,
-        href: medicalNotePath(id),
+        href: medicalNotePath(id, locale),
         name: `${id}.md`,
-        title: medicalNotes[id].title['zh-hant'],
+        title: medicalNotes[id].title[locale],
       })),
     };
   }
@@ -89,9 +88,9 @@ function grouped(locale: Locale, collection: 'medical' | 'hardware'): Grouped {
     })),
     notes: hardwareNoteIds.map((id) => ({
       category: hardwareNotes[id].category,
-      href: hardwareNotePath(id),
+      href: hardwareNotePath(id, locale),
       name: `${id}.md`,
-      title: hardwareNotes[id].title['zh-hant'],
+      title: hardwareNotes[id].title[locale],
     })),
   };
 }
@@ -122,7 +121,7 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
                 title={folder.title}
                 count={t.count(files.length)}
                 intro={folder.intro}
-                files={files.map(noteFile)}
+                files={files.map((file) => noteFile(file, locale))}
                 available={group.available}
               />
             );
@@ -147,11 +146,14 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
           count={t.count(networkNoteIds.length)}
           intro={network.intro}
           files={networkNoteIds.map((id) =>
-            noteFile({
-              href: `/zh-hant/note/network/${id}/`,
-              name: `${id}.md`,
-              title: networkNotes[id].title,
-            }),
+            noteFile(
+              {
+                href: `/${locale}/note/network/${id}/`,
+                name: `${id}.md`,
+                title: networkNotes[id].title[locale],
+              },
+              locale,
+            ),
           )}
           available={network.available}
         />
@@ -165,7 +167,7 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
               title={group.title}
               count={t.count(group.notes.length)}
               intro={group.intro}
-              files={group.notes.map(noteFile)}
+              files={group.notes.map((file) => noteFile(file, locale))}
               available={group.available}
             />
           );

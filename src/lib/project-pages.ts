@@ -18,18 +18,20 @@ export type ProjectShot = {
 export const projectPages = {
   dgxtop: {
     category: 'tools',
-    editions: ['zh-hant', 'en'],
+    editions: ['zh-hant', 'en', 'ja'],
     tagIds: ['architecture', 'rust', 'gpu', 'system-monitoring'],
     repository: 'https://github.com/DennySORA/dgxtop',
     updatedAt: '2026-10-11',
     title: {
       'zh-hant': 'dgxtop：設計一個不顯示假 0 的 GPU 終端監控工具',
       en: 'dgxtop: designing a GPU terminal monitor that never shows a fake zero',
+      ja: 'dgxtop：偽のゼロを表示しない GPU ターミナルモニターの設計',
     },
     description: {
       'zh-hant':
         '給 NVIDIA DGX Spark 與 GPU Linux 主機的 Rust 終端監控工具。六個元件、兩條路徑、單一寫入者：隔離的 adapter host、可解釋的來源仲裁、精確歷史與受保護的程序終止，以及每個取捨背後的理由。',
       en: 'A Rust terminal monitor for NVIDIA DGX Spark and GPU Linux hosts. Six components, two paths and one writer: isolated adapter hosts, explainable source arbitration, exact history and protected process termination, with the reasons behind each trade-off.',
+      ja: 'NVIDIA DGX Spark と GPU 搭載 Linux ホスト向けの Rust 製ターミナルモニター。6 つのコンポーネント、2 つの経路、単一の書き込み主体。隔離された adapter host、説明可能なデータソース選択、正確な履歴と保護されたプロセス終了、そして各設計判断の理由を紹介します。',
     },
     shots: [
       { file: 'dgx-spark-overview.webp', width: 1909, height: 961 },
@@ -58,10 +60,7 @@ export const projectPages = {
 export type ProjectEdition =
   (typeof projectPages)[ProjectPageId]['editions'][number];
 
-export function hasProjectEdition(
-  id: ProjectPageId,
-  locale: Locale,
-): locale is ProjectEdition {
+export function hasProjectEdition(id: ProjectPageId, locale: Locale): boolean {
   return (projectPages[id].editions as readonly Locale[]).includes(locale);
 }
 

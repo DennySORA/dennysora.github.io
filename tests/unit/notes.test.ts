@@ -14,13 +14,17 @@ import { filePath } from '../../src/lib/workspace.ts';
 
 const path = '/zh-hant/note/medical/drugs/analgesics/';
 describe('medical notes', () => {
-  it('publishes the supplied Chinese edition outside the empty blog', () => {
+  it('publishes all medical editions outside the empty blog', () => {
     expect(parseRoute(path)).toEqual({
       kind: 'medical-note',
       locale: 'zh-hant',
       noteId: 'analgesics',
     });
-    expect(parseRoute('/en/note/medical/drugs/analgesics/')).toBeNull();
+    expect(parseRoute('/en/note/medical/drugs/analgesics/')).toEqual({
+      kind: 'medical-note',
+      locale: 'en',
+      noteId: 'analgesics',
+    });
     expect(routePath({ kind: 'notes', locale: 'en' })).toBe('/en/note/');
     expect(
       filePath({
@@ -36,6 +40,8 @@ describe('medical notes', () => {
     expect(data.view.kind).toBe('medical-note');
     expect(data.languageLinks.filter((link) => link.href)).toEqual([
       { locale: 'zh-hant', href: path },
+      { locale: 'en', href: path.replace('zh-hant', 'en') },
+      { locale: 'ja', href: path.replace('zh-hant', 'ja') },
     ]);
   });
   it('retains reference content with no executable markup or fake risk scales', () => {
@@ -50,7 +56,7 @@ describe('medical notes', () => {
 });
 
 describe('medical categories and brain tumor guide', () => {
-  it('publishes each note in exactly its category and only its source language', () => {
+  it('publishes each note in exactly its category in all three languages', () => {
     const brainPath = '/zh-hant/note/medical/pathology/brain-cns-tumors/';
     const route = {
       kind: 'medical-note',
@@ -62,7 +68,10 @@ describe('medical categories and brain tumor guide', () => {
     expect(filePath(route)).toBe('note/medical/pathology/brain-cns-tumors.md');
     expect(publishedPaths()).toContain(brainPath.slice(0, -1));
     for (const locale of ['en', 'ja'])
-      expect(parseRoute(brainPath.replace('zh-hant', locale))).toBeNull();
+      expect(parseRoute(brainPath.replace('zh-hant', locale))).toEqual({
+        ...route,
+        locale,
+      });
     expect(parseRoute(brainPath.replace('pathology', 'drugs'))).toBeNull();
     expect(parseRoute(brainPath.replace('pathology', 'knowledge'))).toBeNull();
     expect(parseRoute('/zh-hant/note/medical/analgesics/')).toBeNull();
@@ -80,6 +89,8 @@ describe('medical categories and brain tumor guide', () => {
     expect(data.view.kind).toBe('medical-note');
     expect(data.languageLinks.filter((link) => link.href)).toEqual([
       { locale: 'zh-hant', href: brainPath },
+      { locale: 'en', href: brainPath.replace('zh-hant', 'en') },
+      { locale: 'ja', href: brainPath.replace('zh-hant', 'ja') },
     ]);
   });
 

@@ -204,10 +204,13 @@ export function Explorer({
                 {networkNoteIds.map((id) => (
                   <li key={id}>
                     <TreeLink
-                      href={`/zh-hant/note/network/${id}/`}
+                      href={`/${locale}/note/network/${id}/`}
                       kind="markdown"
                       name={`${id}.md`}
-                      note={{ text: networkNotes[id].title, visible: false }}
+                      note={{
+                        text: networkNotes[id].title[locale],
+                        visible: false,
+                      }}
                       current={page(
                         route.kind === 'network-note' && route.noteId === id,
                       )}
@@ -247,7 +250,7 @@ export function Explorer({
                         .map((id) => (
                           <li key={id}>
                             <TreeLink
-                              href={medicalNotePath(id)}
+                              href={medicalNotePath(id, locale)}
                               kind="markdown"
                               name={`${id}.md`}
                               note={{
@@ -297,7 +300,7 @@ export function Explorer({
                         .map((id) => (
                           <li key={id}>
                             <TreeLink
-                              href={hardwareNotePath(id)}
+                              href={hardwareNotePath(id, locale)}
                               kind="markdown"
                               name={`${id}.md`}
                               note={{

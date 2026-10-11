@@ -11,7 +11,7 @@ import {
   sectionIds,
   shotFiles,
 } from '../../src/features/projects/dgxtop/copy.tsx';
-import { dictionaries, locales } from '../../src/i18n/index.ts';
+import { locales } from '../../src/i18n/index.ts';
 import {
   loadTaxonomy,
   publishedPaths,
@@ -62,21 +62,18 @@ describe('projects routes', () => {
   });
 
   it('publishes a project page only in the languages it was written in', () => {
-    expect(projectPages.dgxtop.editions).toEqual(['zh-hant', 'en']);
-    for (const locale of ['zh-hant', 'en'] as const) {
+    expect(projectPages.dgxtop.editions).toEqual(locales);
+    for (const locale of locales) {
       const route = { kind: 'project', locale, projectId: 'dgxtop' } as const;
       expect(routePath(route)).toBe(`/${locale}/projects/tools/dgxtop/`);
       expect(parseRoute(routePath(route))).toEqual(route);
       expect(publishedPaths()).toContain(`/${locale}/projects/tools/dgxtop`);
       expect(filePath(route)).toBe('projects/tools/dgxtop.md');
     }
-    expect(parseRoute('/ja/projects/tools/dgxtop/')).toBeNull();
-    expect(publishedPaths()).not.toContain('/ja/projects/tools/dgxtop');
   });
 
   it('answers unknown, misplaced and removed project paths with a real 404', () => {
     for (const path of [
-      '/ja/projects/tools/dgxtop/',
       '/en/projects/dgxtop/',
       '/en/projects/apps/',
       '/en/projects/tools/unknown/',
@@ -99,17 +96,19 @@ describe('projects routes', () => {
 });
 
 describe('project editions and links', () => {
-  it('sends each reader to their edition, else English', () => {
+  it('sends each reader to their translated edition', () => {
     expect(projectEdition('dgxtop', 'zh-hant')).toBe('zh-hant');
     expect(projectEdition('dgxtop', 'en')).toBe('en');
-    expect(projectEdition('dgxtop', 'ja')).toBe('en');
-    expect(projectPagePath('dgxtop', 'ja')).toBe('/en/projects/tools/dgxtop/');
+    expect(projectEdition('dgxtop', 'ja')).toBe('ja');
+    expect(projectPagePath('dgxtop', 'ja')).toBe('/ja/projects/tools/dgxtop/');
   });
 
-  it('states a missing translation instead of inventing one', () => {
-    expect(projectEditionsLabel('dgxtop', 'en')).toBe('繁體中文 · English');
+  it('lists all available translations', () => {
+    expect(projectEditionsLabel('dgxtop', 'en')).toBe(
+      '繁體中文 · English · 日本語',
+    );
     expect(projectEditionsLabel('dgxtop', 'ja')).toBe(
-      `繁體中文 · English · ${dictionaries.ja.unavailableTranslation}`,
+      '繁體中文 · English · 日本語',
     );
   });
 
@@ -118,7 +117,7 @@ describe('project editions and links', () => {
     expect(data.languageLinks).toEqual([
       { locale: 'zh-hant', href: '/zh-hant/projects/tools/dgxtop/' },
       { locale: 'en', href: '/en/projects/tools/dgxtop/' },
-      { locale: 'ja', href: null },
+      { locale: 'ja', href: '/ja/projects/tools/dgxtop/' },
     ]);
     expect(data.indexable).toBe(true);
     expect(data.title).toBe(`${projectPages.dgxtop.title.en} — DennySORA`);
@@ -156,15 +155,15 @@ describe('project folders and explorer', () => {
     const html = renderToStaticMarkup(
       createElement(Projects, { locale: 'ja', category: 'tools' }),
     );
-    expect(html).toContain('hrefLang="en"');
+    expect(html).toContain('hrefLang="ja"');
     expect(html).toContain(
-      `<span class="collection-file-title" lang="en">${projectPages.dgxtop.title.en}</span>`,
+      `<span class="collection-file-title" lang="ja">${projectPages.dgxtop.title.ja}</span>`,
     );
   });
 });
 
 describe('dgxtop page', () => {
-  for (const locale of ['zh-hant', 'en'] as const) {
+  for (const locale of locales) {
     it(`${locale} renders every section, diagram, screenshot and tag`, () => {
       const data = load(`/${locale}/projects/tools/dgxtop/`);
       if (data.view.kind !== 'project') throw new Error('Expected a project');

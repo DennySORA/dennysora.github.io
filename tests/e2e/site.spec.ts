@@ -336,7 +336,7 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   expect(sitemap).toContain(
     'https://dennysora.me/zh-hant/projects/tools/dgxtop/',
   );
-  expect(sitemap).not.toContain('/ja/projects/tools/dgxtop/');
+  expect(sitemap).toContain('https://dennysora.me/ja/projects/tools/dgxtop/');
   expect(sitemap).not.toContain('/projects/dgxtop/');
   expect(sitemap).not.toContain('/privacy/');
   expect(sitemap).not.toContain('/blog/engineering-principles/');
@@ -405,9 +405,7 @@ test('desktop Explorer remains visible and usable without JavaScript', async ({
     .locator('#desktop-explorer')
     .getByRole('link', { name: /analgesics\.md/ })
     .click();
-  await expect(page).toHaveURL(
-    `${origin}/zh-hant/note/medical/drugs/analgesics/`,
-  );
-  await expect(page.locator('h1')).toContainText('止痛藥指南');
+  await expect(page).toHaveURL(`${origin}/en/note/medical/drugs/analgesics/`);
+  await expect(page.locator('h1')).toContainText('Pain medicine guide');
   await context.close();
 });

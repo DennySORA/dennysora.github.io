@@ -44,9 +44,8 @@ import { MedicalNote } from '../features/notes/MedicalNote.tsx';
 import { medicalCategoryCopy, medicalNotes } from '../lib/medical-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { NetworkNotes } from '../features/notes/NetworkNotes.tsx';
-import { NetworkNote } from '../features/notes/NetworkNote.tsx';
+import { loadNotePageModule } from '../features/notes/note-page-module.ts';
 import { networkCopy, networkNotes } from '../lib/network-notes.ts';
-import { HardwareNote } from '../features/notes/HardwareNote.tsx';
 import {
   hardwareCategoryCopy,
   hardwareCopy,
@@ -71,6 +70,19 @@ function ProjectPageChunk(
 ) {
   const { ProjectPage } = use(loadProjectPageModule());
   return <ProjectPage {...props} />;
+}
+
+function NotePageChunk(props: {
+  kind: 'hardware-note' | 'network-note';
+  html: string;
+  locale: Locale;
+}) {
+  const { HardwareNote, NetworkNote } = use(loadNotePageModule());
+  return props.kind === 'hardware-note' ? (
+    <HardwareNote html={props.html} locale={props.locale} />
+  ) : (
+    <NetworkNote html={props.html} locale={props.locale} />
+  );
 }
 
 function notFound(): never {
@@ -253,19 +265,19 @@ function loadView(route: RouteDescriptor) {
       return {
         kind: 'network-note' as const,
         noteId: route.noteId,
-        html: loadNetworkNote(route.noteId),
+        html: loadNetworkNote(route.noteId, locale),
       };
     case 'medical-note':
       return {
         kind: 'medical-note' as const,
         noteId: route.noteId,
-        html: loadMedicalNote(route.noteId),
+        html: loadMedicalNote(route.noteId, locale),
       };
     case 'hardware-note':
       return {
         kind: 'hardware-note' as const,
         noteId: route.noteId,
-        html: loadHardwareNote(route.noteId),
+        html: loadHardwareNote(route.noteId, locale),
       };
     case 'projects':
       return { kind: 'projects' as const };
@@ -287,10 +299,6 @@ export type ViewData = ReturnType<typeof loadView>;
 
 function availableLocales(route: RouteDescriptor): Locale[] {
   switch (route.kind) {
-    case 'medical-note':
-    case 'network-note':
-    case 'hardware-note':
-      return ['zh-hant'];
     case 'project':
       return [...projectPages[route.projectId].editions];
     case 'article': {
@@ -359,7 +367,7 @@ function describe(view: ViewData, locale: Locale) {
         ),
         description:
           view.kind === 'medical-note'
-            ? medicalNotes[view.noteId].description
+            ? medicalNotes[view.noteId].description[locale]
             : noteCopy[locale].intro,
       };
     case 'medical-category':
@@ -378,8 +386,8 @@ function describe(view: ViewData, locale: Locale) {
       };
     case 'network-note':
       return {
-        title: withSite(networkNotes[view.noteId].title),
-        description: networkNotes[view.noteId].description,
+        title: withSite(networkNotes[view.noteId].title[locale]),
+        description: networkNotes[view.noteId].description[locale],
       };
     case 'hardware':
       return {
@@ -398,7 +406,7 @@ function describe(view: ViewData, locale: Locale) {
     case 'hardware-note':
       return {
         title: withSite(hardwareNotes[view.noteId].title[locale]),
-        description: hardwareNotes[view.noteId].description,
+        description: hardwareNotes[view.noteId].description[locale],
       };
     case 'projects':
       return {
@@ -623,7 +631,12 @@ function View({ data }: { data: PageData }) {
         />
       );
     case 'hardware-note':
-      return <HardwareNote html={view.html} />;
+    case 'network-note':
+      return (
+        <Suspense fallback={null}>
+          <NotePageChunk kind={view.kind} html={view.html} locale={locale} />
+        </Suspense>
+      );
     case 'medical-note':
       return (
         <MedicalNote
@@ -634,8 +647,6 @@ function View({ data }: { data: PageData }) {
       );
     case 'network':
       return <NetworkNotes locale={locale} />;
-    case 'network-note':
-      return <NetworkNote html={view.html} />;
     case 'projects':
       return <Projects locale={locale} />;
     case 'project-category':

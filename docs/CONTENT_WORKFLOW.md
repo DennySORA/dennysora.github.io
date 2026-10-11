@@ -55,7 +55,9 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 - 電腦：`/zh-hant/note/hardware/computer/140mm-case-fans/`，原文位於 `content/notes/hardware/computer/140mm-case-fans.html`。內容是由研究報告重整的 140 mm 風扇評估與前 10 推薦，並在 2026-10-10 逐項回查來源；正文的「核對紀錄」列出與原報告的差異。
 
-分類入口及標籤名稱支援三語；筆記仍只有已提供的繁體中文原文。新增譯文之前，不建立不存在的英、日文筆記網址。醫學筆記需保留教育用途聲明、可核對來源、統計適用範圍與推論限制。
+五篇筆記均提供繁體中文、英文、日文全文，路徑使用 `/{locale}/note/…`；目錄、Explorer、標題摘要、標籤、互動結果及搜尋皆依目前語言呈現。中文 HTML 仍是結構與資料的來源；[`content/notes/translations/`](../content/notes/translations/) 每篇 JSON 逐段保存 `source`、`en`、`ja`，包含正文、表格、SVG 文字、無障礙標籤、程式註解及契約附錄中的說明文字。程式識別字、數值、連結、DOM ID 與 `data-*` 不隨翻譯改寫。截圖保留真實畫面，不假造已本地化的軟體。
+
+[`note-translations.ts`](../src/lib/note-translations.ts) 在建置時只替換文字並進行 HTML 跳脫；缺漏、空值、重複或不再對應原文的譯文會讓 `content:check` 失敗，不靜默回退中文。新增或修改中文段落時，必須同步維護英日對照；原稿已有的英文節標、圖表標籤與說明也明確列入對照，`en` 保留原文、`ja` 翻譯，新增英文說明時同樣需要人工盤點；`pre` 區塊依行比對，保留縮排與非翻譯程式內容。所有原有章節錨點和來源 URL 都保持一致。翻譯不代表重新執行實驗、刷新價格或取得人工專業審查；醫學筆記保留教育用途聲明、適應症與劑量條件、可核對來源、統計範圍及推論限制。
 
 硬體筆記的圖表是內嵌 SVG，只用 `src/styles/hardware-notes.css` 的 class 取 token 色，不寫 `style`、字面色碼或 script；每張圖都要有可展開或並列的資料表。載入器拒絕 script、style、img、`src`／`style` 屬性等標記。互動工具（型號篩選、工作點滑桿、數量試算）由 `src/features/notes/hardware-note-tools.ts` 在本機重算，靜態 HTML 先寫好預設結果，沒有 JavaScript 時仍可讀；工具用到的報價放在 `data-*` 屬性，改價格時只改內容檔。性能數字分平台標示（Cybenetics、Tweakers、HWCooling 不混用絕對值），價格與庫存註明觀測日。
 
@@ -98,7 +100,7 @@ gh api graphql \
 
 `content/projects/projects.json` 保留首頁能力證據所使用的真實 repository 連結。2026-10-03 依擁有者指示移除 Projects 清單、專案詳情與 Privacy 頁，舊網址回傳 404，不再進入 sitemap 或導覽。首頁另移除作品、探索、工程之外、完整紀錄及最後聯絡區塊。
 
-2026-10-11 依擁有者指示新增「專案／工具」：`/{locale}/projects/` 與分類資料夾 `/{locale}/projects/tools/` 三語都有；專案頁只在實際撰寫的語言發布。目前是 dgxtop 的架構與設計說明（繁體中文與英文：`/zh-hant/projects/tools/dgxtop/`、`/en/projects/tools/dgxtop/`），日文資料夾明示沒有日文版並連到英文版。舊的扁平網址 `/<locale>/projects/dgxtop/` 與 Privacy 仍回傳 404。
+2026-10-11 依擁有者指示新增「專案／工具」：`/{locale}/projects/` 與分類資料夾 `/{locale}/projects/tools/` 三語都有；專案頁只在實際撰寫的語言發布。目前 dgxtop 的架構與設計說明已具備繁體中文、英文、日文全文：`/zh-hant/projects/tools/dgxtop/`、`/en/projects/tools/dgxtop/`、`/ja/projects/tools/dgxtop/`。三語都包含圖表文字、表格、截圖說明及替代文字，原有截圖保持不變。舊的扁平網址 `/<locale>/projects/dgxtop/` 與 Privacy 仍回傳 404。
 
 新增專案頁的方式：
 

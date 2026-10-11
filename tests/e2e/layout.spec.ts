@@ -114,7 +114,7 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
   ).toHaveAttribute('aria-current', 'page');
   await expect(
     dialog.getByRole('link', { name: /analgesics\.md/ }),
-  ).toHaveAttribute('href', '/zh-hant/note/medical/drugs/analgesics/');
+  ).toHaveAttribute('href', '/ja/note/medical/drugs/analgesics/');
   await expect(
     dialog.locator('a[href*="/blog/"][href$="-principles/"]'),
   ).toHaveCount(0);

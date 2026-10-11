@@ -13,8 +13,12 @@ export const medicalNotes = {
       en: 'Pain medicine guide: types, effects and precautions',
       ja: '鎮痛薬ガイド：種類・作用・使用上の注意',
     },
-    description:
-      'Loxoprofen、Ibuprofen 與 Acetaminophen 的藥理、安全性與證據來源。',
+    description: {
+      'zh-hant':
+        'Loxoprofen、Ibuprofen 與 Acetaminophen 的藥理、安全性與證據來源。',
+      en: 'Pharmacology, safety and evidence sources for loxoprofen, ibuprofen and acetaminophen.',
+      ja: 'ロキソプロフェン、イブプロフェン、アセトアミノフェンの薬理、安全性、根拠となる資料。',
+    },
   },
   'brain-cns-tumors': {
     category: 'pathology',
@@ -24,8 +28,12 @@ export const medicalNotes = {
       en: 'Brain and CNS tumors: classification and an introduction to gliomas',
       ja: '脳・中枢神経系腫瘍：分類とグリオーマ入門',
     },
-    description:
-      '原發性與轉移性腫瘤、WHO 分類、膠質瘤、分子標記及診斷流程的教育筆記。',
+    description: {
+      'zh-hant':
+        '原發性與轉移性腫瘤、WHO 分類、膠質瘤、分子標記及診斷流程的教育筆記。',
+      en: 'Educational notes on primary and metastatic tumors, WHO classification, gliomas, molecular markers and the diagnostic process.',
+      ja: '原発性・転移性腫瘍、WHO 分類、グリオーマ、分子マーカー、診断の流れを学ぶためのノート。',
+    },
   },
 } as const satisfies Record<
   MedicalNoteId,
@@ -33,7 +41,7 @@ export const medicalNotes = {
     category: MedicalCategory;
     tagIds: readonly string[];
     title: Record<Locale, string>;
-    description: string;
+    description: Record<Locale, string>;
   }
 >;
 export const medicalCategoryCopy: Record<
@@ -72,6 +80,9 @@ export const medicalCategoryCopy: Record<
     },
   },
 };
-export function medicalNotePath(id: MedicalNoteId): string {
-  return `/zh-hant/note/medical/${medicalNotes[id].category}/${id}/`;
+export function medicalNotePath(
+  id: MedicalNoteId,
+  locale: Locale = 'zh-hant',
+): string {
+  return `/${locale}/note/medical/${medicalNotes[id].category}/${id}/`;
 }

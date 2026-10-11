@@ -1,6 +1,7 @@
 import { renderToReadableStream } from 'react-dom/server';
 import { ServerRouter, type EntryContext } from 'react-router';
 import { loadProjectPageModule } from './features/projects/project-page-module.ts';
+import { loadNotePageModule } from './features/notes/note-page-module.ts';
 
 // Build-time HTML rendering only. No server entry is included in the Pages artifact.
 export default async function handleRequest(
@@ -10,7 +11,7 @@ export default async function handleRequest(
   context: EntryContext,
 ) {
   // Split content resolves first, so no page is prerendered as a fallback.
-  await loadProjectPageModule();
+  await Promise.all([loadProjectPageModule(), loadNotePageModule()]);
   const stream = await renderToReadableStream(
     <ServerRouter context={context} url={request.url} />,
     {

@@ -1,6 +1,6 @@
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
 import { Icon } from '../../components/Icon.tsx';
-import type { Locale } from '../../i18n/index.ts';
+import { htmlLang, type Locale } from '../../i18n/index.ts';
 import {
   networkCopy,
   networkNoteIds,
@@ -31,15 +31,22 @@ export function NetworkNotes({ locale }: { locale: Locale }) {
         {networkNoteIds.map((id) => (
           <li key={id}>
             <h2 className="ln">
-              <a href={`/zh-hant/note/network/${id}/`} hrefLang="zh-Hant">
+              <a
+                href={`/${locale}/note/network/${id}/`}
+                hrefLang={htmlLang[locale]}
+              >
                 <Icon name="markdown" size={18} />
-                <span lang="zh-Hant">{networkNotes[id].title}</span>
+                <span lang={htmlLang[locale]}>
+                  {networkNotes[id].title[locale]}
+                </span>
               </a>
             </h2>
             <p className="network-note-file" aria-hidden="true">
               {id}.md
             </p>
-            <p lang="zh-Hant">{networkNotes[id].description}</p>
+            <p lang={htmlLang[locale]}>
+              {networkNotes[id].description[locale]}
+            </p>
             <small>
               <Icon name="globe" size={14} />
               {t.available}

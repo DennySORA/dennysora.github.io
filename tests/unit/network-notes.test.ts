@@ -16,7 +16,7 @@ import { hasRawAsset } from '../../src/lib/asset-policy.ts';
 
 describe('native network notes', () => {
   for (const noteId of networkNoteIds)
-    it(`publishes only the supplied edition: ${noteId}`, () => {
+    it(`publishes all three editions: ${noteId}`, () => {
       const route = {
         kind: 'network-note' as const,
         locale: 'zh-hant' as const,
@@ -24,7 +24,10 @@ describe('native network notes', () => {
       };
       const path = routePath(route);
       expect(parseRoute(path)).toEqual(route);
-      expect(parseRoute(path.replace('zh-hant', 'en'))).toBeNull();
+      expect(parseRoute(path.replace('zh-hant', 'en'))).toEqual({
+        ...route,
+        locale: 'en',
+      });
       expect(parseRoute('/zh-hant/note/network/unknown/')).toBeNull();
       expect(publishedPaths()).toContain(path.slice(0, -1));
       expect(filePath(route)).toBe(`note/network/${noteId}.md`);
@@ -36,6 +39,8 @@ describe('native network notes', () => {
       expect(data.view.kind).toBe('network-note');
       expect(data.languageLinks.filter((link) => link.href)).toEqual([
         { locale: 'zh-hant', href: path },
+        { locale: 'en', href: path.replace('zh-hant', 'en') },
+        { locale: 'ja', href: path.replace('zh-hant', 'ja') },
       ]);
       const html = loadNetworkNote(noteId);
       expect(html).not.toMatch(

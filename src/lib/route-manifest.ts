@@ -73,9 +73,7 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
       if (rest.length === 0) return { kind: 'notes', locale };
       if (a === 'network') {
         if (rest.length === 1) return { kind: 'network', locale };
-        return rest.length === 2 &&
-          locale === 'zh-hant' &&
-          networkNoteIds.some((id) => id === b)
+        return rest.length === 2 && networkNoteIds.some((id) => id === b)
           ? { kind: 'network-note', locale, noteId: b as NetworkNoteId }
           : null;
       }
@@ -89,7 +87,6 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
             category: b as HardwareCategory,
           };
         return rest.length === 3 &&
-          locale === 'zh-hant' &&
           hardwareNoteIds.some(
             (id) => id === c && hardwareNotes[id].category === b,
           )
@@ -106,7 +103,6 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
           category: b as MedicalCategory,
         };
       return rest.length === 3 &&
-        locale === 'zh-hant' &&
         medicalNoteIds.some((id) => id === c && medicalNotes[id].category === b)
         ? { kind: 'medical-note', locale, noteId: c as MedicalNoteId }
         : null;

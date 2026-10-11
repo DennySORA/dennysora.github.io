@@ -1,0 +1,1342 @@
+[
+  {
+    "source": "Brain & CNS Tumors · 原稿：2026-10-04 · 核對：2026-10-05",
+    "en": "Brain & CNS Tumors · Source: 2026-10-04 · Checked: 2026-10-05",
+    "ja": "脳・CNS 腫瘍 · 原稿：2026-10-04 · 確認：2026-10-05"
+  },
+  {
+    "source": "腦與中樞神經系統腫瘤：分類與膠質瘤入門",
+    "en": "Brain and CNS tumors: classification and an introduction to gliomas",
+    "ja": "脳・中枢神経系腫瘍：分類とグリオーマ入門"
+  },
+  {
+    "source": "從「為什麼原發性腦癌比較少」開始，分清楚",
+    "en": "Start with why primary brain cancer is relatively uncommon, then distinguish",
+    "ja": "「原発性脳がんが比較的少ない理由」を出発点に、次の腫瘍を区別します："
+  },
+  {
+    "source": "Glioma（膠質瘤）",
+    "en": "glioma",
+    "ja": "グリオーマ（神経膠腫）"
+  },
+  {
+    "source": "、腦膜瘤、淋巴瘤、胚胎性腫瘤與",
+    "en": ", meningioma, lymphoma, embryonal tumors and",
+    "ja": "、髄膜腫、リンパ腫、胎児性腫瘍、そして"
+  },
+  {
+    "source": "Brain metastasis（腦轉移）",
+    "en": "brain metastasis",
+    "ja": "脳転移"
+  },
+  {
+    "source": "WHO CNS 分類",
+    "en": "WHO CNS classification",
+    "ja": "WHO CNS 分類"
+  },
+  {
+    "source": "Glioma ≠ 單一疾病",
+    "en": "Glioma ≠ a single disease",
+    "ja": "グリオーマ ≠ 単一の疾患"
+  },
+  {
+    "source": "含分子標記",
+    "en": "Includes molecular markers",
+    "ja": "分子マーカーを含む"
+  },
+  {
+    "source": "成人／兒童分流",
+    "en": "Adult / pediatric types distinguished",
+    "ja": "成人型／小児型を区別"
+  },
+  {
+    "source": "常見相關組織與腫瘤",
+    "en": "Common associated tissues and tumors",
+    "ja": "主に関連する組織と腫瘍"
+  },
+  {
+    "source": "部位關聯概念圖，不能只憑位置確診；不表示解剖比例。",
+    "en": "A conceptual map of site associations, not anatomical proportions. Location alone cannot establish a diagnosis.",
+    "ja": "部位との関連を示す概念図です。位置だけで診断はできず、解剖学的な比率も示していません。"
+  },
+  {
+    "source": "腦膜",
+    "en": "Meninges",
+    "ja": "髄膜"
+  },
+  {
+    "source": "Meningioma（腦膜瘤）",
+    "en": "Meningioma",
+    "ja": "髄膜腫（Meningioma）"
+  },
+  {
+    "source": "腦實質",
+    "en": "Brain parenchyma",
+    "ja": "脳実質"
+  },
+  {
+    "source": "Glioma / GBM（膠質瘤家族）",
+    "en": "Glioma / GBM (glioma family)",
+    "ja": "Glioma / GBM（グリオーマの仲間）"
+  },
+  {
+    "source": "後顱窩／小腦",
+    "en": "Posterior fossa / cerebellum",
+    "ja": "後頭蓋窩／小脳"
+  },
+  {
+    "source": "Medulloblastoma（髓母細胞瘤）",
+    "en": "Medulloblastoma",
+    "ja": "髄芽腫（Medulloblastoma）"
+  },
+  {
+    "source": "腦下垂體",
+    "en": "Pituitary gland",
+    "ja": "下垂体"
+  },
+  {
+    "source": "腦下垂體腺瘤／神經內分泌腫瘤（PitNET）",
+    "en": "Pituitary adenoma / pituitary neuroendocrine tumor (PitNET)",
+    "ja": "下垂体腺腫／下垂体神経内分泌腫瘍（PitNET）"
+  },
+  {
+    "source": "腦室周邊／脊髓等",
+    "en": "Periventricular regions / spinal cord, etc.",
+    "ja": "脳室周囲／脊髄など"
+  },
+  {
+    "source": "Ependymoma（室管膜瘤）",
+    "en": "Ependymoma",
+    "ja": "上衣腫（Ependymoma）"
+  },
+  {
+    "source": "醫療資訊用途界線",
+    "en": "Scope of this medical information",
+    "ja": "医療情報の用途と限界"
+  },
+  {
+    "source": "醫療用途聲明：",
+    "en": "Medical-use statement: ",
+    "ja": "医療上の用途について："
+  },
+  {
+    "source": "本頁是疾病機制與分類教學，不用來判斷個人是否罹癌，也不能替代 MRI、病理、分子檢驗與神經外科／神經腫瘤團隊評估。若你是因為自己或家人的影像報告而閱讀，最有價值的資訊通常是：病灶位置、MRI impression、病理正式名稱、CNS WHO grade、IDH、1p/19q 與其他已完成的 molecular findings。",
+    "en": "This page teaches disease mechanisms and classification. It cannot determine whether an individual has cancer or replace MRI, pathology, molecular testing or assessment by a neurosurgical / neuro-oncology team. If you are reading because of your own or a family member’s imaging report, the most useful information usually includes lesion location, the MRI impression, the formal pathological diagnosis, CNS WHO grade, IDH, 1p/19q and other completed molecular findings.",
+    "ja": "本ページは疾患の機序と分類を学ぶためのものです。個人ががんかどうかを判断するものではなく、MRI、病理、分子検査、脳神経外科・神経腫瘍チームによる評価の代わりにはなりません。ご本人やご家族の画像報告をきっかけに読んでいる場合、通常、特に有用なのは病変の位置、MRI の所見・診断、正式な病理診断名、CNS WHO grade、IDH、1p/19q、その他すでに判明している分子検査結果です。"
+  },
+  {
+    "source": "章節導覽",
+    "en": "Sections",
+    "ja": "章節案内"
+  },
+  {
+    "source": "總覽",
+    "en": "Overview",
+    "ja": "概要"
+  },
+  {
+    "source": "為什麼少見",
+    "en": "Why uncommon",
+    "ja": "比較的少ない理由"
+  },
+  {
+    "source": "其他腫瘤",
+    "en": "Other tumors",
+    "ja": "その他の腫瘍"
+  },
+  {
+    "source": "腦轉移",
+    "en": "Brain metastasis",
+    "ja": "脳転移"
+  },
+  {
+    "source": "分子標記",
+    "en": "Molecular markers",
+    "ja": "分子マーカー"
+  },
+  {
+    "source": "診斷流程",
+    "en": "Diagnostic process",
+    "ja": "診断の流れ"
+  },
+  {
+    "source": "症狀與警訊",
+    "en": "Symptoms and warning signs",
+    "ja": "症状と警告サイン"
+  },
+  {
+    "source": "重點整理",
+    "en": "Key points",
+    "ja": "要点"
+  },
+  {
+    "source": "來源",
+    "en": "Sources",
+    "ja": "出典"
+  },
+  {
+    "source": "先校正一句話：「腦瘤」不等於「腦癌」",
+    "en": "First, clarify one phrase: a brain tumor is not necessarily brain cancer",
+    "ja": "まず言葉を整理：「脳腫瘍」は必ずしも「脳がん」ではない"
+  },
+  {
+    "source": "比較精確的說法：",
+    "en": "More precisely: ",
+    "ja": "より正確には："
+  },
+  {
+    "source": "原發性惡性腦／CNS 腫瘤相對少見；但一旦限定在「原發性惡性 CNS 腫瘤」，",
+    "en": "Primary malignant brain / CNS tumors are relatively uncommon. But within the category of primary malignant CNS tumors, ",
+    "ja": "原発性の悪性脳・CNS 腫瘍は比較的まれです。ただし「原発性悪性 CNS 腫瘍」に限ると、"
+  },
+  {
+    "source": "glioma 是最重要的一大群",
+    "en": "gliomas are one of the most important major groups",
+    "ja": "グリオーマは特に重要な大きな集団です"
+  },
+  {
+    "source": "。而成人腦內看到惡性腫瘤時，還必須考慮從其他器官轉移過來的",
+    "en": ". When a malignant tumor is found in an adult brain, metastasis from another organ must also be considered:",
+    "ja": "。また、成人の脳に悪性腫瘍が見つかった場合には、他の臓器からの転移も考慮する必要があります："
+  },
+  {
+    "source": "三個詞先分開",
+    "en": "Distinguish these three terms first",
+    "ja": "まず 3 つの用語を区別する"
+  },
+  {
+    "source": "：發生在腦或顱內相關組織的腫瘤，可為非惡性或惡性；CNS tumor 的範圍更廣，也涵蓋脊髓等。",
+    "en": ": a tumor arising in the brain or associated intracranial tissues, which may be nonmalignant or malignant. CNS tumor is broader and also includes the spinal cord and other sites.",
+    "ja": "：脳や関連する頭蓋内組織に生じる腫瘍で、非悪性の場合も悪性の場合もあります。CNS tumor はさらに広く、脊髄なども含みます。"
+  },
+  {
+    "source": "：由腦、脊髓及相關組織（如腦膜）原發的腫瘤。",
+    "en": ": a tumor originating in the brain, spinal cord or associated tissues such as the meninges.",
+    "ja": "：脳、脊髄、髄膜などの関連組織から原発した腫瘍。"
+  },
+  {
+    "source": "：其他癌症轉移到腦。",
+    "en": ": another cancer that has spread to the brain.",
+    "ja": "：ほかのがんが脳へ転移したもの。"
+  },
+  {
+    "source": "原發性惡性腦／CNS 腫瘤年齡校正年發生率",
+    "en": "Age-adjusted annual incidence of primary malignant brain / CNS tumors",
+    "ja": "原発性悪性脳・CNS 腫瘍の年齢調整年間発生率"
+  },
+  {
+    "source": "6.86 / 10萬人年",
+    "en": "6.86 / 100,000 person-years",
+    "ja": "10 万人年あたり 6.86"
+  },
+  {
+    "source": "美國，2018–2022；CBTRUS",
+    "en": "United States, 2018–2022; CBTRUS",
+    "ja": "米国、2018–2022 年。CBTRUS"
+  },
+  {
+    "source": "Glioma 占所有原發性腦／CNS 腫瘤",
+    "en": "Gliomas as a share of all primary brain / CNS tumors",
+    "ja": "全原発性脳・CNS 腫瘍に占めるグリオーマの割合"
+  },
+  {
+    "source": "同一資料集",
+    "en": "Same dataset",
+    "ja": "同じデータセット"
+  },
+  {
+    "source": "GBM 占所有惡性原發 CNS 腫瘤",
+    "en": "GBM as a share of all malignant primary CNS tumors",
+    "ja": "全原発性悪性 CNS 腫瘍に占める GBM の割合"
+  },
+  {
+    "source": "Glioblastoma 是最常見的惡性組織型",
+    "en": "Glioblastoma is the most common malignant histology",
+    "ja": "膠芽腫は最も多い悪性組織型"
+  },
+  {
+    "source": "統計範圍：美國全齡人口，診斷年 2018–2022；6.86 為按 2000 年美國標準人口校正的平均年發生率。22.2% 的分母是全部原發性腦及其他 CNS 腫瘤；52.2% 的分母是其中的惡性腫瘤。均不含腦轉移，不能視為臺灣發生率或個人罹病機率。CBTRUS 登錄組織型分組以 WHO 2016 為基礎，與本文 WHO CNS5 整合分子診斷不是完全相同的分類口徑。",
+    "en": "Statistical scope: the US population of all ages, diagnosed in 2018–2022. The 6.86 figure is the average annual incidence adjusted to the 2000 US standard population. The denominator for 22.2% is all primary brain and other CNS tumors; for 52.2%, it is the malignant subset. Neither includes brain metastases, and neither represents incidence in Taiwan or an individual’s probability of disease. CBTRUS registry histology groupings are based on WHO 2016 and do not exactly match the integrated molecular diagnoses of WHO CNS5 used in this article. ",
+    "ja": "統計の範囲：米国の全年齢人口、診断年は 2018–2022 年。6.86 は 2000 年米国標準人口で調整した平均年間発生率です。22.2% の分母はすべての原発性脳・その他の CNS 腫瘍、52.2% の分母はそのうちの悪性腫瘍です。どちらも脳転移を含まず、台湾の発生率や個人の罹患確率とはみなせません。CBTRUS 登録の組織型分類は WHO 2016 に基づき、本記事の WHO CNS5 による分子情報を統合した診断分類とは完全には一致しません。"
+  },
+  {
+    "source": "統計來源",
+    "en": "Statistical source",
+    "ja": "統計の出典"
+  },
+  {
+    "source": "原發性 CNS 腫瘤（代表類別）",
+    "en": "Primary CNS tumors (representative categories)",
+    "ja": "原発性 CNS 腫瘍（代表的な分類）"
+  },
+  {
+    "source": "膠質、膠質神經元與神經元腫瘤",
+    "en": "Gliomas, glioneuronal and neuronal tumors",
+    "ja": "神経膠腫、グリア神経細胞腫瘍、神経細胞腫瘍"
+  },
+  {
+    "source": "成人型瀰漫性膠質瘤：Astrocytoma, IDH-mutant；Oligodendroglioma, IDH-mutant and 1p/19q-codeleted；Glioblastoma, IDH-wildtype",
+    "en": "Adult-type diffuse gliomas: Astrocytoma, IDH-mutant; Oligodendroglioma, IDH-mutant and 1p/19q-codeleted; Glioblastoma, IDH-wildtype",
+    "ja": "成人型びまん性神経膠腫：Astrocytoma, IDH-mutant；Oligodendroglioma, IDH-mutant and 1p/19q-codeleted；Glioblastoma, IDH-wildtype"
+  },
+  {
+    "source": "兒童型瀰漫性膠質瘤",
+    "en": "Pediatric-type diffuse gliomas",
+    "ja": "小児型びまん性神経膠腫"
+  },
+  {
+    "source": "局限型星狀細胞瘤",
+    "en": "Circumscribed astrocytic tumors",
+    "ja": "限局性星細胞系腫瘍"
+  },
+  {
+    "source": "室管膜腫瘤（包括 Ependymoma）",
+    "en": "Ependymal tumors (including ependymoma)",
+    "ja": "上衣系腫瘍（上衣腫を含む）"
+  },
+  {
+    "source": "神經元／膠質神經元腫瘤",
+    "en": "Neuronal / glioneuronal tumors",
+    "ja": "神経細胞／グリア神経細胞腫瘍"
+  },
+  {
+    "source": "Schwannoma 等顱神經／脊神經腫瘤",
+    "en": "Cranial / spinal nerve tumors such as schwannoma",
+    "ja": "神経鞘腫などの脳神経／脊髄神経腫瘍"
+  },
+  {
+    "source": "轉移性腦腫瘤（Brain metastasis）",
+    "en": "Metastatic brain tumors (brain metastasis)",
+    "ja": "転移性脳腫瘍（Brain metastasis）"
+  },
+  {
+    "source": "由其他器官原發癌轉移而來，例如：",
+    "en": "Spread from a primary cancer in another organ, for example:",
+    "ja": "ほかの臓器の原発がんから転移したもの。例えば："
+  },
+  {
+    "source": "肺癌",
+    "en": "Lung cancer",
+    "ja": "肺がん"
+  },
+  {
+    "source": "乳癌",
+    "en": "Breast cancer",
+    "ja": "乳がん"
+  },
+  {
+    "source": "黑色素瘤",
+    "en": "Melanoma",
+    "ja": "悪性黒色腫"
+  },
+  {
+    "source": "腎癌",
+    "en": "Kidney cancer",
+    "ja": "腎がん"
+  },
+  {
+    "source": "其他原發癌",
+    "en": "Other primary cancers",
+    "ja": "その他の原発がん"
+  },
+  {
+    "source": "原發性腦癌較少見：已知背景與解釋界線",
+    "en": "Why primary brain cancer is relatively uncommon: known context and limits of explanation",
+    "ja": "原発性脳がんが比較的少ないこと：既知の背景と説明の限界"
+  },
+  {
+    "source": "多數成熟神經元不再規律進行細胞分裂，但腦內仍有膠質細胞與神經幹／前驅細胞等不同細胞群。這有助理解「腦腫瘤不等於成熟神經元癌變」，卻不能單獨解釋不同器官癌症發生率的差異；多數成人腦與脊髓腫瘤的確切成因仍不清楚。",
+    "en": "Most mature neurons no longer divide regularly, but the brain still contains distinct cell populations such as glial cells and neural stem / progenitor cells. This helps explain why a brain tumor is not simply a mature neuron becoming cancerous, but cannot by itself explain differences in cancer incidence between organs. The precise causes of most adult brain and spinal cord tumors remain unclear.",
+    "ja": "成熟した神経細胞の多くは規則的な細胞分裂をしなくなりますが、脳にはグリア細胞や神経幹細胞・前駆細胞などの異なる細胞集団もあります。これは「脳腫瘍は成熟神経細胞のがん化と同義ではない」ことの理解には役立ちますが、臓器間のがん発生率の違いを単独で説明するものではありません。成人の脳・脊髄腫瘍の多くは、正確な原因がまだ不明です。"
+  },
+  {
+    "source": "因此，成熟神經元的低分裂活動是細胞生物學背景，不是「腦癌較少見」的單一、已確立因果解釋。",
+    "en": "Low division activity in mature neurons is therefore a cell-biological background fact, not a single established causal explanation for the relative rarity of brain cancer. ",
+    "ja": "したがって、成熟神経細胞の分裂活動が低いことは細胞生物学的な背景であり、「脳がんが比較的少ない」ことの単一で確立した因果的説明ではありません。"
+  },
+  {
+    "source": "NINDS 神經元資料",
+    "en": "NINDS information on neurons",
+    "ja": "NINDS の神経細胞に関する資料"
+  },
+  {
+    "source": "NCI 成因與風險背景",
+    "en": "NCI background on causes and risks",
+    "ja": "NCI の原因とリスクに関する資料"
+  },
+  {
+    "source": "不要把「腦癌少見」理解成「腦內惡性腫瘤少見到可以忽略」。",
+    "en": "Do not interpret rare brain cancer as meaning malignant tumors in the brain are too rare to matter. ",
+    "ja": "「脳がんがまれ」を「脳内の悪性腫瘍は無視できるほどまれ」と解釈しないでください。"
+  },
+  {
+    "source": "成人還有更常見的腦轉移；而且顱骨是封閉空間，即使腫瘤在病理學上是 benign，也可能因壓迫重要結構造成嚴重後果。",
+    "en": "Brain metastases are more common in adults. The skull is also an enclosed space, so even a histologically benign tumor may have serious consequences by compressing important structures.",
+    "ja": "成人では、より多い脳転移もあります。また、頭蓋内は閉鎖された空間なので、病理学的に良性の腫瘍でも重要な構造を圧迫し、深刻な影響をもたらすことがあります。"
+  },
+  {
+    "source": "Glioma 不是一種癌，而是一整個腫瘤家族",
+    "en": "Glioma is an entire tumor family, not one cancer",
+    "ja": "グリオーマは一つのがんではなく、腫瘍の一群"
+  },
+  {
+    "source": "現代 WHO CNS 分類不是只看「顯微鏡長得像哪一種膠質細胞」，而是把",
+    "en": "Modern WHO CNS classification goes beyond which glial cell a tumor resembles under the microscope, integrating",
+    "ja": "現代の WHO CNS 分類は「顕微鏡でどのグリア細胞に似ているか」だけでなく、"
+  },
+  {
+    "source": "形態學 + 分子遺傳特徵",
+    "en": "morphology + molecular genetic features",
+    "ja": "形態学 + 分子遺伝学的特徴"
+  },
+  {
+    "source": "整合成診斷。",
+    "en": " into the diagnosis.",
+    "ja": "を統合して診断します。"
+  },
+  {
+    "source": "成人型瀰漫性膠質瘤：分類概念",
+    "en": "Adult-type diffuse gliomas: classification concept",
+    "ja": "成人型びまん性神経膠腫：分類の考え方"
+  },
+  {
+    "source": "依 IDH、1p/19q 及完整組織與分子條件判讀。",
+    "en": "Interpret IDH, 1p/19q and the full histological and molecular criteria.",
+    "ja": "IDH、1p/19q、組織学的・分子的な条件全体から判断します。"
+  },
+  {
+    "source": "再看 1p/19q codeletion 等整合診斷條件。",
+    "en": "Then consider 1p/19q codeletion and other integrated diagnostic criteria.",
+    "ja": "さらに 1p/19q 共欠失など、統合診断の条件を確認します。"
+  },
+  {
+    "source": "Astrocytoma 或 Oligodendroglioma",
+    "en": "Astrocytoma or oligodendroglioma",
+    "ja": "星細胞腫または乏突起膠腫"
+  },
+  {
+    "source": "本身不等於 GBM；需符合整合診斷條件，並排除其他腫瘤類型。",
+    "en": "does not by itself mean GBM; integrated diagnostic criteria must be met and other tumor types excluded.",
+    "ja": "だけで GBM とはなりません。統合診断の条件を満たし、ほかの腫瘍型を除外する必要があります。"
+  },
+  {
+    "source": "符合條件時可診斷 Glioblastoma, IDH-wildtype",
+    "en": "Glioblastoma, IDH-wildtype can be diagnosed when the criteria are met",
+    "ja": "条件を満たす場合は Glioblastoma, IDH-wildtype と診断できます"
+  },
+  {
+    "source": "這是分類概念圖，並非完整診斷演算法。「成人型／兒童型」描述主要生物學類型與常見年齡，不是絕對年齡限制。",
+    "en": "This is a classification concept map, not a complete diagnostic algorithm. Adult-type / pediatric-type describes major biological types and typical ages, not absolute age limits.",
+    "ja": "これは分類の概念図であり、完全な診断アルゴリズムではありません。「成人型／小児型」は主な生物学的特徴と好発年齢を表し、絶対的な年齢制限ではありません。"
+  },
+  {
+    "source": "成人型 diffuse glioma。可為 CNS WHO grade 2、3 或 4。",
+    "en": "An adult-type diffuse glioma. It may be CNS WHO grade 2, 3 or 4.",
+    "ja": "成人型びまん性神経膠腫です。CNS WHO grade 2、3、4 があります。"
+  },
+  {
+    "source": "重點：",
+    "en": "Key point: ",
+    "ja": "要点："
+  },
+  {
+    "source": "grade 4 astrocytoma 不應簡化成「就是 GBM」",
+    "en": "grade 4 astrocytoma should not simply be equated with GBM",
+    "ja": "grade 4 の星細胞腫を単純に「GBM と同じ」としてはいけません"
+  },
+  {
+    "source": "。WHO 現代分類把 IDH 狀態納入腫瘤實體名稱。",
+    "en": ". Modern WHO classification incorporates IDH status into tumor entity names.",
+    "ja": "。現代の WHO 分類は、腫瘍実体の名称に IDH の状態を組み込んでいます。"
+  },
+  {
+    "source": "正式診斷的核心分子條件是",
+    "en": "The core molecular requirements for a formal diagnosis are",
+    "ja": "正式な診断の中心となる分子的条件は"
+  },
+  {
+    "source": "且",
+    "en": "and",
+    "ja": "かつ"
+  },
+  {
+    "source": "通常分 CNS WHO grade 2 / 3。",
+    "en": "Usually classified as CNS WHO grade 2 / 3.",
+    "ja": "通常は CNS WHO grade 2 / 3 に分類されます。"
+  },
+  {
+    "source": "成人最重要的高度惡性 diffuse glioma 類型之一，屬 CNS WHO grade 4。",
+    "en": "One of the most important highly malignant diffuse glioma types in adults; CNS WHO grade 4.",
+    "ja": "成人における特に重要な高悪性度びまん性神経膠腫の一つで、CNS WHO grade 4 です。"
+  },
+  {
+    "source": "高浸潤性、容易復發，不能單純把它想成一顆界線清楚的「球」。",
+    "en": "Highly infiltrative and prone to recurrence; it should not be viewed simply as a sharply bounded ball.",
+    "ja": "浸潤性が高く再発しやすいため、境界明瞭な一つの「球」と捉えることはできません。"
+  },
+  {
+    "source": "GBM 為什麼特別難治？",
+    "en": "Why is GBM particularly difficult to treat?",
+    "ja": "GBM はなぜ特に治療が難しいのか"
+  },
+  {
+    "source": "1. 浸潤，而不是只有一個腫塊",
+    "en": "1. Infiltration, not just a single mass",
+    "ja": "1. 一つの腫瘤だけでなく、周囲へ浸潤する"
+  },
+  {
+    "source": "GBM 細胞可沿白質、血管周圍等路徑浸入看似正常的腦組織。MRI 上看到的 enhancing mass 並不等於所有腫瘤細胞的完整邊界。",
+    "en": "GBM cells can infiltrate apparently normal brain tissue along white matter, perivascular spaces and other routes. The enhancing mass seen on MRI does not mark the full extent of all tumor cells.",
+    "ja": "GBM 細胞は白質や血管周囲などを通って、一見正常な脳組織へ浸潤できます。MRI で造影される腫瘤は、すべての腫瘍細胞の広がりの境界を示すものではありません。"
+  },
+  {
+    "source": "2. 「切乾淨」受神經功能限制",
+    "en": "2. Neurological function limits complete removal",
+    "ja": "2. 「取り切る」ことは神経機能によって制約される"
+  },
+  {
+    "source": "如果腫瘤靠近語言、運動、視覺、腦幹等 eloquent structures，外科醫師不能像切除某些周邊器官腫瘤那樣任意擴大安全邊界。",
+    "en": "When a tumor lies near eloquent structures for language, movement or vision, or near the brainstem, surgeons cannot freely widen the safety margin as they might with some peripheral organ tumors.",
+    "ja": "腫瘍が言語、運動、視覚、脳幹などの重要な機能を担う構造に近い場合、外科医は一部の末梢臓器の腫瘍のように、切除の安全域を自由に広げることはできません。"
+  },
+  {
+    "source": "3. 腫瘤內部高度異質",
+    "en": "3. High intratumoral heterogeneity",
+    "ja": "3. 腫瘍内部の異質性が高い"
+  },
+  {
+    "source": "同一顆腫瘤可同時存在不同分子狀態與細胞族群，導致不同區域對壓力與治療的反應不同。",
+    "en": "Different molecular states and cell populations can coexist within the same tumor, causing different regions to respond differently to stress and treatment.",
+    "ja": "同じ腫瘍の中に異なる分子状態や細胞集団が共存し、領域によってストレスや治療への反応が異なります。"
+  },
+  {
+    "source": "4. 復發是核心臨床問題",
+    "en": "4. Recurrence is a central clinical problem",
+    "ja": "4. 再発が中心的な臨床課題"
+  },
+  {
+    "source": "殘留的浸潤細胞與治療選擇壓力可造成復發。因此治療不是只有「開刀」，而通常是神經外科、放療與藥物治療的整合。",
+    "en": "Residual infiltrating cells and treatment selection pressure can lead to recurrence. Treatment is therefore not just surgery, but usually integrates neurosurgery, radiotherapy and drug therapy.",
+    "ja": "残存する浸潤細胞と治療による選択圧が再発につながることがあります。そのため治療は「手術」だけでなく、通常は脳神経外科、放射線療法、薬物療法を組み合わせます。"
+  },
+  {
+    "source": "統計不要直接套到個人。",
+    "en": "Do not apply population statistics directly to an individual. ",
+    "ja": "統計をそのまま個人に当てはめないでください。"
+  },
+  {
+    "source": "GBM 的預後會受年齡、功能狀態、手術切除程度、分子特徵、治療可行性與其他臨床因素影響；人口統計數字不能替代個案病理與醫療團隊判讀。",
+    "en": "GBM prognosis depends on age, functional status, extent of resection, molecular features, treatment feasibility and other clinical factors. Population statistics cannot replace individual pathology and interpretation by the medical team.",
+    "ja": "GBM の予後は、年齢、機能状態、手術での摘出範囲、分子学的特徴、治療の実施可能性、その他の臨床因子に影響されます。人口統計は、個別の病理所見と医療チームによる判断の代わりにはなりません。"
+  },
+  {
+    "source": "其他重要的腦／CNS 腫瘤",
+    "en": "Other important brain / CNS tumors",
+    "ja": "その他の重要な脳・CNS 腫瘍"
+  },
+  {
+    "source": "腫瘤比較表（可水平捲動）",
+    "en": "Tumor comparison table (horizontally scrollable)",
+    "ja": "腫瘍の比較表（横にスクロールできます）"
+  },
+  {
+    "source": "其他重要腦與 CNS 腫瘤：來源、等級與典型重點",
+    "en": "Other important brain and CNS tumors: origin, grade and typical features",
+    "ja": "その他の重要な脳・CNS 腫瘍：由来、グレード、主な特徴"
+  },
+  {
+    "source": "腫瘤",
+    "en": "Tumor",
+    "ja": "腫瘍"
+  },
+  {
+    "source": "主要來源／位置",
+    "en": "Main origin / location",
+    "ja": "主な由来／部位"
+  },
+  {
+    "source": "惡性度概念",
+    "en": "Concept of malignancy",
+    "ja": "悪性度の考え方"
+  },
+  {
+    "source": "典型重點",
+    "en": "Typical features",
+    "ja": "主な特徴"
+  },
+  {
+    "source": "腦膜瘤",
+    "en": "Meningioma",
+    "ja": "髄膜腫"
+  },
+  {
+    "source": "腦膜相關細胞",
+    "en": "Meningeal-associated cells",
+    "ja": "髄膜関連細胞"
+  },
+  {
+    "source": "多數非惡性",
+    "en": "Most are nonmalignant",
+    "ja": "多くは非悪性"
+  },
+  {
+    "source": "最常見的原發性非惡性 CNS 組織型之一；即使「良性」也可能因位置壓迫視神經、腦幹或皮質。",
+    "en": "One of the most common primary nonmalignant CNS histologies. Even a benign tumor may compress the optic nerve, brainstem or cortex because of its location.",
+    "ja": "最も多い原発性非悪性 CNS 組織型の一つです。「良性」でも、位置によって視神経、脳幹、大脳皮質を圧迫することがあります。"
+  },
+  {
+    "source": "室管膜瘤",
+    "en": "Ependymoma",
+    "ja": "上衣腫"
+  },
+  {
+    "source": "腦室／中央管相關 ependymal lineage",
+    "en": "Ependymal lineage associated with the ventricles / central canal",
+    "ja": "脳室／中心管に関連する上衣細胞系統"
+  },
+  {
+    "source": "依 subtype / 分子群而異",
+    "en": "Varies by subtype / molecular group",
+    "ja": "亜型／分子群によって異なる"
+  },
+  {
+    "source": "兒童與成人分布不同；脊髓也可見。",
+    "en": "Distribution differs between children and adults; also occurs in the spinal cord.",
+    "ja": "小児と成人では分布が異なり、脊髄にも生じます。"
+  },
+  {
+    "source": "中線結構，如腦幹、丘腦、脊髓",
+    "en": "Midline structures such as the brainstem, thalamus and spinal cord",
+    "ja": "脳幹、視床、脊髄などの正中構造"
+  },
+  {
+    "source": "高度惡性",
+    "en": "Highly malignant",
+    "ja": "高悪性度"
+  },
+  {
+    "source": "屬 pediatric-type diffuse high-grade glioma；位置常使手術策略受限。",
+    "en": "A pediatric-type diffuse high-grade glioma; location often limits surgical options.",
+    "ja": "小児型びまん性高悪性度神経膠腫に属し、部位によって手術の選択肢が制約されることが多い腫瘍です。"
+  },
+  {
+    "source": "髓母細胞瘤",
+    "en": "Medulloblastoma",
+    "ja": "髄芽腫"
+  },
+  {
+    "source": "後顱窩／小腦區域；embryonal tumor",
+    "en": "Posterior fossa / cerebellar region; embryonal tumor",
+    "ja": "後頭蓋窩／小脳領域。胎児性腫瘍"
+  },
+  {
+    "source": "惡性",
+    "en": "Malignant",
+    "ja": "悪性"
+  },
+  {
+    "source": "以兒童較典型；可沿 CSF 路徑散播。",
+    "en": "More typical in children; may spread along CSF pathways.",
+    "ja": "小児に典型的で、髄液の経路に沿って播種することがあります。"
+  },
+  {
+    "source": "淋巴細胞，常為 B-cell lineage",
+    "en": "Lymphocytes, often of B-cell lineage",
+    "ja": "リンパ球。多くは B 細胞系統"
+  },
+  {
+    "source": "它是 lymphoma，不是 glioma；治療邏輯完全不同。",
+    "en": "It is a lymphoma, not a glioma; the treatment approach is entirely different.",
+    "ja": "グリオーマではなくリンパ腫であり、治療の考え方はまったく異なります。"
+  },
+  {
+    "source": "常見於 pineal / suprasellar region",
+    "en": "Common in the pineal / suprasellar region",
+    "ja": "松果体部／鞍上部に多い"
+  },
+  {
+    "source": "依 subtype 差異很大",
+    "en": "Varies greatly by subtype",
+    "ja": "亜型によって大きく異なる"
+  },
+  {
+    "source": "兒童、青少年、年輕成人較典型；某些型別對放療／化療敏感。",
+    "en": "More typical in children, adolescents and young adults; some types are sensitive to radiotherapy / chemotherapy.",
+    "ja": "小児、思春期、若年成人に典型的で、放射線療法・化学療法に感受性の高い型もあります。"
+  },
+  {
+    "source": "多數不是典型惡性癌",
+    "en": "Most are not typical malignant cancers",
+    "ja": "多くは典型的な悪性がんではない"
+  },
+  {
+    "source": "臨床問題常來自荷爾蒙過多／不足或視交叉壓迫。",
+    "en": "Clinical problems often arise from hormone excess / deficiency or optic chiasm compression.",
+    "ja": "臨床上の問題は、ホルモンの過剰・不足や視交叉の圧迫に由来することが多い腫瘍です。"
+  },
+  {
+    "source": "前庭神經鞘 Schwann cell",
+    "en": "Schwann cells of the vestibular nerve sheath",
+    "ja": "前庭神経鞘のシュワン細胞"
+  },
+  {
+    "source": "通常非惡性",
+    "en": "Usually nonmalignant",
+    "ja": "通常は非悪性"
+  },
+  {
+    "source": "常見單側聽力下降、耳鳴、平衡症狀；大者可壓迫腦幹。",
+    "en": "Often presents with unilateral hearing loss, tinnitus or balance symptoms; large tumors can compress the brainstem.",
+    "ja": "片側の難聴、耳鳴り、平衡障害がよくみられ、大きいものは脳幹を圧迫することがあります。"
+  },
+  {
+    "source": "具神經元分化，或兼具神經元與膠質分化",
+    "en": "Neuronal differentiation, or combined neuronal and glial differentiation",
+    "ja": "神経細胞への分化、または神経細胞とグリアの両方への分化"
+  },
+  {
+    "source": "很多為低 grade",
+    "en": "Many are low grade",
+    "ja": "低グレードのものが多い"
+  },
+  {
+    "source": "部分在年輕患者以長期 epilepsy 被發現。",
+    "en": "Some are discovered in young patients through longstanding epilepsy.",
+    "ja": "若年患者の長期にわたるてんかんをきっかけに見つかるものもあります。"
+  },
+  {
+    "source": "成年人非常重要：Brain metastasis",
+    "en": "Particularly important in adults: brain metastasis",
+    "ja": "成人で特に重要：脳転移"
+  },
+  {
+    "source": "轉移性腦腫瘤的細胞本質仍屬於原發器官。例如肺癌轉移到腦，病理上仍是「轉移性肺癌」，不是突然變成 glioblastoma。",
+    "en": "The cells of a metastatic brain tumor retain the identity of their organ of origin. For example, lung cancer spreading to the brain remains metastatic lung cancer pathologically; it does not suddenly become glioblastoma.",
+    "ja": "転移性脳腫瘍の細胞は、元の臓器の性質を保っています。例えば肺がんが脳へ転移しても、病理学的には「転移性肺がん」であり、突然膠芽腫に変わるわけではありません。"
+  },
+  {
+    "source": "原發癌",
+    "en": "Primary cancer",
+    "ja": "原発がん"
+  },
+  {
+    "source": "例如 lung / breast / melanoma / kidney 等。",
+    "en": "For example, lung / breast / melanoma / kidney cancers.",
+    "ja": "例えば肺がん、乳がん、悪性黒色腫、腎がんなど。"
+  },
+  {
+    "source": "經血行等路徑到 CNS",
+    "en": "Reaches the CNS through the bloodstream or other routes",
+    "ja": "血行などの経路で CNS に到達"
+  },
+  {
+    "source": "形成單顆或多顆 brain metastases；治療還必須同時考慮全身疾病狀態。",
+    "en": "Forms single or multiple brain metastases. Treatment must also account for the state of systemic disease.",
+    "ja": "単発または多発の脳転移を形成します。治療では全身の疾患の状態も同時に考慮する必要があります。"
+  },
+  {
+    "source": "NCI 明確指出：",
+    "en": "The NCI explicitly states that ",
+    "ja": "NCI は明確に、"
+  },
+  {
+    "source": "metastatic brain tumors 比 primary brain tumors 更常見",
+    "en": "metastatic brain tumors are more common than primary brain tumors",
+    "ja": "転移性脳腫瘍は原発性脳腫瘍より多い"
+  },
+  {
+    "source": "。因此在成人影像上看到腦內病灶，既往癌症史、病灶數量、位置與影像特徵都會影響鑑別診斷，但最終仍需依臨床與病理情境判斷。",
+    "en": ". Thus, when an adult has an intracranial lesion on imaging, cancer history, lesion number, location and imaging features all affect the differential diagnosis. Final judgment still depends on the clinical and pathological context.",
+    "ja": "と述べています。そのため成人の画像で脳内病変が見つかった場合、がんの既往、病変の数、位置、画像の特徴が鑑別診断に影響しますが、最終的には臨床・病理の状況に基づいて判断します。"
+  },
+  {
+    "source": "腦瘤不像肺癌那樣主要用 Stage I–IV 思考",
+    "en": "Brain tumors are not primarily understood through Stage I–IV as lung cancer is",
+    "ja": "脳腫瘍は肺がんのように主として Stage I–IV で捉えるものではない"
+  },
+  {
+    "source": "CNS WHO grade：腫瘤本身的生物學等級",
+    "en": "CNS WHO grade: the biological grade of the tumor itself",
+    "ja": "CNS WHO grade：腫瘍そのものの生物学的グレード"
+  },
+  {
+    "source": "對 CNS 腫瘤，grade 通常反映其病理／分子特徵與預期生長行為。不同腫瘤實體的 grading 規則不完全相同。",
+    "en": "For CNS tumors, grade usually reflects pathological / molecular features and expected growth behavior. Grading rules are not identical across tumor entities.",
+    "ja": "CNS 腫瘍のグレードは、通常、病理・分子学的特徴と予想される増殖挙動を反映します。グレード分類の規則は腫瘍実体ごとに完全には同じではありません。"
+  },
+  {
+    "source": "概念上由低 proliferative potential 到較 aggressive，但不能跨不同腫瘤實體機械比較。",
+    "en": "Conceptually, from low proliferative potential to more aggressive behavior, but grades cannot be mechanically compared across different tumor entities.",
+    "ja": "概念的には低い増殖能から、より侵攻性の高い性質までを表しますが、異なる腫瘍実体の間で機械的に比較することはできません。"
+  },
+  {
+    "source": "Stage：很多其他癌症常用的擴散範圍",
+    "en": "Stage: the extent of spread commonly used for many other cancers",
+    "ja": "Stage：多くのほかのがんで使われる、広がりの範囲"
+  },
+  {
+    "source": "成人 primary brain/spinal cord tumors",
+    "en": "Adult primary brain / spinal cord tumors",
+    "ja": "成人の原発性脳・脊髄腫瘍には"
+  },
+  {
+    "source": "沒有一套標準的 Stage I–IV 臨床分期系統",
+    "en": "have no standard Stage I–IV clinical staging system",
+    "ja": "標準的な Stage I–IV の臨床病期分類がありません"
+  },
+  {
+    "source": "。NCI 指出治療更依賴腫瘤類型、位置、殘存量與 grade 等因素。癌症登錄仍可記錄 Summary Stage，與一般 I–IV 臨床分期不同。",
+    "en": ". The NCI notes that treatment depends more on tumor type, location, residual amount and grade. Cancer registries can still record Summary Stage, which differs from conventional I–IV clinical staging.",
+    "ja": "。NCI は、治療は腫瘍型、位置、残存量、グレードなどにより強く依存すると述べています。がん登録では Summary Stage を記録することがありますが、一般的な I–IV の臨床病期とは異なります。"
+  },
+  {
+    "source": "CNS 腫瘤有一個反直覺點：",
+    "en": "One counterintuitive point about CNS tumors: ",
+    "ja": "CNS 腫瘍で直感に反する点："
+  },
+  {
+    "source": "「只有 2 cm」不代表風險小。",
+    "en": "Only 2 cm does not mean low risk. ",
+    "ja": "「わずか 2 cm」でも低リスクとは限りません。"
+  },
+  {
+    "source": "2 cm 在額葉非關鍵區、腦幹、視交叉附近，臨床意義可能完全不同。",
+    "en": "A 2 cm lesion in a noncritical frontal region, the brainstem or near the optic chiasm can have very different clinical implications.",
+    "ja": "同じ 2 cm でも、前頭葉の重要機能領域外、脳幹、視交叉の近くでは、臨床的な意味がまったく異なる場合があります。"
+  },
+  {
+    "source": "現代 glioma：基因／表觀遺傳資訊已進入正式診斷",
+    "en": "Modern glioma diagnosis: genetic / epigenetic information is now part of the formal diagnosis",
+    "ja": "現代のグリオーマ診断：遺伝・エピジェネティック情報が正式診断に組み込まれている"
+  },
+  {
+    "source": "成人 diffuse glioma 分類的核心節點之一。是否為",
+    "en": "One of the core classification points for adult diffuse gliomas. Whether it is",
+    "ja": "成人びまん性神経膠腫の分類における中心的な判断点の一つです。"
+  },
+  {
+    "source": "會直接改變診斷實體。",
+    "en": "directly changes the diagnostic entity.",
+    "ja": "かどうかによって、診断される腫瘍実体が直接変わります。"
+  },
+  {
+    "source": "搭配 IDH mutation，是診斷 oligodendroglioma 的核心條件。",
+    "en": "Together with an IDH mutation, a core requirement for diagnosing oligodendroglioma.",
+    "ja": "IDH 変異と併せて、乏突起膠腫の診断の中心的な条件です。"
+  },
+  {
+    "source": "在特定 pediatric-type high-grade diffuse glioma，例如 H3 K27-altered、H3 G34-mutant 中非常關鍵。",
+    "en": "Critical in certain pediatric-type high-grade diffuse gliomas, such as H3 K27-altered and H3 G34-mutant.",
+    "ja": "H3 K27-altered、H3 G34-mutant など、特定の小児型高悪性度びまん性神経膠腫で非常に重要です。"
+  },
+  {
+    "source": "可協助支持某些 astrocytic lineage 的整體分子病理判讀；不能脫離完整診斷背景單獨下結論。",
+    "en": "Can support the overall molecular pathological interpretation of certain astrocytic lineages, but must not be used in isolation from the full diagnostic context.",
+    "ja": "一部の星細胞系統について、分子病理の総合的な解釈を裏付けることがありますが、診断の全体像から切り離して単独で結論を出すことはできません。"
+  },
+  {
+    "source": "EGFR / TERT 等",
+    "en": "EGFR / TERT, etc.",
+    "ja": "EGFR / TERT など"
+  },
+  {
+    "source": "在 adult diffuse glioma 的整合診斷中可能具有分類或生物學意義，實際判讀依 WHO criteria 與檢驗組合。",
+    "en": "May have classificatory or biological significance in integrated diagnosis of adult diffuse gliomas. Interpretation depends on WHO criteria and the combination of tests.",
+    "ja": "成人びまん性神経膠腫の統合診断において、分類上または生物学的な意味を持つ場合があります。実際の解釈は WHO の基準と検査の組み合わせによります。"
+  },
+  {
+    "source": "是 glioblastoma 臨床常關注的預測／預後 biomarker 之一，但不是「有／沒有就決定所有治療」的單一開關。",
+    "en": "is one of the predictive / prognostic biomarkers often considered clinically in glioblastoma, but its presence or absence is not a single switch determining all treatment.",
+    "ja": "は、膠芽腫の臨床で注目される効果予測・予後バイオマーカーの一つですが、「ある／ない」だけですべての治療を決める単一のスイッチではありません。"
+  },
+  {
+    "source": "從「MRI 有一顆東西」到正式診斷，中間還有很多層",
+    "en": "There are many steps between something seen on MRI and a formal diagnosis",
+    "ja": "「MRI に何かがある」から正式な診断までには、多くの段階がある"
+  },
+  {
+    "source": "由發現病灶到整合診斷",
+    "en": "From finding a lesion to an integrated diagnosis",
+    "ja": "病変の発見から統合診断まで"
+  },
+  {
+    "source": "臨床可行性會影響檢查順序與是否取得組織。",
+    "en": "Clinical feasibility affects the order of tests and whether tissue can be obtained.",
+    "ja": "臨床的な実施可能性によって、検査の順序や組織を採取できるかどうかが変わります。"
+  },
+  {
+    "source": "症狀或意外發現（Symptoms / incidental）：神經學檢查。",
+    "en": "Symptoms or incidental finding: neurological examination.",
+    "ja": "症状または偶然の発見（Symptoms / incidental）：神経学的診察。"
+  },
+  {
+    "source": "影像（Imaging）：以 MRI 為核心，評估位置、數量與型態。",
+    "en": "Imaging: primarily MRI, assessing location, number and morphology.",
+    "ja": "画像（Imaging）：MRI を中心に、位置、数、形態を評価。"
+  },
+  {
+    "source": "組織（Tissue）：臨床可行時，透過手術或 biopsy 取得。",
+    "en": "Tissue: obtained through surgery or biopsy when clinically feasible.",
+    "ja": "組織（Tissue）：臨床的に可能な場合、手術または生検で採取。"
+  },
+  {
+    "source": "整合診斷（Integrated diagnosis）：histology + molecular。",
+    "en": "Integrated diagnosis: histology + molecular findings.",
+    "ja": "統合診断（Integrated diagnosis）：組織学 + 分子所見。"
+  },
+  {
+    "source": "多專科團隊評估治療。",
+    "en": "A multidisciplinary team assesses treatment.",
+    "ja": "多職種・多診療科のチームで治療を検討。"
+  },
+  {
+    "source": "影像能回答什麼？",
+    "en": "What can imaging answer?",
+    "ja": "画像で分かること"
+  },
+  {
+    "source": "位置、大小、數量、mass effect、水腫。",
+    "en": "Location, size, number, mass effect and edema.",
+    "ja": "位置、大きさ、数、圧迫効果、浮腫。"
+  },
+  {
+    "source": "是否 enhancement、壞死、出血、擴散限制等影像特徵。",
+    "en": "Imaging features such as enhancement, necrosis, hemorrhage or restricted diffusion.",
+    "ja": "造影効果、壊死、出血、拡散制限などの画像所見。"
+  },
+  {
+    "source": "協助規劃手術、biopsy 與鑑別診斷。",
+    "en": "Helps plan surgery, biopsy and the differential diagnosis.",
+    "ja": "手術、生検、鑑別診断の計画に役立つ。"
+  },
+  {
+    "source": "影像不能永遠回答什麼？",
+    "en": "What can imaging not always answer?",
+    "ja": "画像だけでは必ずしも分からないこと"
+  },
+  {
+    "source": "「這一定就是 glioma」通常不能僅靠 MRI 定論。",
+    "en": "MRI alone usually cannot establish that a lesion is definitely a glioma.",
+    "ja": "通常、MRI だけで「これは必ずグリオーマだ」と断定することはできません。"
+  },
+  {
+    "source": "metastasis、lymphoma、感染、發炎／脫髓鞘等有時會模仿腫瘤。",
+    "en": "Metastasis, lymphoma, infection and inflammation / demyelination can sometimes mimic tumors.",
+    "ja": "転移、リンパ腫、感染、炎症・脱髄などが、腫瘍に似て見える場合があります。"
+  },
+  {
+    "source": "正式 WHO integrated diagnosis 常需要 tissue 與 molecular data。",
+    "en": "A formal WHO integrated diagnosis often requires tissue and molecular data.",
+    "ja": "正式な WHO 統合診断には、組織と分子データが必要なことが多いです。"
+  },
+  {
+    "source": "症狀主要取決於「位置 + 顱內壓 + 生長速度」",
+    "en": "Symptoms depend mainly on location + intracranial pressure + growth rate",
+    "ja": "症状は主に「位置 + 頭蓋内圧 + 増殖速度」で決まる"
+  },
+  {
+    "source": "局部神經功能",
+    "en": "Focal neurological function",
+    "ja": "局所の神経機能"
+  },
+  {
+    "source": "單側無力、語言異常、視野改變、感覺異常、平衡／步態問題等。",
+    "en": "Unilateral weakness, language disturbance, visual field changes, sensory abnormalities, balance / gait problems, etc.",
+    "ja": "片側の筋力低下、言語の異常、視野の変化、感覚異常、平衡・歩行の問題など。"
+  },
+  {
+    "source": "皮質刺激",
+    "en": "Cortical irritation",
+    "ja": "大脳皮質への刺激"
+  },
+  {
+    "source": "新發 seizure 是某些 brain tumor 的重要表現之一，尤其在成人新出現癲癇時需要評估原因。",
+    "en": "A new seizure is an important presentation of some brain tumors. New-onset epilepsy in an adult particularly requires assessment of the cause.",
+    "ja": "新たなけいれん発作は、一部の脳腫瘍の重要な症状です。特に成人で初めててんかん発作が起きた場合、原因の評価が必要です。"
+  },
+  {
+    "source": "顱內壓／mass effect",
+    "en": "Intracranial pressure / mass effect",
+    "ja": "頭蓋内圧／圧迫効果"
+  },
+  {
+    "source": "頭痛、噁心、嘔吐、嗜睡、意識改變等，但這些症狀都不是「看到就等於腦癌」。",
+    "en": "Headache, nausea, vomiting, drowsiness or altered consciousness, but none of these symptoms by itself means brain cancer.",
+    "ja": "頭痛、悪心、嘔吐、傾眠、意識変化など。ただし、どの症状も「見られたら脳がん」というものではありません。"
+  },
+  {
+    "source": "需要急診評估的神經學警訊：",
+    "en": "Neurological warning signs requiring emergency assessment: ",
+    "ja": "救急での評価が必要な神経学的警告サイン："
+  },
+  {
+    "source": "首次癲癇發作、突然單側無力／說話困難、快速惡化的意識狀態、嚴重急性神經症狀。這些不一定是腦瘤，也可能是中風、出血、感染等急症。",
+    "en": "A first seizure, sudden unilateral weakness / difficulty speaking, rapidly worsening consciousness or severe acute neurological symptoms. These need not be a brain tumor; stroke, hemorrhage, infection and other emergencies are also possible.",
+    "ja": "初めてのけいれん発作、突然の片側の筋力低下・話しにくさ、急速に悪化する意識状態、重い急性神経症状。脳腫瘍とは限らず、脳卒中、出血、感染などの緊急疾患の可能性もあります。"
+  },
+  {
+    "source": "把整件事記成 7 句話",
+    "en": "Remember the topic in seven statements",
+    "ja": "7 つの文で押さえる要点"
+  },
+  {
+    "source": "顱內腫瘤包含 benign 與 malignant。",
+    "en": "Intracranial tumors include both benign and malignant tumors.",
+    "ja": "頭蓋内腫瘍には良性と悪性の両方があります。"
+  },
+  {
+    "source": "原發性惡性 CNS 腫瘤相對少見",
+    "en": "Primary malignant CNS tumors are relatively uncommon",
+    "ja": "原発性悪性 CNS 腫瘍は比較的まれです"
+  },
+  {
+    "source": "，但位置特殊，所以風險不能只看病理「良／惡性」。",
+    "en": ", but their location means risk cannot be judged solely by pathological benignity or malignancy.",
+    "ja": "が、部位が特殊なため、リスクを病理上の「良性／悪性」だけでは判断できません。"
+  },
+  {
+    "source": "Glioma 是家族名稱",
+    "en": "Glioma is a family name",
+    "ja": "グリオーマは腫瘍群の名称であり"
+  },
+  {
+    "source": "，不是一種固定疾病。",
+    "en": ", not a single fixed disease.",
+    "ja": "、単一の決まった疾患ではありません。"
+  },
+  {
+    "source": "成人 diffuse glioma 的核心實體包括",
+    "en": "Core entities of adult diffuse glioma include",
+    "ja": "成人びまん性神経膠腫の主な診断カテゴリーは、"
+  },
+  {
+    "source": "GBM 是高度惡性的 glioma",
+    "en": "GBM is a highly malignant glioma",
+    "ja": "GBM は高悪性度のグリオーマです"
+  },
+  {
+    "source": "，但不是所有 glioma 都是 GBM。",
+    "en": ", but not all gliomas are GBM.",
+    "ja": "が、すべてのグリオーマが GBM ではありません。"
+  },
+  {
+    "source": "Brain metastasis 在成人非常重要，而且比 primary brain tumor 更常見。",
+    "en": "Brain metastasis is very important in adults and is more common than primary brain tumors.",
+    "ja": "脳転移は成人で非常に重要であり、原発性脳腫瘍より多くみられます。"
+  },
+  {
+    "source": "現代診斷重點是",
+    "en": "Modern diagnosis focuses on",
+    "ja": "現代の診断で重視するのは、"
+  },
+  {
+    "source": "位置 + histology + molecular profile + CNS WHO grade + 可切除性／殘存腫瘤",
+    "en": "location + histology + molecular profile + CNS WHO grade + resectability / residual tumor",
+    "ja": "位置 + 組織学 + 分子プロファイル + CNS WHO grade + 切除可能性／残存腫瘍"
+  },
+  {
+    "source": "，不是只問「幾公分」或「第幾期」。",
+    "en": ", not just how many centimeters or what stage.",
+    "ja": "であり、「何 cm か」「何期か」だけではありません。"
+  },
+  {
+    "source": "主要資料來源",
+    "en": "Main sources",
+    "ja": "主な出典"
+  },
+  {
+    "source": "IARC / WHO Blue Books；查閱：2026-10-04",
+    "en": "IARC / WHO Blue Books; accessed: 2026-10-04",
+    "ja": "IARC / WHO Blue Books。参照：2026-10-04"
+  },
+  {
+    "source": "Adult-type diffuse gliomas 與 CNS tumour taxonomy",
+    "en": "Adult-type diffuse gliomas and CNS tumor taxonomy",
+    "ja": "成人型びまん性神経膠腫と CNS 腫瘍分類"
+  },
+  {
+    "source": "Neuro-Oncology；最新人口型統計報告之一",
+    "en": "Neuro-Oncology; one of the latest population-based statistical reports",
+    "ja": "Neuro-Oncology。最新の人口ベース統計報告の一つ"
+  },
+  {
+    "source": "發生率、glioma 22.2%、GBM 52.2% of malignant、meningioma 分布等",
+    "en": "Incidence, gliomas 22.2%, GBM 52.2% of malignant tumors, meningioma distribution, etc.",
+    "ja": "発生率、グリオーマ 22.2%、悪性腫瘍中の GBM 52.2%、髄膜腫の分布など"
+  },
+  {
+    "source": "Primary vs metastatic、沒有標準成人 CNS Stage I–IV、治療因素",
+    "en": "Primary vs metastatic tumors, no standard adult CNS Stage I–IV, treatment factors",
+    "ja": "原発性と転移性、成人 CNS の標準的な Stage I–IV がないこと、治療の要因"
+  },
+  {
+    "source": "WHO classification、metastatic brain tumors、臨床背景",
+    "en": "WHO classification, metastatic brain tumors and clinical context",
+    "ja": "WHO 分類、転移性脳腫瘍、臨床的背景"
+  },
+  {
+    "source": "NCI SEER；頁面更新：2026-09-23",
+    "en": "NCI SEER; page updated: 2026-09-23",
+    "ja": "NCI SEER。ページ更新：2026-09-23"
+  },
+  {
+    "source": "CNS 無 AJCC 標準 staging 的登錄背景",
+    "en": "Registry background on the absence of standard AJCC staging for CNS tumors",
+    "ja": "CNS 腫瘍に標準的な AJCC 病期分類がないことの登録上の背景"
+  },
+  {
+    "source": "神經元與神經幹／前驅細胞的生物學背景",
+    "en": "Biological background of neurons and neural stem / progenitor cells",
+    "ja": "神経細胞と神経幹細胞・前駆細胞の生物学的背景"
+  },
+  {
+    "source": "成人 IDH-wildtype 膠質瘤診斷標記的判讀限制（2025）",
+    "en": "Limits of interpreting diagnostic markers in adult IDH-wildtype gliomas (2025)",
+    "ja": "成人 IDH-wildtype グリオーマの診断マーカーを解釈する際の限界（2025）"
+  },
+  {
+    "source": "室管膜瘤位置",
+    "en": "Ependymoma locations",
+    "ja": "上衣腫の発生部位"
+  },
+  {
+    "source": "膠質瘤分類背景",
+    "en": "Background on glioma classification",
+    "ja": "グリオーマ分類の背景"
+  },
+  {
+    "source": "NHS — 神經學緊急警訊",
+    "en": "NHS — neurological emergency warning signs",
+    "ja": "NHS — 神経学的な救急の警告サイン"
+  },
+  {
+    "source": "首次癲癇及意識未恢復",
+    "en": "First seizure and failure to regain consciousness",
+    "ja": "初めてのけいれん発作と意識が回復しない場合"
+  },
+  {
+    "source": "突然單側無力／說話困難",
+    "en": "Sudden unilateral weakness / difficulty speaking",
+    "ja": "突然の片側の筋力低下／話しにくさ"
+  },
+  {
+    "source": "原稿製作：2026-10-04。本文於 2026-10-05 整理版面並核對引用，保留疾病分類的教育用途；內容可離線閱讀，來源連結需網路。",
+    "en": "Source prepared: 2026-10-04. This article was reformatted and its references checked on 2026-10-05, retaining its educational purpose of explaining disease classification. Content can be read offline; source links require a network connection.",
+    "ja": "原稿作成：2026-10-04。本記事は 2026-10-05 にレイアウトを整理し、引用を確認しました。疾患分類を学ぶための用途を維持しています。本文はオフラインで読めますが、出典リンクにはネットワーク接続が必要です。"
+  },
+  {
+    "source": "Glioblastoma（GBM）",
+    "en": "Glioblastoma（GBM）",
+    "ja": "膠芽腫（GBM）"
+  },
+  {
+    "source": "Grade ≠ Stage",
+    "en": "Grade ≠ Stage",
+    "ja": "悪性度 ≠ 病期"
+  },
+  {
+    "source": "Glioma",
+    "en": "Glioma",
+    "ja": "神経膠腫"
+  },
+  {
+    "source": "Grade / Stage",
+    "en": "Grade / Stage",
+    "ja": "悪性度／病期"
+  },
+  {
+    "source": "01 · Overview",
+    "en": "01 · Overview",
+    "ja": "01 · 概要"
+  },
+  {
+    "source": "brain metastasis",
+    "en": "brain metastasis",
+    "ja": "脳転移"
+  },
+  {
+    "source": "Brain tumor",
+    "en": "Brain tumor",
+    "ja": "脳腫瘍"
+  },
+  {
+    "source": "Primary brain/CNS tumor",
+    "en": "Primary brain/CNS tumor",
+    "ja": "原発性脳・中枢神経系腫瘍"
+  },
+  {
+    "source": "Brain metastasis",
+    "en": "Brain metastasis",
+    "ja": "脳転移"
+  },
+  {
+    "source": "Primary CNS lymphoma",
+    "en": "Primary CNS lymphoma",
+    "ja": "原発性中枢神経系リンパ腫"
+  },
+  {
+    "source": "Medulloblastoma / embryonal tumors",
+    "en": "Medulloblastoma / embryonal tumors",
+    "ja": "髄芽腫・胎児性腫瘍"
+  },
+  {
+    "source": "Germ-cell tumors",
+    "en": "Germ-cell tumors",
+    "ja": "胚細胞腫瘍"
+  },
+  {
+    "source": "02 · Incidence & biological context",
+    "en": "02 · Incidence & biological context",
+    "ja": "02 · 発生頻度と生物学的背景"
+  },
+  {
+    "source": "03 · Glioma",
+    "en": "03 · Glioma",
+    "ja": "03 · 神経膠腫"
+  },
+  {
+    "source": "IDH-mutant",
+    "en": "IDH-mutant",
+    "ja": "IDH 変異型"
+  },
+  {
+    "source": "IDH-wildtype",
+    "en": "IDH-wildtype",
+    "ja": "IDH 野生型"
+  },
+  {
+    "source": "Astrocytoma, IDH-mutant",
+    "en": "Astrocytoma, IDH-mutant",
+    "ja": "星細胞腫、IDH 変異型"
+  },
+  {
+    "source": "Oligodendroglioma",
+    "en": "Oligodendroglioma",
+    "ja": "乏突起膠腫"
+  },
+  {
+    "source": "1p/19q-codeleted",
+    "en": "1p/19q-codeleted",
+    "ja": "1p/19q 共欠失"
+  },
+  {
+    "source": "Glioblastoma, IDH-wildtype",
+    "en": "Glioblastoma, IDH-wildtype",
+    "ja": "膠芽腫、IDH 野生型"
+  },
+  {
+    "source": "04 · Glioblastoma",
+    "en": "04 · Glioblastoma",
+    "ja": "04 · 膠芽腫"
+  },
+  {
+    "source": "05 · Other CNS tumors",
+    "en": "05 · Other CNS tumors",
+    "ja": "05 · その他の中枢神経系腫瘍"
+  },
+  {
+    "source": "Meningioma",
+    "en": "Meningioma",
+    "ja": "髄膜腫"
+  },
+  {
+    "source": "Ependymoma",
+    "en": "Ependymoma",
+    "ja": "上衣腫"
+  },
+  {
+    "source": "Diffuse midline glioma",
+    "en": "Diffuse midline glioma",
+    "ja": "びまん性正中神経膠腫"
+  },
+  {
+    "source": "H3 K27-altered",
+    "en": "H3 K27-altered",
+    "ja": "H3 K27 変化型"
+  },
+  {
+    "source": "Medulloblastoma",
+    "en": "Medulloblastoma",
+    "ja": "髄芽腫"
+  },
+  {
+    "source": "Germ-cell tumor",
+    "en": "Germ-cell tumor",
+    "ja": "胚細胞腫瘍"
+  },
+  {
+    "source": "Pituitary neuroendocrine tumor",
+    "en": "Pituitary neuroendocrine tumor",
+    "ja": "下垂体神経内分泌腫瘍"
+  },
+  {
+    "source": "Vestibular schwannoma",
+    "en": "Vestibular schwannoma",
+    "ja": "前庭神経鞘腫"
+  },
+  {
+    "source": "Neuronal / glioneuronal tumors",
+    "en": "Neuronal / glioneuronal tumors",
+    "ja": "神経細胞性・グリア神経細胞性腫瘍"
+  },
+  {
+    "source": "06 · Metastasis",
+    "en": "06 · Metastasis",
+    "ja": "06 · 転移"
+  },
+  {
+    "source": "07 · Grade ≠ Stage",
+    "en": "07 · Grade ≠ Stage",
+    "ja": "07 · 悪性度 ≠ 病期"
+  },
+  {
+    "source": "08 · Molecular diagnosis",
+    "en": "08 · Molecular diagnosis",
+    "ja": "08 · 分子診断"
+  },
+  {
+    "source": "1p/19q codeletion",
+    "en": "1p/19q codeletion",
+    "ja": "1p/19q 共欠失"
+  },
+  {
+    "source": "H3 alterations",
+    "en": "H3 alterations",
+    "ja": "H3 の変化"
+  },
+  {
+    "source": "MGMT promoter methylation",
+    "en": "MGMT promoter methylation",
+    "ja": "MGMT プロモーターのメチル化"
+  },
+  {
+    "source": "09 · Diagnostic workflow",
+    "en": "09 · Diagnostic workflow",
+    "ja": "09 · 診断の流れ"
+  },
+  {
+    "source": "10 · Symptoms",
+    "en": "10 · Symptoms",
+    "ja": "10 · 症状"
+  },
+  {
+    "source": "11 · Takeaway",
+    "en": "11 · Takeaway",
+    "ja": "11 · 要点"
+  },
+  {
+    "source": "Brain tumor ≠ brain cancer。",
+    "en": "Brain tumor ≠ brain cancer. ",
+    "ja": "脳腫瘍 ≠ 脳がん。"
+  },
+  {
+    "source": "Oligodendroglioma, IDH-mutant and 1p/19q-codeleted",
+    "en": "Oligodendroglioma, IDH-mutant and 1p/19q-codeleted",
+    "ja": "乏突起膠腫、IDH 変異型かつ 1p/19q 共欠失"
+  },
+  {
+    "source": "Sources",
+    "en": "Sources",
+    "ja": "出典"
+  }
+]

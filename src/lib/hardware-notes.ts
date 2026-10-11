@@ -13,8 +13,12 @@ export const hardwareNotes = {
       en: '140 mm fans: quiet airflow, static pressure and a top 10',
       ja: '140 mm ファン評価：静音・静圧・風量とおすすめ 10 選',
     },
-    description:
-      '同噪音實測、冷排與濾網、日本到手價和 27 款規格；附前 10 推薦、P–Q 工作點與風扇盒除錯。',
+    description: {
+      'zh-hant':
+        '同噪音實測、冷排與濾網、日本到手價和 27 款規格；附前 10 推薦、P–Q 工作點與風扇盒除錯。',
+      en: 'Noise-normalized tests, radiators and filters, delivered prices in Japan and specifications for 27 fans, with a top 10, P–Q operating points and fan-box troubleshooting.',
+      ja: '同騒音での測定、ラジエーターとフィルター、日本での送料込み価格、27 モデルの仕様。おすすめ 10 選、P–Q 動作点、ファンボックスのトラブルシューティングも収録。',
+    },
   },
 } as const satisfies Record<
   HardwareNoteId,
@@ -22,7 +26,7 @@ export const hardwareNotes = {
     category: HardwareCategory;
     tagIds: readonly string[];
     title: Record<Locale, string>;
-    description: string;
+    description: Record<Locale, string>;
   }
 >;
 export const hardwareCopy: Record<
@@ -33,19 +37,19 @@ export const hardwareCopy: Record<
     title: '硬體',
     intro:
       '電腦硬體的選購與實測整理。原廠規格、獨立實驗室量測、價格快照與推論分開標示。',
-    available: '繁體中文原文 · 選購與實測筆記',
+    available: '繁體中文 · English · 日本語 · 選購與實測筆記',
   },
   en: {
     title: 'Hardware',
     intro:
       'Buying notes and test summaries for computer hardware. Vendor specifications, independent lab measurements, price snapshots and conclusions are labelled separately.',
-    available: 'Traditional Chinese source edition · Buying and test notes',
+    available: '繁體中文 · English · 日本語 · Buying and test notes',
   },
   ja: {
     title: 'ハードウェア',
     intro:
       'PC ハードウェアの選び方と測定データの整理。メーカー仕様、第三者の測定、価格の記録、推論を区別して記載します。',
-    available: '繁体字中国語の原文 · 選定と測定のノート',
+    available: '繁體中文 · English · 日本語 · 選定と測定のノート',
   },
 };
 export const hardwareCategoryCopy: Record<
@@ -72,6 +76,9 @@ export const hardwareCategoryCopy: Record<
     },
   },
 };
-export function hardwareNotePath(id: HardwareNoteId): string {
-  return `/zh-hant/note/hardware/${hardwareNotes[id].category}/${id}/`;
+export function hardwareNotePath(
+  id: HardwareNoteId,
+  locale: Locale = 'zh-hant',
+): string {
+  return `/${locale}/note/hardware/${hardwareNotes[id].category}/${id}/`;
 }

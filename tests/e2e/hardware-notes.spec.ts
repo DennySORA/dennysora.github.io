@@ -57,9 +57,9 @@ test('hardware folders lead to the fan note and its local tools recompute', asyn
   await page.goto(note + '#spec-tl140');
   await expect(page.locator('#spec-tl140')).toHaveAttribute('open', '');
   await expect(page.locator('#spec-tl140')).toBeVisible();
-  await expect(page.locator('a[hreflang="en"][rel="alternate"]')).toHaveCount(
-    0,
-  );
+  await expect(
+    page.locator('link[hreflang="en"][rel="alternate"]'),
+  ).toHaveCount(1);
   expect(external).toEqual([]);
   expect(await page.context().cookies()).toEqual([]);
   expect(

@@ -1,6 +1,6 @@
 import { EndOfBuffer } from '../../components/Buffer.tsx';
 import { Icon } from '../../components/Icon.tsx';
-import { dictionaries, localeNames, type Locale } from '../../i18n/index.ts';
+import { htmlLang, type Locale } from '../../i18n/index.ts';
 
 /** A reviewed, build-time HTML fragment; never accepts visitor-supplied HTML. */
 export function MedicalNote({
@@ -29,14 +29,8 @@ export function MedicalNote({
           />
         </div>
       ) : null}
-      {locale !== 'zh-hant' ? (
-        <p className="ln medical-translation" data-pagefind-ignore="all">
-          {localeNames['zh-hant']} ·{' '}
-          {dictionaries[locale].unavailableTranslation}
-        </p>
-      ) : null}
       <article
-        lang="zh-Hant"
+        lang={htmlLang[locale]}
         aria-labelledby="medical-title"
         data-pagefind-ignore="all"
         dangerouslySetInnerHTML={{ __html: html }}

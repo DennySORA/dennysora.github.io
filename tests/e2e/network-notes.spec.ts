@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { origin, trackExternalRequests } from './helpers.ts';
 
 const base = '/zh-hant/note/network/';
-test('network notes retain native navigation, source-only editions and safe local tools', async ({
+test('network notes retain native navigation, three-language editions and safe local tools', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
@@ -41,9 +41,9 @@ test('network notes retain native navigation, source-only editions and safe loca
   expect((await download).suggestedFilename()).toBe(
     'P2P_v2_3_review_notes.json',
   );
-  await expect(page.locator('a[hreflang="en"][rel="alternate"]')).toHaveCount(
-    0,
-  );
+  await expect(
+    page.locator('link[hreflang="en"][rel="alternate"]'),
+  ).toHaveCount(1);
   expect(external).toEqual([]);
   expect(await page.context().cookies()).toEqual([]);
   expect(

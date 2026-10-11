@@ -1,0 +1,1982 @@
+[
+  {
+    "source": "Clinical Pharmacology • Pain Medicine • Drug Safety • 更新：2026-09-30",
+    "en": "Clinical Pharmacology • Pain Medicine • Drug Safety • Updated: 2026-09-30",
+    "ja": "臨床薬理 • 疼痛治療 • 医薬品の安全性 • 更新：2026-09-30"
+  },
+  {
+    "source": "止痛藥指南：種類、作用與用藥注意事項",
+    "en": "Pain medicine guide: types, effects and precautions",
+    "ja": "鎮痛薬ガイド：種類・作用・使用上の注意"
+  },
+  {
+    "source": "本篇涵蓋 Loxoprofen、Ibuprofen 與 Acetaminophen 三種常用藥物，並非所有止痛藥的完整清單。",
+    "en": "This article covers three common medicines—loxoprofen, ibuprofen and acetaminophen—and is not a complete list of pain medicines.",
+    "ja": "本記事では、よく使われるロキソプロフェン、イブプロフェン、アセトアミノフェンの 3 剤を扱います。すべての鎮痛薬を網羅したものではありません。"
+  },
+  {
+    "source": "不是三個「不同強度的止痛藥」，而是兩條不同藥理路徑。",
+    "en": "These are not three pain medicines of different strengths, but two different pharmacological pathways.",
+    "ja": "単に「強さの異なる 3 つの鎮痛薬」ではなく、2 つの異なる薬理経路を考えます。"
+  },
+  {
+    "source": "Loxoprofen 與 ibuprofen 都是非選擇性 NSAID，主要交換的是「更強的周邊抗發炎作用」與「胃腸、腎臟、體液與心血管的 prostaglandin 代價」；acetaminophen 則主要走中樞解熱鎮痛路線，抗發炎弱，但核心毒理轉向肝臟的 NAPQI。",
+    "en": "Loxoprofen and ibuprofen are both nonselective NSAIDs. Their stronger peripheral anti-inflammatory action comes with prostaglandin-related costs to the gastrointestinal tract, kidneys, fluid balance and cardiovascular system. Acetaminophen acts mainly through central antipyretic and analgesic pathways, with weak anti-inflammatory activity; its central toxicological concern shifts to hepatic NAPQI.",
+    "ja": "ロキソプロフェンとイブプロフェンはいずれも非選択的 NSAID です。より強い末梢の抗炎症作用と引き換えに、プロスタグランジンに関連する消化管・腎臓・体液・心血管への負担があります。一方、アセトアミノフェンは主に中枢性の解熱鎮痛経路に作用し、抗炎症作用は弱く、毒性の中心は肝臓の NAPQI に移ります。"
+  },
+  {
+    "source": "Ibuprofen：racemic NSAID；S-enantiomer 主要活性",
+    "en": "Ibuprofen: a racemic NSAID; the S-enantiomer is primarily active",
+    "ja": "Ibuprofen：ラセミ体の NSAID。主な活性を持つのは S エナンチオマー"
+  },
+  {
+    "source": "mg 數不可跨藥物直接換算",
+    "en": "Milligram doses cannot be directly converted between medicines",
+    "ja": "mg 数を薬剤間で直接換算することはできません"
+  },
+  {
+    "source": "本文目錄",
+    "en": "On this page",
+    "ja": "目次"
+  },
+  {
+    "source": "總覽",
+    "en": "Overview",
+    "ja": "概要"
+  },
+  {
+    "source": "作用機轉",
+    "en": "Mechanisms of action",
+    "ja": "作用機序"
+  },
+  {
+    "source": "分子差異",
+    "en": "Molecular differences",
+    "ja": "分子ごとの違い"
+  },
+  {
+    "source": "臨床證據",
+    "en": "Clinical evidence",
+    "ja": "臨床エビデンス"
+  },
+  {
+    "source": "器官毒性",
+    "en": "Organ toxicity",
+    "ja": "臓器毒性"
+  },
+  {
+    "source": "交互作用",
+    "en": "Interactions",
+    "ja": "相互作用"
+  },
+  {
+    "source": "特殊族群",
+    "en": "Special populations",
+    "ja": "特別な配慮が必要な集団"
+  },
+  {
+    "source": "毒理",
+    "en": "Toxicology",
+    "ja": "毒性学"
+  },
+  {
+    "source": "臨床判讀",
+    "en": "Clinical interpretation",
+    "ja": "臨床的な読み解き"
+  },
+  {
+    "source": "強度結論",
+    "en": "Conclusions on strength",
+    "ja": "強さについての結論"
+  },
+  {
+    "source": "藥物速查",
+    "en": "Quick medicine reference",
+    "ja": "薬剤早見表"
+  },
+  {
+    "source": "證據限制",
+    "en": "Evidence limitations",
+    "ja": "エビデンスの限界"
+  },
+  {
+    "source": "來源",
+    "en": "Sources",
+    "ja": "出典"
+  },
+  {
+    "source": "醫療資訊用途界線",
+    "en": "Scope of this medical information",
+    "ja": "医療情報の用途と限界"
+  },
+  {
+    "source": "教育用途，不是個人處方",
+    "en": "Educational use, not an individual prescription",
+    "ja": "学習用であり、個人への処方ではありません"
+  },
+  {
+    "source": "本頁整理臨床藥理與研究，不提供個別選藥或劑量建議。用藥請依所在地仿單及醫師、藥師指示；勿自行併用兩種 NSAID，並留意重複含 acetaminophen 的製劑。",
+    "en": "This page summarizes clinical pharmacology and research; it does not recommend a medicine or dose for any individual. Follow local product information and your doctor’s or pharmacist’s instructions. Do not combine two NSAIDs on your own, and watch for duplicate acetaminophen in combination products.",
+    "ja": "本ページは臨床薬理と研究の整理であり、個人に対する薬剤や用量の推奨ではありません。服薬は所在地の添付文書と医師・薬剤師の指示に従ってください。自己判断で 2 種類の NSAID を併用せず、アセトアミノフェンを重複して含む製剤にも注意してください。"
+  },
+  {
+    "source": "疑似過量，即使目前沒有不適，也應立即聯絡當地急救或毒物諮詢服務。",
+    "en": "If an overdose is suspected, contact local emergency or poison-control services immediately, even if there are no symptoms yet.",
+    "ja": "過量摂取が疑われる場合は、まだ症状がなくても直ちに地域の救急窓口や中毒相談窓口に連絡してください。"
+  },
+  {
+    "source": "1. Overview：先把整個系統看完",
+    "en": "1. Overview: see the whole system first",
+    "ja": "1. Overview：まず全体像を把握する"
+  },
+  {
+    "source": "三種止痛藥的整體作用流程",
+    "en": "Overall pathways of the three pain medicines",
+    "ja": "3 剤の鎮痛薬の作用の全体像"
+  },
+  {
+    "source": "從組織損傷出發，分別看周邊與中樞兩條藥理路徑。",
+    "en": "Starting with tissue injury, follow the peripheral and central pharmacological pathways separately.",
+    "ja": "組織損傷を出発点に、末梢と中枢の薬理経路を分けて見ます。"
+  },
+  {
+    "source": "三種止痛藥的整體作用流程（可水平捲動）",
+    "en": "Overall pathways of the three pain medicines (horizontally scrollable)",
+    "ja": "3 剤の鎮痛薬の作用の全体像（横にスクロールできます）"
+  },
+  {
+    "source": "組織損傷 / 發炎 / 發燒",
+    "en": "Tissue injury / inflammation / fever",
+    "ja": "組織損傷 / 炎症 / 発熱"
+  },
+  {
+    "source": "周邊 COX-1 / COX-2",
+    "en": "Peripheral COX-1 / COX-2",
+    "ja": "末梢の COX-1 / COX-2"
+  },
+  {
+    "source": "PGE₂ / PGI₂ / TXA₂ 等",
+    "en": "PGE₂ / PGI₂ / TXA₂, etc.",
+    "ja": "PGE₂ / PGI₂ / TXA₂ など"
+  },
+  {
+    "source": "發炎、痛覺敏化、腎血流、胃黏膜",
+    "en": "Inflammation, pain sensitization, renal blood flow, gastric mucosa",
+    "ja": "炎症、痛覚感作、腎血流、胃粘膜"
+  },
+  {
+    "source": "S-enantiomer 為主要 COX 活性",
+    "en": "The S-enantiomer has the main COX activity",
+    "ja": "主な COX 活性を担うのは S エナンチオマー"
+  },
+  {
+    "source": "止痛 + 抗發炎 + 退燒",
+    "en": "Analgesia + anti-inflammatory action + fever reduction",
+    "ja": "鎮痛 + 抗炎症 + 解熱"
+  },
+  {
+    "source": "胃 / 腎 / 出血 / CV 代價",
+    "en": "Gastric / renal / bleeding / CV costs",
+    "ja": "胃 / 腎臓 / 出血 / 心血管への負担"
+  },
+  {
+    "source": "中樞 pain / thermoregulation",
+    "en": "Central pain / thermoregulation",
+    "ja": "中枢の痛覚 / 体温調節"
+  },
+  {
+    "source": "5-HT、endocannabinoid / AM404 等假說",
+    "en": "Hypotheses involving 5-HT, endocannabinoid / AM404, etc.",
+    "ja": "5-HT、エンドカンナビノイド / AM404 などの仮説"
+  },
+  {
+    "source": "主要中樞；周邊抗發炎弱",
+    "en": "Mainly central; weak peripheral anti-inflammatory action",
+    "ja": "主に中枢に作用。末梢の抗炎症作用は弱い"
+  },
+  {
+    "source": "止痛 + 退燒",
+    "en": "Analgesia + fever reduction",
+    "ja": "鎮痛 + 解熱"
+  },
+  {
+    "source": "核心毒理：NAPQI / 肝臟",
+    "en": "Central toxicological concern: NAPQI / liver",
+    "ja": "毒性の中心：NAPQI / 肝臓"
+  },
+  {
+    "source": "關鍵邊界：NSAID 的治療效果與器官副作用來自同一個 prostaglandin 生理系統；acetaminophen 則不是「弱版 NSAID」，而是不同藥理路線。",
+    "en": "Key distinction: the therapeutic effects and organ adverse effects of NSAIDs arise from the same prostaglandin physiological system. Acetaminophen is not a weaker NSAID; it follows a different pharmacological pathway.",
+    "ja": "重要な違い：NSAID の治療効果と臓器への副作用は、同じプロスタグランジンの生理系に由来します。アセトアミノフェンは「弱い NSAID」ではなく、異なる薬理経路に作用します。"
+  },
+  {
+    "source": "核心角色：",
+    "en": "Core role: ",
+    "ja": "主な役割："
+  },
+  {
+    "source": "非選擇性 NSAID 的 prodrug。母體本身 COX 抑制很弱，吸收後轉為活性的 trans-OH metabolite。",
+    "en": "A prodrug of a nonselective NSAID. The parent drug itself has very weak COX inhibition and is converted after absorption into an active trans-OH metabolite.",
+    "ja": "非選択的 NSAID のプロドラッグです。未変化体自体の COX 阻害作用は非常に弱く、吸収後に活性を持つ trans-OH 代謝物へ変換されます。"
+  },
+  {
+    "source": "日本處方藥常見；全球大型 outcome 資料少於 ibuprofen。",
+    "en": "Commonly prescribed in Japan; fewer large global outcome studies are available than for ibuprofen.",
+    "ja": "日本でよく処方されますが、大規模な国際的アウトカムデータはイブプロフェンより少ない薬です。"
+  },
+  {
+    "source": "非選擇性 NSAID。市售多為 R/S racemate，S(+)-ibuprofen 是主要 COX 抑制 enantiomer，部分 R 會體內轉成 S。",
+    "en": "A nonselective NSAID. Most marketed products are R/S racemates. S(+)-ibuprofen is the main COX-inhibiting enantiomer, and some R is converted to S in the body.",
+    "ja": "非選択的 NSAID です。市販製品の多くは R/S ラセミ体で、S(+)-ibuprofen が主な COX 阻害エナンチオマーです。体内では R の一部が S に変換されます。"
+  },
+  {
+    "source": "全球使用最廣、RCT / meta-analysis 資料最完整的 NSAID 之一。",
+    "en": "One of the most widely used NSAIDs worldwide, with one of the most extensive RCT and meta-analysis evidence bases.",
+    "ja": "世界で最も広く使われる NSAID の一つで、RCT とメタ解析のデータも最も充実した薬剤の一つです。"
+  },
+  {
+    "source": "中樞解熱鎮痛。精確機轉仍未完全釐清；周邊抗發炎效果弱。",
+    "en": "Central antipyretic and analgesic action. The precise mechanism remains incompletely understood; peripheral anti-inflammatory effects are weak.",
+    "ja": "中枢性の解熱鎮痛作用を持ちます。正確な機序はまだ完全には解明されておらず、末梢の抗炎症作用は弱い薬です。"
+  },
+  {
+    "source": "典型 NSAID 胃腎機制較少，但過量或高風險狀態的肝毒性是核心安全議題。",
+    "en": "It has fewer typical NSAID gastric and renal mechanisms, but hepatotoxicity in overdose or high-risk situations is the central safety concern.",
+    "ja": "典型的な NSAID の胃・腎障害機序は少ない一方、過量摂取や高リスク状態での肝毒性が安全性の中心的な問題です。"
+  },
+  {
+    "source": "2. COX / Prostaglandin：為什麼 NSAID 同時有效又危險",
+    "en": "2. COX / Prostaglandins: why NSAIDs are both effective and hazardous",
+    "ja": "2. COX / Prostaglandin：NSAID が効く理由と危険性を併せ持つ理由"
+  },
+  {
+    "source": "COX prostaglandin路徑",
+    "en": "COX–prostaglandin pathway",
+    "ja": "COX・プロスタグランジン経路"
+  },
+  {
+    "source": "COX 產生的 prostaglandins 參與疼痛，也維持正常器官生理；抑制後有療效，也有代價。",
+    "en": "Prostaglandins produced by COX contribute to pain and also maintain normal organ physiology. Inhibiting them produces benefits as well as costs.",
+    "ja": "COX が産生するプロスタグランジンは痛みに関与すると同時に、臓器の正常な生理機能も保ちます。その阻害には治療効果と代償の両方があります。"
+  },
+  {
+    "source": "COX prostaglandin路徑（可水平捲動）",
+    "en": "COX–prostaglandin pathway (horizontally scrollable)",
+    "ja": "COX・プロスタグランジン経路（横にスクロールできます）"
+  },
+  {
+    "source": "PGE₂：痛覺 / 發燒",
+    "en": "PGE₂: pain / fever",
+    "ja": "PGE₂：痛覚 / 発熱"
+  },
+  {
+    "source": "PGI₂ / PGE₂：腎臟",
+    "en": "PGI₂ / PGE₂: kidneys",
+    "ja": "PGI₂ / PGE₂：腎臓"
+  },
+  {
+    "source": "維持灌流、afferent dilation、Na/H₂O",
+    "en": "Maintain perfusion, afferent dilation, Na/H₂O",
+    "ja": "灌流、輸入細動脈の拡張、Na/H₂O の維持"
+  },
+  {
+    "source": "PGE₂ / PGI₂：胃黏膜",
+    "en": "PGE₂ / PGI₂: gastric mucosa",
+    "ja": "PGE₂ / PGI₂：胃粘膜"
+  },
+  {
+    "source": "血流、黏液 / bicarbonate、防禦",
+    "en": "Blood flow, mucus / bicarbonate, defense",
+    "ja": "血流、粘液 / 重炭酸、粘膜防御"
+  },
+  {
+    "source": "血小板聚集 / hemostasis",
+    "en": "Platelet aggregation / hemostasis",
+    "ja": "血小板凝集 / 止血"
+  },
+  {
+    "source": "同時失去保護性 PG",
+    "en": "Protective PGs are lost at the same time",
+    "ja": "同時に保護的な PG も失われる"
+  },
+  {
+    "source": "直覺：",
+    "en": "Intuition: ",
+    "ja": "理解のポイント："
+  },
+  {
+    "source": "COX 不是單純「發炎酵素」。它也維持正常胃黏膜、腎臟血流與血小板/血管生理。抑制同一條路徑，同時產生療效與 class toxicity。",
+    "en": "COX is not simply an inflammation enzyme. It also maintains normal gastric mucosa, renal blood flow and platelet/vascular physiology. Inhibiting this same pathway produces both therapeutic effects and class toxicity.",
+    "ja": "COX は単なる「炎症の酵素」ではありません。正常な胃粘膜、腎血流、血小板・血管の生理機能も維持します。同じ経路の阻害によって、治療効果と薬効群に共通する毒性が同時に生じます。"
+  },
+  {
+    "source": "COX-1 / COX-2 不宜過度簡化：",
+    "en": "Do not oversimplify COX-1 / COX-2: ",
+    "ja": "COX-1 / COX-2 を単純化しすぎない："
+  },
+  {
+    "source": "兩者都有生理與病理角色。Loxoprofen 的活性 trans-OH metabolite 與 ibuprofen 都可視為非選擇性、可逆性 COX inhibitor；不同 assay 的 COX-1/COX-2 IC₅₀ 差異很大，因此不適合用單一「選擇性倍數」做臨床安全排名。",
+    "en": "Both have physiological and pathological roles. The active trans-OH metabolite of loxoprofen and ibuprofen can both be regarded as nonselective, reversible COX inhibitors. COX-1/COX-2 IC₅₀ values vary widely between assays, so a single selectivity ratio should not be used to rank clinical safety.",
+    "ja": "どちらも生理的・病理的な役割を持ちます。ロキソプロフェンの活性 trans-OH 代謝物とイブプロフェンはいずれも、非選択的かつ可逆的な COX 阻害薬と捉えられます。COX-1/COX-2 の IC₅₀ は測定法によって大きく異なるため、単一の「選択性の倍率」で臨床的な安全性を順位付けするのは適切ではありません。"
+  },
+  {
+    "source": "3. 三個分子其實有三種不同的 pharmacology",
+    "en": "3. Three molecules, three different pharmacological profiles",
+    "ja": "3. 3 つの分子には、それぞれ異なる薬理特性がある"
+  },
+  {
+    "source": "3.1 Loxoprofen：先變身才真正工作",
+    "en": "3.1 Loxoprofen: it must first be converted to become active",
+    "ja": "3.1 ロキソプロフェン：変換されてから本格的に働く"
+  },
+  {
+    "source": "口服後母體快速吸收，再經 carbonyl reduction 形成 active trans-OH metabolite；體外研究顯示母體對 human COX-1/2 幾乎沒有明顯抑制，而活性代謝物可非選擇性抑制 COX。",
+    "en": "After oral administration, the parent drug is rapidly absorbed and undergoes carbonyl reduction to form the active trans-OH metabolite. In vitro studies show little appreciable inhibition of human COX-1/2 by the parent drug, whereas the active metabolite inhibits COX nonselectively.",
+    "ja": "経口投与後、未変化体は速やかに吸収され、カルボニル還元によって活性 trans-OH 代謝物になります。in vitro 研究では未変化体によるヒト COX-1/2 の阻害はほとんど認められず、活性代謝物が非選択的に COX を阻害します。"
+  },
+  {
+    "source": "臨床含義：",
+    "en": "Clinical implication: ",
+    "ja": "臨床上の意味："
+  },
+  {
+    "source": "「prodrug」可以減少未吸收母體的直接局部胃刺激，但",
+    "en": "Being a prodrug may reduce direct local gastric irritation from the unabsorbed parent drug, but ",
+    "ja": "プロドラッグであることは、未吸収の未変化体による局所的な胃刺激を減らし得ますが、"
+  },
+  {
+    "source": "不會消除全身 COX 抑制造成的潰瘍 / 出血 / AKI",
+    "en": "does not eliminate ulcers / bleeding / AKI caused by systemic COX inhibition",
+    "ja": "全身性 COX 阻害による潰瘍 / 出血 / AKI をなくすものではありません"
+  },
+  {
+    "source": "3.2 Ibuprofen：手性很重要",
+    "en": "3.2 Ibuprofen: chirality matters",
+    "ja": "3.2 イブプロフェン：キラリティーが重要"
+  },
+  {
+    "source": "一般 ibuprofen 是 R/S racemate。",
+    "en": "Conventional ibuprofen is an R/S racemate. ",
+    "ja": "通常のイブプロフェンは R/S ラセミ体です。"
+  },
+  {
+    "source": "是主要 COX inhibitor；R-enantiomer 本身 COX 抑制很弱，但人體可將部分 R 進行 unidirectional chiral inversion 轉為 S。",
+    "en": "is the main COX inhibitor. The R-enantiomer itself inhibits COX only weakly, but some R undergoes unidirectional chiral inversion to S in humans.",
+    "ja": "が主な COX 阻害体です。R エナンチオマー自体の COX 阻害作用は弱いものの、ヒトでは R の一部が一方向のキラル反転によって S に変換されます。"
+  },
+  {
+    "source": "藥效不是「200 mg 全部都具有相同活性」那麼簡單，這也是不能用毫克數跨分子直比 potency 的原因之一。",
+    "en": "The effect is not as simple as assuming that all 200 mg has the same activity. This is one reason milligram doses cannot be used to compare potency directly across molecules.",
+    "ja": "薬効は「200 mg のすべてが同じ活性を持つ」というほど単純ではありません。これも、mg 数だけで異なる分子の効力を直接比較できない理由の一つです。"
+  },
+  {
+    "source": "3.3 Acetaminophen：機轉尚未完全定論",
+    "en": "3.3 Acetaminophen: the mechanism is not fully settled",
+    "ja": "3.3 アセトアミノフェン：作用機序はまだ完全には確定していない"
+  },
+  {
+    "source": "目前最穩妥的說法是：主要在",
+    "en": "The most defensible current description is that it acts mainly in the",
+    "ja": "現時点で最も確実に言えるのは、主に"
+  },
+  {
+    "source": "抑制 pain / thermoregulatory prostaglandin signaling；serotonergic、endocannabinoid / AM404、TRPV1 等路徑都有實驗支持。",
+    "en": "to inhibit prostaglandin signaling involved in pain and thermoregulation. Serotonergic, endocannabinoid / AM404 and TRPV1 pathways all have experimental support.",
+    "ja": "で痛覚・体温調節に関わるプロスタグランジンのシグナルを抑制するということです。セロトニン、エンドカンナビノイド / AM404、TRPV1 などの経路にも実験的な裏付けがあります。"
+  },
+  {
+    "source": "不要把「COX-3」當成已確立的人類臨床機轉。",
+    "en": "Do not treat COX-3 as an established human clinical mechanism. ",
+    "ja": "「COX-3」をヒトで確立した臨床的な作用機序として扱わないでください。"
+  },
+  {
+    "source": "現代文獻仍把 acetaminophen 的完整鎮痛機制視為未完全解決。",
+    "en": "Modern literature still considers the complete analgesic mechanism of acetaminophen unresolved.",
+    "ja": "近年の文献でも、アセトアミノフェンの鎮痛機序の全体像は未解明とされています。"
+  },
+  {
+    "source": "4. PK / PD：吸收快，不等於「一定比較強」",
+    "en": "4. PK / PD: rapid absorption does not necessarily mean greater strength",
+    "ja": "4. PK / PD：吸収が速いことは「必ず強い」ことを意味しない"
+  },
+  {
+    "source": "藥動學與日本成人仿單參考（可水平捲動）",
+    "en": "Pharmacokinetics and Japanese adult labeling reference (horizontally scrollable)",
+    "ja": "薬物動態と日本の成人向け添付文書の参考情報（横にスクロールできます）"
+  },
+  {
+    "source": "藥動學與日本成人仿單參考",
+    "en": "Pharmacokinetics and Japanese adult labeling reference",
+    "ja": "薬物動態と日本の成人向け添付文書の参考情報"
+  },
+  {
+    "source": "項目",
+    "en": "Item",
+    "ja": "項目"
+  },
+  {
+    "source": "藥理分類",
+    "en": "Pharmacological class",
+    "ja": "薬理分類"
+  },
+  {
+    "source": "主要有效形式",
+    "en": "Main active form",
+    "ja": "主な活性型"
+  },
+  {
+    "source": "主要 S(+)-ibuprofen",
+    "en": "Primarily S(+)-ibuprofen",
+    "ja": "主に S(+)-ibuprofen"
+  },
+  {
+    "source": "母體 + CNS downstream metabolites / signaling",
+    "en": "Parent drug + downstream CNS metabolites / signaling",
+    "ja": "未変化体 + CNS の下流代謝物 / シグナル"
+  },
+  {
+    "source": "日本常見成人處方參考*",
+    "en": "Common adult prescription references in Japan*",
+    "ja": "日本で一般的な成人処方の参考値*"
+  },
+  {
+    "source": "一般疼痛通常 60 mg/次、1日3次",
+    "en": "For general pain, usually 60 mg per dose, three times daily",
+    "ja": "一般的な疼痛では通常 1 回 60 mg、1 日 3 回"
+  },
+  {
+    "source": "一般發炎疼痛常見總量 600 mg/day 分3次；URTI 頓用通常 200 mg",
+    "en": "For general inflammatory pain, commonly 600 mg/day in three divided doses; usually 200 mg as needed for URTI",
+    "ja": "一般的な炎症性疼痛では通常 1 日量 600 mg を 3 回に分けて投与。URTI の頓用では通常 200 mg"
+  },
+  {
+    "source": "日本成人「鎮痛」適應症：通常 300–1000 mg/次、間隔 ≥4–6 h；該適應症仿單上限為 4000 mg/day，非一般自行用藥上限",
+    "en": "For the adult analgesia indication in Japan: usually 300–1000 mg per dose at intervals of ≥4–6 h. The labeling limit for this indication is 4000 mg/day, not a general self-medication limit",
+    "ja": "日本の成人「鎮痛」適応：通常 1 回 300–1000 mg、投与間隔は ≥4–6 h。この適応の添付文書上の上限は 4000 mg/day であり、一般的な自己服薬の上限ではありません"
+  },
+  {
+    "source": "（標籤研究）",
+    "en": "(labeling studies)",
+    "ja": "（添付文書の試験）"
+  },
+  {
+    "source": "parent 約 0.45 h；active trans-OH 約 0.79 h",
+    "en": "Parent drug approximately 0.45 h; active trans-OH approximately 0.79 h",
+    "ja": "未変化体は約 0.45 h、活性 trans-OH は約 0.79 h"
+  },
+  {
+    "source": "200 mg 日本資料約 2.1 h；美國標準錠常見 1–2 h",
+    "en": "Japanese data for 200 mg: approximately 2.1 h; standard US tablets commonly 1–2 h",
+    "ja": "日本の 200 mg のデータでは約 2.1 h。米国の通常錠では一般に 1–2 h"
+  },
+  {
+    "source": "Calonal 400 mg 空腹約 0.46 h",
+    "en": "Calonal 400 mg, fasting: approximately 0.46 h",
+    "ja": "カロナール 400 mg、空腹時：約 0.46 h"
+  },
+  {
+    "source": "t½（約）",
+    "en": "t½ (approximate)",
+    "ja": "t½（概数）"
+  },
+  {
+    "source": "約 1.8–2.0 h",
+    "en": "Approximately 1.8–2.0 h",
+    "ja": "約 1.8–2.0 h"
+  },
+  {
+    "source": "Calonal 400 mg 約 2.36 h",
+    "en": "Calonal 400 mg: approximately 2.36 h",
+    "ja": "カロナール 400 mg：約 2.36 h"
+  },
+  {
+    "source": "抗發炎",
+    "en": "Anti-inflammatory action",
+    "ja": "抗炎症作用"
+  },
+  {
+    "source": "有",
+    "en": "Yes",
+    "ja": "あり"
+  },
+  {
+    "source": "臨床上弱",
+    "en": "Clinically weak",
+    "ja": "臨床的には弱い"
+  },
+  {
+    "source": "核心清除",
+    "en": "Main elimination route",
+    "ja": "主な消失経路"
+  },
+  {
+    "source": "代謝後尿排；glucuronide conjugates",
+    "en": "Urinary excretion after metabolism; glucuronide conjugates",
+    "ja": "代謝後に尿中排泄。グルクロン酸抱合体"
+  },
+  {
+    "source": "肝代謝（CYP2C9 重要）→ renal excretion",
+    "en": "Hepatic metabolism (CYP2C9 is important) → renal excretion",
+    "ja": "肝代謝（CYP2C9 が重要）→ 腎排泄"
+  },
+  {
+    "source": "glucuronidation / sulfation 為主；少量 CYP → NAPQI",
+    "en": "Mainly glucuronidation / sulfation; a small fraction via CYP → NAPQI",
+    "ja": "主にグルクロン酸抱合 / 硫酸抱合。少量は CYP → NAPQI"
+  },
+  {
+    "source": "* 這是日本現行處方仿單的「參考範圍」，不是個人用藥指示。不同疾病、國家、年齡、製劑與共病會改變劑量。以日本 Calonal 為例，成人急性上呼吸道炎的仿單用量另為每次 300–500 mg 頓用，原則每日最多 2 次、每日上限 1500 mg；不能套用鎮痛適應症的 4000 mg 上限。T",
+    "en": "* These are reference ranges from current Japanese prescription labeling, not individual medication instructions. Dose varies with disease, country, age, formulation and comorbidities. For example, Japanese Calonal labeling for acute upper respiratory inflammation in adults separately specifies 300–500 mg per dose as needed, generally no more than twice daily, with a daily maximum of 1500 mg. The 4000 mg limit for the analgesia indication must not be applied here. T",
+    "ja": "* これは日本の現行の処方薬添付文書に記載された「参考範囲」であり、個人への服薬指示ではありません。用量は疾患、国、年齢、製剤、併存疾患によって変わります。例えば日本のカロナールでは、成人の急性上気道炎の用量は別に 1 回 300–500 mg の頓用、原則 1 日 2 回まで、1 日上限 1500 mg とされています。鎮痛適応の上限 4000 mg を当てはめてはいけません。T"
+  },
+  {
+    "source": "來自不同研究，不能直接當成 head-to-head onset comparison。",
+    "en": "values come from different studies and cannot be treated as a direct head-to-head comparison of onset.",
+    "ja": "の値は異なる研究に由来し、作用発現時間の直接比較としては扱えません。"
+  },
+  {
+    "source": "60 mg vs 200 mg vs 1000 mg 不能比較「誰比較大顆所以比較強」。",
+    "en": "60 mg vs 200 mg vs 1000 mg does not tell you which medicine is stronger because its tablet contains more milligrams.",
+    "ja": "60 mg、200 mg、1000 mg を比べて「量の大きい錠剤ほど強い」とは判断できません。"
+  },
+  {
+    "source": "每種分子的 receptor/enzyme potency、bioavailability、active metabolite、protein binding 與 therapeutic window 都不同。跨藥物需要比較「臨床劑量下的 outcome」，不是比較 mg。",
+    "en": "Each molecule differs in receptor/enzyme potency, bioavailability, active metabolites, protein binding and therapeutic window. Comparisons between medicines must use outcomes at clinical doses, not milligram counts.",
+    "ja": "各分子は受容体・酵素に対する効力、バイオアベイラビリティ、活性代謝物、タンパク結合、治療域が異なります。薬剤間で比較すべきなのは「臨床用量でのアウトカム」であり、mg 数ではありません。"
+  },
+  {
+    "source": "5. 臨床效果：疼痛 phenotype 比藥名更重要",
+    "en": "5. Clinical effects: the pain phenotype matters more than the medicine’s name",
+    "ja": "5. 臨床効果：薬の名前より痛みの表現型が重要"
+  },
+  {
+    "source": "急性發炎性牙科疼痛：Ibuprofen 的直接證據很強",
+    "en": "Acute inflammatory dental pain: strong direct evidence for ibuprofen",
+    "ja": "急性の炎症性歯科疼痛：イブプロフェンの直接的なエビデンスは強い"
+  },
+  {
+    "source": "Cochrane 納入 7 項研究、2241 人。多數比較",
+    "en": "Cochrane included 7 studies with 2241 participants. Most compared",
+    "ja": "Cochrane は 7 研究、2241 人を対象にしています。多くの研究で比較したのは"
+  },
+  {
+    "source": "；6 小時達至少 50% pain relief 的 RR 為",
+    "en": "; the RR for achieving at least 50% pain relief over 6 hours was",
+    "ja": "で、6 時間で少なくとも 50% の鎮痛を得られる RR は"
+  },
+  {
+    "source": "，支持 ibuprofen 在拔智齒這個「高度發炎」模型中較有效。",
+    "en": ", supporting greater effectiveness of ibuprofen in the highly inflammatory model of wisdom-tooth extraction.",
+    "ja": "であり、親知らず抜歯という「炎症の強い」モデルでは、イブプロフェンの効果がより高いことを支持します。"
+  },
+  {
+    "source": "這是特定 dose、特定疼痛模型的結論，不代表 ibuprofen 在所有疼痛都比 acetaminophen 強。",
+    "en": "This conclusion applies to a specific dose and pain model; it does not mean ibuprofen is stronger than acetaminophen for every kind of pain.",
+    "ja": "これは特定の用量と疼痛モデルについての結論であり、すべての痛みでイブプロフェンがアセトアミノフェンより強いという意味ではありません。"
+  },
+  {
+    "source": "Ibuprofen + Acetaminophen：不同機轉可產生 additive analgesia",
+    "en": "Ibuprofen + acetaminophen: different mechanisms can produce additive analgesia",
+    "ja": "イブプロフェン + アセトアミノフェン：異なる機序によって相加的な鎮痛が得られる"
+  },
+  {
+    "source": "Cochrane 急性術後疼痛 review（3 trials, 1647 人）顯示，固定劑量 ibuprofen + acetaminophen 在拔智齒後可比相同劑量的 ibuprofen 單藥讓更多人達到 6 小時良好止痛，並減少 rescue medication。",
+    "en": "A Cochrane review of acute postoperative pain (3 trials, 1647 participants) found that a fixed-dose ibuprofen + acetaminophen combination after wisdom-tooth extraction could provide good pain relief over 6 hours to more people than the same dose of ibuprofen alone, while reducing rescue medication use.",
+    "ja": "急性術後疼痛に関する Cochrane レビュー（3 試験、1647 人）では、親知らず抜歯後の固定用量イブプロフェン + アセトアミノフェン配合剤は、同量のイブプロフェン単剤より多くの人に 6 時間の良好な鎮痛をもたらし、レスキュー薬の使用も減らすことが示されました。"
+  },
+  {
+    "source": "這說明「不同路徑組合」與「同類 NSAID 疊加」是兩件完全不同的事；仍需依醫囑與總劑量使用。",
+    "en": "This shows that combining different pathways and stacking NSAIDs of the same class are entirely different things. Medical instructions and total-dose limits still apply.",
+    "ja": "これは「異なる経路の組み合わせ」と「同じ系統の NSAID の重ね使い」がまったく別であることを示します。いずれも医師の指示と総用量に従う必要があります。"
+  },
+  {
+    "source": "Loxoprofen vs Ibuprofen：同級，但現代證據量不對稱",
+    "en": "Loxoprofen vs ibuprofen: the same class, but unequal amounts of modern evidence",
+    "ja": "ロキソプロフェンとイブプロフェン：同系統だが、近年のエビデンス量は対称ではない"
+  },
+  {
+    "source": "2016 loxoprofen review 整理的 active-comparator trials 中，口服 loxoprofen 在 knee OA 等情境的鎮痛療效一般沒有顯著不同於 ibuprofen；也與 naproxen、celecoxib 等 comparator 有相近結果。",
+    "en": "In active-comparator trials summarized by a 2016 loxoprofen review, oral loxoprofen generally did not differ significantly from ibuprofen in analgesic efficacy for conditions such as knee OA. Results were also similar to comparators including naproxen and celecoxib.",
+    "ja": "2016 年のロキソプロフェンのレビューにまとめられた実薬対照試験では、膝 OA などに対する経口ロキソプロフェンの鎮痛効果は、一般にイブプロフェンと有意な差がありませんでした。ナプロキセン、セレコキシブなどの対照薬とも同程度の結果でした。"
+  },
+  {
+    "source": "限制：",
+    "en": "Limitations: ",
+    "ja": "限界："
+  },
+  {
+    "source": "loxoprofen 的直接比較研究較少、較舊、地區集中。這不足以宣稱 loxoprofen 「比 ibuprofen 更強」或更安全。",
+    "en": "Direct comparative studies of loxoprofen are fewer, older and geographically concentrated. They do not justify claiming that loxoprofen is stronger or safer than ibuprofen.",
+    "ja": "ロキソプロフェンの直接比較研究は少なく、古いものが多く、地域も偏っています。これだけでロキソプロフェンが「イブプロフェンより強い」、あるいは安全とは主張できません。"
+  },
+  {
+    "source": "發燒 / 病毒性上呼吸道感染：止症狀 ≠ 縮短疾病",
+    "en": "Fever / viral upper respiratory infection: symptom relief ≠ a shorter illness",
+    "ja": "発熱 / ウイルス性上気道感染：症状の緩和 ≠ 病期の短縮"
+  },
+  {
+    "source": "NSAID 與 acetaminophen 都可降低 fever / pain，但這是 symptomatic treatment。Loxoprofen 的",
+    "en": "Both NSAIDs and acetaminophen can reduce fever and pain, but this is symptomatic treatment. A loxoprofen",
+    "ja": "NSAID もアセトアミノフェンも発熱や痛みを軽減できますが、これは対症療法です。ロキソプロフェンの"
+  },
+  {
+    "source": "placebo-controlled URTI 研究",
+    "en": "placebo-controlled URTI study",
+    "ja": "プラセボ対照 URTI 試験"
+  },
+  {
+    "source": "沒有顯示明確縮短病程。",
+    "en": " did not show a clear reduction in illness duration.",
+    "ja": "では、病期を明確に短縮する効果は示されませんでした。"
+  },
+  {
+    "source": "因此「吃了舒服」和「疾病被治好 / 病程縮短」需要分開理解。",
+    "en": "Feeling better after taking a medicine must therefore be distinguished from curing the disease or shortening its course.",
+    "ja": "したがって「飲むと楽になる」ことと「病気が治る / 病期が短くなる」ことは分けて理解する必要があります。"
+  },
+  {
+    "source": "用一個例子走完整流程：拔牙後疼痛",
+    "en": "Walk through the whole process with one example: pain after tooth extraction",
+    "ja": "抜歯後の痛みを例に、全体の流れをたどる"
+  },
+  {
+    "source": "拔牙後疼痛路徑",
+    "en": "Pain pathway after tooth extraction",
+    "ja": "抜歯後の疼痛経路"
+  },
+  {
+    "source": "組織損傷增加痛覺敏化；不同藥理路徑影響拔牙後的止痛效果。",
+    "en": "Tissue injury increases pain sensitization. Different pharmacological pathways influence pain relief after extraction.",
+    "ja": "組織損傷は痛覚感作を強めます。異なる薬理経路が抜歯後の鎮痛効果に影響します。"
+  },
+  {
+    "source": "拔牙後疼痛路徑（可水平捲動）",
+    "en": "Pain pathway after tooth extraction (horizontally scrollable)",
+    "ja": "抜歯後の疼痛経路（横にスクロールできます）"
+  },
+  {
+    "source": "拔牙 / tissue injury",
+    "en": "Tooth extraction / tissue injury",
+    "ja": "抜歯 / 組織損傷"
+  },
+  {
+    "source": "阻斷周邊發炎 + pain sensitization",
+    "en": "Block peripheral inflammation + pain sensitization",
+    "ja": "末梢の炎症 + 痛覚感作を抑える"
+  },
+  {
+    "source": "中樞 pain processing ↓；抗發炎弱",
+    "en": "Central pain processing ↓; weak anti-inflammatory action",
+    "ja": "中枢の疼痛処理 ↓。抗炎症作用は弱い"
+  },
+  {
+    "source": "發炎性模型中 NSAID 常有較強單藥效力",
+    "en": "NSAIDs often have greater single-agent efficacy in inflammatory models",
+    "ja": "炎症性モデルでは NSAID 単剤の効果が高いことが多い"
+  },
+  {
+    "source": "但若 NSAID risk 高，安全性可能比 efficacy 更重要",
+    "en": "But when NSAID risk is high, safety may matter more than efficacy",
+    "ja": "ただし NSAID のリスクが高い場合、安全性が有効性より重要なこともある"
+  },
+  {
+    "source": "6. 器官毒性：真正需要深度理解的部分",
+    "en": "6. Organ toxicity: what requires a deeper understanding",
+    "ja": "6. 臓器毒性：深く理解しておきたい部分"
+  },
+  {
+    "source": "6.1 胃腸：NSAID 的「系統性」傷害比局部刺激更重要",
+    "en": "6.1 Gastrointestinal tract: systemic NSAID injury matters more than local irritation",
+    "ja": "6.1 消化管：NSAID の「全身性」の傷害は局所刺激より重要"
+  },
+  {
+    "source": "抑制胃黏膜 PGE₂/PGI₂ → mucosal blood flow、mucus、bicarbonate defense 下降，再加上局部藥物刺激，可造成 dyspepsia、erosion、ulcer、bleeding、perforation。",
+    "en": "Inhibition of gastric mucosal PGE₂/PGI₂ reduces mucosal blood flow, mucus and bicarbonate defenses. Together with local drug irritation, this can cause dyspepsia, erosion, ulcers, bleeding and perforation.",
+    "ja": "胃粘膜の PGE₂/PGI₂ の阻害によって粘膜血流、粘液、重炭酸による防御が低下します。薬剤の局所刺激も加わり、消化不良、びらん、潰瘍、出血、穿孔を起こし得ます。"
+  },
+  {
+    "source": "高齡、潰瘍史、抗凝血 / antiplatelet、systemic steroid、SSRI、酒精等可提高 GI bleeding risk。",
+    "en": "Older age, a history of ulcers, anticoagulants / antiplatelets, systemic steroids, SSRIs and alcohol can increase GI bleeding risk.",
+    "ja": "高齢、潰瘍の既往、抗凝固薬 / 抗血小板薬、全身性ステロイド、SSRI、飲酒などは消化管出血のリスクを高めます。"
+  },
+  {
+    "source": "沒有相同程度的周邊 COX-mediated gastropathy，因此不是典型 NSAID 潰瘍藥物；但這不代表零 GI 副作用或零出血風險，尤其與 warfarin 等情境仍要分開評估。",
+    "en": "does not cause the same degree of peripheral COX-mediated gastropathy and is therefore not a typical NSAID ulcer-causing medicine. This does not mean zero GI adverse effects or zero bleeding risk; situations such as warfarin coadministration still need separate assessment.",
+    "ja": "同程度の末梢 COX を介する胃障害がなく、典型的な NSAID 潰瘍を起こす薬ではありません。ただし消化管の副作用や出血リスクがゼロという意味ではなく、特にワルファリン併用などは別に評価する必要があります。"
+  },
+  {
+    "source": "6.2 腎臟：NSAID 的「triple whammy」是血流動力學問題",
+    "en": "6.2 Kidneys: the NSAID triple whammy is a hemodynamic problem",
+    "ja": "6.2 腎臓：NSAID の「triple whammy」は血行動態の問題"
+  },
+  {
+    "source": "NSAID triple whammy腎損傷",
+    "en": "Kidney injury from the NSAID triple whammy",
+    "ja": "NSAID の triple whammy による腎障害"
+  },
+  {
+    "source": "三種血流動力學因素疊加，使腎絲球過濾壓下降。",
+    "en": "Three hemodynamic factors combine to lower glomerular filtration pressure.",
+    "ja": "3 つの血行動態因子が重なり、糸球体の濾過圧が低下します。"
+  },
+  {
+    "source": "NSAID triple whammy腎損傷（可水平捲動）",
+    "en": "Kidney injury from the NSAID triple whammy (horizontally scrollable)",
+    "ja": "NSAID の triple whammy による腎障害（横にスクロールできます）"
+  },
+  {
+    "source": "risk 特別高：老人、CKD、脫水、HF",
+    "en": "Particularly high risk: older people, CKD, dehydration, HF",
+    "ja": "特に高リスク：高齢者、CKD、脱水、HF"
+  },
+  {
+    "source": "近期 systematic review/meta-analysis（5 case-control studies, 410,130 人）估計 triple-whammy exposure 與 AKI 風險上升相關（AKI 統合分析納入其中 4 項研究，OR 約 2.01，95% CI 1.30–3.10），但異質性高、證據確定性低；數字用來理解風險方向，不宜當成個人預測。",
+    "en": "A recent systematic review/meta-analysis (5 case-control studies, 410,130 people) associated triple-whammy exposure with increased AKI risk. The AKI pooled analysis included 4 of those studies: OR approximately 2.01, 95% CI 1.30–3.10. Heterogeneity was high and certainty low; these numbers indicate the direction of risk, not an individual prediction.",
+    "ja": "近年のシステマティックレビュー／メタ解析（症例対照研究 5 件、410,130 人）では、triple whammy への曝露と AKI リスク上昇の関連が推定されました。AKI の統合解析に含まれたのはそのうち 4 研究で、OR は約 2.01、95% CI は 1.30–3.10 です。ただし異質性が高く、エビデンスの確実性は低いため、数値はリスクの方向を理解するためのものであり、個人の予測には適しません。"
+  },
+  {
+    "source": "6.3 心血管 / 血壓 / 體液",
+    "en": "6.3 Cardiovascular system / blood pressure / fluids",
+    "ja": "6.3 心血管 / 血圧 / 体液"
+  },
+  {
+    "source": "NSAID 抑制腎臟 prostaglandin 可造成",
+    "en": "NSAID inhibition of renal prostaglandins can cause",
+    "ja": "NSAID による腎プロスタグランジンの阻害は、"
+  },
+  {
+    "source": "Na⁺ / H₂O retention、血壓升高、edema、heart failure destabilization",
+    "en": "Na⁺ / H₂O retention, increased blood pressure, edema and destabilization of heart failure",
+    "ja": "Na⁺ / H₂O 貯留、血圧上昇、浮腫、心不全の不安定化"
+  },
+  {
+    "source": "；prostacyclin / thromboxane 平衡也涉及 thrombotic risk。日本現行 loxoprofen 與 ibuprofen 仿單均納入 myocardial infarction / cerebrovascular event 等重大不良反應警示。",
+    "en": "; the prostacyclin / thromboxane balance also affects thrombotic risk. Current Japanese loxoprofen and ibuprofen labeling both warn of serious adverse reactions such as myocardial infarction and cerebrovascular events.",
+    "ja": "を起こし得ます。プロスタサイクリン / トロンボキサンのバランスも血栓リスクに関係します。日本の現行のロキソプロフェンとイブプロフェンの添付文書はいずれも、心筋梗塞や脳血管障害などの重大な副作用を警告しています。"
+  },
+  {
+    "source": "量化證據要非常小心：",
+    "en": "Quantitative evidence requires great care: ",
+    "ja": "数値化されたエビデンスは慎重に扱う必要があります："
+  },
+  {
+    "source": "大型 CNT meta-analysis 對「高劑量、長期」ibuprofen（大多約 2400 mg/day、RA/OA population）發現 major coronary event、heart failure、upper GI complication 風險上升。這些數字",
+    "en": "The large CNT meta-analysis found increased risks of major coronary events, heart failure and upper GI complications with high-dose, long-term ibuprofen, mostly around 2400 mg/day in RA/OA populations. These figures ",
+    "ja": "大規模な CNT メタ解析では、「高用量・長期」のイブプロフェン（主に RA/OA 集団で約 2400 mg/day）で、主要冠動脈イベント、心不全、上部消化管合併症のリスク上昇が認められました。これらの数値は"
+  },
+  {
+    "source": "不能直接外推到偶爾 200–400 mg OTC 使用",
+    "en": "cannot be directly extrapolated to occasional OTC use of 200–400 mg",
+    "ja": "ときどき 200–400 mg を OTC として使用する場合に直接外挿できません"
+  },
+  {
+    "source": "，但支持 NSAID class risk 具有 dose/duration 依賴性。",
+    "en": ", but they support dose- and duration-dependent NSAID class risk.",
+    "ja": "が、NSAID に共通するリスクが用量と期間に依存することを支持します。"
+  },
+  {
+    "source": "6.4 Acetaminophen 肝毒性：NAPQI 是核心",
+    "en": "6.4 Acetaminophen hepatotoxicity: NAPQI is central",
+    "ja": "6.4 アセトアミノフェンの肝毒性：中心となるのは NAPQI"
+  },
+  {
+    "source": "acetaminophen NAPQI肝毒性",
+    "en": "Acetaminophen NAPQI hepatotoxicity",
+    "ja": "アセトアミノフェンの NAPQI による肝毒性"
+  },
+  {
+    "source": "大部分走非毒性代謝路徑；少部分形成 NAPQI，其結果取決於解毒能力與暴露量。",
+    "en": "Most follows nontoxic metabolic pathways. A small fraction forms NAPQI, whose consequences depend on detoxification capacity and exposure.",
+    "ja": "大部分は非毒性の代謝経路を通ります。少量が NAPQI となり、その影響は解毒能力と曝露量によって変わります。"
+  },
+  {
+    "source": "acetaminophen NAPQI肝毒性（可水平捲動）",
+    "en": "Acetaminophen NAPQI hepatotoxicity (horizontally scrollable)",
+    "ja": "アセトアミノフェンの NAPQI による肝毒性（横にスクロールできます）"
+  },
+  {
+    "source": "主要：UGT / SULT",
+    "en": "Main route: UGT / SULT",
+    "ja": "主経路：UGT / SULT"
+  },
+  {
+    "source": "主要清除路徑",
+    "en": "Main elimination pathway",
+    "ja": "主な消失経路"
+  },
+  {
+    "source": "形成非毒性結合物後，由尿液排出",
+    "en": "Nontoxic conjugates form and are excreted in urine",
+    "ja": "非毒性の抱合体となって尿中に排泄される"
+  },
+  {
+    "source": "少量：CYP，尤其 CYP2E1",
+    "en": "Small fraction: CYP, especially CYP2E1",
+    "ja": "少量：CYP、特に CYP2E1"
+  },
+  {
+    "source": "正常時迅速 conjugate",
+    "en": "Rapidly conjugated under normal conditions",
+    "ja": "通常は速やかに抱合される"
+  },
+  {
+    "source": "過量 / 高風險狀態",
+    "en": "Overdose / high-risk conditions",
+    "ja": "過量摂取 / 高リスク状態"
+  },
+  {
+    "source": "常規治療劑量下，絕大部分 acetaminophen 走 glucuronidation / sulfation；少量經 CYP 形成 NAPQI，通常由 glutathione 解毒。過量或安全餘裕下降時，NAPQI 累積可造成 centrilobular hepatic necrosis。",
+    "en": "At routine therapeutic doses, most acetaminophen undergoes glucuronidation / sulfation. A small fraction forms NAPQI through CYP and is normally detoxified by glutathione. In overdose or with a reduced safety margin, NAPQI accumulation can cause centrilobular hepatic necrosis.",
+    "ja": "通常の治療用量では、アセトアミノフェンの大部分はグルクロン酸抱合 / 硫酸抱合を受けます。少量が CYP を介して NAPQI となり、通常はグルタチオンで解毒されます。過量摂取や安全余裕が小さい状態では、NAPQI の蓄積により肝小葉中心性壊死を起こし得ます。"
+  },
+  {
+    "source": "特別容易出事的不是「單純吃一顆 Calonal」：",
+    "en": "The particularly hazardous situations are not simply taking one Calonal tablet: ",
+    "ja": "特に問題が起こりやすいのは、単に「カロナールを 1 錠飲む」ことではなく："
+  },
+  {
+    "source": "而是多個感冒 / 止痛製劑重複含 acetaminophen、超過處方總量、長期大量飲酒、營養不良 / fasting、脫水、嚴重肝病等情境。日本現行 Calonal 仿單明確警示嚴重肝障礙與重複成分。",
+    "en": "They include duplicate acetaminophen in multiple cold/pain products, exceeding the prescribed total dose, long-term heavy alcohol use, malnutrition / fasting, dehydration and severe liver disease. Current Japanese Calonal labeling explicitly warns of serious liver injury and duplicate ingredients.",
+    "ja": "複数のかぜ薬・鎮痛薬にアセトアミノフェンが重複している、処方された総量を超える、長期の大量飲酒、低栄養 / 絶食、脱水、重い肝疾患といった状況です。日本の現行のカロナール添付文書は、重篤な肝障害と成分の重複を明確に警告しています。"
+  },
+  {
+    "source": "6.5 典型藥理與風險輪廓（定性比較）",
+    "en": "6.5 Typical pharmacological and risk profiles (qualitative comparison)",
+    "ja": "6.5 典型的な薬理特性とリスクの特徴（定性的比較）"
+  },
+  {
+    "source": "典型藥理與風險輪廓（可水平捲動）",
+    "en": "Typical pharmacological and risk profiles (horizontally scrollable)",
+    "ja": "典型的な薬理特性とリスクの特徴（横にスクロールできます）"
+  },
+  {
+    "source": "描述的是典型機轉，不是事件發生率或藥物安全排名",
+    "en": "This describes typical mechanisms, not event rates or a medicine safety ranking",
+    "ja": "典型的な機序の説明であり、発生率や薬剤の安全性の順位ではありません"
+  },
+  {
+    "source": "面向",
+    "en": "Aspect",
+    "ja": "観点"
+  },
+  {
+    "source": "具有 NSAID 抗發炎作用",
+    "en": "Has NSAID anti-inflammatory activity",
+    "ja": "NSAID としての抗炎症作用がある"
+  },
+  {
+    "source": "周邊抗發炎作用弱",
+    "en": "Weak peripheral anti-inflammatory activity",
+    "ja": "末梢の抗炎症作用は弱い"
+  },
+  {
+    "source": "典型 GI ulcer",
+    "en": "Typical GI ulcers",
+    "ja": "典型的な消化管潰瘍"
+  },
+  {
+    "source": "COX 抑制造成胃黏膜防禦下降",
+    "en": "COX inhibition reduces gastric mucosal defense",
+    "ja": "COX 阻害によって胃粘膜の防御が低下"
+  },
+  {
+    "source": "無同等典型 NSAID 潰瘍機轉，仍非零風險",
+    "en": "No equivalent typical NSAID ulcer mechanism; risk is still not zero",
+    "ja": "同等の典型的な NSAID 潰瘍の機序はないが、リスクはゼロではない"
+  },
+  {
+    "source": "腎臟 prostaglandin 抑制是重要風險機轉",
+    "en": "Renal prostaglandin inhibition is an important risk mechanism",
+    "ja": "腎プロスタグランジンの阻害が重要なリスク機序"
+  },
+  {
+    "source": "非同等典型機轉，仍可能有腎損傷",
+    "en": "Not the same typical mechanism, but kidney injury is still possible",
+    "ja": "同じ典型的な機序ではないが、腎障害は起こり得る"
+  },
+  {
+    "source": "也可能造成肝損傷，非 NAPQI 主導",
+    "en": "Can also cause liver injury, not primarily through NAPQI",
+    "ja": "肝障害を起こすこともあるが、NAPQI が主因ではない"
+  },
+  {
+    "source": "過量時 NAPQI / GSH 耗竭為核心毒理",
+    "en": "NAPQI / GSH depletion is central to overdose toxicity",
+    "ja": "過量摂取時は NAPQI / GSH 枯渇が毒性の中心"
+  },
+  {
+    "source": "此表不能用來算個人風險。NSAID 也可造成肝損傷；acetaminophen 也可有腎損傷，只是典型機轉與主導風險不同。",
+    "en": "This table cannot calculate an individual’s risk. NSAIDs can also cause liver injury and acetaminophen can also cause kidney injury; their typical mechanisms and dominant risks differ.",
+    "ja": "この表で個人のリスクを計算することはできません。NSAID でも肝障害、アセトアミノフェンでも腎障害は起こり得ます。典型的な機序と主なリスクが異なるということです。"
+  },
+  {
+    "source": "7. Drug–drug interactions：哪幾組最值得記",
+    "en": "7. Drug–drug interactions: the combinations most worth remembering",
+    "ja": "7. 薬物相互作用：覚えておきたい組み合わせ"
+  },
+  {
+    "source": "藥物交互作用（可水平捲動）",
+    "en": "Drug interactions (horizontally scrollable)",
+    "ja": "薬物相互作用（横にスクロールできます）"
+  },
+  {
+    "source": "藥物交互作用",
+    "en": "Drug interactions",
+    "ja": "薬物相互作用"
+  },
+  {
+    "source": "合併藥物 / 狀態",
+    "en": "Concomitant medicine / condition",
+    "ja": "併用薬 / 状態"
+  },
+  {
+    "source": "醫學機制",
+    "en": "Medical mechanism",
+    "ja": "医学的な機序"
+  },
+  {
+    "source": "另一個 NSAID",
+    "en": "Another NSAID",
+    "ja": "別の NSAID"
+  },
+  {
+    "source": "避免自行併用",
+    "en": "Avoid combining on your own",
+    "ja": "自己判断での併用を避ける"
+  },
+  {
+    "source": "不是同 class，但仍需依療程",
+    "en": "Not the same class, but the prescribed regimen still applies",
+    "ja": "同じ系統ではないが、治療方針に従う必要がある"
+  },
+  {
+    "source": "NSAID + NSAID 通常增加 GI/renal/bleeding toxicity，未必等比例增加 analgesia",
+    "en": "NSAID + NSAID usually increases GI, renal and bleeding toxicity without necessarily increasing analgesia proportionately",
+    "ja": "NSAID + NSAID は通常、消化管・腎臓・出血の毒性を増やし、鎮痛効果が比例して高まるとは限らない"
+  },
+  {
+    "source": "同屬 COX 藥物，需醫療評估",
+    "en": "Also a COX medicine; requires medical assessment",
+    "ja": "同じ COX 系の薬であり、医療者の評価が必要"
+  },
+  {
+    "source": "可干擾 aspirin antiplatelet effect",
+    "en": "May interfere with aspirin’s antiplatelet effect",
+    "ja": "アスピリンの抗血小板作用を妨げる可能性がある"
+  },
+  {
+    "source": "，timing 有重要性",
+    "en": "; timing matters",
+    "ja": "。投与のタイミングが重要"
+  },
+  {
+    "source": "沒有典型 ibuprofen–aspirin COX-1 competition",
+    "en": "No typical ibuprofen–aspirin COX-1 competition",
+    "ja": "典型的なイブプロフェン・アスピリン間の COX-1 競合はない"
+  },
+  {
+    "source": "ibuprofen 可暫時佔據 platelet COX-1，影響 aspirin 不可逆 acetylation",
+    "en": "Ibuprofen can temporarily occupy platelet COX-1, affecting aspirin’s irreversible acetylation",
+    "ja": "イブプロフェンが血小板 COX-1 を一時的に占有し、アスピリンの不可逆的アセチル化に影響し得る"
+  },
+  {
+    "source": "反覆使用可使 warfarin effect / INR ↑",
+    "en": "Repeated use may increase warfarin effect / INR",
+    "ja": "反復使用によりワルファリンの作用 / INR が上昇する可能性"
+  },
+  {
+    "source": "NSAID：platelet + GI mucosa；APAP：warfarin interaction mechanism較複雜",
+    "en": "NSAIDs: platelets + GI mucosa; APAP: a more complex warfarin interaction mechanism",
+    "ja": "NSAID：血小板 + 消化管粘膜。APAP：ワルファリンとの相互作用の機序はより複雑"
+  },
+  {
+    "source": "無典型 triple-whammy COX hemodynamic effect",
+    "en": "No typical triple-whammy COX hemodynamic effect",
+    "ja": "典型的な triple whammy の COX を介した血行動態作用はない"
+  },
+  {
+    "source": "濃度可能 ↑",
+    "en": "Concentration may increase",
+    "ja": "濃度が上昇する可能性"
+  },
+  {
+    "source": "非典型核心 interaction",
+    "en": "Not a typical central interaction",
+    "ja": "典型的な主要相互作用ではない"
+  },
+  {
+    "source": "NSAID 降低 renal lithium clearance",
+    "en": "NSAIDs reduce renal lithium clearance",
+    "ja": "NSAID はリチウムの腎クリアランスを低下させる"
+  },
+  {
+    "source": "毒性可能 ↑",
+    "en": "Toxicity may increase",
+    "ja": "毒性が増す可能性"
+  },
+  {
+    "source": "不是主要 class interaction",
+    "en": "Not a major class interaction",
+    "ja": "薬効群としての主要な相互作用ではない"
+  },
+  {
+    "source": "renal clearance / protein binding 等",
+    "en": "Renal clearance / protein binding, etc.",
+    "ja": "腎クリアランス / タンパク結合など"
+  },
+  {
+    "source": "沒有同等 NSAID GI mechanism",
+    "en": "No equivalent NSAID GI mechanism",
+    "ja": "同等の NSAID の消化管障害機序はない"
+  },
+  {
+    "source": "多重止血 / mucosal risk 疊加",
+    "en": "Multiple hemostatic / mucosal risks combine",
+    "ja": "止血 / 粘膜に関する複数のリスクが重なる"
+  },
+  {
+    "source": "長期大量飲酒",
+    "en": "Long-term heavy alcohol use",
+    "ja": "長期の大量飲酒"
+  },
+  {
+    "source": "GI risk 等需注意",
+    "en": "GI and other risks require attention",
+    "ja": "消化管などのリスクに注意が必要"
+  },
+  {
+    "source": "肝毒性 safety margin ↓",
+    "en": "Reduced hepatotoxicity safety margin",
+    "ja": "肝毒性に対する安全余裕が低下"
+  },
+  {
+    "source": "CYP2E1 / glutathione、營養狀態等因素",
+    "en": "CYP2E1 / glutathione, nutritional status and other factors",
+    "ja": "CYP2E1 / グルタチオン、栄養状態などの要因"
+  },
+  {
+    "source": "其他含 acetaminophen 製劑",
+    "en": "Other acetaminophen-containing products",
+    "ja": "ほかのアセトアミノフェン含有製剤"
+  },
+  {
+    "source": "不同成分",
+    "en": "Different ingredient",
+    "ja": "別の成分"
+  },
+  {
+    "source": "最常見的 accidental overdose 路徑",
+    "en": "The most common route to accidental overdose",
+    "ja": "意図しない過量摂取で最もよくある経路"
+  },
+  {
+    "source": "不同品牌名稱卻是同一 active ingredient，總劑量疊加",
+    "en": "Different brand names but the same active ingredient; total doses add up",
+    "ja": "ブランド名が違っても有効成分は同じで、総用量が積み重なる"
+  },
+  {
+    "source": "8. 特殊族群：同一顆藥，風險可以完全不同",
+    "en": "8. Special populations: the same medicine can carry very different risks",
+    "ja": "8. 特別な配慮が必要な集団：同じ薬でもリスクは大きく変わる"
+  },
+  {
+    "source": "展開情境，查看三種藥物的機轉與風險。這不是個人處方決策工具。",
+    "en": "Expand a scenario to see the mechanisms and risks of the three medicines. This is not a tool for individual prescribing decisions.",
+    "ja": "状況を展開すると、3 剤の機序とリスクを確認できます。個人への処方を決定するためのツールではありません。"
+  },
+  {
+    "source": "潰瘍 / GI bleed",
+    "en": "Ulcers / GI bleeding",
+    "ja": "潰瘍 / 消化管出血"
+  },
+  {
+    "source": "潰瘍 / GI bleed：",
+    "en": "Ulcers / GI bleeding:",
+    "ja": "潰瘍 / 消化管出血："
+  },
+  {
+    "source": "Loxoprofen 與 ibuprofen 都有典型 NSAID gastropathy，活動性 peptic ulcer 在日本標籤屬 contraindication。Loxoprofen 的 prodrug 設計不能消除 systemic COX inhibition。Acetaminophen 沒有同等的 NSAID 潰瘍機轉，但若合併 warfarin 等仍需個別評估。",
+    "en": "Loxoprofen and ibuprofen both cause typical NSAID gastropathy, and active peptic ulcer is a contraindication in Japanese labeling. Loxoprofen’s prodrug design does not eliminate systemic COX inhibition. Acetaminophen lacks the same NSAID ulcer mechanism, but combinations such as warfarin still require individual assessment.",
+    "ja": "ロキソプロフェンもイブプロフェンも典型的な NSAID 胃障害を起こし、活動性消化性潰瘍は日本の添付文書では禁忌です。ロキソプロフェンのプロドラッグ設計は全身性 COX 阻害をなくしません。アセトアミノフェンには同じ NSAID 潰瘍の機序はありませんが、ワルファリン併用などは個別の評価が必要です。"
+  },
+  {
+    "source": "CKD / 脫水",
+    "en": "CKD / dehydration",
+    "ja": "CKD / 脱水"
+  },
+  {
+    "source": "CKD / 脫水：",
+    "en": "CKD / dehydration:",
+    "ja": "CKD / 脱水："
+  },
+  {
+    "source": "Loxoprofen 與 ibuprofen 會降低 renal prostaglandins，使 afferent arteriole 收縮；在 volume depletion、CKD、HF、老人，或 ACEi/ARB + diuretic 時 AKI risk 明顯重要。Acetaminophen 沒有同等典型 hemodynamic mechanism，但仍不是「腎臟零風險」。",
+    "en": "Loxoprofen and ibuprofen reduce renal prostaglandins, constricting the afferent arteriole. AKI risk becomes especially important with volume depletion, CKD, HF, older age or ACEi/ARB + diuretics. Acetaminophen lacks the same typical hemodynamic mechanism, but is not free of renal risk.",
+    "ja": "ロキソプロフェンとイブプロフェンは腎プロスタグランジンを減らし、輸入細動脈を収縮させます。循環血液量の減少、CKD、HF、高齢、ACEi/ARB + 利尿薬の併用では AKI リスクが特に重要です。アセトアミノフェンには同じ典型的な血行動態機序はありませんが、「腎リスクゼロ」ではありません。"
+  },
+  {
+    "source": "高血壓 / HF / CV",
+    "en": "Hypertension / HF / CV",
+    "ja": "高血圧 / HF / 心血管"
+  },
+  {
+    "source": "高血壓 / HF / CV：",
+    "en": "Hypertension / HF / CV:",
+    "ja": "高血圧 / HF / 心血管："
+  },
+  {
+    "source": "NSAID 可造成 Na/H₂O retention、BP 上升、edema / HF destabilization，並有 thrombotic event 警示。高劑量長期 ibuprofen 有大型 meta-analysis safety signal；loxoprofen 的 comparative outcome data 較少，不能把資料少解讀為比較安全。",
+    "en": "NSAIDs can cause Na/H₂O retention, increased BP, edema and HF destabilization, and carry warnings for thrombotic events. High-dose, long-term ibuprofen has a safety signal in large meta-analyses. Comparative outcome data for loxoprofen are fewer; less data must not be interpreted as greater safety.",
+    "ja": "NSAID は Na/H₂O 貯留、血圧上昇、浮腫、心不全の不安定化を起こし得て、血栓性イベントへの警告もあります。高用量・長期のイブプロフェンには大規模メタ解析で安全性の懸念が示されています。ロキソプロフェンの比較アウトカムデータは少なく、データの少なさを安全性の高さと解釈してはいけません。"
+  },
+  {
+    "source": "肝病 / 大量飲酒",
+    "en": "Liver disease / heavy alcohol use",
+    "ja": "肝疾患 / 大量飲酒"
+  },
+  {
+    "source": "肝病 / 大量飲酒：",
+    "en": "Liver disease / heavy alcohol use:",
+    "ja": "肝疾患 / 大量飲酒："
+  },
+  {
+    "source": "Acetaminophen 是最需要看總 dose、重複產品、營養狀態與 NAPQI/GSH balance 的藥。嚴重 liver dysfunction 在日本 Calonal 標籤屬 contraindication。NSAIDs 也可造成罕見 hepatic injury，但不是同樣的 dose-dependent NAPQI toxicology。",
+    "en": "Acetaminophen particularly requires attention to total dose, duplicate products, nutrition and the NAPQI/GSH balance. Severe liver dysfunction is a contraindication in Japanese Calonal labeling. NSAIDs can also rarely cause hepatic injury, but not through the same dose-dependent NAPQI toxicology.",
+    "ja": "アセトアミノフェンでは特に、総用量、製剤の重複、栄養状態、NAPQI/GSH のバランスを確認する必要があります。重篤な肝機能障害は日本のカロナール添付文書では禁忌です。NSAID もまれに肝障害を起こしますが、同じ用量依存性の NAPQI 毒性ではありません。"
+  },
+  {
+    "source": "妊娠",
+    "en": "Pregnancy",
+    "ja": "妊娠"
+  },
+  {
+    "source": "妊娠：",
+    "en": "Pregnancy:",
+    "ja": "妊娠："
+  },
+  {
+    "source": "Loxoprofen 與 ibuprofen 在日本「妊娠後期」禁忌；FDA 建議約 20 週後避免 NSAID，除非臨床必要。Acetaminophen 常是需要止痛/退燒時的主要替代路線之一，但仍以最低有效 dose / 最短必要時間並由產科或醫療人員評估。",
+    "en": "Loxoprofen and ibuprofen are contraindicated in late pregnancy in Japan. The FDA recommends avoiding NSAIDs from around 20 weeks unless clinically necessary. Acetaminophen is often a main alternative when pain or fever relief is needed, but still requires the lowest effective dose for the shortest necessary time and assessment by obstetric or other medical professionals.",
+    "ja": "ロキソプロフェンとイブプロフェンは、日本では「妊娠後期」に禁忌です。FDA は臨床的に必要な場合を除き、妊娠約 20 週以降の NSAID 使用を避けるよう勧告しています。アセトアミノフェンは鎮痛・解熱が必要な際の主な代替選択肢の一つですが、最小有効量を必要最短期間とし、産科などの医療者による評価が必要です。"
+  },
+  {
+    "source": "Loxoprofen 與 ibuprofen 的 COX-1 inhibition 可誘發 bronchospasm，因此日本標籤把 aspirin asthma / history 列為禁忌。Acetaminophen 並非典型 NSAID，但高度敏感者也可能反應，不能宣稱絕對安全。",
+    "en": "COX-1 inhibition by loxoprofen and ibuprofen can trigger bronchospasm, so Japanese labeling contraindicates use in aspirin asthma or a history of it. Acetaminophen is not a typical NSAID, but highly sensitive people may still react; it cannot be called absolutely safe.",
+    "ja": "ロキソプロフェンとイブプロフェンの COX-1 阻害は気管支攣縮を誘発し得るため、日本の添付文書ではアスピリン喘息またはその既往が禁忌とされています。アセトアミノフェンは典型的な NSAID ではありませんが、感受性の高い人は反応する可能性があり、絶対に安全とは言えません。"
+  },
+  {
+    "source": "高齡",
+    "en": "Older adults",
+    "ja": "高齢者"
+  },
+  {
+    "source": "高齡：",
+    "en": "Older adults:",
+    "ja": "高齢者："
+  },
+  {
+    "source": "renal reserve、GI mucosal defense、HF / hypertension、polypharmacy 與 anticoagulant 使用都讓 NSAID adverse events 更容易出現。Acetaminophen 常能避開部分 NSAID class risks，但需看肝功能、營養、總 dose 與重複成分。",
+    "en": "Reduced renal reserve and GI mucosal defense, HF / hypertension, polypharmacy and anticoagulant use all make NSAID adverse events more likely. Acetaminophen often avoids some NSAID class risks, but liver function, nutrition, total dose and duplicate ingredients still matter.",
+    "ja": "腎予備能や消化管粘膜防御の低下、心不全・高血圧、多剤併用、抗凝固薬の使用などが、NSAID の有害事象を起こしやすくします。アセトアミノフェンは NSAID に共通するリスクの一部を避けられることが多いものの、肝機能、栄養、総用量、成分の重複を確認する必要があります。"
+  },
+  {
+    "source": "AERD / aspirin asthma 為什麼 NSAID 會誘發喘？",
+    "en": "AERD / aspirin asthma: why can NSAIDs trigger asthma?",
+    "ja": "AERD / アスピリン喘息：なぜ NSAID は喘息を誘発するのか"
+  },
+  {
+    "source": "對 aspirin-exacerbated respiratory disease 患者，強力 COX-1 抑制會使 arachidonic acid mediator 平衡偏向 cysteinyl leukotrienes，造成 bronchoconstriction / upper-airway inflammation。日本 loxoprofen 與 ibuprofen 仿單均把 aspirin asthma 或既往史列為禁忌。",
+    "en": "In aspirin-exacerbated respiratory disease, strong COX-1 inhibition shifts the arachidonic-acid mediator balance toward cysteinyl leukotrienes, causing bronchoconstriction and upper-airway inflammation. Japanese loxoprofen and ibuprofen labeling both contraindicate aspirin asthma or a history of it.",
+    "ja": "アスピリン増悪呼吸器疾患では、強い COX-1 阻害によってアラキドン酸メディエーターのバランスがシステイニルロイコトリエン側に傾き、気管支収縮や上気道の炎症を起こします。日本のロキソプロフェンとイブプロフェンの添付文書はいずれも、アスピリン喘息またはその既往を禁忌としています。"
+  },
+  {
+    "source": "Acetaminophen 並非典型 NSAID，但高度敏感者仍可能反應，因此也不能把它理解成「所有 NSAID 氣喘患者絕對安全」。",
+    "en": "Acetaminophen is not a typical NSAID, but highly sensitive people may still react. It must not be interpreted as absolutely safe for every patient with NSAID-induced asthma.",
+    "ja": "アセトアミノフェンは典型的な NSAID ではありませんが、感受性の高い人は反応する可能性があるため、「NSAID で喘息を起こすすべての患者に絶対安全」と理解してはいけません。"
+  },
+  {
+    "source": "妊娠：時間點比「這顆平常很安全」更重要",
+    "en": "Pregnancy: timing matters more than whether a medicine is usually safe",
+    "ja": "妊娠：普段の安全性より、使用する時期が重要"
+  },
+  {
+    "source": "日本 loxoprofen / ibuprofen 現行仿單均將妊娠後期列為禁忌；FDA 另建議約 20 週起避免 NSAID，除非臨床必要，因可能造成 fetal renal dysfunction → oligohydramnios；約 30 週後還有 premature ductus arteriosus closure 風險。",
+    "en": "Current Japanese loxoprofen / ibuprofen labeling contraindicates late pregnancy. The FDA also recommends avoiding NSAIDs from around 20 weeks unless clinically necessary, because fetal renal dysfunction can lead to oligohydramnios; after around 30 weeks there is also a risk of premature closure of the ductus arteriosus.",
+    "ja": "日本の現行のロキソプロフェン / イブプロフェンの添付文書は、妊娠後期を禁忌としています。FDA も、胎児の腎機能障害から羊水過少につながる可能性があるため、臨床的に必要な場合を除き約 20 週以降は NSAID を避けるよう勧告しています。約 30 週以降には動脈管の早期閉鎖リスクもあります。"
+  },
+  {
+    "source": "產科機構仍常視為懷孕期需要 analgesic / antipyretic 時的主要選項之一，但應以最低有效劑量、最短必要時間並與醫療人員討論。日本現行 Calonal 仿單同樣要求 benefit-risk 評估。",
+    "en": "is still often regarded by obstetric organizations as a main option when an analgesic / antipyretic is needed during pregnancy, but it should be used at the lowest effective dose for the shortest necessary duration, in consultation with a medical professional. Current Japanese Calonal labeling likewise requires a benefit–risk assessment.",
+    "ja": "妊娠中に鎮痛薬・解熱薬が必要な際の主要な選択肢の一つとして、産科関連団体でも引き続き扱われることが多い薬です。ただし最小有効量・必要最短期間とし、医療者に相談してください。日本の現行のカロナール添付文書も、有益性と危険性の評価を求めています。"
+  },
+  {
+    "source": "9. Toxicology：三者過量不是同一種病",
+    "en": "9. Toxicology: overdose is not the same condition for all three",
+    "ja": "9. 毒性学：3 剤の過量摂取は同じ病態ではない"
+  },
+  {
+    "source": "主要按 NSAID overdose / toxicity 思路：GI、renal、CNS、acid-base 與 hemodynamic 問題；結構化的人體 overdose 資料遠少於 ibuprofen / acetaminophen。",
+    "en": "Primarily approached as NSAID overdose / toxicity: GI, renal, CNS, acid–base and hemodynamic problems. Structured human overdose data are far more limited than for ibuprofen / acetaminophen.",
+    "ja": "主に NSAID の過量摂取・毒性として捉え、消化管、腎臓、中枢神経、酸塩基平衡、血行動態の問題に注目します。ヒトの過量摂取についての体系的なデータは、イブプロフェンやアセトアミノフェンよりはるかに少ない状況です。"
+  },
+  {
+    "source": "疑似大量誤服應直接尋求醫療評估，不用「平常劑量沒事」推估過量安全。",
+    "en": "Seek medical assessment directly if a large accidental ingestion is suspected. Safety in overdose cannot be inferred from tolerating the usual dose.",
+    "ja": "大量の誤飲が疑われる場合は、直接医療機関で評価を受けてください。「普段の量なら大丈夫」を根拠に過量摂取の安全性を推測してはいけません。"
+  },
+  {
+    "source": "較大過量可出現 nausea/vomiting、CNS depression、AKI、metabolic acidosis、hypotension 等；處置以 supportive care 為主，依嚴重程度處理。",
+    "en": "Larger overdoses can cause nausea/vomiting, CNS depression, AKI, metabolic acidosis and hypotension. Management is mainly supportive and guided by severity.",
+    "ja": "大量の過量摂取では、悪心・嘔吐、中枢神経抑制、AKI、代謝性アシドーシス、低血圧などが生じ得ます。処置は主に支持療法で、重症度に応じて対応します。"
+  },
+  {
+    "source": "半衰期短不代表 overdose 可以在家等待。",
+    "en": "A short half-life does not mean an overdose can be watched at home.",
+    "ja": "半減期が短くても、過量摂取を自宅で様子見してよいという意味ではありません。"
+  },
+  {
+    "source": "時間敏感的 hepatotoxic emergency。",
+    "en": "A time-sensitive hepatotoxic emergency. ",
+    "ja": "時間が重要な肝毒性の緊急事態です。"
+  },
+  {
+    "source": "醫療端會依 ingestion timing、serum acetaminophen level 等決定風險；N-acetylcysteine（NAC）是關鍵 antidote。",
+    "en": "Clinicians assess risk using ingestion timing, serum acetaminophen levels and other information. N-acetylcysteine (NAC) is the key antidote.",
+    "ja": "医療者は摂取時刻、血清アセトアミノフェン濃度などからリスクを判断します。N-acetylcysteine（NAC）が重要な解毒薬です。"
+  },
+  {
+    "source": "早期症狀可能很輕，不能用「現在沒有不舒服」排除嚴重肝毒性。",
+    "en": "Early symptoms can be mild. Feeling well now does not rule out serious hepatotoxicity.",
+    "ja": "初期症状は軽いことがあります。「今は具合が悪くない」ことでは、重篤な肝毒性を否定できません。"
+  },
+  {
+    "source": "需要立即醫療評估：",
+    "en": "Immediate medical assessment is needed for: ",
+    "ja": "直ちに医療者の評価が必要な状況："
+  },
+  {
+    "source": "疑似重複或過量 acetaminophen、吐血 / 黑便、尿量明顯下降、嚴重呼吸困難 / 過敏、廣泛水泡或黏膜破損、黃疸 / 意識異常、胸痛或神經學缺損。對 acetaminophen 尤其不要等出現黃疸才處理。",
+    "en": "Suspected duplicate or excessive acetaminophen use, vomiting blood / black stools, a marked fall in urine output, severe breathing difficulty / allergy, widespread blisters or mucosal injury, jaundice / altered consciousness, chest pain or neurological deficits. With acetaminophen in particular, do not wait for jaundice before seeking care.",
+    "ja": "アセトアミノフェンの重複・過量摂取の疑い、吐血・黒色便、著しい尿量低下、重度の呼吸困難・アレルギー、広範な水疱や粘膜障害、黄疸・意識異常、胸痛、神経学的障害。特にアセトアミノフェンでは、黄疸が出るまで待たないでください。"
+  },
+  {
+    "source": "10. Clinical interpretation：不要問「誰最強」，要問「是哪種痛 + 哪種風險」",
+    "en": "10. Clinical interpretation: ask what kind of pain and what kind of risk, rather than which is strongest",
+    "ja": "10. 臨床的な読み解き：「最も強い薬」ではなく「痛みの種類とリスク」を考える"
+  },
+  {
+    "source": "疼痛情境與風險取捨（可水平捲動）",
+    "en": "Pain scenarios and risk trade-offs (horizontally scrollable)",
+    "ja": "痛みの状況とリスクの比較（横にスクロールできます）"
+  },
+  {
+    "source": "疼痛情境與風險取捨",
+    "en": "Pain scenarios and risk trade-offs",
+    "ja": "痛みの状況とリスクの比較"
+  },
+  {
+    "source": "藥理判斷",
+    "en": "Pharmacological assessment",
+    "ja": "薬理学的な判断"
+  },
+  {
+    "source": "真正要看的 trade-off",
+    "en": "The trade-off that matters",
+    "ja": "注目すべき利点と不利益"
+  },
+  {
+    "source": "牙科 / 拔牙 / 扭傷 / 發炎性肌骨痛",
+    "en": "Dental pain / extraction / sprain / inflammatory musculoskeletal pain",
+    "ja": "歯科疼痛 / 抜歯 / 捻挫 / 炎症性の筋骨格系疼痛"
+  },
+  {
+    "source": "NSAID route 特別契合：降低 peripheral PGE₂ sensitization",
+    "en": "The NSAID pathway is particularly relevant: reduced peripheral PGE₂ sensitization",
+    "ja": "NSAID の経路が特に適合：末梢の PGE₂ による感作を低下させる"
+  },
+  {
+    "source": "ibuprofen 有強直接 RCT evidence；loxoprofen 同 class 且有日本適應症，但比較證據較少",
+    "en": "Ibuprofen has strong direct RCT evidence. Loxoprofen is in the same class and has Japanese indications, but less comparative evidence",
+    "ja": "イブプロフェンには強い直接的 RCT エビデンスがある。ロキソプロフェンも同系統で日本での適応があるが、比較エビデンスは少ない"
+  },
+  {
+    "source": "發燒 / 一般頭痛 / 感冒疼痛",
+    "en": "Fever / general headache / cold-related pain",
+    "ja": "発熱 / 一般的な頭痛 / かぜの痛み"
+  },
+  {
+    "source": "NSAID 與 acetaminophen 都可 symptom control",
+    "en": "Both NSAIDs and acetaminophen can control symptoms",
+    "ja": "NSAID とアセトアミノフェンはいずれも症状を和らげ得る"
+  },
+  {
+    "source": "是否真的需要抗發炎？有無脫水、腎病、胃病、肝病、酒精或重複成分？",
+    "en": "Is anti-inflammatory action actually needed? Are dehydration, kidney, stomach or liver disease, alcohol or duplicate ingredients present?",
+    "ja": "抗炎症作用が本当に必要か。脱水、腎疾患、胃疾患、肝疾患、飲酒、成分の重複はないか。"
+  },
+  {
+    "source": "NSAID renal hemodynamic effect 可能成為主導風險",
+    "en": "The renal hemodynamic effect of NSAIDs may dominate the risk",
+    "ja": "NSAID の腎血行動態への作用が主なリスクになる可能性"
+  },
+  {
+    "source": "風險可能比「多一點抗發炎」更重要",
+    "en": "Risk may matter more than a little extra anti-inflammatory action",
+    "ja": "「少し強い抗炎症作用」よりリスクが重要なこともある"
+  },
+  {
+    "source": "活動性胃潰瘍 / 高 GI bleed risk",
+    "en": "Active gastric ulcer / high GI bleeding risk",
+    "ja": "活動性胃潰瘍 / 高い消化管出血リスク"
+  },
+  {
+    "source": "NSAID class effect 明顯",
+    "en": "Pronounced NSAID class effect",
+    "ja": "NSAID に共通する作用が明確"
+  },
+  {
+    "source": "避免把 loxoprofen 的 prodrug 特性誤當成「無潰瘍風險」",
+    "en": "Do not mistake loxoprofen’s prodrug property for absence of ulcer risk",
+    "ja": "ロキソプロフェンのプロドラッグという特性を「潰瘍リスクがない」と誤解しない"
+  },
+  {
+    "source": "肝病 / malnutrition / chronic heavy alcohol",
+    "en": "Liver disease / malnutrition / chronic heavy alcohol use",
+    "ja": "肝疾患 / 低栄養 / 慢性的な大量飲酒"
+  },
+  {
+    "source": "acetaminophen therapeutic margin 需更謹慎",
+    "en": "The therapeutic margin of acetaminophen requires greater caution",
+    "ja": "アセトアミノフェンの治療上の安全余裕をより慎重に考える必要"
+  },
+  {
+    "source": "總 acetaminophen exposure、營養與 CYP/GSH 狀態",
+    "en": "Total acetaminophen exposure, nutrition and CYP/GSH status",
+    "ja": "アセトアミノフェンの総曝露量、栄養、CYP/GSH の状態"
+  },
+  {
+    "source": "需要 aspirin antiplatelet therapy",
+    "en": "Need for aspirin antiplatelet therapy",
+    "ja": "アスピリンによる抗血小板療法が必要"
+  },
+  {
+    "source": "ibuprofen 有明確 pharmacodynamic interference concern",
+    "en": "Ibuprofen presents a clear pharmacodynamic interference concern",
+    "ja": "イブプロフェンには明確な薬力学的干渉の懸念がある"
+  },
+  {
+    "source": "不要自行用時間錯開來「猜」；應讓醫師/藥師安排",
+    "en": "Do not guess a dosing interval yourself; have a doctor or pharmacist arrange it",
+    "ja": "自己判断で時間をずらして「推測」せず、医師・薬剤師に調整してもらう"
+  },
+  {
+    "source": "11. 一個更精準的「強度」結論",
+    "en": "11. A more precise conclusion about strength",
+    "ja": "11. 「強さ」についての、より正確な結論"
+  },
+  {
+    "source": "可合理說的",
+    "en": "Reasonable statements",
+    "ja": "妥当に言えること"
+  },
+  {
+    "source": "在高度發炎的 acute dental pain 模型，",
+    "en": "In the highly inflammatory acute dental pain model, ",
+    "ja": "炎症の強い急性歯科疼痛モデルでは、"
+  },
+  {
+    "source": "ibuprofen 400 mg 的單劑效果優於 acetaminophen 1000 mg",
+    "en": "a single dose of ibuprofen 400 mg is more effective than acetaminophen 1000 mg",
+    "ja": "イブプロフェン 400 mg の単回投与はアセトアミノフェン 1000 mg より効果が高い"
+  },
+  {
+    "source": "，有高品質 Cochrane 證據。",
+    "en": ", supported by high-quality Cochrane evidence.",
+    "ja": "ことを、質の高い Cochrane のエビデンスが支持しています。"
+  },
+  {
+    "source": "Loxoprofen 60 mg 與 ibuprofen 常見治療劑量處於相同 NSAID clinical tier；既有 active-comparator studies 未顯示 loxoprofen 一貫優於 ibuprofen。",
+    "en": "Loxoprofen 60 mg and common therapeutic doses of ibuprofen occupy the same NSAID clinical tier. Existing active-comparator studies have not shown consistent superiority of loxoprofen over ibuprofen.",
+    "ja": "ロキソプロフェン 60 mg とイブプロフェンの一般的な治療用量は、NSAID として臨床的に同程度の位置づけです。既存の実薬対照研究では、ロキソプロフェンが一貫してイブプロフェンを上回るとは示されていません。"
+  },
+  {
+    "source": "Acetaminophen 的優勢不是「抗發炎強」，而是其不同的 adverse-effect profile。",
+    "en": "Acetaminophen’s advantage is its different adverse-effect profile, not strong anti-inflammatory action.",
+    "ja": "アセトアミノフェンの利点は「抗炎症作用の強さ」ではなく、副作用の特徴が異なる点です。"
+  },
+  {
+    "source": "不能合理說的",
+    "en": "Statements that are not justified",
+    "ja": "妥当とは言えないこと"
+  },
+  {
+    "source": "「Loxoprofen 是 prodrug，所以一定比 ibuprofen 不傷胃」。",
+    "en": "“Loxoprofen is a prodrug, so it must be gentler on the stomach than ibuprofen.”",
+    "ja": "「ロキソプロフェンはプロドラッグだから、必ずイブプロフェンより胃に優しい」。"
+  },
+  {
+    "source": "「Acetaminophen 對腎 / 胃完全零風險」。",
+    "en": "“Acetaminophen has absolutely no risk to the kidneys or stomach.”",
+    "ja": "「アセトアミノフェンは腎臓・胃へのリスクが完全にゼロ」。"
+  },
+  {
+    "source": "「Ibuprofen 全球研究最多，所以一定最適合每個人」。",
+    "en": "“Ibuprofen has the most global research, so it must be the best choice for everyone.”",
+    "ja": "「イブプロフェンは世界で最も研究されているから、必ず誰にとっても最適」。"
+  },
+  {
+    "source": "「把 loxoprofen + ibuprofen 疊加就會更強」。",
+    "en": "“Stacking loxoprofen + ibuprofen makes the treatment stronger.”",
+    "ja": "「ロキソプロフェン + イブプロフェンを重ねれば、より強くなる」。"
+  },
+  {
+    "source": "12. 藥物速查：展開 clinical fingerprint",
+    "en": "12. Quick medicine reference: expand the clinical fingerprint",
+    "ja": "12. 薬剤早見表：臨床的な特徴を展開"
+  },
+  {
+    "source": "展開藥物，查看它的 clinical fingerprint。",
+    "en": "Expand a medicine to see its clinical fingerprint.",
+    "ja": "薬剤を展開すると、臨床的な特徴を確認できます。"
+  },
+  {
+    "source": "「需要周邊抗發炎」時有合理性；60 mg 是日本常見成人單次規格。特色是 prodrug → active trans-OH。不要把 prodrug 當成胃腎保護。最重要風險仍是 NSAID class：GI ulcer/bleed、AKI、fluid retention/HF、AERD、drug interactions。證據基礎比 ibuprofen 小。",
+    "en": "Reasonable when peripheral anti-inflammatory action is needed; 60 mg is a common single adult dose in Japan. Its defining feature is prodrug → active trans-OH. Do not mistake the prodrug for gastric or renal protection. The main risks remain those of the NSAID class: GI ulcer/bleeding, AKI, fluid retention/HF, AERD and drug interactions. Its evidence base is smaller than ibuprofen’s.",
+    "ja": "「末梢の抗炎症作用が必要」な場合に合理性があり、60 mg は日本で一般的な成人 1 回量です。特徴はプロドラッグ → 活性 trans-OH への変換です。プロドラッグを胃や腎臓の保護と捉えてはいけません。主なリスクは NSAID に共通する消化管潰瘍・出血、AKI、体液貯留・HF、AERD、薬物相互作用です。エビデンスの基盤はイブプロフェンより小さいものです。"
+  },
+  {
+    "source": "典型、全球研究非常完整的 nonselective NSAID。急性 dental inflammatory pain 有強直接證據。R/S racemate 中 S-enantiomer 主要負責 COX inhibition。要特別記得 GI/renal/CV class risk，以及與 low-dose aspirin 的 pharmacodynamic interference。",
+    "en": "A typical nonselective NSAID with extensive worldwide research. It has strong direct evidence for acute inflammatory dental pain. In the R/S racemate, the S-enantiomer is mainly responsible for COX inhibition. Particularly remember GI/renal/CV class risks and pharmacodynamic interference with low-dose aspirin.",
+    "ja": "世界的な研究が非常に充実した、典型的な非選択的 NSAID です。急性の炎症性歯科疼痛には強い直接的なエビデンスがあります。R/S ラセミ体のうち、主に S エナンチオマーが COX 阻害を担います。消化管・腎臓・心血管の薬効群共通リスクと、低用量アスピリンへの薬力学的干渉を特に覚えておく必要があります。"
+  },
+  {
+    "source": "主要是 analgesia + antipyresis，而非強周邊 anti-inflammation。優點是避開典型 NSAID COX-mediated GI/renal/platelet physiology；交換條件是 dose-dependent hepatic toxicology。最大實務陷阱是「不同品牌重複含 acetaminophen」。",
+    "en": "Mainly analgesia + antipyresis, rather than strong peripheral anti-inflammatory activity. Its advantage is avoiding typical NSAID COX-mediated GI, renal and platelet physiology; the trade-off is dose-dependent hepatic toxicity. The greatest practical pitfall is duplicate acetaminophen across different brands.",
+    "ja": "主な作用は鎮痛 + 解熱であり、強い末梢抗炎症作用ではありません。典型的な NSAID の COX を介する消化管・腎臓・血小板への作用を避けられる点が利点ですが、代わりに用量依存性の肝毒性があります。実務上の最大の落とし穴は「違うブランドにアセトアミノフェンが重複している」ことです。"
+  },
+  {
+    "source": "官方標籤",
+    "en": "Official labeling",
+    "ja": "公式の添付文書"
+  },
+  {
+    "source": "用來回答批准適應症、dose range、contraindication、interaction、重大 adverse reactions；它不是 comparative-effectiveness ranking。",
+    "en": "Answers questions about approved indications, dose ranges, contraindications, interactions and serious adverse reactions. It is not a comparative-effectiveness ranking.",
+    "ja": "承認された適応、用量範囲、禁忌、相互作用、重大な副作用を確認するための資料です。比較有効性の順位表ではありません。"
+  },
+  {
+    "source": "用來回答特定疾病、特定 dose、特定 outcome 下的 efficacy / safety；不能任意外推到不同 dose 或族群。",
+    "en": "Answers questions about efficacy and safety for a particular disease, dose and outcome. It cannot be freely extrapolated to different doses or populations.",
+    "ja": "特定の疾患・用量・アウトカムにおける有効性と安全性を確認するためのものです。別の用量や集団へ自由に外挿することはできません。"
+  },
+  {
+    "source": "用來解釋「為什麼」，例如 loxoprofen active metabolite、ibuprofen stereochemistry、NAPQI；不能單靠 in-vitro IC₅₀ 推導臨床優劣。",
+    "en": "Explains why, for example through the active metabolite of loxoprofen, ibuprofen stereochemistry or NAPQI. Clinical superiority cannot be inferred from in vitro IC₅₀ alone.",
+    "ja": "ロキソプロフェンの活性代謝物、イブプロフェンの立体化学、NAPQI など、「なぜ」を説明するためのものです。in vitro の IC₅₀ だけから臨床上の優劣を導くことはできません。"
+  },
+  {
+    "source": "最大資訊落差：",
+    "en": "The largest information gap: ",
+    "ja": "最も大きな情報の差："
+  },
+  {
+    "source": "ibuprofen 的全球資料量遠大於 loxoprofen。對 loxoprofen 的 long-term cardiovascular / comparative safety，不能因缺少大型 outcome trial 就解讀成「比較安全」。",
+    "en": "The global evidence base for ibuprofen is much larger than for loxoprofen. For loxoprofen’s long-term cardiovascular and comparative safety, a lack of large outcome trials must not be interpreted as greater safety.",
+    "ja": "イブプロフェンの世界的なデータ量はロキソプロフェンを大きく上回ります。ロキソプロフェンの長期の心血管安全性や比較安全性について、大規模アウトカム試験が少ないことを「より安全」と解釈してはいけません。"
+  },
+  {
+    "source": "14. 主要來源（官方資料優先）",
+    "en": "14. Main sources (official information prioritized)",
+    "ja": "14. 主な出典（公式資料を優先）"
+  },
+  {
+    "source": "Goto et al. 2007｜Loxoprofen 與上呼吸道感染病程",
+    "en": "Goto et al. 2007 | Loxoprofen and the course of upper respiratory infection",
+    "ja": "Goto et al. 2007｜ロキソプロフェンと上気道感染の経過"
+  },
+  {
+    "source": "隨機、雙盲、安慰劑對照試驗 · PMID 17675766",
+    "en": "Randomized, double-blind, placebo-controlled trial · PMID 17675766",
+    "ja": "ランダム化二重盲検プラセボ対照試験 · PMID 17675766"
+  },
+  {
+    "source": "PMDA｜ロキソプロフェンナトリウム錠60mg「クニヒロ」",
+    "en": "PMDA | Loxoprofen Sodium Tablets 60 mg “Kunihiro” (ロキソプロフェンナトリウム錠60mg「クニヒロ」)",
+    "ja": "PMDA｜ロキソプロフェンナトリウム錠60mg「クニヒロ」"
+  },
+  {
+    "source": "現行產品頁／2025-07-22 添付文書。",
+    "en": "Current product page / package insert dated 2025-07-22.",
+    "ja": "現行の製品ページ／2025-07-22 の添付文書。"
+  },
+  {
+    "source": "PMDA｜ブルフェン錠100／200（Ibuprofen）",
+    "en": "PMDA | Brufen Tablets 100 / 200 (Ibuprofen)",
+    "ja": "PMDA｜ブルフェン錠100／200（イブプロフェン）"
+  },
+  {
+    "source": "日本處方 ibuprofen 官方仿單。",
+    "en": "Official Japanese prescription ibuprofen labeling.",
+    "ja": "日本の処方薬イブプロフェンの公式添付文書。"
+  },
+  {
+    "source": "PMDA｜カロナール錠200／300／500",
+    "en": "PMDA | Calonal Tablets 200 / 300 / 500",
+    "ja": "PMDA｜カロナール錠200／300／500"
+  },
+  {
+    "source": "2026-08-25 現行添付文書。",
+    "en": "Current package insert dated 2026-08-25.",
+    "ja": "2026-08-25 の現行添付文書。"
+  },
+  {
+    "source": "主要是高劑量、較長期 NSAID trials；不可直接套用到偶爾 OTC 使用。",
+    "en": "Mostly high-dose, longer-term NSAID trials; not directly applicable to occasional OTC use.",
+    "ja": "主に高用量・比較的長期の NSAID 試験であり、ときどきの OTC 使用に直接当てはめることはできません。"
+  },
+  {
+    "source": "用途界線：",
+    "en": "Scope of use: ",
+    "ja": "用途の限界："
+  },
+  {
+    "source": "本頁是臨床藥理與安全性分析，不是個人處方。真正選藥需把疼痛原因、年齡、體重、腎肝功能、潰瘍 / 出血、血壓 / 心衰、氣喘、妊娠、脫水、酒精與全部併用藥一起評估；若藥袋指示與本文的「一般仿單範圍」不同，以開立醫師與藥師的個別指示為準。",
+    "en": "This page analyzes clinical pharmacology and safety; it is not an individual prescription. Actual medicine selection requires joint assessment of the cause of pain, age, weight, renal and hepatic function, ulcers / bleeding, blood pressure / heart failure, asthma, pregnancy, dehydration, alcohol and all concomitant medicines. If medication-bag instructions differ from the general labeling ranges here, follow the individualized instructions of the prescribing doctor and pharmacist.",
+    "ja": "本ページは臨床薬理と安全性の分析であり、個人への処方ではありません。実際の薬剤選択では、痛みの原因、年齢、体重、腎・肝機能、潰瘍・出血、血圧・心不全、喘息、妊娠、脱水、飲酒、すべての併用薬をまとめて評価する必要があります。薬袋の指示が本文の「一般的な添付文書の範囲」と異なる場合は、処方した医師と薬剤師の個別の指示に従ってください。"
+  },
+  {
+    "source": "靜態內容不依賴外部資源；外部連結需要網路。頁面數據截至 2026-09-30 可取得資料。",
+    "en": "Static content does not depend on external resources; external links require a network connection. The page reflects information available as of 2026-09-30.",
+    "ja": "静的な本文は外部リソースに依存しません。外部リンクにはネットワーク接続が必要です。ページのデータは 2026-09-30 時点で入手可能な情報に基づきます。"
+  },
+  {
+    "source": "Loxoprofen：prodrug NSAID",
+    "en": "Loxoprofen：prodrug NSAID",
+    "ja": "ロキソプロフェン：プロドラッグ型 NSAID"
+  },
+  {
+    "source": "Acetaminophen：central analgesic / antipyretic",
+    "en": "Acetaminophen：central analgesic / antipyretic",
+    "ja": "アセトアミノフェン：中枢性鎮痛薬・解熱薬"
+  },
+  {
+    "source": "arachidonic acid pathway",
+    "en": "arachidonic acid pathway",
+    "ja": "アラキドン酸経路"
+  },
+  {
+    "source": "nociceptor sensitization",
+    "en": "nociceptor sensitization",
+    "ja": "侵害受容器の感作"
+  },
+  {
+    "source": "→ active trans-OH metabolite",
+    "en": "→ active trans-OH metabolite",
+    "ja": "→ 活性 trans-OH 代謝物"
+  },
+  {
+    "source": "NSAID outcome",
+    "en": "NSAID outcome",
+    "ja": "NSAID の作用結果"
+  },
+  {
+    "source": "spinal / brain prostaglandin signaling",
+    "en": "spinal / brain prostaglandin signaling",
+    "ja": "脊髄・脳のプロスタグランジンシグナル"
+  },
+  {
+    "source": "APAP outcome",
+    "en": "APAP outcome",
+    "ja": "APAP の作用結果"
+  },
+  {
+    "source": "Cell membrane",
+    "en": "Cell membrane",
+    "ja": "細胞膜"
+  },
+  {
+    "source": "phospholipids → arachidonic acid",
+    "en": "phospholipids → arachidonic acid",
+    "ja": "リン脂質 → アラキドン酸"
+  },
+  {
+    "source": "nociceptor sensitization；hypothalamus",
+    "en": "nociceptor sensitization；hypothalamus",
+    "ja": "侵害受容器の感作；視床下部"
+  },
+  {
+    "source": "TXA₂：platelet",
+    "en": "TXA₂：platelet",
+    "ja": "TXA₂：血小板"
+  },
+  {
+    "source": "reversible COX inhibition",
+    "en": "reversible COX inhibition",
+    "ja": "可逆的な COX 阻害"
+  },
+  {
+    "source": "↓ PGE₂ → ↓ pain / fever",
+    "en": "↓ PGE₂ → ↓ pain / fever",
+    "ja": "PGE₂ ↓ → 痛み・発熱 ↓"
+  },
+  {
+    "source": "↓ inflammatory prostanoids",
+    "en": "↓ inflammatory prostanoids",
+    "ja": "炎症性プロスタノイド ↓"
+  },
+  {
+    "source": "→ clinical anti-inflammation",
+    "en": "→ clinical anti-inflammation",
+    "ja": "→ 臨床的な抗炎症作用"
+  },
+  {
+    "source": "GI ulcer / bleed",
+    "en": "GI ulcer / bleed",
+    "ja": "消化管潰瘍・出血"
+  },
+  {
+    "source": "AKI / Na-water retention",
+    "en": "AKI / Na-water retention",
+    "ja": "AKI・ナトリウム／水分貯留"
+  },
+  {
+    "source": "BP / HF / thrombotic concern",
+    "en": "BP / HF / thrombotic concern",
+    "ja": "血圧・心不全・血栓症への懸念"
+  },
+  {
+    "source": "platelet effects",
+    "en": "platelet effects",
+    "ja": "血小板への作用"
+  },
+  {
+    "source": "Prodrug：",
+    "en": "Prodrug：",
+    "ja": "プロドラッグ："
+  },
+  {
+    "source": "Mechanistic evidence",
+    "en": "Mechanistic evidence",
+    "ja": "機序に関するエビデンス"
+  },
+  {
+    "source": "Stereochemical pharmacology",
+    "en": "Stereochemical pharmacology",
+    "ja": "立体化学的薬理作用"
+  },
+  {
+    "source": "Mechanism partly unresolved",
+    "en": "Mechanism partly unresolved",
+    "ja": "機序は一部未解明"
+  },
+  {
+    "source": "NSAID prodrug",
+    "en": "NSAID prodrug",
+    "ja": "NSAID のプロドラッグ"
+  },
+  {
+    "source": "NSAID racemate",
+    "en": "NSAID racemate",
+    "ja": "NSAID のラセミ体"
+  },
+  {
+    "source": "Non-NSAID analgesic / antipyretic",
+    "en": "Non-NSAID analgesic / antipyretic",
+    "ja": "非 NSAID の鎮痛薬・解熱薬"
+  },
+  {
+    "source": "active trans-OH metabolite",
+    "en": "active trans-OH metabolite",
+    "ja": "活性 trans-OH 代謝物"
+  },
+  {
+    "source": "parent 1.22 h；active trans-OH 1.31 h",
+    "en": "parent 1.22 h；active trans-OH 1.31 h",
+    "ja": "未変化体 1.22 h；活性 trans-OH 1.31 h"
+  },
+  {
+    "source": "Cochrane • High-quality evidence",
+    "en": "Cochrane • High-quality evidence",
+    "ja": "Cochrane • 質の高いエビデンス"
+  },
+  {
+    "source": "Cochrane • Combination evidence",
+    "en": "Cochrane • Combination evidence",
+    "ja": "Cochrane • 併用に関するエビデンス"
+  },
+  {
+    "source": "Review • Smaller evidence base",
+    "en": "Review • Smaller evidence base",
+    "ja": "レビュー • エビデンスの蓄積は比較的少ない"
+  },
+  {
+    "source": "RCT interpretation",
+    "en": "RCT interpretation",
+    "ja": "RCT の解釈"
+  },
+  {
+    "source": "inflammatory mediators ↑",
+    "en": "inflammatory mediators ↑",
+    "ja": "炎症性メディエーター ↑"
+  },
+  {
+    "source": "Clinical outcome",
+    "en": "Clinical outcome",
+    "ja": "臨床的な作用結果"
+  },
+  {
+    "source": "↓ renal PGE₂ / PGI₂",
+    "en": "↓ renal PGE₂ / PGI₂",
+    "ja": "腎臓の PGE₂ / PGI₂ ↓"
+  },
+  {
+    "source": "afferent arteriole constriction",
+    "en": "afferent arteriole constriction",
+    "ja": "輸入細動脈の収縮"
+  },
+  {
+    "source": "efferent arteriole dilation",
+    "en": "efferent arteriole dilation",
+    "ja": "輸出細動脈の拡張"
+  },
+  {
+    "source": "Diuretic / dehydration",
+    "en": "Diuretic / dehydration",
+    "ja": "利尿薬・脱水"
+  },
+  {
+    "source": "effective circulating volume ↓",
+    "en": "effective circulating volume ↓",
+    "ja": "有効循環血液量 ↓"
+  },
+  {
+    "source": "Glomerulus",
+    "en": "Glomerulus",
+    "ja": "糸球体"
+  },
+  {
+    "source": "inflow ↓ + outflow pressure ↓",
+    "en": "inflow ↓ + outflow pressure ↓",
+    "ja": "流入 ↓ ＋ 流出側の圧 ↓"
+  },
+  {
+    "source": "filtration pressure ↓↓",
+    "en": "filtration pressure ↓↓",
+    "ja": "濾過圧 ↓↓"
+  },
+  {
+    "source": "→ pre-renal AKI risk ↑",
+    "en": "→ pre-renal AKI risk ↑",
+    "ja": "→ 腎前性 AKI のリスク ↑"
+  },
+  {
+    "source": "creatinine ↑ / urine ↓",
+    "en": "creatinine ↑ / urine ↓",
+    "ja": "クレアチニン ↑・尿量 ↓"
+  },
+  {
+    "source": "hyperkalemia / volume issues",
+    "en": "hyperkalemia / volume issues",
+    "ja": "高カリウム血症・体液量の問題"
+  },
+  {
+    "source": "hepatic metabolism",
+    "en": "hepatic metabolism",
+    "ja": "肝代謝"
+  },
+  {
+    "source": "glucuronidation + sulfation",
+    "en": "glucuronidation + sulfation",
+    "ja": "グルクロン酸抱合 ＋ 硫酸抱合"
+  },
+  {
+    "source": "→ non-toxic conjugates → urine",
+    "en": "→ non-toxic conjugates → urine",
+    "ja": "→ 無毒性の抱合体 → 尿中へ"
+  },
+  {
+    "source": "→ reactive NAPQI",
+    "en": "→ reactive NAPQI",
+    "ja": "→ 反応性の高い NAPQI"
+  },
+  {
+    "source": "Glutathione (GSH)",
+    "en": "Glutathione (GSH)",
+    "ja": "グルタチオン（GSH）"
+  },
+  {
+    "source": "→ detoxification",
+    "en": "→ detoxification",
+    "ja": "→ 解毒"
+  },
+  {
+    "source": "phase II saturation",
+    "en": "phase II saturation",
+    "ja": "第 II 相反応の飽和"
+  },
+  {
+    "source": "GSH depletion",
+    "en": "GSH depletion",
+    "ja": "GSH の枯渇"
+  },
+  {
+    "source": "NAPQI binds proteins",
+    "en": "NAPQI binds proteins",
+    "ja": "NAPQI がタンパク質に結合"
+  },
+  {
+    "source": "→ mitochondrial injury / necrosis",
+    "en": "→ mitochondrial injury / necrosis",
+    "ja": "→ ミトコンドリア障害・壊死"
+  },
+  {
+    "source": "Hemodynamic AKI",
+    "en": "Hemodynamic AKI",
+    "ja": "血行動態性 AKI"
+  },
+  {
+    "source": "Dose-related liver toxicity",
+    "en": "Dose-related liver toxicity",
+    "ja": "用量依存性の肝毒性"
+  },
+  {
+    "source": "Low-dose aspirin",
+    "en": "Low-dose aspirin",
+    "ja": "低用量アスピリン"
+  },
+  {
+    "source": "Warfarin / anticoagulant",
+    "en": "Warfarin / anticoagulant",
+    "ja": "ワルファリン・抗凝固薬"
+  },
+  {
+    "source": "bleeding risk ↑",
+    "en": "bleeding risk ↑",
+    "ja": "出血リスク ↑"
+  },
+  {
+    "source": "ACEi / ARB + diuretic",
+    "en": "ACEi / ARB + diuretic",
+    "ja": "ACEi / ARB ＋ 利尿薬"
+  },
+  {
+    "source": "AKI risk ↑",
+    "en": "AKI risk ↑",
+    "ja": "AKI リスク ↑"
+  },
+  {
+    "source": "afferent constriction + efferent dilation + hypovolemia",
+    "en": "afferent constriction + efferent dilation + hypovolemia",
+    "ja": "輸入細動脈の収縮 ＋ 輸出細動脈の拡張 ＋ 循環血液量の減少"
+  },
+  {
+    "source": "SSRI / corticosteroid",
+    "en": "SSRI / corticosteroid",
+    "ja": "SSRI・副腎皮質ステロイド"
+  },
+  {
+    "source": "GI bleed risk ↑",
+    "en": "GI bleed risk ↑",
+    "ja": "消化管出血リスク ↑"
+  },
+  {
+    "source": "Aspirin asthma / AERD",
+    "en": "Aspirin asthma / AERD",
+    "ja": "アスピリン喘息・AERD"
+  },
+  {
+    "source": "Aspirin asthma / AERD：",
+    "en": "Aspirin asthma / AERD：",
+    "ja": "アスピリン喘息・AERD："
+  },
+  {
+    "source": "Clinical phenotype",
+    "en": "Clinical phenotype",
+    "ja": "臨床的な表現型"
+  },
+  {
+    "source": "CKD / dehydration / HF",
+    "en": "CKD / dehydration / HF",
+    "ja": "CKD・脱水・心不全"
+  },
+  {
+    "source": "Loxoprofen clinical fingerprint：",
+    "en": "Loxoprofen clinical fingerprint：",
+    "ja": "ロキソプロフェンの臨床的特徴："
+  },
+  {
+    "source": "Ibuprofen clinical fingerprint：",
+    "en": "Ibuprofen clinical fingerprint：",
+    "ja": "イブプロフェンの臨床的特徴："
+  },
+  {
+    "source": "Acetaminophen clinical fingerprint：",
+    "en": "Acetaminophen clinical fingerprint：",
+    "ja": "アセトアミノフェンの臨床的特徴："
+  },
+  {
+    "source": "13. Evidence hierarchy & limitations",
+    "en": "13. Evidence hierarchy & limitations",
+    "ja": "13. エビデンスの階層と限界"
+  },
+  {
+    "source": "RCT / Meta-analysis",
+    "en": "RCT / Meta-analysis",
+    "ja": "RCT・メタ解析"
+  },
+  {
+    "source": "Mechanistic study",
+    "en": "Mechanistic study",
+    "ja": "機序研究"
+  },
+  {
+    "source": "DailyMed current label",
+    "en": "DailyMed current label",
+    "ja": "DailyMed の現行添付文書"
+  },
+  {
+    "source": "Loxoprofen active metabolite / COX pharmacology",
+    "en": "Loxoprofen active metabolite / COX pharmacology",
+    "ja": "ロキソプロフェン活性代謝物・COX 薬理作用"
+  },
+  {
+    "source": "Ibuprofen stereochemistry",
+    "en": "Ibuprofen stereochemistry",
+    "ja": "イブプロフェンの立体化学"
+  },
+  {
+    "source": "NSAID cardiovascular / GI risk｜CNT Collaboration, Lancet 2013",
+    "en": "NSAID cardiovascular / GI risk｜CNT Collaboration, Lancet 2013",
+    "ja": "NSAID の心血管・消化管リスク｜CNT Collaboration, Lancet 2013"
+  },
+  {
+    "source": "Triple whammy renal risk｜Systematic review / meta-analysis",
+    "en": "Triple whammy renal risk｜Systematic review / meta-analysis",
+    "ja": "トリプルワーミーによる腎リスク｜系統的レビュー・メタ解析"
+  },
+  {
+    "source": "Acetaminophen mechanism / NAPQI toxicology",
+    "en": "Acetaminophen mechanism / NAPQI toxicology",
+    "ja": "アセトアミノフェンの作用機序・NAPQI の毒性"
+  },
+  {
+    "source": "FDA｜NSAIDs in pregnancy ≥20 weeks",
+    "en": "FDA｜NSAIDs in pregnancy ≥20 weeks",
+    "ja": "FDA｜妊娠 20 週以降の NSAID"
+  },
+  {
+    "source": "FDA Drug Safety Communication",
+    "en": "FDA Drug Safety Communication",
+    "ja": "FDA 医薬品安全性情報"
+  },
+  {
+    "source": "ACOG｜Acetaminophen use in pregnancy",
+    "en": "ACOG｜Acetaminophen use in pregnancy",
+    "ja": "ACOG｜妊娠中のアセトアミノフェン使用"
+  },
+  {
+    "source": "ACOG Practice Advisory",
+    "en": "ACOG Practice Advisory",
+    "ja": "ACOG 診療上の助言"
+  }
+]

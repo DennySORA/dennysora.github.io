@@ -62,19 +62,21 @@ test('the projects buffer leads through Tools to dgxtop and its other edition', 
   ).toEqual([0, 0]);
 });
 
-test('Japanese readers get the folders and an honest pointer to the English edition', async ({
+test('Japanese readers get the complete Japanese project edition', async ({
   page: tab,
   request,
 }) => {
-  expect((await request.get('/ja/projects/tools/dgxtop/')).status()).toBe(404);
+  expect((await request.get('/ja/projects/tools/dgxtop/')).status()).toBe(200);
   expect((await request.get('/en/projects/dgxtop/')).status()).toBe(404);
   await tab.goto('/ja/projects/tools/');
   const file = tab.locator('main .collection-files a');
-  await expect(file).toHaveAttribute('href', page);
-  await expect(file).toHaveAttribute('hreflang', 'en');
-  await expect(tab.locator('main .collection-meta')).toContainText(
-    'この言語の版はまだありません',
-  );
+  await expect(file).toHaveAttribute('href', '/ja/projects/tools/dgxtop/');
+  await expect(file).toHaveAttribute('hreflang', 'ja');
+  await file.click();
+  await expect(tab.locator('html')).toHaveAttribute('lang', 'ja');
+  await expect(tab.locator('#architecture')).toBeVisible();
+  await expect(tab.locator('main figure.dg')).toHaveCount(7);
+  await expect(tab.locator('main .project-shot img')).toHaveCount(7);
 });
 
 test('the dgxtop page is accessible, fits every width and reads without JavaScript', async ({
@@ -101,7 +103,7 @@ test('the dgxtop page is accessible, fits every width and reads without JavaScri
   for (const path of [
     page,
     '/zh-hant/projects/tools/dgxtop/',
-    '/ja/projects/',
+    '/ja/projects/tools/dgxtop/',
   ]) {
     await tab.goto(path);
     const results = await new AxeBuilder({ page: tab })
