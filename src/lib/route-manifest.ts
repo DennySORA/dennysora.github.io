@@ -14,6 +14,15 @@ import {
   type HardwareNoteId,
 } from './hardware-notes.ts';
 import {
+  collectionNotePath,
+  findCollectionNote,
+  hasCategory,
+  isNoteCollection,
+  type CollectionNoteId,
+  type NoteCategoryId,
+  type NoteCollectionId,
+} from './note-collections.ts';
+import {
   hasProjectEdition,
   projectCategories,
   projectPageIds,
@@ -40,6 +49,14 @@ export type RouteDescriptor =
   | { kind: 'hardware'; locale: Locale }
   | { kind: 'hardware-category'; locale: Locale; category: HardwareCategory }
   | { kind: 'hardware-note'; locale: Locale; noteId: HardwareNoteId }
+  | { kind: 'note-collection'; locale: Locale; collection: NoteCollectionId }
+  | {
+      kind: 'note-category';
+      locale: Locale;
+      collection: NoteCollectionId;
+      category: NoteCategoryId;
+    }
+  | { kind: 'collection-note'; locale: Locale; noteId: CollectionNoteId }
   | { kind: 'projects'; locale: Locale }
   | { kind: 'project-category'; locale: Locale; category: ProjectCategory }
   | { kind: 'project'; locale: Locale; projectId: ProjectPageId }
@@ -92,6 +109,24 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
           )
           ? { kind: 'hardware-note', locale, noteId: c as HardwareNoteId }
           : null;
+      }
+      if (a && isNoteCollection(a)) {
+        if (rest.length === 1)
+          return { kind: 'note-collection', locale, collection: a };
+        if (b && hasCategory(a, b)) {
+          if (rest.length === 2)
+            return {
+              kind: 'note-category',
+              locale,
+              collection: a,
+              category: b,
+            };
+          const noteId = rest.length === 3 && c && findCollectionNote(a, b, c);
+          return noteId ? { kind: 'collection-note', locale, noteId } : null;
+        }
+        // A flat collection files its notes directly under the collection.
+        const noteId = rest.length === 2 && b && findCollectionNote(a, null, b);
+        return noteId ? { kind: 'collection-note', locale, noteId } : null;
       }
       if (a !== 'medical') return null;
       if (rest.length === 1) return { kind: 'medical', locale };
@@ -175,6 +210,12 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/note/hardware/${route.category}/`;
     case 'hardware-note':
       return `/${route.locale}/note/hardware/${hardwareNotes[route.noteId].category}/${route.noteId}/`;
+    case 'note-collection':
+      return `/${route.locale}/note/${route.collection}/`;
+    case 'note-category':
+      return `/${route.locale}/note/${route.collection}/${route.category}/`;
+    case 'collection-note':
+      return collectionNotePath(route.noteId, route.locale);
     case 'projects':
       return `/${route.locale}/projects/`;
     case 'project-category':
@@ -227,6 +268,9 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'hardware':
     case 'hardware-category':
     case 'hardware-note':
+    case 'note-collection':
+    case 'note-category':
+    case 'collection-note':
       return 'notes';
     case 'projects':
     case 'project-category':

@@ -32,6 +32,7 @@ import {
   routePath,
 } from '../../src/lib/route-manifest.ts';
 import { crumbs, fileKind, filePath } from '../../src/lib/workspace.ts';
+import { collectionEntries } from '../../src/lib/note-collections.server.ts';
 
 function load(path: string) {
   return loader({
@@ -145,7 +146,7 @@ describe('project folders and explorer', () => {
         createElement(Explorer, {
           locale,
           route: { kind: 'projects', locale },
-          files: { posts: [] },
+          files: { posts: [], collections: collectionEntries(locale) },
         }),
       );
       expect(explorer).toContain(`href="/${locale}/projects/"`);

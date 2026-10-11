@@ -3,7 +3,7 @@ import {
   Collection,
   type CollectionFile,
 } from '../../components/Collection.tsx';
-import type { IconName } from '../../components/Icon.tsx';
+import { Icon, type IconName } from '../../components/Icon.tsx';
 import { htmlLang, type Locale } from '../../i18n/index.ts';
 import {
   networkCopy,
@@ -28,11 +28,30 @@ import {
   type HardwareCategory,
 } from '../../lib/hardware-notes.ts';
 import { noteCopy } from '../../lib/notes-copy.ts';
+import type {
+  CollectionEntry,
+  CollectionNoteId,
+  NoteCategoryId,
+  NoteCollectionId,
+} from '../../lib/note-collections.ts';
 
 export type NotesView =
   | { collection: 'all' }
   | { collection: 'medical'; category?: MedicalCategory }
-  | { collection: 'hardware'; category?: HardwareCategory };
+  | { collection: 'hardware'; category?: HardwareCategory }
+  | { collection: NoteCollectionId; category?: NoteCategoryId };
+
+// Art and icons stay with the view; titles and intros arrive as loader data.
+const collectionArt: Record<NoteCollectionId, string> = {
+  japan: '/assets/illustrations/collection-japan-v1.webp',
+  health: '/assets/illustrations/collection-health-v1.webp',
+  other: '/assets/illustrations/collection-other-v1.webp',
+};
+const collectionIcon: Record<NoteCollectionId, IconName> = {
+  japan: 'torii',
+  health: 'heart-pulse',
+  other: 'camera',
+};
 
 type NoteFile = Omit<CollectionFile, 'lang'>;
 const noteFile = (file: NoteFile, locale: Locale): CollectionFile => ({
@@ -95,10 +114,120 @@ function grouped(locale: Locale, collection: 'medical' | 'hardware'): Grouped {
   };
 }
 
-export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
+/** A loader-provided collection in the same shape as Medicine and Hardware. */
+function fromEntry(entry: CollectionEntry): Grouped {
+  return {
+    root: entry.id,
+    icon: collectionIcon[entry.id],
+    art: collectionArt[entry.id],
+    title: entry.title,
+    intro: entry.intro,
+    available: entry.available,
+    categories: entry.categories.map(({ id, title, intro }) => ({
+      id,
+      title,
+      intro,
+    })),
+    notes: [
+      ...entry.categories.flatMap((category) =>
+        category.notes.map((note) => ({
+          category: category.id,
+          href: note.href,
+          name: `${note.id}.md`,
+          title: note.title,
+        })),
+      ),
+      ...entry.notes.map((note) => ({
+        category: entry.id,
+        href: note.href,
+        name: `${note.id}.md`,
+        title: note.title,
+      })),
+    ],
+  };
+}
+
+/** A flat collection lists its notes directly, as the Networks folder does. */
+function FlatCollection({
+  locale,
+  entry,
+  summaries,
+}: {
+  locale: Locale;
+  entry: CollectionEntry;
+  summaries: readonly { id: CollectionNoteId; description: string }[];
+}) {
+  return (
+    <div className="container profile-layout notes-directory">
+      <header className="page-head has-art">
+        <div className="page-head-text">
+          <MdHeading level={1} icon={collectionIcon[entry.id]}>
+            {entry.title}
+          </MdHeading>
+          <p className="ln page-intro">{entry.intro}</p>
+        </div>
+        <img
+          className="page-art"
+          src={collectionArt[entry.id]}
+          width={88}
+          height={88}
+          alt=""
+          decoding="async"
+        />
+      </header>
+      <ul className="network-note-list">
+        {entry.notes.map((note) => (
+          <li key={note.id}>
+            <h2 className="ln">
+              <a href={note.href} hrefLang={htmlLang[locale]}>
+                <Icon name="markdown" size={18} />
+                <span lang={htmlLang[locale]}>{note.title}</span>
+              </a>
+            </h2>
+            <p className="network-note-file" aria-hidden="true">
+              {note.id}.md
+            </p>
+            <p lang={htmlLang[locale]}>
+              {summaries.find(({ id }) => id === note.id)?.description}
+            </p>
+            <small>
+              <Icon name="globe" size={14} />
+              {entry.available}
+            </small>
+          </li>
+        ))}
+      </ul>
+      <EndOfBuffer />
+    </div>
+  );
+}
+
+export function Notes({
+  locale,
+  view,
+  collections,
+  summaries = [],
+}: {
+  locale: Locale;
+  view: NotesView;
+  /** The newer collections in this page's language, from the loader. */
+  collections: readonly CollectionEntry[];
+  summaries?: readonly { id: CollectionNoteId; description: string }[];
+}) {
   const t = noteCopy[locale];
   if (view.collection !== 'all') {
-    const group = grouped(locale, view.collection);
+    const entry = collections.find(({ id }) => id === view.collection);
+    if (entry && entry.categories.length === 0)
+      return (
+        <FlatCollection locale={locale} entry={entry} summaries={summaries} />
+      );
+    const group =
+      view.collection === 'medical' || view.collection === 'hardware'
+        ? grouped(locale, view.collection)
+        : entry
+          ? fromEntry(entry)
+          : null;
+    if (!group) throw new Error(`Missing note collection ${view.collection}`);
     const category = group.categories.find(({ id }) => id === view.category);
     return (
       <div className="container profile-layout notes-directory">
@@ -157,8 +286,13 @@ export function Notes({ locale, view }: { locale: Locale; view: NotesView }) {
           )}
           available={network.available}
         />
-        {(['medical', 'hardware'] as const).map((collection) => {
-          const group = grouped(locale, collection);
+        {[
+          ...(['medical', 'hardware'] as const).map((collection) =>
+            grouped(locale, collection),
+          ),
+          ...collections.map(fromEntry),
+        ].map((group) => {
+          const collection = group.root;
           return (
             <Collection
               key={collection}

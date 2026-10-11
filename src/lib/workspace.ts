@@ -1,5 +1,6 @@
 import { medicalNotes } from './medical-notes.ts';
 import { hardwareNotes } from './hardware-notes.ts';
+import { collectionNotes, type CollectionEntry } from './note-collections.ts';
 import { projectPages } from './project-pages.ts';
 import type { Locale } from '../i18n/index.ts';
 import {
@@ -16,6 +17,8 @@ import { papersUrl } from './site.ts';
 
 export type WorkspaceFiles = {
   posts: { slug: string; title: string }[];
+  /** Note collections whose copy arrives as loader data, in the page's language. */
+  collections: CollectionEntry[];
 };
 
 export type AreaKey = NavSection | 'papers';
@@ -122,6 +125,39 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
         },
         { label: `${route.noteId}.md`, href: self },
       ];
+    case 'note-collection':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: route.collection, href: self },
+      ];
+    case 'note-category':
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        {
+          label: route.collection,
+          href: `/${locale}/note/${route.collection}/`,
+        },
+        { label: route.category, href: self },
+      ];
+    case 'collection-note': {
+      const { collection, category } = collectionNotes[route.noteId];
+      return [
+        home,
+        { label: 'note', href: `/${locale}/note/` },
+        { label: collection, href: `/${locale}/note/${collection}/` },
+        ...(category
+          ? [
+              {
+                label: category,
+                href: `/${locale}/note/${collection}/${category}/`,
+              },
+            ]
+          : []),
+        { label: `${route.noteId}.md`, href: self },
+      ];
+    }
     case 'projects':
       return [home, { label: 'projects', href: self }];
     case 'project-category':
@@ -167,6 +203,8 @@ const folders: RouteDescriptor['kind'][] = [
   'network',
   'hardware',
   'hardware-category',
+  'note-collection',
+  'note-category',
   'projects',
   'project-category',
   'tags',

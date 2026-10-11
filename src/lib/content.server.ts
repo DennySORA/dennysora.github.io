@@ -16,12 +16,26 @@ import {
   type HardwareNoteId,
 } from './hardware-notes.ts';
 import {
+  collectionNoteIds,
+  noteCollectionIds,
+  noteCollections,
+  type CollectionNoteId,
+} from './note-collections.ts';
+import {
+  collectionNoteMeta,
+  collectionNoteSource,
+} from './note-collections.server.ts';
+import {
   projectCategories,
   projectPageIds,
   projectPages,
 } from './project-pages.ts';
 import { addNoteTags } from './note-tags.server.ts';
-import { translateNote, type NoteTranslation } from './note-translations.ts';
+import {
+  markJapanese,
+  translateNote,
+  type NoteTranslation,
+} from './note-translations.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
@@ -260,6 +274,11 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'medical-category', locale, category });
     for (const category of hardwareCategories)
       routes.push({ kind: 'hardware-category', locale, category });
+    for (const collection of noteCollectionIds) {
+      routes.push({ kind: 'note-collection', locale, collection });
+      for (const category of noteCollections[collection].categories)
+        routes.push({ kind: 'note-category', locale, collection, category });
+    }
     for (const category of projectCategories)
       routes.push({ kind: 'project-category', locale, category });
     for (const post of listPosts(locale))
@@ -274,6 +293,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'network-note', locale, noteId });
     for (const noteId of hardwareNoteIds)
       routes.push({ kind: 'hardware-note', locale, noteId });
+    for (const noteId of collectionNoteIds)
+      routes.push({ kind: 'collection-note', locale, noteId });
   }
   // A project page is published only in the languages it was written in.
   for (const projectId of projectPageIds)
@@ -308,10 +329,21 @@ export function validateContent(): void {
     problems.push('Duplicate topic id');
   if (new Set(types.map((type) => type.id)).size !== types.length)
     problems.push('Duplicate content type id');
+  // Note IDs name translation files and search entries, so they are unique site-wide.
+  const noteIds = [
+    ...medicalNoteIds,
+    ...networkNoteIds,
+    ...hardwareNoteIds,
+    ...collectionNoteIds,
+  ];
+  for (const id of new Set(noteIds))
+    if (noteIds.filter((item) => item === id).length > 1)
+      problems.push(`Duplicate note id ${id}`);
   for (const [id, note] of Object.entries({
     ...medicalNotes,
     ...networkNotes,
     ...hardwareNotes,
+    ...collectionNoteMeta,
     ...projectPages,
   })) {
     if (note.tagIds.length === 0) problems.push(`Missing tags in note ${id}`);
@@ -391,6 +423,7 @@ export function validateContent(): void {
     for (const id of medicalNoteIds) loadMedicalNote(id, locale);
     for (const id of networkNoteIds) loadNetworkNote(id, locale);
     for (const id of hardwareNoteIds) loadHardwareNote(id, locale);
+    for (const id of collectionNoteIds) loadCollectionNote(id, locale);
   }
   const paths = publishedPaths();
   if (new Set(paths).size !== paths.length) problems.push('Duplicate route');
@@ -471,11 +504,80 @@ export function loadHardwareNote(
   );
 }
 
-function noteEdition(html: string, id: string, locale: Locale): string {
-  if (locale === 'zh-hant') return html;
+/** A note's own photos: same-origin files under /assets/notes/<id>/, never remote. */
+export function collectionNoteImages(id: CollectionNoteId, html: string) {
+  return [...html.matchAll(/<img\b[^>]*>/gi)].map(([tag]) => {
+    const attribute = (name: string) =>
+      tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+    const src = attribute('src') ?? '';
+    const width = Number(attribute('width'));
+    const height = Number(attribute('height'));
+    if (
+      !new RegExp(`^/assets/notes/${id}/[a-z0-9-]+\\.(?:webp|jpg|png)$`).test(
+        src,
+      ) ||
+      !Number.isInteger(width) ||
+      !Number.isInteger(height) ||
+      width <= 0 ||
+      height <= 0 ||
+      !attribute('alt')?.trim()
+    )
+      throw new Error(`Unsafe or incomplete image in note ${id}: ${tag}`);
+    return { src, width, height };
+  });
+}
+
+/** Accepts only reviewed static markup: tables, inline SVG and the note's own photos. */
+export function checkCollectionNoteMarkup(id: CollectionNoteId, html: string) {
+  if (
+    /<(?:script|iframe|object|embed|form|style|link|picture|source|video|audio)\b|\son[a-z]+\s*=|javascript:|\s(?:style|srcset)\s*=/i.test(
+      html,
+    )
+  )
+    throw new Error(`Executable or styled markup in note ${id}`);
+  // Every src belongs to an <img> whose file is this note's own photo.
+  const images = collectionNoteImages(id, html);
+  if ((html.match(/\ssrc\s*=/gi) ?? []).length !== images.length)
+    throw new Error(`Source attribute outside an image in note ${id}`);
+  return images;
+}
+
+/** A reviewed static fragment in the requested language, with its tags under the title. */
+export function loadCollectionNote(
+  id: CollectionNoteId,
+  locale: Locale = 'zh-hant',
+): string {
+  if (!collectionNoteIds.includes(id)) throw new Error('Unknown note');
+  const html = readFileSync(
+    join(contentRoot, collectionNoteSource(id)),
+    'utf8',
+  );
+  checkCollectionNoteMarkup(id, html);
+  const edition = noteEdition(html, id, locale);
+  return addNoteTags(
+    // The Japanese edition is Japanese throughout; the others mark its parts.
+    locale === 'ja'
+      ? edition
+      : markJapanese(
+          edition,
+          locale,
+          locale === 'zh-hant' ? noteTranslations(id) : [],
+        ),
+    collectionNoteMeta[id].tagIds,
+    loadTaxonomy().tags,
+    locale,
+  );
+}
+
+function noteTranslations(id: string): NoteTranslation[] {
   const entries = json(join(contentRoot, `notes/translations/${id}.json`));
   if (!Array.isArray(entries))
     throw new Error(`Invalid note translations: ${id}`);
+  return entries as NoteTranslation[];
+}
+
+function noteEdition(html: string, id: string, locale: Locale): string {
+  if (locale === 'zh-hant') return html;
   // translateNote checks every field, rejects duplicates and requires exact coverage.
-  return translateNote(html, entries as NoteTranslation[], locale);
+  return translateNote(html, noteTranslations(id), locale);
 }

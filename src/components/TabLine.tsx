@@ -79,6 +79,9 @@ function Buffers({
           'hardware',
           'hardware-category',
           'hardware-note',
+          'note-collection',
+          'note-category',
+          'collection-note',
         ].includes(route.kind)
       ? 'notes'
       : ['project-category', 'project'].includes(route.kind)

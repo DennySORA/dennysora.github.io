@@ -10,9 +10,15 @@ import { locales } from '../../src/i18n/index.ts';
 import { publishedRoutes } from '../../src/lib/content.server.ts';
 import { routePath } from '../../src/lib/route-manifest.ts';
 import {
+  markJapanese,
   noteTranslationSources,
   translateNote,
 } from '../../src/lib/note-translations.ts';
+import {
+  collectionEntries,
+  collectionNoteSource,
+} from '../../src/lib/note-collections.server.ts';
+import { collectionNoteIds } from '../../src/lib/note-collections.ts';
 
 describe('note translation contract', () => {
   it('requires complete, current translations and escapes text without changing markup or code indentation', () => {
@@ -65,6 +71,68 @@ describe('note translation contract', () => {
     expect(translateNote(html, entries, 'en')).toBe(
       '<h2>Evidence hierarchy</h2><code>stable_id</code><strong>Key point</strong>.',
     );
+    // A full stop between two inline items still starts a new English sentence.
+    expect(
+      translateNote(
+        '<p><strong>重點</strong>。<span lang="ja">Nらしい</span></p>',
+        entries.slice(1),
+        'en',
+      ),
+    ).toBe('<p><strong>Key point</strong>. <span lang="ja">Nらしい</span></p>');
+  });
+
+  it('keeps lang="ja" passages verbatim in every edition while translating the prose around them', () => {
+    const html =
+      '<p><span lang="ja" title="例文">先生が来ます。</span> 是事件主體。</p><table><tr><td lang="ja"><b>教室に</b>先生がいます。</td><td>教室裡有老師。</td></tr></table><p lang="ja">雨が<span lang="zh-Hant">（中文註）</span>降る。</p><br><img alt="說明" src="/a.webp"><p>結尾。</p>';
+    expect(noteTranslationSources(html)).toEqual([
+      '是事件主體。',
+      '教室裡有老師。',
+      '（中文註）',
+      '說明',
+      '結尾。',
+    ]);
+    const entries = [
+      { source: '是事件主體。', en: 'is the subject.', ja: 'は主体。' },
+      { source: '教室裡有老師。', en: 'A teacher is in.', ja: '教室に先生。' },
+      { source: '（中文註）', en: '(note)', ja: '（注）' },
+      { source: '說明', en: 'Caption', ja: '説明' },
+      { source: '結尾。', en: 'End.', ja: '終わり。' },
+    ];
+    const en = translateNote(html, entries, 'en');
+    expect(en).toContain(
+      '<span lang="ja" title="例文">先生が来ます。</span> is the subject.',
+    );
+    expect(en).toContain('<td lang="ja"><b>教室に</b>先生がいます。</td>');
+    expect(en).toContain('<span lang="zh-Hant">(note)</span>降る。');
+    expect(en).toContain('alt="Caption"');
+    expect(en).toContain('<p>End.</p>');
+  });
+
+  it('marks Japanese inside English and Chinese text, using the English to place shared kanji', () => {
+    expect(
+      markJapanese(
+        '<p>Use 家族のために働きます。I work. AはBと同じです and PDFの; <span lang="ja">どの</span>, 方.</p><svg><text>テスト</text></svg><select><option>秒です</option></select>',
+        'en',
+      ),
+    ).toBe(
+      '<p>Use <span lang="ja">家族のために働きます。</span>I work. <span lang="ja">AはBと同じです</span> and PDF<span lang="ja">の</span>; <span lang="ja">どの</span>, <span lang="ja">方</span>.</p><svg><text>テスト</text></svg><select><option>秒です</option></select>',
+    );
+    const source = '誰來？が 屬於 来る；是い形容詞';
+    expect(
+      markJapanese(`<small>${source}</small>`, 'zh-hant', [
+        {
+          source,
+          en: 'Who comes? が belongs to 来る; an i-adjective',
+          ja: '-',
+        },
+      ]),
+    ).toBe(
+      '<small>誰來？<span lang="ja">が</span> 屬於 <span lang="ja">来る</span>；是<span lang="ja">い</span>形容詞</small>',
+    );
+    // Japanese with no Chinese around it needs no translation to be placed.
+    expect(markJapanese('<a>34｜について／によって</a>', 'zh-hant')).toBe(
+      '<a>34｜<span lang="ja">について／によって</span></a>',
+    );
   });
 
   it('loads every full edition with localized metadata and tags while preserving source anchors, links and data', () => {
@@ -74,6 +142,12 @@ describe('note translation contract', () => {
       'p2p-downloader': 'p2p-downloader.html',
       'p2p-privacy': 'p2p-privacy.html',
       '140mm-case-fans': 'hardware/computer/140mm-case-fans.html',
+      ...Object.fromEntries(
+        collectionNoteIds.map((id) => [
+          id,
+          collectionNoteSource(id).replace(/^notes\//, ''),
+        ]),
+      ),
     };
     const structure = (html: string) =>
       [...html.matchAll(/\s(?:id|href|src|data-[\w-]+)="[^"]*"/g)]
@@ -87,9 +161,10 @@ describe('note translation contract', () => {
       (route) =>
         route.kind === 'medical-note' ||
         route.kind === 'network-note' ||
-        route.kind === 'hardware-note',
+        route.kind === 'hardware-note' ||
+        route.kind === 'collection-note',
     );
-    expect(notes).toHaveLength(15);
+    expect(notes).toHaveLength((5 + collectionNoteIds.length) * 3);
     for (const route of notes) {
       if (!('noteId' in route)) throw new Error('Expected note');
       const path = routePath(route);
@@ -130,7 +205,11 @@ describe('note translation contract', () => {
     for (const locale of locales) {
       const html =
         renderToStaticMarkup(
-          createElement(Notes, { locale, view: { collection: 'all' } }),
+          createElement(Notes, {
+            locale,
+            view: { collection: 'all' },
+            collections: collectionEntries(locale),
+          }),
         ) + renderToStaticMarkup(createElement(NetworkNotes, { locale }));
       const noteLinks = [
         ...html.matchAll(/href="(\/(?:zh-hant|en|ja)\/note\/[^"]+)"/g),

@@ -8,6 +8,7 @@ import {
 } from 'node:fs';
 import { join, dirname } from 'node:path';
 import {
+  collectionNoteImages,
   isIndexable,
   listPosts,
   loadPosts,
@@ -15,6 +16,8 @@ import {
   renderPost,
   siteUrl,
 } from '../src/lib/content.server.ts';
+import { collectionNoteIds } from '../src/lib/note-collections.ts';
+import { collectionNoteSource } from '../src/lib/note-collections.server.ts';
 import { dictionaries, locales, htmlLang } from '../src/i18n/index.ts';
 import { escapeHtml } from '../src/lib/html.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
@@ -50,6 +53,12 @@ for (const id of projectPageIds)
       join('assets/projects', id, shot.file),
       join(output, projectShotUrl(id, shot)),
     );
+// A note's photos ship only when its published fragment shows them.
+for (const id of collectionNoteIds) {
+  const html = readFileSync(join('content', collectionNoteSource(id)), 'utf8');
+  for (const image of collectionNoteImages(id, html))
+    cpSync(image.src.slice(1), join(output, image.src));
+}
 cpSync('CNAME', join(output, 'CNAME'));
 write('.nojekyll', '');
 write(

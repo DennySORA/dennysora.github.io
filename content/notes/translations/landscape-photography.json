@@ -1,0 +1,4557 @@
+[
+  {
+    "source": "// Photography · 風景 · 原稿 2026-10-11 · 本站重整與核對 2026-10-12",
+    "en": "// Photography · Landscape · original 2026-10-11 · rewritten and checked on this site 2026-10-12",
+    "ja": "// Photography · 風景 · 原稿 2026-10-11 · 本サイトで再編・確認 2026-10-12"
+  },
+  {
+    "source": "不把照片修成戲劇化的「完美風景」，而是用同一天的 31 張實拍，辨認哪些構圖決策有效、哪些光線無法補救，以及下一次該站在哪裡、用什麼視角。",
+    "en": "Rather than retouching the photos into dramatic “perfect landscapes,” this guide uses 31 real shots from a single day to work out which composition decisions work, which light can’t be rescued, and where to stand and what viewpoint to use next time.",
+    "ja": "写真を劇的な「完璧な風景」に仕上げるのではなく、同じ日に撮った 31 枚の実写真を使って、どの構図の判断が効いているか、どの光は補えないか、そして次はどこに立ち、どんな視点で撮るべきかを見極めます。"
+  },
+  {
+    "source": "31 張",
+    "en": "31 photos",
+    "ja": "31 枚"
+  },
+  {
+    "source": "原始 JPEG，Google Pixel 9 實拍",
+    "en": "Original JPEGs shot on a Google Pixel 9",
+    "ja": "Google Pixel 9 で撮影した元の JPEG"
+  },
+  {
+    "source": "主要的等效焦距",
+    "en": "Main equivalent focal lengths",
+    "ja": "主な換算焦点距離"
+  },
+  {
+    "source": "從讀圖、光線到四週練習",
+    "en": "From reading photos and light to a four-week practice plan",
+    "ja": "写真の読み方と光から 4 週間の練習まで"
+  },
+  {
+    "source": "2 個",
+    "en": "2 tools",
+    "ja": "2 つ"
+  },
+  {
+    "source": "本機試算：超焦距與 ND 快門",
+    "en": "On-device calculators: hyperfocal distance and ND shutter",
+    "ja": "端末内の試算ツール：過焦点距離と ND シャッター"
+  },
+  {
+    "source": "參數是起點，不是保證值",
+    "en": "Settings are starting points, not guarantees",
+    "ja": "設定値は出発点であり、保証値ではない"
+  },
+  {
+    "source": "外部照片只提供連結",
+    "en": "External photos are provided as links only",
+    "ja": "外部の写真はリンクのみ"
+  },
+  {
+    "source": "從吊橋旁的高處拍攝的峽谷：碧綠河水、白灰色岩石與兩側樹林，右上方可見吊橋的一段。",
+    "en": "A gorge shot from a high point beside a suspension bridge: jade-green water, whitish-gray rocks and forest on both sides, with part of the suspension bridge visible at the upper right.",
+    "ja": "吊り橋のそばの高い位置から撮った峡谷。エメラルドグリーンの川、白っぽい灰色の岩、両岸の木々。右上に吊り橋の一部が見える。"
+  },
+  {
+    "source": "封面：原檔 PXL_20261010_034347195.jpg 的縮圖。選好看的風景，還要選對畫面。",
+    "en": "Cover: thumbnail of original file PXL_20261010_034347195.jpg. A good-looking landscape isn’t enough; you also have to choose the right frame.",
+    "ja": "カバー写真：元ファイル PXL_20261010_034347195.jpg のサムネイル。美しい風景を選ぶだけでなく、画面の切り取り方も正しく選ぶ必要があります。"
+  },
+  {
+    "source": "照片使用原則",
+    "en": "How the photos are used",
+    "ja": "写真の扱いについて"
+  },
+  {
+    "source": "本文章節",
+    "en": "Sections of this guide",
+    "ja": "本記事の章"
+  },
+  {
+    "source": "先看結論",
+    "en": "The takeaway",
+    "ja": "まず結論"
+  },
+  {
+    "source": "讀懂標記",
+    "en": "Reading the guides",
+    "ja": "マークの読み方"
+  },
+  {
+    "source": "四個案例",
+    "en": "Four cases",
+    "ja": "4 つの事例"
+  },
+  {
+    "source": "光線與天氣",
+    "en": "Light and weather",
+    "ja": "光と天気"
+  },
+  {
+    "source": "構圖",
+    "en": "Composition",
+    "ja": "構図"
+  },
+  {
+    "source": "焦段與機位",
+    "en": "Focal length and position",
+    "ja": "焦点距離と撮影位置"
+  },
+  {
+    "source": "曝光",
+    "en": "Exposure",
+    "ja": "露出"
+  },
+  {
+    "source": "景深與對焦",
+    "en": "Depth of field and focus",
+    "ja": "被写界深度とピント"
+  },
+  {
+    "source": "流水與濾鏡",
+    "en": "Water and filters",
+    "ja": "流水とフィルター"
+  },
+  {
+    "source": "五類場景",
+    "en": "Five genres",
+    "ja": "5 つのジャンル"
+  },
+  {
+    "source": "裁切對照",
+    "en": "Crop comparisons",
+    "ja": "トリミング比較"
+  },
+  {
+    "source": "現場流程",
+    "en": "Field routine",
+    "ja": "現場での手順"
+  },
+  {
+    "source": "31 張索引",
+    "en": "31-photo index",
+    "ja": "31 枚の索引"
+  },
+  {
+    "source": "四週練習",
+    "en": "Four-week practice",
+    "ja": "4 週間の練習"
+  },
+  {
+    "source": "來源與授權",
+    "en": "Sources and licensing",
+    "ja": "出典とライセンス"
+  },
+  {
+    "source": "最有用的進步，不是把照片調得更飽和",
+    "en": "The most useful improvement isn’t more saturation",
+    "ja": "最も役に立つ上達は、写真の彩度を上げることではない"
+  },
+  {
+    "source": "這組照片最有辨識度的共同題材，是",
+    "en": "The most distinctive shared subjects in this set are ",
+    "ja": "このセットで最も特徴的な共通の題材は、"
+  },
+  {
+    "source": "碧綠河水、狹長峽谷、繁密樹林與橋梁",
+    "en": "jade-green rivers, narrow gorges, dense forest and bridges",
+    "ja": "エメラルドグリーンの川、細長い峡谷、深い森、そして橋"
+  },
+  {
+    "source": "。攝影上真正的挑戰不是風景不漂亮，而是畫面裡有太多資訊同時要求注意。",
+    "en": ". The real photographic challenge isn’t that the scenery lacks beauty, but that too much in the frame demands attention at the same time.",
+    "ja": "です。撮影上の本当の課題は、風景が美しくないことではなく、画面の中であまりに多くの情報が同時に注意を求めていることです。"
+  },
+  {
+    "source": "已有的優勢",
+    "en": "Existing strengths",
+    "ja": "すでにある強み"
+  },
+  {
+    "source": "常能找到形成",
+    "en": "The photos often use viewpoints that create ",
+    "ja": "よく見つけているのは、"
+  },
+  {
+    "source": "前後空間深度",
+    "en": "depth from foreground to background",
+    "ja": "前後の空間的な奥行き"
+  },
+  {
+    "source": "的視角：河道有天然的收斂線，峽谷左右兩側形成框架；也留意到小舟、橋梁、岩石等提供尺度的元素。",
+    "en": ": the river channel provides natural converging lines, the two sides of the gorge form a frame, and there’s an eye for elements that give scale, such as small boats, bridges and rocks.",
+    "ja": "を生む視点です。川筋には自然な収束線があり、峡谷の左右が枠を作っています。小舟、橋、岩など、スケール感を与える要素にも目が向いています。"
+  },
+  {
+    "source": "最值得優先修正",
+    "en": "Top priorities to fix",
+    "ja": "最優先で直したい点"
+  },
+  {
+    "source": "降低超廣角的慣性使用；先問主體是什麼，再決定機位與視角。按下快門前，檢查光源是否直射、橋影與雜枝是否切割主體，以及邊角是否有不完整的物件。",
+    "en": "Reach for the ultra-wide less out of habit; first ask what the subject is, then decide on the camera position and viewpoint. Before pressing the shutter, check whether the light source is shining straight in, whether bridge shadows or stray branches cut across the subject, and whether anything at the edges is only partly in frame.",
+    "ja": "習慣で超広角を使うのを控え、まず主被写体は何かを考えてから、撮影位置と視点を決めます。シャッターを押す前に、光源が直接入っていないか、橋の影や雑多な枝が主被写体を分断していないか、画面の隅に一部だけ写った物がないかを確認します。"
+  },
+  {
+    "source": "現場 10 秒診斷",
+    "en": "10-second diagnosis on location",
+    "ja": "現場での 10 秒診断"
+  },
+  {
+    "source": "① 第一眼看哪裡？ ② 有沒有一條把視線帶進去的線？ ③ 哪些亮點或雜物會搶戲？ ④ 移動三步或換一個視角後，是否更好？",
+    "en": "① Where does the eye land first? ② Is there a line that leads the eye in? ③ Which highlights or clutter steal the show? ④ Is it better after moving three steps or changing the viewpoint?",
+    "ja": "① 最初にどこを見るか？ ② 視線を引き込む線はあるか？ ③ 注意を奪う明るい点や雑物はどれか？ ④ 3 歩動くか視点を変えたら、もっと良くなるか？"
+  },
+  {
+    "source": "下面的圖解是",
+    "en": "The diagrams below are ",
+    "ja": "以下の図解は"
+  },
+  {
+    "source": "可以檢驗的選項",
+    "en": "options you can test",
+    "ja": "検証できる選択肢"
+  },
+  {
+    "source": "，不是百分之百的完美公式。三分法、S 曲線和前中後景都不是每張照片必須具備的條件；好的極簡、對稱與抽象作品，可能刻意違反它們。",
+    "en": ", not a formula that is perfect every time. The rule of thirds, S-curves and a foreground–middle ground–background structure are not requirements for every photo; good minimalist, symmetrical and abstract work may break them on purpose.",
+    "ja": "であり、100％完璧な公式ではありません。三分割法、S 字曲線、前景・中景・背景は、どの写真にも必要な条件ではありません。優れたミニマル、対称、抽象的な作品は、あえてそれらを破ることもあります。"
+  },
+  {
+    "source": "先知道圖上這幾種標記代表什麼",
+    "en": "First, learn what the marks on the photos mean",
+    "ja": "まず、写真上のマークの意味を知る"
+  },
+  {
+    "source": "本頁在真實照片上疊加可以關閉的教學標記：",
+    "en": "This page overlays teaching marks, which you can turn off, on the real photos:",
+    "ja": "本ページでは、オフにできる解説用のマークを実際の写真に重ねています："
+  },
+  {
+    "source": "圖上標記的意思",
+    "en": "What the marks mean",
+    "ja": "マークの意味"
+  },
+  {
+    "source": "三分線",
+    "en": "Rule-of-thirds lines",
+    "ja": "三分割線"
+  },
+  {
+    "source": "建議的視線路徑",
+    "en": "Suggested eye path",
+    "ja": "おすすめの視線の流れ"
+  },
+  {
+    "source": "值得保留的視覺元素（實線圈）",
+    "en": "Visual elements worth keeping (solid circle)",
+    "ja": "残したい視覚要素（実線の円）"
+  },
+  {
+    "source": "值得檢查的干擾（虛線圈或框）",
+    "en": "Distractions worth checking (dashed circle or box)",
+    "ja": "確認したい邪魔な要素（破線の円や枠）"
+  },
+  {
+    "source": "數字對應圖下的說明",
+    "en": "Numbers refer to the notes below each photo",
+    "ja": "番号は写真下の説明に対応"
+  },
+  {
+    "source": "路徑、圈選與數字",
+    "en": "Paths, circles and numbers",
+    "ja": "線・丸・番号"
+  },
+  {
+    "source": "全部顯示",
+    "en": "Show all",
+    "ja": "すべて表示"
+  },
+  {
+    "source": "這兩個開關作用在全頁所有照片；每張照片右上角的「輔助線」只切換那一張。標記只影響顯示，不會改動照片。",
+    "en": "These two switches apply to every photo on the page; the “Guides” button at the top right of each photo toggles only that one. The marks change only what’s displayed, never the photos themselves.",
+    "ja": "この 2 つのスイッチはページ内のすべての写真に効きます。各写真の右上にある「ガイド」は、その 1 枚だけを切り替えます。マークは表示にだけ影響し、写真そのものは変更しません。"
+  },
+  {
+    "source": "看圖方法：",
+    "en": "How to read a photo: ",
+    "ja": "写真の見方："
+  },
+  {
+    "source": "先關掉標記看 3 秒，自己指出第一眼的視覺焦點；再打開標記比對。若需要靠說明文字才知道主體在哪裡，表示主體可能還不夠突出。",
+    "en": "Turn the marks off and look for 3 seconds, pointing out for yourself where your eye lands first; then turn the marks back on and compare. If you need the caption to know where the subject is, the subject may not stand out enough yet.",
+    "ja": "まずマークを消して 3 秒眺め、最初に目が行く視覚的な焦点を自分で指摘します。次にマークを表示して比べます。説明文を読まないと主被写体がどこかわからないなら、主被写体がまだ十分に際立っていない可能性があります。"
+  },
+  {
+    "source": "直幅峽谷：河流會自然引導視線",
+    "en": "Vertical gorge: the river naturally guides the eye",
+    "ja": "縦構図の峡谷：川が自然に視線を導く"
+  },
+  {
+    "source": "原檔 PXL_20261010_034054885.jpg · 12:40:54 · 12 mm 等效 · f/1.7 · 1/2088 秒 · ISO 59",
+    "en": "original file PXL_20261010_034054885.jpg · 12:40:54 · 12 mm equiv. · f/1.7 · 1/2088 s · ISO 59",
+    "ja": "元ファイル PXL_20261010_034054885.jpg · 12:40:54 · 12 mm 相当 · f/1.7 · 1/2088 秒 · ISO 59"
+  },
+  {
+    "source": "輔助線",
+    "en": "Guides",
+    "ja": "ガイド"
+  },
+  {
+    "source": "從高處往下拍的直幅峽谷：碧綠河流從畫面下方延伸到遠方，兩側是陡峭的岩壁與樹林。",
+    "en": "A vertical shot looking down into a gorge: the jade-green river runs from the bottom of the frame into the distance, with steep rock walls and forest on both sides.",
+    "ja": "高い位置から見下ろして撮った縦構図の峡谷。エメラルドグリーンの川が画面下から遠くへ延び、両側には切り立った岩壁と森がある。"
+  },
+  {
+    "source": "河流從畫面下方延伸到遠方，兩側岩壁提供邊界，形成接近「通道」的視覺結構。",
+    "en": "The river runs from the bottom of the frame into the distance, and the rock walls on both sides set the boundaries, creating a visual structure close to a “corridor.”",
+    "ja": "川が画面下から遠くへ延び、両側の岩壁が境界となって、「通路」に近い視覚構造を作っています。"
+  },
+  {
+    "source": "① 河道的連續形狀，是這張圖最有用的導線。",
+    "en": "① The continuous shape of the river channel is the most useful leading line in this photo.",
+    "ja": "① 川筋の連続した形が、この写真で最も役立つリーディングラインです。"
+  },
+  {
+    "source": "直幅在這裡有意義：它捨棄左右雜物，把觀眾推向縱深。",
+    "en": "The vertical frame earns its place here: it drops the clutter at the sides and pushes the viewer into the depth of the scene.",
+    "ja": "ここでは縦構図に意味があります。左右の雑物を捨て、見る人を奥行きへと押し出しています。"
+  },
+  {
+    "source": "三分交點不是成功保證",
+    "en": "A thirds intersection is no guarantee of success",
+    "ja": "三分割の交点は成功の保証ではない"
+  },
+  {
+    "source": "不要把「把主體放在三分交點」誤當成「一定拍得好」。真正要檢查的是：那個位置有沒有明確的光線、對比、尺度與視線銜接。",
+    "en": "Don’t mistake “put the subject on a thirds intersection” for “the shot will be good.” What you really need to check is whether that spot has clear light, contrast, scale and a connection to the eye path.",
+    "ja": "「主被写体を三分割の交点に置く」を「必ずうまく撮れる」と取り違えないこと。本当に確認すべきなのは、その位置に明確な光、コントラスト、スケール感、そして視線のつながりがあるかどうかです。"
+  },
+  {
+    "source": "四個最值得練的課題",
+    "en": "Four lessons most worth practicing",
+    "ja": "最も練習する価値のある 4 つの課題"
+  },
+  {
+    "source": "案例 A｜翡翠峽谷：色彩強，但要清理邊角",
+    "en": "Case A | Emerald gorge: strong color, but the edges need cleaning up",
+    "ja": "事例 A｜翡翠色の峡谷：色は強いが、隅の整理が必要"
+  },
+  {
+    "source": "原檔 PXL_20261010_034347195.jpg · 12:43:47 · 12 mm 等效 · f/1.7 · 1/1045 秒 · ISO 56",
+    "en": "original file PXL_20261010_034347195.jpg · 12:43:47 · 12 mm equiv. · f/1.7 · 1/1045 s · ISO 56",
+    "ja": "元ファイル PXL_20261010_034347195.jpg · 12:43:47 · 12 mm 相当 · f/1.7 · 1/1045 秒 · ISO 56"
+  },
+  {
+    "source": "從高處拍攝的峽谷：碧綠河水與白灰色岩石，右上角吊橋只入鏡一段，畫面下緣有大片近處的草葉。",
+    "en": "A gorge shot from a high point: jade-green water and whitish-gray rocks, only part of the suspension bridge in frame at the upper right, and a large patch of nearby grass along the bottom edge.",
+    "ja": "高い位置から撮った峡谷。エメラルドグリーンの川と白っぽい灰色の岩。右上の吊り橋は一部しか写っておらず、画面下端には手前の草葉が大きく入っている。"
+  },
+  {
+    "source": "綠色河道與白灰岩石有很好的色彩與材質對比；問題集中在沒有完整入鏡的橋，以及近處的雜草。",
+    "en": "The green channel and whitish-gray rocks give good contrast in color and texture; the problems are concentrated in the bridge that isn’t fully in frame and the weeds close to the camera.",
+    "ja": "緑の川筋と白っぽい灰色の岩は、色と質感のコントラストが良好です。問題は、全体が写っていない橋と、手前の雑草に集中しています。"
+  },
+  {
+    "source": "① 下緣植物面積大、細節雜，搶走岩石與河流的注意力。",
+    "en": "① The plants along the bottom edge are large and busy with detail, pulling attention away from the rocks and river.",
+    "ja": "① 下端の植物は面積が大きく細部も雑然としていて、岩と川から注意を奪っています。"
+  },
+  {
+    "source": "② 橋在右上緣被切到；要嘛完整安排，要嘛換位讓它退出構圖。",
+    "en": "② The bridge is cut off at the top right edge; either include it properly or move so it leaves the composition.",
+    "ja": "② 橋が右上の端で切れています。全体をきちんと入れるか、位置を変えて構図から外すかのどちらかにします。"
+  },
+  {
+    "source": "③ 翡翠色水面與左右岩石的交界，是這張照片真正的視覺核心。",
+    "en": "③ The boundary between the emerald water and the rocks on either side is the real visual core of this photo.",
+    "ja": "③ 翡翠色の水面と左右の岩の境目こそが、この写真の本当の視覚的な核心です。"
+  },
+  {
+    "source": "案例 B｜橋上 12 mm：有尺度，但陰影切斷畫面",
+    "en": "Case B | 12 mm from the bridge: there’s scale, but a shadow cuts the frame",
+    "ja": "事例 B｜橋の上から 12 mm：スケール感はあるが、影が画面を分断"
+  },
+  {
+    "source": "原檔 PXL_20261010_045807548.jpg · 13:58:07 · 12 mm 等效 · f/1.7 · 1/1272 秒 · ISO 60",
+    "en": "original file PXL_20261010_045807548.jpg · 13:58:07 · 12 mm equiv. · f/1.7 · 1/1272 s · ISO 60",
+    "ja": "元ファイル PXL_20261010_045807548.jpg · 13:58:07 · 12 mm 相当 · f/1.7 · 1/1272 秒 · ISO 60"
+  },
+  {
+    "source": "從橋上以超廣角往下游拍：河谷、遠山與天空都入鏡，左側河邊有一艘很小的槳板，近處水面有一道橋的陰影。",
+    "en": "An ultra-wide shot downstream from a bridge: the river valley, distant mountains and sky are all in frame, a tiny paddleboard sits by the river on the left, and a bridge shadow falls across the nearby water.",
+    "ja": "橋の上から超広角で下流を撮影。川の谷、遠くの山、空がすべて写り、左側の川岸にとても小さなパドルボードがあり、手前の水面に橋の影が一本落ちている。"
+  },
+  {
+    "source": "超廣角容納了整個河谷與天空，也讓河邊的槳板顯得非常小；橋影成為畫面近處最強烈的水平線。",
+    "en": "The ultra-wide takes in the whole valley and sky, and also makes the paddleboard by the bank look tiny; the bridge shadow becomes the strongest horizontal line near the camera.",
+    "ja": "超広角は谷全体と空を収め、川岸のパドルボードをとても小さく見せています。橋の影は、画面手前で最も強い水平線になっています。"
+  },
+  {
+    "source": "① 左側的槳板是重要的比例尺，但位置太靠邊、體積太小。",
+    "en": "① The paddleboard on the left is an important scale reference, but it sits too close to the edge and is too small.",
+    "ja": "① 左側のパドルボードは大切なスケールの手がかりですが、端に寄りすぎていて小さすぎます。"
+  },
+  {
+    "source": "② 橋影的高反差橫線，打斷沿著河流觀看的動線。",
+    "en": "② The high-contrast horizontal line of the bridge shadow interrupts the path the eye takes along the river.",
+    "ja": "② 橋の影が作るハイコントラストの横線が、川に沿って見ていく視線の流れを断ち切っています。"
+  },
+  {
+    "source": "③ 大面積的近處水面，占用了原本可以留給中景的畫幅。",
+    "en": "③ The large area of nearby water takes up frame space that could have gone to the middle ground.",
+    "ja": "③ 手前の広い水面が、本来は中景に回せたはずの画面を占めています。"
+  },
+  {
+    "source": "案例 C｜逆光河谷：氣氛佳，但耀光主導注意力",
+    "en": "Case C | Backlit valley: great atmosphere, but flare dominates attention",
+    "ja": "事例 C｜逆光の谷：雰囲気は良いが、フレアが注意を支配"
+  },
+  {
+    "source": "原檔 PXL_20261010_045832826.jpg · 13:58:32 · 12 mm 等效 · f/1.7 · 1/9709 秒 · ISO 53",
+    "en": "original file PXL_20261010_045832826.jpg · 13:58:32 · 12 mm equiv. · f/1.7 · 1/9709 s · ISO 53",
+    "ja": "元ファイル PXL_20261010_045832826.jpg · 13:58:32 · 12 mm 相当 · f/1.7 · 1/9709 秒 · ISO 53"
+  },
+  {
+    "source": "逆光拍攝的河谷：太陽在畫面上方放射出光束，河面反射成一片亮光，兩側山坡偏暗。",
+    "en": "A backlit river valley: the sun at the top of the frame throws out rays of light, the river reflects as a sheet of glare, and the slopes on both sides are dark.",
+    "ja": "逆光で撮った川の谷。画面上部の太陽から光芒が放射状に伸び、川面は一面のまぶしい反射になり、両側の斜面は暗く沈んでいる。"
+  },
+  {
+    "source": "山谷深處的光束有戲劇感；但直射光造成大面積耀光與刺眼的水面，比峽谷本身更快吸引注意。",
+    "en": "The rays deep in the valley are dramatic, but the direct light creates widespread flare and a glaring water surface that grab attention faster than the gorge itself.",
+    "ja": "谷の奥の光芒にはドラマがあります。しかし直射光が広範囲のフレアとまぶしい水面を生み、峡谷そのものより先に目を引いてしまいます。"
+  },
+  {
+    "source": "① 上方太陽與放射光束的亮度，是第一個視覺焦點。",
+    "en": "① The brightness of the sun and its rays at the top is the first visual focal point.",
+    "ja": "① 上部の太陽と放射状の光芒の明るさが、最初の視覚的な焦点です。"
+  },
+  {
+    "source": "② 河面閃光與耀光部分重疊，使河道輪廓不易辨認。",
+    "en": "② Glints on the river partly overlap the flare, making the channel’s outline hard to read.",
+    "ja": "② 川面のきらめきとフレアが部分的に重なり、川筋の輪郭が見分けにくくなっています。"
+  },
+  {
+    "source": "③ 河道本身有很好的遠近方向，可以透過重新構圖凸顯。",
+    "en": "③ The channel itself has a good near-to-far direction that recomposing could bring out.",
+    "ja": "③ 川筋自体には良い遠近の方向性があり、構図を見直せば際立たせられます。"
+  },
+  {
+    "source": "補救的優先順序：先調整拍攝方向或遮住直射光，其次以較小的光比拍攝，最後才談後製。",
+    "en": "Order of fixes: first change the shooting direction or block the direct light, then shoot when the contrast between light and shadow is lower, and only then think about editing.",
+    "ja": "対処の優先順位：まず撮影方向を変えるか直射光を遮り、次に明暗比の小さい状態で撮り、レタッチは最後に考えます。"
+  },
+  {
+    "source": "案例 D｜密林：樹幹有規律，但焦點不明",
+    "en": "Case D | Dense forest: regular trunks, but no clear focal point",
+    "ja": "事例 D｜密林：幹に規則性はあるが、焦点がはっきりしない"
+  },
+  {
+    "source": "原檔 PXL_20261010_031416116.jpg · 12:14:16 · 12 mm 等效 · f/1.7 · 1/113 秒 · ISO 51",
+    "en": "original file PXL_20261010_031416116.jpg · 12:14:16 · 12 mm equiv. · f/1.7 · 1/113 s · ISO 51",
+    "ja": "元ファイル PXL_20261010_031416116.jpg · 12:14:16 · 12 mm 相当 · f/1.7 · 1/113 秒 · ISO 51"
+  },
+  {
+    "source": "以超廣角橫拍的杉林：大量直立樹幹平均分布，樹梢間透出許多亮點。",
+    "en": "A horizontal ultra-wide shot of a cedar forest: many upright trunks spread evenly, with lots of bright spots showing through the treetops.",
+    "ja": "超広角で横位置に撮った杉林。多くの直立した幹が均等に並び、梢の間から明るい点がたくさん透けている。"
+  },
+  {
+    "source": "密集的樹幹形成韻律；但光斑和背景形體反覆出現，缺少一個明顯比其他位置更重要的局部。",
+    "en": "The dense trunks create a rhythm, but the light spots and background shapes keep repeating, and no single area is clearly more important than the rest.",
+    "ja": "密集した幹がリズムを生んでいます。しかし光の斑点や背景の形が繰り返し現れ、ほかよりはっきり重要な部分がありません。"
+  },
+  {
+    "source": "① 透過樹梢的高亮區很多，視線會在不同的光洞間跳動。",
+    "en": "① Many bright patches show through the treetops, so the eye jumps between different holes of light.",
+    "ja": "① 梢から透ける明るい部分が多く、視線があちこちの光の穴の間を跳び回ります。"
+  },
+  {
+    "source": "② 中央的樹幹沒有明顯獨立於其他樹幹；可以側移，尋找受光的孤樹。",
+    "en": "② The central trunk doesn’t clearly stand apart from the others; step sideways and look for a single sunlit tree.",
+    "ja": "② 中央の幹がほかの幹からはっきり独立していません。横に移動して、光の当たった一本の木を探します。"
+  },
+  {
+    "source": "③ 直立樹幹的重複節奏是優點，可以嘗試直幅或更窄的取景。",
+    "en": "③ The repeating rhythm of upright trunks is a strength; try a vertical frame or a tighter framing.",
+    "ja": "③ 直立した幹の反復するリズムは長所です。縦構図や、より狭い切り取りを試せます。"
+  },
+  {
+    "source": "同一地點的真實對比，比虛構的「完美版本」更有用",
+    "en": "A real comparison from the same spot is more useful than an imagined “perfect version”",
+    "ja": "同じ場所での実際の比較は、架空の「完璧版」より役に立つ"
+  },
+  {
+    "source": "12 mm 等效 · 超廣角",
+    "en": "12 mm equivalent · ultra-wide",
+    "ja": "12 mm 相当 · 超広角"
+  },
+  {
+    "source": "13:58:07 · f/1.7 · 1/1272 秒 · ISO 60",
+    "en": "13:58:07 · f/1.7 · 1/1272 s · ISO 60",
+    "ja": "13:58:07 · f/1.7 · 1/1272 秒 · ISO 60"
+  },
+  {
+    "source": "從橋上以 12 mm 超廣角拍攝的河谷，河面與橋影占據畫面下半部。",
+    "en": "The river valley shot from the bridge with a 12 mm ultra-wide; the water and the bridge shadow fill the bottom half of the frame.",
+    "ja": "橋の上から 12 mm の超広角で撮った川の谷。水面と橋の影が画面の下半分を占めている。"
+  },
+  {
+    "source": "保留大量環境，但河面與橋影比槳板更醒目。",
+    "en": "Keeps plenty of surroundings, but the water and the bridge shadow are more eye-catching than the paddleboard.",
+    "ja": "周囲の環境を多く残していますが、川面と橋の影のほうがパドルボードより目立ちます。"
+  },
+  {
+    "source": "24 mm 等效 · 主相機",
+    "en": "24 mm equivalent · main camera",
+    "ja": "24 mm 相当 · メインカメラ"
+  },
+  {
+    "source": "13:58:12 · f/1.7 · 1/418 秒 · ISO 20",
+    "en": "13:58:12 · f/1.7 · 1/418 s · ISO 20",
+    "ja": "13:58:12 · f/1.7 · 1/418 秒 · ISO 20"
+  },
+  {
+    "source": "同一座橋上約五秒後以 24 mm 主鏡頭拍攝，河道位於畫面中央，視野較集中。",
+    "en": "Shot from the same bridge about five seconds later with the 24 mm main lens; the river channel sits in the center of the frame and the view is more focused.",
+    "ja": "同じ橋の上で約 5 秒後に 24 mm のメインレンズで撮影。川筋が画面中央にあり、視野がより絞られている。"
+  },
+  {
+    "source": "視野更集中，與左圖相隔約 5 秒；河道成為更明確的主題。",
+    "en": "A more focused view, taken about 5 seconds after the left photo; the river channel becomes a clearer subject.",
+    "ja": "視野がより絞られ、左の写真から約 5 秒後の撮影です。川筋がよりはっきりした主題になっています。"
+  },
+  {
+    "source": "不要把差異全歸因於焦段",
+    "en": "Don’t credit the whole difference to focal length",
+    "ja": "違いをすべて焦点距離のせいにしない"
+  },
+  {
+    "source": "這是兩支不同鏡頭拍的真實照片。不同鏡頭也可能有不同的曝光、畸變校正與手機多幀處理；「望遠壓縮」同樣不能只用焦距解釋。",
+    "en": "These are real photos from two different lenses. Different lenses can also mean different exposure, distortion correction and phone multi-frame processing; “telephoto compression” likewise can’t be explained by focal length alone.",
+    "ja": "これは 2 つの異なるレンズで撮った実際の写真です。レンズが違えば、露出、歪曲補正、スマートフォンの多フレーム処理も異なる可能性があります。「望遠の圧縮効果」も、焦点距離だけでは説明できません。"
+  },
+  {
+    "source": "照片裡真正看得到的光線，不只是「黃金時刻」",
+    "en": "The light you can actually see in these photos, not just “golden hour”",
+    "ja": "写真に実際に写っている光は、「ゴールデンアワー」だけではない"
+  },
+  {
+    "source": "這組照片多在 11:27 至 14:53（EXIF 時區 +09:00）之間拍攝，中午到下午的高反差問題因此很典型。這不代表拍錯時間，而是提醒：高角度的直射光適合強調形狀，不一定適合把整個山谷一次拍好。",
+    "en": "Most of this set was shot between 11:27 and 14:53 (EXIF time zone +09:00), so the high-contrast problems of midday and early afternoon are typical. That doesn’t mean the timing was wrong; it’s a reminder that high-angle direct light is good for emphasizing shape but not necessarily for capturing a whole valley well in one frame.",
+    "ja": "このセットの多くは 11:27 から 14:53（EXIF のタイムゾーン +09:00）の間に撮影されているため、昼から午後にかけての高コントラストの問題が典型的に表れています。撮影時間が間違っていたという意味ではありません。高い角度からの直射光は形を強調するのには向くものの、谷全体を一度にうまく撮るのに向くとは限らない、ということです。"
+  },
+  {
+    "source": "不同取景、同一時段：直接看逆光的代價",
+    "en": "Different framing, same time of day: the cost of backlight, seen directly",
+    "ja": "別の構図、同じ時間帯：逆光の代償を直接見る"
+  },
+  {
+    "source": "原檔 PXL_20261010_045827144.jpg · 13:58:27 · 24 mm 等效 · f/1.7 · 1/2740 秒 · ISO 19",
+    "en": "original file PXL_20261010_045827144.jpg · 13:58:27 · 24 mm equiv. · f/1.7 · 1/2740 s · ISO 19",
+    "ja": "元ファイル PXL_20261010_045827144.jpg · 13:58:27 · 24 mm 相当 · f/1.7 · 1/2740 秒 · ISO 19"
+  },
+  {
+    "source": "以 24 mm 逆光拍攝的河谷：河面有大片亮反射，兩側山林在陰影中。",
+    "en": "A backlit river valley at 24 mm: a large bright reflection on the water, with the forested slopes on both sides in shadow.",
+    "ja": "24 mm で逆光撮影した川の谷。川面に大きな明るい反射があり、両側の山林は影の中にある。"
+  },
+  {
+    "source": "拍攝時間約在 13:58。河面的亮反射與山林陰影同框，若強行把暗部全部提亮，視覺重心可能失控。",
+    "en": "Shot at about 13:58. The bright reflection on the water and the shadows of the forested hills share the frame; forcing all the dark areas brighter could throw the visual center of gravity out of control.",
+    "ja": "撮影時刻は 13:58 ごろ。川面の明るい反射と山林の影が同じ画面に入っており、暗部を無理にすべて持ち上げると、視覚的な重心が崩れるおそれがあります。"
+  },
+  {
+    "source": "優先決定「亮光束」或「谷地河流」誰是主角，不要讓兩者競爭。",
+    "en": "Decide first whether the “bright rays” or the “valley river” is the lead, and don’t let the two compete.",
+    "ja": "「明るい光芒」と「谷を流れる川」のどちらを主役にするかを先に決め、両者を競わせないようにします。"
+  },
+  {
+    "source": "選擇光束做主題時，允許暗部成為剪影；選擇河流時，應找能減少直射陽光的拍攝角度。",
+    "en": "When you choose the rays as the subject, let the shadows become silhouettes; when you choose the river, look for an angle that cuts down the direct sunlight.",
+    "ja": "光芒を主題に選ぶなら、暗部はシルエットになってかまいません。川を選ぶなら、直射日光を減らせる撮影角度を探します。"
+  },
+  {
+    "source": "光線型態與取景方向",
+    "en": "Types of light and framing direction",
+    "ja": "光のタイプと構図の方向"
+  },
+  {
+    "source": "光線型態",
+    "en": "Type of light",
+    "ja": "光のタイプ"
+  },
+  {
+    "source": "實際觀察",
+    "en": "What you actually see",
+    "ja": "実際の観察"
+  },
+  {
+    "source": "推薦取景方向",
+    "en": "Recommended framing",
+    "ja": "おすすめの構図"
+  },
+  {
+    "source": "代價與限制",
+    "en": "Costs and limits",
+    "ja": "代償と限界"
+  },
+  {
+    "source": "低角度側光",
+    "en": "Low-angle side light",
+    "ja": "低い角度のサイド光"
+  },
+  {
+    "source": "山脊與岩壁明暗分明。",
+    "en": "Ridges and rock walls show clear light and shade.",
+    "ja": "尾根や岩壁の明暗がはっきりする。"
+  },
+  {
+    "source": "以稜線、丘陵、岩壁作主體。",
+    "en": "Make ridgelines, hills or rock walls the subject.",
+    "ja": "稜線、丘陵、岩壁を主題にする。"
+  },
+  {
+    "source": "不是每個地點都看得到落日；山壁可能遮光。",
+    "en": "Not every location gets a view of the sunset; mountain walls may block the light.",
+    "ja": "どの場所でも夕日が見えるわけではない。山の斜面が光を遮ることもある。"
+  },
+  {
+    "source": "高反差逆光",
+    "en": "High-contrast backlight",
+    "ja": "高コントラストの逆光"
+  },
+  {
+    "source": "這組河谷照片裡，光束與水面反射很醒目。",
+    "en": "In this set’s valley photos, the rays and the reflections on the water stand out.",
+    "ja": "このセットの谷の写真では、光芒と水面の反射が目立つ。"
+  },
+  {
+    "source": "利用剪影或邊緣光，或遮住直射鏡頭的太陽。",
+    "en": "Use silhouettes or rim light, or block the sun shining straight into the lens.",
+    "ja": "シルエットやリムライトを生かすか、レンズに直接入る太陽を遮る。"
+  },
+  {
+    "source": "RAW 也救不回已經裁切的高光。",
+    "en": "Even RAW can’t recover highlights that have already clipped.",
+    "ja": "すでに白飛びしたハイライトは RAW でも救えない。"
+  },
+  {
+    "source": "陰天漫射光",
+    "en": "Overcast diffuse light",
+    "ja": "曇天の拡散光"
+  },
+  {
+    "source": "森林、瀑布的亮暗較均勻。",
+    "en": "Brightness in forests and at waterfalls is more even.",
+    "ja": "森や滝の明暗が比較的均一になる。"
+  },
+  {
+    "source": "減少天空占比，拍石頭、水與葉色。",
+    "en": "Show less sky; shoot stones, water and leaf color.",
+    "ja": "空の比率を減らし、石・水・葉の色を撮る。"
+  },
+  {
+    "source": "少了戲劇性的陰影，需要靠線條與材質建立重點。",
+    "en": "Without dramatic shadows, you need lines and texture to create emphasis.",
+    "ja": "ドラマチックな影がない分、線と質感で見せ場を作る必要がある。"
+  },
+  {
+    "source": "薄霧或雨後",
+    "en": "Light mist or after rain",
+    "ja": "薄霧や雨上がり"
+  },
+  {
+    "source": "遠方對比降低，層次分離。",
+    "en": "Distant contrast drops and the layers separate.",
+    "ja": "遠景のコントラストが下がり、層が分かれて見える。"
+  },
+  {
+    "source": "遠山疊層、森林輪廓、反覆的山形。",
+    "en": "Layered distant mountains, forest outlines, repeating mountain shapes.",
+    "ja": "重なる遠山、森の輪郭、繰り返す山の形。"
+  },
+  {
+    "source": "強烈的去朦朧會破壞深度。",
+    "en": "Heavy dehazing destroys depth.",
+    "ja": "強いかすみの除去は奥行きを壊す。"
+  },
+  {
+    "source": "藍調時刻",
+    "en": "Blue hour",
+    "ja": "ブルーアワー"
+  },
+  {
+    "source": "城市燈光與藍天形成冷暖對比。",
+    "en": "City lights and the blue sky form a warm–cool contrast.",
+    "ja": "街の明かりと青い空が、暖色と寒色の対比を作る。"
+  },
+  {
+    "source": "地面反射、軌道、天際線。",
+    "en": "Reflections on the ground, tracks, skylines.",
+    "ja": "地面の反射、軌道、スカイライン。"
+  },
+  {
+    "source": "需要穩定的機位，移動的人物可能拖影。",
+    "en": "Needs a stable camera position; moving people may blur.",
+    "ja": "安定した撮影位置が必要。動く人物はブレて写ることがある。"
+  },
+  {
+    "source": "現場測試",
+    "en": "Field test",
+    "ja": "現場でのテスト"
+  },
+  {
+    "source": "逆光河谷先對重要的亮部曝光，留一張保住高光的照片；再往側邊移動，讓樹梢或山脊遮住太陽，觀察耀光是否降低。鏡頭必須保持乾淨，手機超廣角尤其容易受斜射光影響。",
+    "en": "With a backlit valley, first expose for the important highlights and keep one frame that protects them; then move to the side so treetops or a ridge hide the sun, and see whether the flare drops. Keep the lens clean: phone ultra-wides are especially prone to light striking at an angle.",
+    "ja": "逆光の谷では、まず重要な明部に露出を合わせ、ハイライトを守った 1 枚を残します。次に横へ移動して梢や尾根で太陽を隠し、フレアが減るかを確かめます。レンズは常にきれいにしておくこと。スマートフォンの超広角は、斜めから入る光の影響を特に受けやすいです。"
+  },
+  {
+    "source": "主體、導線、框景與視覺重量：從實拍辨認",
+    "en": "Subject, leading lines, framing and visual weight: spotting them in real photos",
+    "ja": "主被写体、リーディングライン、フレーミング、視覚的な重さ：実写真で見分ける"
+  },
+  {
+    "source": "主體不是「畫面裡最大的東西」",
+    "en": "The subject isn’t “the biggest thing in the frame”",
+    "ja": "主被写体は「画面で最も大きいもの」ではない"
+  },
+  {
+    "source": "森林裡的一束光、岩石旁的一艘小舟、河道盡頭的山谷，都可能成為主體。光線、孤立程度與對比，決定它受注目的程度。",
+    "en": "A shaft of light in the forest, a small boat beside the rocks, the valley at the end of the river channel: any of these can become the subject. Light, isolation and contrast decide how much attention it gets.",
+    "ja": "森の中の一筋の光、岩のそばの小舟、川筋の先にある谷。どれも主被写体になりえます。光、孤立の度合い、コントラストが、それがどれだけ注目されるかを決めます。"
+  },
+  {
+    "source": "框景也可能變成遮擋",
+    "en": "A frame can also become an obstruction",
+    "ja": "フレームは遮りにもなる"
+  },
+  {
+    "source": "樹幹與葉子能包住畫面，但不能讓人找不到主角。決定「拍樹」還是「透過樹拍湖」，是兩種不同的構圖。",
+    "en": "Trunks and leaves can wrap around the picture, but they mustn’t make the main subject hard to find. “Shooting the trees” and “shooting the lake through the trees” are two different compositions, so decide which one you’re making.",
+    "ja": "幹や葉は画面を包み込めますが、主役を見つけにくくしてはいけません。「木を撮る」のか「木越しに湖を撮る」のかは、2 つの異なる構図です。どちらにするかを決めましょう。"
+  },
+  {
+    "source": "樹間拍划船者：天然框景還是遮擋？",
+    "en": "Paddlers between the trees: natural frame or obstruction?",
+    "ja": "木々の間から撮った漕ぎ手：自然のフレームか、遮りか？"
+  },
+  {
+    "source": "原檔 PXL_20261010_044600603.jpg · 13:46:00 · 24 mm 等效 · f/1.7 · 1/917 秒 · ISO 218",
+    "en": "original file PXL_20261010_044600603.jpg · 13:46:00 · 24 mm equiv. · f/1.7 · 1/917 s · ISO 218",
+    "ja": "元ファイル PXL_20261010_044600603.jpg · 13:46:00 · 24 mm 相当 · f/1.7 · 1/917 秒 · ISO 218"
+  },
+  {
+    "source": "透過樹幹與枝條拍攝湖面上的兩塊立槳板：一人跪在板上划槳，另一人在空板旁的水中；畫面左側有一根粗樹幹縱向切過。",
+    "en": "Two stand-up paddleboards on a lake, shot through trunks and branches: one person kneels on a board with a paddle, another is in the water beside an empty board; a thick trunk cuts vertically through the left of the frame.",
+    "ja": "幹や枝越しに湖面の 2 枚のパドルボードを撮影。1 人はボードに膝をついてパドルを持ち、もう 1 人は空のボードの横で水に入っている。画面左側を太い幹が縦に横切っている。"
+  },
+  {
+    "source": "河水與槳板上的人有故事，卻被近處的樹幹分隔。稍微向左右移動幾步，就可能用更乾淨的枝條包住主體。",
+    "en": "The water and the people on the paddleboards tell a story, but nearby trunks split them up. Moving just a few steps left or right could let cleaner branches frame the subject.",
+    "ja": "水面とパドルボードの人には物語がありますが、手前の幹で分断されています。左右に数歩動くだけで、もっとすっきりした枝で主被写体を囲めるかもしれません。"
+  },
+  {
+    "source": "① 槳板與划槳的人，是真正應該保留的敘事主角。",
+    "en": "① The paddleboards and paddlers are the real narrative lead worth keeping.",
+    "ja": "① パドルボードと漕ぎ手こそ、残すべき物語の主役です。"
+  },
+  {
+    "source": "② 粗樹幹與枝條可能造成視線斷裂；從不同的站位找一個乾淨的窗口。",
+    "en": "② The thick trunk and branches can break the line of sight; find a clean window from a different standing spot.",
+    "ja": "② 太い幹や枝は視線を途切れさせることがあります。立ち位置を変えて、すっきりした「窓」を探します。"
+  },
+  {
+    "source": "工程構造與森林：自然框景可以帶入視線",
+    "en": "Engineered structure and forest: a natural frame can lead the eye in",
+    "ja": "人工構造物と森：自然のフレームが視線を導く"
+  },
+  {
+    "source": "原檔 PXL_20261010_043748968.jpg · 13:37:48 · 24 mm 等效 · f/1.7 · 1/542 秒 · ISO 21",
+    "en": "original file PXL_20261010_043748968.jpg · 13:37:48 · 24 mm equiv. · f/1.7 · 1/542 s · ISO 21",
+    "ja": "元ファイル PXL_20261010_043748968.jpg · 13:37:48 · 24 mm 相当 · f/1.7 · 1/542 秒 · ISO 21"
+  },
+  {
+    "source": "從樹林間望向湖面盡頭的水閘設施，左右樹木像門框，近處有細枝。",
+    "en": "Looking through the woods toward the water gate at the far end of the lake; trees on either side act like a door frame, with thin branches close to the camera.",
+    "ja": "林の間から湖の奥にある水門を望む。左右の木が門の枠のようで、手前には細い枝がある。"
+  },
+  {
+    "source": "這張清楚示範人工設施如何成為河谷的終點；左右樹木像門框，但近處枝葉的占比仍高。",
+    "en": "This shows clearly how an artificial structure can become the end point of a river valley; the trees on both sides act like a door frame, but nearby foliage still takes up a lot of the frame.",
+    "ja": "この写真は、人工の設備が谷の終点になる様子をはっきり示しています。左右の木は門の枠のようですが、手前の枝葉の比率はまだ高めです。"
+  },
+  {
+    "source": "① 水閘是可以明確辨認的主體。",
+    "en": "① The water gate is a clearly recognizable subject.",
+    "ja": "① 水門ははっきり見分けられる主被写体です。"
+  },
+  {
+    "source": "② 右下與左下的細枝，可能搶走部分注意。",
+    "en": "② The thin branches at the lower right and lower left may steal some attention.",
+    "ja": "② 右下と左下の細い枝が、注意の一部を奪うかもしれません。"
+  },
+  {
+    "source": "③ 水面和上方設施的倒影，產生垂直的呼應。",
+    "en": "③ The water and the reflection of the structure above create a vertical echo.",
+    "ja": "③ 水面と、そこに映る上の設備が、垂直方向の呼応を生んでいます。"
+  },
+  {
+    "source": "五種方法，優先挑一種就好",
+    "en": "Five methods: just pick one to prioritize",
+    "ja": "5 つの方法：まず 1 つ選べば十分"
+  },
+  {
+    "source": "五種構圖方法",
+    "en": "Five composition methods",
+    "ja": "5 つの構図手法"
+  },
+  {
+    "source": "構圖語言",
+    "en": "Compositional device",
+    "ja": "構図の手法"
+  },
+  {
+    "source": "適用的真實例子",
+    "en": "Real examples where it fits",
+    "ja": "当てはまる実例"
+  },
+  {
+    "source": "失敗的訊號",
+    "en": "Signs it’s failing",
+    "ja": "失敗のサイン"
+  },
+  {
+    "source": "三分構圖",
+    "en": "Rule of thirds",
+    "ja": "三分割構図"
+  },
+  {
+    "source": "河道轉折、小舟、孤樹。",
+    "en": "A bend in the river, a small boat, a lone tree.",
+    "ja": "川筋の曲がり角、小舟、一本の木。"
+  },
+  {
+    "source": "機械式地放在交點，卻沒有視線導向。",
+    "en": "Placed mechanically on an intersection, with nothing guiding the eye.",
+    "ja": "機械的に交点に置いただけで、視線の誘導がない。"
+  },
+  {
+    "source": "S 曲線與收斂線",
+    "en": "S-curves and converging lines",
+    "ja": "S 字曲線と収束線"
+  },
+  {
+    "source": "河、山路、溪石、小徑。",
+    "en": "Rivers, mountain roads, stream stones, trails.",
+    "ja": "川、山道、渓流の石、小道。"
+  },
+  {
+    "source": "導線在畫面外結束，主體不在路徑上。",
+    "en": "The line ends outside the frame and the subject isn’t on its path.",
+    "ja": "リーディングラインが画面外で終わり、主被写体が線上にない。"
+  },
+  {
+    "source": "自然框景",
+    "en": "Natural framing",
+    "ja": "自然のフレーミング"
+  },
+  {
+    "source": "水閘前的樹枝、林間的湖面。",
+    "en": "Branches in front of the water gate, a lake seen through the woods.",
+    "ja": "水門の前の枝、林の間の湖面。"
+  },
+  {
+    "source": "框景造成阻擋，影子比主體更重。",
+    "en": "The frame blocks the view and its shadows weigh more than the subject.",
+    "ja": "フレームが遮りになり、影が主被写体より重くなる。"
+  },
+  {
+    "source": "重複節奏",
+    "en": "Repetition and rhythm",
+    "ja": "反復のリズム"
+  },
+  {
+    "source": "杉林的直立樹幹、建築的窗列。",
+    "en": "Upright trunks in a cedar forest, rows of windows on a building.",
+    "ja": "杉林の直立した幹、建物の窓の列。"
+  },
+  {
+    "source": "所有元素同樣醒目，沒有節奏變化。",
+    "en": "Every element is equally prominent, with no change in rhythm.",
+    "ja": "すべての要素が同じように目立ち、リズムに変化がない。"
+  },
+  {
+    "source": "極簡與負空間",
+    "en": "Minimalism and negative space",
+    "ja": "ミニマリズムとネガティブスペース"
+  },
+  {
+    "source": "水面上的小舟、霧中的山稜線。",
+    "en": "A small boat on the water, a ridgeline in the mist.",
+    "ja": "水面の小舟、霧の中の稜線。"
+  },
+  {
+    "source": "留白失去和主題的比例關係。",
+    "en": "The empty space loses its proportion to the subject.",
+    "ja": "余白が主題との比率を失う。"
+  },
+  {
+    "source": "一張照片不需要把三分法、導線、框景、前中後景全部放進去；只使用那些能幫助觀眾「看見你想說的事」的結構。",
+    "en": "A photo doesn’t need the rule of thirds, leading lines, framing, and a foreground, middle ground and background all at once; use only the structures that help viewers “see what you want to say.”",
+    "ja": "1 枚の写真に、三分割法、リーディングライン、フレーミング、前景・中景・背景をすべて入れる必要はありません。見る人が「あなたの伝えたいことを見る」助けになる構造だけを使います。"
+  },
+  {
+    "source": "在真實照片上觀察：12 mm 不一定比 24 mm 更壯麗",
+    "en": "Seen in real photos: 12 mm isn’t always grander than 24 mm",
+    "ja": "実写真で見る：12 mm が 24 mm より壮大とは限らない"
+  },
+  {
+    "source": "在同一個機位，焦距改變的是取景角度與畫面中物件的大小；透視幾何主要由相機的位置決定。若不移動相機，主鏡頭拍到的中央場景可以用超廣角照片裁切來近似，但不同鏡頭的解析度、畸變校正與處理仍有差異。",
+    "en": "From the same camera position, focal length changes the angle of view and the size of objects in the frame; the geometry of perspective is set mainly by where the camera is. If you don’t move the camera, the central scene the main lens captures can be approximated by cropping the ultra-wide photo, although resolution, distortion correction and processing still differ between lenses.",
+    "ja": "同じ撮影位置なら、焦点距離が変えるのは画角と画面内の物の大きさで、遠近感の幾何はおもにカメラの位置で決まります。カメラを動かさなければ、メインレンズで撮った中央部分の光景は、超広角の写真をトリミングして近似できます。ただし、解像度、歪曲補正、画像処理はレンズごとに異なります。"
+  },
+  {
+    "source": "12 mm 杉林橫幅：包入大量樹幹",
+    "en": "12 mm cedar forest, horizontal: takes in many trunks",
+    "ja": "12 mm の杉林・横位置：多くの幹を収める"
+  },
+  {
+    "source": "原檔 PXL_20261010_031416116.jpg · 12:14:16 · f/1.7 · 1/113 秒 · ISO 51",
+    "en": "original file PXL_20261010_031416116.jpg · 12:14:16 · f/1.7 · 1/113 s · ISO 51",
+    "ja": "元ファイル PXL_20261010_031416116.jpg · 12:14:16 · f/1.7 · 1/113 秒 · ISO 51"
+  },
+  {
+    "source": "以 12 mm 超廣角橫拍的杉林，樹幹平均分布在整個畫面。",
+    "en": "A cedar forest shot horizontally with a 12 mm ultra-wide, trunks spread evenly across the whole frame.",
+    "ja": "12 mm の超広角で横位置に撮った杉林。幹が画面全体に均等に分布している。"
+  },
+  {
+    "source": "超廣角能交代整個林間空間，但每一根樹幹的主角地位相近。",
+    "en": "The ultra-wide shows the whole space inside the forest, but every trunk has a similar claim to being the lead.",
+    "ja": "超広角は林の中の空間全体を伝えられますが、どの幹も主役としての重みが似通っています。"
+  },
+  {
+    "source": "想呈現樹幹的節奏，可以保留廣角；想強調單棵受光的樹，就改變機位與取景。",
+    "en": "To show the rhythm of the trunks, keep the wide view; to emphasize a single sunlit tree, change the camera position and framing.",
+    "ja": "幹のリズムを見せたいなら広角のままでかまいません。光の当たった一本の木を強調したいなら、撮影位置と構図を変えます。"
+  },
+  {
+    "source": "同區直幅：樹幹高度更有感",
+    "en": "Same area, vertical: the height of the trunks comes through",
+    "ja": "同じ場所で縦位置：幹の高さがより伝わる"
+  },
+  {
+    "source": "原檔 PXL_20261010_031426340.jpg · 12:14:26 · f/1.7 · 1/281 秒 · ISO 54",
+    "en": "original file PXL_20261010_031426340.jpg · 12:14:26 · f/1.7 · 1/281 s · ISO 54",
+    "ja": "元ファイル PXL_20261010_031426340.jpg · 12:14:26 · f/1.7 · 1/281 秒 · ISO 54"
+  },
+  {
+    "source": "約十秒後在同一區域直拍的杉林，樹幹由下往上伸展。",
+    "en": "The cedar forest shot vertically in the same area about ten seconds later, trunks stretching from bottom to top.",
+    "ja": "約 10 秒後に同じ場所で縦位置に撮った杉林。幹が下から上へ伸びている。"
+  },
+  {
+    "source": "直幅去掉左右的資訊，使樹幹上下伸展成為主要節奏。",
+    "en": "The vertical frame drops the information at the sides, making the trunks’ upward reach the main rhythm.",
+    "ja": "縦位置は左右の情報を省き、幹が上下に伸びる様子を主なリズムにしています。"
+  },
+  {
+    "source": "直幅不一定比較好，但能有意識地選擇什麼留在畫外。",
+    "en": "Vertical isn’t necessarily better, but it lets you choose deliberately what stays out of the frame.",
+    "ja": "縦位置が必ず良いわけではありませんが、何を画面の外に残すかを意識的に選べます。"
+  },
+  {
+    "source": "等效焦距與使用場合",
+    "en": "Equivalent focal lengths and when to use them",
+    "ja": "換算焦点距離と使いどころ"
+  },
+  {
+    "source": "全片幅等效視角",
+    "en": "Full-frame equivalent angle of view",
+    "ja": "フルサイズ換算の画角"
+  },
+  {
+    "source": "實拍時應該觀察",
+    "en": "What to watch for when shooting",
+    "ja": "撮影時に観察すべきこと"
+  },
+  {
+    "source": "推薦使用場合",
+    "en": "Recommended uses",
+    "ja": "おすすめの場面"
+  },
+  {
+    "source": "代價",
+    "en": "Cost",
+    "ja": "代償"
+  },
+  {
+    "source": "12–16 mm 超廣角",
+    "en": "12–16 mm ultra-wide",
+    "ja": "12–16 mm 超広角"
+  },
+  {
+    "source": "近處擴張、遠山比例變小、邊角進入更多雜物。",
+    "en": "Near objects expand, distant mountains shrink, more clutter enters the corners.",
+    "ja": "手前が広がり、遠くの山は小さくなり、隅に雑物が入りやすい。"
+  },
+  {
+    "source": "峽谷近景、寬廣室內、極近的瀑布。",
+    "en": "Close views in gorges, spacious interiors, waterfalls at very close range.",
+    "ja": "峡谷の近景、広い室内、ごく近くの滝。"
+  },
+  {
+    "source": "主體容易變小，畫面邊緣被拉伸。",
+    "en": "The subject easily becomes small, and the frame edges get stretched.",
+    "ja": "主被写体が小さくなりやすく、画面の端が引き伸ばされる。"
+  },
+  {
+    "source": "24–35 mm 廣角",
+    "en": "24–35 mm wide",
+    "ja": "24–35 mm 広角"
+  },
+  {
+    "source": "較容易控制河道與樹林的畫面結構。",
+    "en": "Easier to control the structure of river and forest scenes.",
+    "ja": "川筋や森の画面の構造をコントロールしやすい。"
+  },
+  {
+    "source": "旅行風景、河川、小徑。",
+    "en": "Travel landscapes, rivers, trails.",
+    "ja": "旅先の風景、河川、小道。"
+  },
+  {
+    "source": "需要主動選景，而不是全部收進來。",
+    "en": "You have to choose what to frame instead of fitting everything in.",
+    "ja": "すべてを収めるのではなく、積極的に切り取る必要がある。"
+  },
+  {
+    "source": "35–70 mm 標準",
+    "en": "35–70 mm standard",
+    "ja": "35–70 mm 標準"
+  },
+  {
+    "source": "抽取特定的山坡、樹幹或光斑。",
+    "en": "Picks out a particular slope, trunk or patch of light.",
+    "ja": "特定の斜面、幹、光の斑点を抜き出す。"
+  },
+  {
+    "source": "森林、聚落、山坡的局部。",
+    "en": "Parts of forests, settlements and hillsides.",
+    "ja": "森、集落、斜面の一部。"
+  },
+  {
+    "source": "環境的交代變少。",
+    "en": "Less context about the surroundings.",
+    "ja": "周囲の状況が伝わりにくくなる。"
+  },
+  {
+    "source": "70–200 mm 以上望遠",
+    "en": "70–200 mm and longer telephoto",
+    "ja": "70–200 mm 以上の望遠"
+  },
+  {
+    "source": "遠山層疊、圖案、形狀更醒目。",
+    "en": "Layered distant mountains, patterns and shapes stand out more.",
+    "ja": "遠山の重なり、模様、形が際立つ。"
+  },
+  {
+    "source": "雲海、山峰剪影、遠方城市。",
+    "en": "Seas of clouds, silhouetted peaks, distant cities.",
+    "ja": "雲海、山頂のシルエット、遠くの街。"
+  },
+  {
+    "source": "更需要留意手震、霧氣與熱擾動。",
+    "en": "Camera shake, haze and heat shimmer matter more.",
+    "ja": "手ブレ、霧やかすみ、陽炎により注意が必要。"
+  },
+  {
+    "source": "Pixel 9 實拍提示",
+    "en": "Pixel 9 field notes",
+    "ja": "Pixel 9 での撮影メモ"
+  },
+  {
+    "source": "這組照片同時有 12 mm 與 24 mm 的等效視角；另有一張 EXIF 記錄為 49 mm 等效，但實際鏡頭焦距仍是 6.9 mm。後者可能是裁切或計算放大，不能據此推論用了真正的 49 mm 光學鏡頭。Google 的官方規格只標示視角（主鏡頭 82°、超廣角 123°），沒有標示等效焦距；本頁的 12／24 mm 是照片 EXIF 記錄的數值。",
+    "en": "This set includes both 12 mm and 24 mm equivalent angles of view; one more photo has EXIF recording a 49 mm equivalent, yet its actual lens focal length is still 6.9 mm. That one is probably a crop or computational zoom, so you can’t infer that a true 49 mm optical lens was used. Google’s official specs list only the field of view (main 82°, ultra-wide 123°), not equivalent focal lengths; the 12/24 mm on this page are the values recorded in the photos’ EXIF. ",
+    "ja": "このセットには 12 mm と 24 mm の換算画角があります。ほかに EXIF で 49 mm 相当と記録された写真が 1 枚ありますが、実際のレンズの焦点距離は 6.9 mm のままです。これはクロップか計算による拡大の可能性が高く、本物の 49 mm 光学レンズを使ったとは推測できません。Google の公式仕様は画角（メイン 82°、超広角 123°）だけを示し、換算焦点距離は記載していません。本ページの 12／24 mm は、写真の EXIF に記録された数値です。"
+  },
+  {
+    "source": "練習：",
+    "en": "Exercise: ",
+    "ja": "練習："
+  },
+  {
+    "source": "在同一條河谷，用超廣角拍一張、主相機拍一張；再固定焦段，只前後移動（先確認安全）各拍一張。回家後分開比較「視角改變」和「機位改變」。",
+    "en": "In the same river valley, take one shot with the ultra-wide and one with the main camera; then fix the focal length and only move forward or back (check that it’s safe first), taking one shot at each spot. At home, compare “a change in angle of view” and “a change in camera position” separately.",
+    "ja": "同じ谷で、超広角で 1 枚、メインカメラで 1 枚撮ります。次に焦点距離を固定し、前後に移動するだけで（まず安全を確認）それぞれ 1 枚ずつ撮ります。帰宅後、「画角の変化」と「撮影位置の変化」を分けて比べます。"
+  },
+  {
+    "source": "曝光是保護需要的資訊，不是把每一處都變亮",
+    "en": "Exposure protects the information you need; it isn’t about brightening everything",
+    "ja": "露出とは必要な情報を守ることで、すべてを明るくすることではない"
+  },
+  {
+    "source": "手機的自動 HDR 可能在按下快門前後合併多張影像，所以 EXIF 的快門值不等於多幀處理的完整紀錄。它可以用來觀察當下的相機設定，但不能從 JPEG 直接判斷感光元件的極限或 RAW 的寬容度。",
+    "en": "A phone’s automatic HDR may merge several frames captured around the moment you press the shutter, so the shutter value in EXIF isn’t a complete record of the multi-frame processing. It’s useful for seeing the camera settings at that moment, but a JPEG alone can’t tell you the sensor’s limits or the latitude of a RAW file.",
+    "ja": "スマートフォンの自動 HDR は、シャッターを押す前後の複数の画像を合成することがあるため、EXIF のシャッター値は多フレーム処理の完全な記録ではありません。その時点のカメラ設定を見るのには使えますが、JPEG からイメージセンサーの限界や RAW のラティチュードを直接判断することはできません。"
+  },
+  {
+    "source": "先看亮部",
+    "en": "Check the highlights first",
+    "ja": "まず明部を見る"
+  },
+  {
+    "source": "河面的鏡面反射、直射的太陽、白雲邊緣最容易吸睛。亮部就是主體時，可以讓暗部形成剪影；亮部干擾主體時，就改變拍攝角度或曝光策略。",
+    "en": "Mirror-like reflections on the water, direct sun and the edges of white clouds draw the eye most easily. When the highlights are the subject, let the shadows become silhouettes; when they distract from the subject, change the shooting angle or the exposure strategy.",
+    "ja": "川面の鏡のような反射、直射の太陽、白い雲の縁は、最も目を引きやすい部分です。明部そのものが主被写体なら、暗部はシルエットにしてかまいません。明部が主被写体の邪魔をするなら、撮影角度か露出の方針を変えます。"
+  },
+  {
+    "source": "再看暗部",
+    "en": "Then the shadows",
+    "ja": "次に暗部を見る"
+  },
+  {
+    "source": "樹蔭和峽谷本來就應該暗。過度拉起陰影會讓空間失去立體感，也可能帶出雜訊或手機的 HDR 光暈。",
+    "en": "Tree shade and gorges are supposed to be dark. Pulling the shadows up too far flattens the sense of space and can bring out noise or phone HDR halos.",
+    "ja": "木陰や峡谷は、もともと暗くて当然です。シャドウを持ち上げすぎると空間の立体感が失われ、ノイズやスマートフォン HDR のハロも出やすくなります。"
+  },
+  {
+    "source": "河谷亮暗差：不是陰影越亮越好",
+    "en": "Light and shade in the valley: brighter shadows aren’t always better",
+    "ja": "谷の明暗差：影は明るいほど良いわけではない"
+  },
+  {
+    "source": "原檔 PXL_20261010_025023976.jpg · 11:50:23 · 24 mm 等效 · f/1.7 · 1/625 秒 · ISO 23",
+    "en": "original file PXL_20261010_025023976.jpg · 11:50:23 · 24 mm equiv. · f/1.7 · 1/625 s · ISO 23",
+    "ja": "元ファイル PXL_20261010_025023976.jpg · 11:50:23 · 24 mm 相当 · f/1.7 · 1/625 秒 · ISO 23"
+  },
+  {
+    "source": "從高處拍攝的蜿蜒河谷：左側山坡在陰影中，右側山坡受光明亮，河道從下方延伸到遠方。",
+    "en": "A winding river valley shot from above: the left slope is in shadow, the right slope is brightly lit, and the river channel runs from the bottom into the distance.",
+    "ja": "高い位置から撮った蛇行する川の谷。左の斜面は影の中、右の斜面は日が当たって明るく、川筋が下から遠くへ延びている。"
+  },
+  {
+    "source": "同一張照片裡，左右坡面的光線差距很大。保留有方向的陰影，可以讓視線自然走向受光的河道。",
+    "en": "Within this one photo, the light on the left and right slopes differs greatly. Keeping directional shadows lets the eye travel naturally to the sunlit channel.",
+    "ja": "この 1 枚の中で、左右の斜面の光の差はとても大きくなっています。方向性のある影を残すと、視線は自然に光の当たった川筋へ向かいます。"
+  },
+  {
+    "source": "① 河面自然形成視覺通道。",
+    "en": "① The river surface naturally forms a visual corridor.",
+    "ja": "① 川面が自然に視覚的な通り道を作っています。"
+  },
+  {
+    "source": "② 右側受光的山坡如果過亮，可以選擇更小的取景範圍或稍微減少曝光；不要機械式地拉亮全部山坡。",
+    "en": "② If the sunlit slope on the right is too bright, choose a tighter framing or reduce the exposure slightly; don’t mechanically brighten every slope.",
+    "ja": "② 右側の日の当たる斜面が明るすぎるなら、より狭い範囲を切り取るか、露出を少し下げます。機械的にすべての斜面を明るくしないこと。"
+  },
+  {
+    "source": "曝光控制的典型起點",
+    "en": "Typical starting points for exposure control",
+    "ja": "露出コントロールの典型的な出発点"
+  },
+  {
+    "source": "控制",
+    "en": "Control",
+    "ja": "設定項目"
+  },
+  {
+    "source": "用途",
+    "en": "What it does",
+    "ja": "役割"
+  },
+  {
+    "source": "典型起點（非保證值）",
+    "en": "Typical starting point (not a guarantee)",
+    "ja": "典型的な出発点（保証値ではない）"
+  },
+  {
+    "source": "拍 RAW",
+    "en": "Shoot RAW",
+    "ja": "RAW で撮る"
+  },
+  {
+    "source": "提供更大的後製彈性，但仍有裁切上限。",
+    "en": "More room for editing, but there’s still a clipping limit.",
+    "ja": "後処理の自由度が増すが、クリッピングの限界は残る。"
+  },
+  {
+    "source": "相機支援時，先用 RAW + JPEG。",
+    "en": "If the camera supports it, start with RAW + JPEG.",
+    "ja": "カメラが対応していれば、まず RAW + JPEG で。"
+  },
+  {
+    "source": "控制感光輸出的增益與曝光取捨。",
+    "en": "Controls the gain applied to the sensor output and the exposure trade-offs.",
+    "ja": "センサー出力のゲインと露出の兼ね合いを制御する。"
+  },
+  {
+    "source": "靜態場景從低 ISO 或基準 ISO 起試；主體移動時再提高。",
+    "en": "For static scenes, start from a low or base ISO; raise it when the subject moves.",
+    "ja": "静止した景色なら低感度かベース ISO から試し、被写体が動くときに上げる。"
+  },
+  {
+    "source": "光圈",
+    "en": "Aperture",
+    "ja": "絞り"
+  },
+  {
+    "source": "控制景深與通光量。",
+    "en": "Controls depth of field and how much light gets through.",
+    "ja": "被写界深度と光量を制御する。"
+  },
+  {
+    "source": "可調光圈的相機從 f/8 附近起步；手機是固定光圈，不必模仿。",
+    "en": "On cameras with an adjustable aperture, start around f/8; phones have a fixed aperture, so there’s no need to imitate this.",
+    "ja": "絞りを変えられるカメラなら f/8 前後から。スマートフォンは固定絞りなので、まねる必要はない。"
+  },
+  {
+    "source": "快門",
+    "en": "Shutter",
+    "ja": "シャッター速度"
+  },
+  {
+    "source": "控制動態模糊與亮度。",
+    "en": "Controls motion blur and brightness.",
+    "ja": "動きのブレと明るさを制御する。"
+  },
+  {
+    "source": "由水、風、手震決定；不要只看曝光值。",
+    "en": "Set by the water, the wind and camera shake; don’t go by the exposure value alone.",
+    "ja": "水、風、手ブレで決める。露出値だけを見ないこと。"
+  },
+  {
+    "source": "包圍曝光",
+    "en": "Bracketing",
+    "ja": "ブラケット撮影"
+  },
+  {
+    "source": "大反差場合保護多段亮度資訊。",
+    "en": "Protects brightness information across several stops in high-contrast scenes.",
+    "ja": "高コントラストの場面で、複数段にわたる明るさの情報を守る。"
+  },
+  {
+    "source": "可以試 3 張 −2／0／+2 EV，再依現場調整。",
+    "en": "Try 3 frames at −2/0/+2 EV, then adjust to the scene.",
+    "ja": "−2／0／+2 EV の 3 枚から試し、現場に合わせて調整する。"
+  },
+  {
+    "source": "不要誤判直方圖",
+    "en": "Don’t misread the histogram",
+    "ja": "ヒストグラムを読み違えない"
+  },
+  {
+    "source": "直方圖靠右不等於曝光必然錯誤；天空、雪地本來就比較亮。重要的是想保留的高光與暗部細節有沒有被裁切。JPEG 的直方圖也不是 RAW 的逐像素資訊。",
+    "en": "A histogram leaning to the right doesn’t automatically mean the exposure is wrong; skies and snow are naturally bright. What matters is whether the highlight and shadow detail you want to keep has been clipped. A JPEG histogram isn’t per-pixel RAW information, either.",
+    "ja": "ヒストグラムが右に寄っていても、露出が間違っているとは限りません。空や雪原はもともと明るいものです。大事なのは、残したいハイライトとシャドウの細部がクリップしていないかどうかです。JPEG のヒストグラムは、RAW のピクセル単位の情報でもありません。"
+  },
+  {
+    "source": "景深與對焦：距離判斷比死記 f/22 更重要",
+    "en": "Depth of field and focus: judging distance matters more than memorizing f/22",
+    "ja": "被写界深度とピント：f/22 を丸暗記するより距離の判断が大切"
+  },
+  {
+    "source": "景深是「在指定的觀看標準下，看起來可接受清晰」的範圍，不是從最近到無限遠都在同一個焦平面。想讓近處的石頭與遠方的樹林都清楚，需要考慮鏡頭的實際焦距、光圈、對焦距離與最後的輸出大小。",
+    "en": "Depth of field is the range that “looks acceptably sharp under a specified viewing standard”; it doesn’t mean everything from the nearest point to infinity lies on a single focal plane. To get both nearby stones and distant trees sharp, you need to consider the lens’s actual focal length, the aperture, the focus distance and the final output size.",
+    "ja": "被写界深度とは、「決められた観賞条件のもとで、許容できる程度にシャープに見える」範囲のことで、最も近い点から無限遠までが同じピント面にあるという意味ではありません。手前の石と遠くの森の両方をシャープにしたいなら、レンズの実際の焦点距離、絞り、ピント位置までの距離、最終的な出力サイズを考える必要があります。"
+  },
+  {
+    "source": "H 為超焦距（mm），f 為鏡頭的",
+    "en": "H is the hyperfocal distance (mm), f is the lens’s ",
+    "ja": "H は過焦点距離（mm）、f はレンズの"
+  },
+  {
+    "source": "實際",
+    "en": "actual",
+    "ja": "実際の"
+  },
+  {
+    "source": "焦距（mm），N 為 f 值，c 為假定的容許模糊圈（mm）。對焦在 H 時，可接受清晰的範圍從 H/2 延伸到無限遠。也常見省略 + f 的簡化式 f² ÷ (N × c)；在風景的拍攝距離下，兩者差異很小。",
+    "en": " focal length (mm), N is the f-number, and c is the assumed circle of confusion (mm). When you focus at H, the range of acceptable sharpness extends from H/2 to infinity. You’ll also often see the simplified form f² ÷ (N × c), which drops the + f; at landscape shooting distances the difference between the two is tiny.",
+    "ja": "焦点距離（mm）、N は F 値、c は仮定した許容錯乱円（mm）です。H にピントを合わせると、許容できるシャープさの範囲は H/2 から無限遠まで広がります。+ f を省いた簡略式 f² ÷ (N × c) もよく見られますが、風景の撮影距離では両者の差はごくわずかです。"
+  },
+  {
+    "source": "例如實際焦距 24 mm、f/8、c = 0.03 mm 時，超焦距約 2.42 m；對焦在超焦距，近端可接受清晰界是 H/2，約 1.21 m。這是傳統模糊圈假設下的估算，不代表像素級的銳利度：對焦在超焦距時，最遠處只是勉強可接受，可以稍微往遠處對焦",
+    "en": "For example, with an actual focal length of 24 mm, f/8 and c = 0.03 mm, the hyperfocal distance is about 2.42 m; focused at the hyperfocal distance, the near limit of acceptable sharpness is H/2, about 1.21 m. This is an estimate based on the traditional circle-of-confusion assumption, not a promise of pixel-level sharpness: when focused at the hyperfocal distance, the farthest areas are only just acceptable, so you can focus slightly farther away ",
+    "ja": "例えば実際の焦点距離 24 mm、f/8、c = 0.03 mm のとき、過焦点距離は約 2.42 m です。過焦点距離にピントを合わせると、被写界深度の前端は H/2、約 1.21 m になります。これは従来の許容錯乱円の仮定に基づく概算で、ピクセル等倍でのシャープさを意味するものではありません。過焦点距離に合わせたとき、最も遠い部分はかろうじて許容できる程度なので、少し遠めにピントを合わせてもかまいません"
+  },
+  {
+    "source": "。手機照片的 24 mm「等效視角」不能直接代入實際焦距的公式。",
+    "en": ". A phone photo’s 24 mm “equivalent angle of view” can’t be plugged directly into a formula that needs the actual focal length.",
+    "ja": "。スマートフォン写真の 24 mm「換算画角」は、実際の焦点距離を使う式にそのまま代入できません。"
+  },
+  {
+    "source": "超焦距試算",
+    "en": "Hyperfocal distance calculator",
+    "ja": "過焦点距離の試算"
+  },
+  {
+    "source": "用來理解變數之間的關係，不能取代放大檢查實際對焦。",
+    "en": "Use it to understand how the variables relate; it can’t replace zooming in to check the actual focus.",
+    "ja": "変数どうしの関係を理解するためのもので、拡大して実際のピントを確認する代わりにはなりません。"
+  },
+  {
+    "source": "鏡頭實際焦距 f",
+    "en": "Actual lens focal length f",
+    "ja": "レンズの実際の焦点距離 f"
+  },
+  {
+    "source": "光圈 N",
+    "en": "Aperture N",
+    "ja": "絞り N"
+  },
+  {
+    "source": "容許模糊圈 c（假定）",
+    "en": "Circle of confusion c (assumed)",
+    "ja": "許容錯乱円 c（仮定）"
+  },
+  {
+    "source": "超焦距 H",
+    "en": "Hyperfocal distance H",
+    "ja": "過焦点距離 H"
+  },
+  {
+    "source": "近端可接受清晰界",
+    "en": "Near limit of acceptable sharpness",
+    "ja": "被写界深度の前端"
+  },
+  {
+    "source": "約 1.21 m",
+    "en": "about 1.21 m",
+    "ja": "約 1.21 m"
+  },
+  {
+    "source": "目前顯示的是預設值：實際焦距 24 mm、f/8、c = 0.030 mm。",
+    "en": "Showing the defaults: actual focal length 24 mm, f/8, c = 0.030 mm.",
+    "ja": "現在の表示は初期値です：実際の焦点距離 24 mm、f/8、c = 0.030 mm。"
+  },
+  {
+    "source": "為什麼不一直用 f/22？",
+    "en": "Why not always use f/22?",
+    "ja": "なぜ常に f/22 にしないのか？"
+  },
+  {
+    "source": "小光圈可以增加景深，但會讓繞射更明顯；最佳的折衷取決於鏡頭與感光元件。前景離鏡頭極近時，可以考慮",
+    "en": "A small aperture increases depth of field but makes diffraction more visible; the best compromise depends on the lens and the sensor. When the foreground is extremely close to the lens, consider ",
+    "ja": "小絞りは被写界深度を深くしますが、回折がより目立つようになります。最適な妥協点はレンズとイメージセンサーによって異なります。前景がレンズに極端に近いときは、"
+  },
+  {
+    "source": "焦點堆疊",
+    "en": "focus stacking",
+    "ja": "深度合成（フォーカススタッキング）"
+  },
+  {
+    "source": "：拍攝多張不同對焦平面的照片，再把清晰的部分合成",
+    "en": ": shoot several frames focused at different planes, then blend the sharp parts ",
+    "ja": "を検討できます。ピント位置を変えて複数枚撮影し、シャープな部分を合成する手法です"
+  },
+  {
+    "source": "。風吹動的草葉或移動的水面，會讓疊圖變得困難。",
+    "en": ". Grass moving in the wind or moving water makes stacking difficult.",
+    "ja": "。風で揺れる草葉や動く水面があると、合成は難しくなります。"
+  },
+  {
+    "source": "手機風景照的近景與遠景常有很大的景深，但同樣會有自動對焦失誤、超廣角邊緣解析力較弱，以及計算降噪造成的塗抹。",
+    "en": "Phone landscape shots often have great depth of field from near to far, but they still suffer from autofocus misses, weaker resolution at the edges of the ultra-wide, and smearing from computational noise reduction.",
+    "ja": "スマートフォンの風景写真は近景から遠景まで被写界深度が深いことが多いものの、オートフォーカスのミス、超広角の周辺部の解像力不足、計算処理によるノイズ除去が生む塗り絵のような質感といった問題は、やはり起こります。"
+  },
+  {
+    "source": "溪流與瀑布：別一律把水拍成絲綢",
+    "en": "Streams and waterfalls: don’t turn all water into silk",
+    "ja": "渓流と滝：水をいつも絹のように撮らない"
+  },
+  {
+    "source": "流動的水可以凝結成噴濺的細節，也可以讓快門累積成柔和的流線。哪一種好，取決於想講的是「力量」還是「安靜」。這組照片裡的小瀑布、溪床與河谷都適合練習。",
+    "en": "Moving water can be frozen into splashing detail, or the shutter can build it up into soft streaks. Which is better depends on whether you want to convey “power” or “calm.” The small waterfall, streambed and river valleys in this set are all good for practice.",
+    "ja": "流れる水は、しぶきの細部まで止めて写すことも、シャッターを開けて柔らかな流れの線として写すこともできます。どちらが良いかは、伝えたいのが「力強さ」か「静けさ」かで決まります。このセットの小さな滝、渓床、川の谷は、どれも練習に向いています。"
+  },
+  {
+    "source": "真實的小瀑布：水流有明確的軸線",
+    "en": "A real small waterfall: the flow has a clear axis",
+    "ja": "実際の小さな滝：水の流れに明確な軸がある"
+  },
+  {
+    "source": "原檔 PXL_20261010_025813058.jpg · 11:58:13 · 24 mm 等效 · f/1.7 · 1/59 秒 · ISO 18",
+    "en": "original file PXL_20261010_025813058.jpg · 11:58:13 · 24 mm equiv. · f/1.7 · 1/59 s · ISO 18",
+    "ja": "元ファイル PXL_20261010_025813058.jpg · 11:58:13 · 24 mm 相当 · f/1.7 · 1/59 秒 · ISO 18"
+  },
+  {
+    "source": "直幅拍攝的小瀑布：一道細長的水流從岩壁中央落下，周圍是草葉與岩石。",
+    "en": "A small waterfall shot vertically: a long, thin stream of water falls down the middle of the rock face, surrounded by grass and rocks.",
+    "ja": "縦位置で撮った小さな滝。細長い水の流れが岩壁の中央を落ち、周りには草葉と岩がある。"
+  },
+  {
+    "source": "直幅把目光帶往瀑布本身。現場能控制快門時，可以分別測試細節清楚、自然流動、柔和長曝。",
+    "en": "The vertical frame draws the eye to the waterfall itself. When you can control the shutter on location, test separately for crisp detail, natural flow and a soft long exposure.",
+    "ja": "縦位置が視線を滝そのものへ導いています。現場でシャッター速度を制御できるなら、細部がくっきりした描写、自然な流れ、柔らかな長秒露光をそれぞれ試せます。"
+  },
+  {
+    "source": "① 水流的中心位置清楚，是視線天然的焦點。",
+    "en": "① The center of the flow is clear, a natural focal point for the eye.",
+    "ja": "① 水の流れの中心がはっきりしていて、視線の自然な焦点になっています。"
+  },
+  {
+    "source": "② 周圍的草葉與岩石如果太亮或太多，會轉移對水流的注意。",
+    "en": "② If the surrounding grass and rocks are too bright or too many, they pull attention away from the water.",
+    "ja": "② 周りの草葉や岩が明るすぎたり多すぎたりすると、水の流れから注意がそれます。"
+  },
+  {
+    "source": "流水快門的起點",
+    "en": "Starting shutter speeds for moving water",
+    "ja": "流水のシャッター速度の出発点"
+  },
+  {
+    "source": "效果",
+    "en": "Effect",
+    "ja": "効果"
+  },
+  {
+    "source": "快門起點",
+    "en": "Starting shutter speed",
+    "ja": "シャッター速度の出発点"
+  },
+  {
+    "source": "主要判斷",
+    "en": "What to judge",
+    "ja": "主な判断基準"
+  },
+  {
+    "source": "可能出錯",
+    "en": "What can go wrong",
+    "ja": "起こりうる失敗"
+  },
+  {
+    "source": "水滴凝結",
+    "en": "Frozen droplets",
+    "ja": "水滴を止める"
+  },
+  {
+    "source": "1/500–1/2000 秒",
+    "en": "1/500–1/2000 s",
+    "ja": "1/500–1/2000 秒"
+  },
+  {
+    "source": "浪花、水滴、急流有清楚的紋理。",
+    "en": "Spray, droplets and rapids show clear texture.",
+    "ja": "しぶき、水滴、急流の質感がはっきり出る。"
+  },
+  {
+    "source": "光線不足，或 ISO 被迫很高。",
+    "en": "Not enough light, or ISO forced very high.",
+    "ja": "光が足りない、または ISO を大きく上げざるをえない。"
+  },
+  {
+    "source": "自然拖絲",
+    "en": "Natural streaks",
+    "ja": "自然な流れ"
+  },
+  {
+    "source": "1/8–1/2 秒",
+    "en": "1/8–1/2 s",
+    "ja": "1/8–1/2 秒"
+  },
+  {
+    "source": "保留方向與少量的水紋。",
+    "en": "Keeps the direction and a little water texture.",
+    "ja": "流れの方向と少しの水紋を残す。"
+  },
+  {
+    "source": "手持晃動、樹葉被風吹糊。",
+    "en": "Handheld shake; leaves blurred by the wind.",
+    "ja": "手持ちのブレ、風で葉がブレる。"
+  },
+  {
+    "source": "長曝絲綢",
+    "en": "Silky long exposure",
+    "ja": "長秒露光の絹のような質感"
+  },
+  {
+    "source": "1–4 秒以上",
+    "en": "1–4 s or longer",
+    "ja": "1–4 秒以上"
+  },
+  {
+    "source": "水面柔和，靜止的岩石仍清楚。",
+    "en": "Soft water, while still rocks stay sharp.",
+    "ja": "水面は柔らかく、静止した岩はシャープなまま。"
+  },
+  {
+    "source": "流水失去紋理，植物模糊。",
+    "en": "The water loses its texture and plants blur.",
+    "ja": "水の質感が失われ、植物がブレる。"
+  },
+  {
+    "source": "數值只是起點。水速、距離與流向、光量、是否使用 ND 濾鏡，都會讓同一個快門產生不同的效果；三腳架固定也不保證水邊的樹葉不動。",
+    "en": "These values are only starting points. Water speed, distance and direction of flow, the amount of light and whether you use an ND filter all make the same shutter speed produce different results; a tripod also doesn’t guarantee that the leaves by the water stay still.",
+    "ja": "数値はあくまで出発点です。水の速さ、距離と流れの向き、光の量、ND フィルターの有無によって、同じシャッター速度でも結果は変わります。三脚で固定しても、水辺の葉が動かないとは限りません。"
+  },
+  {
+    "source": "ND 減光鏡快門試算",
+    "en": "ND filter shutter calculator",
+    "ja": "ND フィルターのシャッター速度試算"
+  },
+  {
+    "source": "假設光圈與 ISO 不變、ND 級數準確：新快門 = 原快門 × 2 的 ND 級數次方。",
+    "en": "Assuming the aperture and ISO stay the same and the ND rating is accurate: new shutter time = original shutter time × 2 raised to the number of ND stops.",
+    "ja": "絞りと ISO が変わらず、ND の段数が正確だと仮定した場合：新しいシャッター速度 = 元のシャッター速度 × 2 の（ND 段数）乗。"
+  },
+  {
+    "source": "原快門",
+    "en": "Original shutter speed",
+    "ja": "元のシャッター速度"
+  },
+  {
+    "source": "1/250 秒",
+    "en": "1/250 s",
+    "ja": "1/250 秒"
+  },
+  {
+    "source": "1/125 秒",
+    "en": "1/125 s",
+    "ja": "1/125 秒"
+  },
+  {
+    "source": "1/60 秒",
+    "en": "1/60 s",
+    "ja": "1/60 秒"
+  },
+  {
+    "source": "1/30 秒",
+    "en": "1/30 s",
+    "ja": "1/30 秒"
+  },
+  {
+    "source": "1/8 秒",
+    "en": "1/8 s",
+    "ja": "1/8 秒"
+  },
+  {
+    "source": "1/2 秒",
+    "en": "1/2 s",
+    "ja": "1/2 秒"
+  },
+  {
+    "source": "1 秒",
+    "en": "1 s",
+    "ja": "1 秒"
+  },
+  {
+    "source": "ND 減光級數",
+    "en": "ND strength (stops)",
+    "ja": "ND の減光段数"
+  },
+  {
+    "source": "3 級",
+    "en": "3 stops",
+    "ja": "3 段"
+  },
+  {
+    "source": "6 級",
+    "en": "6 stops",
+    "ja": "6 段"
+  },
+  {
+    "source": "10 級",
+    "en": "10 stops",
+    "ja": "10 段"
+  },
+  {
+    "source": "15 級",
+    "en": "15 stops",
+    "ja": "15 段"
+  },
+  {
+    "source": "理論快門",
+    "en": "Theoretical shutter speed",
+    "ja": "理論上のシャッター速度"
+  },
+  {
+    "source": "曝光倍數",
+    "en": "Exposure factor",
+    "ja": "露出倍数"
+  },
+  {
+    "source": "目前顯示的是預設值：原快門 1/60 秒、10 級 ND。",
+    "en": "Showing the defaults: original shutter speed 1/60 s, a 10-stop ND.",
+    "ja": "現在の表示は初期値です：元のシャッター速度 1/60 秒、10 段の ND。"
+  },
+  {
+    "source": "CPL 偏光鏡：",
+    "en": "CPL (polarizing) filter: ",
+    "ja": "CPL（偏光フィルター）："
+  },
+  {
+    "source": "可以減弱水面等處的反射，看見水下的石頭，但也可能拿掉漂亮的水面倒影",
+    "en": "Reduces reflections on surfaces such as water so you can see the stones below, but it can also remove an attractive reflection on the water ",
+    "ja": "水面などの反射を弱めて水中の石を見せられますが、美しい水面の映り込みまで消してしまうこともあります"
+  },
+  {
+    "source": "；搭配超廣角拍大片天空時，天空可能深淺不均",
+    "en": "; with an ultra-wide lens on a large area of sky, the sky can darken unevenly ",
+    "ja": "。超広角で広い空を写すと、空の濃淡がむらになることがあります"
+  },
+  {
+    "source": "GND 漸層減光鏡：",
+    "en": " GND (graduated ND) filter: ",
+    "ja": "GND（ハーフ ND）フィルター："
+  },
+  {
+    "source": "壓低天空的亮度，代價是遇到起伏的山線時，容易連山一起壓暗。",
+    "en": "Darkens the sky, but along an uneven mountain line it easily darkens the mountains along with it.",
+    "ja": "空の明るさを抑えられますが、起伏のある山並みでは、山まで一緒に暗くなりやすいのが代償です。"
+  },
+  {
+    "source": "山、森林、海邊、都市、鄉村：每個場景要看什麼？",
+    "en": "Mountains, forests, coast, city, countryside: what to look for in each",
+    "ja": "山、森、海辺、都市、田園：それぞれの場面で何を見るか"
+  },
+  {
+    "source": "沒有海岸照片或大型都市天際線",
+    "en": "no coastal photos or big-city skylines",
+    "ja": "海岸の写真や大都市のスカイラインはありません"
+  },
+  {
+    "source": "；這兩類改為提供授權可以核對的公開實拍連結，並清楚標為外部照片。外部照片需要連網開啟，本頁不嵌入。",
+    "en": "; for those two genres, the page links to public real photos whose licenses you can verify, clearly labeled as external photos. External photos need an internet connection to open; this page doesn’t embed them.",
+    "ja": "。この 2 つについては、ライセンスを確認できる公開の実写真へのリンクを示し、外部写真であることを明記しています。外部写真の閲覧にはインターネット接続が必要で、本ページには埋め込んでいません。"
+  },
+  {
+    "source": "從高處往下拍的直幅峽谷與碧綠河流。",
+    "en": "A vertical shot looking down into a gorge with a jade-green river.",
+    "ja": "高い位置から見下ろした縦構図の峡谷とエメラルドグリーンの川。"
+  },
+  {
+    "source": "山景與峽谷",
+    "en": "Mountains and gorges",
+    "ja": "山と峡谷"
+  },
+  {
+    "source": "主題：河谷與遠山。",
+    "en": "Subject: river valleys and distant mountains. ",
+    "ja": "主題：川の谷と遠くの山。"
+  },
+  {
+    "source": "先找河道或稜線作為視線的骨架。遠山在超廣角裡變得太小時，試試 24–70 mm；側光比單純的超廣角更能強化地形。",
+    "en": "First find a river channel or ridgeline to serve as the backbone for the eye. When distant mountains get too small in the ultra-wide, try 24–70 mm; side light strengthens the terrain better than simply going ultra-wide.",
+    "ja": "まず視線の骨格となる川筋や稜線を探します。超広角で遠くの山が小さくなりすぎるなら、24–70 mm を試しましょう。単に超広角にするより、サイド光のほうが地形を強調できます。"
+  },
+  {
+    "source": "作者實拍 · 原檔 PXL_20261010_034054885.jpg",
+    "en": "the author's photo · original file PXL_20261010_034054885.jpg",
+    "ja": "筆者撮影 · 元ファイル PXL_20261010_034054885.jpg"
+  },
+  {
+    "source": "林間溪谷：光束斜照在溪石與流水上，兩側是樹林。",
+    "en": "A stream valley in the woods: shafts of light fall at an angle on the stream stones and flowing water, with forest on both sides.",
+    "ja": "林の中の渓谷。光芒が渓流の石と流れに斜めに差し込み、両側は森になっている。"
+  },
+  {
+    "source": "森林",
+    "en": "Forest",
+    "ja": "森林"
+  },
+  {
+    "source": "主題：溪石、光斑、孤立的樹。",
+    "en": "Subject: stream stones, patches of light, a lone tree. ",
+    "ja": "主題：渓流の石、光の斑点、孤立した木。"
+  },
+  {
+    "source": "選一個受光的物件或溪流的節點作為視覺終點。樹幹可以當框景，也可能遮擋；正午強光下，可以只拍樹蔭裡的細節。",
+    "en": "Choose one sunlit object or a point along the stream as the visual end point. Trunks can serve as a frame or get in the way; under harsh midday light, you can shoot just the details in the shade.",
+    "ja": "光の当たった物や流れの節目を 1 つ選び、視覚的な終点にします。幹はフレームにもなれば、遮りにもなります。真昼の強い光の下では、木陰の細部だけを撮るのも手です。"
+  },
+  {
+    "source": "作者實拍 · 原檔 PXL_20261010_030015888.jpg",
+    "en": "the author's photo · original file PXL_20261010_030015888.jpg",
+    "ja": "筆者撮影 · 元ファイル PXL_20261010_030015888.jpg"
+  },
+  {
+    "source": "山腳下的地方車站：木造車站建築、站前的公車與郵筒。",
+    "en": "A local station at the foot of a mountain: a wooden station building, with a bus and a mailbox in front.",
+    "ja": "山のふもとのローカル駅。木造の駅舎と、駅前のバスと郵便ポスト。"
+  },
+  {
+    "source": "城鎮（山城建物示範）",
+    "en": "Towns (example: buildings in a mountain town)",
+    "ja": "町（山あいの町の建物の例）"
+  },
+  {
+    "source": "主題：建築線條與交通。",
+    "en": "Subject: architectural lines and transport. ",
+    "ja": "主題：建物の線と交通。"
+  },
+  {
+    "source": "檢查垂直線、人物與車輛的位置，以及招牌是否分散注意。這是地方車站，和大型都市夜景不同；藍調天際線請看下方的外部實拍連結。",
+    "en": "Check vertical lines, where people and vehicles are, and whether signs scatter attention. This is a local station, not a big-city night scene; for a blue-hour skyline, see the external photo link below.",
+    "ja": "垂直線、人や車の位置、看板が注意を散らしていないかを確認します。これは地方の駅で、大都市の夜景とは違います。ブルーアワーのスカイラインは、下の外部写真のリンクを見てください。"
+  },
+  {
+    "source": "作者實拍 · 原檔 PXL_20261010_055341159.jpg",
+    "en": "the author's photo · original file PXL_20261010_055341159.jpg",
+    "ja": "筆者撮影 · 元ファイル PXL_20261010_055341159.jpg"
+  },
+  {
+    "source": "山坡上的聚落：房屋散布在林間，前景有枝葉。",
+    "en": "A hillside settlement: houses scattered among the trees, with foliage in the foreground.",
+    "ja": "斜面の集落。家々が林の中に点在し、前景に枝葉がある。"
+  },
+  {
+    "source": "鄉村與聚落",
+    "en": "Countryside and settlements",
+    "ja": "田園と集落"
+  },
+  {
+    "source": "主題：村屋與山坡的尺度。",
+    "en": "Subject: the scale of village houses and hillsides. ",
+    "ja": "主題：村の家と斜面のスケール。"
+  },
+  {
+    "source": "先決定拍「民居」還是「山勢」，用道路、河道或屋頂的節奏把觀者帶進去；清理前景的枝條。",
+    "en": "First decide whether you’re shooting “the houses” or “the lay of the mountain,” then use the rhythm of roads, rivers or rooftops to lead the viewer in; clear the branches out of the foreground.",
+    "ja": "まず「民家」を撮るのか「山の地勢」を撮るのかを決め、道路、川筋、屋根のリズムで見る人を引き込みます。前景の枝は整理します。"
+  },
+  {
+    "source": "作者實拍 · 原檔 PXL_20261010_023959391.jpg",
+    "en": "the author's photo · original file PXL_20261010_023959391.jpg",
+    "ja": "筆者撮影 · 元ファイル PXL_20261010_023959391.jpg"
+  },
+  {
+    "source": "海邊與海岸",
+    "en": "Seaside and coast",
+    "ja": "海辺と海岸"
+  },
+  {
+    "source": "主題：浪線、礁石與地平線。",
+    "en": "Subject: lines of surf, reef rocks and the horizon. ",
+    "ja": "主題：波の線、岩礁、水平線。"
+  },
+  {
+    "source": "地平線要平，浪線可以成為導線；比較凝結的浪花與 0.4 秒這類中慢速快門帶出的軌跡。保留足夠的退路，不要站在濕滑、會被浪打到的區域。",
+    "en": "Keep the horizon level; lines of waves can become leading lines. Compare frozen spray with the trails a medium-slow shutter speed such as 0.4 s brings out. Leave yourself a safe way back, and don’t stand on slippery ground that waves can reach.",
+    "ja": "水平線は水平に保ち、波の線はリーディングラインにできます。止めたしぶきと、0.4 秒のような中低速のシャッターで生まれる軌跡を比べてみましょう。十分な退路を確保し、滑りやすく波をかぶる場所には立たないこと。"
+  },
+  {
+    "source": "這組照片沒有海邊素材，因此不編造海景。外部的授權實拍可以連網開啟核對：",
+    "en": "This set has no seaside material, so no seascape is invented here. An external, licensed real photo can be opened online for comparison:",
+    "ja": "このセットには海辺の素材がないため、架空の海の風景は作りません。ライセンス付きの外部の実写真は、オンラインで開いて確認できます："
+  },
+  {
+    "source": "Nikon D800 · 16 mm · f/11 · 0.4 秒 · ISO 100",
+    "en": "Nikon D800 · 16 mm · f/11 · 0.4 s · ISO 100",
+    "ja": "Nikon D800 · 16 mm · f/11 · 0.4 秒 · ISO 100"
+  },
+  {
+    "source": "大型都市與藍調時刻",
+    "en": "Big cities and blue hour",
+    "ja": "大都市とブルーアワー"
+  },
+  {
+    "source": "主題：燈光與視線的縱深。",
+    "en": "Subject: lights and depth along the line of sight. ",
+    "ja": "主題：明かりと視線の奥行き。"
+  },
+  {
+    "source": "高樓夜景比自然風景更需要檢查垂直線、亮招牌、車軌與天空比例。把握藍天還有細節的時刻，燈光不必全部過曝。",
+    "en": "Night views of high-rises need more checking than natural landscapes: vertical lines, bright signs, light trails and the proportion of sky. Catch the moment when the blue sky still holds detail, and the lights don’t all need to be overexposed.",
+    "ja": "高層ビルの夜景は、自然の風景よりも、垂直線、明るい看板、車の光跡、空の比率を確認する必要があります。青空にまだ階調が残る時間を狙えば、明かりをすべて露出オーバーにする必要はありません。"
+  },
+  {
+    "source": "外部照片 · 20 秒 · f/11 · ISO 100",
+    "en": "External photo · 20 s · f/11 · ISO 100",
+    "ja": "外部写真 · 20 秒 · f/11 · ISO 100"
+  },
+  {
+    "source": "五種場景設定速查（相機參數是起點）",
+    "en": "Quick settings for five genres (camera settings are starting points)",
+    "ja": "5 つの場面の設定早見表（カメラ設定は出発点）"
+  },
+  {
+    "source": "五種場景的設定起點",
+    "en": "Starting settings for five genres",
+    "ja": "5 つの場面の設定の出発点"
+  },
+  {
+    "source": "場景",
+    "en": "Scene",
+    "ja": "場面"
+  },
+  {
+    "source": "全片幅等效焦段",
+    "en": "Full-frame equivalent focal length",
+    "ja": "フルサイズ換算の焦点距離"
+  },
+  {
+    "source": "光圈與快門的典型起點",
+    "en": "Typical starting aperture and shutter speed",
+    "ja": "絞りとシャッター速度の典型的な出発点"
+  },
+  {
+    "source": "實際的決策",
+    "en": "Practical decisions",
+    "ja": "実際の判断"
+  },
+  {
+    "source": "高山山脊",
+    "en": "Mountain ridges",
+    "ja": "高山の尾根"
+  },
+  {
+    "source": "24–70 mm；層疊可用 70–200 mm。",
+    "en": "24–70 mm; 70–200 mm for layers.",
+    "ja": "24–70 mm。重なりを狙うなら 70–200 mm。"
+  },
+  {
+    "source": "f/8–f/11；手持時依焦距提高快門。",
+    "en": "f/8–f/11; when handheld, raise the shutter speed to suit the focal length.",
+    "ja": "f/8–f/11。手持ちなら焦点距離に応じてシャッター速度を上げる。"
+  },
+  {
+    "source": "用稜線、前景尺度與霧分層；避免遠方山峰太小。",
+    "en": "Use ridgelines, foreground scale and mist to separate layers; avoid distant peaks that are too small.",
+    "ja": "稜線、前景のスケール、霧で層を分ける。遠くの山頂が小さくなりすぎないように。"
+  },
+  {
+    "source": "35–70 mm；空間狹窄時再用 16–24 mm。",
+    "en": "35–70 mm; 16–24 mm only when space is tight.",
+    "ja": "35–70 mm。狭い場所なら 16–24 mm。"
+  },
+  {
+    "source": "f/5.6–f/11；風大時從 1/250 秒試起。",
+    "en": "f/5.6–f/11; in strong wind, start from 1/250 s.",
+    "ja": "f/5.6–f/11。風が強ければ 1/250 秒から試す。"
+  },
+  {
+    "source": "先清理重疊的樹幹，再找單一受光的主體。",
+    "en": "First clear up overlapping trunks, then look for a single sunlit subject.",
+    "ja": "まず重なった幹を整理し、次に光の当たる主被写体を 1 つ探す。"
+  },
+  {
+    "source": "海岸",
+    "en": "Coast",
+    "ja": "海岸"
+  },
+  {
+    "source": "f/8；凝結浪花約 1/1000 秒，拖浪 0.3–2 秒。",
+    "en": "f/8; about 1/1000 s to freeze spray, 0.3–2 s for wave trails.",
+    "ja": "f/8。しぶきを止めるなら約 1/1000 秒、波を流すなら 0.3–2 秒。"
+  },
+  {
+    "source": "安全與潮汐優先；控制浪的方向與地平線。",
+    "en": "Safety and tides first; control the direction of the waves and the horizon.",
+    "ja": "安全と潮の満ち引きが最優先。波の向きと水平線を整える。"
+  },
+  {
+    "source": "城市藍調",
+    "en": "City blue hour",
+    "ja": "都市のブルーアワー"
+  },
+  {
+    "source": "腳架、基準 ISO；約 1–10 秒起試。",
+    "en": "Tripod, base ISO; start at about 1–10 s.",
+    "ja": "三脚、ベース ISO。約 1–10 秒から試す。"
+  },
+  {
+    "source": "垂直線、燈牌高光、移動物的鬼影。",
+    "en": "Vertical lines, highlights on illuminated signs, ghosting from moving objects.",
+    "ja": "垂直線、電飾看板のハイライト、動く物のゴースト。"
+  },
+  {
+    "source": "鄉村聚落",
+    "en": "Rural settlements",
+    "ja": "田園の集落"
+  },
+  {
+    "source": "f/5.6–f/11；依人車移動決定快門。",
+    "en": "f/5.6–f/11; set the shutter speed by how people and vehicles move.",
+    "ja": "f/5.6–f/11。人や車の動きに合わせてシャッター速度を決める。"
+  },
+  {
+    "source": "一間主屋或一條田埂，不要平均描述所有元素。",
+    "en": "One main house or one paddy ridge; don’t describe every element equally.",
+    "ja": "1 軒の母屋か 1 本のあぜ道に絞り、すべての要素を均等に描かない。"
+  },
+  {
+    "source": "全景實拍：拼接不是越寬越好",
+    "en": "A real panorama: wider stitching isn’t always better",
+    "ja": "実際のパノラマ：つなぎ合わせは広いほど良いわけではない"
+  },
+  {
+    "source": "峽谷全景接圖：橫向的環境資訊很完整",
+    "en": "Stitched gorge panorama: the side-to-side context is complete",
+    "ja": "峡谷のパノラマ合成：横方向の環境情報が充実"
+  },
+  {
+    "source": "原檔 PXL_20261010_034400603.PANO.jpg · 原始輸出 12416 × 3104 px（本頁為壓縮版）",
+    "en": "original file PXL_20261010_034400603.PANO.jpg · original output 12416 × 3104 px (compressed on this page)",
+    "ja": "元ファイル PXL_20261010_034400603.PANO.jpg · 元の出力 12416 × 3104 px（本ページは圧縮版）"
+  },
+  {
+    "source": "峽谷的超寬全景接圖：左右兩段河水、中央岩壁與上方吊橋都收入畫面。",
+    "en": "An ultra-wide stitched panorama of the gorge: two stretches of river on the left and right, the central rock wall and the suspension bridge above are all in frame.",
+    "ja": "峡谷の超横長パノラマ合成。左右 2 本の流れ、中央の岩壁、上の吊り橋がすべて画面に収まっている。"
+  },
+  {
+    "source": "左右支流、主岩壁與上方的橋梁都收入畫面，但比例超寬，視覺中心相對較弱。",
+    "en": "The left and right branches, the main rock wall and the bridge above are all in frame, but the proportions are ultra-wide and the visual center is relatively weak.",
+    "ja": "左右の支流、主な岩壁、上の橋がすべて画面に入っていますが、比率が極端に横長で、視覚的な中心は比較的弱くなっています。"
+  },
+  {
+    "source": "全景適合解釋地形與路線；想做成單張作品時，需要重新選擇左側流水或右側翡翠潭作為主角。",
+    "en": "Panoramas are good for explaining terrain and routes; to make a single finished work, you’d need to choose again between the flowing water on the left and the emerald pool on the right as the lead.",
+    "ja": "パノラマは地形やルートの説明に向いています。1 枚の作品にするなら、左側の流れと右側の翡翠色の淵のどちらを主役にするか、選び直す必要があります。"
+  },
+  {
+    "source": "仔細看全景的底邊與流動的水：拼接可能出現黑邊、接縫或形體錯位，需要局部放大驗證，不能只看縮圖。",
+    "en": "Look closely at the bottom edge of the panorama and the moving water: stitching can produce black edges, seams or misaligned shapes, so verify by zooming in on parts instead of judging from the thumbnail.",
+    "ja": "パノラマの下端と流れる水をよく見てください。つなぎ合わせでは黒い縁、継ぎ目、形のずれが出ることがあるので、サムネイルだけで判断せず、部分的に拡大して確かめる必要があります。"
+  },
+  {
+    "source": "用相機逐張拍攝全景時，可以從相鄰畫面重疊約 25–40% 開始測試，並盡量固定白平衡與曝光。近景很近時，旋轉位置不同可能造成視差。",
+    "en": "When shooting a panorama frame by frame with a camera, you can start testing with about 25–40% overlap between adjacent frames, and keep white balance and exposure fixed where possible. When the foreground is very close, rotating the camera around different points can cause parallax.",
+    "ja": "カメラで 1 枚ずつパノラマを撮るなら、隣り合うコマの重なりを約 25–40% にして試し始め、ホワイトバランスと露出はできるだけ固定します。近景がとても近いと、回転の中心がずれることで視差が生じることがあります。"
+  },
+  {
+    "source": "這組照片沒有拍到、但仍值得保留的進階題材",
+    "en": "Advanced subjects this set didn’t cover, but still worth keeping",
+    "ja": "このセットでは撮っていないが、残しておきたい発展的な題材"
+  },
+  {
+    "source": "進階題材的參數起點",
+    "en": "Starting settings for advanced subjects",
+    "ja": "発展的な題材の設定の出発点"
+  },
+  {
+    "source": "建議的參數起點",
+    "en": "Suggested starting settings",
+    "ja": "おすすめの設定の出発点"
+  },
+  {
+    "source": "要驗證的事",
+    "en": "What to verify",
+    "ja": "確かめること"
+  },
+  {
+    "source": "不應推論",
+    "en": "What not to infer",
+    "ja": "推論してはいけないこと"
+  },
+  {
+    "source": "雪景與沙丘",
+    "en": "Snow and sand dunes",
+    "ja": "雪景色と砂丘"
+  },
+  {
+    "source": "全片幅等效 35–200 mm、f/8 起試；曝光補償參考直方圖。",
+    "en": "Full-frame equivalent 35–200 mm, start at f/8; set exposure compensation by the histogram.",
+    "ja": "フルサイズ換算 35–200 mm、f/8 から試す。露出補正はヒストグラムを参考に。"
+  },
+  {
+    "source": "白雪細節是否被裁切、亮雪是否被自動測光壓成灰色；沙丘的側光能否呈現紋理。",
+    "en": "Whether snow detail is clipped and whether auto metering turns bright snow gray; whether side light on dunes brings out texture.",
+    "ja": "雪の細部が白飛びしていないか、明るい雪が自動測光でグレーに沈んでいないか。砂丘ではサイド光で模様が出るか。"
+  },
+  {
+    "source": "照片很亮不等於「曝光錯誤」。",
+    "en": "A very bright photo doesn’t mean “wrong exposure.”",
+    "ja": "写真が明るいことは「露出の失敗」を意味しない。"
+  },
+  {
+    "source": "星空與地景",
+    "en": "Night sky and landscape",
+    "ja": "星空と地上の風景"
+  },
+  {
+    "source": "14–24 mm、f/1.8–f/2.8、ISO 1600–6400、5–15 秒作為測試。",
+    "en": "14–24 mm, f/1.8–f/2.8, ISO 1600–6400, 5–15 s as test values.",
+    "ja": "14–24 mm、f/1.8–f/2.8、ISO 1600–6400、5–15 秒をテストの目安に。"
+  },
+  {
+    "source": "放大確認星點有沒有拖尾；近處地景可以分開曝光，依作品類型揭露是否合成。",
+    "en": "Zoom in to check whether stars trail; the nearby landscape can be exposed separately, and disclose any compositing as the type of work requires.",
+    "ja": "拡大して星が流れていないかを確認する。近くの地上風景は別に露出してもよいが、作品の種類に応じて合成かどうかを明記する。"
+  },
+  {
+    "source": "「500 法則」不保證高解析相機不出現星軌",
+    "en": "The “500 rule” doesn’t guarantee that a high-resolution camera won’t show star trails ",
+    "ja": "「500 ルール」でも、高画素のカメラで星が流れないとは限らない"
+  },
+  {
+    "source": "抽象的山坡與地貌",
+    "en": "Abstract slopes and landforms",
+    "ja": "抽象的な斜面と地形"
+  },
+  {
+    "source": "70–300 mm、f/5.6–f/11，快門依手震與風調整。",
+    "en": "70–300 mm, f/5.6–f/11; adjust the shutter speed for camera shake and wind.",
+    "ja": "70–300 mm、f/5.6–f/11。シャッター速度は手ブレと風に応じて調整。"
+  },
+  {
+    "source": "讓色塊、線條、陰影成為主題，而不是交代整個景點。",
+    "en": "Make blocks of color, lines and shadows the subject instead of documenting the whole spot.",
+    "ja": "景勝地全体を説明するのではなく、色の面、線、影を主題にする。"
+  },
+  {
+    "source": "望遠焦距本身不改變物體之間的透視關係。",
+    "en": "A telephoto focal length doesn’t by itself change the perspective between objects.",
+    "ja": "望遠の焦点距離そのものは、物と物の遠近関係を変えない。"
+  },
+  {
+    "source": "範圍說明",
+    "en": "Scope note",
+    "ja": "範囲について"
+  },
+  {
+    "source": "以上是原稿技術資訊的保留與整合，不代表這組照片拍過雪景、星空或沙漠；需要用實際的相機與現場條件驗證。相關的技術參考列在本頁最後。",
+    "en": "The above preserves and consolidates technical information from the original; it doesn’t mean this set includes snow, star or desert photos. These need to be verified with real cameras under real conditions. Related technical references are listed at the end of this page.",
+    "ja": "以上は原稿の技術情報を残して整理したもので、このセットで雪景色、星空、砂漠を撮ったという意味ではありません。実際のカメラと現場の条件で検証する必要があります。関連する技術資料は本ページの最後に挙げています。"
+  },
+  {
+    "source": "不用 AI：只靠裁切，也能看出改善方向",
+    "en": "No AI: cropping alone shows the direction to improve",
+    "ja": "AI は使わない：トリミングだけでも改善の方向は見える"
+  },
+  {
+    "source": "以下每組右側，都是從真實 JPEG 做的裁切與非常輕微的全域對比、飽和度調整，沒有補造天空、橋梁、岩石、人物或新的陽光。這些示範不代表「重拍後一定長這樣」，只用來說明取捨。",
+    "en": "The right side of each pair below is a crop of the real JPEG with very slight global contrast and saturation adjustments; no sky, bridge, rock, person or new sunlight was added. These examples don’t mean “a reshoot would look exactly like this”; they only illustrate the trade-offs.",
+    "ja": "以下の各組の右側は、実際の JPEG をトリミングし、全体のコントラストと彩度をごくわずかに調整したもので、空、橋、岩、人物、新たな日差しは一切付け足していません。これらの作例は「撮り直せば必ずこうなる」という意味ではなく、取捨選択を説明するためのものです。"
+  },
+  {
+    "source": "峽谷｜減少不完整的橋景與近處雜草",
+    "en": "Gorge | Less of the partial bridge and the nearby weeds",
+    "ja": "峡谷｜欠けた橋と手前の雑草を減らす"
+  },
+  {
+    "source": "原圖",
+    "en": "Original",
+    "ja": "元画像"
+  },
+  {
+    "source": "峽谷原圖：吊橋只入鏡一段，右下有大片葉子。",
+    "en": "The original gorge photo: only part of the suspension bridge is in frame, with a large patch of leaves at the lower right.",
+    "ja": "峡谷の元画像。吊り橋は一部しか写っておらず、右下に大きな葉がある。"
+  },
+  {
+    "source": "原圖：橋梁只入鏡一部分；右下的葉子占了顯著面積。",
+    "en": "Original: only part of the bridge is in frame; the leaves at the lower right take up a noticeable area.",
+    "ja": "元画像：橋は一部しか写っておらず、右下の葉がかなりの面積を占めています。"
+  },
+  {
+    "source": "裁切與微調版（非 AI 生成）",
+    "en": "Cropped and lightly adjusted (not AI-generated)",
+    "ja": "トリミング・微調整版（AI 生成ではない）"
+  },
+  {
+    "source": "同一張照片裁切後的版本：保留岩石與河水，去掉大部分葉子與半截的橋。",
+    "en": "A cropped version of the same photo: the rocks and water stay, while most of the leaves and the half-visible bridge are removed.",
+    "ja": "同じ写真をトリミングした版。岩と川は残し、葉の大部分と半分だけ写った橋を取り除いている。"
+  },
+  {
+    "source": "裁切版：把注意力推向岩石與河水；代價是失去部分環境脈絡，而不是補上完整的橋。",
+    "en": "Cropped: pushes attention toward the rocks and water; the price is losing some of the surrounding context, and it doesn’t fill in the rest of the bridge.",
+    "ja": "トリミング版：注意を岩と川へ向けます。代償は周囲の文脈が一部失われることで、橋の全体を補うわけではありません。"
+  },
+  {
+    "source": "河谷｜用 24 mm 同景做更集中的視角",
+    "en": "River valley | A more focused view from the same 24 mm scene",
+    "ja": "川の谷｜同じ 24 mm の光景から、より絞った視点を作る"
+  },
+  {
+    "source": "24 mm 原圖：河道在畫面中央延伸到遠方。",
+    "en": "The 24 mm original: the river channel runs through the center of the frame into the distance.",
+    "ja": "24 mm の元画像。川筋が画面中央を遠くへ延びている。"
+  },
+  {
+    "source": "原圖：已經是 24 mm 的較窄取景，河水位於畫面中央。",
+    "en": "Original: already a narrower 24 mm framing, with the river in the center of the frame.",
+    "ja": "元画像：すでに 24 mm の狭めの構図で、川が画面中央にあります。"
+  },
+  {
+    "source": "同一張照片裁切後的版本：更集中在遠處的河道。",
+    "en": "A cropped version of the same photo, concentrating more on the distant river channel.",
+    "ja": "同じ写真をトリミングした版。遠くの川筋により集中している。"
+  },
+  {
+    "source": "裁切版：再去掉部分無效的邊緣，集中遠處的河道；槳板可能更靠近邊緣，要慎選比例。",
+    "en": "Cropped: removes more of the unhelpful edges and concentrates on the distant channel; the paddleboard may end up closer to the edge, so choose the ratio carefully.",
+    "ja": "トリミング版：役に立たない周辺部をさらに削り、遠くの川筋に集中させます。パドルボードが端に寄りすぎることがあるので、比率は慎重に選びます。"
+  },
+  {
+    "source": "逆光｜裁掉少量太陽周邊",
+    "en": "Backlight | Trimming a little around the sun",
+    "ja": "逆光｜太陽の周りを少し切る"
+  },
+  {
+    "source": "逆光原圖：太陽與光束在上方，河面反光明亮。",
+    "en": "The backlit original: the sun and rays are at the top, and the reflection on the river is bright.",
+    "ja": "逆光の元画像。太陽と光芒が上部にあり、川面の反射が明るい。"
+  },
+  {
+    "source": "原圖：直射光和河面反射很強，陰影偏深。",
+    "en": "Original: the direct light and the reflection on the river are strong, and the shadows are deep.",
+    "ja": "元画像：直射光と川面の反射が強く、影は深めです。"
+  },
+  {
+    "source": "同一張照片裁切後的版本：去掉部分太陽周邊的天空。",
+    "en": "A cropped version of the same photo, removing some of the sky around the sun.",
+    "ja": "同じ写真をトリミングした版。太陽周辺の空の一部を取り除いている。"
+  },
+  {
+    "source": "裁切版：可以減少部分刺眼天空的視覺重量，但已經裁切的高光無法從 JPEG 補回。",
+    "en": "Cropped: can reduce some of the visual weight of the glaring sky, but highlights that have already clipped can’t be recovered from the JPEG.",
+    "ja": "トリミング版：まぶしい空の視覚的な重さをいくらか減らせますが、すでに白飛びしたハイライトは JPEG からは取り戻せません。"
+  },
+  {
+    "source": "建議的 RAW／JPEG 後製順序",
+    "en": "Suggested RAW/JPEG editing order",
+    "ja": "おすすめの RAW／JPEG 編集の順序"
+  },
+  {
+    "source": "幾何與主體",
+    "en": "Geometry and subject ",
+    "ja": "ジオメトリと主被写体"
+  },
+  {
+    "source": "先校正歪斜與取景比例。人、橋、建物被裁掉一半時，通常不是提高飽和度能救的。",
+    "en": "First correct any tilt and the framing proportions. When a person, bridge or building is cut in half, raising saturation usually can’t save it.",
+    "ja": "まず傾きと構図の比率を直します。人、橋、建物が半分切れているなら、彩度を上げてもたいてい救えません。"
+  },
+  {
+    "source": "整體明暗",
+    "en": "Overall tone ",
+    "ja": "全体の明暗"
+  },
+  {
+    "source": "調整曝光、白點與黑點，保留暗部的方向感，檢查 RGB 通道有沒有裁切。",
+    "en": "Adjust exposure, the white point and the black point, keep a sense of direction in the shadows, and check the RGB channels for clipping.",
+    "ja": "露出、白レベル、黒レベルを調整し、暗部の方向感を残しつつ、RGB チャンネルがクリップしていないかを確認します。"
+  },
+  {
+    "source": "冷暖與色彩",
+    "en": "Warmth and color ",
+    "ja": "色温度と色"
+  },
+  {
+    "source": "水與岩石已經有自然的冷暖對比時，不必推高所有色彩；對照拍攝當下的印象。",
+    "en": "When water and rock already have a natural warm–cool contrast, there’s no need to push every color; compare with your impression at the moment you shot it.",
+    "ja": "水と岩にすでに自然な暖色・寒色の対比があるなら、すべての色を強める必要はありません。撮影したときの印象と照らし合わせます。"
+  },
+  {
+    "source": "局部遮色片",
+    "en": "Local masks ",
+    "ja": "部分マスク"
+  },
+  {
+    "source": "微調天空、樹林或河道，避免天空過暗、地面過亮，形成不合理的 HDR 光暈。",
+    "en": "Fine-tune the sky, forest or river, avoiding an overly dark sky and overly bright ground that create implausible HDR halos.",
+    "ja": "空、森、川筋を微調整し、空が暗すぎて地面が明るすぎる、不自然な HDR のハロを避けます。"
+  },
+  {
+    "source": "細節與霧",
+    "en": "Detail and haze ",
+    "ja": "細部とかすみ"
+  },
+  {
+    "source": "少量使用 Texture、Clarity、Dehaze；遠山適度柔和，才有空氣透視。",
+    "en": "Use Texture, Clarity and Dehaze sparingly; distant mountains should stay a little soft so aerial perspective survives.",
+    "ja": "Texture、Clarity、Dehaze は控えめに。遠くの山をほどよく柔らかく残してこそ、空気遠近法が生まれます。"
+  },
+  {
+    "source": "輸出與檢查",
+    "en": "Export and check ",
+    "ja": "書き出しと確認"
+  },
+  {
+    "source": "確認邊緣白邊、銳化光暈、色帶，以及手機 HDR 造成的假紋理。",
+    "en": "Check for white fringes along edges, sharpening halos, color banding and the false textures phone HDR can create.",
+    "ja": "輪郭の白いふち、シャープネスのハロ、色の帯（バンディング）、スマートフォン HDR が生む偽の質感を確認します。"
+  },
+  {
+    "source": "裁切示範不補造景物",
+    "en": "The crop examples add nothing",
+    "ja": "トリミング作例は何も付け足さない"
+  },
+  {
+    "source": "右側的版本不會把半截的橋延長，也不會加入人造的金色光線。因此改善的幅度更真實，也更能看出哪些問題一定得回到現場重拍。",
+    "en": "The versions on the right don’t extend the half-visible bridge or add artificial golden light. That keeps the improvement realistic and makes it easier to see which problems can only be fixed by going back and reshooting.",
+    "ja": "右側の版では、半分切れた橋を延ばすことも、人工的な金色の光を加えることもしていません。そのため改善の幅はより現実的で、どの問題が現場で撮り直すしかないのかも見えやすくなります。"
+  },
+  {
+    "source": "出門時怎麼拍：一套可重複的 30 秒檢查法",
+    "en": "How to shoot when you’re out: a repeatable 30-second check",
+    "ja": "出かけたときの撮り方：繰り返し使える 30 秒チェック"
+  },
+  {
+    "source": "先決定主體",
+    "en": "Decide on the subject first ",
+    "ja": "まず主被写体を決める"
+  },
+  {
+    "source": "用一句話說明：這張拍的是河流、吊橋、光束、樹幹，還是小舟？",
+    "en": "Say it in one sentence: is this a photo of the river, the suspension bridge, the rays, the trunks or the small boat?",
+    "ja": "一文で言ってみます。この写真が撮っているのは、川か、吊り橋か、光芒か、幹か、それとも小舟か？"
+  },
+  {
+    "source": "找導線或框景",
+    "en": "Find a leading line or frame ",
+    "ja": "リーディングラインかフレームを探す"
+  },
+  {
+    "source": "河道、步道、岩壁、樹幹，至少有一項能把視線送到主體。",
+    "en": "River channel, footpath, rock wall, trunks: at least one should carry the eye to the subject.",
+    "ja": "川筋、遊歩道、岩壁、幹のうち、少なくとも 1 つが視線を主被写体へ運ぶようにします。"
+  },
+  {
+    "source": "比較兩個鏡頭或裁切",
+    "en": "Compare two lenses or crops ",
+    "ja": "2 つのレンズかトリミングを比べる"
+  },
+  {
+    "source": "先用 1x 拍一張基準，再用超廣角或光學長焦；不要只求裝進更多東西。",
+    "en": "Take a baseline shot at 1x first, then try the ultra-wide or the optical telephoto; don’t just aim to fit more in.",
+    "ja": "まず 1x で基準の 1 枚を撮り、次に超広角か光学望遠を使います。より多くを詰め込むことだけを目指さないこと。"
+  },
+  {
+    "source": "換機位（先確認安全）",
+    "en": "Change position (check safety first) ",
+    "ja": "撮影位置を変える（まず安全を確認）"
+  },
+  {
+    "source": "站著、蹲著、往旁邊移動幾步，觀察枝條是否離開主體。",
+    "en": "Stand, crouch or move a few steps to the side, and see whether the branches move off the subject.",
+    "ja": "立つ、しゃがむ、横に数歩動く。枝が主被写体から離れるかを観察します。"
+  },
+  {
+    "source": "保護高光與快門",
+    "en": "Protect highlights and shutter speed ",
+    "ja": "ハイライトとシャッター速度を守る"
+  },
+  {
+    "source": "看看河面反光和天空，必要時降低曝光、包圍曝光，或等光線改變。",
+    "en": "Look at the reflections on the river and the sky; if needed, lower the exposure, bracket, or wait for the light to change.",
+    "ja": "川面の反射と空を見て、必要なら露出を下げるか、ブラケット撮影するか、光が変わるのを待ちます。"
+  },
+  {
+    "source": "再拍變體",
+    "en": "Then shoot variations ",
+    "ja": "バリエーションも撮る"
+  },
+  {
+    "source": "橫幅與直幅各一張、近與遠各一張；先保住可用的版本，再做實驗。",
+    "en": "One horizontal and one vertical, one close and one far; secure a usable version first, then experiment.",
+    "ja": "横位置と縦位置で 1 枚ずつ、近くと遠くで 1 枚ずつ。まず使える 1 枚を確保してから実験します。"
+  },
+  {
+    "source": "現場檢查表",
+    "en": "Field checklist",
+    "ja": "現場チェックリスト"
+  },
+  {
+    "source": "主題在 2 秒內能辨認。",
+    "en": "The subject can be recognized within 2 seconds.",
+    "ja": "2 秒以内に主題がわかる。"
+  },
+  {
+    "source": "主體沒有被枝葉或前景遮住。",
+    "en": "The subject isn’t blocked by foliage or the foreground.",
+    "ja": "主被写体が枝葉や前景で隠れていない。"
+  },
+  {
+    "source": "有意識地選擇直幅或橫幅。",
+    "en": "Vertical or horizontal was chosen deliberately.",
+    "ja": "縦位置か横位置かを意識して選んだ。"
+  },
+  {
+    "source": "視線的動線有終點。",
+    "en": "The eye’s path has an end point.",
+    "ja": "視線の流れに終点がある。"
+  },
+  {
+    "source": "邊框沒有突出的雜物。",
+    "en": "No distracting clutter sticks out at the edges.",
+    "ja": "画面の縁に目立つ雑物がない。"
+  },
+  {
+    "source": "重要的高光沒有不可接受的裁切。",
+    "en": "Important highlights have no unacceptable clipping.",
+    "ja": "重要なハイライトに許容できない白飛びがない。"
+  },
+  {
+    "source": "快門足以控制手震與主體的動作。",
+    "en": "The shutter speed is fast enough for camera shake and subject movement.",
+    "ja": "シャッター速度が手ブレと被写体の動きを抑えるのに足りている。"
+  },
+  {
+    "source": "已檢查近景與遠景的清晰度。",
+    "en": "Sharpness in the foreground and background has been checked.",
+    "ja": "近景と遠景のシャープさを確認した。"
+  },
+  {
+    "source": "現場已拍一張更窄的構圖。",
+    "en": "A tighter composition was also shot on location.",
+    "ja": "現場でより狭い構図も 1 枚撮った。"
+  },
+  {
+    "source": "腳下、橋邊與水岸都安全。",
+    "en": "Footing, bridge edges and the waterside are all safe.",
+    "ja": "足元、橋の端、水辺がすべて安全。"
+  },
+  {
+    "source": "勾選只存在目前開啟的頁面，重新載入就會清空；本頁不保存也不傳送任何資料。",
+    "en": "Checkmarks exist only in the currently open page and are cleared when you reload; this page doesn’t save or send any data.",
+    "ja": "チェックは今開いているページの中だけに存在し、再読み込みで消えます。本ページはデータを保存も送信もしません。"
+  },
+  {
+    "source": "31 張真實照片：逐張檢視紀錄",
+    "en": "31 real photos: a photo-by-photo review",
+    "ja": "31 枚の実写真：1 枚ずつの検討記録"
+  },
+  {
+    "source": "這裡收錄原始的 31 張 JPEG，依檔名（拍攝時間）排序。標籤是針對「風景作品的主體清晰度與構圖」的",
+    "en": "Here are the original 31 JPEGs, sorted by file name (shooting time). The labels are ",
+    "ja": "ここには元の 31 枚の JPEG を、ファイル名（撮影時刻）順に収録しています。ラベルは「風景作品としての主題の明確さと構図」についての"
+  },
+  {
+    "source": "主觀教學判斷",
+    "en": "subjective teaching judgments",
+    "ja": "主観的な教育上の判断"
+  },
+  {
+    "source": "，不是照片的客觀美感分數。「紀錄」不等於不值得保留；旅遊紀錄的價值可能來自資訊與回憶，而不是風景作品的標準。",
+    "en": " of “subject clarity and composition as a landscape work,” not objective scores of a photo’s beauty. “Record” doesn’t mean a photo isn’t worth keeping; a travel record’s value can come from information and memories rather than from landscape-work standards.",
+    "ja": "であり、写真の客観的な美しさの点数ではありません。「記録」は残す価値がないという意味ではありません。旅の記録の価値は、風景作品の基準ではなく、情報や思い出から生まれることもあります。"
+  },
+  {
+    "source": "標籤分布：精選 1 張、佳 12 張、可改善 15 張、紀錄 3 張。",
+    "en": "Label breakdown: Top pick 1, Good 12, Could improve 15, Record 3.",
+    "ja": "ラベルの内訳：厳選 1 枚、良い 12 枚、改善の余地あり 15 枚、記録 3 枚。"
+  },
+  {
+    "source": "只看「可改善」的照片",
+    "en": "Show only “Could improve” photos",
+    "ja": "「改善の余地あり」の写真だけを表示"
+  },
+  {
+    "source": "顯示 31／31 張",
+    "en": "Showing 31 of 31",
+    "ja": "31 枚中 31 枚を表示"
+  },
+  {
+    "source": "車站月台的屋頂向遠方收斂，上方有設備與招牌。",
+    "en": "The roof of a station platform converging into the distance, with equipment and signs overhead.",
+    "ja": "駅のホームの屋根が遠くへ収束し、上部に設備と看板がある。"
+  },
+  {
+    "source": "車站月台",
+    "en": "Station platform",
+    "ja": "駅のホーム"
+  },
+  {
+    "source": "紀錄",
+    "en": "Record",
+    "ja": "記録"
+  },
+  {
+    "source": "車站屋頂形成消失點，但上方設備與招牌資訊多；若拍建築節奏可稍微收緊畫面。",
+    "en": "The station roof forms a vanishing point, but the equipment and signs above add a lot of information; to capture the architectural rhythm, tighten the frame a little.",
+    "ja": "駅の屋根が消失点を作っているが、上部の設備と看板の情報が多い。建築のリズムを撮るなら、画面を少し引き締めるとよい。"
+  },
+  {
+    "source": "PXL_20261010_002848591.jpg · 24mm 等效 · ISO 21",
+    "en": "PXL_20261010_002848591.jpg · 24mm equiv. · ISO 21",
+    "ja": "PXL_20261010_002848591.jpg · 24mm 相当 · ISO 21"
+  },
+  {
+    "source": "戶外導覽看板，玻璃面有反光。",
+    "en": "An outdoor information board with reflections on its glass.",
+    "ja": "屋外の案内板。ガラス面に反射がある。"
+  },
+  {
+    "source": "現場導覽圖",
+    "en": "On-site map board",
+    "ja": "現地の案内図"
+  },
+  {
+    "source": "屬旅遊紀錄，玻璃反射降低可讀性；稍微側移避免鏡面反射。",
+    "en": "A travel record; reflections on the glass reduce legibility. Step slightly to the side to avoid the mirror-like reflection.",
+    "ja": "旅の記録。ガラスの反射で読みにくい。少し横にずれて鏡面反射を避ける。"
+  },
+  {
+    "source": "PXL_20261010_020829314.jpg · 24mm 等效 · ISO 23",
+    "en": "PXL_20261010_020829314.jpg · 24mm equiv. · ISO 23",
+    "ja": "PXL_20261010_020829314.jpg · 24mm 相当 · ISO 23"
+  },
+  {
+    "source": "從高處俯視的狹谷，谷壁向下收斂，河流在底部。",
+    "en": "A narrow gorge seen from above, its walls converging downward, with the river at the bottom.",
+    "ja": "高い位置から見下ろした狭い谷。谷壁が下へ向かって収束し、底に川がある。"
+  },
+  {
+    "source": "俯視狹谷",
+    "en": "Gorge from above",
+    "ja": "見下ろした狭い谷"
+  },
+  {
+    "source": "佳",
+    "en": "Good",
+    "ja": "良い"
+  },
+  {
+    "source": "谷壁自然收斂，具深度；河流偏小，可縮窄視角強調河道。",
+    "en": "The gorge walls converge naturally and give depth; the river is a bit small, so narrow the angle of view to emphasize the channel.",
+    "ja": "谷壁が自然に収束し、奥行きがある。川がやや小さいので、画角を狭めて川筋を強調できる。"
+  },
+  {
+    "source": "PXL_20261010_022724150.jpg · 12mm 等效 · ISO 57",
+    "en": "PXL_20261010_022724150.jpg · 12mm equiv. · ISO 57",
+    "ja": "PXL_20261010_022724150.jpg · 12mm 相当 · ISO 57"
+  },
+  {
+    "source": "樹林入口，許多樹幹與枝葉交錯。",
+    "en": "The entrance to a wood, with many trunks and branches crisscrossing.",
+    "ja": "林の入り口。多くの幹や枝葉が入り組んでいる。"
+  },
+  {
+    "source": "森林入口",
+    "en": "Forest entrance",
+    "ja": "森の入り口"
+  },
+  {
+    "source": "可改善",
+    "en": "Could improve",
+    "ja": "改善の余地あり"
+  },
+  {
+    "source": "樹木紋理豐富，但缺少明確焦點；嘗試孤立一棵受光樹。",
+    "en": "Rich tree textures, but no clear focal point; try isolating one sunlit tree.",
+    "ja": "木々の質感は豊かだが、はっきりした焦点がない。光の当たる木を 1 本だけ切り出してみる。"
+  },
+  {
+    "source": "PXL_20261010_023018362.jpg · 24mm 等效 · ISO 24",
+    "en": "PXL_20261010_023018362.jpg · 24mm equiv. · ISO 24",
+    "ja": "PXL_20261010_023018362.jpg · 24mm 相当 · ISO 24"
+  },
+  {
+    "source": "山坡上散布的房屋與前景枝葉。",
+    "en": "Houses scattered on a hillside, with foliage in the foreground.",
+    "ja": "斜面に点在する家々と前景の枝葉。"
+  },
+  {
+    "source": "山坡聚落",
+    "en": "Hillside settlement",
+    "ja": "斜面の集落"
+  },
+  {
+    "source": "山坡房屋提供人文尺度，但背景枝葉雜亂、主題分散。",
+    "en": "The hillside houses add a human scale, but the foliage behind is messy and the subject is scattered.",
+    "ja": "斜面の家々が人の暮らしのスケールを示すが、背景の枝葉が雑然とし、主題が散漫。"
+  },
+  {
+    "source": "PXL_20261010_023959391.jpg · 49mm 等效 · ISO 23",
+    "en": "PXL_20261010_023959391.jpg · 49mm equiv. · ISO 23",
+    "ja": "PXL_20261010_023959391.jpg · 49mm 相当 · ISO 23"
+  },
+  {
+    "source": "蜿蜒的河道向遠方延伸，左右坡面明暗差大。",
+    "en": "A winding river channel stretching into the distance, with a strong difference in light between the left and right slopes.",
+    "ja": "蛇行する川筋が遠くへ延び、左右の斜面の明暗差が大きい。"
+  },
+  {
+    "source": "蜿蜒河道",
+    "en": "Winding river",
+    "ja": "蛇行する川筋"
+  },
+  {
+    "source": "河道作為清楚的縱深導線；左右明暗差可當作戲劇張力。",
+    "en": "The channel works as a clear leading line into depth; the light difference between left and right can serve as dramatic tension.",
+    "ja": "川筋が奥行きへのはっきりしたリーディングラインになる。左右の明暗差はドラマチックな緊張感として生かせる。"
+  },
+  {
+    "source": "PXL_20261010_025023976.jpg · 24mm 等效 · ISO 23",
+    "en": "PXL_20261010_025023976.jpg · 24mm equiv. · ISO 23",
+    "ja": "PXL_20261010_025023976.jpg · 24mm 相当 · ISO 23"
+  },
+  {
+    "source": "以超廣角拍攝的開闊山谷與受光坡面。",
+    "en": "An open valley and sunlit slopes shot with an ultra-wide.",
+    "ja": "超広角で撮った開けた谷と日の当たる斜面。"
+  },
+  {
+    "source": "廣角山谷",
+    "en": "Wide-angle valley",
+    "ja": "広角の谷"
+  },
+  {
+    "source": "視野開闊，但高亮坡面與河道沒有明確主次；嘗試更窄取景。",
+    "en": "An open view, but the bright slope and the channel have no clear hierarchy; try a tighter framing.",
+    "ja": "視野は開けているが、明るい斜面と川筋の主従がはっきりしない。より狭い構図を試す。"
+  },
+  {
+    "source": "PXL_20261010_025036139.jpg · 12mm 等效 · ISO 57",
+    "en": "PXL_20261010_025036139.jpg · 12mm equiv. · ISO 57",
+    "ja": "PXL_20261010_025036139.jpg · 12mm 相当 · ISO 57"
+  },
+  {
+    "source": "俯拍溪床上的石頭與流水。",
+    "en": "Stones and flowing water in a streambed, shot from above.",
+    "ja": "渓床の石と流れを上から撮影。"
+  },
+  {
+    "source": "溪石俯拍",
+    "en": "Stream stones from above",
+    "ja": "渓流の石の俯瞰"
+  },
+  {
+    "source": "可呈現流水狀態；改變站位使瀑流成為更明確的主體。",
+    "en": "Shows the state of the flowing water; change your position so the cascade becomes a clearer subject.",
+    "ja": "流れの様子は伝わる。立ち位置を変えて、落ちる水をよりはっきりした主被写体にする。"
+  },
+  {
+    "source": "PXL_20261010_025740936.jpg · 24mm 等效 · ISO 510",
+    "en": "PXL_20261010_025740936.jpg · 24mm equiv. · ISO 510",
+    "ja": "PXL_20261010_025740936.jpg · 24mm 相当 · ISO 510"
+  },
+  {
+    "source": "直幅拍攝的小瀑布與周圍的草葉。",
+    "en": "A small waterfall shot vertically, with the grass around it.",
+    "ja": "縦位置で撮った小さな滝と周りの草葉。"
+  },
+  {
+    "source": "直幅小瀑布",
+    "en": "Small waterfall, vertical",
+    "ja": "縦位置の小さな滝"
+  },
+  {
+    "source": "水流垂直軸線明確；留意右側亮草與背景雜枝。",
+    "en": "The water’s vertical axis is clear; watch the bright grass on the right and stray branches behind.",
+    "ja": "水の流れの垂直軸が明確。右側の明るい草と背景の雑多な枝に注意。"
+  },
+  {
+    "source": "PXL_20261010_025813058.jpg · 24mm 等效 · ISO 18",
+    "en": "PXL_20261010_025813058.jpg · 24mm equiv. · ISO 18",
+    "ja": "PXL_20261010_025813058.jpg · 24mm 相当 · ISO 18"
+  },
+  {
+    "source": "森林中的溪流與岩石，前方有橫倒的樹幹。",
+    "en": "A stream and rocks in the forest, with a fallen trunk lying across the front.",
+    "ja": "森の中の渓流と岩。手前に倒木が横たわっている。"
+  },
+  {
+    "source": "森林溪流",
+    "en": "Forest stream",
+    "ja": "森の渓流"
+  },
+  {
+    "source": "前方溪道與岩石能帶視線入畫，但近處橫木有阻斷感。",
+    "en": "The stream channel and rocks in front lead the eye into the frame, but the log close to the camera feels like a barrier.",
+    "ja": "手前の流れと岩が視線を画面に導くが、近くの横木が行く手を遮るように感じられる。"
+  },
+  {
+    "source": "PXL_20261010_030011621.jpg · 24mm 等效 · ISO 52",
+    "en": "PXL_20261010_030011621.jpg · 24mm equiv. · ISO 52",
+    "ja": "PXL_20261010_030011621.jpg · 24mm 相当 · ISO 52"
+  },
+  {
+    "source": "橫幅拍攝的森林溪谷，光束照在溪石上。",
+    "en": "A forest stream valley shot horizontally, with shafts of light falling on the stream stones.",
+    "ja": "横位置で撮った森の渓谷。光芒が渓流の石を照らしている。"
+  },
+  {
+    "source": "森林溪谷橫幅",
+    "en": "Forest stream valley, horizontal",
+    "ja": "森の渓谷・横位置"
+  },
+  {
+    "source": "光束、溪流與石頭有連續深度；略緊的角度能減少枝條干擾。",
+    "en": "The rays, the stream and the stones create continuous depth; a slightly tighter angle would reduce interference from branches.",
+    "ja": "光芒、流れ、石が連続した奥行きを作る。少し狭い画角にすれば枝の邪魔が減る。"
+  },
+  {
+    "source": "PXL_20261010_030015888.jpg · 24mm 等效 · ISO 117",
+    "en": "PXL_20261010_030015888.jpg · 24mm equiv. · ISO 117",
+    "ja": "PXL_20261010_030015888.jpg · 24mm 相当 · ISO 117"
+  },
+  {
+    "source": "林中的步道，下方有告示牌，右側有建物。",
+    "en": "A path through the woods, with a notice board at the bottom and a building on the right.",
+    "ja": "林の中の遊歩道。下に掲示板、右側に建物がある。"
+  },
+  {
+    "source": "林中小徑",
+    "en": "Forest trail",
+    "ja": "林の小道"
+  },
+  {
+    "source": "小徑帶入場景，但底部告示與右側建物相互搶戲。",
+    "en": "The trail leads into the scene, but the notice at the bottom and the building on the right compete for attention.",
+    "ja": "小道が場面へと導くが、下の掲示と右側の建物が互いに注意を奪い合う。"
+  },
+  {
+    "source": "PXL_20261010_030321133.jpg · 24mm 等效 · ISO 28",
+    "en": "PXL_20261010_030321133.jpg · 24mm equiv. · ISO 28",
+    "ja": "PXL_20261010_030321133.jpg · 24mm 相当 · ISO 28"
+  },
+  {
+    "source": "橫幅的杉林，樹幹平均分布，樹梢透光。",
+    "en": "A cedar forest in landscape orientation, trunks evenly spread, light showing through the treetops.",
+    "ja": "横位置の杉林。幹が均等に並び、梢から光が透けている。"
+  },
+  {
+    "source": "杉林橫幅",
+    "en": "Cedar forest, horizontal",
+    "ja": "杉林・横位置"
+  },
+  {
+    "source": "樹幹有節奏，背光亮洞很多；需選單一受光主幹。",
+    "en": "The trunks have rhythm, but there are many bright backlit gaps; pick out a single sunlit main trunk.",
+    "ja": "幹にリズムはあるが、逆光の明るい穴が多い。光の当たる幹を 1 本選ぶ必要がある。"
+  },
+  {
+    "source": "PXL_20261010_031416116.jpg · 12mm 等效 · ISO 51",
+    "en": "PXL_20261010_031416116.jpg · 12mm equiv. · ISO 51",
+    "ja": "PXL_20261010_031416116.jpg · 12mm 相当 · ISO 51"
+  },
+  {
+    "source": "直幅的杉林，樹幹由下往上伸展。",
+    "en": "A cedar forest in portrait orientation, trunks stretching from bottom to top.",
+    "ja": "縦位置の杉林。幹が下から上へ伸びている。"
+  },
+  {
+    "source": "杉林直幅",
+    "en": "Cedar forest, vertical",
+    "ja": "杉林・縦位置"
+  },
+  {
+    "source": "直幅強調樹的高度，但仍可以減少下緣枯枝。",
+    "en": "The vertical frame emphasizes the trees’ height, but the dead branches along the bottom could still be reduced.",
+    "ja": "縦位置で木の高さを強調しているが、下端の枯れ枝はまだ減らせる。"
+  },
+  {
+    "source": "PXL_20261010_031426340.jpg · 12mm 等效 · ISO 54",
+    "en": "PXL_20261010_031426340.jpg · 12mm equiv. · ISO 54",
+    "ja": "PXL_20261010_031426340.jpg · 12mm 相当 · ISO 54"
+  },
+  {
+    "source": "山谷中的河道，近處有一大塊橋的陰影。",
+    "en": "A river channel in a valley, with a large bridge shadow close to the camera.",
+    "ja": "谷の中の川筋。手前に橋の大きな影がある。"
+  },
+  {
+    "source": "山谷橋影",
+    "en": "Valley with bridge shadow",
+    "ja": "谷と橋の影"
+  },
+  {
+    "source": "河谷線條強，但大塊人工陰影讓視線中斷。",
+    "en": "Strong valley lines, but the large artificial shadow breaks the eye’s path.",
+    "ja": "谷の線は力強いが、人工物の大きな影で視線が途切れる。"
+  },
+  {
+    "source": "PXL_20261010_032704735.jpg · 12mm 等效 · ISO 55",
+    "en": "PXL_20261010_032704735.jpg · 12mm equiv. · ISO 55",
+    "ja": "PXL_20261010_032704735.jpg · 12mm 相当 · ISO 55"
+  },
+  {
+    "source": "強逆光下的河谷，近處有霧白與高光。",
+    "en": "A river valley in strong backlight, with misty white haze and highlights close to the camera.",
+    "ja": "強い逆光の川の谷。手前が白くかすみ、ハイライトがある。"
+  },
+  {
+    "source": "河谷強逆光",
+    "en": "Valley in strong backlight",
+    "ja": "強い逆光の谷"
+  },
+  {
+    "source": "山谷有層次，近端霧白與高光影響清晰；換角度或時機。",
+    "en": "The valley has layers, but the hazy white and highlights up close hurt clarity; change the angle or the timing.",
+    "ja": "谷に層はあるが、手前の白いかすみとハイライトが鮮明さを損なう。角度か時間を変える。"
+  },
+  {
+    "source": "PXL_20261010_032712401.jpg · 12mm 等效 · ISO 51",
+    "en": "PXL_20261010_032712401.jpg · 12mm equiv. · ISO 51",
+    "ja": "PXL_20261010_032712401.jpg · 12mm 相当 · ISO 51"
+  },
+  {
+    "source": "直幅拍攝的峽谷碧綠河道與岩石。",
+    "en": "The gorge’s jade-green channel and rocks, shot vertically.",
+    "ja": "縦位置で撮った峡谷のエメラルドグリーンの川筋と岩。"
+  },
+  {
+    "source": "峽谷碧綠河道",
+    "en": "Jade-green channel in the gorge",
+    "ja": "峡谷のエメラルドグリーンの川筋"
+  },
+  {
+    "source": "直幅強化河流深度；水與岩石比例有吸引力。",
+    "en": "The vertical frame strengthens the river’s depth; the balance of water and rock is appealing.",
+    "ja": "縦位置で川の奥行きが強まる。水と岩の比率に魅力がある。"
+  },
+  {
+    "source": "PXL_20261010_034054885.jpg · 12mm 等效 · ISO 59",
+    "en": "PXL_20261010_034054885.jpg · 12mm equiv. · ISO 59",
+    "ja": "PXL_20261010_034054885.jpg · 12mm 相当 · ISO 59"
+  },
+  {
+    "source": "翡翠色河水、白灰岩石與上方的吊橋。",
+    "en": "Emerald water, whitish-gray rocks and the suspension bridge above.",
+    "ja": "翡翠色の川、白っぽい灰色の岩、上の吊り橋。"
+  },
+  {
+    "source": "翡翠峽谷吊橋",
+    "en": "Emerald gorge and suspension bridge",
+    "ja": "翡翠色の峡谷と吊り橋"
+  },
+  {
+    "source": "精選",
+    "en": "Top pick",
+    "ja": "厳選"
+  },
+  {
+    "source": "水色與岩壁層次非常鮮明；可移除下緣雜草與不完整橋景。",
+    "en": "The water color and the layers of rock wall are very vivid; the weeds along the bottom and the incomplete bridge could be removed.",
+    "ja": "水の色と岩壁の層がとても鮮やか。下端の雑草と欠けた橋は取り除ける。"
+  },
+  {
+    "source": "PXL_20261010_034347195.jpg · 12mm 等效 · ISO 56",
+    "en": "PXL_20261010_034347195.jpg · 12mm equiv. · ISO 56",
+    "ja": "PXL_20261010_034347195.jpg · 12mm 相当 · ISO 56"
+  },
+  {
+    "source": "峽谷的超寬全景接圖。",
+    "en": "An ultra-wide stitched panorama of the gorge.",
+    "ja": "峡谷の超横長パノラマ合成。"
+  },
+  {
+    "source": "峽谷全景拼接",
+    "en": "Stitched gorge panorama",
+    "ja": "峡谷のパノラマ合成"
+  },
+  {
+    "source": "展示地貌全貌，適合紀錄；極寬比例讓主體較小且底邊接合須檢查。",
+    "en": "Shows the whole landform and suits documentation; the extremely wide ratio makes the subject small, and the stitching along the bottom edge needs checking.",
+    "ja": "地形の全体像を示し、記録に向く。極端な横長で主被写体が小さく、下端のつなぎ目は確認が必要。"
+  },
+  {
+    "source": "PXL_20261010_034400603.PANO.jpg · 24mm 等效 · ISO 29",
+    "en": "PXL_20261010_034400603.PANO.jpg · 24mm equiv. · ISO 29",
+    "ja": "PXL_20261010_034400603.PANO.jpg · 24mm 相当 · ISO 29"
+  },
+  {
+    "source": "安靜的水潭，上方山坡有明亮的建物。",
+    "en": "A calm pool, with bright buildings on the hillside above.",
+    "ja": "静かな淵。上の斜面に明るい建物がある。"
+  },
+  {
+    "source": "水潭與山坡建物",
+    "en": "Pool and hillside buildings",
+    "ja": "淵と斜面の建物"
+  },
+  {
+    "source": "水面安靜，但上方建物高亮、左右資訊分散；確定是否要拍人文或水色。",
+    "en": "Calm water, but the buildings above are very bright and the information at left and right is scattered; decide whether you’re shooting the human element or the water color.",
+    "ja": "水面は静かだが、上の建物が明るすぎ、左右の情報が散らばっている。人の暮らしと水の色のどちらを撮るかを決める。"
+  },
+  {
+    "source": "PXL_20261010_035547268.jpg · 12mm 等效 · ISO 49",
+    "en": "PXL_20261010_035547268.jpg · 12mm equiv. · ISO 49",
+    "ja": "PXL_20261010_035547268.jpg · 12mm 相当 · ISO 49"
+  },
+  {
+    "source": "透過枝幹看到的翡翠色湖面。",
+    "en": "An emerald lake seen through branches and trunks.",
+    "ja": "枝越しに見える翡翠色の湖面。"
+  },
+  {
+    "source": "林間翡翠湖",
+    "en": "Emerald lake through the trees",
+    "ja": "林間の翡翠色の湖"
+  },
+  {
+    "source": "色彩漂亮，但枝幹遮住水面；可利用樹幹形成更乾淨的自然框景。",
+    "en": "Beautiful color, but branches block the water; use the trunks to form a cleaner natural frame.",
+    "ja": "色は美しいが、枝や幹が水面を隠している。幹を使って、よりすっきりした自然のフレームを作れる。"
+  },
+  {
+    "source": "PXL_20261010_043608407.jpg · 24mm 等效 · ISO 20",
+    "en": "PXL_20261010_043608407.jpg · 24mm equiv. · ISO 20",
+    "ja": "PXL_20261010_043608407.jpg · 24mm 相当 · ISO 20"
+  },
+  {
+    "source": "森林框住的水閘與湖面倒影。",
+    "en": "A water gate framed by forest, with its reflection on the lake.",
+    "ja": "森に囲まれた水門と湖面の映り込み。"
+  },
+  {
+    "source": "水閘與湖面",
+    "en": "Water gate and lake",
+    "ja": "水門と湖面"
+  },
+  {
+    "source": "森林框景引向水閘，但前景碎枝略多，可更精簡。",
+    "en": "The forest frame leads to the water gate, but there are slightly too many small branches in the foreground; it could be simpler.",
+    "ja": "森のフレームが水門へ導くが、前景の細かい枝がやや多く、もっと簡潔にできる。"
+  },
+  {
+    "source": "PXL_20261010_043748968.jpg · 24mm 等效 · ISO 21",
+    "en": "PXL_20261010_043748968.jpg · 24mm equiv. · ISO 21",
+    "ja": "PXL_20261010_043748968.jpg · 24mm 相当 · ISO 21"
+  },
+  {
+    "source": "大樹枝椏下方的湖面，右下角岸邊停著幾艘獨木舟。",
+    "en": "A lake beneath the boughs of a large tree, with several kayaks pulled up on the shore in the lower-right corner.",
+    "ja": "大木の枝の下の湖面。右下の岸に数艇のカヤックが置かれている。"
+  },
+  {
+    "source": "枝椏與獨木舟",
+    "en": "Boughs and kayaks",
+    "ja": "枝とカヤック"
+  },
+  {
+    "source": "樹形優美、水面清亮，但獨木舟擠在角落且大樹幹搶鏡。",
+    "en": "A graceful tree shape and clear water, but the kayaks are squeezed into a corner and the big trunk steals the show.",
+    "ja": "木の形は美しく水面も澄んでいるが、カヤックが隅に寄り、大きな幹が目立ちすぎる。"
+  },
+  {
+    "source": "PXL_20261010_044409306.jpg · 24mm 等效 · ISO 21",
+    "en": "PXL_20261010_044409306.jpg · 24mm equiv. · ISO 21",
+    "ja": "PXL_20261010_044409306.jpg · 24mm 相当 · ISO 21"
+  },
+  {
+    "source": "樹幹之間看到湖面上的兩塊槳板與兩個人。",
+    "en": "Two paddleboards and two people on the lake, seen between tree trunks.",
+    "ja": "幹の間から見える湖面の 2 枚のパドルボードと 2 人。"
+  },
+  {
+    "source": "樹間槳板",
+    "en": "Paddleboard between trees",
+    "ja": "木々の間のパドルボード"
+  },
+  {
+    "source": "人與槳板提供尺度及故事，若換位避免粗樹幹遮擋會更突出。",
+    "en": "The person and paddleboard give scale and a story; moving to avoid the thick trunk in the way would make them stand out more.",
+    "ja": "人とパドルボードがスケールと物語を与える。位置を変えて太い幹に遮られないようにすれば、もっと際立つ。"
+  },
+  {
+    "source": "PXL_20261010_044600603.jpg · 24mm 等效 · ISO 218",
+    "en": "PXL_20261010_044600603.jpg · 24mm equiv. · ISO 218",
+    "ja": "PXL_20261010_044600603.jpg · 24mm 相当 · ISO 218"
+  },
+  {
+    "source": "從橋上以超廣角拍攝的河景與橋影。",
+    "en": "A river view and bridge shadow shot from the bridge with an ultra-wide.",
+    "ja": "橋の上から超広角で撮った川の風景と橋の影。"
+  },
+  {
+    "source": "橋上超廣角河景",
+    "en": "Ultra-wide river view from the bridge",
+    "ja": "橋の上からの超広角の川景色"
+  },
+  {
+    "source": "河道有導線、槳板有尺度；大片橋影與過多近端水面削弱重點。",
+    "en": "The channel gives a leading line and the paddleboard gives scale; the large bridge shadow and too much near water weaken the focus.",
+    "ja": "川筋がリーディングラインに、パドルボードがスケールになる。大きな橋の影と多すぎる手前の水面が見せ場を弱める。"
+  },
+  {
+    "source": "PXL_20261010_045807548.jpg · 12mm 等效 · ISO 60",
+    "en": "PXL_20261010_045807548.jpg · 12mm equiv. · ISO 60",
+    "ja": "PXL_20261010_045807548.jpg · 12mm 相当 · ISO 60"
+  },
+  {
+    "source": "從橋上以主鏡頭拍攝、較集中的河景。",
+    "en": "A more focused river view shot from the bridge with the main lens.",
+    "ja": "橋の上からメインレンズで撮った、より絞った川の風景。"
+  },
+  {
+    "source": "橋上主鏡頭河景",
+    "en": "Main-lens river view from the bridge",
+    "ja": "橋の上からのメインレンズの川景色"
+  },
+  {
+    "source": "與前張相比，河流更集中、畫面較乾淨；槳板靠左下仍太小。",
+    "en": "Compared with the previous shot, the river is more concentrated and the frame cleaner; the paddleboard at the lower left is still too small.",
+    "ja": "前の写真と比べ、川がより集中し画面もすっきりしている。左下のパドルボードはまだ小さすぎる。"
+  },
+  {
+    "source": "PXL_20261010_045812234.jpg · 24mm 等效 · ISO 20",
+    "en": "PXL_20261010_045812234.jpg · 24mm equiv. · ISO 20",
+    "ja": "PXL_20261010_045812234.jpg · 24mm 相当 · ISO 20"
+  },
+  {
+    "source": "逆光下的河面，光束從上方照下。",
+    "en": "A river surface in backlight, with rays shining down from above.",
+    "ja": "逆光の川面。光芒が上から差し込んでいる。"
+  },
+  {
+    "source": "逆光河面 A",
+    "en": "Backlit river A",
+    "ja": "逆光の川面 A"
+  },
+  {
+    "source": "有戲劇光束，但過亮反射分散河道視覺動線。",
+    "en": "Dramatic rays, but the overly bright reflection disrupts the eye’s path along the channel.",
+    "ja": "ドラマチックな光芒はあるが、明るすぎる反射が川筋に沿った視線の流れを散らす。"
+  },
+  {
+    "source": "PXL_20261010_045827144.jpg · 24mm 等效 · ISO 19",
+    "en": "PXL_20261010_045827144.jpg · 24mm equiv. · ISO 19",
+    "ja": "PXL_20261010_045827144.jpg · 24mm 相当 · ISO 19"
+  },
+  {
+    "source": "逆光下的河谷，太陽直接入鏡。",
+    "en": "A river valley in backlight, with the sun directly in frame.",
+    "ja": "逆光の川の谷。太陽が直接写り込んでいる。"
+  },
+  {
+    "source": "逆光河面 B",
+    "en": "Backlit river B",
+    "ja": "逆光の川面 B"
+  },
+  {
+    "source": "山谷光線具有氣氛，但太陽直入、高光反射與耀光競爭。",
+    "en": "The light in the valley has atmosphere, but the sun shining straight in, the bright reflections and the flare compete.",
+    "ja": "谷の光には雰囲気があるが、直接入る太陽、ハイライトの反射、フレアが競い合っている。"
+  },
+  {
+    "source": "PXL_20261010_045832826.jpg · 12mm 等效 · ISO 53",
+    "en": "PXL_20261010_045832826.jpg · 12mm equiv. · ISO 53",
+    "ja": "PXL_20261010_045832826.jpg · 12mm 相当 · ISO 53"
+  },
+  {
+    "source": "圓形隧道與出口的亮光。",
+    "en": "A round tunnel and the bright light at its exit.",
+    "ja": "円形のトンネルと出口の明るい光。"
+  },
+  {
+    "source": "圓形隧道",
+    "en": "Round tunnel",
+    "ja": "円形のトンネル"
+  },
+  {
+    "source": "隧道消失點清晰、構圖簡潔；入口亮度差與步道雜物需注意。",
+    "en": "A clear vanishing point in the tunnel and a simple composition; watch the brightness difference at the entrance and the clutter on the path.",
+    "ja": "トンネルの消失点が明快で構図も簡潔。入り口の明暗差と通路の雑物には注意。"
+  },
+  {
+    "source": "PXL_20261010_051648818.jpg · 12mm 等效 · ISO 292",
+    "en": "PXL_20261010_051648818.jpg · 12mm equiv. · ISO 292",
+    "ja": "PXL_20261010_051648818.jpg · 12mm 相当 · ISO 292"
+  },
+  {
+    "source": "河谷與岸邊的建物。",
+    "en": "A river valley and buildings along the bank.",
+    "ja": "川の谷と岸辺の建物。"
+  },
+  {
+    "source": "河谷與建物",
+    "en": "River valley and buildings",
+    "ja": "川の谷と建物"
+  },
+  {
+    "source": "河道與聚落可講故事，但建物與山勢缺主次。",
+    "en": "The river and settlement can tell a story, but the buildings and the mountains lack a clear hierarchy.",
+    "ja": "川筋と集落で物語を語れるが、建物と山の地勢に主従がない。"
+  },
+  {
+    "source": "PXL_20261010_055012010.jpg · 12mm 等效 · ISO 53",
+    "en": "PXL_20261010_055012010.jpg · 12mm equiv. · ISO 53",
+    "ja": "PXL_20261010_055012010.jpg · 12mm 相当 · ISO 53"
+  },
+  {
+    "source": "山腳下的木造車站與站前廣場。",
+    "en": "A wooden station at the foot of a mountain and the square in front of it.",
+    "ja": "山のふもとの木造駅舎と駅前広場。"
+  },
+  {
+    "source": "山城車站",
+    "en": "Mountain-town station",
+    "ja": "山あいの町の駅"
+  },
+  {
+    "source": "車站建築有特色，天空和地面占比都偏大；可調整焦段與機位。",
+    "en": "The station building has character, but the sky and ground both take up too much of the frame; adjust the focal length and position.",
+    "ja": "駅舎には特徴があるが、空と地面の比率がどちらも大きすぎる。焦点距離と撮影位置を調整できる。"
+  },
+  {
+    "source": "PXL_20261010_055341159.jpg · 24mm 等效 · ISO 22",
+    "en": "PXL_20261010_055341159.jpg · 24mm equiv. · ISO 22",
+    "ja": "PXL_20261010_055341159.jpg · 24mm 相当 · ISO 22"
+  },
+  {
+    "source": "四週練習：針對這組照片最需要改進的地方",
+    "en": "Four-week practice: targeting what this set most needs to improve",
+    "ja": "4 週間の練習：このセットで最も改善が必要な点に絞る"
+  },
+  {
+    "source": "四週練習計畫",
+    "en": "Four-week practice plan",
+    "ja": "4 週間の練習計画"
+  },
+  {
+    "source": "週次",
+    "en": "Week",
+    "ja": "週"
+  },
+  {
+    "source": "主題與實作",
+    "en": "Theme and practice",
+    "ja": "テーマと実践"
+  },
+  {
+    "source": "回家驗收",
+    "en": "Review at home",
+    "ja": "帰宅後の確認"
+  },
+  {
+    "source": "不要犯的錯",
+    "en": "Mistakes to avoid",
+    "ja": "避けたい失敗"
+  },
+  {
+    "source": "W1 主體減法",
+    "en": "W1 Simplify to the subject",
+    "ja": "W1 主被写体の引き算"
+  },
+  {
+    "source": "找一條河或一片樹林，先拍全景，再用 2–3 個視角縮小取景，標記最亮的物件。",
+    "en": "Find a river or a stretch of forest; shoot the wide view first, then narrow the framing from 2–3 viewpoints and note the brightest object.",
+    "ja": "川か森を 1 か所選び、まず全景を撮ってから、2–3 の視点で構図を狭め、最も明るい物を記録する。"
+  },
+  {
+    "source": "每組選 1 張，用一句話說出主題，並指出兩個干擾物。",
+    "en": "Pick 1 photo from each set, state its subject in one sentence and point out two distractions.",
+    "ja": "各組から 1 枚選び、一文で主題を言い、邪魔なものを 2 つ挙げる。"
+  },
+  {
+    "source": "不要只把照片換成更鮮豔的濾鏡。",
+    "en": "Don’t just swap in a more vivid filter.",
+    "ja": "写真をより派手なフィルターに替えるだけで済ませない。"
+  },
+  {
+    "source": "W2 光線方向",
+    "en": "W2 Direction of light",
+    "ja": "W2 光の方向"
+  },
+  {
+    "source": "同一地點早、中、晚各拍一次，盡量固定機位，記錄太陽位置和反差。",
+    "en": "Shoot the same spot in the morning, at midday and in the evening, keeping the camera position as fixed as possible and noting the sun’s position and the contrast.",
+    "ja": "同じ場所を朝・昼・夕方に 1 回ずつ撮る。撮影位置はできるだけ固定し、太陽の位置とコントラストを記録する。"
+  },
+  {
+    "source": "比較最亮的區域，是否真的是希望觀眾注意的地方。",
+    "en": "Compare the brightest areas: are they really where you want viewers to look?",
+    "ja": "最も明るい部分が、本当に見る人に注目してほしい場所かを比べる。"
+  },
+  {
+    "source": "不要把亮部和暗部平均化。",
+    "en": "Don’t even out the highlights and shadows.",
+    "ja": "明部と暗部を平均化しない。"
+  },
+  {
+    "source": "W3 焦段與站位",
+    "en": "W3 Focal length and position",
+    "ja": "W3 焦点距離と立ち位置"
+  },
+  {
+    "source": "同一場景用 12 mm、24 mm 各拍一張；再固定焦段，走動改變透視後重拍。",
+    "en": "Shoot the same scene once at 12 mm and once at 24 mm; then fix the focal length, walk to change the perspective, and shoot again.",
+    "ja": "同じ場面を 12 mm と 24 mm で 1 枚ずつ撮る。次に焦点距離を固定し、歩いて遠近感を変えてから撮り直す。"
+  },
+  {
+    "source": "分開說明視角的取捨與透視的差異。",
+    "en": "Explain the angle-of-view trade-off and the difference in perspective separately.",
+    "ja": "画角の取捨と遠近感の違いを分けて説明する。"
+  },
+  {
+    "source": "不要把焦距的變化誤當成攝影位置的改變。",
+    "en": "Don’t mistake a change in focal length for a change in camera position.",
+    "ja": "焦点距離の変化を撮影位置の変化と取り違えない。"
+  },
+  {
+    "source": "W4 完整作品",
+    "en": "W4 A finished piece",
+    "ja": "W4 作品としての仕上げ"
+  },
+  {
+    "source": "從同一天選 3 張最有故事的照片，做裁切、色調、標記與重拍計畫。",
+    "en": "From the same day, pick the 3 photos with the most story and plan the crop, color, marks and a reshoot.",
+    "ja": "同じ日から最も物語のある 3 枚を選び、トリミング、色調、マーク、撮り直しの計画を立てる。"
+  },
+  {
+    "source": "輸出原圖、編修版與說明；每張都要能指出改善來自哪一個決策。",
+    "en": "Export the original, the edited version and notes; for each photo, be able to point to the decision the improvement came from.",
+    "ja": "元画像、編集版、説明を出力する。どの写真も、改善がどの判断から来たのかを示せるようにする。"
+  },
+  {
+    "source": "不要用生成的新物件代替實際拍攝。",
+    "en": "Don’t replace real shooting with newly generated objects.",
+    "ja": "生成した新しい物で実際の撮影を置き換えない。"
+  },
+  {
+    "source": "如何客觀一點地檢查自己的改進",
+    "en": "How to check your progress a little more objectively",
+    "ja": "自分の上達を少し客観的に確かめる方法"
+  },
+  {
+    "source": "不要用「100 分構圖」或單一的美感分數假裝精準。每張照片只回答四個是或否：① 主體是否明確？② 動線是否有效？③ 光線有沒有幫助主體？④ 邊角有沒有無謂的干擾？隔一晚再選片，通常比剛拍完立刻選更不受現場興奮影響。",
+    "en": "Don’t pretend to precision with a “100-point composition” or a single beauty score. For each photo, answer just four yes-or-no questions: ① Is the subject clear? ② Does the eye path work? ③ Does the light help the subject? ④ Are there needless distractions at the edges? Choosing photos after a night’s rest, rather than right after shooting, is usually less swayed by the excitement of the moment.",
+    "ja": "「100 点満点の構図」や単一の美しさの点数で、正確そうに見せかけないこと。各写真について、次の 4 つにはい・いいえで答えるだけにします。① 主被写体は明確か？ ② 視線の流れは機能しているか？ ③ 光は主被写体を助けているか？ ④ 隅に無駄な邪魔はないか？ 撮った直後に選ぶより一晩おいてから選ぶほうが、たいてい現場の興奮に左右されにくくなります。"
+  },
+  {
+    "source": "來源、授權，以及這份指南不宣稱的事",
+    "en": "Sources, licensing and what this guide doesn’t claim",
+    "ja": "出典、ライセンス、そしてこのガイドが主張しないこと"
+  },
+  {
+    "source": "照片來源",
+    "en": "Photo sources",
+    "ja": "写真の出典"
+  },
+  {
+    "source": "作者實拍：",
+    "en": "The author's photos: ",
+    "ja": "筆者撮影："
+  },
+  {
+    "source": "31 張 JPEG，EXIF 顯示為 Google Pixel 9，拍攝日期 2026-10-10（時區 +09:00）。原始照片的檔案內容沒有修改；本頁只使用去除 EXIF 的縮圖，以及明確標示的裁切示範。另有 3 段影片，沒有納入逐張審圖。",
+    "en": "31 JPEGs; EXIF shows a Google Pixel 9, shot on 2026-10-10 (time zone +09:00). The original photo files were not modified; this page uses only thumbnails with EXIF removed, plus clearly labeled crop examples. There are also 3 video clips, which were not included in the photo-by-photo review.",
+    "ja": "31 枚の JPEG。EXIF では Google Pixel 9、撮影日は 2026-10-10（タイムゾーン +09:00）。元の写真ファイルの内容は変更していません。本ページで使っているのは、EXIF を取り除いたサムネイルと、明示したトリミング作例だけです。ほかに動画が 3 本ありますが、1 枚ずつの検討には含めていません。"
+  },
+  {
+    "source": "外部海岸實拍（只提供連結）：",
+    "en": "External coastal photo (link only): ",
+    "ja": "外部の海岸写真（リンクのみ）："
+  },
+  {
+    "source": "外部都市實拍（只提供連結）：",
+    "en": "External city photo (link only): ",
+    "ja": "外部の都市写真（リンクのみ）："
+  },
+  {
+    "source": "外部鄉村實拍（只提供連結）：",
+    "en": "External countryside photo (link only): ",
+    "ja": "外部の田園写真（リンクのみ）："
+  },
+  {
+    "source": "，Wikimedia Commons，CC0 1.0；可以觀察電線、農舍與農田如何取捨。",
+    "en": ", Wikimedia Commons, CC0 1.0; useful for seeing how power lines, farmhouses and fields are included or left out.",
+    "ja": "、Wikimedia Commons、CC0 1.0。電線、農家、田んぼをどう取捨しているかを観察できます。"
+  },
+  {
+    "source": "技術參考",
+    "en": "Technical references",
+    "ja": "技術資料"
+  },
+  {
+    "source": "引導線、視線方向與線條的類型。",
+    "en": "Leading lines, gaze direction and types of lines.",
+    "ja": "リーディングライン、視線の方向、線の種類。"
+  },
+  {
+    "source": "焦段、視角，以及「透視由拍攝位置決定」。",
+    "en": "Focal length, angle of view, and “perspective is set by shooting position.”",
+    "ja": "焦点距離、画角、そして「遠近感は撮影位置で決まる」こと。"
+  },
+  {
+    "source": "長焦的取捨、遠近大小關係與常見誤解。",
+    "en": "Telephoto trade-offs, how near and far objects compare in size, and common misconceptions.",
+    "ja": "望遠の取捨、遠近による大きさの関係、よくある誤解。"
+  },
+  {
+    "source": "特定機型的對焦、穩定與防震設定範例；不保證適用所有機型。",
+    "en": "Example focus, stabilization and anti-vibration settings for a specific camera model; not guaranteed to apply to every model.",
+    "ja": "特定機種のピント、手ブレ補正、ブレ防止の設定例。すべての機種に当てはまるとは限らない。"
+  },
+  {
+    "source": "直方圖、亮暗部裁切與曝光判斷。",
+    "en": "Histograms, highlight and shadow clipping, and judging exposure.",
+    "ja": "ヒストグラム、明部・暗部のクリッピング、露出の判断。"
+  },
+  {
+    "source": "包圍曝光與曝光融合的場景應用。",
+    "en": "Applying exposure bracketing and exposure blending to different scenes.",
+    "ja": "ブラケット撮影と露出合成の場面別の使い方。"
+  },
+  {
+    "source": "縮小光圈會增加繞射；焦點堆疊時每張可用 f/2.8–f/8。",
+    "en": "Stopping down increases diffraction; for focus stacking, each frame can use f/2.8–f/8.",
+    "ja": "絞り込むと回折が増える。深度合成では各コマに f/2.8–f/8 を使える。"
+  },
+  {
+    "source": "對焦在超焦距時，從一半的距離到無限遠清晰；遠景可以稍微往遠處對焦。",
+    "en": "Focused at the hyperfocal distance, everything from half that distance to infinity is sharp; for distant scenes you can focus slightly farther.",
+    "ja": "過焦点距離にピントを合わせると、その半分の距離から無限遠までがシャープになる。遠景では少し遠めに合わせてもよい。"
+  },
+  {
+    "source": "依水流的快慢調整快門，並用可變 ND 拉長曝光。",
+    "en": "Adjust the shutter speed to how fast the water flows, and use a variable ND to lengthen exposures.",
+    "ja": "水の流れの速さに応じてシャッター速度を調整し、可変 ND で露光を長くする。"
+  },
+  {
+    "source": "Nikon（日本）｜レンズフィルターの使いかた",
+    "en": "Nikon (Japan)｜レンズフィルターの使いかた (How to use lens filters)",
+    "ja": "Nikon（日本）｜レンズフィルターの使いかた"
+  },
+  {
+    "source": "ND 濾鏡的流水長曝光；廣角拍天空時偏光鏡造成的深淺不均。",
+    "en": "Long exposures of moving water with ND filters; uneven sky from a polarizer when shooting the sky wide.",
+    "ja": "ND フィルターによる流水の長秒露光。広角で空を撮るときに偏光フィルターが生む濃淡むら。"
+  },
+  {
+    "source": "偏光鏡減少反射、讓藍天更藍。",
+    "en": "Polarizers reduce reflections and make blue skies bluer.",
+    "ja": "偏光フィルターは反射を減らし、青空をより青くする。"
+  },
+  {
+    "source": "作者實測認為 500 法則算出的曝光偏長、會留下星軌，改用較短的曝光。",
+    "en": "The article’s author found in field tests that the 500 rule gives exposures that run long and leave star trails, and switched to shorter exposures.",
+    "ja": "記事の著者は実地のテストから、500 ルールで求めた露光時間は長すぎて星の軌跡が残ると判断し、より短い露光を使っている。"
+  },
+  {
+    "source": "夜景多幀拍攝、固定機位與手持注意事項。",
+    "en": "Multi-frame night shots, keeping the camera steady, and tips for shooting handheld.",
+    "ja": "夜景の多フレーム撮影、カメラの固定、手持ち撮影の注意点。"
+  },
+  {
+    "source": "ProRAW 與曝光、白平衡、色彩的後製彈性。",
+    "en": "ProRAW and its editing latitude for exposure, white balance and color.",
+    "ja": "ProRAW と、露出・ホワイトバランス・色の編集の自由度。"
+  },
+  {
+    "source": "天空、主體、景觀、漸層等局部非破壞性調整。",
+    "en": "Non-destructive local adjustments such as sky, subject, landscape and gradient masks.",
+    "ja": "空、被写体、風景、グラデーションなどの部分的な非破壊調整。"
+  },
+  {
+    "source": "Pixel 9 主鏡頭 ƒ/1.68、視角 82°；超廣角 ƒ/1.7、視角 123°。",
+    "en": "Pixel 9 main lens ƒ/1.68, 82° field of view; ultra-wide ƒ/1.7, 123° field of view.",
+    "ja": "Pixel 9 のメインレンズは ƒ/1.68、画角 82°。超広角は ƒ/1.7、画角 123°。"
+  },
+  {
+    "source": "核對紀錄",
+    "en": "Review log",
+    "ja": "確認記録"
+  },
+  {
+    "source": "原稿以第二人稱寫給照片的作者；本站版本改為中性的說明，內容與判斷不變。",
+    "en": "The original was written in the second person, addressed to the photographer; this site’s version uses neutral explanations, with the content and judgments unchanged.",
+    "ja": "原稿は写真の撮影者に向けて二人称で書かれていました。本サイト版は中立的な説明に改めていますが、内容と判断は変えていません。"
+  },
+  {
+    "source": "超焦距的近端界：原稿用 H²／(2H − f) 估算，得到約 1.22 m；依常用的薄透鏡景深公式，對焦在 H 時近端界正好是 H/2，本頁與試算工具改為 1.21 m。",
+    "en": "Near limit at the hyperfocal distance: the original estimated it with H²/(2H − f), getting about 1.22 m; by the common thin-lens depth-of-field formula, the near limit when focused at H is exactly H/2, so this page and the calculator now use 1.21 m.",
+    "ja": "過焦点距離での近端：原稿は H²／(2H − f) で見積もり、約 1.22 m としていました。一般的な薄肉レンズの被写界深度の式では、H にピントを合わせたときの近端はちょうど H/2 になるため、本ページと試算ツールでは 1.21 m に改めました。"
+  },
+  {
+    "source": "原稿的疊圖以 1000 × 1000 的座標拉伸到 4:3 或 3:4 的照片上，圓圈與數字會變形；本頁依每張照片的實際比例重畫同一組標記。",
+    "en": "The original overlays stretched 1000 × 1000 coordinates onto 4:3 or 3:4 photos, distorting the circles and numbers; this page redraws the same marks at each photo’s actual proportions.",
+    "ja": "原稿のオーバーレイは 1000 × 1000 の座標を 4:3 や 3:4 の写真に引き伸ばしていたため、円や数字が変形していました。本ページでは各写真の実際の比率に合わせて、同じマークを描き直しています。"
+  },
+  {
+    "source": "第 05 節兩張杉林圖原本帶有與案例 D 相同、但沒有對應說明的數字標記，本頁只保留三分線與視線路徑；第 03 節的逆光圖原本有編號 ① 卻沒有對應標記，本頁改為一般說明。",
+    "en": "The two cedar forest photos in section 05 originally carried the same number marks as Case D but without matching notes, so this page keeps only the rule-of-thirds lines and the eye path; the backlit photo in section 03 originally had a numbered ① note with no matching mark, so this page turned it into a general note.",
+    "ja": "第 05 節の杉林の写真 2 枚には、もともと事例 D と同じ番号マークが付いていましたが、対応する説明がなかったため、本ページでは三分割線と視線の流れだけを残しました。第 03 節の逆光の写真には番号 ① がありましたが、対応するマークがなかったため、本ページでは一般的な説明に改めました。"
+  },
+  {
+    "source": "照片索引中「車站月台」的標籤原本寫成「中性」，與分類「紀錄」不一致，本頁統一為「紀錄」。",
+    "en": "In the photo index, the label for “Station platform” was originally written as “Neutral,” which didn’t match its category “Record”; this page now uses “Record” consistently.",
+    "ja": "写真索引の「駅のホーム」のラベルは、もともと「中立」と書かれていて分類の「記録」と一致していなかったため、本ページでは「記録」に統一しました。"
+  },
+  {
+    "source": "第 08 節瀑布圖的視線路徑在原稿中有一段不完整的曲線指令，瀏覽器會略過那一段；本頁改為完整的曲線。",
+    "en": "In the original, the eye path on the waterfall photo in section 08 contained an incomplete curve command that browsers skip; this page uses a complete curve.",
+    "ja": "第 08 節の滝の写真の視線の流れには、原稿では不完全な曲線命令が 1 か所あり、ブラウザーはその部分を飛ばしていました。本ページでは完全な曲線に改めています。"
+  },
+  {
+    "source": "照片沿用原稿內嵌的位元組，沒有重新壓縮；重複使用的照片只保存一份。",
+    "en": "The photos reuse the bytes embedded in the original without recompression; photos used more than once are stored only once.",
+    "ja": "写真は原稿に埋め込まれていたバイト列をそのまま使い、再圧縮していません。複数回使う写真は 1 つだけ保存しています。"
+  },
+  {
+    "source": "2026-10-12 回查全部外部連結：3 個 Wikimedia Commons 檔案的作者與 CC0 授權正確，Tokyo blue hour 的 EXIF 是 20 秒、f/11、ISO 100、24 mm；其餘技術參考都能開啟。",
+    "en": "All external links rechecked on 2026-10-12: the authors and CC0 licenses of the 3 Wikimedia Commons files are correct, and the EXIF of Tokyo blue hour is 20 s, f/11, ISO 100, 24 mm; all the other technical references open.",
+    "ja": "2026-10-12 にすべての外部リンクを再確認しました。Wikimedia Commons の 3 ファイルの作者と CC0 ライセンスは正しく、Tokyo blue hour の EXIF は 20 秒、f/11、ISO 100、24 mm でした。そのほかの技術資料もすべて開けます。"
+  },
+  {
+    "source": "偏光鏡在超廣角下天空深淺不均的提醒，出處是 Nikon 日本的濾鏡教學（R10），不是 Nikon 美國的偏光鏡文章，本頁改標正確來源。",
+    "en": "The warning that polarizers make the sky uneven with ultra-wide lenses comes from Nikon Japan’s filter tutorial (R10), not Nikon USA’s polarizer article; this page now cites the correct source.",
+    "ja": "超広角で偏光フィルターを使うと空の濃淡がむらになるという注意の出典は、Nikon 日本のフィルター解説（R10）であり、Nikon 米国の偏光フィルターの記事ではありません。本ページでは正しい出典に改めました。"
+  },
+  {
+    "source": "補上 Google 的 Pixel 技術規格（R16）：官方只標示視角，沒有等效焦距；本頁的 12／24 mm 是 EXIF 記錄值。",
+    "en": "Added Google’s Pixel tech specs (R16): the official specs give only the field of view, not equivalent focal lengths; the 12/24 mm on this page are values recorded in EXIF.",
+    "ja": "Google の Pixel 技術仕様（R16）を追加しました。公式には画角だけが示され、換算焦点距離はありません。本ページの 12／24 mm は EXIF の記録値です。"
+  },
+  {
+    "source": "Cambridge in Colour 的超焦距文章支持「從一半距離到無限遠」，並提醒遠景只勉強可接受；本頁補上這個提醒。Nikon 的星空文章作者認為 500 法則算出的曝光偏長，本頁的說法與它一致。",
+    "en": "Cambridge in Colour’s hyperfocal article supports “from half the distance to infinity” and warns that distant areas are only just acceptable; this page adds that caveat. The author of Nikon’s astrophotography article considers exposures from the 500 rule too long, and this page’s wording agrees with it.",
+    "ja": "Cambridge in Colour の過焦点距離の記事は「半分の距離から無限遠まで」を裏づけ、遠景はかろうじて許容できる程度だと注意しています。本ページではこの注意を補いました。Nikon の星景写真の記事の著者は、500 ルールで求めた露光時間は長すぎると考えており、本ページの記述もそれと一致しています。"
+  },
+  {
+    "source": "判斷的限制",
+    "en": "Limits of these judgments",
+    "ja": "判断の限界"
+  },
+  {
+    "source": "圖上標記是對觀看路徑的教學詮釋，不是眼動儀的數據；「佳／可改善」是以作品為目標的主觀評價。EXIF 是手機輸出的檔案資訊，不代表完整的多幀 HDR 處理過程。本頁沒有對 RAW、鏡頭 MTF 或感光元件訊號做任何量測。",
+    "en": "The marks on the photos are a teaching interpretation of viewing paths, not eye-tracker data; “Good/Could improve” are subjective assessments aimed at finished work. EXIF is file information output by the phone and doesn’t represent the complete multi-frame HDR process. This page made no measurements of RAW files, lens MTF or sensor signals.",
+    "ja": "写真上のマークは見る順路の教育的な解釈であって、アイトラッカーのデータではありません。「良い／改善の余地あり」は作品を目指す立場からの主観的な評価です。EXIF はスマートフォンが出力したファイル情報で、多フレーム HDR 処理の全過程を表すものではありません。本ページでは RAW、レンズの MTF、イメージセンサーの信号について一切測定していません。"
+  },
+  {
+    "source": "D Coetzee｜Waves crashing on rocks at bay shore at sunset（Wikimedia Commons，CC0）",
+    "en": "D Coetzee｜Waves crashing on rocks at bay shore at sunset (Wikimedia Commons, CC0)",
+    "ja": "D Coetzee｜Waves crashing on rocks at bay shore at sunset（Wikimedia Commons、CC0）"
+  },
+  {
+    "source": "Romain Guy｜Tokyo blue hour（Wikimedia Commons，CC0）",
+    "en": "Romain Guy｜Tokyo blue hour (Wikimedia Commons, CC0)",
+    "ja": "Romain Guy｜Tokyo blue hour（Wikimedia Commons、CC0）"
+  },
+  {
+    "source": "，Wikimedia Commons，CC0 1.0。",
+    "en": ", Wikimedia Commons, CC0 1.0.",
+    "ja": "、Wikimedia Commons、CC0 1.0。"
+  },
+  {
+    "source": "20–70 mm。",
+    "en": "20–70 mm.",
+    "ja": "20–70 mm。"
+  },
+  {
+    "source": "24–70 mm。",
+    "en": "24–70 mm.",
+    "ja": "24–70 mm。"
+  },
+  {
+    "source": "35–100 mm。",
+    "en": "35–100 mm.",
+    "ja": "35–100 mm。"
+  },
+  {
+    "source": "照片內容依原圖更正：樹間那張拍的是兩塊立槳板與兩個人，不是原稿寫的兩艘獨木舟；大樹枝椏那張的右下角岸邊停著幾艘獨木舟，不是一艘；橋上系列的小點是一位立槳者，本頁統一稱為槳板。",
+    "en": "Photo contents corrected against the images: the shot through the trees shows two stand-up paddleboards and two people, not the two canoes the original described; the shot under the big tree has several kayaks on the shore in the lower-right corner, not one; the small figure in the bridge series is one stand-up paddler, so this page calls it a paddleboard throughout.",
+    "ja": "写真の内容を元画像に合わせて訂正しました。木々の間から撮った 1 枚に写っているのは、原稿にある 2 艘のカヌーではなく、2 枚のパドルボードと 2 人です。大木の枝の下の 1 枚では、右下の岸に置かれたカヤックは 1 艇ではなく数艇です。橋からのシリーズに写る小さな人影は 1 人の SUP（スタンドアップパドル）なので、本ページでは一貫してパドルボードと呼びます。"
+  },
+  {
+    "source": "// 00 · The takeaway",
+    "en": "// 00 · The takeaway",
+    "ja": "// 00 · 要点"
+  },
+  {
+    "source": "// 01 · How to read the guides",
+    "en": "// 01 · How to read the guides",
+    "ja": "// 01 · ガイドの見方"
+  },
+  {
+    "source": "// 02 · Four cases",
+    "en": "// 02 · Four cases",
+    "ja": "// 02 · 4 つの事例"
+  },
+  {
+    "source": "// 03 · Light & weather",
+    "en": "// 03 · Light & weather",
+    "ja": "// 03 · 光と天気"
+  },
+  {
+    "source": "// 04 · Composition",
+    "en": "// 04 · Composition",
+    "ja": "// 04 · 構図"
+  },
+  {
+    "source": "// 05 · Focal length & position",
+    "en": "// 05 · Focal length & position",
+    "ja": "// 05 · 焦点距離と立ち位置"
+  },
+  {
+    "source": "// 06 · Exposure & histogram",
+    "en": "// 06 · Exposure & histogram",
+    "ja": "// 06 · 露出とヒストグラム"
+  },
+  {
+    "source": "// 07 · Depth of field",
+    "en": "// 07 · Depth of field",
+    "ja": "// 07 · 被写界深度"
+  },
+  {
+    "source": "// 08 · Shutter, water & filters",
+    "en": "// 08 · Shutter, water & filters",
+    "ja": "// 08 · シャッター・水・フィルター"
+  },
+  {
+    "source": "// 09 · Five genres",
+    "en": "// 09 · Five genres",
+    "ja": "// 09 · 5 つのジャンル"
+  },
+  {
+    "source": "// 10 · Crop comparisons",
+    "en": "// 10 · Crop comparisons",
+    "ja": "// 10 · トリミングの比較"
+  },
+  {
+    "source": "// 11 · On location",
+    "en": "// 11 · On location",
+    "ja": "// 11 · 現場で"
+  },
+  {
+    "source": "// 12 · Photo index",
+    "en": "// 12 · Photo index",
+    "ja": "// 12 · 写真索引"
+  },
+  {
+    "source": "// 13 · Four-week practice",
+    "en": "// 13 · Four-week practice",
+    "ja": "// 13 · 4 週間の練習"
+  },
+  {
+    "source": "// 14 · Sources & licensing",
+    "en": "// 14 · Sources & licensing",
+    "ja": "// 14 · 出典とライセンス"
+  },
+  {
+    "source": "// 04A · GPT composition atlas",
+    "en": "// 04A · GPT composition atlas",
+    "ja": "// 04A · GPT 構図図鑑"
+  },
+  {
+    "source": "開啟原尺寸圖片",
+    "en": "Open full size",
+    "ja": "原寸で開く"
+  },
+  {
+    "source": "風景攝影：從 31 張實拍與 21 張構圖示意圖學構圖、光線與曝光",
+    "en": "Landscape photography from 31 real photos and 21 composition diagrams: composition, light and exposure",
+    "ja": "風景写真：実写 31 枚と構図図解 21 枚で学ぶ構図・光・露出"
+  },
+  {
+    "source": "21 張",
+    "en": "21 images",
+    "ja": "21 枚"
+  },
+  {
+    "source": "GPT 構圖示意圖，明確標為生成",
+    "en": "GPT composition illustrations, clearly labeled as generated",
+    "ja": "生成であることを明記した GPT の構図図解"
+  },
+  {
+    "source": "16 節",
+    "en": "16 sections",
+    "ja": "16 節"
+  },
+  {
+    "source": "31 張照片皆為作者實拍，未經 AI 生成或替換景物",
+    "en": "All 31 photos were taken by the author, with no AI generation and no replaced scenery",
+    "ja": "31 枚の写真はすべて筆者撮影。AI による生成や被写体の差し替えはなし"
+  },
+  {
+    "source": "04A 章的 21 張構圖圖是 GPT 生成的示意，不是實拍",
+    "en": "The 21 composition images in chapter 04A are GPT-generated illustrations, not photographs",
+    "ja": "04A 章の 21 枚の構図図解は GPT による生成画像で、実写ではない"
+  },
+  {
+    "source": "實拍照片上的線條是教學疊圖，可以關閉",
+    "en": "Lines on the real photos are teaching overlays you can turn off",
+    "ja": "実写真上の線は解説用のオーバーレイで、オフにできる"
+  },
+  {
+    "source": "本頁照片全部取自作者在 2026-10-10 以 Google Pixel 9 拍攝的 31 張 JPEG。示範裁切只改變畫幅與少量全域色調，沒有生成或替換任何景物；圖上的線條、圓圈與數字是教學疊圖，不是拍攝現場的元素。相機設定來自 JPEG 的 EXIF；本頁的縮圖不含 EXIF 與 GPS 資料。04A 章的 21 張構圖大圖則是 GPT 生成的示意圖，不是實拍，每張都另外標示。",
+    "en": "Every photo on this page comes from 31 JPEGs the author shot with a Google Pixel 9 on 2026-10-10. The sample crops change only the framing and a little global tone; no scenery was generated or replaced. The lines, circles and numbers on the photos are teaching overlays, not elements of the scene. Camera settings come from the JPEG EXIF; the thumbnails on this page contain no EXIF or GPS data. The 21 large composition images in chapter 04A, by contrast, are GPT-generated illustrations, not photographs, and each one is labeled as such.",
+    "ja": "本ページの写真はすべて、筆者が 2026-10-10 に Google Pixel 9 で撮影した 31 枚の JPEG から取っています。作例のトリミングは画面の比率と全体の色調をわずかに変えただけで、被写体の生成や差し替えは一切していません。写真上の線・円・数字は解説用のオーバーレイで、撮影現場にあったものではありません。カメラ設定は JPEG の EXIF によるもので、本ページのサムネイルには EXIF と GPS データは含まれていません。一方、04A 章の大きな構図図解 21 枚は GPT による生成画像で、実写ではありません。1 枚ごとにその旨を明記しています。"
+  },
+  {
+    "source": "GPT 構圖圖鑑",
+    "en": "GPT composition atlas",
+    "ja": "GPT 構図図鑑"
+  },
+  {
+    "source": "以下都是原始實拍，沒有使用 AI 生成的「改善版」；單張的構圖示意集中在",
+    "en": "All of the following are original photos, with no AI-generated “improved versions”; the standalone composition illustrations are collected in",
+    "ja": "以下はすべて元の実写真で、AI で生成した「改善版」は使っていません。構図を 1 枚ずつ図解した画像は"
+  },
+  {
+    "source": "04A 章",
+    "en": "chapter 04A",
+    "ja": "04A 章"
+  },
+  {
+    "source": "。每張圖上方列出原檔名與 EXIF，可以逐一核對。",
+    "en": ". The original file name and EXIF are listed above each photo so you can check them one by one.",
+    "ja": "にまとめています。各写真の上に元のファイル名と EXIF を記しているので、1 枚ずつ照合できます。"
+  },
+  {
+    "source": "GPT 構圖大圖圖鑑：用 21 張生成示意圖讀懂構圖",
+    "en": "GPT composition atlas: understanding composition through 21 generated illustrations",
+    "ja": "GPT 構図図鑑：21 枚の生成画像で構図を読み解く"
+  },
+  {
+    "source": "這一章收錄 21 張單張大圖：10 種構圖語法、6 種題材範例，以及作者另外提供的 5 張理想示範圖。每次只讀一張：先看圖上標註的觀看順序，再讀圖下的說明，最後回到前面的實拍章節，檢查自己的照片缺的是主體、導線、前景、留白，還是光線控制。",
+    "en": "This chapter collects 21 large standalone images: 10 composition methods, 6 genre examples and 5 ideal examples supplied separately by the author. Read them one at a time: first look at the viewing order marked on the image, then read the notes below it, and finally go back to the earlier chapters of real photos and check whether your own photos are missing a subject, leading lines, a foreground, negative space or light control.",
+    "ja": "この章には、単独の大きな図を 21 枚収めています。構図の技法 10 種、ジャンル別の例 6 種、そして筆者が別に提供した理想的な作例 5 枚です。1 回に 1 枚ずつ読んでください。まず図上に示された見る順番を確かめ、次に図の下の説明を読み、最後に実写真を扱った前の章へ戻って、自分の写真に足りないのが主被写体なのか、リーディングライン、前景、余白なのか、それとも光のコントロールなのかを確認します。"
+  },
+  {
+    "source": "生成圖，不是實拍",
+    "en": "Generated images, not photographs",
+    "ja": "生成画像であり、実写ではありません"
+  },
+  {
+    "source": "這一章的圖全部由 GPT 生成，其中 5 張由作者另外提供。它們用來把構圖觀念畫清楚，不宣稱場景真實存在：圖中的地點、建築、人物、招牌、標語與相機參數都不是真實資料。請學主體位置、導線、前中後景、留白、光線控制與畫面平衡，不要照抄其中的山形、建築或雲彩。",
+    "en": "Every image in this chapter was generated by GPT; 5 of them were supplied separately by the author. They are there to illustrate composition ideas clearly and do not claim that the scenes really exist: the places, buildings, people, signs, slogans and camera settings in them are not real data. Study the subject placement, leading lines, foreground–middle ground–background structure, negative space, light control and overall balance, and don’t copy their mountain shapes, buildings or clouds.",
+    "ja": "この章の図はすべて GPT による生成画像で、そのうち 5 枚は筆者が別に提供したものです。構図の考え方をわかりやすく描くためのもので、描かれた風景が実在するとは主張していません。図中の場所、建物、人物、看板、標語、カメラ設定は、いずれも実際のデータではありません。主被写体の位置、リーディングライン、前景・中景・背景、余白、光のコントロール、画面のバランスを学び、山の形や建物、雲をそのまままねしないでください。"
+  },
+  {
+    "source": "圖上的標線與中文標註是圖片的一部分，不能像實拍照片的疊圖那樣關閉，英文版與日文版也維持中文；每張圖下方的文字說明它示範的重點。",
+    "en": "The lines and Chinese labels drawn on the images are part of the pictures themselves: unlike the overlays on the real photos, they can’t be turned off, and they stay in Chinese in the English and Japanese editions too. The text below each image explains what it demonstrates.",
+    "ja": "図上の線と中国語の注記は画像の一部なので、実写真のオーバーレイのようにオフにすることはできず、英語版と日本語版でも中国語のままです。各図の下の文章で、その図が示している要点を説明しています。"
+  },
+  {
+    "source": "編輯解析",
+    "en": "Editor’s analysis",
+    "ja": "編集者の解説"
+  },
+  {
+    "source": "生成圖的標註只是近似，讀圖時以圖下的文字與前面的實拍為準。例如對稱構圖那張把畫面中央的垂直線標成對稱軸，但湖面倒影其實是沿著水平的岸線上下對稱；理想海邊示範說衝浪者放在三分線交點，實際上他只靠近右側的三分線；風景構圖範例的說明把遠山當成主體，圖上的標註卻把蜿蜒的河流標為主體。本頁照原樣收錄圖片，不修改圖上的內容。",
+    "en": "The labels on the generated images are only approximate; when reading them, go by the text below each image and the real photos earlier on the page. For example, the symmetry image labels the vertical line through the center of the frame as the axis of symmetry, but the reflection in the lake is actually mirrored top to bottom across the horizontal shoreline; the ideal seaside example says the surfer is placed on an intersection of the rule-of-thirds lines, but in fact he is only close to the right-hand rule-of-thirds line; and the landscape example’s text treats the distant mountains as the subject, while the label in the image marks the winding river as the subject. This page reproduces the images as they are and does not alter anything in them.",
+    "ja": "生成画像の注記はあくまで近似です。図を読むときは、図の下の文章と前の章の実写真を基準にしてください。たとえばシンメトリー構図の図は画面中央の垂直線を対称軸と表記していますが、湖面の映り込みは実際には水平な岸辺の線を境に上下対称になっています。また、理想的な海辺の作例ではサーファーを三分割線の交点に置いたと説明していますが、実際には右側の三分割線に近いだけです。さらに、風景の構図例の説明文は遠くの山を主被写体としていますが、図上の注記では蛇行する川を主被写体と表記しています。本ページでは画像を元のまま収録し、図上の内容には手を加えていません。"
+  },
+  {
+    "source": "21 張構圖示意圖",
+    "en": "21 composition illustrations",
+    "ja": "21 枚の構図図解"
+  },
+  {
+    "source": "A｜十種構圖語法",
+    "en": "A | Ten composition methods",
+    "ja": "A｜構図の技法 10 種"
+  },
+  {
+    "source": "01 三分構圖",
+    "en": "01 Rule of thirds",
+    "ja": "01 三分割構図"
+  },
+  {
+    "source": "02 引導線構圖",
+    "en": "02 Leading lines",
+    "ja": "02 リーディングライン構図"
+  },
+  {
+    "source": "03 前景構圖",
+    "en": "03 Foreground",
+    "ja": "03 前景構図"
+  },
+  {
+    "source": "04 框景構圖",
+    "en": "04 Framing",
+    "ja": "04 フレーミング構図"
+  },
+  {
+    "source": "05 對稱構圖",
+    "en": "05 Symmetry",
+    "ja": "05 シンメトリー構図"
+  },
+  {
+    "source": "06 S 型構圖",
+    "en": "06 S-curve",
+    "ja": "06 S 字構図"
+  },
+  {
+    "source": "07 黃金比例構圖",
+    "en": "07 Golden ratio",
+    "ja": "07 黄金比構図"
+  },
+  {
+    "source": "08 對角線構圖",
+    "en": "08 Diagonals",
+    "ja": "08 対角線構図"
+  },
+  {
+    "source": "09 留白構圖",
+    "en": "09 Negative space",
+    "ja": "09 余白を生かした構図"
+  },
+  {
+    "source": "10 層次構圖",
+    "en": "10 Layering",
+    "ja": "10 レイヤー構図"
+  },
+  {
+    "source": "B｜題材範例",
+    "en": "B | Genre examples",
+    "ja": "B｜ジャンル別の例"
+  },
+  {
+    "source": "11 都市構圖範例",
+    "en": "11 City example",
+    "ja": "11 都市の構図例"
+  },
+  {
+    "source": "12 鄉村構圖範例",
+    "en": "12 Countryside example",
+    "ja": "12 田園の構図例"
+  },
+  {
+    "source": "13 建築構圖範例",
+    "en": "13 Architecture example",
+    "ja": "13 建築の構図例"
+  },
+  {
+    "source": "14 夜間構圖範例",
+    "en": "14 Night example",
+    "ja": "14 夜景の構図例"
+  },
+  {
+    "source": "15 風景構圖範例",
+    "en": "15 Landscape example",
+    "ja": "15 風景の構図例"
+  },
+  {
+    "source": "16 海景構圖範例",
+    "en": "16 Seascape example",
+    "ja": "16 海景の構図例"
+  },
+  {
+    "source": "C｜作者提供的理想示範圖",
+    "en": "C | Ideal examples from the author",
+    "ja": "C｜筆者提供の理想的な作例"
+  },
+  {
+    "source": "17 理想山景示範",
+    "en": "17 Ideal mountain example",
+    "ja": "17 理想的な山の作例"
+  },
+  {
+    "source": "18 理想森林示範",
+    "en": "18 Ideal forest example",
+    "ja": "18 理想的な森の作例"
+  },
+  {
+    "source": "19 理想海邊示範",
+    "en": "19 Ideal seaside example",
+    "ja": "19 理想的な海辺の作例"
+  },
+  {
+    "source": "20 理想都市示範",
+    "en": "20 Ideal city example",
+    "ja": "20 理想的な都市の作例"
+  },
+  {
+    "source": "21 理想鄉村示範",
+    "en": "21 Ideal countryside example",
+    "ja": "21 理想的な田園の作例"
+  },
+  {
+    "source": "先學會構圖語法本身，再把它帶去任何場景。",
+    "en": "Learn the composition methods themselves first, then take them into any scene.",
+    "ja": "まず構図の技法そのものを身につけ、それからどんな場面にも応用します。"
+  },
+  {
+    "source": "GPT 生成 · 1448 × 814",
+    "en": "GPT-generated · 1448 × 814",
+    "ja": "GPT 生成 · 1448 × 814"
+  },
+  {
+    "source": "構圖語法 01",
+    "en": "Composition method 01",
+    "ja": "構図の技法 01"
+  },
+  {
+    "source": "先決定主角，再用交點與留白穩定畫面。",
+    "en": "Decide on the main subject first, then steady the frame with an intersection and negative space.",
+    "ja": "まず主役を決め、交点と余白で画面を安定させます。"
+  },
+  {
+    "source": "GPT 生成的示意圖：日落時的雪山湖景。三分線把山峰放在右上交點、地平線放在下三分線，黃色虛線從前景岩石經湖面倒影引到山峰；中文標註說明主體、天空留白、背景山體、中景湖面與前景岩石。",
+    "en": "GPT-generated illustration: a lake with a snow-capped mountain at sunset. Rule-of-thirds lines put the peak on the upper-right intersection and the horizon on the lower line, and a yellow dashed line leads from the foreground rocks through the reflection in the lake to the peak; Chinese labels explain the subject, the sky as negative space, the background mountain, the lake in the middle ground and the foreground rocks.",
+    "ja": "GPT による生成画像：日没時の雪山と湖の風景。三分割線で山頂を右上の交点に、地平線を下の三分割線に置き、黄色の破線が前景の岩から湖面の映り込みを経て山頂へ導いている。中国語の注記で、主被写体、空の余白、背景の山、中景の湖面、前景の岩を説明している。"
+  },
+  {
+    "source": "這張圖在示範什麼？",
+    "en": "What this image shows",
+    "ja": "この図が示していること"
+  },
+  {
+    "source": "示範主體落在強勢區後，天空、山體與倒影如何形成平衡。三分法的價值不是套格子，而是幫助更快找到視覺重心。",
+    "en": "Shows how, once the subject sits in a strong position, the sky, the mountain and its reflection come into balance. The value of the rule of thirds isn’t in fitting a grid; it’s in helping you find the visual center of gravity faster.",
+    "ja": "主被写体を視覚的に強い位置に置いたとき、空・山・映り込みがどのように釣り合うかを示しています。三分割法の価値は格子に当てはめることではなく、視覚的な重心をより早く見つける助けになることにあります。"
+  },
+  {
+    "source": "帶回現場怎麼拍？",
+    "en": "Taking it on location",
+    "ja": "現場での撮り方"
+  },
+  {
+    "source": "到現場先問主角是山、樹、人物還是光線，接著移動腳步，把最重要的主體放到視覺最容易被看見的位置。",
+    "en": "On location, first ask whether the main subject is the mountain, a tree, a person or the light, then move until the most important subject sits where the eye finds it most easily.",
+    "ja": "現場ではまず、主役が山なのか、木なのか、人物なのか、それとも光なのかを考えます。次に自分が動いて、最も重要な主被写体を、いちばん目に留まりやすい位置に置きます。"
+  },
+  {
+    "source": "最常見的失敗訊號",
+    "en": "Common failure signs",
+    "ja": "よくある失敗のサイン"
+  },
+  {
+    "source": "只顧著對交點，卻忽略旁邊更亮、更亂的元素搶戲；或水平線明顯歪斜。",
+    "en": "Fixating on an intersection while missing brighter, busier elements nearby that steal the show; or a visibly tilted horizon.",
+    "ja": "交点に合わせることばかり気にして、そばにあるもっと明るく雑然とした要素が主役を食っているのを見落としています。または、水平線がはっきり傾いています。"
+  },
+  {
+    "source": "適合的題材",
+    "en": "Good subjects",
+    "ja": "向いている題材"
+  },
+  {
+    "source": "很適合回頭套用到湖景、山景與峽谷場景。",
+    "en": "Well worth taking back to lake, mountain and gorge scenes.",
+    "ja": "湖、山、峡谷の場面に立ち返って応用するのにとても向いています。"
+  },
+  {
+    "source": "對照前面的章節：",
+    "en": "Compare with the earlier section: ",
+    "ja": "前の章と照らし合わせる："
+  },
+  {
+    "source": "構圖語法 02",
+    "en": "Composition method 02",
+    "ja": "構図の技法 02"
+  },
+  {
+    "source": "引導線構圖",
+    "en": "Leading lines",
+    "ja": "リーディングライン構図"
+  },
+  {
+    "source": "利用道路、欄杆、河流，把視線一步一步帶到主體。",
+    "en": "Use roads, railings and rivers to lead the eye to the subject step by step.",
+    "ja": "道路、手すり、川を使って、視線を一歩ずつ主被写体へ導きます。"
+  },
+  {
+    "source": "GPT 生成的示意圖：一條木棧道從畫面下緣筆直伸向湖中的小島，欄杆與棧道的線條匯聚到消失點，遠方是被朝陽照亮的雪山；中文標註說明前景起點、視線路徑、消失點、中景連接與背景主體。",
+    "en": "GPT-generated illustration: a wooden boardwalk runs straight from the bottom edge of the frame toward a small island in a lake, the lines of the railings and boardwalk converge at a vanishing point, and in the distance is a snow-capped mountain lit by the morning sun; Chinese labels explain the foreground starting point, the eye path, the vanishing point, the middle-ground link and the background subject.",
+    "ja": "GPT による生成画像：木道が画面の下端から湖に浮かぶ小島へまっすぐ延び、手すりと木道の線が消失点に集まっている。遠くには朝日に照らされた雪山。中国語の注記で、前景の起点、視線の経路、消失点、中景のつながり、背景の主被写体を説明している。"
+  },
+  {
+    "source": "畫面中的橋面、道路或邊線會成為視線軌道。只要終點夠明確，觀者會自然被帶進照片。",
+    "en": "Bridge decks, roads or edge lines in the frame become tracks for the eye. As long as the end point is clear enough, viewers are naturally drawn into the photo.",
+    "ja": "画面の中の橋の路面、道路、縁の線は、視線のレールになります。終点さえ十分にはっきりしていれば、見る人は自然と写真の中へ引き込まれます。"
+  },
+  {
+    "source": "先找真正通往主體的線，不要只找好看的線。若道路、橋面或河道能從下緣進場，效果通常更穩。",
+    "en": "First look for lines that really lead to the subject, not just lines that look good. If a road, bridge deck or river channel can enter from the bottom edge, the result is usually more solid.",
+    "ja": "見た目がよいだけの線ではなく、本当に主被写体へ通じる線をまず探します。道路、橋の路面、川筋が画面の下端から入ってくると、たいていより安定した効果が得られます。"
+  },
+  {
+    "source": "線條很強，卻把視線帶出畫面，或終點只是一片雜亂背景。",
+    "en": "The lines are strong but lead the eye out of the frame, or the end point is just a cluttered background.",
+    "ja": "線は力強いのに、視線を画面の外へ連れ出しています。あるいは、行き着く先がただの雑然とした背景です。"
+  },
+  {
+    "source": "適合橋梁、步道、道路、河道與軌道題材。",
+    "en": "Suits bridges, trails, roads, river channels and tracks.",
+    "ja": "橋、遊歩道、道路、川筋、線路といった題材に向いています。"
+  },
+  {
+    "source": "構圖語法 03",
+    "en": "Composition method 03",
+    "ja": "構図の技法 03"
+  },
+  {
+    "source": "前景構圖",
+    "en": "Foreground",
+    "ja": "前景構図"
+  },
+  {
+    "source": "用近距離元素建立入口，讓畫面更有臨場感。",
+    "en": "Use close elements to build an entry point and make the frame feel more immersive.",
+    "ja": "近くの要素で入り口を作り、画面に臨場感を持たせます。"
+  },
+  {
+    "source": "GPT 生成的示意圖：前景是紫色花叢與長滿苔蘚的岩石，中景是平靜湖面，背景是夕照下的雪山；黃色虛線從花叢中的視覺入口引到山峰，中文標註說明前、中、後景的層次。",
+    "en": "GPT-generated illustration: clumps of purple flowers and moss-covered rocks in the foreground, a calm lake in the middle ground and snow-capped mountains in the evening sun in the background; a yellow dashed line leads from a visual entry point among the flowers to the peak, and Chinese labels explain the layers of foreground, middle ground and background.",
+    "ja": "GPT による生成画像：前景に紫色の花の茂みと苔むした岩、中景に穏やかな湖面、背景に夕日を浴びた雪山。黄色の破線が花の茂みの中の視覚的な入り口から山頂へ導き、中国語の注記で前景・中景・背景の層を説明している。"
+  },
+  {
+    "source": "前景不是裝飾，而是讓觀者知道「從哪裡開始看」。只要入口清楚，畫面通常更有深度。",
+    "en": "The foreground isn’t decoration; it tells viewers “where to start looking.” As long as the entry point is clear, the frame usually gains depth.",
+    "ja": "前景は飾りではなく、見る人に「どこから見始めるか」を伝えるものです。入り口がはっきりしていれば、画面はたいてい奥行きを増します。"
+  },
+  {
+    "source": "蹲低、靠近石頭、花草或水紋，但別讓前景蓋掉主角。前景應該是帶觀者進入畫面的第一步。",
+    "en": "Crouch low and get close to stones, flowers and grass, or ripples on the water, but don’t let the foreground bury the main subject. The foreground should be the first step that brings viewers into the frame.",
+    "ja": "低くしゃがみ、石や草花、水紋に近づきます。ただし、前景で主役を覆い隠さないこと。前景は、見る人を画面の中へ導く最初の一歩であるべきです。"
+  },
+  {
+    "source": "前景過大、過亮、過花，反而成了錯誤主角。",
+    "en": "A foreground that is too big, too bright or too busy ends up as the wrong main subject.",
+    "ja": "前景が大きすぎる、明るすぎる、にぎやかすぎるせいで、かえって間違った主役になっています。"
+  },
+  {
+    "source": "適用於瀑布、峽谷、湖畔與高處俯瞰場景。",
+    "en": "Works for waterfalls, gorges, lakeshores and views looking down from high places.",
+    "ja": "滝、峡谷、湖畔、高い場所から見下ろす場面に向いています。"
+  },
+  {
+    "source": "構圖語法 04",
+    "en": "Composition method 04",
+    "ja": "構図の技法 04"
+  },
+  {
+    "source": "框景構圖",
+    "en": "Framing",
+    "ja": "フレーミング構図"
+  },
+  {
+    "source": "用洞口、樹枝、窗框或門框，把注意力壓回主體。",
+    "en": "Use cave mouths, branches, window frames or door frames to push attention back onto the subject.",
+    "ja": "洞窟の入り口、木の枝、窓枠、戸口の枠を使って、注意を主被写体へ引き戻します。"
+  },
+  {
+    "source": "GPT 生成的示意圖：從岩洞內往外看，暗色的洞口與松枝圍成畫框，框內是被夕陽照亮的雪山與雲海；中文標註說明天然框景、邊界引導、視線集中區與景深對比。",
+    "en": "GPT-generated illustration: looking out from inside a rock cave, the dark cave mouth and pine branches form a frame around snow-capped mountains and a sea of clouds lit by the setting sun; Chinese labels explain the natural frame, the guiding edges, the area where the eye concentrates and the contrast in depth.",
+    "ja": "GPT による生成画像：岩の洞窟の中から外を望む。暗い洞口と松の枝が額縁となり、その中に夕日に照らされた雪山と雲海が収まっている。中国語の注記で、自然のフレーム、縁による誘導、視線が集まる領域、奥行きのコントラストを説明している。"
+  },
+  {
+    "source": "框景的作用是收邊、減少干擾、強化觀看方向。當外圈較暗、內圈較亮時，主體通常更突出。",
+    "en": "A frame tidies the edges, cuts distractions and strengthens the direction of viewing. When the outer ring is darker and the inner area brighter, the subject usually stands out more.",
+    "ja": "フレームの役割は、画面の縁を整え、邪魔なものを減らし、見る方向を強めることです。外側が暗く内側が明るいと、主被写体はたいていより際立ちます。"
+  },
+  {
+    "source": "拍攝時左右移動，避免主體黏在框邊。框可以厚，但不能搶走主角。",
+    "en": "Move left and right while shooting so the subject doesn’t stick to the edge of the frame. The frame can be thick, but it mustn’t upstage the main subject.",
+    "ja": "撮影時は左右に動き、主被写体がフレームの縁にくっつかないようにします。フレームは厚くてもかまいませんが、主役を食ってはいけません。"
+  },
+  {
+    "source": "框景太重、太黑或直接穿過主體，導致壓迫感過強。",
+    "en": "The frame is too heavy or too dark, or cuts straight through the subject, making the picture feel oppressive.",
+    "ja": "フレームが重すぎる、暗すぎる、あるいは主被写体を直接横切っていて、圧迫感が強すぎます。"
+  },
+  {
+    "source": "林間、小舟、山洞、門窗與拱廊都很適用。",
+    "en": "Woods, small boats, caves, doors and windows, and arcades all work well.",
+    "ja": "林の中、小舟、洞窟、門や窓、アーチ型の回廊などによく合います。"
+  },
+  {
+    "source": "構圖語法 05",
+    "en": "Composition method 05",
+    "ja": "構図の技法 05"
+  },
+  {
+    "source": "對稱構圖",
+    "en": "Symmetry",
+    "ja": "シンメトリー構図"
+  },
+  {
+    "source": "當反射夠乾淨時，中央對稱可以非常有力量。",
+    "en": "When the reflection is clean enough, central symmetry can be very powerful.",
+    "ja": "映り込みが十分にきれいなら、中央に軸を据えた対称はとても力強くなります。"
+  },
+  {
+    "source": "GPT 生成的示意圖：雪山與森林完整倒映在平靜湖面，上下幾乎鏡像；畫面中央畫有一條垂直虛線，中文標註說明主體山峰、上半部實景、下半部鏡像與水面倒影。",
+    "en": "GPT-generated illustration: a snow-capped mountain and forest reflected in full on a calm lake, the top and bottom almost mirror images of each other; a vertical dashed line is drawn down the center of the frame, and Chinese labels explain the peak as the subject, the real scene in the upper half, the mirror image in the lower half and the reflection on the water.",
+    "ja": "GPT による生成画像：雪山と森が穏やかな湖面にそっくり映り込み、上下がほぼ鏡像になっている。画面中央に垂直の破線が引かれ、中国語の注記で、主被写体の山頂、上半分の実景、下半分の鏡像、水面の映り込みを説明している。"
+  },
+  {
+    "source": "對稱讓畫面產生秩序感。真正重要的不只是中線，而是左右與上下的分量是否平衡。",
+    "en": "Symmetry gives the frame a sense of order. What really matters isn’t just the center line but whether the weight is balanced left and right, top and bottom.",
+    "ja": "対称は画面に秩序をもたらします。本当に大切なのは中心線だけではなく、左右と上下の重みが釣り合っているかどうかです。"
+  },
+  {
+    "source": "先確認水面平不平，再開水平儀。先拍中線版，再拍偏上或偏下版比較。",
+    "en": "First check whether the water is flat, then turn on the level. Shoot a version with the line centered first, then versions with it higher or lower, and compare.",
+    "ja": "まず水面が平らかどうかを確かめてから、水準器を表示します。最初に線を中央に置いたカットを撮り、次に上寄り・下寄りのカットを撮って比べます。"
+  },
+  {
+    "source": "風太大、水波太碎，卻仍硬做對稱；或水平稍歪，破壞會非常明顯。",
+    "en": "Forcing symmetry when the wind is too strong and the water too choppy; or a horizon that is slightly off, which ruins the effect very visibly.",
+    "ja": "風が強すぎて水面が細かく波立っているのに、無理に対称にしています。あるいは水平がわずかに傾いていて、その崩れがとても目立ちます。"
+  },
+  {
+    "source": "適合湖泊、倒影、水塘、鏡面建築題材。",
+    "en": "Suits lakes, reflections, ponds and mirrored architecture.",
+    "ja": "湖、映り込み、池、鏡面の建築といった題材に向いています。"
+  },
+  {
+    "source": "構圖語法 06",
+    "en": "Composition method 06",
+    "ja": "構図の技法 06"
+  },
+  {
+    "source": "S 型構圖",
+    "en": "S-curve",
+    "ja": "S 字構図"
+  },
+  {
+    "source": "讓彎曲路徑形成節奏，帶著觀者慢慢深入場景。",
+    "en": "Let a winding path create rhythm and lead viewers slowly deeper into the scene.",
+    "ja": "曲がりくねった道筋でリズムを生み、見る人を少しずつ場面の奥へ導きます。"
+  },
+  {
+    "source": "GPT 生成的示意圖：一條河從前景岩坡呈 S 形蜿蜒穿過秋色森林，伸向遠方被夕陽照亮的雪山；黃色虛線沿著河道標出 S 型路徑、中段轉折與遠方主體。",
+    "en": "GPT-generated illustration: a river winds in an S shape from a rocky slope in the foreground through an autumn forest toward distant snow-capped mountains lit by the setting sun; a yellow dashed line follows the river, marking the S-shaped path, the turn in the middle section and the distant subject.",
+    "ja": "GPT による生成画像：川が前景の岩の斜面から S 字を描いて紅葉の森の中を蛇行し、夕日に照らされた遠くの雪山へと延びている。黄色の破線が川筋に沿って、S 字の経路、中ほどの曲がり目、遠くの主被写体を示している。"
+  },
+  {
+    "source": "S 曲線讓視線不是直衝，而是停、轉、再前進，因此畫面更有流動感與故事感。",
+    "en": "With an S-curve, the eye doesn’t rush straight in; it stops, turns and moves on again, so the frame gains a sense of flow and story.",
+    "ja": "S 字曲線があると、視線は一直線に突き進まず、止まり、曲がり、また進みます。そのため画面に流れと物語性が生まれます。"
+  },
+  {
+    "source": "站在能看見完整轉折的角度，不要只截到半段彎路。第一個彎折通常要清楚。",
+    "en": "Stand at an angle where you can see the whole bend, rather than catching only half of the curve. The first bend usually needs to be clear.",
+    "ja": "曲がりの全体が見える角度に立ち、カーブを半分だけ切り取らないようにします。最初の曲がり目は、たいていはっきり見せる必要があります。"
+  },
+  {
+    "source": "只拍到一小截彎線，或線條中途斷掉，視覺節奏就會失效。",
+    "en": "Only a short stretch of the curve is in the frame, or the line breaks off partway, and the visual rhythm stops working.",
+    "ja": "曲線がほんの一部しか写っていない、あるいは線が途中で途切れていて、視覚的なリズムが働かなくなっています。"
+  },
+  {
+    "source": "河道、山路、海岸彎線、鄉間小路都很好用。",
+    "en": "River channels, mountain roads, curving coastlines and country lanes all work well.",
+    "ja": "川筋、山道、弧を描く海岸線、田舎の小道は、どれも使いやすい題材です。"
+  },
+  {
+    "source": "構圖語法 07",
+    "en": "Composition method 07",
+    "ja": "構図の技法 07"
+  },
+  {
+    "source": "黃金比例構圖",
+    "en": "Golden ratio",
+    "ja": "黄金比構図"
+  },
+  {
+    "source": "把它當成檢查視覺流向的工具，而不是硬套公式。",
+    "en": "Treat it as a tool for checking the flow of the eye, not as a formula to force onto the frame.",
+    "ja": "公式として無理に当てはめるのではなく、視線の流れを確かめる道具として使います。"
+  },
+  {
+    "source": "GPT 生成的示意圖：海岬上的燈塔與石階步道，一條黃金螺旋從左下前景繞向燈塔；中文標註說明主體落點、視覺流向、留白空間、前景區域與次要元素。",
+    "en": "GPT-generated illustration: a lighthouse and a stone-stepped path on a headland, with a golden spiral curving from the lower-left foreground toward the lighthouse; Chinese labels explain where the subject is placed, the visual flow, the negative space, the foreground area and the secondary elements.",
+    "ja": "GPT による生成画像：岬に立つ灯台と石段の遊歩道。黄金螺旋が左下の前景から灯台へ向かって巻いている。中国語の注記で、主被写体の配置、視線の流れ、余白、前景の領域、副次的な要素を説明している。"
+  },
+  {
+    "source": "螺旋的重點在於視線由外而內、由大到小地集中，而不是數學正確本身。",
+    "en": "The point of the spiral is that the eye converges from the outside in and from large to small, not mathematical accuracy for its own sake.",
+    "ja": "螺旋で大切なのは、視線が外から内へ、大きなものから小さなものへと集まっていくことで、数学的な正確さそのものではありません。"
+  },
+  {
+    "source": "先拍直覺版本，再回看視線是否自然旋進主體。如果有，再微調站位。",
+    "en": "Shoot an intuitive version first, then look back to see whether the eye spirals naturally into the subject. If it does, fine-tune where you stand.",
+    "ja": "まず直感で 1 枚撮り、それから視線が自然に渦を描いて主被写体へ入っていくかを見直します。そうなっていれば、立ち位置を微調整します。"
+  },
+  {
+    "source": "為了硬湊螺旋，反而犧牲光線、主題或故事性。",
+    "en": "Sacrificing the light, the theme or the story just to force a spiral.",
+    "ja": "無理に螺旋に合わせようとして、かえって光、主題、物語性を犠牲にしています。"
+  },
+  {
+    "source": "海岸線、燈塔、道路、峽灣、人物與單一主體特別適合。",
+    "en": "Coastlines, lighthouses, roads, fjords, people and single subjects are especially good fits.",
+    "ja": "海岸線、灯台、道路、フィヨルド、人物、単一の主被写体に特に向いています。"
+  },
+  {
+    "source": "構圖語法 08",
+    "en": "Composition method 08",
+    "ja": "構図の技法 08"
+  },
+  {
+    "source": "對角線構圖",
+    "en": "Diagonals",
+    "ja": "対角線構図"
+  },
+  {
+    "source": "讓斜線帶來張力、速度感與前進方向。",
+    "en": "Let diagonal lines bring tension, a sense of speed and a direction of travel.",
+    "ja": "斜めの線で、緊張感、スピード感、前へ進む方向を生み出します。"
+  },
+  {
+    "source": "GPT 生成的示意圖：一位登山者站在山稜步道上，黃色虛線沿稜線從左下延伸到右上被陽光照亮的山頂，另一條藍色虛線標出次要對角線；中文標註說明前景支點、動勢方向與遠方終點。",
+    "en": "GPT-generated illustration: a hiker stands on a ridge trail; a yellow dashed line runs along the ridge from the lower left to the sunlit summit at the upper right, and a second, blue dashed line marks a secondary diagonal; Chinese labels explain the foreground anchor point, the direction of movement and the distant end point.",
+    "ja": "GPT による生成画像：尾根の登山道に登山者が立ち、黄色の破線が稜線に沿って左下から右上の日の当たる山頂へ延び、もう 1 本の青い破線が副次的な対角線を示している。中国語の注記で、前景の支点、動きの方向、遠くの終点を説明している。"
+  },
+  {
+    "source": "對角線比水平線更有「事件正在發生」的感覺，非常適合帶出力量與移動方向。",
+    "en": "A diagonal feels more like “something is happening” than a horizontal line does, which makes it ideal for conveying power and direction of movement.",
+    "ja": "対角線は水平線よりも「何かが起きている」感じが強く、力強さや動きの方向を表すのにとても向いています。"
+  },
+  {
+    "source": "找真正能帶向主角的稜線、坡面、海岸或步道，再讓人物或光線配合那個方向。",
+    "en": "Find a ridgeline, slope, coastline or trail that genuinely leads to the main subject, then have the person or the light follow that direction.",
+    "ja": "本当に主役へ向かう稜線、斜面、海岸、遊歩道を見つけ、人物や光をその方向に合わせます。"
+  },
+  {
+    "source": "每條線都在亂斜，卻沒有共同終點，最後只剩混亂。",
+    "en": "Every line slants at random with no shared end point, and all that’s left is chaos.",
+    "ja": "どの線もばらばらに傾いていて共通の終点がなく、結局は混乱しか残っていません。"
+  },
+  {
+    "source": "稜線、山坡、步道、人物行進題材很適合。",
+    "en": "Ridgelines, hillsides, trails and people on the move are all good fits.",
+    "ja": "稜線、山の斜面、遊歩道、歩いて進む人物といった題材によく合います。"
+  },
+  {
+    "source": "構圖語法 09",
+    "en": "Composition method 09",
+    "ja": "構図の技法 09"
+  },
+  {
+    "source": "留白構圖",
+    "en": "Negative space",
+    "ja": "余白を生かした構図"
+  },
+  {
+    "source": "刻意簡化元素，讓主體更清楚、情緒更純粹。",
+    "en": "Deliberately simplify the elements so the subject is clearer and the mood purer.",
+    "ja": "あえて要素を減らし、主被写体をよりはっきりさせて、伝わる感情をより純粋にします。"
+  },
+  {
+    "source": "GPT 生成的示意圖：霧中湖面的小島上立著一棵孤樹，四周是大片天空與水面；三分線把孤樹放在交點附近，中文標註說明留白區域、情緒空間、視覺呼吸與比例控制。",
+    "en": "GPT-generated illustration: a lone tree stands on a small island in a misty lake, surrounded by a wide expanse of sky and water; rule-of-thirds lines place the tree near an intersection, and Chinese labels explain the negative-space area, the room for emotion, visual breathing room and control of proportion.",
+    "ja": "GPT による生成画像：霧に包まれた湖の小島に一本の木が立ち、周囲には広い空と水面が広がる。三分割線で木を交点の近くに置き、中国語の注記で、余白の領域、感情の空間、視覚的な呼吸、比率のコントロールを説明している。"
+  },
+  {
+    "source": "留白不是空，而是幫主體保留呼吸空間。當背景足夠安靜，情緒就會更純。",
+    "en": "Negative space isn’t emptiness; it keeps breathing room for the subject. When the background is quiet enough, the mood comes through more purely.",
+    "ja": "余白は空っぽではなく、主被写体のために息をつく空間を残すものです。背景が十分に静かなら、感情はより純粋に伝わります。"
+  },
+  {
+    "source": "把雜枝、路人、建築與亮點排除在外，讓主體變小一些，往往更有意境。",
+    "en": "Keep stray branches, passersby, buildings and bright spots out of the frame, and let the subject become a little smaller; that often makes the picture more evocative.",
+    "ja": "雑多な枝、通行人、建物、明るい点を画面から外し、主被写体を少し小さくすると、かえって趣が深まることがよくあります。"
+  },
+  {
+    "source": "主體太小又不夠清楚，畫面就只會變空，而不會變簡潔。",
+    "en": "When the subject is both too small and not clear enough, the frame just turns empty rather than simple.",
+    "ja": "主被写体が小さすぎるうえにはっきりしないため、画面が簡潔になるのではなく、ただ空っぽになっています。"
+  },
+  {
+    "source": "霧景、單棵樹、孤舟、雪地與靜水場景都非常適合。",
+    "en": "Misty scenes, single trees, lone boats, snowfields and still water are all ideal.",
+    "ja": "霧の風景、一本の木、一艘の小舟、雪原、静かな水面の場面にとても向いています。"
+  },
+  {
+    "source": "構圖語法 10",
+    "en": "Composition method 10",
+    "ja": "構図の技法 10"
+  },
+  {
+    "source": "層次構圖",
+    "en": "Layering",
+    "ja": "レイヤー構図"
+  },
+  {
+    "source": "把前景、中景、背景拆清楚，畫面自然更立體。",
+    "en": "Separate the foreground, middle ground and background clearly, and the frame naturally looks more three-dimensional.",
+    "ja": "前景・中景・背景をはっきり分ければ、画面は自然と立体的になります。"
+  },
+  {
+    "source": "GPT 生成的示意圖：從長滿花草的岩石高處俯瞰湖泊、森林與層層遠山；中文標註分別標出前景、中景與背景，並以虛線說明視覺遞進與景深方向。",
+    "en": "GPT-generated illustration: looking down from high rocks covered with flowers and grass over a lake, forest and layer upon layer of distant mountains; Chinese labels mark the foreground, middle ground and background, and dashed lines show the visual progression and the direction of depth.",
+    "ja": "GPT による生成画像：草花に覆われた高い岩の上から、湖、森、幾重にも重なる遠くの山々を見下ろす。中国語の注記で前景・中景・背景をそれぞれ示し、破線で視線が段階的に奥へ進む流れと奥行きの方向を説明している。"
+  },
+  {
+    "source": "層次感讓風景不只是漂亮，而是有空間。當前中後景都成立時，照片通常更耐看。",
+    "en": "Layering makes a landscape not just pretty but spacious. When the foreground, middle ground and background all hold up, the photo usually rewards a longer look.",
+    "ja": "層の重なりがあると、風景は単にきれいなだけでなく、空間を感じさせるものになります。前景・中景・背景がそれぞれ成り立っていれば、写真はたいてい見飽きないものになります。"
+  },
+  {
+    "source": "主動找三層以上的距離關係，再用光線、明暗、霧氣與清晰度把它們分開。",
+    "en": "Actively look for three or more layers at different distances, then separate them with light, tonal contrast, mist and sharpness.",
+    "ja": "3 層以上の距離の関係を自分から探し、光、明暗、霧、鮮明さでそれぞれを分けます。"
+  },
+  {
+    "source": "所有東西都一樣亮、一樣清楚，畫面就會變平。",
+    "en": "Everything is equally bright and equally sharp, so the frame goes flat.",
+    "ja": "すべてが同じように明るく、同じようにくっきりしていて、画面が平板になっています。"
+  },
+  {
+    "source": "峽谷、森林、湖景、多山場景最值得練這個。",
+    "en": "Gorges, forests, lakes and mountainous scenes are the most worthwhile places to practice this.",
+    "ja": "峡谷、森、湖の風景、山の連なる場面は、これを練習するのに最もふさわしい題材です。"
+  },
+  {
+    "source": "從題材出發，理解都市、鄉村、建築、夜景、風景與海景的常見判斷。",
+    "en": "Start from the genre and learn the common judgment calls for city, countryside, architecture, night, landscape and seascape scenes.",
+    "ja": "ジャンルを出発点に、都市、田園、建築、夜景、風景、海景でよく求められる判断を理解します。"
+  },
+  {
+    "source": "題材範例 11",
+    "en": "Genre example 11",
+    "ja": "ジャンル別の例 11"
+  },
+  {
+    "source": "都市構圖範例",
+    "en": "City example",
+    "ja": "都市の構図例"
+  },
+  {
+    "source": "街道、行人、車流與高樓線條，如何在城市裡形成故事性。",
+    "en": "How streets, pedestrians, traffic and the lines of tall buildings create a sense of story in the city.",
+    "ja": "街路、歩行者、車の流れ、高層ビルの線が、都市の中でどのように物語性を生むか。"
+  },
+  {
+    "source": "GPT 生成的示意圖：黃昏的城市街道，斑馬線、車道與兩側建築的線條匯向遠方的台北 101，左側有行人走過斑馬線；畫面中的招牌與標語都是生成的。中文標註說明主體位置、消失點、引導線條、前景、中景與背景。",
+    "en": "GPT-generated illustration: a city street at dusk, where the lines of the crosswalk, the traffic lanes and the buildings on both sides converge on Taipei 101 in the distance, with pedestrians crossing the crosswalk on the left; the signs and slogans in the image are all generated. Chinese labels explain the subject position, the vanishing point, the leading lines, and the foreground, middle ground and background.",
+    "ja": "GPT による生成画像：夕暮れの都市の街路。横断歩道、車線、両側の建物の線が遠くの台北 101 へ向かって集まり、左側では歩行者が横断歩道を渡っている。画面内の看板や標語はすべて生成されたもの。中国語の注記で、主被写体の位置、消失点、リーディングライン、前景、中景、背景を説明している。"
+  },
+  {
+    "source": "都市題材最重要的是消失點、節奏與主體位置。街道、軌道、車流與行人會一起形成故事。",
+    "en": "In city scenes, what matters most is the vanishing point, rhythm and where the subject sits. Streets, tracks, traffic and pedestrians come together to form a story.",
+    "ja": "都市の題材で最も大切なのは、消失点、リズム、主被写体の位置です。街路、軌道、車の流れ、歩行者が一緒になって物語を作ります。"
+  },
+  {
+    "source": "先找能通往遠方主體的街道，再等待行人或車輛進入好位置。藍調時刻特別適合練冷暖對比。",
+    "en": "First find a street that leads to a distant subject, then wait for a pedestrian or vehicle to move into a good position. Blue hour is especially good for practicing warm–cool contrast.",
+    "ja": "まず遠くの主被写体へ通じる街路を探し、歩行者や車がよい位置に入るのを待ちます。ブルーアワーは、暖色と寒色の対比を練習するのに特に向いています。"
+  },
+  {
+    "source": "畫面熱鬧卻沒有主角，或招牌與燈箱過亮，把主體完全吃掉。",
+    "en": "A busy frame with no main subject, or signs and light boxes so bright that they swallow the subject entirely.",
+    "ja": "画面はにぎやかなのに主役がいません。あるいは看板や電飾看板が明るすぎて、主被写体を完全に食ってしまっています。"
+  },
+  {
+    "source": "商圈、河岸、路口、有軌電車與高樓街景都適用。",
+    "en": "Works for shopping districts, riversides, intersections, streetcars and high-rise street scenes.",
+    "ja": "繁華街、川沿い、交差点、路面電車、高層ビルの街並みのどれにも使えます。"
+  },
+  {
+    "source": "題材範例 12",
+    "en": "Genre example 12",
+    "ja": "ジャンル別の例 12"
+  },
+  {
+    "source": "鄉村構圖範例",
+    "en": "Countryside example",
+    "ja": "田園の構図例"
+  },
+  {
+    "source": "利用道路曲線、農舍與層次，讓安靜場景也能說故事。",
+    "en": "Use the curve of a road, farmhouses and layers so that even a quiet scene can tell a story.",
+    "ja": "道のカーブ、農家、層の重なりを生かして、静かな風景にも物語を語らせます。"
+  },
+  {
+    "source": "GPT 生成的示意圖：夕陽下的鄉間，一條彎曲的土路沿著木圍欄延伸到農舍，遠處是山巒；圖上以 1 到 7 的編號標註前景引導、主體、地平線位置、層次、S 曲線、留白與重複元素。",
+    "en": "GPT-generated illustration: countryside at sunset, with a winding dirt road running along a wooden fence to a farmhouse and mountains in the distance; numbers 1 to 7 in the image mark the foreground lead-in, the subject, the horizon position, layers, the S-curve, negative space and repeated elements.",
+    "ja": "GPT による生成画像：夕日に照らされた田園。曲がりくねった土の道が木の柵に沿って農家まで延び、遠くには山並みがある。画像内では 1 から 7 の番号で、前景による誘導、主被写体、地平線の位置、層の重なり、S 字曲線、余白、反復する要素を示している。"
+  },
+  {
+    "source": "鄉村畫面通常靠道路節奏、田野層次與單純主體來成立。安靜不等於無聊。",
+    "en": "Countryside pictures usually hold together through the rhythm of the road, the layers of the fields and a simple subject. Quiet doesn’t mean boring.",
+    "ja": "田園の画面は、たいてい道のリズム、田畑の重なり、シンプルな主被写体によって成り立ちます。静かだからといって退屈なわけではありません。"
+  },
+  {
+    "source": "找彎路、農舍、樹或穀倉當故事中心，並盡量利用清晨或傍晚的斜光。",
+    "en": "Find a bend in the road, a farmhouse, a tree or a barn to be the center of the story, and make the most of the slanting light of early morning or evening.",
+    "ja": "曲がった道、農家、木、納屋を物語の中心に据え、早朝や夕方の斜光をできるだけ生かします。"
+  },
+  {
+    "source": "路線進場後沒有終點，或前景雜草與圍欄亂成一團。",
+    "en": "A path that enters the frame but has no end point, or foreground weeds and fences in a tangled mess.",
+    "ja": "道筋が画面に入ってきても行き着く先がありません。あるいは前景の雑草や柵がごちゃごちゃに入り乱れています。"
+  },
+  {
+    "source": "郊區、田野、丘陵、公路與農村聚落都能直接使用。",
+    "en": "Applies directly to suburbs, fields, hills, highways and farming villages.",
+    "ja": "郊外、田畑、丘陵、道路、農村の集落にそのまま使えます。"
+  },
+  {
+    "source": "題材範例 13",
+    "en": "Genre example 13",
+    "ja": "ジャンル別の例 13"
+  },
+  {
+    "source": "建築構圖範例",
+    "en": "Architecture example",
+    "ja": "建築の構図例"
+  },
+  {
+    "source": "對稱、垂直控制、框景與幾何秩序，是建築照片的關鍵。",
+    "en": "Symmetry, control of verticals, framing and geometric order are the keys to architectural photos.",
+    "ja": "対称性、垂直線のコントロール、フレーミング、幾何学的な秩序が、建築写真の鍵です。"
+  },
+  {
+    "source": "GPT 生成的示意圖：從朱紅大門向內望，一座中式宮殿大殿位於中軸線上，地面的線條引向主體；中文標註說明框架、對稱軸線、重複元素、垂直控制、透視引導線與比例關係。",
+    "en": "GPT-generated illustration: a view in through a vermilion gate to a Chinese-style palace hall on the central axis, with lines on the ground leading to the subject; Chinese labels explain the frame, the axis of symmetry, repeated elements, vertical control, perspective leading lines and proportions.",
+    "ja": "GPT による生成画像：朱塗りの大門から内側を望むと、中国風の宮殿の正殿が中軸線上に建ち、地面の線が主被写体へと導いている。中国語の注記で、フレーム、対称軸、反復する要素、垂直線のコントロール、遠近感を生むリーディングライン、比率の関係を説明している。"
+  },
+  {
+    "source": "建築照片的核心是秩序感：中軸、重複元素、垂直線穩定，以及空間比例要清楚。",
+    "en": "The core of architectural photos is a sense of order: a central axis, repeated elements, steady verticals and clear spatial proportions.",
+    "ja": "建築写真の核心は秩序感、つまり中心軸、反復する要素、安定した垂直線、そしてはっきりした空間の比率です。"
+  },
+  {
+    "source": "先檢查垂直線，再決定是否中心對稱。若環境雜亂，就用門、窗、走廊收邊。",
+    "en": "Check the verticals first, then decide whether to go for central symmetry. If the surroundings are cluttered, use doors, windows or corridors to close off the edges.",
+    "ja": "まず垂直線を確認し、それから中央を軸にした対称にするかを決めます。周囲が雑然としているなら、門、窓、廊下で画面の縁を締めます。"
+  },
+  {
+    "source": "建築歪斜、變形過大，或前景太亂破壞幾何感。",
+    "en": "Buildings that lean or are badly distorted, or a messy foreground that breaks the sense of geometry.",
+    "ja": "建物が傾いていたり、ゆがみが大きすぎたり、前景が雑然としていて幾何学的な印象を壊していたりします。"
+  },
+  {
+    "source": "寺廟、車站、街屋、古蹟、大廳與現代建築都適合。",
+    "en": "Suits temples, stations, shophouses, historic sites, halls and modern buildings.",
+    "ja": "寺院、駅、町家、史跡、ホール、現代建築のどれにも向いています。"
+  },
+  {
+    "source": "題材範例 14",
+    "en": "Genre example 14",
+    "ja": "ジャンル別の例 14"
+  },
+  {
+    "source": "夜間構圖範例",
+    "en": "Night example",
+    "ja": "夜景の構図例"
+  },
+  {
+    "source": "夜景不只是亮，而是高光控制、視線引導與暗部平衡。",
+    "en": "A night scene isn’t just about brightness; it’s about controlling highlights, guiding the eye and balancing the shadows.",
+    "ja": "夜景は明るさだけでは決まりません。ハイライトのコントロール、視線の誘導、暗部のバランスが大切です。"
+  },
+  {
+    "source": "GPT 生成的示意圖：河岸步道的夜景，欄杆與路燈從左下引向對岸亮燈的台北 101 與城市天際線，水面映著燈光；中文標註說明光源、視線路徑、主體、高光控制、暗部平衡、倒影與引導線。",
+    "en": "GPT-generated illustration: a riverside promenade at night, where the railing and streetlights lead from the lower left to the lit-up Taipei 101 and city skyline across the river, with lights reflected in the water; Chinese labels explain the light sources, the eye path, the subject, highlight control, shadow balance, reflections and leading lines.",
+    "ja": "GPT による生成画像：川沿いの遊歩道の夜景。手すりと街灯が左下から、対岸でライトアップされた台北 101 と都市のスカイラインへと視線を導き、水面には明かりが映っている。中国語の注記で、光源、視線の流れ、主被写体、ハイライトのコントロール、暗部のバランス、映り込み、リーディングラインを説明している。"
+  },
+  {
+    "source": "夜景的關鍵是亮部不要炸掉、暗部保留氣氛，而且主體要夠清楚。",
+    "en": "The keys to a night scene are highlights that don’t blow out, shadows that keep the mood, and a subject that is clear enough.",
+    "ja": "夜景の鍵は、明部を白飛びさせないこと、暗部に雰囲気を残すこと、そして主被写体を十分にはっきりさせることです。"
+  },
+  {
+    "source": "先找最亮也最值得拍的主體，再看看是否有欄杆、水面、步道或橋樑可作引導。",
+    "en": "First find the subject that is both the brightest and the most worth shooting, then see whether a railing, the water, a walkway or a bridge can lead the eye.",
+    "ja": "まず最も明るく、最も撮る価値のある主被写体を探し、次に手すり、水面、遊歩道、橋などで視線を導けるかを見ます。"
+  },
+  {
+    "source": "亮部死白、天空全黑、水平歪斜，或只有一堆燈卻沒有主題。",
+    "en": "Highlights blown to pure white, a completely black sky, a tilted horizon, or a mass of lights with no theme.",
+    "ja": "明部が真っ白に飛んでいたり、空が真っ黒だったり、水平が傾いていたりします。あるいは、明かりばかりで主題がありません。"
+  },
+  {
+    "source": "城市夜景、河岸、橋樑、高樓與倒影題材都很實用。",
+    "en": "Very useful for city night views, riversides, bridges, high-rises and reflections.",
+    "ja": "都市の夜景、川沿い、橋、高層ビル、映り込みの題材にとても役立ちます。"
+  },
+  {
+    "source": "題材範例 15",
+    "en": "Genre example 15",
+    "ja": "ジャンル別の例 15"
+  },
+  {
+    "source": "風景構圖範例",
+    "en": "Landscape example",
+    "ja": "風景の構図例"
+  },
+  {
+    "source": "大景重點在前中後景、光線方向與視線如何走進深處。",
+    "en": "In a grand landscape, what matters is the foreground, middle ground and background, the direction of the light, and how the eye travels into the depth.",
+    "ja": "大きな風景で大切なのは、前景・中景・背景、光の向き、そして視線がどう奥へ進んでいくかです。"
+  },
+  {
+    "source": "GPT 生成的示意圖：一位背包客站在前景岩石上，俯瞰蜿蜒的河谷與日出時的群山；中文標註說明前景、中景、主體河流、引導線、背景、大氣透視、光線方向與畫面平衡。",
+    "en": "GPT-generated illustration: a backpacker standing on rocks in the foreground looks down over a winding river valley and mountains at sunrise; Chinese labels explain the foreground, the middle ground, the river as subject, leading lines, the background, atmospheric perspective, the direction of light and the balance of the frame.",
+    "ja": "GPT による生成画像：前景の岩の上にバックパッカーが立ち、蛇行する川の谷と日の出の山々を見下ろしている。中国語の注記で、前景、中景、主被写体の川、リーディングライン、背景、空気遠近法、光の向き、画面のバランスを説明している。"
+  },
+  {
+    "source": "這是一張總結型大景示範：前景入口、中景導線、遠山主體與光線方向一次到位。",
+    "en": "This is a summary example of a grand landscape: the foreground entry point, the leading line in the middle ground, the distant mountains as subject and the direction of light all fall into place at once.",
+    "ja": "これは総まとめ型の大きな風景の作例です。前景の入口、中景のリーディングライン、遠い山の主被写体、光の向きが一度にそろっています。"
+  },
+  {
+    "source": "站在高點時別只看遠山，先檢查前景是否成立，再看河流、山稜或光線能否把視線帶進畫面。",
+    "en": "On a high point, don’t look only at the distant mountains: first check whether the foreground works, then see whether a river, a ridgeline or the light can carry the eye into the frame.",
+    "ja": "高い場所に立ったら、遠くの山だけを見ないこと。まず前景が成り立っているかを確認し、次に川、稜線、光が視線を画面の中へ運べるかを見ます。"
+  },
+  {
+    "source": "只有漂亮背景，卻沒有前景與導線；或太陽、人物、主峰彼此打架。",
+    "en": "Only a beautiful background, with no foreground and no leading line; or the sun, a person and the main peak fighting one another.",
+    "ja": "きれいな背景だけで、前景もリーディングラインもありません。あるいは太陽、人物、主峰が互いにけんかしています。"
+  },
+  {
+    "source": "適合做整體風景拍攝的複習模板。",
+    "en": "Works well as a review template for landscape photography as a whole.",
+    "ja": "風景撮影全体を復習するためのテンプレートに向いています。"
+  },
+  {
+    "source": "題材範例 16",
+    "en": "Genre example 16",
+    "ja": "ジャンル別の例 16"
+  },
+  {
+    "source": "海景構圖範例",
+    "en": "Seascape example",
+    "ja": "海景の構図例"
+  },
+  {
+    "source": "海景拍得好，關鍵在地平線、波浪節奏、海岸線與明確主體。",
+    "en": "A good seascape depends on the horizon, the rhythm of the waves, the coastline and a clear subject.",
+    "ja": "海景をうまく撮る鍵は、水平線、波のリズム、海岸線、そして明確な主被写体です。"
+  },
+  {
+    "source": "GPT 生成的示意圖：夕陽下的海岸，右側懸崖上有白色燈塔，前景是濕亮的礁石，浪花朝岸邊推進；中文標註說明地平線位置、主體燈塔、海岸線引導線、海浪方向、前景礁石與留白空間。",
+    "en": "GPT-generated illustration: a coast at sunset, with a white lighthouse on the cliff at the right, wet, glistening rocks in the foreground and surf rolling toward the shore; Chinese labels explain the horizon position, the lighthouse as subject, the coastline as a leading line, the direction of the waves, the foreground rocks and negative space.",
+    "ja": "GPT による生成画像：夕日の海岸。右側の崖の上に白い灯台が立ち、前景には濡れて光る岩礁があり、波しぶきが岸へ押し寄せている。中国語の注記で、水平線の位置、主被写体の灯台、海岸線のリーディングライン、波の向き、前景の岩礁、余白を説明している。"
+  },
+  {
+    "source": "海景元素少，所以每個元素都重要：地平線放哪裡、海浪怎麼走、前景礁石是否成立、燈塔是否夠明確。",
+    "en": "A seascape has few elements, so every one of them matters: where the horizon goes, how the waves move, whether the foreground rocks work, and whether the lighthouse is clear enough.",
+    "ja": "海景は要素が少ないので、どの要素も重要です。水平線をどこに置くか、波がどう動くか、前景の岩礁が成り立っているか、灯台が十分にはっきりしているかが問われます。"
+  },
+  {
+    "source": "先把地平線拍平，再決定強調天空還是浪。若有燈塔、碼頭、礁石或船，盡量讓它成為清楚焦點。",
+    "en": "First get the horizon level, then decide whether to emphasize the sky or the waves. If there is a lighthouse, pier, rocks or a boat, try to make it a clear focal point.",
+    "ja": "まず水平線をまっすぐに撮り、次に空と波のどちらを強調するかを決めます。灯台、桟橋、岩礁、船があれば、できるだけはっきりした焦点にします。"
+  },
+  {
+    "source": "只有一大片海卻沒有停留點，或地平線歪斜、前景碎亂。",
+    "en": "Just a vast expanse of sea with nowhere for the eye to rest, or a tilted horizon and a cluttered foreground.",
+    "ja": "一面の海があるだけで、視線の止まる場所がありません。あるいは水平線が傾き、前景がごちゃついています。"
+  },
+  {
+    "source": "海岸、燈塔、浪花、日出日落海景都可直接使用。",
+    "en": "Applies directly to coasts, lighthouses, breaking waves and sunrise or sunset seascapes.",
+    "ja": "海岸、灯台、波しぶき、日の出・日の入りの海景にそのまま使えます。"
+  },
+  {
+    "source": "作者另外提供的五張完整示意圖，圖上直接標明「100% 虛構生成」，用一張圖串起整套觀看順序。",
+    "en": "Five complete illustrations supplied separately by the author. Each is labeled “100% fictional” right in the image and ties the whole viewing order together in a single picture.",
+    "ja": "筆者が別に提供した 5 枚の完成した図解です。画像内に「100% 虚構生成」と直接明記されており、それぞれ 1 枚の図で一連の見る順番を通して示しています。"
+  },
+  {
+    "source": "GPT 生成 · 1448 × 1086",
+    "en": "GPT-generated · 1448 × 1086",
+    "ja": "GPT 生成 · 1448 × 1086"
+  },
+  {
+    "source": "作者提供 17",
+    "en": "From the author 17",
+    "ja": "筆者提供 17"
+  },
+  {
+    "source": "理想山景示範",
+    "en": "Ideal mountain example",
+    "ja": "理想的な山の作例"
+  },
+  {
+    "source": "以三分法、山徑導線、前中後景與亮部控制，濃縮成一張完整示意。",
+    "en": "The rule of thirds, a trail as the leading line, foreground, middle ground and background, and highlight control, condensed into one complete illustration.",
+    "ja": "三分割法、登山道のリーディングライン、前景・中景・背景、明部のコントロールを、1 枚の完成した図解に凝縮しています。"
+  },
+  {
+    "source": "作者提供的 GPT 生成示意圖，圖上標明「100% 虛構生成」：高山稜線上的小屋與一位登山者，碎石山徑從前景蜿蜒而上，遠方是雲海與群山；中文標註說明觀看順序（前景、山徑、主體、遠景）、三分線交點與亮部控制。",
+    "en": "GPT-generated illustration supplied by the author, labeled “100% fictional” in the image: a hut and a hiker on a high mountain ridge, with a gravel trail winding up from the foreground and a sea of clouds and mountains in the distance; Chinese labels explain the viewing order (foreground, trail, subject, distant view), the rule-of-thirds intersection and highlight control.",
+    "ja": "筆者提供の GPT 生成画像（画像内に「100% 虚構生成」と表記）：高山の稜線に建つ山小屋と 1 人の登山者。砂利の登山道が前景から曲がりくねって上り、遠くには雲海と山々が広がる。中国語の注記で、見る順番（前景、登山道、主被写体、遠景）、三分割線の交点、明部のコントロールを説明している。"
+  },
+  {
+    "source": "這張把山景最常見的正確決策濃縮得很完整：前景岩石提供入口，山徑形成導線，主體落在三分線交點，右側天空保留呼吸空間。",
+    "en": "This image is a very complete distillation of the most common right decisions in mountain scenes: rocks in the foreground provide an entry point, the trail forms a leading line, the subject sits on a rule-of-thirds intersection, and the sky on the right keeps some breathing room.",
+    "ja": "この図は、山の風景で最もよくある正しい判断を余すところなく凝縮しています。前景の岩が入口になり、登山道がリーディングラインを作り、主被写体は三分割線の交点に置かれ、右側の空には息をつく余白が残されています。"
+  },
+  {
+    "source": "真實拍攝時，不必複製同一座山；更重要的是複製這種觀看順序：前景 → 導線 → 主體 → 遠景。",
+    "en": "When shooting for real, there’s no need to copy the same mountain; what matters more is copying this viewing order: foreground → leading line → subject → distant view.",
+    "ja": "実際に撮影するときは、同じ山を再現する必要はありません。それより大切なのは、「前景 → リーディングライン → 主被写体 → 遠景」という見る順番を再現することです。"
+  },
+  {
+    "source": "若把前景拿掉、導線斷掉，或右側亮天失控爆掉，這張圖的穩定結構就會瓦解。",
+    "en": "If the foreground is removed, the leading line breaks, or the bright sky on the right blows out uncontrolled, the stable structure of this image falls apart.",
+    "ja": "前景を取り除いたり、リーディングラインが途切れたり、右側の明るい空がコントロールできずに白飛びしたりすると、この図の安定した構造は崩れてしまいます。"
+  },
+  {
+    "source": "很適合作為「理想山景」的總模板。",
+    "en": "Works very well as a master template for an “ideal mountain scene.”",
+    "ja": "「理想的な山の風景」の総合的なテンプレートとして、とても向いています。"
+  },
+  {
+    "source": "作者提供 18",
+    "en": "From the author 18",
+    "ja": "筆者提供 18"
+  },
+  {
+    "source": "理想森林示範",
+    "en": "Ideal forest example",
+    "ja": "理想的な森の作例"
+  },
+  {
+    "source": "樹幹節奏、溪流導線、人物主體與光束層次，一次看懂森林構圖。",
+    "en": "The rhythm of the trunks, a stream as the leading line, a person as the subject and layers of light rays: forest composition at a glance.",
+    "ja": "幹のリズム、渓流のリーディングライン、主被写体の人物、光芒の重なりで、森の構図がひと目でわかります。"
+  },
+  {
+    "source": "作者提供的 GPT 生成示意圖，圖上標明「100% 虛構生成」：森林小徑與溪流通往霧中的小木屋，一位穿紅外套的行者站在左側三分線上，光束從樹梢灑下；中文標註說明觀看順序、明暗對比與樹幹節奏。",
+    "en": "GPT-generated illustration supplied by the author, labeled “100% fictional” in the image: a forest trail and a stream lead to a small cabin in the mist, a hiker in a red jacket stands on the left rule-of-thirds line, and shafts of light fall through the treetops; Chinese labels explain the viewing order, light–dark contrast and the rhythm of the trunks.",
+    "ja": "筆者提供の GPT 生成画像（画像内に「100% 虚構生成」と表記）：森の小道と渓流が霧の中の小さな木の小屋へと続き、赤い上着のハイカーが左側の三分割線上に立ち、梢から光芒が差し込んでいる。中国語の注記で、見る順番、明暗の対比、幹のリズムを説明している。"
+  },
+  {
+    "source": "這張示範森林題材最難的部分：如何在複雜場景裡建立焦點。答案是讓人物、溪流與光束一起合作。",
+    "en": "This image shows the hardest part of forest subjects: how to establish a focal point in a complex scene. The answer is to have the person, the stream and the shafts of light work together.",
+    "ja": "この図は、森という題材で最も難しい部分、つまり複雑な場面でどう焦点を作るかを示しています。答えは、人物、渓流、光芒を連携させることです。"
+  },
+  {
+    "source": "在真實森林裡，先找一條會把視線帶進去的小徑或水流，再等待一束光或安排人物成為停留點。",
+    "en": "In a real forest, first find a path or stream that will carry the eye in, then wait for a shaft of light or place a person to give the eye somewhere to rest.",
+    "ja": "実際の森では、まず視線を奥へ運んでくれる小道や流れを探し、次に一筋の光を待つか、人物を配して視線の止まる場所を作ります。"
+  },
+  {
+    "source": "若整片森林亮度平均、主體不清楚，照片會只剩「很多樹」，卻沒有重點。",
+    "en": "If the whole forest is evenly lit and the subject is unclear, the photo is left with nothing but “lots of trees” and no focus.",
+    "ja": "森全体の明るさが均一で主被写体がはっきりしないと、写真には「たくさんの木」しか残らず、見せ場がなくなります。"
+  },
+  {
+    "source": "這張很適合作為日後拍森林、溪谷與林道的檢查圖。",
+    "en": "This image works very well as a reference to check against when shooting forests, stream valleys and forest roads in the future.",
+    "ja": "この図は、今後、森や渓谷、林道を撮るときの確認用の図として、とても向いています。"
+  },
+  {
+    "source": "作者提供 19",
+    "en": "From the author 19",
+    "ja": "筆者提供 19"
+  },
+  {
+    "source": "理想海邊示範",
+    "en": "Ideal seaside example",
+    "ja": "理想的な海辺の作例"
+  },
+  {
+    "source": "地平線、主體衝浪者、燈塔、海岸線與前景貝殼，共同建立完整海景閱讀路徑。",
+    "en": "The horizon, a surfer as the subject, a lighthouse, the coastline and shells in the foreground together build a complete reading path through the seascape.",
+    "ja": "水平線、主被写体のサーファー、灯台、海岸線、前景の貝殻が、海景を読み解くための完全な道筋を一緒に作り上げています。"
+  },
+  {
+    "source": "作者提供的 GPT 生成示意圖，圖上標明「100% 虛構生成」：夕陽下的海灘，一位衝浪者拿著衝浪板走在浪邊，右側棧道盡頭有燈塔，前景是貝殼與礁石；中文標註說明觀看順序、地平線、海岸線導線與冷暖色對比。",
+    "en": "GPT-generated illustration supplied by the author, labeled “100% fictional” in the image: a beach at sunset, with a surfer carrying a surfboard along the water’s edge, a lighthouse at the end of a jetty on the right, and shells and rocks in the foreground; Chinese labels explain the viewing order, the horizon, the coastline as a leading line and the warm–cool color contrast.",
+    "ja": "筆者提供の GPT 生成画像（画像内に「100% 虚構生成」と表記）：夕日の浜辺。サーフボードを抱えたサーファーが波打ち際を歩き、右側の突堤の先には灯台があり、前景には貝殻と岩礁がある。中国語の注記で、見る順番、水平線、海岸線のリーディングライン、暖色と寒色の対比を説明している。"
+  },
+  {
+    "source": "這張最有價值的地方，是把海景常用的所有元素放在一個可讀的結構裡：前景、海岸線、主體、遠方燈塔與天空亮部。",
+    "en": "The most valuable thing about this image is that it puts all the elements commonly used in seascapes into one readable structure: the foreground, the coastline, the subject, the distant lighthouse and the bright sky.",
+    "ja": "この図の最大の価値は、前景、海岸線、主被写体、遠くの灯台、空の明部という、海景でよく使う要素をすべて、読み取れる 1 つの構造に収めていることです。"
+  },
+  {
+    "source": "到海邊時可直接拿它檢查：地平線平了嗎？前景礁石或貝殼夠不夠乾淨？海浪能不能帶往主體？",
+    "en": "At the seaside, use it directly as a check: Is the horizon level? Are the foreground rocks or shells clean enough? Can the waves carry the eye to the subject?",
+    "ja": "海辺では、これを使ってそのまま確認できます。水平線はまっすぐか？ 前景の岩礁や貝殻は十分にすっきりしているか？ 波が主被写体へ視線を導けるか？"
+  },
+  {
+    "source": "若主體不明確，只剩漂亮浪花與夕陽，畫面容易變得只有氛圍、沒有結構。",
+    "en": "If the subject is unclear and all that’s left is pretty waves and a sunset, the picture easily becomes all mood and no structure.",
+    "ja": "主被写体が不明確で、きれいな波しぶきと夕日しか残らないと、画面は雰囲気だけで構造のないものになりがちです。"
+  },
+  {
+    "source": "可當作海邊、燈塔、衝浪與夕陽海景的綜合範例。",
+    "en": "Can serve as a combined example for seaside, lighthouse, surfing and sunset seascapes.",
+    "ja": "海辺、灯台、サーフィン、夕日の海景の総合的な作例として使えます。"
+  },
+  {
+    "source": "作者提供 20",
+    "en": "From the author 20",
+    "ja": "筆者提供 20"
+  },
+  {
+    "source": "理想都市示範",
+    "en": "Ideal city example",
+    "ja": "理想的な都市の作例"
+  },
+  {
+    "source": "濕地反射、軌道導線、行人主體、城市天際線與冷暖光對比，一次整合。",
+    "en": "Reflections on wet ground, tracks as leading lines, a pedestrian as the subject, the city skyline and a warm–cool light contrast, all brought together at once.",
+    "ja": "濡れた地面の反射、軌道のリーディングライン、主被写体の歩行者、都市のスカイライン、暖色と寒色の光の対比を、一度にまとめています。"
+  },
+  {
+    "source": "作者提供的 GPT 生成示意圖，圖上標明「100% 虛構生成」：雨後的河岸街道，有軌電車沿軌道駛來，一位撐紅傘的行人走在濕亮的步道上，遠方是台北 101 與城市天際線；中文標註說明觀看順序、軌道導線、反射與冷暖光對比。",
+    "en": "GPT-generated illustration supplied by the author, labeled “100% fictional” in the image: a riverside street after rain, with a streetcar approaching along its tracks, a pedestrian with a red umbrella walking on the wet, shining walkway, and Taipei 101 and the city skyline in the distance; Chinese labels explain the viewing order, the tracks as leading lines, reflections and the warm–cool light contrast.",
+    "ja": "筆者提供の GPT 生成画像（画像内に「100% 虚構生成」と表記）：雨上がりの川沿いの街路。路面電車が軌道に沿ってこちらへ向かい、赤い傘をさした歩行者が濡れて光る遊歩道を歩き、遠くには台北 101 と都市のスカイラインがある。中国語の注記で、見る順番、軌道のリーディングライン、反射、暖色と寒色の光の対比を説明している。"
+  },
+  {
+    "source": "這張都市示範最大的優點，是把複雜城市整理成可閱讀的路徑：前景路面 → 軌道與街道 → 行人主體 → 高塔 → 天空。",
+    "en": "The biggest strength of this city example is that it organizes a complex city into a readable path: foreground pavement → tracks and street → pedestrian as subject → tower → sky.",
+    "ja": "この都市の作例の最大の長所は、複雑な都市を「前景の路面 → 軌道と街路 → 主被写体の歩行者 → タワー → 空」という読み取れる道筋に整理していることです。"
+  },
+  {
+    "source": "在雨後或藍調時刻拍城市時，先找會反光的地面，再等待一位人物走到強勢位置，成功率會很高。",
+    "en": "When shooting a city after rain or at blue hour, first find reflective ground, then wait for a person to walk into a strong position; the success rate will be very high.",
+    "ja": "雨上がりやブルーアワーに都市を撮るときは、まず光を反射する地面を探し、次に人物が画面の強い位置まで歩いてくるのを待つと、成功率がとても高くなります。"
+  },
+  {
+    "source": "如果沒有人物或視線終點，城市畫面再漂亮也可能只像一般街拍紀錄。",
+    "en": "Without a person or an end point for the eye, a city picture, however beautiful, may look like nothing more than an ordinary street-photography record.",
+    "ja": "人物や視線の終点がないと、都市の画面はどれほどきれいでも、ありふれた街角スナップの記録のように見えるかもしれません。"
+  },
+  {
+    "source": "可作為城市散步、電車街景、雨天街拍與藍調時刻的理想模板。",
+    "en": "Can serve as an ideal template for city walks, streetcar street scenes, rainy-day street photography and blue hour.",
+    "ja": "街歩き、路面電車のある街並み、雨の日のスナップ、ブルーアワーの理想的なテンプレートとして使えます。"
+  },
+  {
+    "source": "作者提供 21",
+    "en": "From the author 21",
+    "ja": "筆者提供 21"
+  },
+  {
+    "source": "理想鄉村示範",
+    "en": "Ideal countryside example",
+    "ja": "理想的な田園の作例"
+  },
+  {
+    "source": "S 形道路、自行車主體、村莊中景、遠山背景與乾淨的田園節奏。",
+    "en": "An S-shaped road, a cyclist as the subject, a village in the middle ground, distant mountains in the background and a clean rural rhythm.",
+    "ja": "S 字の道、主被写体の自転車、中景の村、背景の遠い山並み、すっきりとした田園のリズム。"
+  },
+  {
+    "source": "作者提供的 GPT 生成示意圖，圖上標明「100% 虛構生成」：一位騎單車的旅人沿著彎曲小路騎向村莊，兩側是稻田與木圍欄，遠方是山巒與夕陽；中文標註說明觀看順序、道路導線、層次與色彩。",
+    "en": "GPT-generated illustration supplied by the author, labeled “100% fictional” in the image: a traveler on a bicycle rides along a winding lane toward a village, with rice paddies and wooden fences on both sides and mountains and the setting sun in the distance; Chinese labels explain the viewing order, the road as a leading line, layers and color.",
+    "ja": "筆者提供の GPT 生成画像（画像内に「100% 虚構生成」と表記）：自転車に乗った旅人が曲がりくねった小道を村へ向かって走り、両側には田んぼと木の柵、遠くには山並みと夕日がある。中国語の注記で、見る順番、道のリーディングライン、層の重なり、色彩を説明している。"
+  },
+  {
+    "source": "這張鄉村示範非常完整地把平凡場景拍得有故事：前景花草與木欄提供入口，道路負責引導，單車騎士成為主角。",
+    "en": "This countryside example shows very thoroughly how an ordinary scene can be given a story: flowers, grasses and a wooden fence in the foreground provide an entry point, the road does the guiding, and the cyclist becomes the lead.",
+    "ja": "この田園の作例は、平凡な風景に物語を持たせる方法を余すところなく示しています。前景の草花と木の柵が入口になり、道が視線を導き、自転車に乗る人が主役になります。"
+  },
+  {
+    "source": "在鄉間拍攝時，先找彎路，再找一位人、腳踏車或小車作為主體，照片會立刻更有敘事感。",
+    "en": "When shooting in the countryside, first find a bend in the road, then a person, a bicycle or a small car as the subject, and the photo immediately gains a stronger sense of narrative.",
+    "ja": "田舎で撮影するときは、まず曲がった道を探し、次に人、自転車、小さな車などを主被写体として探すと、写真の物語性がすぐに増します。"
+  },
+  {
+    "source": "若沒有主體，鄉村畫面很容易只剩風景記錄；若元素過多，也會破壞純粹感。",
+    "en": "Without a subject, a countryside picture easily becomes a mere landscape record; with too many elements, it also loses its sense of purity.",
+    "ja": "主被写体がないと、田園の画面はただの風景の記録になりがちです。要素が多すぎても、純粋さが損なわれます。"
+  },
+  {
+    "source": "非常適合當作鄉村、田野、公路與村落生活感照片的總模板。",
+    "en": "Works very well as a master template for photos of the countryside, fields, highways and the feel of village life.",
+    "ja": "田園、田畑、道路、村の暮らしの雰囲気を写す写真の総合的なテンプレートとして、とても向いています。"
+  },
+  {
+    "source": "本節仍以實拍為主；GPT 生成的構圖示意集中在",
+    "en": "This section still relies mainly on real photos; the GPT-generated composition illustrations are gathered in",
+    "ja": "この節はこれまでどおり実写真が中心です。GPT で生成した構図の図解は"
+  },
+  {
+    "source": "，不取代真實拍攝。這組照片有真實的山谷、森林與山城建物，",
+    "en": " and are not a substitute for real photography. The set includes real valleys, forests and buildings in a mountain town, but ",
+    "ja": "にまとめており、実際の撮影に代わるものではありません。このセットには実際の谷、森、山あいの町の建物がありますが、"
+  },
+  {
+    "source": "GPT 構圖示意圖：",
+    "en": "GPT composition illustrations: ",
+    "ja": "GPT による構図の図解："
+  },
+  {
+    "source": "04A 章的 21 張，其中 5 張由作者另外提供；用來說明構圖結構，都不是實拍紀錄，圖上的場景、人物、招牌、標語與相機參數都不是真實資料。檔案沿用原稿內嵌的位元組。",
+    "en": "The 21 images in chapter 04A, 5 of them supplied separately by the author. They illustrate composition structure and none of them is a photographic record; the scenes, people, signs, slogans and camera settings in the images are not real data. The files reuse the bytes embedded in the original.",
+    "ja": "04A 章の 21 枚。うち 5 枚は筆者が別に提供したものです。構図の構造を説明するための画像で、いずれも実写の記録ではありません。画像内のシーン、人物、看板、標語、カメラ設定は、どれも実際のデータではありません。ファイルは原稿に埋め込まれていたバイト列をそのまま使っています。"
+  },
+  {
+    "source": "2026-10-11 的新版原稿新增 04A 章「GPT 構圖大圖圖鑑」：本頁收錄全部 21 張圖與說明，圖片位元組不變；原稿標題裡關於修訂過程的說明（例如修正圖片縮放問題）改寫成給讀者的導讀，第二人稱改為中性，並更正一處錯字。",
+    "en": "The new 2026-10-11 version of the original added chapter 04A, “GPT composition atlas”: this page includes all 21 images and their notes with the image bytes unchanged; the notes in the original’s heading about the revision process (such as fixing an image-scaling problem) were rewritten as an introduction for readers, second-person wording was made neutral, and one typo was corrected.",
+    "ja": "2026-10-11 の新しい版の原稿で 04A 章「GPT 構図図鑑」が加わりました。本ページは 21 枚すべての画像と説明を収録し、画像のバイト列は変えていません。原稿の見出しにあった改訂作業についての説明（画像の拡大縮小の不具合を直したことなど）は読者向けの導入に書き直し、二人称は中立的な表現に改め、誤字を 1 か所訂正しました。"
+  },
+  {
+    "source": "生成圖的標註只是近似：對稱構圖把垂直中線標成對稱軸，但倒影是上下對稱；理想海邊示範的衝浪者並不在三分線交點上；風景構圖範例的文字說遠山是主體，圖上卻標河流。本頁在編輯解析中說明，圖片本身不修改。",
+    "en": "The labels on the generated images are only approximate: the symmetry image marks the vertical center line as the axis of symmetry, but the reflection is symmetrical top to bottom; the surfer in the ideal seaside example is not on a rule-of-thirds intersection; and the landscape example’s text names the distant mountains as the subject, while the image labels the river. This page explains this in the Editor’s analysis; the images themselves are not modified.",
+    "ja": "生成画像の注記はあくまで近似です。シンメトリー構図の図は垂直の中心線を対称軸と表記していますが、映り込みは上下対称です。理想的な海辺の作例のサーファーは、三分割線の交点上にはいません。風景の構図例は、説明文では遠くの山を主被写体としていますが、図上では川を主被写体と表記しています。本ページでは編集者の解説で説明し、画像そのものは修正していません。"
+  }
+]

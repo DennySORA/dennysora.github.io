@@ -9,6 +9,7 @@ import { locales } from '../../src/i18n/index.ts';
 import { publishedPaths } from '../../src/lib/content.server.ts';
 import { parseRoute } from '../../src/lib/route-manifest.ts';
 import { areas } from '../../src/lib/workspace.ts';
+import { collectionEntries } from '../../src/lib/note-collections.server.ts';
 
 describe('requested website simplification', () => {
   for (const locale of locales) {
@@ -48,7 +49,7 @@ describe('requested website simplification', () => {
           createElement(TabLine, {
             locale,
             route: { kind: 'home', locale },
-            files: { posts: [] },
+            files: { posts: [], collections: collectionEntries(locale) },
             languageLinks: locales.map((target) => ({
               locale: target,
               href: `/${target}/`,

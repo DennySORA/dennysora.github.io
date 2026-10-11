@@ -1,0 +1,2072 @@
+[
+  {
+    "source": "// 日語 · 第 3 篇，共 7 篇 · 原稿 2026-10-10 · 本站重整與核對 2026-10-12",
+    "en": "// Japanese · note 3 of 7 · original 2026-10-10 · rewritten and checked on this site 2026-10-12",
+    "ja": "// 日本語 · 第3回（全7回） · 原稿 2026-10-10 · 本サイトで再編・確認 2026-10-12"
+  },
+  {
+    "source": "日語筆記 3｜時間與從句：とき、名詞化、關係子句與目的",
+    "en": "Japanese notes 3 | Time and clauses: とき, nominalization, relative clauses and purpose",
+    "ja": "日本語ノート 3｜時間と節：とき、名詞化、連体修飾節と目的"
+  },
+  {
+    "source": "從句裡的 る／た 比較的是兩件事的先後，不是照抄整句的時間。這一篇處理時間的表達、とき／前に／後で、こと／の 的作用範圍、關係子句，以及目的與用途。",
+    "en": "In a subordinate clause, る／た compares the order of two events; it does not simply copy the tense of the whole sentence. This note covers time expressions, とき／前に／後で, the scope of こと／の, relative clauses, and purpose and use.",
+    "ja": "従属節の「る／た」が比べているのは二つの出来事の前後関係であり、文全体の時制をそのまま写しているわけではありません。このノートでは、時間の表し方、とき／前に／後で、「こと／の」の作用範囲、連体修飾節、そして目的と用途を扱います。"
+  },
+  {
+    "source": "初級課程 L1–L21 與後續課堂筆記",
+    "en": "Beginner course L1–L21 and later class notes",
+    "ja": "初級コース L1–L21 とその後の授業ノート"
+  },
+  {
+    "source": "原筆記、編輯解析與校訂分開標示",
+    "en": "Original notes, editor’s analysis and revisions are marked separately",
+    "ja": "元のノート・編集者の解説・校訂を区別して表示"
+  },
+  {
+    "source": "日文例句在三種語言版本中保持原文",
+    "en": "Japanese examples stay in the original in all three language editions",
+    "ja": "日本語の例文は3言語版すべてで原文のまま"
+  },
+  {
+    "source": "日語筆記系列",
+    "en": "Japanese notes series",
+    "ja": "日本語ノートシリーズ"
+  },
+  {
+    "source": "1 句子結構",
+    "en": "1 Sentence structure",
+    "ja": "1 文の構造"
+  },
+  {
+    "source": "2 活用與接續",
+    "en": "2 Conjugation",
+    "ja": "2 活用と接続"
+  },
+  {
+    "source": "3 時間與從句",
+    "en": "3 Time and clauses",
+    "ja": "3 時間と節"
+  },
+  {
+    "source": "4 理由與意圖",
+    "en": "4 Reasons and intent",
+    "ja": "4 理由と意図"
+  },
+  {
+    "source": "5 互動與表達",
+    "en": "5 Interaction",
+    "ja": "5 やりとりと表現"
+  },
+  {
+    "source": "6 詞彙與讀音",
+    "en": "6 Vocabulary",
+    "ja": "6 語彙と読み方"
+  },
+  {
+    "source": "7 總複習",
+    "en": "7 Review",
+    "ja": "7 総復習"
+  },
+  {
+    "source": "本篇主題",
+    "en": "Topics in this note",
+    "ja": "このノートのトピック"
+  },
+  {
+    "source": "14｜時間點、期間、頻率與截止",
+    "en": "14 | Points in time, periods, frequency and deadlines",
+    "ja": "14｜時点・期間・頻度・期限"
+  },
+  {
+    "source": "15｜とき／前に／後で／てから",
+    "en": "15 | とき／前に／後で／てから",
+    "ja": "15｜とき／前に／後で／てから"
+  },
+  {
+    "source": "16｜こと／の與忘れる：分清內容、事實、結果",
+    "en": "16 | こと／の and 忘れる: telling content, fact and result apart",
+    "ja": "16｜「こと／の」と「忘れる」：内容・事実・結果を区別する"
+  },
+  {
+    "source": "17｜關係子句：先找中心名詞",
+    "en": "17 | Relative clauses: find the head noun first",
+    "ja": "17｜連体修飾節：まず被修飾名詞を探す"
+  },
+  {
+    "source": "18｜移動目的、一般目的、用途與方法",
+    "en": "18 | Purpose of movement, general purpose, use and method",
+    "ja": "18｜移動の目的・一般的な目的・用途・方法"
+  },
+  {
+    "source": "19｜ます語幹、ながら、たい、方與知る",
+    "en": "19 | The masu stem, ながら, たい, 方 and 知る",
+    "ja": "19｜ます形の語幹・ながら・たい・方・知る"
+  },
+  {
+    "source": "// 14 · 時間與從句",
+    "en": "// 14 · Time and clauses",
+    "ja": "// 14 · 時間と節"
+  },
+  {
+    "source": "先判斷要說的是「何時」「多久」「多常」，還是「最晚何時完成」。",
+    "en": "First decide whether you mean “when,” “how long,” “how often” or “by when at the latest.”",
+    "ja": "まず、言いたいのが「いつ」「どのくらいの間」「どのくらいの頻度で」なのか、それとも「遅くともいつまでに終えるか」なのかを見極めます。"
+  },
+  {
+    "source": "編輯解析",
+    "en": "Editor’s analysis",
+    "ja": "編集者の解説"
+  },
+  {
+    "source": "是時間點，",
+    "en": "is a point in time, ",
+    "ja": "は時点、"
+  },
+  {
+    "source": "二時間",
+    "en": "二時間",
+    "ja": "二時間"
+  },
+  {
+    "source": "是時長，",
+    "en": "is a duration, and ",
+    "ja": "は時間の長さ、"
+  },
+  {
+    "source": "一週間に三回",
+    "en": "一週間に三回",
+    "ja": "一週間に三回"
+  },
+  {
+    "source": "是頻率。",
+    "en": "is a frequency. ",
+    "ja": "は頻度です。"
+  },
+  {
+    "source": "設定持續的終點，",
+    "en": "sets the end point of something ongoing, while ",
+    "ja": "は継続の終点を示し、"
+  },
+  {
+    "source": "設定完成的期限；終點與期限不能混用。",
+    "en": "sets the deadline for finishing something; don’t mix up an end point and a deadline.",
+    "ja": "は完了の期限を示します。終点と期限を混同してはいけません。"
+  },
+  {
+    "source": "也能表示空間終點（東京まで），所以「まで＝一直做」只適用於相應的時間構造。日期的特殊讀音另在「量詞與讀音」統一查詢。",
+    "en": "can also mark a spatial end point (東京まで), so “まで = keep doing until” only applies to the matching time construction. Special date readings are covered separately in “Counters and readings.”",
+    "ja": "は空間的な終点（東京まで）も表せるため、「まで＝ずっと〜し続ける」が当てはまるのは、対応する時間の構造の場合だけです。日付の特殊な読み方は、別途「助数詞と読み方」でまとめて確認できます。"
+  },
+  {
+    "source": "將「時間點、時間長度、起點、頻率基準、每次時長」分開。",
+    "en": "Keep these apart: point in time, length of time, starting point, frequency base and length of each occurrence.",
+    "ja": "「時点」「時間の長さ」「起点」「頻度の基準」「1回あたりの時間」を分けて考えます。"
+  },
+  {
+    "source": "時間詞是否加に",
+    "en": "Does the time word take に?",
+    "ja": "時間を表す語に「に」を付けるか"
+  },
+  {
+    "source": "通常加に：明確時間點",
+    "en": "Usually with に: specific points in time",
+    "ja": "通常「に」を付ける：明確な時点"
+  },
+  {
+    "source": "通常不加：相對／周期時間",
+    "en": "Usually without: relative or recurring time",
+    "ja": "通常は付けない：相対的・周期的な時間"
+  },
+  {
+    "source": "今日／昨日／明日／毎日／毎週／毎朝／毎晩",
+    "en": "今日／昨日／明日／毎日／毎週／毎朝／毎晩",
+    "ja": "今日／昨日／明日／毎日／毎週／毎朝／毎晩"
+  },
+  {
+    "source": "易錯點",
+    "en": "Common trap",
+    "ja": "間違えやすい点"
+  },
+  {
+    "source": "易錯點 · RISK C",
+    "en": "Common trap · RISK C",
+    "ja": "間違えやすい点 · RISK C"
+  },
+  {
+    "source": "毎週に、昨日に通常不成立",
+    "en": "毎週に and 昨日に usually don’t work",
+    "ja": "「毎週に」「昨日に」は通常成り立たない"
+  },
+  {
+    "source": "毎週、図書館へ行きます；昨日、映画を見ました。",
+    "en": "毎週、図書館へ行きます; 昨日、映画を見ました。",
+    "ja": "毎週、図書館へ行きます。昨日、映画を見ました。"
+  },
+  {
+    "source": "複合時間與約略",
+    "en": "Compound times and approximations",
+    "ja": "複合的な時間とおおよその言い方"
+  },
+  {
+    "source": "上週日出門了。",
+    "en": "I went out last Sunday.",
+    "ja": "先週の日曜日に出かけました。"
+  },
+  {
+    "source": "大約六點；時間點",
+    "en": "Around six o’clock; a point in time",
+    "ja": "6時ごろ（時点）"
+  },
+  {
+    "source": "大約六小時；時長",
+    "en": "About six hours; a duration",
+    "ja": "6時間ぐらい（時間の長さ）"
+  },
+  {
+    "source": "大約二十人；數量",
+    "en": "About twenty people; a quantity",
+    "ja": "20人ぐらい（数量）"
+  },
+  {
+    "source": "到上野需要多久？",
+    "en": "How long does it take to get to Ueno?",
+    "ja": "上野までどのくらいかかりますか。"
+  },
+  {
+    "source": "搭電車大約一小時。",
+    "en": "About an hour by train.",
+    "ja": "電車で一時間ぐらいかかります。"
+  },
+  {
+    "source": "易錯點 · RISK A",
+    "en": "Common trap · RISK A",
+    "ja": "間違えやすい点 · RISK A"
+  },
+  {
+    "source": "かかる前的時間不使用を",
+    "en": "No を with the time before かかる",
+    "ja": "「かかる」の前の時間に「を」は付けない"
+  },
+  {
+    "source": "一時間かかります；不是 × 一時間をかかります。",
+    "en": "一時間かかります, not × 一時間をかかります.",
+    "ja": "「一時間かかります」であって、×「一時間をかかります」ではありません。"
+  },
+  {
+    "source": "時間點、起點與時長",
+    "en": "Points in time, starting points and durations",
+    "ja": "時点・起点・時間の長さ"
+  },
+  {
+    "source": "形式",
+    "en": "Form",
+    "ja": "形式"
+  },
+  {
+    "source": "意思",
+    "en": "Meaning",
+    "ja": "意味"
+  },
+  {
+    "source": "例",
+    "en": "Example",
+    "ja": "例"
+  },
+  {
+    "source": "一時間前に",
+    "en": "一時間前に",
+    "ja": "一時間前に"
+  },
+  {
+    "source": "一小時前的時間點",
+    "en": "The point in time one hour ago",
+    "ja": "一時間前という時点"
+  },
+  {
+    "source": "從一小時前開始",
+    "en": "Starting from one hour ago",
+    "ja": "一時間前から始まる"
+  },
+  {
+    "source": "一時間",
+    "en": "一時間",
+    "ja": "一時間"
+  },
+  {
+    "source": "一小時的長度",
+    "en": "A length of one hour",
+    "ja": "一時間という長さ"
+  },
+  {
+    "source": "從三年前持續至今",
+    "en": "Continuing from three years ago until now",
+    "ja": "三年前から今まで続いている"
+  },
+  {
+    "source": "三年間",
+    "en": "三年間",
+    "ja": "三年間"
+  },
+  {
+    "source": "三年的期間",
+    "en": "A period of three years",
+    "ja": "三年という期間"
+  },
+  {
+    "source": "何月與何か月",
+    "en": "何月 and 何か月",
+    "ja": "「何月」と「何か月」"
+  },
+  {
+    "source": "問題",
+    "en": "What it asks",
+    "ja": "尋ねる内容"
+  },
+  {
+    "source": "哪一個月份",
+    "en": "Which month",
+    "ja": "どの月か"
+  },
+  {
+    "source": "幾個月的期間",
+    "en": "A period of how many months",
+    "ja": "期間が何か月か"
+  },
+  {
+    "source": "頻率基準與每次時長",
+    "en": "Frequency base and duration per occurrence",
+    "ja": "頻度の基準と1回あたりの時間"
+  },
+  {
+    "source": "每週運動三次。",
+    "en": "I exercise three times a week.",
+    "ja": "一週間に三回運動します。"
+  },
+  {
+    "source": "每次運動兩小時。",
+    "en": "I exercise for two hours each time.",
+    "ja": "一回に二時間運動します。"
+  },
+  {
+    "source": "每天學日文。",
+    "en": "I study Japanese every day.",
+    "ja": "毎日日本語を勉強します。"
+  },
+  {
+    "source": "在日本待三天。",
+    "en": "I stayed in Japan for three days.",
+    "ja": "日本に三日間いました。"
+  },
+  {
+    "source": "直到 vs 最晚以前",
+    "en": "Until vs. by",
+    "ja": "終点の「まで」と期限の「までに」"
+  },
+  {
+    "source": "事件結構",
+    "en": "Event structure",
+    "ja": "出来事の構造"
+  },
+  {
+    "source": "例與翻譯",
+    "en": "Example and translation",
+    "ja": "例と意味"
+  },
+  {
+    "source": "某狀態／動作持續到五點",
+    "en": "A state or action continues until five",
+    "ja": "ある状態・動作が5時まで続く"
+  },
+  {
+    "source": "5時まで勉強します。／讀到五點。",
+    "en": "5時まで勉強します。/ I’ll study until five.",
+    "ja": "5時まで勉強します。／5時までずっと勉強する。"
+  },
+  {
+    "source": "完成點不得晚於五點",
+    "en": "Completion must come no later than five",
+    "ja": "完了は遅くとも5時まで"
+  },
+  {
+    "source": "5時までに宿題を終えます。／五點以前完成作業。",
+    "en": "5時までに宿題を終えます。/ I’ll finish my homework by five.",
+    "ja": "5時までに宿題を終えます。／遅くとも5時には宿題を終える。"
+  },
+  {
+    "source": "持續到另一事件發生",
+    "en": "Continues until another event happens",
+    "ja": "別の出来事が起こるまで続く"
+  },
+  {
+    "source": "友達が来るまで、ここで待ちます。／等到朋友來。",
+    "en": "友達が来るまで、ここで待ちます。/ I’ll wait here until my friend comes.",
+    "ja": "友達が来るまで、ここで待ちます。／友達が来るまでずっと待つ。"
+  },
+  {
+    "source": "校訂",
+    "en": "Revision",
+    "ja": "校訂"
+  },
+  {
+    "source": "本版把「宿題をします」改用「宿題を終えます」示範期限，是為了直接表達「完成」；原例仍保留在來源 P92。不是判原句不合文法。",
+    "en": "This edition replaces “宿題をします” with “宿題を終えます” to illustrate the deadline, so that “completion” is stated directly; the original example remains on P92 of the source. This is not a judgment that the original sentence is ungrammatical.",
+    "ja": "本版では、期限の例として「宿題をします」を「宿題を終えます」に替えました。「完了」を直接表すためです。元の例文は出典の P92 に残っています。元の文が文法的に誤りだと判断したわけではありません。"
+  },
+  {
+    "source": "原手冊頁：P38、P39、P92",
+    "en": "Source handbook pages: P38, P39, P92",
+    "ja": "元の冊子のページ：P38、P39、P92"
+  },
+  {
+    "source": "相關主題：",
+    "en": "Related topics: ",
+    "ja": "関連トピック："
+  },
+  {
+    "source": "とき／前に／後で／てから",
+    "en": "とき／前に／後で／てから",
+    "ja": "とき／前に／後で／てから"
+  },
+  {
+    "source": "日期、量詞與讀音：數字旁的名詞不能省略思考",
+    "en": "Dates, counters and readings: always consider the noun next to the number",
+    "ja": "日付・助数詞・読み方：数字の隣の名詞まで考える"
+  },
+  {
+    "source": "// 15 · 時間與從句",
+    "en": "// 15 · Time and clauses",
+    "ja": "// 15 · 時間と節"
+  },
+  {
+    "source": "內層的 る／た，常是在比較兩件事的完成先後；不是照抄整句的昨天／明天。",
+    "en": "The inner る／た often compares which of two events is completed first; it does not just copy “yesterday” or “tomorrow” from the whole sentence.",
+    "ja": "内層の「る／た」は、多くの場合、二つの出来事のどちらが先に完了するかを比べています。文全体の「昨日／明日」をそのまま写したものではありません。"
+  },
+  {
+    "source": "：看書時睡覺尚未開始，所以內層仍是",
+    "en": ": when the reading happened, sleep had not yet begun, so the inner verb stays",
+    "ja": "：本を読んだ時点ではまだ寝ていなかったので、内層は辞書形の"
+  },
+  {
+    "source": "：相對於見面的時點，工作要先完成，所以用",
+    "en": ": relative to the time of meeting, the work must be finished first, so it uses",
+    "ja": "：会う時点を基準にすると、仕事はその前に終わっていなければならないので、た形の"
+  },
+  {
+    "source": "這是原手冊用來解釋移動／完成動詞的基本對比。不要擴大為「任何とき句都只看完成」；持續狀態、習慣與敘述視點仍需看完整上下文。此限制是本版的編輯提醒。",
+    "en": "This is the basic contrast the source handbook uses to explain verbs of movement and completion. Don’t stretch it into “every とき clause is only about completion”; ongoing states, habits and narrative viewpoint still need the full context. This caveat is an editorial note added in this edition.",
+    "ja": "これは、元の冊子が移動・完了を表す動詞を説明するために用いている基本的な対比です。「とき節はどれも完了かどうかだけを見ればよい」と拡大解釈しないでください。継続している状態、習慣、語りの視点については、やはり前後の文脈全体を見る必要があります。この注意は本版で編集者が加えたものです。"
+  },
+  {
+    "source": "とき前面的接法由詞類決定；動詞的る／た則要看在基準事件時是否已完成。",
+    "en": "The connection before とき depends on the part of speech; for verbs, る／た depends on whether the action is already complete at the time of the reference event.",
+    "ja": "「とき」の前の接続は品詞によって決まります。動詞の「る／た」は、基準となる出来事の時点ですでに完了しているかどうかで決まります。"
+  },
+  {
+    "source": "詞類接續",
+    "en": "Connection by part of speech",
+    "ja": "品詞別の接続"
+  },
+  {
+    "source": "詞類",
+    "en": "Part of speech",
+    "ja": "品詞"
+  },
+  {
+    "source": "接法",
+    "en": "How it connects",
+    "ja": "接続のしかた"
+  },
+  {
+    "source": "名詞",
+    "en": "Noun",
+    "ja": "名詞"
+  },
+  {
+    "source": "動詞",
+    "en": "Verb",
+    "ja": "動詞"
+  },
+  {
+    "source": "名詞與な形容詞不能混",
+    "en": "Don’t mix up nouns and na-adjectives",
+    "ja": "名詞とな形容詞を混同しない"
+  },
+  {
+    "source": "30歳のとき；暇なとき。× 30歳なとき、× 暇のとき。",
+    "en": "30歳のとき; 暇なとき. × 30歳なとき, × 暇のとき.",
+    "ja": "30歳のとき、暇なとき。× 30歳なとき、× 暇のとき。"
+  },
+  {
+    "source": "行くとき與行ったとき",
+    "en": "行くとき and 行ったとき",
+    "ja": "「行くとき」と「行ったとき」"
+  },
+  {
+    "source": "基準時的事件狀態",
+    "en": "State of the event at the reference time",
+    "ja": "基準時点での出来事の状態"
+  },
+  {
+    "source": "典型解讀",
+    "en": "Typical interpretation",
+    "ja": "典型的な解釈"
+  },
+  {
+    "source": "行く尚未完成",
+    "en": "行く not yet completed",
+    "ja": "「行く」はまだ完了していない"
+  },
+  {
+    "source": "出發前／準備去時買相機",
+    "en": "Buys a camera before leaving, or while getting ready to go",
+    "ja": "出発前・行く準備の段階でカメラを買う"
+  },
+  {
+    "source": "行く已成立",
+    "en": "行く has already taken place",
+    "ja": "「行く」はすでに成立"
+  },
+  {
+    "source": "到了日本、訪日期間買相機",
+    "en": "Buys a camera after arriving, during the stay in Japan",
+    "ja": "日本に着いてから、滞在中にカメラを買う"
+  },
+  {
+    "source": "去日本前／準備去時買了相機。",
+    "en": "I bought a camera before going to Japan (while preparing for the trip).",
+    "ja": "日本へ行く前（行く準備をしていたとき）にカメラを買った。"
+  },
+  {
+    "source": "去日本時，在那次行程中買了相機。",
+    "en": "When I went to Japan, I bought a camera during that trip.",
+    "ja": "日本へ行ったとき、その旅行中にカメラを買った。"
+  },
+  {
+    "source": "核心",
+    "en": "Core",
+    "ja": "要点"
+  },
+  {
+    "source": "相對時態",
+    "en": "Relative tense",
+    "ja": "相対時制"
+  },
+  {
+    "source": "從句的 る 常表示相對基準事件尚未完成；た 表示已成立。不要簡化成「る=現在、た=過去」。",
+    "en": "In a subordinate clause, る usually means the event is not yet complete relative to the reference event; た means it has already happened. Don’t simplify this to “る = present, た = past.”",
+    "ja": "従属節の「る」は、基準となる出来事に対してまだ完了していないことを表すことが多く、「た」はすでに成立していることを表します。「る=現在、た=過去」と単純化しないでください。"
+  },
+  {
+    "source": "接續",
+    "en": "Connection",
+    "ja": "接続"
+  },
+  {
+    "source": "功能",
+    "en": "Function",
+    "ja": "機能"
+  },
+  {
+    "source": "原筆記例句",
+    "en": "Example from the original notes",
+    "ja": "元のノートの例文"
+  },
+  {
+    "source": "事件發生前",
+    "en": "Before the event happens",
+    "ja": "出来事が起こる前"
+  },
+  {
+    "source": "事件完成後",
+    "en": "After the event is completed",
+    "ja": "出来事が完了した後"
+  },
+  {
+    "source": "完成前項，再進行後項",
+    "en": "Finish the first action, then do the second",
+    "ja": "前件を終えてから後件を行う"
+  },
+  {
+    "source": "因為已發生的前項",
+    "en": "Because of the first event, which has already happened",
+    "ja": "すでに起きた前件が理由"
+  },
+  {
+    "source": "某時點／場合；需看內層時態",
+    "en": "A point in time or situation; check the inner tense",
+    "ja": "ある時点・場合。内層の時制を確認する"
+  },
+  {
+    "source": "不懂的時候，就問 ChatGPT。",
+    "en": "When I don’t understand something, I ask ChatGPT.",
+    "ja": "分からないときには、ChatGPTに聞きます。"
+  },
+  {
+    "source": "手寫筆記中的例句。ときに 是時間背景，は 可加上話題／對比；不是新的獨立時態。",
+    "en": "An example from the handwritten notes. ときに sets the time background, and は can add topic or contrast; it is not a new, separate tense.",
+    "ja": "手書きノートにある例文です。「ときに」は時間的な背景を表し、「は」を付けると話題・対比の意味が加わります。新しい独立した時制ではありません。"
+  },
+  {
+    "source": "原補遺 P94 對 とき 的縮略表漏列な形容詞；本版恢復原手冊 P40 的完整接續。",
+    "en": "The condensed とき table in the original supplement (P94) left out na-adjectives; this edition restores the full connection rules from P40 of the source handbook.",
+    "ja": "元の補遺 P94 にある「とき」の簡略表では、な形容詞が抜けていました。本版では、元の冊子 P40 にある完全な接続を復元しています。"
+  },
+  {
+    "source": "原手冊頁：P40、P41、P94",
+    "en": "Source handbook pages: P40, P41, P94",
+    "ja": "元の冊子のページ：P40、P41、P94"
+  },
+  {
+    "source": "時間點、期間、頻率與截止",
+    "en": "Points in time, periods, frequency and deadlines",
+    "ja": "時点・期間・頻度・期限"
+  },
+  {
+    "source": "から／ので／ため：理由、語體與語氣",
+    "en": "から／ので／ため: reasons, register and tone",
+    "ja": "から／ので／ため：理由・文体・語気"
+  },
+  {
+    "source": "接續總表：だ／な／の／不加だ",
+    "en": "Connection chart: だ／な／の／no だ",
+    "ja": "接続の一覧：だ／な／の／だを付けない"
+  },
+  {
+    "source": "// 16 · 時間與從句",
+    "en": "// 16 · Time and clauses",
+    "ja": "// 16 · 時間と節"
+  },
+  {
+    "source": "「忘記關燈」的待辦內容是關燈；結果沒關，不代表內層要先寫成否定。",
+    "en": "In “I forgot to turn off the light,” the task you forgot is turning off the light; the result (it wasn’t turned off) doesn’t mean the inner clause should be negative.",
+    "ja": "「電気を消すのを忘れた」で、すべきだった内容は「電気を消す」ことです。結果として消さなかったからといって、内層を否定形にするわけではありません。"
+  },
+  {
+    "source": "這是整份筆記最重要的作用範圍問題：先確定外層動詞要處理的是什麼，再決定內層形態。",
+    "en": "This is the most important scope question in all these notes: first pin down what the outer verb is dealing with, then decide the inner form. ",
+    "ja": "これは、このノート全体で最も重要な作用範囲の問題です。まず外層の動詞が何を扱っているのかを確かめ、それから内層の形を決めます。"
+  },
+  {
+    "source": "是忘了執行；",
+    "en": "means you forgot to do it; ",
+    "ja": "は実行するのを忘れたこと、"
+  },
+  {
+    "source": "是忘了自己已做過。",
+    "en": "means you forgot that you had already done it.",
+    "ja": "は自分がすでにしたことを忘れたことです。"
+  },
+  {
+    "source": "也不是單一意思：",
+    "en": "doesn’t have just one meaning either: ",
+    "ja": "も、意味は一つではありません："
+  },
+  {
+    "source": "是經驗；",
+    "en": "expresses experience; ",
+    "ja": "は経験、"
+  },
+  {
+    "source": "是偶爾會／不會。不要把外層",
+    "en": "means something sometimes happens or sometimes doesn’t. Don’t mistake the present form of the outer",
+    "ja": "は「時々する／しない」を表します。外層の"
+  },
+  {
+    "source": "的現在形誤當成內層事件發生時間。",
+    "en": "for the time when the inner event happens.",
+    "ja": "が現在形であることを、内層の出来事が起こる時と取り違えないでください。"
+  },
+  {
+    "source": "另外有兩個來源：",
+    "en": "has two separate sources: ",
+    "ja": "には、由来の異なる用法があります："
+  },
+  {
+    "source": "的用途／所需，與逆接",
+    "en": "for use or what something requires, and the concessive",
+    "ja": "の用途・必要と、逆接の"
+  },
+  {
+    "source": "的「明明卻」。後面接",
+    "en": "meaning “even though.” If one of",
+    "ja": "の二つです（後者は「にもかかわらず」の意味）。後ろに"
+  },
+  {
+    "source": "時，先考慮用途結構，不要一律翻成轉折。",
+    "en": "follows, consider the use structure first instead of always translating it as a contrast.",
+    "ja": "が来るときは、まず用途の構造を考え、一律に逆接と解釈しないようにしましょう。"
+  },
+  {
+    "source": "長句通常不是助詞太多，而是不同助詞分屬不同述語。",
+    "en": "A long sentence usually doesn’t have too many particles; rather, different particles belong to different predicates.",
+    "ja": "長い文は、たいてい助詞が多すぎるのではなく、それぞれの助詞が異なる述語に属しているのです。"
+  },
+  {
+    "source": "內層：友だちが来る。",
+    "en": "Inner: 友だちが来る。",
+    "ja": "内層：友だちが来る。"
+  },
+  {
+    "source": "↑ 誰來？友だち",
+    "en": "↑ Who comes? 友だち",
+    "ja": "↑ 誰が来る？友だち"
+  },
+  {
+    "source": "友だちが来るのを待っています",
+    "en": "友だちが来るのを待っています",
+    "ja": "友だちが来るのを待っています"
+  },
+  {
+    "source": "助詞",
+    "en": "Particle",
+    "ja": "助詞"
+  },
+  {
+    "source": "所屬述語",
+    "en": "Predicate it belongs to",
+    "ja": "属する述語"
+  },
+  {
+    "source": "作用",
+    "en": "What it does",
+    "ja": "働き"
+  },
+  {
+    "source": "友だち是「來」的主體",
+    "en": "友だち is the one who comes",
+    "ja": "友だちは「来る」の主体"
+  },
+  {
+    "source": "名詞化",
+    "en": "Nominalization",
+    "ja": "名詞化"
+  },
+  {
+    "source": "把整個事件變成外層成分",
+    "en": "Turns the whole event into an element of the outer clause",
+    "ja": "出来事全体を外層の成分にする"
+  },
+  {
+    "source": "整件事是「等待」的對象",
+    "en": "The whole event is what is being waited for",
+    "ja": "出来事全体が「待つ」の対象"
+  },
+  {
+    "source": "同型例句",
+    "en": "Examples with the same pattern",
+    "ja": "同じ型の例文"
+  },
+  {
+    "source": "正在等電車來。",
+    "en": "I’m waiting for the train to come.",
+    "ja": "電車が来るのを待っています。"
+  },
+  {
+    "source": "正在等雨停。",
+    "en": "I’m waiting for the rain to stop.",
+    "ja": "雨がやむのを待っています。"
+  },
+  {
+    "source": "幫媽媽做菜。",
+    "en": "I help my mother cook.",
+    "ja": "母が料理するのを手伝います。"
+  },
+  {
+    "source": "看見孩子正在玩。",
+    "en": "I saw the children playing.",
+    "ja": "子どもが遊んでいるのを見ました。"
+  },
+  {
+    "source": "忘了做作業。",
+    "en": "I forgot to do my homework.",
+    "ja": "宿題をするのを忘れました。"
+  },
+  {
+    "source": "括號法",
+    "en": "The bracket method",
+    "ja": "括弧で区切る方法"
+  },
+  {
+    "source": "看到 が〜のを 時，先切成 ［SがV］の + を + 外層動詞。不要把「が来るのを」當成一整個固定片語。",
+    "en": "When you see が〜のを, first split it into ［SがV］の + を + outer verb. Don’t treat “が来るのを” as one fixed phrase.",
+    "ja": "「が〜のを」を見たら、まず「［SがV］の + を + 外層の動詞」に分けます。「が来るのを」をひとまとまりの決まった言い回しとして扱わないでください。"
+  },
+  {
+    "source": "こと把事件抽象化；前面的形態決定是能力、經驗還是偶爾發生。",
+    "en": "こと turns an event into something abstract; the form before it decides whether it means ability, experience or occasional occurrence.",
+    "ja": "「こと」は出来事を抽象化します。前に来る形によって、能力・経験・時々起こることのどれになるかが決まります。"
+  },
+  {
+    "source": "意義",
+    "en": "Meaning",
+    "ja": "意味"
+  },
+  {
+    "source": "能做",
+    "en": "Can do",
+    "ja": "能力"
+  },
+  {
+    "source": "曾經做過",
+    "en": "Have done before",
+    "ja": "経験"
+  },
+  {
+    "source": "有時會做",
+    "en": "Sometimes do",
+    "ja": "時々する"
+  },
+  {
+    "source": "有時不做",
+    "en": "Sometimes don’t",
+    "ja": "時々しない"
+  },
+  {
+    "source": "三句直接比較",
+    "en": "Three sentences compared directly",
+    "ja": "3つの文の直接比較"
+  },
+  {
+    "source": "日文",
+    "en": "Japanese",
+    "ja": "日本語"
+  },
+  {
+    "source": "中文",
+    "en": "English",
+    "ja": "訳"
+  },
+  {
+    "source": "去日本。",
+    "en": "I’m going to Japan.",
+    "ja": "日本へ行きます。"
+  },
+  {
+    "source": "有時會去日本。",
+    "en": "I sometimes go to Japan.",
+    "ja": "日本へ行くことがあります。"
+  },
+  {
+    "source": "曾經去過日本。",
+    "en": "I have been to Japan.",
+    "ja": "日本へ行ったことがあります。"
+  },
+  {
+    "source": "Vた與Vる只差一個形態，語意完全不同",
+    "en": "Vた and Vる differ by just one form but mean completely different things",
+    "ja": "「Vた」と「Vる」は形が一つ違うだけで、意味はまったく異なる"
+  },
+  {
+    "source": "行ったことがある = 經驗；行くことがある = 偶爾。",
+    "en": "行ったことがある = experience; 行くことがある = occasionally.",
+    "ja": "行ったことがある = 経験、行くことがある = 時々。"
+  },
+  {
+    "source": "一度も＋否定",
+    "en": "一度も + negative",
+    "ja": "一度も＋否定"
+  },
+  {
+    "source": "一次都沒有去過日本。",
+    "en": "I have never been to Japan, not even once.",
+    "ja": "日本へ一度も行ったことがありません。"
+  },
+  {
+    "source": "一次都沒見過那個人。",
+    "en": "I have never met that person, not even once.",
+    "ja": "その人に一度も会ったことがありません。"
+  },
+  {
+    "source": "先用の把前面的事件名詞化，再由外層述語決定助詞。一般規則是「普通形 + の」；用途的のに與逆接「明明〜卻」必須分開。",
+    "en": "First use の to nominalize the event before it, then let the outer predicate decide the particle. The general rule is “plain form + の”; the のに of use must be kept separate from the concessive “even though.”",
+    "ja": "まず「の」で前の出来事を名詞化し、それから外層の述語が助詞を決めます。一般的な規則は「普通形 + の」です。用途の「のに」と、逆接の「〜のに（にもかかわらず）」は必ず区別してください。"
+  },
+  {
+    "source": "［普通形小句］ + の + 外層助詞／述語",
+    "en": "［plain-form clause］ + の + outer particle or predicate",
+    "ja": "［普通形の節］ + の + 外層の助詞／述語"
+  },
+  {
+    "source": "外層述語決定助詞",
+    "en": "The outer predicate decides the particle",
+    "ja": "外層の述語が助詞を決める"
+  },
+  {
+    "source": "外層基本句",
+    "en": "Basic outer sentence",
+    "ja": "外層の基本文"
+  },
+  {
+    "source": "換成事件",
+    "en": "Replaced with an event",
+    "ja": "出来事に置き換え"
+  },
+  {
+    "source": "教材先以辭書形導入，但 来たのを見た、来ないのが心配だ 也成立。",
+    "en": "The textbook first introduces this with the dictionary form, but 来たのを見た and 来ないのが心配だ also work.",
+    "ja": "教材ではまず辞書形で導入されますが、「来たのを見た」「来ないのが心配だ」も成り立ちます。"
+  },
+  {
+    "source": "のを與內層主語",
+    "en": "のを and the inner subject",
+    "ja": "「のを」と内層の主語"
+  },
+  {
+    "source": "等朋友來。",
+    "en": "I’m waiting for my friend to come.",
+    "ja": "友だちが来るのを待っています。"
+  },
+  {
+    "source": "用途的のに",
+    "en": "のに expressing use",
+    "ja": "用途の「のに」"
+  },
+  {
+    "source": "這把刀用來切肉。",
+    "en": "This knife is used for cutting meat.",
+    "ja": "このナイフは肉を切るのに使います。"
+  },
+  {
+    "source": "去學校要一小時。",
+    "en": "It takes an hour to get to school.",
+    "ja": "学校へ行くのに一時間かかります。"
+  },
+  {
+    "source": "這本書適合學漢字。",
+    "en": "This book is handy for learning kanji.",
+    "ja": "この本は漢字を覚えるのに便利です。"
+  },
+  {
+    "source": "明明下雨卻出門了；這是逆接，不是用途。",
+    "en": "I went out even though it was raining; this is concessive, not use-related.",
+    "ja": "雨なのに出かけた（逆接であり、用途ではない）。"
+  },
+  {
+    "source": "仕事に／仕事で／仕事をするのに",
+    "en": "仕事に／仕事で／仕事をするのに",
+    "ja": "仕事に／仕事で／仕事をするのに"
+  },
+  {
+    "source": "句子",
+    "en": "Sentence",
+    "ja": "文"
+  },
+  {
+    "source": "焦點",
+    "en": "Focus",
+    "ja": "焦点"
+  },
+  {
+    "source": "工作用途／領域需要電腦。",
+    "en": "A computer is needed for work, as a purpose or field.",
+    "ja": "仕事という用途・分野にコンピューターが必要。"
+  },
+  {
+    "source": "在工作上／因工作使用電腦。",
+    "en": "Uses a computer at work, or because of work.",
+    "ja": "仕事の場面で、または仕事の都合でコンピューターを使う。"
+  },
+  {
+    "source": "為了做工作，需要電腦。",
+    "en": "A computer is needed in order to do the work.",
+    "ja": "仕事をするためにコンピューターが必要。"
+  },
+  {
+    "source": "先決定內層事件在外層結構中扮演什麼功能。不能因為整句最後呈現「未執行」結果，就把內層待辦動作改成否定。",
+    "en": "First decide what role the inner event plays in the outer structure. Don’t make the inner to-do action negative just because the whole sentence ends with something left undone.",
+    "ja": "まず、内層の出来事が外層の構造の中でどんな働きをしているかを決めます。文全体の最終的な結果が「実行されなかった」ことだからといって、内層のすべき動作を否定形に変えてはいけません。"
+  },
+  {
+    "source": "正確句",
+    "en": "Correct sentence",
+    "ja": "正しい文"
+  },
+  {
+    "source": "核心形式",
+    "en": "Core form",
+    "ja": "要となる形"
+  },
+  {
+    "source": "為什麼",
+    "en": "Why",
+    "ja": "理由"
+  },
+  {
+    "source": "知っていない 不是此處最自然的一般否定。",
+    "en": "知っていない is not the most natural ordinary negative here.",
+    "ja": "「知っていない」は、ここでは最も自然な一般的否定ではない。"
+  },
+  {
+    "source": "穿上後維持的結果狀態。",
+    "en": "The resulting state that lasts after putting it on.",
+    "ja": "着た後に続いている結果の状態。"
+  },
+  {
+    "source": "出門尚未完成。",
+    "en": "Going out has not happened yet.",
+    "ja": "出かけることはまだ完了していない。"
+  },
+  {
+    "source": "曾經請過假。",
+    "en": "Has been absent from school before.",
+    "ja": "以前に休んだ経験がある。"
+  },
+  {
+    "source": "此句選普通體描述昨天已發生的原因；丁寧體也可接から。",
+    "en": "This sentence uses the plain form to describe a cause that already happened yesterday; the polite form can also take から.",
+    "ja": "この文は、昨日すでに起きた原因を普通形で述べている。丁寧形にも「から」は付けられる。"
+  },
+  {
+    "source": "有時不做。",
+    "en": "Sometimes doesn’t do it.",
+    "ja": "時々しない。"
+  },
+  {
+    "source": "忘記執行原本應做的動作。",
+    "en": "Forgot to carry out an action that was supposed to be done.",
+    "ja": "本来すべきだった動作を実行し忘れた。"
+  },
+  {
+    "source": "談話發生時，下課已完成。",
+    "en": "When the talk happens, class has already ended.",
+    "ja": "話す時点で、授業はすでに終わっている。"
+  },
+  {
+    "source": "電気を消すのを忘れました 的三層結構",
+    "en": "The three-layer structure of 電気を消すのを忘れました",
+    "ja": "「電気を消すのを忘れました」の三層構造"
+  },
+  {
+    "source": "電気を消す 原本應做的動作＋ の＋を 事件名詞化＋外層受詞＋ 忘れました 最外層述語",
+    "en": "電気を消す (the action that should have been done) + の＋を (event nominalization + outer object) + 忘れました (outermost predicate)",
+    "ja": "電気を消す（本来すべき動作）＋の＋を（出来事の名詞化＋外層の目的語）＋忘れました（最外層の述語）"
+  },
+  {
+    "source": "範圍",
+    "en": "Scope",
+    "ja": "範囲"
+  },
+  {
+    "source": "內容與結果不同：",
+    "en": "Content and result are different:",
+    "ja": "内容と結果は別物："
+  },
+  {
+    "source": "忘記的內容是「關燈」；由於忘記，通常推得結果「沒有關」。消さなかった 是外層結果，不是內層待辦內容。",
+    "en": "What you forgot is “turning off the light”; because you forgot, the usual inference is the result “it wasn’t turned off.” 消さなかった is the outer result, not the inner to-do content.",
+    "ja": "忘れた内容は「電気を消す」ことです。忘れたために、通常は「消さなかった」という結果が推測できます。「消さなかった」は外層の結果であり、内層のすべき内容ではありません。"
+  },
+  {
+    "source": "實際發生什麼",
+    "en": "What actually happens",
+    "ja": "実際に起きたこと"
+  },
+  {
+    "source": "自然中文",
+    "en": "Natural English",
+    "ja": "自然な訳"
+  },
+  {
+    "source": "原本要關，但忘記執行；通常燈仍亮著。",
+    "en": "You meant to turn it off but forgot to; the light is usually still on.",
+    "ja": "消すつもりだったが、実行し忘れた。通常、電気はまだついている。"
+  },
+  {
+    "source": "忘記關燈。",
+    "en": "I forgot to turn off the light.",
+    "ja": "電気を消すのを忘れた"
+  },
+  {
+    "source": "已經關掉，但忘記自己做過。",
+    "en": "You already turned it off but forgot that you did.",
+    "ja": "すでに消したが、自分が消したことを忘れた。"
+  },
+  {
+    "source": "忘了自己已經關燈。",
+    "en": "I forgot that I had already turned off the light.",
+    "ja": "電気を消したのを忘れた"
+  },
+  {
+    "source": "原本有「不要關燈」的要求，卻忘了該要求；特殊情境。",
+    "en": "There was a request, “don’t turn off the light,” but you forgot that request; a special situation.",
+    "ja": "「電気を消さないで」という要求があったのに、その要求を忘れた。特殊な状況。"
+  },
+  {
+    "source": "忘了不要關燈。",
+    "en": "I forgot not to turn off the light.",
+    "ja": "電気を消さないのを忘れた"
+  },
+  {
+    "source": "忘記「燈尚未關」這個事實／狀態。",
+    "en": "Forgot the fact or state that “the light hasn’t been turned off yet.”",
+    "ja": "「まだ電気を消していない」という事実・状態を忘れていた。"
+  },
+  {
+    "source": "忘了燈還沒關。",
+    "en": "I had forgotten that I hadn’t turned off the light.",
+    "ja": "電気を消していないことを忘れていた"
+  },
+  {
+    "source": "消します→消し＋忘れる 的複合動詞。",
+    "en": "A compound verb: 消します→消し＋忘れる.",
+    "ja": "「消します→消し＋忘れる」による複合動詞。"
+  },
+  {
+    "source": "忘記關燈，較簡潔。",
+    "en": "I forgot to turn off the light (more concise).",
+    "ja": "電気を消し忘れた（より簡潔）"
+  },
+  {
+    "source": "判斷法：",
+    "en": "How to decide:",
+    "ja": "判断のしかた："
+  },
+  {
+    "source": "先問「我忘記的是待辦動作、已完成的事實、否定指示，還是狀態？」再選 Vる／Vた／Vない／Vていないこと。不要先看最後結果。",
+    "en": "First ask, “Did I forget an action I had to do, a fact that was already done, a negative instruction or a state?” Then choose Vる／Vた／Vない／Vていないこと. Don’t look at the final result first.",
+    "ja": "まず「自分が忘れたのは、すべき動作か、すでに完了した事実か、否定の指示か、それとも状態か」を問い、それから「Vる／Vた／Vない／Vていないこと」を選びます。最終的な結果から先に見ないでください。"
+  },
+  {
+    "source": "原手冊頁：P22、P44、P45、P46",
+    "en": "Source handbook pages: P22, P44, P45, P46",
+    "ja": "元の冊子のページ：P22、P44、P45、P46"
+  },
+  {
+    "source": "關係子句：先找中心名詞",
+    "en": "Relative clauses: find the head noun first",
+    "ja": "連体修飾節：まず被修飾名詞を探す"
+  },
+  {
+    "source": "移動目的、一般目的、用途與方法",
+    "en": "Purpose of movement, general purpose, use and method",
+    "ja": "移動の目的・一般的な目的・用途・方法"
+  },
+  {
+    "source": "// 17 · 時間與從句",
+    "en": "// 17 · Time and clauses",
+    "ja": "// 17 · 時間と節"
+  },
+  {
+    "source": "中心名詞補回內層的一個空位；外層助詞再把整個名詞群接到主句。",
+    "en": "The head noun fills a gap in the inner clause; the outer particle then connects the whole noun phrase to the main clause.",
+    "ja": "被修飾名詞は内層の空所を一つ埋めます。そのうえで外層の助詞が、名詞句全体を主節につなぎます。"
+  },
+  {
+    "source": "裡，中心名詞",
+    "en": "uses the head noun",
+    "ja": "では、被修飾名詞の"
+  },
+  {
+    "source": "本",
+    "en": "本",
+    "ja": "本"
+  },
+  {
+    "source": "是內層",
+    "en": "to fill a gap in the inner",
+    "ja": "が内層の"
+  },
+  {
+    "source": "的受詞空位；",
+    "en": "clause as its object; ",
+    "ja": "の目的語の空所に当たります。"
+  },
+  {
+    "source": "来週帰る友達",
+    "en": "来週帰る友達",
+    "ja": "来週帰る友達"
+  },
+  {
+    "source": "裡，",
+    "en": "uses ",
+    "ja": "では、"
+  },
+  {
+    "source": "友達",
+    "en": "友達",
+    "ja": "友達"
+  },
+  {
+    "source": "的主語空位。不要在內層再把同一個中心名詞重複一次。",
+    "en": "clause as its subject. Don’t repeat the same head noun inside the inner clause.",
+    "ja": "の主語の空所に当たります。内層の中で同じ被修飾名詞をもう一度繰り返さないでください。"
+  },
+  {
+    "source": "中，",
+    "en": "is a typical case: ",
+    "ja": "では、"
+  },
+  {
+    "source": "屬於",
+    "en": "belongs to",
+    "ja": "が属するのは"
+  },
+  {
+    "source": "屬於外層",
+    "en": "belongs to the outer",
+    "ja": "が属するのは外層の"
+  },
+  {
+    "source": "。這正是「先找中心名詞，再分內外層」的實際用途。",
+    "en": ". This is exactly what “find the head noun first, then separate the inner and outer layers” is for in practice.",
+    "ja": "。これこそが「まず被修飾名詞を探し、それから内層と外層を分ける」ことの実際の使い道です。"
+  },
+  {
+    "source": "日文把整個說明小句放在中心名詞前，不需要英文式 who／which／that。",
+    "en": "Japanese puts the whole describing clause before the head noun; it doesn’t need English-style who, which or that.",
+    "ja": "日本語では、説明する節全体を被修飾名詞の前に置きます。英語の who／which／that のような語は必要ありません。"
+  },
+  {
+    "source": "普通形 + 名詞",
+    "en": "Plain form + noun",
+    "ja": "普通形 + 名詞"
+  },
+  {
+    "source": "原句",
+    "en": "Original sentence",
+    "ja": "元の文"
+  },
+  {
+    "source": "關係子句",
+    "en": "Relative clause",
+    "ja": "連体修飾節"
+  },
+  {
+    "source": "不能使用禮貌形修飾名詞",
+    "en": "Don’t modify a noun with the polite form",
+    "ja": "丁寧形で名詞を修飾しない"
+  },
+  {
+    "source": "× 先生に借りました本；○ 先生に借りた本。",
+    "en": "× 先生に借りました本; ○ 先生に借りた本.",
+    "ja": "× 先生に借りました本。○ 先生に借りた本。"
+  },
+  {
+    "source": "中心名詞填補內層空位",
+    "en": "The head noun fills a gap in the inner clause",
+    "ja": "被修飾名詞が内層の空所を埋める"
+  },
+  {
+    "source": "↑ 中心名詞「本」填補買う的受詞空位",
+    "en": "↑ The head noun “本” fills the object gap of 買う",
+    "ja": "↑ 被修飾名詞「本」が「買う」の目的語の空所を埋める"
+  },
+  {
+    "source": "↑ 中心名詞「友だち」填補帰る的主語空位",
+    "en": "↑ The head noun “友だち” fills the subject gap of 帰る",
+    "ja": "↑ 被修飾名詞「友だち」が「帰る」の主語の空所を埋める"
+  },
+  {
+    "source": "易錯點 · RISK B",
+    "en": "Common trap · RISK B",
+    "ja": "間違えやすい点 · RISK B"
+  },
+  {
+    "source": "中心名詞不能重複",
+    "en": "Don’t repeat the head noun",
+    "ja": "被修飾名詞を繰り返さない"
+  },
+  {
+    "source": "× 友だちが来週帰る友だち。後面的 友だち 已經是內層主語空位。",
+    "en": "× 友だちが来週帰る友だち. The 友だち at the end already fills the subject gap of the inner clause.",
+    "ja": "× 友だちが来週帰る友だち。後ろの「友だち」が、すでに内層の主語の空所に当たっています。"
+  },
+  {
+    "source": "複合修飾",
+    "en": "Compound modification",
+    "ja": "複合的な修飾"
+  },
+  {
+    "source": "安靜且風景漂亮的城市",
+    "en": "A quiet town with beautiful scenery",
+    "ja": "静かで景色がきれいな町"
+  },
+  {
+    "source": "媽媽昨天在百貨公司買的包包",
+    "en": "The bag my mother bought at the department store yesterday",
+    "ja": "母が昨日デパートで買ったかばん"
+  },
+  {
+    "source": "語序題解法",
+    "en": "Solving word-order questions",
+    "ja": "語順問題の解き方"
+  },
+  {
+    "source": "先找最中心名詞，再問「什麼樣的名詞？」；不要依中文單字順序從左到右拼接。",
+    "en": "First find the central head noun, then ask “what kind of noun?”; don’t piece the words together left to right in English word order.",
+    "ja": "まず最も中心となる被修飾名詞を見つけ、次に「どんな名詞か？」と問います。訳文の語順どおりに、左から順に単語をつなげないでください。"
+  },
+  {
+    "source": "語序部分得到滿分，表示「先找中心名詞與最外層述語」的方法有效。以下把正確語序轉成可重複使用的樹狀分析。",
+    "en": "Full marks on the word-order section show that the method “find the head noun and the outermost predicate first” works. Below, the correct word orders are turned into reusable tree analyses.",
+    "ja": "語順の問題で満点を取れたことは、「まず被修飾名詞と最外層の述語を探す」という方法が有効であることを示しています。以下では、正しい語順を、繰り返し使えるツリー状の分析にまとめます。"
+  },
+  {
+    "source": "一、うちの近くにある映画館で映画を見ました",
+    "en": "一、うちの近くにある映画館で映画を見ました",
+    "ja": "一、うちの近くにある映画館で映画を見ました"
+  },
+  {
+    "source": "成分",
+    "en": "Element",
+    "ja": "成分"
+  },
+  {
+    "source": "屬於哪個述語",
+    "en": "Which predicate it belongs to",
+    "ja": "どの述語に属するか"
+  },
+  {
+    "source": "角色",
+    "en": "Role",
+    "ja": "役割"
+  },
+  {
+    "source": "基準名詞與方位名詞的連結。",
+    "en": "Links the reference noun with the location noun.",
+    "ja": "基準となる名詞と、位置を表す名詞をつなぐ。"
+  },
+  {
+    "source": "存在位置；整段修飾中心名詞 映画館。",
+    "en": "Location of existence; the whole phrase modifies the head noun 映画館.",
+    "ja": "存在の場所。この部分全体が被修飾名詞「映画館」を修飾する。"
+  },
+  {
+    "source": "外層「看電影」的動作場所。",
+    "en": "Where the outer action, “watching a movie,” takes place.",
+    "ja": "外層の「映画を見る」という動作の場所。"
+  },
+  {
+    "source": "觀看對象。",
+    "en": "What is watched.",
+    "ja": "見る対象。"
+  },
+  {
+    "source": "二、うちから駅まで行くのに5分しかかかりません",
+    "en": "二、うちから駅まで行くのに5分しかかかりません",
+    "ja": "二、うちから駅まで行くのに5分しかかかりません"
+  },
+  {
+    "source": "判斷",
+    "en": "Interpretation",
+    "ja": "判断"
+  },
+  {
+    "source": "移動起點",
+    "en": "Starting point of movement",
+    "ja": "移動の起点"
+  },
+  {
+    "source": "從家出發。",
+    "en": "Setting out from home.",
+    "ja": "家から出発する。"
+  },
+  {
+    "source": "移動終點範圍",
+    "en": "End point of movement",
+    "ja": "移動の終点（範囲）"
+  },
+  {
+    "source": "到車站為止。",
+    "en": "As far as the station.",
+    "ja": "駅に着くところまで。"
+  },
+  {
+    "source": "移動所需",
+    "en": "What the trip takes",
+    "ja": "移動に要するもの"
+  },
+  {
+    "source": "為「去車站這件事」計算耗時。",
+    "en": "Measures the time needed for “going to the station.”",
+    "ja": "「駅まで行くこと」にかかる時間を表す。"
+  },
+  {
+    "source": "低量限制",
+    "en": "Limiting to a small amount",
+    "ja": "少なさの限定"
+  },
+  {
+    "source": "会議",
+    "en": "会議",
+    "ja": "会議"
+  },
+  {
+    "source": "コピーをしてください。名詞 + の前に。",
+    "en": "コピーをしてください。Noun + の前に.",
+    "ja": "コピーをしてください。名詞 + の前に。"
+  },
+  {
+    "source": "佐藤さんは渋谷",
+    "en": "佐藤さんは渋谷",
+    "ja": "佐藤さんは渋谷"
+  },
+  {
+    "source": "。居住地是 住む 的著點。",
+    "en": "。The place of residence is the landing point (goal) of 住む.",
+    "ja": "。居住地は「住む」の着点です。"
+  },
+  {
+    "source": "原手冊頁：P47、P48",
+    "en": "Source handbook pages: P47, P48",
+    "ja": "元の冊子のページ：P47、P48"
+  },
+  {
+    "source": "こと／の與忘れる：分清內容、事實、結果",
+    "en": "こと／の and 忘れる: telling content, fact and result apart",
+    "ja": "「こと／の」と「忘れる」：内容・事実・結果を区別する"
+  },
+  {
+    "source": "述語的格框架與主要助詞",
+    "en": "Predicate case frames and the main particles",
+    "ja": "述語の格フレームと主な助詞"
+  },
+  {
+    "source": "// 18 · 時間與從句",
+    "en": "// 18 · Time and clauses",
+    "ja": "// 18 · 時間と節"
+  },
+  {
+    "source": "「去做什麼」「為了什麼」「對什麼有用」「靠什麼做」不是同一個問題。",
+    "en": "“Going to do what,” “for what purpose,” “useful for what” and “by what means” are not the same question.",
+    "ja": "「何をしに行くか」「何のためか」「何の役に立つか」「何によってするか」は同じ問いではありません。"
+  },
+  {
+    "source": "的形式是ます語幹＋に＋移動動詞；",
+    "en": "has the form masu stem + に + verb of movement; ",
+    "ja": "は「ます形の語幹＋に＋移動動詞」の形、"
+  },
+  {
+    "source": "是一般目的；",
+    "en": "expresses a general purpose; ",
+    "ja": "は一般的な目的、"
+  },
+  {
+    "source": "是用途評價；",
+    "en": "evaluates usefulness; ",
+    "ja": "は用途の評価、"
+  },
+  {
+    "source": "是方法。中文都可能含「來／為了」，但日文構造不同。",
+    "en": "expresses a method. In English, all of these may come out with “to” or “in order to,” but the Japanese structures differ.",
+    "ja": "は方法です。ほかの言語に訳すと、どれも似た言い方になることがありますが、日本語ではそれぞれ構造が異なります。"
+  },
+  {
+    "source": "手寫筆記中的",
+    "en": "In the handwritten notes,",
+    "ja": "手書きノートにある"
+  },
+  {
+    "source": "與",
+    "en": "and",
+    "ja": "と"
+  },
+  {
+    "source": "應保留在用途這裡，不是拿",
+    "en": "belong here under use; don’t swap in",
+    "ja": "は、この用途の項に置くべきもので、決して"
+  },
+  {
+    "source": "取代。前者評價「對某用途有益／合適」，後者才表示「關於某主題」。",
+    "en": "for them. The にいい forms evaluate whether something is “good for or suited to a use”; only について means “about a topic.”",
+    "ja": "に置き換えるものではありません。前者は「ある用途に役立つ・適している」という評価を表し、「ある主題について」を表すのは後者です。"
+  },
+  {
+    "source": "ために 有兩套必須分開的功能：",
+    "en": "ために has two functions that must be kept apart: ",
+    "ja": "「ために」には、区別すべき二つの機能があります："
+  },
+  {
+    "source": "目的「為了」",
+    "en": "purpose (“in order to”)",
+    "ja": "目的（〜するために）"
+  },
+  {
+    "source": "，以及較正式的",
+    "en": " and the more formal ",
+    "ja": "と、より改まった"
+  },
+  {
+    "source": "原因「因為／由於」",
+    "en": "cause (“because of” or “due to”)",
+    "ja": "原因（〜なので・〜によって）"
+  },
+  {
+    "source": "。詞類接續不同。",
+    "en": ". The two connect differently by part of speech.",
+    "ja": "です。品詞による接続も異なります。"
+  },
+  {
+    "source": "一、目的：為了達成某個目標",
+    "en": "1. Purpose: to achieve a goal",
+    "ja": "一、目的：ある目標を達成するため"
+  },
+  {
+    "source": "前項",
+    "en": "Preceding word",
+    "ja": "前に来る語"
+  },
+  {
+    "source": "例句",
+    "en": "Example sentence",
+    "ja": "例文"
+  },
+  {
+    "source": "V辭書形 + ために",
+    "en": "V dictionary form + ために",
+    "ja": "V辞書形 + ために"
+  },
+  {
+    "source": "不能直接把形容詞當「目的」；改成變化或使役結果",
+    "en": "An adjective can’t be a “purpose” by itself; rephrase it as a change or a caused result",
+    "ja": "形容詞をそのまま「目的」にはできない。変化または使役の結果を表す形にする"
+  },
+  {
+    "source": "日本語が上手なために勉強します 不是「為了日文變好而學習」。目的應說：",
+    "en": "日本語が上手なために勉強します does not mean “I study in order to get good at Japanese.” For purpose, say: ",
+    "ja": "「日本語が上手なために勉強します」は「上達することを目指して勉強する」という意味にはなりません。目的はこう言います："
+  },
+  {
+    "source": "二、原因：由於某個事實",
+    "en": "2. Cause: due to a fact",
+    "ja": "二、原因：ある事実による"
+  },
+  {
+    "source": "目的",
+    "en": "Purpose",
+    "ja": "目的"
+  },
+  {
+    "source": "家族のために働きます。為了家人而工作。",
+    "en": "家族のために働きます。I work for the sake of my family.",
+    "ja": "家族のために働きます。家族のためという目的で働く、という意味です。"
+  },
+  {
+    "source": "原因",
+    "en": "Cause",
+    "ja": "原因"
+  },
+  {
+    "source": "台風のため、休みです。因為颱風而停課／休息。",
+    "en": "台風のため、休みです。Because of the typhoon, classes are canceled or it’s a day off. ",
+    "ja": "台風のため、休みです。台風が原因で休校・休業になる、という意味です。"
+  },
+  {
+    "source": "辨析",
+    "en": "Compare",
+    "ja": "比較"
+  },
+  {
+    "source": "安いために買います 通常解作「因為便宜所以買」；若要表達「為了把它變便宜」，應說 安くするために。",
+    "en": "安いために買います is usually read as “I buy it because it’s cheap”; to say “in order to make it cheaper,” use 安くするために.",
+    "ja": "「安いために買います」は通常「安いから買う」と解釈されます。「安くすることを目指して」と言いたいなら、「安くするために」と言います。"
+  },
+  {
+    "source": "N3 補充",
+    "en": "N3 note",
+    "ja": "N3 補足"
+  },
+  {
+    "source": "目的若是「能夠、變得會、避免某狀況」等非意志性結果，日文常改用 ように：日本語が話せるように、毎日練習します。",
+    "en": "When the purpose is a non-volitional result such as “being able to,” “coming to be able to” or “avoiding a situation,” Japanese often uses ように instead: 日本語が話せるように、毎日練習します。",
+    "ja": "目的が「できる」「できるようになる」「ある状況を避ける」といった非意志的な結果である場合、日本語ではよく「ように」を使います：日本語が話せるように、毎日練習します。"
+  },
+  {
+    "source": "「去哪裡、去做什麼、為何做、用來做什麼、怎麼做」是五種不同問題。",
+    "en": "“Where to go,” “what to go and do,” “why do it,” “what it’s used for” and “how to do it” are five different questions.",
+    "ja": "「どこへ行くか」「何をしに行くか」「なぜするか」「何に使うか」「どうやってするか」は、五つの異なる問いです。"
+  },
+  {
+    "source": "移動目的",
+    "en": "Purpose of movement",
+    "ja": "移動の目的"
+  },
+  {
+    "source": "限制",
+    "en": "Limits",
+    "ja": "限界"
+  },
+  {
+    "source": "N是活動目的",
+    "en": "N is the activity you go for",
+    "ja": "Nは目的となる活動"
+  },
+  {
+    "source": "只用於移動去做某事",
+    "en": "Only for going somewhere to do something",
+    "ja": "何かをしに移動する場合だけ"
+  },
+  {
+    "source": "一般目的與用途",
+    "en": "General purpose and use",
+    "ja": "一般的な目的と用途"
+  },
+  {
+    "source": "一般目的",
+    "en": "General purpose",
+    "ja": "一般的な目的"
+  },
+  {
+    "source": "名詞目的／利益",
+    "en": "Purpose or benefit expressed by a noun",
+    "ja": "名詞による目的・利益"
+  },
+  {
+    "source": "用途、便利、耗時",
+    "en": "Use, convenience, time required",
+    "ja": "用途・便利さ・所要時間"
+  },
+  {
+    "source": "兩種ために不能混合",
+    "en": "Don’t mix the two kinds of ために",
+    "ja": "二種類の「ために」を混ぜない"
+  },
+  {
+    "source": "○ 日本語を勉強するために；○ 日本語の勉強のために；× 日本語を勉強のために。",
+    "en": "○ 日本語を勉強するために; ○ 日本語の勉強のために; × 日本語を勉強のために.",
+    "ja": "○ 日本語を勉強するために、○ 日本語の勉強のために。× 日本語を勉強のために。"
+  },
+  {
+    "source": "方法與目的的問法",
+    "en": "Asking about method and purpose",
+    "ja": "方法と目的の尋ね方"
+  },
+  {
+    "source": "問法",
+    "en": "Question form",
+    "ja": "尋ね方"
+  },
+  {
+    "source": "問什麼",
+    "en": "What it asks about",
+    "ja": "何を尋ねるか"
+  },
+  {
+    "source": "方法／手段",
+    "en": "Method or means",
+    "ja": "方法・手段"
+  },
+  {
+    "source": "使用何種工具",
+    "en": "Which tool is used",
+    "ja": "どんな道具を使うか"
+  },
+  {
+    "source": "用途",
+    "en": "Use",
+    "ja": "用途"
+  },
+  {
+    "source": "食べに行く與食べて行く",
+    "en": "食べに行く and 食べて行く",
+    "ja": "「食べに行く」と「食べて行く」"
+  },
+  {
+    "source": "去的目的是吃",
+    "en": "The purpose of going is to eat",
+    "ja": "行く目的は食べること"
+  },
+  {
+    "source": "先吃，再去／走",
+    "en": "Eat first, then go or leave",
+    "ja": "先に食べてから行く・出かける"
+  },
+  {
+    "source": "明確強調先後",
+    "en": "Explicitly stresses the order",
+    "ja": "前後関係をはっきり強調する"
+  },
+  {
+    "source": "書いて覚える，不等於書いてから覚える",
+    "en": "書いて覚える is not the same as 書いてから覚える",
+    "ja": "「書いて覚える」は「書いてから覚える」と同じではない"
+  },
+  {
+    "source": "原筆記要表達「藉由反覆書寫來記住漢字」：前項是方法，使用て形；てから則先完成前項，再進入後項。",
+    "en": "The original notes mean “memorize kanji by writing them over and over”: the first part is the method, so it uses the te-form; with てから, the first part is completed before moving on to the second.",
+    "ja": "元のノートが表したいのは「繰り返し書くことで漢字を覚える」ということです。前件は方法なので、て形を使います。一方「てから」は、前件を完了してから後件に移ることを表します。"
+  },
+  {
+    "source": "在筆記本上反覆寫漢字，藉此記住。",
+    "en": "I memorize kanji by writing them in my notebook again and again.",
+    "ja": "ノートに漢字を何度も書いて覚えます。"
+  },
+  {
+    "source": "書く 的寫入位置。",
+    "en": "Where the writing of 書く goes.",
+    "ja": "「書く」の書き込む場所。"
+  },
+  {
+    "source": "書く 與 覚える 的內容／受詞；後項可承接同一對象。",
+    "en": "The content or object of both 書く and 覚える; the second verb can take over the same object.",
+    "ja": "「書く」と「覚える」の内容・目的語。後件は同じ対象を引き継げる。"
+  },
+  {
+    "source": "何度も 強調反覆次數；たくさん 強調大量。",
+    "en": "何度も stresses repetition; たくさん stresses quantity.",
+    "ja": "「何度も」は繰り返しの回数を、「たくさん」は量の多さを強調する。"
+  },
+  {
+    "source": "表示「以書寫這個方法」完成後面的 覚える。",
+    "en": "Shows that the following 覚える is done “by the method of writing.”",
+    "ja": "後ろの「覚える」を「書くという方法で」行うことを表す。"
+  },
+  {
+    "source": "最外層主要述語：記住。",
+    "en": "Outermost main predicate: memorize.",
+    "ja": "最外層の主な述語：覚える。"
+  },
+  {
+    "source": "表達",
+    "en": "Expression",
+    "ja": "表現"
+  },
+  {
+    "source": "以書寫作為記憶方法，回答どうやって覚えますか。",
+    "en": "Uses writing as the way to memorize; answers どうやって覚えますか。",
+    "ja": "書くことを記憶の方法にしている。「どうやって覚えますか。」への答えになる。"
+  },
+  {
+    "source": "先寫完，再進入記憶階段；兩步被切開。",
+    "en": "Finish writing first, then move on to memorizing; the two steps are separated.",
+    "ja": "書き終えてから、覚える段階に移る。二つの段階が切り離されている。"
+  },
+  {
+    "source": "備註",
+    "en": "Note",
+    "ja": "補足"
+  },
+  {
+    "source": "書いてから覚えます 並非任何場合都不合文法；它只是",
+    "en": "書いてから覚えます is not ungrammatical in every case; it is just ",
+    "ja": "「書いてから覚えます」が、どんな場合でも非文法的というわけではありません。ただ、「書くことで記憶を作る」ことと"
+  },
+  {
+    "source": "不等於",
+    "en": "not the same as",
+    "ja": "同じではない"
+  },
+  {
+    "source": "「透過書寫形成記憶」。",
+    "en": " “forming a memory through writing.”",
+    "ja": "というだけです。"
+  },
+  {
+    "source": "方法／手段：Vて",
+    "en": "Method or means: Vて",
+    "ja": "方法・手段：Vて"
+  },
+  {
+    "source": "声に出して読んで覚えます。",
+    "en": "声に出して読んで覚えます。",
+    "ja": "声に出して読んで覚えます。"
+  },
+  {
+    "source": "藉由朗讀來記。",
+    "en": "Memorize by reading aloud.",
+    "ja": "声に出して読むことで覚える。"
+  },
+  {
+    "source": "意味を調べてから、例文を書きます。",
+    "en": "意味を調べてから、例文を書きます。",
+    "ja": "意味を調べてから、例文を書きます。"
+  },
+  {
+    "source": "先查意思，再寫例句。",
+    "en": "Look up the meaning first, then write example sentences.",
+    "ja": "まず意味を調べ、それから例文を書く。"
+  },
+  {
+    "source": "地図を見て行きます。",
+    "en": "地図を見て行きます。",
+    "ja": "地図を見て行きます。"
+  },
+  {
+    "source": "看著地圖／靠地圖前往。",
+    "en": "Go while looking at the map, or relying on it.",
+    "ja": "地図を見ながら、または地図を頼りに行く。"
+  },
+  {
+    "source": "地図を見てから出発します。",
+    "en": "地図を見てから出発します。",
+    "ja": "地図を見てから出発します。"
+  },
+  {
+    "source": "先看完地圖，再出發。",
+    "en": "Look at the map first, then set off.",
+    "ja": "地図を見終えてから出発する。"
+  },
+  {
+    "source": "口語偶爾省略助詞；正式學習與書寫保留漢字",
+    "en": "Casual speech sometimes drops particles; in formal study and writing, keep the full 漢字",
+    "ja": "話し言葉では助詞が省略されることもありますが、正式な学習や書き言葉では「漢字"
+  },
+  {
+    "source": "覚えます，不把漢字覚えます當成標準完整句。",
+    "en": "覚えます, and don’t treat 漢字覚えます as a standard complete sentence.",
+    "ja": "覚えます」の形を保ち、「漢字覚えます」を標準的な完全な文とは見なしません。"
+  },
+  {
+    "source": "手寫筆記回查：",
+    "en": "Rechecking the handwritten notes: ",
+    "ja": "手書きノートの再確認："
+  },
+  {
+    "source": "手寫筆記回查：Nにいい／Vるのにいい",
+    "en": "Rechecking the handwritten notes: Nにいい／Vるのにいい",
+    "ja": "手書きノートの再確認：Nにいい／Vるのにいい"
+  },
+  {
+    "source": "結構",
+    "en": "Structure",
+    "ja": "構造"
+  },
+  {
+    "source": "日本電影對學日文有幫助。",
+    "en": "Japanese films help with learning Japanese.",
+    "ja": "日本の映画は日本語の勉強に役立つ。"
+  },
+  {
+    "source": "日本電影適合用來學日文。",
+    "en": "Japanese films are well suited to learning Japanese.",
+    "ja": "日本の映画は日本語を勉強するのに適している。"
+  },
+  {
+    "source": "談論日文學習這個主題。",
+    "en": "Talk about the topic of learning Japanese.",
+    "ja": "日本語の勉強というテーマについて話す。"
+  },
+  {
+    "source": "前兩句是依手寫筆記中可辨識的內容做的正字化整理；另一頁底部也可見 Nにいいです。較早的整理曾把相鄰筆記歸成 について，這裡明確分開，不宣稱手寫筆記只教了其中一種。",
+    "en": "The first two sentences are normalized versions of what can be made out in the handwritten notes; Nにいいです can also be seen at the bottom of another page. An earlier rewrite grouped the neighboring notes under について; here they are clearly separated, without claiming that the handwritten notes taught only one of them.",
+    "ja": "最初の2文は、手書きノートで判読できる内容をもとに表記を整えたものです。別のページの下部にも「Nにいいです」が見えます。以前の整理では、隣接するメモを「について」にまとめていましたが、ここでは明確に分けています。手書きノートがそのうち一方だけを教えていたと主張するものではありません。"
+  },
+  {
+    "source": "原手冊頁：P32、P49、P50、P89",
+    "en": "Source handbook pages: P32, P49, P50, P89",
+    "ja": "元の冊子のページ：P32、P49、P50、P89"
+  },
+  {
+    "source": "ます語幹、ながら、たい、方與知る",
+    "en": "The masu stem, ながら, たい, 方 and 知る",
+    "ja": "ます形の語幹・ながら・たい・方・知る"
+  },
+  {
+    "source": "// 19 · 時間與從句",
+    "en": "// 19 · Time and clauses",
+    "ja": "// 19 · 時間と節"
+  },
+  {
+    "source": "同一個詞幹分出不同句型；「方」形成名詞後，助詞仍由外層述語決定。",
+    "en": "One stem branches into different patterns; after 方 forms a noun, the outer predicate still decides the particle.",
+    "ja": "同じ語幹から異なる文型が分かれます。「方」で名詞になった後も、助詞は外層の述語が決めます。"
+  },
+  {
+    "source": "後，可接",
+    "en": "can then take",
+    "ja": "からは、次の形が作れます："
+  },
+  {
+    "source": "和",
+    "en": "and",
+    "ja": "と"
+  },
+  {
+    "source": "的助詞不同，不是",
+    "en": "take different particles, not because",
+    "ja": "で助詞が異なるのは"
+  },
+  {
+    "source": "方",
+    "en": "方",
+    "ja": "方"
+  },
+  {
+    "source": "改變了意思，而是外層動詞換了。",
+    "en": "changes the meaning but because the outer verb is different.",
+    "ja": "が意味を変えたからではなく、外層の動詞が替わったからです。"
+  },
+  {
+    "source": "常表示理解狀態的改變，也可回應「收到」；",
+    "en": "often marks a change in understanding and can also be used to say “got it”; ",
+    "ja": "は理解の状態が変わったことを表すことが多く、「了解」という返事にも使えます。"
+  },
+  {
+    "source": "常表已經知道。",
+    "en": "usually means you already know. ",
+    "ja": "は、たいてい「すでに知っている」ことを表します。"
+  },
+  {
+    "source": "的一般否定則以",
+    "en": "normally has",
+    "ja": "の一般的な否定としては"
+  },
+  {
+    "source": "為基本，不要類推成每次都用",
+    "en": "as its basic negative; don’t generalize this into always using",
+    "ja": "が基本です。類推して毎回使わないように注意したいのが"
+  },
+  {
+    "source": "同一個ます語幹可接ながら、たい、に行く與方；方形成後仍由外層述語決定助詞。",
+    "en": "The same masu stem can take ながら, たい, に行く or 方; once 方 has formed a noun, the outer predicate still decides the particle.",
+    "ja": "同じます形の語幹に「ながら」「たい」「に行く」「方」を付けられます。「方」で名詞になった後も、助詞は外層の述語が決めます。"
+  },
+  {
+    "source": "ます語幹四分支",
+    "en": "Four branches from the masu stem",
+    "ja": "ます形の語幹から分かれる四つの形"
+  },
+  {
+    "source": "一邊〜一邊〜",
+    "en": "Doing ~ while doing ~",
+    "ja": "二つの動作の同時進行"
+  },
+  {
+    "source": "想做",
+    "en": "Want to do",
+    "ja": "願望"
+  },
+  {
+    "source": "去做",
+    "en": "Go to do",
+    "ja": "移動の目的"
+  },
+  {
+    "source": "方法",
+    "en": "Way of doing",
+    "ja": "方法"
+  },
+  {
+    "source": "ながら前不是て形",
+    "en": "No te-form before ながら",
+    "ja": "「ながら」の前はて形ではない"
+  },
+  {
+    "source": "話します -> 話しながら，不是 話してながら。",
+    "en": "話します -> 話しながら, not 話してながら.",
+    "ja": "話します -> 話しながら。「話してながら」ではありません。"
+  },
+  {
+    "source": "方與助詞",
+    "en": "方 and particles",
+    "ja": "「方」と助詞"
+  },
+  {
+    "source": "読み方をわかります不成立",
+    "en": "読み方をわかります doesn’t work",
+    "ja": "「読み方をわかります」は成り立たない"
+  },
+  {
+    "source": "不要從中文「知道／理解」反推；先看日文述語格框架：がわかる／を知る。",
+    "en": "Don’t work backwards from “know” or “understand”; look at the Japanese predicate’s case frame first: がわかる／を知る.",
+    "ja": "意味が近いからといって助詞まで同じだと考えず、まず述語の格フレームを確認します：がわかる／を知る。"
+  },
+  {
+    "source": "分かります・分かりました・分かっています",
+    "en": "分かります・分かりました・分かっています",
+    "ja": "分かります・分かりました・分かっています"
+  },
+  {
+    "source": "具備理解能力／處於理解狀態。",
+    "en": "Able to understand, or in a state of understanding.",
+    "ja": "理解する能力がある・理解している状態にある。"
+  },
+  {
+    "source": "從不明白變成明白；也常表示「收到、了解」。",
+    "en": "Going from not understanding to understanding; also often means “got it” or “understood.”",
+    "ja": "分からない状態から分かる状態への変化。「了解しました」の意味でもよく使う。"
+  },
+  {
+    "source": "已經知道；有時帶「我知道啦」的語氣。",
+    "en": "Already knowing; sometimes has a tone of “I know, I know.”",
+    "ja": "すでに知っている。「もう分かってるよ」という語気を帯びることもある。"
+  },
+  {
+    "source": "何をします・何をしたい・したいこと",
+    "en": "何をします・何をしたい・したいこと",
+    "ja": "何をします・何をしたい・したいこと"
+  },
+  {
+    "source": "要做什麼／平常做什麼？",
+    "en": "What will you do, or what do you usually do?",
+    "ja": "これから何をするか／普段何をするか"
+  },
+  {
+    "source": "想做什麼？",
+    "en": "What do you want to do?",
+    "ja": "何をしたいか"
+  },
+  {
+    "source": "想做的事情是什麼？",
+    "en": "What is the thing you want to do?",
+    "ja": "したい事柄は何か"
+  },
+  {
+    "source": "原手冊頁：P51、P52",
+    "en": "Source handbook pages: P51, P52",
+    "ja": "元の冊子のページ：P51、P52"
+  },
+  {
+    "source": "普通形不是只有辭書形",
+    "en": "The plain form is more than the dictionary form",
+    "ja": "普通形は辞書形だけではない"
+  },
+  {
+    "source": "動詞索引：把格框架當成單字的一部分",
+    "en": "Verb index: treat the case frame as part of the word",
+    "ja": "動詞索引：格フレームを単語の一部として扱う"
+  },
+  {
+    "source": "上一篇與下一篇",
+    "en": "Previous and next notes",
+    "ja": "前後のノート"
+  },
+  {
+    "source": "← 上一篇：2 活用與接續",
+    "en": "← Previous: 2 Conjugation",
+    "ja": "← 前のノート：2 活用と接続"
+  },
+  {
+    "source": "下一篇：4 理由與意圖 →",
+    "en": "Next: 4 Reasons and intent →",
+    "ja": "次のノート：4 理由と意図 →"
+  },
+  {
+    "source": "依詞類修飾とき",
+    "en": "とき takes each word class’s noun-modifying form",
+    "ja": "品詞ごとの名詞修飾の形で「とき」につなぐ"
+  },
+  {
+    "source": "外層：私は［ ］を待っています。",
+    "en": "Outer: 私は［　　　　］を待っています。",
+    "ja": "外層：私は［　　　　］を待っています。"
+  },
+  {
+    "source": "名詞化：［友だちが来る］の",
+    "en": "Nominalized: ［友だちが来る］の",
+    "ja": "名詞化：［友だちが来る］の"
+  },
+  {
+    "source": "完成：私は［友だちが来るの］を待っています。",
+    "en": "Complete: 私は［友だちが来るの］を待っています。",
+    "ja": "完成：私は［友だちが来るの］を待っています。"
+  },
+  {
+    "source": "しか 必須配合否定 かかりません。",
+    "en": "しか must be paired with a negative: かかりません。",
+    "ja": "しかは必ず否定と一緒に使う：かかりません。"
+  },
+  {
+    "source": "改成 〜になる／〜にするために",
+    "en": "Rephrase as 〜になる／〜にするために",
+    "ja": "〜になる／〜にするためにと言い換える"
+  },
+  {
+    "source": "完成後順序：Vてから",
+    "en": "Order after finishing: Vてから",
+    "ja": "完了後の順序：Vてから"
+  }
+]

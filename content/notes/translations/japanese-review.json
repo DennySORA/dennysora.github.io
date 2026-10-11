@@ -1,0 +1,2602 @@
+[
+  {
+    "source": "// 日語 · 第 7 篇，共 7 篇 · 原稿 2026-10-10 · 本站重整與核對 2026-10-12",
+    "en": "// Japanese · Part 7 of 7 · original 2026-10-10 · rewritten and checked on this site 2026-10-12",
+    "ja": "// 日本語 · 第 7 回（全 7 回） · 原稿 2026-10-10 · 本サイトで再編・確認 2026-10-12"
+  },
+  {
+    "source": "日語筆記 7｜總複習：43 個易錯點、接續總表與校訂紀錄",
+    "en": "Japanese notes 7 | Review: 43 common traps, the connection table and the revision log",
+    "ja": "日本語ノート 7｜総復習：間違えやすい点 43 項目、接続一覧表、校訂記録"
+  },
+  {
+    "source": "最後要驗證的，不是能否背出中文，而是能否說明「這個形式為什麼在這裡」。這一篇收錄 43 個易錯點、接續總表、四層檢查，以及校訂紀錄、來源對照與外部查核。",
+    "en": "The final test is not whether you can recite the translations, but whether you can explain “why this form is here.” This part collects the 43 common traps, the connection table and a four-layer check, along with the revision log, the source map and the external checks.",
+    "ja": "最後に確かめるべきなのは、訳語を暗記しているかではなく、「この形がなぜここにあるのか」を説明できるかです。この回には、間違えやすい点 43 項目、接続一覧表、4 層のチェックに加えて、校訂記録、出典対照表、外部資料による確認を収めています。"
+  },
+  {
+    "source": "初級課程 L1–L21 與後續課堂筆記",
+    "en": "Beginner course L1–L21 and later class notes",
+    "ja": "初級コース L1–L21 とその後の授業ノート"
+  },
+  {
+    "source": "原筆記、編輯解析與校訂分開標示",
+    "en": "Original notes, editor’s analysis and revisions are labeled separately",
+    "ja": "元のノート、編集者の解説、校訂を区別して表示"
+  },
+  {
+    "source": "日文例句在三種語言版本中保持原文",
+    "en": "Japanese examples stay in the original in all three language editions",
+    "ja": "日本語の例文は 3 言語版すべてで原文のまま"
+  },
+  {
+    "source": "日語筆記系列",
+    "en": "Japanese notes series",
+    "ja": "日本語ノートのシリーズ"
+  },
+  {
+    "source": "1 句子結構",
+    "en": "1 Sentence structure",
+    "ja": "1 文の構造"
+  },
+  {
+    "source": "2 活用與接續",
+    "en": "2 Conjugation",
+    "ja": "2 活用と接続"
+  },
+  {
+    "source": "3 時間與從句",
+    "en": "3 Time and clauses",
+    "ja": "3 時間と節"
+  },
+  {
+    "source": "4 理由與意圖",
+    "en": "4 Reasons and intent",
+    "ja": "4 理由と意図"
+  },
+  {
+    "source": "5 互動與表達",
+    "en": "5 Interaction",
+    "ja": "5 やりとりと表現"
+  },
+  {
+    "source": "6 詞彙與讀音",
+    "en": "6 Vocabulary",
+    "ja": "6 語彙と読み方"
+  },
+  {
+    "source": "7 總複習",
+    "en": "7 Review",
+    "ja": "7 総復習"
+  },
+  {
+    "source": "本篇主題",
+    "en": "Topics in this part",
+    "ja": "この回のトピック"
+  },
+  {
+    "source": "41｜43個高頻陷阱：依原ID保留",
+    "en": "41 | 43 frequent traps, with their original IDs",
+    "ja": "41｜頻出の落とし穴 43 項目：元の ID のまま"
+  },
+  {
+    "source": "42｜接續總表：だ／な／の／不加だ",
+    "en": "42 | Connection table: だ／な／の／no だ",
+    "ja": "42｜接続一覧表：だ／な／の／だなし"
+  },
+  {
+    "source": "43｜把整冊串起來：四層檢查與複習路徑",
+    "en": "43 | Tying the whole handbook together: four-layer check and review path",
+    "ja": "43｜冊子全体をつなぐ：4 層のチェックと復習の道筋"
+  },
+  {
+    "source": "// 41 · 總結與檢核",
+    "en": "// 41 · Summary and checks",
+    "ja": "// 41 · まとめと確認"
+  },
+  {
+    "source": "先找錯誤模型，再記正確形式；錯誤例不是離開語境仍成立的全面禁令。",
+    "en": "Find the error pattern first, then memorize the correct form; an incorrect example is not a blanket ban that still holds outside its context.",
+    "ja": "まず誤りのパターンを見つけ、それから正しい形を覚えます。誤用例は、文脈を離れても成り立つ全面的な禁止ではありません。"
+  },
+  {
+    "source": "編輯解析",
+    "en": "Editor’s analysis",
+    "ja": "編集者の解説"
+  },
+  {
+    "source": "以下保留原手冊的",
+    "en": "Below are all of the source handbook’s ",
+    "ja": "以下には、元の冊子の"
+  },
+  {
+    "source": "A01～B43 共43項",
+    "en": "43 items, A01–B43",
+    "ja": "A01～B43 の全 43 項目"
+  },
+  {
+    "source": "，按數字重新排序，避免原雙欄擷取造成 A01、A08、A02 的閱讀跳躍。這些是原筆記的高頻陷阱清單，",
+    "en": ", re-sorted by number to avoid the jumps in reading order (A01, A08, A02) caused by extracting the original two-column layout. This is the original notes’ list of frequent traps; it ",
+    "ja": "を収め、番号順に並べ替えました。元の 2 段組みから抽出したことで A01、A08、A02 と読む順序が飛んでしまうのを避けるためです。これは元のノートにある頻出の落とし穴の一覧であり、"
+  },
+  {
+    "source": "不代表學習者一定會犯這 43 種錯誤",
+    "en": "does not mean a learner will necessarily make all 43 of these mistakes",
+    "ja": "学習者が必ずこの 43 種類の誤りをするという意味ではありません"
+  },
+  {
+    "source": "「三枚を買う」那一項已把適用範圍縮回原例的「受詞後重複を」；需要改語境才能判斷的表達，不只用紅色叉號製造絕對規則。舊文仍可在原頁對照查看。",
+    "en": "The “三枚を買う” item has been narrowed back to the scope of the original example: “を repeated after the object.” Expressions that can only be judged by changing the context are not turned into absolute rules with a red cross alone. The old wording can still be compared on the original page.",
+    "ja": "「三枚を買う」の項目は、適用範囲を元の例の「目的語の後で『を』を重ねる」誤りに絞り直しました。文脈を変えないと判断できない表現を、赤い × だけで絶対的な規則にすることはしません。旧版の記述は元のページで照合できます。"
+  },
+  {
+    "source": "原43項易錯點",
+    "en": "The original 43 common traps",
+    "ja": "間違えやすい点（元の 43 項目）"
+  },
+  {
+    "source": "原ID／主題",
+    "en": "Original ID / topic",
+    "ja": "元の ID／トピック"
+  },
+  {
+    "source": "錯誤模型與正確形式",
+    "en": "Error pattern and correct form",
+    "ja": "誤りのパターンと正しい形"
+  },
+  {
+    "source": "判斷規則",
+    "en": "Decision rule",
+    "ja": "判断のルール"
+  },
+  {
+    "source": "とき前的語體",
+    "en": "Style before とき",
+    "ja": "「とき」の前の文体"
+  },
+  {
+    "source": "× 食べませんとき",
+    "en": "× 食べませんとき",
+    "ja": "× 食べませんとき"
+  },
+  {
+    "source": "○ 食べないとき",
+    "en": "○ 食べないとき",
+    "ja": "○ 食べないとき"
+  },
+  {
+    "source": "判斷：名詞修飾使用普通形。",
+    "en": "Rule: noun modifiers take the plain form.",
+    "ja": "判断：名詞修飾には普通形を使う。"
+  },
+  {
+    "source": "原筆記",
+    "en": "Original notes",
+    "ja": "元のノート"
+  },
+  {
+    "source": "名詞與な形容詞",
+    "en": "Nouns and na-adjectives",
+    "ja": "名詞とな形容詞"
+  },
+  {
+    "source": "× 30歳なとき／暇のとき",
+    "en": "× 30歳なとき／暇のとき",
+    "ja": "× 30歳なとき／暇のとき"
+  },
+  {
+    "source": "○ 30歳のとき／暇なとき",
+    "en": "○ 30歳のとき／暇なとき",
+    "ja": "○ 30歳のとき／暇なとき"
+  },
+  {
+    "source": "判斷：先判斷詞類。",
+    "en": "Rule: identify the part of speech first.",
+    "ja": "判断：まず品詞を見分ける。"
+  },
+  {
+    "source": "前に",
+    "en": "前に",
+    "ja": "前に"
+  },
+  {
+    "source": "× 昨日、寝た前に",
+    "en": "× 昨日、寝た前に",
+    "ja": "× 昨日、寝た前に"
+  },
+  {
+    "source": "○ 昨日、寝る前に",
+    "en": "○ 昨日、寝る前に",
+    "ja": "○ 昨日、寝る前に"
+  },
+  {
+    "source": "判斷：前に固定辭書形。",
+    "en": "Rule: 前に always takes the dictionary form.",
+    "ja": "判断：「前に」の前は辞書形に固定。"
+  },
+  {
+    "source": "後で",
+    "en": "後で",
+    "ja": "後で"
+  },
+  {
+    "source": "× 明日、終わる後で",
+    "en": "× 明日、終わる後で",
+    "ja": "× 明日、終わる後で"
+  },
+  {
+    "source": "○ 明日、終わった後で",
+    "en": "○ 明日、終わった後で",
+    "ja": "○ 明日、終わった後で"
+  },
+  {
+    "source": "判斷：後で前用た形表相對完成。",
+    "en": "Rule: before 後で, use the ta-form to show relative completion.",
+    "ja": "判断：「後で」の前はた形にして、相対的な完了を表す。"
+  },
+  {
+    "source": "× 形式混用",
+    "en": "× Mixing up the two forms",
+    "ja": "× 二つの形を混同する"
+  },
+  {
+    "source": "○ 帰ってから／帰ったから",
+    "en": "○ 帰ってから／帰ったから",
+    "ja": "○ 帰ってから／帰ったから"
+  },
+  {
+    "source": "判斷：前者順序，後者原因。",
+    "en": "Rule: the first marks sequence, the second marks cause.",
+    "ja": "判断：前者は順序、後者は原因。"
+  },
+  {
+    "source": "たり時態",
+    "en": "Tense with たり",
+    "ja": "「たり」と時制"
+  },
+  {
+    "source": "× 見たり中有た=整句過去",
+    "en": "× A た inside 見たり = the whole sentence is past",
+    "ja": "× 見たりの「た」=文全体が過去"
+  },
+  {
+    "source": "○ 最後のする／したを見る",
+    "en": "○ Look at the final する／した",
+    "ja": "○ 最後のする／したを見る"
+  },
+  {
+    "source": "判斷：最外層述語控制時態。",
+    "en": "Rule: the outermost predicate controls the tense.",
+    "ja": "判断：最も外側の述語が時制を決める。"
+  },
+  {
+    "source": "× 行くこと=曾經",
+    "en": "× 行くこと = past experience",
+    "ja": "× 行くこと=経験"
+  },
+  {
+    "source": "○ 行ったこと=曾經",
+    "en": "○ 行ったこと = past experience",
+    "ja": "○ 行ったこと=経験"
+  },
+  {
+    "source": "判斷：Vる=偶爾；Vた=經驗。",
+    "en": "Rule: Vる = occasionally; Vた = experience.",
+    "ja": "判断：Vる=ときどきあること、Vた=経験。"
+  },
+  {
+    "source": "句內禮貌形",
+    "en": "Polite form inside a clause",
+    "ja": "節の中の丁寧形"
+  },
+  {
+    "source": "× 買いました本",
+    "en": "× 買いました本",
+    "ja": "× 買いました本"
+  },
+  {
+    "source": "○ 買った本",
+    "en": "○ 買った本",
+    "ja": "○ 買った本"
+  },
+  {
+    "source": "判斷：修飾句用普通形。",
+    "en": "Rule: modifying clauses take the plain form.",
+    "ja": "判断：修飾節は普通形。"
+  },
+  {
+    "source": "ある否定",
+    "en": "Negative of ある",
+    "ja": "「ある」の否定"
+  },
+  {
+    "source": "判斷：特殊變化。",
+    "en": "Rule: an irregular change.",
+    "ja": "判断：特殊な変化。"
+  },
+  {
+    "source": "の後助詞",
+    "en": "Particle after の",
+    "ja": "「の」の後の助詞"
+  },
+  {
+    "source": "× の固定接が",
+    "en": "× の is always followed by が",
+    "ja": "× 「の」の後は必ず「が」"
+  },
+  {
+    "source": "○ 後方述語決定は・が・を・に",
+    "en": "○ The predicate that follows decides は・が・を・に",
+    "ja": "○ 後ろの述語が「は・が・を・に」を決める"
+  },
+  {
+    "source": "判斷：看外層格框架。",
+    "en": "Rule: look at the outer case frame.",
+    "ja": "判断：外側の格フレームを見る。"
+  },
+  {
+    "source": "內外層助詞",
+    "en": "Inner- and outer-layer particles",
+    "ja": "内側と外側の層の助詞"
+  },
+  {
+    "source": "× 友だちを来る",
+    "en": "× 友だちを来る",
+    "ja": "× 友だちを来る"
+  },
+  {
+    "source": "○ 友だちが来るのを待つ",
+    "en": "○ 友だちが来るのを待つ",
+    "ja": "○ 友だちが来るのを待つ"
+  },
+  {
+    "source": "判斷：が屬於来る；を屬於待つ。",
+    "en": "Rule: が belongs to 来る; を belongs to 待つ.",
+    "ja": "判断：「が」は来るに、「を」は待つに属する。"
+  },
+  {
+    "source": "を與する",
+    "en": "を and する",
+    "ja": "「を」と「する」"
+  },
+  {
+    "source": "× 有を就填する",
+    "en": "× Fill in する whenever there is a を",
+    "ja": "× 「を」があれば「する」を入れる"
+  },
+  {
+    "source": "○ 本を読む／ご飯を食べる",
+    "en": "○ 本を読む／ご飯を食べる",
+    "ja": "○ 本を読む／ご飯を食べる"
+  },
+  {
+    "source": "判斷：先選述語。",
+    "en": "Rule: choose the predicate first.",
+    "ja": "判断：まず述語を選ぶ。"
+  },
+  {
+    "source": "× 図書館に本を読む",
+    "en": "× 図書館に本を読む",
+    "ja": "× 図書館に本を読む"
+  },
+  {
+    "source": "○ 図書館で本を読む",
+    "en": "○ 図書館で本を読む",
+    "ja": "○ 図書館で本を読む"
+  },
+  {
+    "source": "判斷：動作舞台用で。",
+    "en": "Rule: the place where an action happens takes で.",
+    "ja": "判断：動作が行われる場所には「で」。"
+  },
+  {
+    "source": "事件場所",
+    "en": "Where an event takes place",
+    "ja": "出来事の場所"
+  },
+  {
+    "source": "× 学校にコンサートがある",
+    "en": "× 学校にコンサートがある",
+    "ja": "× 学校にコンサートがある"
+  },
+  {
+    "source": "○ 学校でコンサートがある",
+    "en": "○ 学校でコンサートがある",
+    "ja": "○ 学校でコンサートがある"
+  },
+  {
+    "source": "判斷：活動／事件用で。",
+    "en": "Rule: activities and events take で.",
+    "ja": "判断：活動／出来事には「で」。"
+  },
+  {
+    "source": "旅行",
+    "en": "旅行 (travel)",
+    "ja": "旅行"
+  },
+  {
+    "source": "× 旅行へ行く（考試首選）",
+    "en": "× 旅行へ行く (as the exam’s first choice)",
+    "ja": "× 旅行へ行く（試験での第一選択としては）"
+  },
+  {
+    "source": "○ 旅行に行く",
+    "en": "○ 旅行に行く",
+    "ja": "○ 旅行に行く"
+  },
+  {
+    "source": "判斷：活動目的用に。 此為原教材首選形式，不等於宣告所有語境中的旅行へ行く都不存在。",
+    "en": "Rule: an activity as a purpose takes に. This is the form the original textbook prefers; it does not declare that 旅行へ行く does not exist in any context.",
+    "ja": "判断：活動の目的には「に」。これは元の教材が優先する形であり、あらゆる文脈で「旅行へ行く」が存在しないと宣言するものではない。"
+  },
+  {
+    "source": "電車",
+    "en": "電車 (train)",
+    "ja": "電車"
+  },
+  {
+    "source": "× 助詞統一",
+    "en": "× The same particle for every verb",
+    "ja": "× 助詞を統一する"
+  },
+  {
+    "source": "○ に乗る／を降りる／で行く",
+    "en": "○ に乗る／を降りる／で行く",
+    "ja": "○ に乗る／を降りる／で行く"
+  },
+  {
+    "source": "判斷：動詞格框架不同。",
+    "en": "Rule: each verb has its own case frame.",
+    "ja": "判断：動詞ごとに格フレームが異なる。"
+  },
+  {
+    "source": "自他動詞",
+    "en": "Transitive and intransitive verbs",
+    "ja": "自動詞と他動詞"
+  },
+  {
+    "source": "× 授業を始まる",
+    "en": "× 授業を始まる",
+    "ja": "× 授業を始まる"
+  },
+  {
+    "source": "○ 授業が始まる／授業を始める",
+    "en": "○ 授業が始まる／授業を始める",
+    "ja": "○ 授業が始まる／授業を始める"
+  },
+  {
+    "source": "判斷：自己發生が；施加動作を。",
+    "en": "Rule: が for something that happens by itself; を for an action applied to something.",
+    "ja": "判断：自然に起こることには「が」、働きかける動作には「を」。"
+  },
+  {
+    "source": "わかる／知る",
+    "en": "わかる／知る",
+    "ja": "わかる／知る"
+  },
+  {
+    "source": "× 読み方をわかる",
+    "en": "× 読み方をわかる",
+    "ja": "× 読み方をわかる"
+  },
+  {
+    "source": "○ 読み方がわかる／を知る",
+    "en": "○ 読み方がわかる／を知る",
+    "ja": "○ 読み方がわかる／を知る"
+  },
+  {
+    "source": "判斷：不同述語格框架。",
+    "en": "Rule: the predicates have different case frames.",
+    "ja": "判断：述語によって格フレームが異なる。"
+  },
+  {
+    "source": "× 降るそう=看起來",
+    "en": "× 降るそう = “looks like it will”",
+    "ja": "× 降るそう=様態"
+  },
+  {
+    "source": "○ 降りそう=看起來／降るそう=聽說",
+    "en": "○ 降りそう = “looks like it will” / 降るそう = “I hear that”",
+    "ja": "○ 降りそう=様態／降るそう=伝聞"
+  },
+  {
+    "source": "判斷：接續形式決定語意。",
+    "en": "Rule: the connecting form decides the meaning.",
+    "ja": "判断：接続の形が意味を決める。"
+  },
+  {
+    "source": "× たまたま=偶爾",
+    "en": "× たまたま = occasionally",
+    "ja": "× たまたま=ときどき"
+  },
+  {
+    "source": "○ たまに=偶爾／たまたま=碰巧",
+    "en": "○ たまに = occasionally / たまたま = by chance",
+    "ja": "○ たまに=ときどき／たまたま=偶然"
+  },
+  {
+    "source": "判斷：頻率與偶然不同。",
+    "en": "Rule: frequency is not the same as chance.",
+    "ja": "判断：頻度と偶然は別のもの。"
+  },
+  {
+    "source": "× だいたい=通常",
+    "en": "× だいたい = usually",
+    "ja": "× だいたい=通常"
+  },
+  {
+    "source": "○ たいてい=通常／だいたい=大約",
+    "en": "○ たいてい = usually / だいたい = roughly",
+    "ja": "○ たいてい=通常／だいたい=おおよそ"
+  },
+  {
+    "source": "判斷：頻率與約略不同。",
+    "en": "Rule: frequency is not the same as approximation.",
+    "ja": "判断：頻度とおおよその量は別のもの。"
+  },
+  {
+    "source": "服裝動詞",
+    "en": "Verbs for wearing",
+    "ja": "着用の動詞"
+  },
+  {
+    "source": "× 帽子をはく",
+    "en": "× 帽子をはく",
+    "ja": "× 帽子をはく"
+  },
+  {
+    "source": "○ 帽子をかぶる",
+    "en": "○ 帽子をかぶる",
+    "ja": "○ 帽子をかぶる"
+  },
+  {
+    "source": "判斷：物品決定動詞。",
+    "en": "Rule: the item decides the verb.",
+    "ja": "判断：身に着ける物が動詞を決める。"
+  },
+  {
+    "source": "着る／切る",
+    "en": "着る／切る",
+    "ja": "着る／切る"
+  },
+  {
+    "source": "× 都變きて",
+    "en": "× Both become きて",
+    "ja": "× どちらも「きて」になる"
+  },
+  {
+    "source": "○ 着て／切って",
+    "en": "○ 着て／切って",
+    "ja": "○ 着て／切って"
+  },
+  {
+    "source": "判斷：一段與五段。",
+    "en": "Rule: ichidan vs. godan verbs.",
+    "ja": "判断：一段動詞と五段動詞。"
+  },
+  {
+    "source": "てしまう縮約",
+    "en": "Contracting てしまう",
+    "ja": "「てしまう」の縮約"
+  },
+  {
+    "source": "× 読んちゃった",
+    "en": "× 読んちゃった",
+    "ja": "× 読んちゃった"
+  },
+  {
+    "source": "○ 読んじゃった",
+    "en": "○ 読んじゃった",
+    "ja": "○ 読んじゃった"
+  },
+  {
+    "source": "判斷：でしまう -> じゃう。",
+    "en": "Rule: でしまう -> じゃう.",
+    "ja": "判断：でしまう -> じゃう。"
+  },
+  {
+    "source": "× 還沒=また",
+    "en": "× “not yet” = また",
+    "ja": "× 未完了=また"
+  },
+  {
+    "source": "○ 還沒=まだ",
+    "en": "○ “not yet” = まだ",
+    "ja": "○ 未完了=まだ"
+  },
+  {
+    "source": "判斷：時間副詞不同。",
+    "en": "Rule: these are different time adverbs.",
+    "ja": "判断：時間を表す副詞がそれぞれ異なる。"
+  },
+  {
+    "source": "何を／何か",
+    "en": "何を／何か",
+    "ja": "何を／何か"
+  },
+  {
+    "source": "× 問句當同義",
+    "en": "× Treating the two questions as synonyms",
+    "ja": "× 二つの疑問文を同じ意味とみなす"
+  },
+  {
+    "source": "○ 具體內容／是否存在",
+    "en": "○ Specific content / whether anything exists",
+    "ja": "○ 具体的な内容／何かがあるかどうか"
+  },
+  {
+    "source": "判斷：回答格式不同。",
+    "en": "Rule: they call for different kinds of answers.",
+    "ja": "判断：答え方の形式が異なる。"
+  },
+  {
+    "source": "何で",
+    "en": "何で",
+    "ja": "何で"
+  },
+  {
+    "source": "× 何で使いますか一律",
+    "en": "× 何で使いますか for every case",
+    "ja": "× 「何で使いますか」で一律に聞く"
+  },
+  {
+    "source": "○ 何を使う／何に使う／どうやって使う",
+    "en": "○ 何を使う／何に使う／どうやって使う",
+    "ja": "○ 何を使う／何に使う／どうやって使う"
+  },
+  {
+    "source": "判斷：先決定問題角色。",
+    "en": "Rule: first decide what role the question asks about.",
+    "ja": "判断：まず何の役割を問うのかを決める。"
+  },
+  {
+    "source": "商品請求",
+    "en": "Asking for an item",
+    "ja": "商品を頼む"
+  },
+  {
+    "source": "判斷：物品受詞用を。",
+    "en": "Rule: the item, as the object, takes を.",
+    "ja": "判断：物を目的語にするなら「を」。"
+  },
+  {
+    "source": "× 完全同義",
+    "en": "× Exactly the same meaning",
+    "ja": "× まったく同じ意味"
+  },
+  {
+    "source": "○ 物品／方案方式",
+    "en": "○ Item / option or method",
+    "ja": "○ 物／案や方法"
+  },
+  {
+    "source": "判斷：を與で角色不同。",
+    "en": "Rule: を and で play different roles.",
+    "ja": "判断：「を」と「で」は役割が異なる。"
+  },
+  {
+    "source": "價格句",
+    "en": "Price sentences",
+    "ja": "値段の文"
+  },
+  {
+    "source": "× ケーキを500円です",
+    "en": "× ケーキを500円です",
+    "ja": "× ケーキを500円です"
+  },
+  {
+    "source": "○ ケーキは500円です",
+    "en": "○ ケーキは500円です",
+    "ja": "○ ケーキは500円です"
+  },
+  {
+    "source": "判斷：句尾是判斷句。",
+    "en": "Rule: the sentence ends as an “A is B” statement.",
+    "ja": "判断：文末は「A は B です」型の名詞述語文。"
+  },
+  {
+    "source": "數量詞",
+    "en": "Quantity expressions",
+    "ja": "数量詞"
+  },
+  {
+    "source": "錯誤模型：已標受詞後再重複を，例如 Tシャツを三枚を買う",
+    "en": "Error pattern: を repeated after an object that is already marked, e.g. Tシャツを三枚を買う",
+    "ja": "誤りのパターン：目的語に「を」を付けた後、さらに「を」を重ねる。例：Tシャツを三枚を買う"
+  },
+  {
+    "source": "修正：Tシャツを三枚買う",
+    "en": "Corrected: Tシャツを三枚買う",
+    "ja": "修正：Tシャツを三枚買う"
+  },
+  {
+    "source": "本版範圍修訂：針對完整句中的重複助詞，不把單獨「三枚を買う」一律判錯。",
+    "en": "Scope revised in this edition: this targets a repeated particle within a full sentence; “三枚を買う” on its own is not automatically marked wrong.",
+    "ja": "本版での範囲の修正：完全な文の中で重なった助詞を対象とし、単独の「三枚を買う」を一律に誤りとはしない。"
+  },
+  {
+    "source": "× 三時間しか寝ました",
+    "en": "× 三時間しか寝ました",
+    "ja": "× 三時間しか寝ました"
+  },
+  {
+    "source": "○ 三時間しか寝ませんでした",
+    "en": "○ 三時間しか寝ませんでした",
+    "ja": "○ 三時間しか寝ませんでした"
+  },
+  {
+    "source": "判斷：しか後接否定。",
+    "en": "Rule: しか is followed by a negative.",
+    "ja": "判断：「しか」の後は否定。"
+  },
+  {
+    "source": "判斷：不規則活用。",
+    "en": "Rule: irregular conjugation.",
+    "ja": "判断：不規則な活用。"
+  },
+  {
+    "source": "× きれくない／きれい部屋",
+    "en": "× きれくない／きれい部屋",
+    "ja": "× きれくない／きれい部屋"
+  },
+  {
+    "source": "○ きれいではない／きれいな部屋",
+    "en": "○ きれいではない／きれいな部屋",
+    "ja": "○ きれいではない／きれいな部屋"
+  },
+  {
+    "source": "判斷：な形容詞。",
+    "en": "Rule: it is a na-adjective.",
+    "ja": "判断：な形容詞である。"
+  },
+  {
+    "source": "× 行ったことにした（未來決定）",
+    "en": "× 行ったことにした (for a decision about the future)",
+    "ja": "× 行ったことにした（これからの決定として）"
+  },
+  {
+    "source": "○ 行くことにした",
+    "en": "○ 行くことにした",
+    "ja": "○ 行くことにした"
+  },
+  {
+    "source": "判斷：內容與決定時間分層。",
+    "en": "Rule: keep the time of the content separate from the time of the decision.",
+    "ja": "判断：内容の時と決定の時を分けて考える。"
+  },
+  {
+    "source": "× わけがない=立場上不能",
+    "en": "× わけがない = “can’t, given my position”",
+    "ja": "× わけがない=立場上できない"
+  },
+  {
+    "source": "○ 不可能／わけにはいかない=立場上不能",
+    "en": "○ “impossible” / わけにはいかない = “can’t, given my position”",
+    "ja": "○ ありえない／わけにはいかない=立場上できない"
+  },
+  {
+    "source": "判斷：語意層次不同。",
+    "en": "Rule: they work at different levels of meaning.",
+    "ja": "判断：意味の層が異なる。"
+  },
+  {
+    "source": "× 只翻成「來」",
+    "en": "× Only ever translated as “come”",
+    "ja": "× 「来る」の意味だけで捉える"
+  },
+  {
+    "source": "○ 空間、時間、動作指向",
+    "en": "○ Space, time and the direction of an action",
+    "ja": "○ 空間・時間・動作の方向"
+  },
+  {
+    "source": "判斷：看基準點方向。",
+    "en": "Rule: look at the direction relative to the reference point.",
+    "ja": "判断：基準点から見た方向を確かめる。"
+  },
+  {
+    "source": "食べに／食べて",
+    "en": "食べに／食べて",
+    "ja": "食べに／食べて"
+  },
+  {
+    "source": "× 都是去吃",
+    "en": "× Both mean “go and eat”",
+    "ja": "× どちらも「食べに行く」の意味"
+  },
+  {
+    "source": "○ 目的／先後動作",
+    "en": "○ Purpose / sequence of actions",
+    "ja": "○ 目的／動作の前後関係"
+  },
+  {
+    "source": "判斷：に=目的；て=連接。",
+    "en": "Rule: に = purpose; て = linking.",
+    "ja": "判断：に=目的、て=接続。"
+  },
+  {
+    "source": "予約",
+    "en": "予約 (reservation)",
+    "ja": "予約"
+  },
+  {
+    "source": "× 予約を立てる",
+    "en": "× 予約を立てる",
+    "ja": "× 予約を立てる"
+  },
+  {
+    "source": "○ 予定を立てる／予約する",
+    "en": "○ 予定を立てる／予約する",
+    "ja": "○ 予定を立てる／予約する"
+  },
+  {
+    "source": "判斷：固定搭配。",
+    "en": "Rule: fixed collocations.",
+    "ja": "判断：決まった組み合わせ。"
+  },
+  {
+    "source": "文化財",
+    "en": "文化財 (cultural property)",
+    "ja": "文化財"
+  },
+  {
+    "source": "× 文物（ぶんかざい）",
+    "en": "× 文物（ぶんかざい）",
+    "ja": "× 文物（ぶんかざい）"
+  },
+  {
+    "source": "○ 文化財",
+    "en": "○ 文化財",
+    "ja": "○ 文化財"
+  },
+  {
+    "source": "判斷：漢字與讀音配對。",
+    "en": "Rule: match the kanji with its reading.",
+    "ja": "判断：漢字と読み方を対応させる。"
+  },
+  {
+    "source": "上野與かかる",
+    "en": "上野 and かかる",
+    "ja": "上野と「かかる」"
+  },
+  {
+    "source": "× 上野で電車に一時間をかかる",
+    "en": "× 上野で電車に一時間をかかる",
+    "ja": "× 上野で電車に一時間をかかる"
+  },
+  {
+    "source": "○ 上野まで電車で一時間かかる",
+    "en": "○ 上野まで電車で一時間かかる",
+    "ja": "○ 上野まで電車で一時間かかる"
+  },
+  {
+    "source": "判斷：終點・手段・時長を分開。",
+    "en": "Rule: keep endpoint, means and duration apart.",
+    "ja": "判断：終点・手段・所要時間を分ける。"
+  },
+  {
+    "source": "電話",
+    "en": "電話 (phone)",
+    "ja": "電話"
+  },
+  {
+    "source": "× 助詞を一律にする",
+    "en": "× One particle for all of them",
+    "ja": "× 助詞を一律にする"
+  },
+  {
+    "source": "○ 電話で話す／電話をかける／電話に出る",
+    "en": "○ 電話で話す／電話をかける／電話に出る",
+    "ja": "○ 電話で話す／電話をかける／電話に出る"
+  },
+  {
+    "source": "判斷：述語ごとに格が違う。",
+    "en": "Rule: the case differs from predicate to predicate.",
+    "ja": "判断：述語ごとに格が違う。"
+  },
+  {
+    "source": "だけ與しか",
+    "en": "だけ and しか",
+    "ja": "「だけ」と「しか」"
+  },
+  {
+    "source": "× 兩者都接否定",
+    "en": "× Both take a negative",
+    "ja": "× どちらも否定と結びつく"
+  },
+  {
+    "source": "○ だけ可肯定；しか必須否定",
+    "en": "○ だけ can be affirmative; しか must be negative",
+    "ja": "○ 「だけ」は肯定も可、「しか」は否定が必須"
+  },
+  {
+    "source": "判斷：中性限定と不足感。",
+    "en": "Rule: neutral limitation vs. a sense of “not enough.”",
+    "ja": "判断：中立的な限定と不足感。"
+  },
+  {
+    "source": "原手冊頁：P77、P78、P79",
+    "en": "Source handbook pages: P77, P78, P79",
+    "ja": "元の冊子のページ：P77、P78、P79"
+  },
+  {
+    "source": "相關主題：",
+    "en": "Related topics: ",
+    "ja": "関連トピック："
+  },
+  {
+    "source": "錯誤診斷：先修哪一層",
+    "en": "Error diagnosis: which layer to fix first",
+    "ja": "誤りの診断：どの層から直すか"
+  },
+  {
+    "source": "接續總表：だ／な／の／不加だ",
+    "en": "Connection table: だ／な／の／no だ",
+    "ja": "接続一覧表：だ／な／の／だなし"
+  },
+  {
+    "source": "校訂紀錄",
+    "en": "Revision log",
+    "ja": "校訂記録"
+  },
+  {
+    "source": "// 42 · 總結與檢核",
+    "en": "// 42 · Summary and checks",
+    "ja": "// 42 · まとめと確認"
+  },
+  {
+    "source": "「普通形＋X」之前，先確認名詞與な形容詞的非過去肯定要接哪一種形式。",
+    "en": "Before “plain form + X,” first check which form the non-past affirmative of nouns and na-adjectives takes.",
+    "ja": "「普通形＋X」の前に、名詞とな形容詞の非過去・肯定がどの形で接続するかを確認します。"
+  },
+  {
+    "source": "這張表是全冊的接續入口。",
+    "en": "This table is the entry point for connections across the whole handbook. ",
+    "ja": "この表は冊子全体の接続の入口です。"
+  },
+  {
+    "source": "先看最右側句型，再看前面詞類。",
+    "en": "Read the pattern on the far right first, then the word class before it.",
+    "ja": "まず一番右の文型を見て、次にその前の品詞を見ます。"
+  },
+  {
+    "source": "不互相矛盾；因為右側結構不同。",
+    "en": " do not contradict each other, because the structure on the right differs.",
+    "ja": "は互いに矛盾しません。右側の構造がそれぞれ異なるからです。"
+  },
+  {
+    "source": "表中以",
+    "en": "The table centers on the ",
+    "ja": "表は"
+  },
+  {
+    "source": "非過去肯定",
+    "en": "non-past affirmative",
+    "ja": "非過去・肯定"
+  },
+  {
+    "source": "為主，不應把「不加だ」誤用到過去：",
+    "en": ". Do not carry “no だ” over to the past: ",
+    "ja": "が中心で、「だなし」を過去にまで当てはめてはいけません。たとえば"
+  },
+  {
+    "source": "的だった仍保留。",
+    "en": " still keeps its だった. The ",
+    "ja": "の「だった」はそのまま残ります。"
+  },
+  {
+    "source": "原因例特意保留過去動詞",
+    "en": " example of cause deliberately keeps the past-tense verb ",
+    "ja": "の原因の例では、あえて過去の動詞"
+  },
+  {
+    "source": "，用來示範原因也能是已發生事實。",
+    "en": ", to show that a cause can also be something that has already happened.",
+    "ja": "を残し、原因がすでに起きた事実でもありうることを示しています。"
+  },
+  {
+    "source": "表格由來源中的分散接續合併；推定與樣態的名詞接續另對照東京外大",
+    "en": "The table merges connections that were scattered through the source. The noun connections for inference and appearance were also checked against the Tokyo University of Foreign Studies source ",
+    "ja": "表は、出典に散らばっていた接続をまとめたものです。推定と様態の名詞接続は、東京外国語大学の"
+  },
+  {
+    "source": "，から／ので對照",
+    "en": ", and から／ので against ",
+    "ja": "、「から／ので」は"
+  },
+  {
+    "source": "。沒有在來源中建立完整規則的進階句型，不用一條看似整齊的公式硬補。",
+    "en": ". Advanced patterns for which the source never set out a complete rule are not forced into a neat-looking formula.",
+    "ja": "とも照合しました。出典で完全な規則が示されていない発展的な文型を、整って見える公式で無理に補うことはしません。"
+  },
+  {
+    "source": "四詞類接續總表",
+    "en": "Connection table for the four word classes",
+    "ja": "4 品詞の接続一覧表"
+  },
+  {
+    "source": "接續族",
+    "en": "Connection type",
+    "ja": "接続のタイプ"
+  },
+  {
+    "source": "右側形式",
+    "en": "Form on the right",
+    "ja": "右側の形式"
+  },
+  {
+    "source": "動詞",
+    "en": "Verb",
+    "ja": "動詞"
+  },
+  {
+    "source": "名詞",
+    "en": "Noun",
+    "ja": "名詞"
+  },
+  {
+    "source": "功能",
+    "en": "Function",
+    "ja": "機能"
+  },
+  {
+    "source": "普通形",
+    "en": "Plain form",
+    "ja": "普通形"
+  },
+  {
+    "source": "原因；也可丁寧體",
+    "en": "Cause; polite style also possible",
+    "ja": "原因（丁寧体も可）"
+  },
+  {
+    "source": "な接續",
+    "en": "な connection",
+    "ja": "な接続"
+  },
+  {
+    "source": "のに〔逆接〕",
+    "en": "のに (concessive)",
+    "ja": "のに〔逆接〕"
+  },
+  {
+    "source": "明明卻",
+    "en": "Even though (against expectation)",
+    "ja": "期待に反する逆接"
+  },
+  {
+    "source": "情境說明",
+    "en": "Explaining the situation",
+    "ja": "状況の説明"
+  },
+  {
+    "source": "時間背景",
+    "en": "Time setting",
+    "ja": "時間の背景"
+  },
+  {
+    "source": "想法／發言內容",
+    "en": "Content of a thought / statement",
+    "ja": "考え／発言の内容"
+  },
+  {
+    "source": "そうだ〔傳聞〕",
+    "en": "そうだ (hearsay)",
+    "ja": "そうだ〔伝聞〕"
+  },
+  {
+    "source": "聽說",
+    "en": "I hear",
+    "ja": "人から聞いた話"
+  },
+  {
+    "source": "可能",
+    "en": "Possibility",
+    "ja": "可能性"
+  },
+  {
+    "source": "推測／確認",
+    "en": "Conjecture / confirmation",
+    "ja": "推測／確認"
+  },
+  {
+    "source": "らしい〔推定〕",
+    "en": "らしい (inference)",
+    "ja": "らしい〔推定〕"
+  },
+  {
+    "source": "間接消息／推定",
+    "en": "Indirect information / inference",
+    "ja": "間接的な情報／推定"
+  },
+  {
+    "source": "合理預期",
+    "en": "Reasonable expectation",
+    "ja": "当然の見込み"
+  },
+  {
+    "source": "強烈確信",
+    "en": "Strong conviction",
+    "ja": "強い確信"
+  },
+  {
+    "source": "ため〔原因〕",
+    "en": "ため (cause)",
+    "ja": "ため〔原因〕"
+  },
+  {
+    "source": "正式原因",
+    "en": "Formal cause",
+    "ja": "改まった原因"
+  },
+  {
+    "source": "指定形",
+    "en": "Specified form",
+    "ja": "指定の形"
+  },
+  {
+    "source": "ために〔目的〕",
+    "en": "ために (purpose)",
+    "ja": "ために〔目的〕"
+  },
+  {
+    "source": "目的用意志性動作等",
+    "en": "Purpose: volitional actions, etc.",
+    "ja": "目的：意志的な動作など"
+  },
+  {
+    "source": "そうだ〔樣態〕",
+    "en": "そうだ (appearance)",
+    "ja": "そうだ〔様態〕"
+  },
+  {
+    "source": "不直接接一般名詞",
+    "en": "Does not attach directly to ordinary nouns",
+    "ja": "一般の名詞には直接付かない"
+  },
+  {
+    "source": "ます語幹／形容詞詞幹",
+    "en": "Masu stem / adjective stem",
+    "ja": "ます形の語幹／形容詞の語幹"
+  },
+  {
+    "source": "列舉；也可丁寧形",
+    "en": "Listing; polite form also possible",
+    "ja": "列挙（丁寧形も可）"
+  },
+  {
+    "source": "指定動詞形",
+    "en": "Required verb form",
+    "ja": "指定される動詞の形"
+  },
+  {
+    "source": "右側結構",
+    "en": "Structure on the right",
+    "ja": "右側の構造"
+  },
+  {
+    "source": "例",
+    "en": "Example",
+    "ja": "例"
+  },
+  {
+    "source": "辭書形",
+    "en": "Dictionary form",
+    "ja": "辞書形"
+  },
+  {
+    "source": "原手冊頁：P30、P80、P81、P87、P88、P89、P90、P91、P92、P94",
+    "en": "Source handbook pages: P30, P80, P81, P87, P88, P89, P90, P91, P92, P94",
+    "ja": "元の冊子のページ：P30、P80、P81、P87、P88、P89、P90、P91、P92、P94"
+  },
+  {
+    "source": "普通形不是只有辭書形",
+    "en": "The plain form is not just the dictionary form",
+    "ja": "普通形は辞書形だけではない"
+  },
+  {
+    "source": "から／ので／ため：理由、語體與語氣",
+    "en": "から／ので／ため: reasons, style and tone",
+    "ja": "から／ので／ため：理由・文体・ニュアンス"
+  },
+  {
+    "source": "そう／らしい／によると：訊息來源要分明",
+    "en": "そう／らしい／によると: be clear about where information comes from",
+    "ja": "そう／らしい／によると：情報源をはっきりさせる"
+  },
+  {
+    "source": "// 43 · 總結與檢核",
+    "en": "// 43 · Summary and checks",
+    "ja": "// 43 · まとめと確認"
+  },
+  {
+    "source": "最後驗證的不是能否背中文，而是能否說明「這個形式為什麼在這裡」。",
+    "en": "The final test is not whether you can recite the translations, but whether you can explain “why this form is here.”",
+    "ja": "最後に確かめるのは、訳語を暗記しているかではなく、「この形がなぜここにあるのか」を説明できるかです。"
+  },
+  {
+    "source": "閱讀先看述語與角色，做題再看右側接續；造句則先寫出完整內層事件，最後加語氣。兩種方向交替使用，比只記公式更容易發現層級錯置。",
+    "en": "When reading, look first at the predicate and the roles; when doing exercises, check the connection on the right next. When building a sentence, write out the complete inner event first and add the tone last. Alternating between these two directions makes misplaced layers easier to spot than memorizing formulas alone.",
+    "ja": "読むときはまず述語と役割を見て、問題を解くときは次に右側の接続を見ます。文を作るときは、まず内側の出来事を完全に書き、最後に文末のニュアンスを加えます。この 2 つの方向を交互に使うと、公式を覚えるだけよりも層の取り違えに気づきやすくなります。"
+  },
+  {
+    "source": "以下不是新增考題，也不是新的能力評分。它是把原 P80–81 的速查與十秒檢查，收斂成可反覆使用的檢核流程。",
+    "en": "What follows is not a new set of test questions or a new skill rating. It condenses the quick reference and ten-second check from the original P80–81 into a checking routine you can use again and again.",
+    "ja": "以下は新しい試験問題でも、新たな能力評価でもありません。元の P80–81 にあった早見表と 10 秒チェックを、繰り返し使える確認手順にまとめたものです。"
+  },
+  {
+    "source": "檢查層",
+    "en": "Check layer",
+    "ja": "チェックの層"
+  },
+  {
+    "source": "要確認什麼",
+    "en": "What to confirm",
+    "ja": "確認すること"
+  },
+  {
+    "source": "來源中的對照",
+    "en": "Contrast in the source",
+    "ja": "出典での対比"
+  },
+  {
+    "source": "事件與角色",
+    "en": "Event and roles",
+    "ja": "出来事と役割"
+  },
+  {
+    "source": "誰做、對什麼、在哪裡、用什麼？",
+    "en": "Who does it, to what, where, with what?",
+    "ja": "誰が、何に対して、どこで、何を使って？"
+  },
+  {
+    "source": "內外層與時間",
+    "en": "Inner/outer layers and time",
+    "ja": "内外の層と時間"
+  },
+  {
+    "source": "是待辦動作、完成事實、偶發還是經驗？",
+    "en": "Is it an action still to be done, a completed fact, something occasional or an experience?",
+    "ja": "これからする動作か、完了した事実か、時々あることか、それとも経験か？"
+  },
+  {
+    "source": "接續形態",
+    "en": "Connecting form",
+    "ja": "接続の形"
+  },
+  {
+    "source": "右邊需要辭書形、た形、ます語幹，還是四詞類特別接續？",
+    "en": "Does the right side need the dictionary form, the ta-form, the masu stem, or a special connection for the four word classes?",
+    "ja": "右側が求めるのは辞書形か、た形か、ます形の語幹か、それとも 4 品詞それぞれの特別な接続か？"
+  },
+  {
+    "source": "意圖與語境",
+    "en": "Intent and context",
+    "ja": "意図と文脈"
+  },
+  {
+    "source": "是在提出安排、推測、來源、要求還是反預期？",
+    "en": "Is it stating a plan, a conjecture, a source, a request or something contrary to expectation?",
+    "ja": "予定を述べているのか、推測か、情報源か、要求か、それとも予想に反することか？"
+  },
+  {
+    "source": "原十秒檢查：依本版接續校訂重述",
+    "en": "The original ten-second check, restated to match this edition’s connection revisions",
+    "ja": "元の 10 秒チェック：本版の接続の校訂に合わせて再整理"
+  },
+  {
+    "source": "最外層述語是什麼？",
+    "en": "What is the outermost predicate?",
+    "ja": "最も外側の述語は何か？"
+  },
+  {
+    "source": "每個助詞屬於哪個述語？",
+    "en": "Which predicate does each particle belong to?",
+    "ja": "それぞれの助詞はどの述語に属するか？"
+  },
+  {
+    "source": "名詞是主體、受詞、地點、工具、目的或比較基準？",
+    "en": "Is the noun the subject, the object, a place, a tool, a purpose or a standard of comparison?",
+    "ja": "名詞は主体、目的語、場所、道具、目的、比較の基準のどれか？"
+  },
+  {
+    "source": "右側句型要求哪一種形態？",
+    "en": "Which form does the pattern on the right require?",
+    "ja": "右側の文型はどの形を求めているか？"
+  },
+  {
+    "source": "內層內容和整句結果是否混在一起？",
+    "en": "Are the inner content and the result of the whole sentence mixed up?",
+    "ja": "内側の内容と文全体の結果が混ざっていないか？"
+  },
+  {
+    "source": "原因から／ので使用普通體還是丁寧體？",
+    "en": "Does the から／ので cause clause use plain or polite style?",
+    "ja": "原因を表す「から／ので」の前は普通体か、丁寧体か？"
+  },
+  {
+    "source": "數量詞附近是否誤加重複助詞？",
+    "en": "Has a repeated particle been added by mistake near a quantity expression?",
+    "ja": "数量詞のまわりで助詞を誤って重ねていないか？"
+  },
+  {
+    "source": "疑問句問具體內容，還是有沒有任何東西？",
+    "en": "Does the question ask for specific content, or whether there is anything at all?",
+    "ja": "疑問文が聞いているのは具体的な内容か、それとも何かがあるかどうかか？"
+  },
+  {
+    "source": "もう／まだ／また的時間關係是否正確？",
+    "en": "Are the time relations of もう／まだ／また correct?",
+    "ja": "「もう／まだ／また」の時間関係は正しいか？"
+  },
+  {
+    "source": "中文直譯是否干擾日文格框架？",
+    "en": "Is a word-for-word translation from your own language interfering with the Japanese case frame?",
+    "ja": "母語からの直訳が日本語の格フレームを乱していないか？"
+  },
+  {
+    "source": "使用路徑",
+    "en": "Reading paths",
+    "ja": "目的別の読み順"
+  },
+  {
+    "source": "需求",
+    "en": "Need",
+    "ja": "したいこと"
+  },
+  {
+    "source": "閱讀順序",
+    "en": "Reading order",
+    "ja": "読む順序"
+  },
+  {
+    "source": "先修測驗中的弱點",
+    "en": "Fix weak spots found in tests first",
+    "ja": "テストで見つかった弱点を先に直す"
+  },
+  {
+    "source": "錯誤診斷 → 名詞化與忘れる → 授受 → 比較／副詞 → 43項易錯點",
+    "en": "Error diagnosis → nominalization and 忘れる → giving and receiving → comparison / adverbs → the 43 common traps",
+    "ja": "誤りの診断 → 名詞化と忘れる → 授受表現 → 比較／副詞 → 間違えやすい点 43 項目"
+  },
+  {
+    "source": "整理新手寫頁",
+    "en": "Organize new handwritten pages",
+    "ja": "新しい手書きページを整理する"
+  },
+  {
+    "source": "んです → 原因／逆接 → 建議 → 予定／つもり → 推測／そう → 時間截止 → 健康搭配",
+    "en": "んです → cause / concession → advice → 予定／つもり → conjecture / そう → time limits → health collocations",
+    "ja": "んです → 原因／逆接 → 助言 → 予定／つもり → 推測／そう → 時間の期限 → 体調の決まった言い方"
+  },
+  {
+    "source": "快速造句前檢查",
+    "en": "Quick check before making sentences",
+    "ja": "文を作る前の簡単なチェック"
+  },
+  {
+    "source": "接續總表 → 相關例句 → 動詞索引",
+    "en": "Connection table → related examples → verb index",
+    "ja": "接続一覧表 → 関連する例文 → 動詞索引"
+  },
+  {
+    "source": "遇到來源矛盾",
+    "en": "When sources contradict each other",
+    "ja": "出典どうしの矛盾に気づいたとき"
+  },
+  {
+    "source": "校訂紀錄 → 95 頁來源對照",
+    "en": "Revision log → 95-page source map",
+    "ja": "校訂記録 → 95 ページの出典対照表"
+  },
+  {
+    "source": "備註",
+    "en": "Note",
+    "ja": "補足"
+  },
+  {
+    "source": "原建議的複習節點「今天、明天、3天後、7天後」保留為來源的操作建議，不聲稱是經過個別驗證的最佳間隔。",
+    "en": "The review points originally suggested, “today, tomorrow, after 3 days, after 7 days,” are kept as the source’s practical suggestion; they are not claimed to be individually validated optimal intervals.",
+    "ja": "もともと勧められていた復習のタイミング「今日、明日、3 日後、7 日後」は、出典による実践上の提案として残しています。個別に検証された最適な間隔だとは主張しません。"
+  },
+  {
+    "source": "原手冊頁：P2、P80、P81、P85",
+    "en": "Source handbook pages: P2, P80, P81, P85",
+    "ja": "元の冊子のページ：P2、P80、P81、P85"
+  },
+  {
+    "source": "43個高頻陷阱：依原ID保留",
+    "en": "43 frequent traps, with their original IDs",
+    "ja": "頻出の落とし穴 43 項目：元の ID のまま"
+  },
+  {
+    "source": "// 校訂 · 不是默默改掉，而是列明依據",
+    "en": "// Revision · not changed silently, but with the grounds stated",
+    "ja": "// 校訂 · 黙って直すのではなく、根拠を明示する"
+  },
+  {
+    "source": "校訂紀錄與待確認項",
+    "en": "Revision log and items to confirm",
+    "ja": "校訂記録と要確認事項"
+  },
+  {
+    "source": "「原筆記重排」保存來源的教學脈絡；「編輯解析」是整理者的分析；標為外部查核的內容，才使用下方列出的公開教材。原手冊的舊版全文與原頁影像沒有公開。",
+    "en": "“Original notes, rearranged” preserves the source’s teaching context; “Editor’s analysis” is the compiler’s analysis; only content marked as externally checked draws on the public materials listed below. The full text of the source handbook’s old edition and the images of its original pages are not public.",
+    "ja": "「元のノートの再構成」は出典の教え方の流れを保ち、「編集者の解説」は編者による分析です。外部資料で確認したと示した内容にだけ、下に挙げた公開教材を使っています。元の冊子の旧版全文と元ページの画像は公開していません。"
+  },
+  {
+    "source": "校訂紀錄：來源與編輯解讀分開",
+    "en": "Revision log: source and editorial interpretation kept apart",
+    "ja": "校訂記録：出典と編集上の解釈を区別"
+  },
+  {
+    "source": "修訂",
+    "en": "Revision",
+    "ja": "修正項目"
+  },
+  {
+    "source": "原本的問題",
+    "en": "Original problem",
+    "ja": "元の問題"
+  },
+  {
+    "source": "本版處理",
+    "en": "How this edition handles it",
+    "ja": "本版での対応"
+  },
+  {
+    "source": "來源／主題",
+    "en": "Source / topic",
+    "ja": "出典／トピック"
+  },
+  {
+    "source": "静かなんです 的正誤誤標",
+    "en": "Right/wrong mislabeling of 静かなんです",
+    "ja": "「静かなんです」の正誤の誤表示"
+  },
+  {
+    "source": "早期聊天同時把相同字串打叉與打勾。",
+    "en": "An early chat marked the same string with both a cross and a check mark.",
+    "ja": "初期のチャットで、同じ文字列に誤りの印と正しい印を同時に付けていた。"
+  },
+  {
+    "source": "本版保留 静かなんです 為正確式；錯誤例改為 静かだんです。",
+    "en": "This edition keeps 静かなんです as the correct form; the incorrect example is now 静かだんです.",
+    "ja": "本版では「静かなんです」を正しい形として残し、誤用例を「静かだんです」に改めた。"
+  },
+  {
+    "source": "前文回覆、來源 P87",
+    "en": "Earlier reply, source P87",
+    "ja": "以前の回答、出典 P87"
+  },
+  {
+    "source": "查看主題",
+    "en": "View topic",
+    "ja": "トピックを見る"
+  },
+  {
+    "source": "普通形 ≠ 辭書形",
+    "en": "Plain form ≠ dictionary form",
+    "ja": "普通形 ≠ 辞書形"
+  },
+  {
+    "source": "早期總結把「普通形／辭書形」並排，容易當成同義。",
+    "en": "An early summary put “plain form / dictionary form” side by side, making them easy to mistake for synonyms.",
+    "ja": "初期のまとめでは「普通形／辞書形」を並べて書いており、同義と取られやすかった。"
+  },
+  {
+    "source": "普通形包含四個肯否時態；指定辭書形的句型另外列。",
+    "en": "The plain form covers four forms (affirmative or negative, non-past or past); patterns that specify the dictionary form are listed separately.",
+    "ja": "普通形には肯定・否定と非過去・過去を組み合わせた 4 つの形がある。辞書形を指定する文型は別に挙げる。"
+  },
+  {
+    "source": "ので 的丁寧形接續",
+    "en": "Polite-form connection with ので",
+    "ja": "「ので」の丁寧形接続"
+  },
+  {
+    "source": "早期表格只列普通形，容易形成排他規則。",
+    "en": "An early table listed only the plain form, which could easily turn into an exclusive rule.",
+    "ja": "初期の表には普通形しか載っておらず、それ以外は使えないという規則になりやすかった。"
+  },
+  {
+    "source": "補明 行きますので／休みですので 也成立；禮貌請求也可使用ので。",
+    "en": "Added that 行きますので／休みですので are also correct; polite requests can use ので as well.",
+    "ja": "「行きますので／休みですので」も成り立つことを補足した。丁寧な依頼にも「ので」が使える。"
+  },
+  {
+    "source": "P87＋外部查核 W1",
+    "en": "P87 + external check W1",
+    "ja": "P87＋外部資料による確認 W1"
+  },
+  {
+    "source": "から／ので 的客觀・主觀口訣",
+    "en": "The “objective vs. subjective” mnemonic for から／ので",
+    "ja": "「から／ので」の「客観・主観」という覚え方"
+  },
+  {
+    "source": "早期以「直接／客觀」做簡短對比。",
+    "en": "Early versions used a brief “direct / objective” contrast.",
+    "ja": "初期には「直接的／客観的」という簡単な対比を使っていた。"
+  },
+  {
+    "source": "保留為語氣傾向，不當作客觀事實與主觀意志的硬分類。",
+    "en": "Kept as a tendency in tone, not a hard classification into objective fact vs. subjective will.",
+    "ja": "ニュアンスの傾向として残し、客観的な事実と主観的な意志の厳密な分類とはしない。"
+  },
+  {
+    "source": "接續表省略だ的範圍",
+    "en": "Scope of dropping だ in the connection table",
+    "ja": "接続表で「だ」を省く範囲"
+  },
+  {
+    "source": "可能誤把「N／な形不加だ」套到所有時態。",
+    "en": "Readers might apply “no だ after N／な形” to every tense.",
+    "ja": "「N／な形には『だ』を付けない」を、すべての時制に当てはめてしまうおそれがあった。"
+  },
+  {
+    "source": "明確限定非過去肯定；学生だったかもしれません 保留だった。",
+    "en": "Explicitly limited to the non-past affirmative; 学生だったかもしれません keeps だった.",
+    "ja": "非過去・肯定に限ると明記した。「学生だったかもしれません」では「だった」を残す。"
+  },
+  {
+    "source": "Nにいい 與 について",
+    "en": "Nにいい and について",
+    "ja": "「Nにいい」と「について」"
+  },
+  {
+    "source": "較早一頁手寫筆記底部的用途評價，曾被整理成「について」主題。",
+    "en": "A note on what something is good for, at the bottom of an earlier page of handwritten notes, had been filed under a “について” topic.",
+    "ja": "以前の手書きノートの 1 ページの下部にあった用途の評価が、「について」のトピックとして整理されていた。"
+  },
+  {
+    "source": "兩者分開：Nにいい／Vるのにいい 回歸用途；について保留為前版補充內容。",
+    "en": "Separated the two: Nにいい／Vるのにいい go back under use; について is kept as supplementary content from the previous edition.",
+    "ja": "両者を分けた。「Nにいい／Vるのにいい」は用途の項目に戻し、「について」は前版の補足内容として残す。"
+  },
+  {
+    "source": "手寫筆記、P89",
+    "en": "Handwritten notes, P89",
+    "ja": "手書きノート、P89"
+  },
+  {
+    "source": "P94 的縮略表沒有完整區分N與な形。",
+    "en": "The condensed table on P94 did not fully separate N (nouns) from な形 (na-adjectives).",
+    "ja": "P94 の簡略表では、N（名詞）と「な形」を十分に区別していなかった。"
+  },
+  {
+    "source": "恢復 P40 的 学生のとき／暇なとき，並標示其不同詞類。",
+    "en": "Restored 学生のとき／暇なとき from P40 and marked that they belong to different word classes.",
+    "ja": "P40 の「学生のとき／暇なとき」を復元し、品詞が異なることを示した。"
+  },
+  {
+    "source": "予定／つもり 不等於機票狀態",
+    "en": "予定／つもり are not about whether a ticket is booked",
+    "ja": "「予定／つもり」は航空券の予約状況ではない"
+  },
+  {
+    "source": "「腦中決定／行程表」只是比喻。",
+    "en": "“A decision in your head / an itinerary” is only a metaphor.",
+    "ja": "「頭の中の決定／旅程表」は比喩にすぎない。"
+  },
+  {
+    "source": "用安排／意志／決定視點比較，不宣稱予定必定已訂票，或つもり一定還沒有實際安排。",
+    "en": "Compared by viewpoint (arrangement / intention / decision), without claiming that 予定 means a ticket is definitely booked or that つもり means nothing has actually been arranged yet.",
+    "ja": "手配／意志／決定という視点で比べる。「予定」なら必ず予約済み、「つもり」なら実際の手配はまだ何もない、とは主張しない。"
+  },
+  {
+    "source": "楽しい／楽しみ 不等於現在／未來",
+    "en": "楽しい／楽しみ ≠ present / future",
+    "ja": "「楽しい／楽しみ」は現在／未来の区別ではない"
+  },
+  {
+    "source": "前版用現在的愉快和未來期待二分。",
+    "en": "The previous edition split them into present enjoyment and future anticipation.",
+    "ja": "前版では、現在の楽しさと未来への期待で二分していた。"
+  },
+  {
+    "source": "改以性質評價與期待／樂趣區分；用活用示例顯示楽しい也能說過去和未來。",
+    "en": "Now distinguished as evaluating a quality vs. anticipation or enjoyment; conjugation examples show that 楽しい can also describe the past and the future.",
+    "ja": "性質の評価か、期待や楽しみごとかで区別するよう改めた。活用例で、「楽しい」も過去や未来を表せることを示す。"
+  },
+  {
+    "source": "P27、P94；本版示例",
+    "en": "P27, P94; examples in this edition",
+    "ja": "P27、P94、本版の用例"
+  },
+  {
+    "source": "北海道的辨識證據不足",
+    "en": "Not enough evidence to read it as 北海道",
+    "ja": "「北海道」と判読する根拠が不十分"
+  },
+  {
+    "source": "P95 把淡字整理為北海道，已帶不確定註記。",
+    "en": "P95 had transcribed the faint characters as 北海道, already with a note of uncertainty.",
+    "ja": "P95 では薄い文字を「北海道」と整理しており、不確かである旨の注記がすでに付いていた。"
+  },
+  {
+    "source": "撤出正式詞彙表。手寫筆記疑似 飛騨（ひだ），但仍列待確認，不用猜測覆蓋舊猜測。",
+    "en": "Removed from the main vocabulary list. The handwritten notes may read 飛騨（ひだ）, but it stays listed as “to confirm”; one guess is not used to overwrite an older guess.",
+    "ja": "正式な語彙表から外した。手書きノートは「飛騨（ひだ）」とも読めるが、要確認のままとし、推測で以前の推測を上書きしない。"
+  },
+  {
+    "source": "手寫筆記、P95",
+    "en": "Handwritten notes, P95",
+    "ja": "手書きノート、P95"
+  },
+  {
+    "source": "三枚を買う 不應脫離語境一律打叉",
+    "en": "三枚を買う should not be crossed out regardless of context",
+    "ja": "「三枚を買う」を文脈抜きで一律に × にしない"
+  },
+  {
+    "source": "B31 把數量詞後重複を壓縮為單獨短句。",
+    "en": "B31 had compressed “を repeated after a quantity expression” into a short standalone phrase.",
+    "ja": "B31 は、数量詞の後で「を」を重ねる誤りを、単独の短い句に縮めていた。"
+  },
+  {
+    "source": "改回完整例 Tシャツを三枚を買う；針對重複格標記，不建立所有數量＋助詞禁令。",
+    "en": "Restored the full example Tシャツを三枚を買う; the target is the repeated case marker, not a ban on every quantity + particle combination.",
+    "ja": "完全な例「Tシャツを三枚を買う」に戻した。対象は格の標示の重複であり、数量＋助詞の組み合わせすべてを禁じるものではない。"
+  },
+  {
+    "source": "どちら不是任何どれ的禮貌替換",
+    "en": "どちら is not a polite substitute for every どれ",
+    "ja": "「どちら」は「どれ」の丁寧な言い換えとは限らない"
+  },
+  {
+    "source": "P94 的概括可能和 P57 的兩者／多者對比衝突。",
+    "en": "The generalization on P94 could conflict with the two-vs-many contrast on P57.",
+    "ja": "P94 の概括は、P57 の「二者／多数」の対比と食い違うおそれがあった。"
+  },
+  {
+    "source": "加回方向、人物、選擇語境；選兩者用どちら，多者選一個用どれ為本冊基本模式。",
+    "en": "Restored the contexts of direction, people and choice; the handbook’s basic pattern is どちら for choosing between two and どれ for choosing one of many.",
+    "ja": "方向・人・選択の文脈を戻した。二者から選ぶなら「どちら」、多数から一つを選ぶなら「どれ」を本冊の基本パターンとする。"
+  },
+  {
+    "source": "ようになる 不一定漸進",
+    "en": "ようになる is not necessarily gradual",
+    "ja": "「ようになる」は必ずしも漸進的ではない"
+  },
+  {
+    "source": "前版用「逐漸變成」講解。",
+    "en": "The previous edition explained it as “gradually becomes.”",
+    "ja": "前版では「だんだん〜になる」と説明していた。"
+  },
+  {
+    "source": "核心改成前後狀態／習慣／能力的改變；是否逐漸另外由語境決定。",
+    "en": "The core is now a change of state, habit or ability between before and after; whether it is gradual is decided separately by context.",
+    "ja": "要点を、前後での状態／習慣／能力の変化に改めた。徐々に変わるかどうかは、文脈によって別に決まる。"
+  },
+  {
+    "source": "P90；本版語意範圍提醒",
+    "en": "P90; this edition’s note on the scope of meaning",
+    "ja": "P90、本版での意味範囲の注意"
+  },
+  {
+    "source": "定量機率與學力推斷",
+    "en": "Quantified probabilities and inferences about ability",
+    "ja": "数値化した確率と学力の推定"
+  },
+  {
+    "source": "原筆記有「較高可能」及歷史作答分數。",
+    "en": "The original notes had “higher likelihood” labels and past test scores.",
+    "ja": "元のノートには「可能性が高い」という表記と、過去の解答の点数があった。"
+  },
+  {
+    "source": "不把文法變成固定機率，不把舊測驗分數當成現在能力或JLPT評級。",
+    "en": "Grammar is not turned into fixed probabilities, and old test scores are not treated as current ability or a JLPT level.",
+    "ja": "文法を固定的な確率にせず、古いテストの点数を現在の実力や JLPT のレベル判定とみなさない。"
+  },
+  {
+    "source": "進階句型與淡字的內容邊界",
+    "en": "Content boundaries for advanced patterns and faint text",
+    "ja": "発展的な文型と薄い文字の扱いの範囲"
+  },
+  {
+    "source": "にもかかわらず、によって 等只有片段或少量例句；手寫筆記底端有裁切。",
+    "en": "にもかかわらず, によって and others have only fragments or a few examples; the bottom of the handwritten notes is cut off.",
+    "ja": "「にもかかわらず」「によって」などは断片的な記述や少数の例文しかない。手書きノートの下端は切れている。"
+  },
+  {
+    "source": "不自稱完整詞典／完整進階文法課；保留來源支持範圍，淡字與裁切仍標未確認。",
+    "en": "Does not claim to be a complete dictionary or a complete advanced grammar course; keeps to what the source supports, and faint or cut-off text is still marked unconfirmed.",
+    "ja": "完全な辞書／完全な発展文法の講座を名乗らない。出典が裏付ける範囲にとどめ、薄い文字や切れた部分は未確認と表示したままにする。"
+  },
+  {
+    "source": "P88、P94、手寫筆記",
+    "en": "P88, P94, handwritten notes",
+    "ja": "P88、P94、手書きノート"
+  },
+  {
+    "source": "もみじ／紅葉的過度二分",
+    "en": "Overly sharp split between もみじ and 紅葉",
+    "ja": "「もみじ／紅葉」の過度な二分"
+  },
+  {
+    "source": "手寫筆記以樹／葉色區分，先前HTML未完整收錄。",
+    "en": "The handwritten notes distinguish them as the tree vs. the color of the leaves; the earlier HTML did not fully include this.",
+    "ja": "手書きノートでは木／葉の色で区別していたが、以前の HTML には十分に収録されていなかった。"
+  },
+  {
+    "source": "補錄原學習對比，但不把もみじ限成唯一樹種，或把紅葉限成單一讀音。",
+    "en": "Added the original learning contrast, without limiting もみじ to a single tree species or 紅葉 to a single reading.",
+    "ja": "元の学習上の対比を補ったが、「もみじ」を唯一の樹種に限ったり、「紅葉」を一つの読み方に限ったりはしない。"
+  },
+  {
+    "source": "手寫筆記；本版補錄",
+    "en": "Handwritten notes; added in this edition",
+    "ja": "手書きノート、本版で補足"
+  },
+  {
+    "source": "高くて便利です 的例句",
+    "en": "The example 高くて便利です",
+    "ja": "「高くて便利です」の例文"
+  },
+  {
+    "source": "い形容詞 て形的例句「高くて便利です」語意不自然，難以判斷是「又高又方便」還是「又貴又方便」。",
+    "en": "The i-adjective te-form example “高くて便利です” is unnatural in meaning: it is hard to tell whether it means “tall and convenient” or “expensive and convenient.”",
+    "ja": "い形容詞のて形の例文「高くて便利です」は意味が不自然で、「（背が）高くて便利」なのか「（値段が）高くて便利」なのか判断しにくい。"
+  },
+  {
+    "source": "改為",
+    "en": "Changed to ",
+    "ja": "例文を"
+  },
+  {
+    "source": "，示範並列的 て形連接。",
+    "en": " This shows the te-form joining parallel descriptions.",
+    "ja": "に改め、並列を表すて形の接続を示した。"
+  },
+  {
+    "source": "本站核對 2026-10-12",
+    "en": "Checked on this site 2026-10-12",
+    "ja": "本サイトで確認 2026-10-12"
+  },
+  {
+    "source": "尚待確認",
+    "en": "Still to confirm",
+    "ja": "要確認事項"
+  },
+  {
+    "source": "待確認",
+    "en": "To confirm",
+    "ja": "要確認"
+  },
+  {
+    "source": "尚待確認：最新手寫筆記中的淡字地名，原版曾記為「北海道」，本版判讀疑似「飛騨（ひだ）」，但證據仍不足，因此不放入正式背誦表。其他被裁切或無法辨認的小字也不補寫。",
+    "en": "Still to confirm: a faint place name in the latest handwritten notes was recorded as “北海道” in the original version; this edition reads it as possibly “飛騨（ひだ）,” but the evidence is still insufficient, so it is not included in the main memorization list. Other small text that is cut off or illegible is not filled in either.",
+    "ja": "現在も確認待ち：最新の手書きノートにある薄い文字の地名は、原版では「北海道」と記されていました。本版では「飛騨（ひだ）」の可能性があると判読しましたが、根拠がまだ不十分なため、正式な暗記用の表には入れていません。切れていたり判読できなかったりするほかの小さな文字も、補って書くことはしていません。"
+  },
+  {
+    "source": "// 來源 · 95 頁對照",
+    "en": "// Sources · 95-page map",
+    "ja": "// 出典 · 95 ページの対照"
+  },
+  {
+    "source": "95 頁來源對照",
+    "en": "95-page source map",
+    "ja": "95 ページの出典対照表"
+  },
+  {
+    "source": "原手冊的 95 個來源頁都有重編位置。這裡的 P1–P95 是原始合併檔的頁標記，不是本站的頁數；原頁的文字與影像沒有公開。",
+    "en": "Every one of the source handbook’s 95 pages has a new location. P1–P95 here are page markers from the original merged file, not page numbers on this site; the text and images of the original pages are not public.",
+    "ja": "元の冊子の 95 ページは、すべて再編後の位置に対応しています。ここでの P1–P95 は元の結合ファイルのページ番号であり、本サイトのページ数ではありません。元ページの文章と画像は公開していません。"
+  },
+  {
+    "source": "展開 95 頁與主題的對照表",
+    "en": "Expand the map of the 95 pages and their topics",
+    "ja": "95 ページとトピックの対照表を開く"
+  },
+  {
+    "source": "95頁來源覆蓋對照",
+    "en": "95-page source coverage map",
+    "ja": "95 ページの出典カバー状況"
+  },
+  {
+    "source": "原頁",
+    "en": "Original page",
+    "ja": "元ページ"
+  },
+  {
+    "source": "原主題",
+    "en": "Original topic",
+    "ja": "元のトピック"
+  },
+  {
+    "source": "重編位置",
+    "en": "New location",
+    "ja": "再編後の位置"
+  },
+  {
+    "source": "封面與範圍",
+    "en": "Cover and scope",
+    "ja": "表紙と範囲"
+  },
+  {
+    "source": "01｜先建結構，再選助詞與語尾",
+    "en": "01 | Build the structure first, then choose particles and endings",
+    "ja": "01｜まず構造を組み立て、それから助詞と語尾を選ぶ"
+  },
+  {
+    "source": "使用指南",
+    "en": "How to use",
+    "ja": "使い方"
+  },
+  {
+    "source": "高頻錯誤地圖",
+    "en": "Map of frequent errors",
+    "ja": "頻出の誤りマップ"
+  },
+  {
+    "source": "02｜錯誤診斷：先修哪一層",
+    "en": "02 | Error diagnosis: which layer to fix first",
+    "ja": "02｜誤りの診断：どの層から直すか"
+  },
+  {
+    "source": "已掌握項目分析",
+    "en": "Analysis of items already mastered",
+    "ja": "習得済みの項目の分析"
+  },
+  {
+    "source": "八個錯誤修正",
+    "en": "Eight error corrections",
+    "ja": "8 つの誤りの修正"
+  },
+  {
+    "source": "七步解析法",
+    "en": "Seven-step analysis method",
+    "ja": "7 段階の分析法"
+  },
+  {
+    "source": "原書目錄",
+    "en": "Original table of contents",
+    "ja": "元の目次"
+  },
+  {
+    "source": "章節導讀",
+    "en": "Chapter introduction",
+    "ja": "章の導入"
+  },
+  {
+    "source": "01｜句子骨架與指示詞",
+    "en": "01 | Sentence skeleton and demonstratives",
+    "ja": "01｜文の骨組みと指示詞"
+  },
+  {
+    "source": "03｜名詞句、指示詞與禮貌問法",
+    "en": "03 | Noun sentences, demonstratives and polite questions",
+    "ja": "03｜名詞文・指示詞・丁寧な尋ね方"
+  },
+  {
+    "source": "01｜句子骨架與指示詞（續）",
+    "en": "01 | Sentence skeleton and demonstratives (cont.)",
+    "ja": "01｜文の骨組みと指示詞（続き）"
+  },
+  {
+    "source": "20｜んです／のです：把事實放進背景",
+    "en": "20 | んです／のです: putting a fact in the background",
+    "ja": "20｜んです／のです：事実を背景に置く"
+  },
+  {
+    "source": "02｜動詞格框架",
+    "en": "02 | Verb case frames",
+    "ja": "02｜動詞の格フレーム"
+  },
+  {
+    "source": "04｜述語的格框架與主要助詞",
+    "en": "04 | Predicate case frames and the main particles",
+    "ja": "04｜述語の格フレームと主な助詞"
+  },
+  {
+    "source": "02｜動詞格框架（續）",
+    "en": "02 | Verb case frames (cont.)",
+    "ja": "02｜動詞の格フレーム（続き）"
+  },
+  {
+    "source": "03｜は、が與には",
+    "en": "03 | は, が and には",
+    "ja": "03｜は、が、には"
+  },
+  {
+    "source": "05｜は／が／には、存在與數量",
+    "en": "05 | は／が／には, existence and quantity",
+    "ja": "05｜は／が／には、存在と数量"
+  },
+  {
+    "source": "03｜は、が與には（續）",
+    "en": "03 | は, が and には (cont.)",
+    "ja": "03｜は、が、には（続き）"
+  },
+  {
+    "source": "04｜主要助詞系統",
+    "en": "04 | The main particle system",
+    "ja": "04｜主な助詞の体系"
+  },
+  {
+    "source": "04｜主要助詞系統（續）",
+    "en": "04 | The main particle system (cont.)",
+    "ja": "04｜主な助詞の体系（続き）"
+  },
+  {
+    "source": "05｜存在與數量句",
+    "en": "05 | Existence and quantity sentences",
+    "ja": "05｜存在文と数量の文"
+  },
+  {
+    "source": "06｜移動・交通・問路",
+    "en": "06 | Movement, transport, asking the way",
+    "ja": "06｜移動・交通・道の尋ね方"
+  },
+  {
+    "source": "06｜移動、轉乘、問路與出る",
+    "en": "06 | Movement, transfers, asking the way and 出る",
+    "ja": "06｜移動・乗り換え・道の尋ね方と出る"
+  },
+  {
+    "source": "06｜移動・交通・問路（續）",
+    "en": "06 | Movement, transport, asking the way (cont.)",
+    "ja": "06｜移動・交通・道の尋ね方（続き）"
+  },
+  {
+    "source": "07｜自他動詞與要る",
+    "en": "07 | Transitive and intransitive verbs, and 要る",
+    "ja": "07｜自他動詞と要る"
+  },
+  {
+    "source": "07｜自他動詞與要る（續）",
+    "en": "07 | Transitive and intransitive verbs, and 要る (cont.)",
+    "ja": "07｜自他動詞と要る（続き）"
+  },
+  {
+    "source": "08｜多層句與助詞歸屬",
+    "en": "08 | Multi-layer sentences and where particles belong",
+    "ja": "08｜多層の文と助詞の所属"
+  },
+  {
+    "source": "16｜こと／の與忘れる：分清內容、事實、結果",
+    "en": "16 | こと／の and 忘れる: telling content, fact and result apart",
+    "ja": "16｜こと／の・忘れる：内容・事実・結果を区別する"
+  },
+  {
+    "source": "08｜多層句與助詞歸屬（續）",
+    "en": "08 | Multi-layer sentences and where particles belong (cont.)",
+    "ja": "08｜多層の文と助詞の所属（続き）"
+  },
+  {
+    "source": "09｜丁寧形、普通形與ある",
+    "en": "09 | Polite form, plain form and ある",
+    "ja": "09｜丁寧形・普通形・ある"
+  },
+  {
+    "source": "07｜普通形不是只有辭書形",
+    "en": "07 | The plain form is not just the dictionary form",
+    "ja": "07｜普通形は辞書形だけではない"
+  },
+  {
+    "source": "09｜丁寧形、普通形與ある（續）",
+    "en": "09 | Polite form, plain form and ある (cont.)",
+    "ja": "09｜丁寧形・普通形・ある（続き）"
+  },
+  {
+    "source": "10｜形容詞與名詞活用",
+    "en": "10 | Adjective and noun conjugation",
+    "ja": "10｜形容詞と名詞の活用"
+  },
+  {
+    "source": "08｜い形、な形、名詞：三套接續",
+    "en": "08 | i-adjectives, na-adjectives and nouns: three sets of connections",
+    "ja": "08｜い形・な形・名詞：3 通りの接続"
+  },
+  {
+    "source": "10｜形容詞與名詞活用（續）",
+    "en": "10 | Adjective and noun conjugation (cont.)",
+    "ja": "10｜形容詞と名詞の活用（続き）"
+  },
+  {
+    "source": "09｜動詞活用：て形、た形與補充詞彙",
+    "en": "09 | Verb conjugation: te-form, ta-form and extra vocabulary",
+    "ja": "09｜動詞の活用：て形・た形と補充語彙"
+  },
+  {
+    "source": "12｜右側接續與と思います",
+    "en": "12 | Connections on the right and と思います",
+    "ja": "12｜右側の接続・と思います"
+  },
+  {
+    "source": "21｜から／ので／ため：理由、語體與語氣",
+    "en": "21 | から／ので／ため: reasons, style and tone",
+    "ja": "21｜から／ので／ため：理由・文体・ニュアンス"
+  },
+  {
+    "source": "32｜ほうがいい、請求與禁止",
+    "en": "32 | ほうがいい, requests and prohibitions",
+    "ja": "32｜ほうがいい・依頼・禁止"
+  },
+  {
+    "source": "12｜右側接續與と思います（續）",
+    "en": "12 | Connections on the right and と思います (cont.)",
+    "ja": "12｜右側の接続・と思います（続き）"
+  },
+  {
+    "source": "12｜右側接續與と思います（續）（續）",
+    "en": "12 | Connections on the right and と思います (cont.) (cont.)",
+    "ja": "12｜右側の接続・と思います（続き）（続き）"
+  },
+  {
+    "source": "18｜移動目的、一般目的、用途與方法",
+    "en": "18 | Purpose of movement, general purpose, use and method",
+    "ja": "18｜移動の目的・一般的な目的・用途と方法"
+  },
+  {
+    "source": "13｜ています與服裝",
+    "en": "13 | ています and clothing",
+    "ja": "13｜ています・服装"
+  },
+  {
+    "source": "11｜ている：進行、習慣與結果狀態",
+    "en": "11 | ている: progressive, habit and resulting state",
+    "ja": "11｜ている：進行・習慣・結果の状態"
+  },
+  {
+    "source": "12｜てしまう：完成與非預期",
+    "en": "12 | てしまう: completion and the unexpected",
+    "ja": "12｜てしまう：完了と予想外"
+  },
+  {
+    "source": "13｜てくる／ていく：基準點與方向",
+    "en": "13 | てくる／ていく: reference point and direction",
+    "ja": "13｜てくる／ていく：基準点と方向"
+  },
+  {
+    "source": "15｜てくる、ていく（續）",
+    "en": "15 | てくる, ていく (cont.)",
+    "ja": "15｜てくる、ていく（続き）"
+  },
+  {
+    "source": "16｜時間、日期、期間",
+    "en": "16 | Time, dates, durations",
+    "ja": "16｜時間・日付・期間"
+  },
+  {
+    "source": "14｜時間點、期間、頻率與截止",
+    "en": "14 | Points in time, durations, frequency and deadlines",
+    "ja": "14｜時点・期間・頻度・期限"
+  },
+  {
+    "source": "40｜日期、量詞與讀音：數字旁的名詞不能省略思考",
+    "en": "40 | Dates, counters and readings: don’t skip thinking about the noun next to a number",
+    "ja": "40｜日付・助数詞・読み方：数字の隣の名詞を考えずに済ませない"
+  },
+  {
+    "source": "16｜時間、日期、期間（續）",
+    "en": "16 | Time, dates, durations (cont.)",
+    "ja": "16｜時間・日付・期間（続き）"
+  },
+  {
+    "source": "17｜とき與相對時態",
+    "en": "17 | とき and relative tense",
+    "ja": "17｜とき・相対的な時制"
+  },
+  {
+    "source": "18｜前に、後で、から（續）",
+    "en": "18 | 前に, 後で, から (cont.)",
+    "ja": "18｜前に、後で、から（続き）"
+  },
+  {
+    "source": "23｜たり／し／と／や／とか：列舉的對象不同",
+    "en": "23 | たり／し／と／や／とか: each one lists different things",
+    "ja": "23｜たり／し／と／や／とか：列挙する対象が違う"
+  },
+  {
+    "source": "20｜こと：能力與經驗",
+    "en": "20 | こと: ability and experience",
+    "ja": "20｜こと：能力と経験"
+  },
+  {
+    "source": "21｜の系列（續）",
+    "en": "21 | The の family (cont.)",
+    "ja": "21｜の系列（続き）"
+  },
+  {
+    "source": "22｜關係子句",
+    "en": "22 | Relative clauses",
+    "ja": "22｜連体修飾節"
+  },
+  {
+    "source": "17｜關係子句：先找中心名詞",
+    "en": "17 | Relative clauses: find the head noun first",
+    "ja": "17｜連体修飾節：まず中心となる名詞を探す"
+  },
+  {
+    "source": "22｜關係子句（續）",
+    "en": "22 | Relative clauses (cont.)",
+    "ja": "22｜連体修飾節（続き）"
+  },
+  {
+    "source": "23｜目的、用途與方法",
+    "en": "23 | Purpose, use and method",
+    "ja": "23｜目的・用途・方法"
+  },
+  {
+    "source": "23｜目的、用途與方法（續）",
+    "en": "23 | Purpose, use and method (cont.)",
+    "ja": "23｜目的・用途・方法（続き）"
+  },
+  {
+    "source": "19｜ます語幹、ながら、たい、方與知る",
+    "en": "19 | Masu stem, ながら, たい, 方 and 知る",
+    "ja": "19｜ます形の語幹・ながら・たい・方・知る"
+  },
+  {
+    "source": "24｜ます語幹、方、知る（續）",
+    "en": "24 | Masu stem, 方, 知る (cont.)",
+    "ja": "24｜ます語幹、方、知る（続き）"
+  },
+  {
+    "source": "25｜授受與家族視點",
+    "en": "25 | Giving and receiving, and the family viewpoint",
+    "ja": "25｜授受表現と家族の視点"
+  },
+  {
+    "source": "29｜授受、家族視點、借貸與教學",
+    "en": "29 | Giving and receiving, family viewpoint, lending and borrowing, teaching",
+    "ja": "29｜授受表現・家族の視点・貸し借り・教えること"
+  },
+  {
+    "source": "25｜授受與家族視點（續）",
+    "en": "25 | Giving and receiving, and the family viewpoint (cont.)",
+    "ja": "25｜授受表現と家族の視点（続き）"
+  },
+  {
+    "source": "28｜そう／らしい／によると：訊息來源要分明",
+    "en": "28 | そう／らしい／によると: be clear about where information comes from",
+    "ja": "28｜そう／らしい／によると：情報源をはっきりさせる"
+  },
+  {
+    "source": "27｜比較、同じ與列舉",
+    "en": "27 | Comparison, 同じ and listing",
+    "ja": "27｜比較・同じ・列挙"
+  },
+  {
+    "source": "30｜比較、同じ、選擇與名詞連結",
+    "en": "30 | Comparison, 同じ, choice and linking nouns",
+    "ja": "30｜比較・同じ・選択・名詞の連結"
+  },
+  {
+    "source": "27｜比較、同じ與列舉（續）",
+    "en": "27 | Comparison, 同じ and listing (cont.)",
+    "ja": "27｜比較・同じ・列挙（続き）"
+  },
+  {
+    "source": "27｜比較、同じ與列舉（續）（續）",
+    "en": "27 | Comparison, 同じ and listing (cont.) (cont.)",
+    "ja": "27｜比較・同じ・列挙（続き）（続き）"
+  },
+  {
+    "source": "28｜頻率、不定詞、副詞",
+    "en": "28 | Frequency, indefinite words, adverbs",
+    "ja": "28｜頻度・不定語・副詞"
+  },
+  {
+    "source": "31｜副詞：時間、頻率、程度與限制",
+    "en": "31 | Adverbs: time, frequency, degree and limits",
+    "ja": "31｜副詞：時間・頻度・程度・限定"
+  },
+  {
+    "source": "28｜頻率、不定詞、副詞（續）",
+    "en": "28 | Frequency, indefinite words, adverbs (cont.)",
+    "ja": "28｜頻度・不定語・副詞（続き）"
+  },
+  {
+    "source": "28｜頻率、不定詞、副詞（續）（續）",
+    "en": "28 | Frequency, indefinite words, adverbs (cont.) (cont.)",
+    "ja": "28｜頻度・不定語・副詞（続き）（続き）"
+  },
+  {
+    "source": "29｜店家請求與付款",
+    "en": "29 | Requests in shops and paying",
+    "ja": "29｜店での依頼と支払い"
+  },
+  {
+    "source": "33｜店家請求、付款、回應與用餐",
+    "en": "33 | Requests in shops, paying, responses and dining",
+    "ja": "33｜店での依頼・支払い・応答・食事"
+  },
+  {
+    "source": "24｜わけ系列：推論、否定範圍與責任",
+    "en": "24 | The わけ family: inference, scope of negation and responsibility",
+    "ja": "24｜わけ系列：推論・否定の範囲・責任"
+  },
+  {
+    "source": "34｜片假名與搭配",
+    "en": "34 | Katakana and collocations",
+    "ja": "34｜カタカナ語と組み合わせ"
+  },
+  {
+    "source": "37｜片假名詞彙：原 94 字＋搭配表＋補充詞",
+    "en": "37 | Katakana vocabulary: the original 94 words + collocation table + extra words",
+    "ja": "37｜カタカナ語：元の 94 語＋組み合わせ表＋補充語"
+  },
+  {
+    "source": "34｜片假名與搭配（續）",
+    "en": "34 | Katakana and collocations (cont.)",
+    "ja": "34｜カタカナ語と組み合わせ（続き）"
+  },
+  {
+    "source": "35｜名詞與形容詞",
+    "en": "35 | Nouns and adjectives",
+    "ja": "35｜名詞と形容詞"
+  },
+  {
+    "source": "38｜名詞、形容詞、天氣、地名與旅宿",
+    "en": "38 | Nouns, adjectives, weather, place names and lodging",
+    "ja": "38｜名詞・形容詞・天気・地名・宿泊"
+  },
+  {
+    "source": "35｜名詞與形容詞（續）",
+    "en": "35 | Nouns and adjectives (cont.)",
+    "ja": "35｜名詞と形容詞（続き）"
+  },
+  {
+    "source": "36｜動詞格框架",
+    "en": "36 | Verb case frames",
+    "ja": "36｜動詞の格フレーム"
+  },
+  {
+    "source": "39｜動詞索引：把格框架當成單字的一部分",
+    "en": "39 | Verb index: treat the case frame as part of the word",
+    "ja": "39｜動詞索引：格フレームを単語の一部として扱う"
+  },
+  {
+    "source": "37｜日期、量詞、讀音",
+    "en": "37 | Dates, counters, readings",
+    "ja": "37｜日付・助数詞・読み方"
+  },
+  {
+    "source": "38｜高頻陷阱",
+    "en": "38 | Frequent traps",
+    "ja": "38｜頻出の落とし穴"
+  },
+  {
+    "source": "38｜高頻陷阱（續）",
+    "en": "38 | Frequent traps (cont.)",
+    "ja": "38｜頻出の落とし穴（続き）"
+  },
+  {
+    "source": "38｜高頻陷阱（續）（續）",
+    "en": "38 | Frequent traps (cont.) (cont.)",
+    "ja": "38｜頻出の落とし穴（続き）（続き）"
+  },
+  {
+    "source": "Q｜最終速查",
+    "en": "Q | Final quick reference",
+    "ja": "Q｜最終早見表"
+  },
+  {
+    "source": "Q｜最終速查（續）",
+    "en": "Q | Final quick reference (cont.)",
+    "ja": "Q｜最終早見表（続き）"
+  },
+  {
+    "source": "單字表｜第 1–2 組",
+    "en": "Word list | groups 1–2",
+    "ja": "単語表｜第 1–2 グループ"
+  },
+  {
+    "source": "單字表｜第 2–3 組",
+    "en": "Word list | groups 2–3",
+    "ja": "単語表｜第 2–3 グループ"
+  },
+  {
+    "source": "單字表｜第 4 組",
+    "en": "Word list | group 4",
+    "ja": "単語表｜第 4 グループ"
+  },
+  {
+    "source": "混淆辨析與記憶法",
+    "en": "Comparing confusables, and memory tips",
+    "ja": "紛らわしい語の比較と覚え方"
+  },
+  {
+    "source": "補遺導讀與文法地圖",
+    "en": "Supplement introduction and grammar map",
+    "ja": "補遺の導入と文法マップ"
+  },
+  {
+    "source": "40｜建議・逆接・限制",
+    "en": "40 | Advice, concession, limits",
+    "ja": "40｜助言・逆接・限定"
+  },
+  {
+    "source": "41｜目的・轉述・について",
+    "en": "41 | Purpose, reported speech, について",
+    "ja": "41｜目的・引用・について"
+  },
+  {
+    "source": "25｜と思う／と言う／ように言う",
+    "en": "25 | と思う／と言う／ように言う",
+    "ja": "25｜と思う／と言う／ように言う"
+  },
+  {
+    "source": "42｜變化・程度・そう",
+    "en": "42 | Change, degree, そう",
+    "ja": "42｜変化・程度・そう"
+  },
+  {
+    "source": "10｜自他動詞、なる／する、ようになる",
+    "en": "10 | Transitive and intransitive verbs, なる／する, ようになる",
+    "ja": "10｜自他動詞、なる／する、ようになる"
+  },
+  {
+    "source": "26｜予定／つもり／ことにする／ことになる",
+    "en": "26 | 予定／つもり／ことにする／ことになる",
+    "ja": "26｜予定／つもり／ことにする／ことになる"
+  },
+  {
+    "source": "27｜かもしれない／でしょう／はず／に違いない",
+    "en": "27 | かもしれない／でしょう／はず／に違いない",
+    "ja": "27｜かもしれない／でしょう／はず／に違いない"
+  },
+  {
+    "source": "45｜身體・天氣固定搭配",
+    "en": "45 | Fixed collocations for the body and weather",
+    "ja": "45｜体・天気の決まった組み合わせ"
+  },
+  {
+    "source": "36｜身體狀況：把名詞、助詞、動詞一起記",
+    "en": "36 | Physical condition: learn the noun, particle and verb together",
+    "ja": "36｜体調：名詞・助詞・動詞をまとめて覚える"
+  },
+  {
+    "source": "46｜新筆記：文法・表現",
+    "en": "46 | New notes: grammar, expressions",
+    "ja": "46｜新しいノート：文法・表現"
+  },
+  {
+    "source": "15｜とき／前に／後で／てから",
+    "en": "15 | とき／前に／後で／てから",
+    "ja": "15｜とき／前に／後で／てから"
+  },
+  {
+    "source": "35｜楽しい／楽しみ／わくわく",
+    "en": "35 | 楽しい／楽しみ／わくわく",
+    "ja": "35｜楽しい／楽しみ／わくわく"
+  },
+  {
+    "source": "47｜旅行・生活詞彙",
+    "en": "47 | Travel and daily-life vocabulary",
+    "ja": "47｜旅行・生活の語彙"
+  },
+  {
+    "source": "// 外部查核",
+    "en": "// External checks",
+    "ja": "// 外部資料による確認"
+  },
+  {
+    "source": "外部查核來源",
+    "en": "Sources for external checks",
+    "ja": "外部確認に用いた資料"
+  },
+  {
+    "source": "以下公開教材只用於本版標明的接續與語氣查核，沒有拿來取代整份原教材。原稿於 2026-10-10 查閱，本站重整時（2026-10-12）再次確認連結。",
+    "en": "The public materials below were used only to check the connections and tone flagged in this edition; they were not used to replace the original materials as a whole. They were consulted for the original on 2026-10-10, and the links were checked again when the notes were rewritten for this site (2026-10-12).",
+    "ja": "以下の公開教材は、本版で明示した接続とニュアンスの確認にのみ使い、元の教材全体の代わりにはしていません。原稿の作成時（2026-10-10）に参照し、本サイトでの再編時（2026-10-12）にリンクを再確認しました。"
+  },
+  {
+    "source": "東京外国語大学｜理由",
+    "en": "Tokyo University of Foreign Studies | 理由 (reasons)",
+    "ja": "東京外国語大学｜理由"
+  },
+  {
+    "source": "普通／丁寧形均可接から與ので；語氣與依賴／命令的限制。",
+    "en": "Both plain and polite forms can take から and ので; tone, and limits with requests and commands.",
+    "ja": "普通形・丁寧形のどちらにも「から」と「ので」が付く。ニュアンスと、依頼／命令での制約。"
+  },
+  {
+    "source": "東京外国語大学｜接続助詞",
+    "en": "Tokyo University of Foreign Studies | 接続助詞 (conjunctive particles)",
+    "ja": "東京外国語大学｜接続助詞"
+  },
+  {
+    "source": "たり／し的列舉；し可見丁寧形接續。",
+    "en": "Listing with たり／し; し can be seen attaching to polite forms.",
+    "ja": "「たり／し」による列挙。「し」は丁寧形に接続する例も見られる。"
+  },
+  {
+    "source": "国際交流基金｜文法を楽しく：つもり（1）",
+    "en": "The Japan Foundation | 文法を楽しく：つもり（1）",
+    "ja": "国際交流基金｜文法を楽しく：つもり（1）"
+  },
+  {
+    "source": "つもり、予定、ことにする的視點；當場決定及意志用法的範圍。",
+    "en": "The viewpoints of つもり, 予定 and ことにする; the scope of on-the-spot decisions and volitional uses.",
+    "ja": "「つもり」「予定」「ことにする」の視点。その場での決定や意志用法の範囲。"
+  },
+  {
+    "source": "東京外国語大学｜かもしれません・にちがいありません",
+    "en": "Tokyo University of Foreign Studies | かもしれません・にちがいありません",
+    "ja": "東京外国語大学｜かもしれません・にちがいありません"
+  },
+  {
+    "source": "推定、はず與そう／らしい的接續；樣態そう不直接接名詞。",
+    "en": "Connections for inference, はず and そう／らしい; the appearance そう does not attach directly to nouns.",
+    "ja": "推定、「はず」と「そう／らしい」の接続。様態の「そう」は名詞に直接付かない。"
+  },
+  {
+    "source": "東京外国語大学｜でしょう",
+    "en": "Tokyo University of Foreign Studies | でしょう",
+    "ja": "東京外国語大学｜でしょう"
+  },
+  {
+    "source": "でしょう的推測、確認等語用功能。",
+    "en": "Pragmatic functions of でしょう such as conjecture and confirmation.",
+    "ja": "「でしょう」の推測・確認などの語用論的な機能。"
+  },
+  {
+    "source": "// 本站版本",
+    "en": "// This site’s edition",
+    "ja": "// 本サイト版"
+  },
+  {
+    "source": "本站版本的整理與限制",
+    "en": "How this site’s edition was prepared, and its limits",
+    "ja": "本サイト版の編集方針と限界"
+  },
+  {
+    "source": "原手冊中的個人測驗分數與作答統計沒有公開；第 02 節只保留錯誤的類型與根因。",
+    "en": "Personal test scores and answer statistics from the source handbook are not published; section 02 keeps only the types of errors and their root causes.",
+    "ja": "元の冊子にあった個人のテストの点数と解答の統計は公開していません。第 02 節には、誤りの種類と根本原因だけを残しています。"
+  },
+  {
+    "source": "7 張手寫筆記照片、85 頁原頁影像與 95 頁舊版全文沒有公開。內容已併入 43 個主題，來源頁碼保留在上方的對照表。",
+    "en": "The 7 photos of handwritten notes, the images of 85 original pages and the 95-page full text of the old edition are not published. Their content has been merged into the 43 topics, and the source page numbers are kept in the map above.",
+    "ja": "手書きノートの写真 7 枚、元ページの画像 85 ページ分、旧版の全文 95 ページは公開していません。内容は 43 のトピックに統合し、出典のページ番号は上の対照表に残しています。"
+  },
+  {
+    "source": "原版的已讀標記、字級調整、遮蔽中文與設定匯出都依賴瀏覽器的本機儲存；本站不使用任何儲存，因此沒有移植。自我測驗時，可以先遮住釋義欄再回想。",
+    "en": "The original version’s read markers, font-size controls, Chinese-hiding toggle and settings export all relied on the browser’s local storage; this site uses no storage at all, so they were not carried over. To test yourself, cover the meaning column first and then try to recall.",
+    "ja": "原版の既読マーク、文字サイズの調整、中国語訳を隠す機能、設定のエクスポートは、いずれもブラウザーのローカルストレージに依存していました。本サイトはストレージを一切使わないため、これらは移植していません。自己テストをするときは、意味の欄を先に隠してから思い出してみてください。"
+  },
+  {
+    "source": "日文例句在繁體中文、英文與日文三個版本中都保持原文；英文版與日文版的說明由本站翻譯，日文版省略與例句重複的中文釋義。翻譯不代表日語教師的逐條審閱。",
+    "en": "Japanese example sentences stay in the original in all three editions (Traditional Chinese, English and Japanese). The explanations in the English and Japanese editions were translated by this site, and the Japanese edition omits Chinese glosses that would only repeat the examples. The translations have not been reviewed item by item by a Japanese teacher.",
+    "ja": "日本語の例文は、繁体字中国語版・英語版・日本語版の 3 つすべてで原文のままです。英語版と日本語版の説明は本サイトが翻訳したもので、日本語版では例文と重複する中国語の訳を省いています。翻訳は、日本語教師による一項目ずつの校閲を経たものではありません。"
+  },
+  {
+    "source": "43 個主題拆成 7 篇，依原本的分組串成系列；章節編號與錨點沿用原稿。",
+    "en": "The 43 topics are split into 7 parts and linked into a series following the original grouping; section numbers and anchors are carried over from the original.",
+    "ja": "43 のトピックを 7 回に分け、元のグループ分けに沿ってシリーズにしています。章番号とアンカーは原稿のものを引き継いでいます。"
+  },
+  {
+    "source": "使用限制",
+    "en": "Limits of use",
+    "ja": "利用上の限界"
+  },
+  {
+    "source": "限制",
+    "en": "Limits",
+    "ja": "限界"
+  },
+  {
+    "source": "重新整理與連結檢查，不等於全部文法都經過外部逐條認證。健康與身體狀況的例句是語言學習素材，不是個人的診斷或治療建議。",
+    "en": "Reorganizing the notes and checking the links does not mean every grammar point has been externally verified item by item. Example sentences about health and physical condition are language-learning material, not personal diagnosis or treatment advice.",
+    "ja": "再編とリンクの確認は、すべての文法が外部で一項目ずつ認証されたことを意味しません。健康や体調に関する例文は語学学習の素材であり、個人に向けた診断や治療の助言ではありません。"
+  },
+  {
+    "source": "上一篇與下一篇",
+    "en": "Previous and next",
+    "ja": "前後の回"
+  },
+  {
+    "source": "← 上一篇：6 詞彙與讀音",
+    "en": "← Previous: 6 Vocabulary",
+    "ja": "← 前の回：6 語彙と読み方"
+  },
+  {
+    "source": "だ保留",
+    "en": "だ kept",
+    "ja": "だを残す"
+  },
+  {
+    "source": "だ省略",
+    "en": "だ dropped",
+    "ja": "だを省く"
+  },
+  {
+    "source": "とき 表格漏列な形",
+    "en": "The とき table omitted the な form",
+    "ja": "ときの表で「な」の形が抜けていた"
+  },
+  {
+    "source": "21｜の系列",
+    "en": "21 | The の family",
+    "ja": "21｜「の」の系列"
+  },
+  {
+    "source": "32｜わけ系列",
+    "en": "32 | The わけ family",
+    "ja": "32｜「わけ」の系列"
+  },
+  {
+    "source": "11｜て形、た形",
+    "en": "11 | te-form, ta-form",
+    "ja": "11｜て形、た形"
+  },
+  {
+    "source": "14｜てしまう",
+    "en": "14 | てしまう",
+    "ja": "14｜てしまう"
+  },
+  {
+    "source": "15｜てくる、ていく",
+    "en": "15 | てくる, ていく",
+    "ja": "15｜てくる、ていく"
+  },
+  {
+    "source": "18｜前に、後で、から",
+    "en": "18 | 前に, 後で, から",
+    "ja": "18｜前に、後で、から"
+  },
+  {
+    "source": "19｜たり〜たりする",
+    "en": "19 | たり〜たりする",
+    "ja": "19｜たり〜たりする"
+  },
+  {
+    "source": "24｜ます語幹、方、知る",
+    "en": "24 | Masu stem, 方, 知る",
+    "ja": "24｜ます語幹、方、知る"
+  },
+  {
+    "source": "26｜そう、らしい",
+    "en": "26 | そう, らしい",
+    "ja": "26｜そう、らしい"
+  },
+  {
+    "source": "30｜はずだ／に違いない",
+    "en": "30 | はずだ／に違いない",
+    "ja": "30｜はずだ／に違いない"
+  },
+  {
+    "source": "31｜ものの／のに／けど",
+    "en": "31 | ものの／のに／けど",
+    "ja": "31｜ものの／のに／けど"
+  },
+  {
+    "source": "33｜ことにする／なる",
+    "en": "33 | ことにする／なる",
+    "ja": "33｜ことにする／なる"
+  },
+  {
+    "source": "39｜んです・ので・ですが",
+    "en": "39 | んです・ので・ですが",
+    "ja": "39｜んです・ので・ですが"
+  },
+  {
+    "source": "43｜予定・つもり・推測",
+    "en": "43 | 予定・つもり・推測",
+    "ja": "43｜予定・つもり・推測"
+  },
+  {
+    "source": "44｜まで・までに",
+    "en": "44 | まで・までに",
+    "ja": "44｜まで・までに"
+  },
+  {
+    "source": "22｜のに／ものの／にもかかわらず／けど",
+    "en": "22 | のに／ものの／にもかかわらず／けど",
+    "ja": "22｜のに／ものの／にもかかわらず／けど"
+  },
+  {
+    "source": "34｜について／によって／によると／にいい",
+    "en": "34 | について／によって／によると／にいい",
+    "ja": "34｜について／によって／によると／にいい"
+  },
+  {
+    "source": "原手冊有些日文欄位混入中文標籤或釋義，例如「完成後順序：」「／離開家」「傳聞：」；本版把中文移到日文之外，讓三個版本都能翻譯。第 6 篇的「上半身衣物を着る」混用了中文「衣物」，改為「上半身の服を着る」。",
+    "en": "Some Japanese fields in the source handbook mixed in Chinese labels or meanings, such as a Chinese gloss after a reading; this edition moves the Chinese outside the Japanese so all three editions can translate it. In note 6, 上半身衣物を着る mixed in a Chinese word and now reads 上半身の服を着る.",
+    "ja": "元の冊子では、日本語の欄に中国語のラベルや訳語が混ざっている箇所がありました（読み方の後ろの中国語訳など）。本版では中国語の部分を日本語の外に移し、3 つの版のどれでも翻訳できるようにしました。第 6 回の「上半身衣物を着る」は中国語の語が混ざっていたため、「上半身の服を着る」に改めました。"
+  }
+]

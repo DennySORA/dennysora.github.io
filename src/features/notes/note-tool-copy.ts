@@ -194,3 +194,20 @@ export const hardwareToolCopy: Record<Locale, typeof zhHardware> = {
       `P14 Pro PST ${count} 個：Bic ${yen(bic)}、Tsukumo ${yen(tsukumo)}（送料込み）。${bic <= tsukumo ? 'Bic' : 'Tsukumo'} の方が安価です。茶色の NF-A14x25 G2 ${count} 個：${yen(g2)}。`,
   },
 };
+
+const zhCollection = {
+  near: (metres: string) => `約 ${metres} m`,
+  archiveCount: (shown: number, total: number) => `顯示 ${shown}／${total} 張`,
+};
+
+export const collectionToolCopy: Record<Locale, typeof zhCollection> = {
+  'zh-hant': zhCollection,
+  en: {
+    near: (metres) => `about ${metres} m`,
+    archiveCount: (shown, total) => `Showing ${shown} of ${total}`,
+  },
+  ja: {
+    near: (metres) => `約 ${metres} m`,
+    archiveCount: (shown, total) => `${total} 枚中 ${shown} 枚を表示`,
+  },
+};

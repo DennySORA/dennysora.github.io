@@ -22,6 +22,7 @@ import {
   routePath,
 } from '../../src/lib/route-manifest.ts';
 import { crumbs, filePath, fileKind } from '../../src/lib/workspace.ts';
+import { collectionEntries } from '../../src/lib/note-collections.server.ts';
 
 const notePath = '/zh-hant/note/hardware/computer/140mm-case-fans/';
 
@@ -142,7 +143,11 @@ describe('hardware notes', () => {
 
   it('lists the hardware collection beside the existing note folders', () => {
     const all = renderToStaticMarkup(
-      createElement(Notes, { locale: 'en', view: { collection: 'all' } }),
+      createElement(Notes, {
+        locale: 'en',
+        view: { collection: 'all' },
+        collections: collectionEntries('en'),
+      }),
     );
     expect(all).toContain('href="/en/note/hardware/"');
     expect(all).toContain('/assets/illustrations/collection-hardware-v1.webp');
@@ -151,6 +156,7 @@ describe('hardware notes', () => {
       createElement(Notes, {
         locale: 'ja',
         view: { collection: 'hardware', category: 'computer' },
+        collections: collectionEntries('ja'),
       }),
     );
     expect(category).toContain('コンピューター');

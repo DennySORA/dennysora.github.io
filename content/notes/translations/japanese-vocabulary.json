@@ -1,0 +1,1757 @@
+[
+  {
+    "source": "// 日語 · 第 6 篇，共 7 篇 · 原稿 2026-10-10 · 本站重整與核對 2026-10-12",
+    "en": "// Japanese · Part 6 of 7 · original 2026-10-10 · rewritten and checked on this site 2026-10-12",
+    "ja": "// 日本語 · 全 7 回中の第 6 回 · 原稿 2026-10-10 · 本サイトで再編・確認 2026-10-12"
+  },
+  {
+    "source": "日語筆記 6｜詞彙與讀音：片假名、名詞、動詞索引與量詞",
+    "en": "Japanese notes 6 | Vocabulary and readings: katakana, nouns, verb index and counters",
+    "ja": "日本語ノート 6｜語彙と読み方：カタカナ語、名詞、動詞索引、助数詞"
+  },
+  {
+    "source": "單字要和它的格框架、讀音一起記。這一篇收錄 113 個片假名詞條、名詞與形容詞、動詞索引，以及日期與量詞的特殊讀音。",
+    "en": "Learn each word together with its case frame and reading. This part covers 113 katakana entries, nouns and adjectives, a verb index, and the special readings of dates and counters.",
+    "ja": "単語は、その格フレームや読み方と一緒に覚えましょう。この回では、カタカナ語 113 項目、名詞と形容詞、動詞索引、そして日付と助数詞の特殊な読み方を収録しています。"
+  },
+  {
+    "source": "初級課程 L1–L21 與後續課堂筆記",
+    "en": "Beginner course L1–L21 and later class notes",
+    "ja": "初級コース L1–L21 とその後の授業ノート"
+  },
+  {
+    "source": "原筆記、編輯解析與校訂分開標示",
+    "en": "Original notes, Editor’s analysis and Revision notes are labeled separately",
+    "ja": "元のノート、編集者の解説、校訂を区別して表示"
+  },
+  {
+    "source": "日文例句在三種語言版本中保持原文",
+    "en": "Japanese example sentences stay in the original in all three language editions",
+    "ja": "日本語の例文は 3 言語版すべてで原文のまま"
+  },
+  {
+    "source": "日語筆記系列",
+    "en": "Japanese notes series",
+    "ja": "日本語ノートのシリーズ"
+  },
+  {
+    "source": "1 句子結構",
+    "en": "1 Sentence structure",
+    "ja": "1 文の構造"
+  },
+  {
+    "source": "2 活用與接續",
+    "en": "2 Conjugation",
+    "ja": "2 活用と接続"
+  },
+  {
+    "source": "3 時間與從句",
+    "en": "3 Time and clauses",
+    "ja": "3 時間と節"
+  },
+  {
+    "source": "4 理由與意圖",
+    "en": "4 Reasons and intent",
+    "ja": "4 理由と意図"
+  },
+  {
+    "source": "5 互動與表達",
+    "en": "5 Interaction",
+    "ja": "5 やりとりと表現"
+  },
+  {
+    "source": "6 詞彙與讀音",
+    "en": "6 Vocabulary",
+    "ja": "6 語彙と読み方"
+  },
+  {
+    "source": "7 總複習",
+    "en": "7 Review",
+    "ja": "7 総復習"
+  },
+  {
+    "source": "本篇主題",
+    "en": "Topics in this part",
+    "ja": "この回のトピック"
+  },
+  {
+    "source": "37｜片假名詞彙：原 94 字＋搭配表＋補充詞",
+    "en": "37 | Katakana vocabulary: the original 94 words + collocation table + added words",
+    "ja": "37｜カタカナ語：元の 94 語＋連語表＋補充語"
+  },
+  {
+    "source": "38｜名詞、形容詞、天氣、地名與旅宿",
+    "en": "38 | Nouns, adjectives, weather, place names and lodging",
+    "ja": "38｜名詞・形容詞・天気・地名・宿泊"
+  },
+  {
+    "source": "39｜動詞索引：把格框架當成單字的一部分",
+    "en": "39 | Verb index: treat the case frame as part of the word",
+    "ja": "39｜動詞索引：格フレームを単語の一部として覚える"
+  },
+  {
+    "source": "40｜日期、量詞與讀音：數字旁的名詞不能省略思考",
+    "en": "40 | Dates, counters and readings: don’t skip the noun next to the number",
+    "ja": "40｜日付・助数詞・読み方：数字の隣の名詞まで考える"
+  },
+  {
+    "source": "// 37 · 詞彙與讀音",
+    "en": "// 37 · Vocabulary and readings",
+    "ja": "// 37 · 語彙と読み方"
+  },
+  {
+    "source": "同一詞只設一列；把原附錄的意思與搭配頁整合，不丟掉原94字。",
+    "en": "One row per word: the meanings from the original appendix are merged with the collocation pages, and none of the original 94 words is dropped.",
+    "ja": "同じ語は 1 行にまとめ、元の付録の意味と連語のページを統合しました。元の 94 語は一つも落としていません。"
+  },
+  {
+    "source": "編輯解析",
+    "en": "Editor’s analysis",
+    "ja": "編集者の解説"
+  },
+  {
+    "source": "原附錄的 94 個詞全部保留在下表；與原 P70–71 重複的詞合併其搭配，再補進最新手寫筆記中的旅行活動詞。來源沒有提供搭配的地方直接標示，不編造為原筆記內容。",
+    "en": "All 94 words from the original appendix are kept in the table below. Words that also appear on the original P70–71 have their collocations merged in, and travel and activity words from the latest handwritten notes are added. Where the source gives no collocation, the table says so directly rather than inventing one and presenting it as content from the original notes.",
+    "ja": "元の付録の 94 語はすべて下の表に残しています。元の P70–71 と重複する語はその連語を統合し、さらに最新の手書きノートにある旅行・アクティビティの語を補いました。出典に連語がない箇所はその旨をそのまま示し、元のノートの内容として作り上げることはしていません。"
+  },
+  {
+    "source": "的語意差異仍保留。",
+    "en": " — the notes on how their meanings differ are still kept.",
+    "ja": "の意味の違いについての説明も残しています。"
+  },
+  {
+    "source": "備註",
+    "en": "Note",
+    "ja": "補足"
+  },
+  {
+    "source": "資料清點：原附錄 94 筆，原詞皆保留；本版片假名索引合併後 113 個詞條。",
+    "en": " Data count: the original appendix has 94 entries, and every original word is kept; after merging, this edition’s katakana index has 113 entries.",
+    "ja": "データ集計：元の付録は 94 件で、元の語はすべて残しています。この版のカタカナ索引は統合後 113 項目です。"
+  },
+  {
+    "source": "片假名詞彙整合表",
+    "en": "Combined katakana vocabulary table",
+    "ja": "カタカナ語の統合表"
+  },
+  {
+    "source": "日文",
+    "en": "Japanese",
+    "ja": "日本語"
+  },
+  {
+    "source": "中文",
+    "en": "Meaning",
+    "ja": "意味"
+  },
+  {
+    "source": "原筆記搭配／備註",
+    "en": "Original collocation / note",
+    "ja": "元のノートの連語／補足"
+  },
+  {
+    "source": "類別與來源",
+    "en": "Category and source",
+    "ja": "分類と出典"
+  },
+  {
+    "source": "團隊、隊伍",
+    "en": "Team, squad",
+    "ja": "チーム"
+  },
+  {
+    "source": "原附錄未列搭配",
+    "en": "No collocation in the original appendix",
+    "ja": "元の付録に連語の記載なし"
+  },
+  {
+    "source": "原附錄",
+    "en": "Original appendix",
+    "ja": "元の付録"
+  },
+  {
+    "source": "演講、致詞",
+    "en": "Speech, address",
+    "ja": "スピーチ"
+  },
+  {
+    "source": "飯店、旅館",
+    "en": "Hotel",
+    "ja": "ホテル"
+  },
+  {
+    "source": "交通・地點",
+    "en": "Transport & places",
+    "ja": "交通・場所"
+  },
+  {
+    "source": "康乃馨",
+    "en": "Carnation",
+    "ja": "カーネーション"
+  },
+  {
+    "source": "領帶",
+    "en": "Necktie",
+    "ja": "ネクタイ"
+  },
+  {
+    "source": "服裝・時尚",
+    "en": "Clothing & fashion",
+    "ja": "服装・ファッション"
+  },
+  {
+    "source": "票、票券",
+    "en": "Ticket",
+    "ja": "チケット"
+  },
+  {
+    "source": "個人電腦、電腦",
+    "en": "Personal computer, computer",
+    "ja": "パソコン"
+  },
+  {
+    "source": "科技・物品",
+    "en": "Tech & objects",
+    "ja": "テクノロジー・物品"
+  },
+  {
+    "source": "巧克力",
+    "en": "Chocolate",
+    "ja": "チョコレート"
+  },
+  {
+    "source": "食物・店家",
+    "en": "Food & shops",
+    "ja": "食べ物・店"
+  },
+  {
+    "source": "阿克拉（迦納首都 Accra）",
+    "en": "Accra (capital of Ghana)",
+    "ja": "アクラ（ガーナの首都）"
+  },
+  {
+    "source": "德里（Delhi）",
+    "en": "Delhi",
+    "ja": "デリー"
+  },
+  {
+    "source": "時尚",
+    "en": "Fashion",
+    "ja": "ファッション"
+  },
+  {
+    "source": "設計",
+    "en": "Design",
+    "ja": "デザイン"
+  },
+  {
+    "source": "設計師",
+    "en": "Designer",
+    "ja": "デザイナー"
+  },
+  {
+    "source": "素描本",
+    "en": "Sketchbook",
+    "ja": "スケッチブック"
+  },
+  {
+    "source": "紐約",
+    "en": "New York",
+    "ja": "ニューヨーク"
+  },
+  {
+    "source": "廣播、公告",
+    "en": "Announcement (PA), notice",
+    "ja": "アナウンス"
+  },
+  {
+    "source": "新聞、消息",
+    "en": "News",
+    "ja": "ニュース"
+  },
+  {
+    "source": "慢跑",
+    "en": "Jogging",
+    "ja": "ジョギング"
+  },
+  {
+    "source": "吉他",
+    "en": "Guitar",
+    "ja": "ギター"
+  },
+  {
+    "source": "卡拉 OK",
+    "en": "Karaoke",
+    "ja": "カラオケ"
+  },
+  {
+    "source": "計程車",
+    "en": "Taxi",
+    "ja": "タクシー"
+  },
+  {
+    "source": "T 恤；原搭配表：T恤",
+    "en": "T-shirt",
+    "ja": "Tシャツ"
+  },
+  {
+    "source": "粉紅色",
+    "en": "Pink",
+    "ja": "ピンク"
+  },
+  {
+    "source": "巴黎",
+    "en": "Paris",
+    "ja": "パリ"
+  },
+  {
+    "source": "塔",
+    "en": "Tower",
+    "ja": "タワー"
+  },
+  {
+    "source": "亞洲",
+    "en": "Asia",
+    "ja": "アジア"
+  },
+  {
+    "source": "公車、巴士",
+    "en": "Bus",
+    "ja": "バス"
+  },
+  {
+    "source": "公尺",
+    "en": "Meter (m)",
+    "ja": "メートル"
+  },
+  {
+    "source": "冷氣、空調",
+    "en": "Air conditioner",
+    "ja": "エアコン"
+  },
+  {
+    "source": "咖啡",
+    "en": "Coffee",
+    "ja": "コーヒー"
+  },
+  {
+    "source": "簽名；標誌",
+    "en": "Signature; sign",
+    "ja": "サイン"
+  },
+  {
+    "source": "電子郵件地址",
+    "en": "Email address",
+    "ja": "メールアドレス"
+  },
+  {
+    "source": "羅馬字母、羅馬拼音",
+    "en": "Roman letters, romanization",
+    "ja": "ローマ字"
+  },
+  {
+    "source": "白板",
+    "en": "Whiteboard",
+    "ja": "ホワイトボード"
+  },
+  {
+    "source": "影印；副本",
+    "en": "Photocopy; copy",
+    "ja": "コピー"
+  },
+  {
+    "source": "義大利麵",
+    "en": "Pasta",
+    "ja": "パスタ"
+  },
+  {
+    "source": "冰淇淋",
+    "en": "Ice cream",
+    "ja": "アイスクリーム"
+  },
+  {
+    "source": "襯衫",
+    "en": "Shirt",
+    "ja": "シャツ"
+  },
+  {
+    "source": "裙子",
+    "en": "Skirt",
+    "ja": "スカート"
+  },
+  {
+    "source": "褲子；原搭配表：長褲",
+    "en": "Pants; original collocation table: long pants",
+    "ja": "ズボン（元の連語表では長ズボン）"
+  },
+  {
+    "source": "大衣、外套",
+    "en": "Coat, overcoat",
+    "ja": "コート"
+  },
+  {
+    "source": "襪子",
+    "en": "Socks",
+    "ja": "ソックス"
+  },
+  {
+    "source": "書",
+    "en": "Book",
+    "ja": "ブック"
+  },
+  {
+    "source": "法國",
+    "en": "France",
+    "ja": "フランス"
+  },
+  {
+    "source": "西裝",
+    "en": "Suit",
+    "ja": "スーツ"
+  },
+  {
+    "source": "毛衣",
+    "en": "Sweater",
+    "ja": "セーター"
+  },
+  {
+    "source": "淋浴",
+    "en": "Shower",
+    "ja": "シャワー"
+  },
+  {
+    "source": "香蕉",
+    "en": "Banana",
+    "ja": "バナナ"
+  },
+  {
+    "source": "鋼琴",
+    "en": "Piano",
+    "ja": "ピアノ"
+  },
+  {
+    "source": "音樂會",
+    "en": "Concert",
+    "ja": "コンサート"
+  },
+  {
+    "source": "活動・專名",
+    "en": "Activities & proper nouns",
+    "ja": "活動・固有名詞"
+  },
+  {
+    "source": "測驗、考試",
+    "en": "Test, exam",
+    "ja": "テスト"
+  },
+  {
+    "source": "派對、聚會",
+    "en": "Party, gathering",
+    "ja": "パーティー"
+  },
+  {
+    "source": "運動",
+    "en": "Sports",
+    "ja": "スポーツ"
+  },
+  {
+    "source": "足球",
+    "en": "Soccer",
+    "ja": "サッカー"
+  },
+  {
+    "source": "網球",
+    "en": "Tennis",
+    "ja": "テニス"
+  },
+  {
+    "source": "游泳池",
+    "en": "Swimming pool",
+    "ja": "プール"
+  },
+  {
+    "source": "打工、兼職",
+    "en": "Part-time job, side job",
+    "ja": "アルバイト"
+  },
+  {
+    "source": "咖哩飯",
+    "en": "Curry and rice",
+    "ja": "カレーライス"
+  },
+  {
+    "source": "三明治",
+    "en": "Sandwich",
+    "ja": "サンドイッチ"
+  },
+  {
+    "source": "收音機、廣播",
+    "en": "Radio",
+    "ja": "ラジオ"
+  },
+  {
+    "source": "護照",
+    "en": "Passport",
+    "ja": "パスポート"
+  },
+  {
+    "source": "葡萄酒",
+    "en": "Wine",
+    "ja": "ワイン"
+  },
+  {
+    "source": "沙拉",
+    "en": "Salad",
+    "ja": "サラダ"
+  },
+  {
+    "source": "麵包",
+    "en": "Bread",
+    "ja": "パン"
+  },
+  {
+    "source": "蛋糕",
+    "en": "Cake",
+    "ja": "ケーキ"
+  },
+  {
+    "source": "果汁、飲料",
+    "en": "Juice, soft drink",
+    "ja": "ジュース"
+  },
+  {
+    "source": "番茄",
+    "en": "Tomato",
+    "ja": "トマト"
+  },
+  {
+    "source": "大樓",
+    "en": "Building (multistory)",
+    "ja": "ビル"
+  },
+  {
+    "source": "公寓",
+    "en": "Apartment building",
+    "ja": "アパート"
+  },
+  {
+    "source": "電腦",
+    "en": "Computer",
+    "ja": "コンピューター"
+  },
+  {
+    "source": "門",
+    "en": "Door",
+    "ja": "ドア"
+  },
+  {
+    "source": "便利商店",
+    "en": "Convenience store",
+    "ja": "コンビニ"
+  },
+  {
+    "source": "廁所、洗手間",
+    "en": "Toilet, restroom",
+    "ja": "トイレ"
+  },
+  {
+    "source": "卡片、卡",
+    "en": "Card",
+    "ja": "カード"
+  },
+  {
+    "source": "大廳、會堂",
+    "en": "Hall, auditorium",
+    "ja": "ホール"
+  },
+  {
+    "source": "桌子",
+    "en": "Table",
+    "ja": "テーブル"
+  },
+  {
+    "source": "電視",
+    "en": "TV",
+    "ja": "テレビ"
+  },
+  {
+    "source": "播放器；選手",
+    "en": "Player (device); player (athlete)",
+    "ja": "プレーヤー"
+  },
+  {
+    "source": "叉子",
+    "en": "Fork",
+    "ja": "フォーク"
+  },
+  {
+    "source": "刀子、餐刀",
+    "en": "Knife, table knife",
+    "ja": "ナイフ"
+  },
+  {
+    "source": "湯匙",
+    "en": "Spoon",
+    "ja": "スプーン"
+  },
+  {
+    "source": "玻璃杯、酒杯",
+    "en": "Drinking glass, wineglass",
+    "ja": "グラス"
+  },
+  {
+    "source": "原子筆",
+    "en": "Ballpoint pen",
+    "ja": "ボールペン"
+  },
+  {
+    "source": "自動鉛筆",
+    "en": "Mechanical pencil",
+    "ja": "シャープペンシル"
+  },
+  {
+    "source": "筆記本",
+    "en": "Notebook",
+    "ja": "ノート"
+  },
+  {
+    "source": "禮物",
+    "en": "Present, gift",
+    "ja": "プレゼント"
+  },
+  {
+    "source": "日曆",
+    "en": "Calendar",
+    "ja": "カレンダー"
+  },
+  {
+    "source": "相機",
+    "en": "Camera",
+    "ja": "カメラ"
+  },
+  {
+    "source": "學校",
+    "en": "School",
+    "ja": "スクール"
+  },
+  {
+    "source": "網路、網絡",
+    "en": "Network",
+    "ja": "ネットワーク"
+  },
+  {
+    "source": "美國",
+    "en": "United States, America",
+    "ja": "アメリカ"
+  },
+  {
+    "source": "澳洲",
+    "en": "Australia",
+    "ja": "オーストラリア"
+  },
+  {
+    "source": "英國",
+    "en": "United Kingdom, Britain",
+    "ja": "イギリス"
+  },
+  {
+    "source": "德國",
+    "en": "Germany",
+    "ja": "ドイツ"
+  },
+  {
+    "source": "餛飩",
+    "en": "Wonton",
+    "ja": "ワンタン"
+  },
+  {
+    "source": "拉麵",
+    "en": "Ramen",
+    "ja": "ラーメン"
+  },
+  {
+    "source": "餐廳",
+    "en": "Restaurant",
+    "ja": "レストラン"
+  },
+  {
+    "source": "超市",
+    "en": "Supermarket",
+    "ja": "スーパー"
+  },
+  {
+    "source": "百貨公司",
+    "en": "Department store",
+    "ja": "デパート"
+  },
+  {
+    "source": "電子郵件",
+    "en": "Email",
+    "ja": "メール"
+  },
+  {
+    "source": "法語",
+    "en": "French (language)",
+    "ja": "フランス語"
+  },
+  {
+    "source": "德語",
+    "en": "German (language)",
+    "ja": "ドイツ語"
+  },
+  {
+    "source": "夾娃娃機",
+    "en": "Claw machine, crane game",
+    "ja": "クレーンゲーム"
+  },
+  {
+    "source": "超市品牌名",
+    "en": "Supermarket chain name",
+    "ja": "スーパーのチェーン名"
+  },
+  {
+    "source": "滑雪",
+    "en": "Skiing",
+    "ja": "スキー"
+  },
+  {
+    "source": "旅行・活動",
+    "en": "Travel & activities",
+    "ja": "旅行・アクティビティ"
+  },
+  {
+    "source": "單板滑雪",
+    "en": "Snowboarding",
+    "ja": "スノーボード"
+  },
+  {
+    "source": "溜冰",
+    "en": "Skating",
+    "ja": "スケート"
+  },
+  {
+    "source": "薰衣草",
+    "en": "Lavender",
+    "ja": "ラベンダー"
+  },
+  {
+    "source": "社團／俱樂部",
+    "en": "Student club / club",
+    "ja": "クラブ"
+  },
+  {
+    "source": "語意依場合而定",
+    "en": "Meaning depends on the setting",
+    "ja": "意味は場面によって決まる"
+  },
+  {
+    "source": "旅行團／套裝行程",
+    "en": "Group tour / package tour",
+    "ja": "ツアー"
+  },
+  {
+    "source": "手寫筆記旁註「旅行」",
+    "en": "Handwritten notes add the margin note “旅行” (travel)",
+    "ja": "手書きノートに「旅行」と傍注あり"
+  },
+  {
+    "source": "應用程式",
+    "en": "App",
+    "ja": "アプリ"
+  },
+  {
+    "source": "手寫筆記只列單字，未列搭配",
+    "en": "Handwritten notes list only the word, with no collocation",
+    "ja": "手書きノートは単語のみで、連語の記載なし"
+  },
+  {
+    "source": "手寫筆記補錄",
+    "en": "Added from handwritten notes",
+    "ja": "手書きノートから追加"
+  },
+  {
+    "source": "パソコン偏「個人電腦」的日常說法；コンピューター較泛指電腦／計算機。",
+    "en": " パソコン is the everyday word, leaning toward “personal computer”; コンピューター refers more broadly to computers and computing machines.",
+    "ja": "パソコンは「個人用のコンピューター」寄りの日常的な言い方で、コンピューターは電子計算機全般をより広く指します。"
+  },
+  {
+    "source": "日本語裡通常指較小型、較平價的集合住宅。",
+    "en": " in Japanese, usually a smaller, lower-cost apartment building.",
+    "ja": "日本語では通常、比較的小規模で家賃の手頃な集合住宅を指します。"
+  },
+  {
+    "source": "通常指商業大樓、辦公大樓等。",
+    "en": " usually a commercial building, office building or similar.",
+    "ja": "通常、商業ビルやオフィスビルなどを指します。"
+  },
+  {
+    "source": "コンビニエンスストア 的縮寫，即便利商店。",
+    "en": " short for コンビニエンスストア, i.e. a convenience store.",
+    "ja": "コンビニエンスストアの略です。"
+  },
+  {
+    "source": "表示兼職、打工；口語常縮寫為 バイト。",
+    "en": " part-time or side work; in casual speech it is often shortened to バイト.",
+    "ja": "本業以外の仕事やパートタイムの仕事を表し、話し言葉ではよくバイトと略します。"
+  },
+  {
+    "source": "依語境可表示「簽名」或「標誌」。",
+    "en": " depending on context, it means either a signature or a sign.",
+    "ja": "文脈によって「署名」または「標識・合図」を表します。"
+  },
+  {
+    "source": "グラス多指飲用玻璃杯；ガラス指玻璃材質。",
+    "en": " グラス usually means a drinking glass; ガラス means glass as a material.",
+    "ja": "グラスは主に飲み物を入れるガラスの器を、ガラスは素材としてのガラスを指します。"
+  },
+  {
+    "source": "建議記憶法",
+    "en": "Suggested way to memorize",
+    "ja": "おすすめの覚え方"
+  },
+  {
+    "source": "第 1 輪：只看日文，3 秒內說出中文；答不出就在單字旁做記號。",
+    "en": "Round 1: look only at the Japanese and say the meaning within 3 seconds; if you can’t, mark the word.",
+    "ja": "第 1 ラウンド：日本語だけを見て、3 秒以内に意味を言います。言えなければ単語の横に印を付けます。"
+  },
+  {
+    "source": "第 2 輪：只看中文，寫出片假名。這一輪比單純辨認更能建立主動回想能力。",
+    "en": "Round 2: look only at the meaning and write the katakana. This round builds active recall better than simple recognition does.",
+    "ja": "第 2 ラウンド：意味だけを見て、カタカナで書きます。このラウンドは、見て分かるだけの練習よりも、自分から思い出す力を育てます。"
+  },
+  {
+    "source": "第 3 輪：只重做答錯單字，不要重新平均複習全部。",
+    "en": "Round 3: redo only the words you got wrong; don’t go back to reviewing everything evenly.",
+    "ja": "第 3 ラウンド：間違えた単語だけをやり直します。全部を均等に復習し直さないようにしましょう。"
+  },
+  {
+    "source": "間隔複習：今天、明天、3 天後、7 天後各測一次錯題。",
+    "en": "Spaced review: test yourself on the missed words once each today, tomorrow, 3 days later and 7 days later.",
+    "ja": "間隔をあけた復習：今日、明日、3 日後、7 日後に、間違えた語をそれぞれ 1 回ずつテストします。"
+  },
+  {
+    "source": "原手冊頁：P70、P71、P82、P83、P84、P85、P95",
+    "en": "Source handbook pages: P70, P71, P82, P83, P84, P85, P95",
+    "ja": "元の冊子のページ：P70、P71、P82、P83、P84、P85、P95"
+  },
+  {
+    "source": "相關主題：",
+    "en": "Related topics: ",
+    "ja": "関連トピック："
+  },
+  {
+    "source": "名詞、形容詞、天氣、地名與旅宿",
+    "en": "Nouns, adjectives, weather, place names and lodging",
+    "ja": "名詞・形容詞・天気・地名・宿泊"
+  },
+  {
+    "source": "動詞索引：把格框架當成單字的一部分",
+    "en": "Verb index: treat the case frame as part of the word",
+    "ja": "動詞索引：格フレームを単語の一部として覚える"
+  },
+  {
+    "source": "// 38 · 詞彙與讀音",
+    "en": "// 38 · Vocabulary and readings",
+    "ja": "// 38 · 語彙と読み方"
+  },
+  {
+    "source": "讀音、意思與使用場合一起保留；疑似地名不混進必背清單。",
+    "en": "Readings, meanings and usage settings are kept together; a possible place name is kept out of the must-learn list.",
+    "ja": "読み方・意味・使う場面をまとめて残し、地名らしき不確かな語は必修リストに入れません。"
+  },
+  {
+    "source": "料金",
+    "en": "料金",
+    "ja": "料金"
+  },
+  {
+    "source": "常對應服務或使用費，",
+    "en": " usually refers to a fee for a service or for use, ",
+    "ja": "はサービスや利用に対して支払うお金を指すことが多く、"
+  },
+  {
+    "source": "値段",
+    "en": "値段",
+    "ja": "値段"
+  },
+  {
+    "source": "指價格；",
+    "en": " refers to price; ",
+    "ja": "は物の価格を指します。"
+  },
+  {
+    "source": "気温",
+    "en": "気温",
+    "ja": "気温"
+  },
+  {
+    "source": "指氣溫。",
+    "en": " means air temperature. ",
+    "ja": "は大気の温度を指します。"
+  },
+  {
+    "source": "和室／旅館／布団",
+    "en": "和室／旅館／布団",
+    "ja": "和室／旅館／布団"
+  },
+  {
+    "source": "是房型、住宿設施與寢具，不是同一分類。",
+    "en": " are a room type, a kind of lodging and bedding respectively, not one category.",
+    "ja": "は、それぞれ部屋の種類、宿泊施設、寝具であり、同じ分類ではありません。"
+  },
+  {
+    "source": "本表整合原 P72–73 與兩批後續筆記。手寫筆記中較早漏錄的",
+    "en": "This table combines the original P72–73 with two later sets of notes. The entries missed earlier from the handwritten notes — ",
+    "ja": "この表は、元の P72–73 と、その後の 2 回分のノートを統合したものです。手書きノートのうち、以前は記録から漏れていた"
+  },
+  {
+    "source": "以「手寫筆記補錄」明示；讀音與中文解釋屬本版正字化整理。",
+    "en": " — are marked “Added from handwritten notes”; their readings and meanings were standardized for this edition.",
+    "ja": "は「手書きノートから追加」と明示しています。読み方と意味の説明は、この版で表記を整えたものです。"
+  },
+  {
+    "source": "北海道不列為已確認的詞彙。",
+    "en": "北海道 is not listed as confirmed vocabulary.",
+    "ja": "北海道は確認済みの語彙として扱いません。"
+  },
+  {
+    "source": "重新檢視最新的手寫筆記，該行更像「飛騨（ひだ）」而非北海道，但仍不作定論。原版寫法與疑讀一起放在校訂區，避免不確定資料進入背誦表。",
+    "en": "On re-examining the latest handwritten notes, that line looks more like “飛騨（ひだ）” than 北海道, but this is still not settled. The original spelling and the uncertain reading are kept together in the revision section, so that uncertain data stays out of the memorization table.",
+    "ja": "最新の手書きノートを見直すと、その行は北海道というより「飛騨（ひだ）」に見えますが、まだ結論は出していません。元の表記と疑わしい読み方はまとめて校訂欄に置き、不確かなデータが暗記用の表に入らないようにしています。"
+  },
+  {
+    "source": "名詞與形容詞整合表",
+    "en": "Combined noun and adjective table",
+    "ja": "名詞・形容詞の統合表"
+  },
+  {
+    "source": "讀音",
+    "en": "Reading",
+    "ja": "読み方"
+  },
+  {
+    "source": "中文／範圍",
+    "en": "Meaning / scope",
+    "ja": "意味／範囲"
+  },
+  {
+    "source": "原搭配與來源",
+    "en": "Original collocation and source",
+    "ja": "元の連語と出典"
+  },
+  {
+    "source": "悶熱",
+    "en": "Hot and humid, muggy",
+    "ja": "蒸し暑い"
+  },
+  {
+    "source": "哈欠",
+    "en": "Yawn",
+    "ja": "あくび"
+  },
+  {
+    "source": "請保重",
+    "en": "Take care of yourself",
+    "ja": "お大事に"
+  },
+  {
+    "source": "這次／下次",
+    "en": "This time / next time",
+    "ja": "今回／次回"
+  },
+  {
+    "source": "遺憾、可惜",
+    "en": "Regrettable, a pity",
+    "ja": "残念"
+  },
+  {
+    "source": "辛苦／嚴重／非常",
+    "en": "Tough / serious / very",
+    "ja": "苦労／深刻／非常に"
+  },
+  {
+    "source": "必要",
+    "en": "Necessary, needed",
+    "ja": "必要"
+  },
+  {
+    "source": "方便",
+    "en": "Convenient",
+    "ja": "便利"
+  },
+  {
+    "source": "來回",
+    "en": "Round trip",
+    "ja": "往復"
+  },
+  {
+    "source": "往復切符",
+    "en": "往復切符",
+    "ja": "往復切符"
+  },
+  {
+    "source": "單程",
+    "en": "One way",
+    "ja": "片道"
+  },
+  {
+    "source": "片道切符",
+    "en": "片道切符",
+    "ja": "片道切符"
+  },
+  {
+    "source": "車票",
+    "en": "Ticket (train or bus)",
+    "ja": "切符"
+  },
+  {
+    "source": "西武",
+    "en": "Seibu (railway)",
+    "ja": "西武"
+  },
+  {
+    "source": "西武線",
+    "en": "西武線",
+    "ja": "西武線"
+  },
+  {
+    "source": "東武",
+    "en": "Tobu (railway)",
+    "ja": "東武"
+  },
+  {
+    "source": "東武線",
+    "en": "東武線",
+    "ja": "東武線"
+  },
+  {
+    "source": "千葉",
+    "en": "Chiba",
+    "ja": "千葉"
+  },
+  {
+    "source": "千葉県",
+    "en": "千葉県",
+    "ja": "千葉県"
+  },
+  {
+    "source": "御殿場",
+    "en": "Gotemba (place name)",
+    "ja": "御殿場"
+  },
+  {
+    "source": "發音",
+    "en": "Pronunciation",
+    "ja": "発音"
+  },
+  {
+    "source": "練習",
+    "en": "Practice",
+    "ja": "練習"
+  },
+  {
+    "source": "会話の練習",
+    "en": "会話の練習",
+    "ja": "会話の練習"
+  },
+  {
+    "source": "發表",
+    "en": "Presentation, announcement",
+    "ja": "発表"
+  },
+  {
+    "source": "庫存",
+    "en": "Stock, inventory",
+    "ja": "在庫"
+  },
+  {
+    "source": "數字",
+    "en": "Numbers",
+    "ja": "数字"
+  },
+  {
+    "source": "價格；價格、價錢",
+    "en": "Price, cost",
+    "ja": "値段、価格"
+  },
+  {
+    "source": "人口",
+    "en": "Population",
+    "ja": "人口"
+  },
+  {
+    "source": "水果",
+    "en": "Fruit",
+    "ja": "果物"
+  },
+  {
+    "source": "季節",
+    "en": "Season",
+    "ja": "季節"
+  },
+  {
+    "source": "春天",
+    "en": "Spring",
+    "ja": "春"
+  },
+  {
+    "source": "夏天",
+    "en": "Summer",
+    "ja": "夏"
+  },
+  {
+    "source": "秋天",
+    "en": "Autumn, fall",
+    "ja": "秋"
+  },
+  {
+    "source": "冬天",
+    "en": "Winter",
+    "ja": "冬"
+  },
+  {
+    "source": "風景",
+    "en": "Scenery, view",
+    "ja": "景色"
+  },
+  {
+    "source": "夜景",
+    "en": "Night view",
+    "ja": "夜景"
+  },
+  {
+    "source": "夕陽",
+    "en": "Setting sun, sunset",
+    "ja": "夕日"
+  },
+  {
+    "source": "觀景台",
+    "en": "Observation deck",
+    "ja": "展望台"
+  },
+  {
+    "source": "文化財產",
+    "en": "Cultural property",
+    "ja": "文化財"
+  },
+  {
+    "source": "重要文化財",
+    "en": "重要文化財",
+    "ja": "重要文化財"
+  },
+  {
+    "source": "綺麗",
+    "en": "綺麗",
+    "ja": "綺麗"
+  },
+  {
+    "source": "漂亮／乾淨",
+    "en": "Pretty / clean",
+    "ja": "美しい／清潔な"
+  },
+  {
+    "source": "洋蔥",
+    "en": "Onion",
+    "ja": "たまねぎ"
+  },
+  {
+    "source": "鍋子／火鍋",
+    "en": "Pot / hot pot",
+    "ja": "鍋（調理器具）／鍋料理"
+  },
+  {
+    "source": "賣場",
+    "en": "Sales floor, store section",
+    "ja": "売り場"
+  },
+  {
+    "source": "食品売り場",
+    "en": "食品売り場",
+    "ja": "食品売り場"
+  },
+  {
+    "source": "新年",
+    "en": "New Year",
+    "ja": "正月"
+  },
+  {
+    "source": "櫃台／受理",
+    "en": "Reception desk / accepting (applications)",
+    "ja": "受付窓口／受理"
+  },
+  {
+    "source": "十字路口",
+    "en": "Intersection",
+    "ja": "交差点"
+  },
+  {
+    "source": "轉角",
+    "en": "Corner",
+    "ja": "曲がり角"
+  },
+  {
+    "source": "郵局",
+    "en": "Post office",
+    "ja": "郵便局"
+  },
+  {
+    "source": "銀行",
+    "en": "Bank",
+    "ja": "銀行"
+  },
+  {
+    "source": "書店",
+    "en": "Bookstore",
+    "ja": "本屋"
+  },
+  {
+    "source": "藥局",
+    "en": "Pharmacy",
+    "ja": "薬局"
+  },
+  {
+    "source": "下雨",
+    "en": "It rains",
+    "ja": "雨が降る"
+  },
+  {
+    "source": "原表未另列搭配",
+    "en": "No separate collocation in the original table",
+    "ja": "元の表に連語の記載なし"
+  },
+  {
+    "source": "刮風",
+    "en": "The wind blows",
+    "ja": "風が吹く"
+  },
+  {
+    "source": "氣溫高",
+    "en": "The temperature is high",
+    "ja": "気温が高い"
+  },
+  {
+    "source": "陰天",
+    "en": "Cloudy weather",
+    "ja": "曇り"
+  },
+  {
+    "source": "汗",
+    "en": "Sweat",
+    "ja": "汗"
+  },
+  {
+    "source": "和室；日式房間",
+    "en": "Japanese-style room",
+    "ja": "和室（日本式の部屋）"
+  },
+  {
+    "source": "日式棉被／床鋪",
+    "en": "Japanese-style quilt / bedding",
+    "ja": "布団（寝具）"
+  },
+  {
+    "source": "錢",
+    "en": "Money",
+    "ja": "お金"
+  },
+  {
+    "source": "費用、料金；費用、收費；常指服務或使用費",
+    "en": "Fee, charge; usually a charge for a service or for use",
+    "ja": "料金（サービスや利用に対して支払うお金）"
+  },
+  {
+    "source": "名古屋",
+    "en": "Nagoya",
+    "ja": "名古屋"
+  },
+  {
+    "source": "橫濱",
+    "en": "Yokohama",
+    "ja": "横浜"
+  },
+  {
+    "source": "神戶",
+    "en": "Kobe",
+    "ja": "神戸"
+  },
+  {
+    "source": "秋季學期",
+    "en": "Fall semester",
+    "ja": "秋学期"
+  },
+  {
+    "source": "羊",
+    "en": "Sheep",
+    "ja": "羊"
+  },
+  {
+    "source": "氣溫",
+    "en": "Air temperature",
+    "ja": "気温"
+  },
+  {
+    "source": "日式旅館",
+    "en": "Japanese-style inn",
+    "ja": "旅館"
+  },
+  {
+    "source": "中秋節",
+    "en": "Mid-Autumn Festival",
+    "ja": "中秋節"
+  },
+  {
+    "source": "手寫筆記列漢字；讀音正字化",
+    "en": "Handwritten notes give the kanji; reading standardized",
+    "ja": "手書きノートは漢字のみ記載。読み方は表記を整えたもの"
+  },
+  {
+    "source": "補習班、私塾",
+    "en": "Cram school, private tutoring school",
+    "ja": "塾、学習塾"
+  },
+  {
+    "source": "手寫筆記列字與讀音",
+    "en": "Handwritten notes give the word and its reading",
+    "ja": "手書きノートに語と読み方を記載"
+  },
+  {
+    "source": "楓／楓葉；具體指稱依語境",
+    "en": "Maple / maple leaves; what it refers to depends on context",
+    "ja": "カエデ／カエデの葉。何を指すかは文脈による"
+  },
+  {
+    "source": "不能簡化成唯一樹種學名",
+    "en": "Can’t be reduced to one tree species’ scientific name",
+    "ja": "単一の樹種の学名には還元できない"
+  },
+  {
+    "source": "秋天葉色轉紅／黃的現象",
+    "en": "Leaves turning red or yellow in autumn",
+    "ja": "秋に葉が赤や黄色に色づく現象"
+  },
+  {
+    "source": "同字也可能讀もみじ；手寫筆記在此標こうよう",
+    "en": "The same kanji can also be read もみじ; the handwritten notes mark こうよう here",
+    "ja": "同じ字はもみじとも読む。手書きノートではここにこうようと記載"
+  },
+  {
+    "source": "興奮、雀躍",
+    "en": "Excited, thrilled",
+    "ja": "わくわくする"
+  },
+  {
+    "source": "校訂",
+    "en": "Revision",
+    "ja": "校訂"
+  },
+  {
+    "source": "手寫筆記原註把もみじ偏向樹、紅葉偏向葉色。這只是課堂對比；本版不把它擴張成「もみじ只能指樹」或「紅葉只有こうよう一種讀法」。",
+    "en": " The original annotation in the handwritten notes leans もみじ toward the tree and 紅葉 toward leaf color. This is only a classroom contrast; this edition does not stretch it into “もみじ can only mean the tree” or “紅葉 has only one reading, こうよう.”",
+    "ja": "手書きノートの元の注記では、もみじを木寄り、紅葉を葉の色寄りとしています。これは授業での対比にすぎず、この版では「もみじは木しか指さない」や「紅葉の読み方はこうようだけ」とまでは広げません。"
+  },
+  {
+    "source": "原手冊頁：P72、P73、P93、P95",
+    "en": "Source handbook pages: P72, P73, P93, P95",
+    "ja": "元の冊子のページ：P72、P73、P93、P95"
+  },
+  {
+    "source": "楽しい／楽しみ／わくわく",
+    "en": "楽しい／楽しみ／わくわく",
+    "ja": "楽しい／楽しみ／わくわく"
+  },
+  {
+    "source": "日期、量詞與讀音：數字旁的名詞不能省略思考",
+    "en": "Dates, counters and readings: don’t skip the noun next to the number",
+    "ja": "日付・助数詞・読み方：数字の隣の名詞まで考える"
+  },
+  {
+    "source": "校訂紀錄",
+    "en": "Revision log",
+    "ja": "校訂記録"
+  },
+  {
+    "source": "// 39 · 詞彙與讀音",
+    "en": "// 39 · Vocabulary and readings",
+    "ja": "// 39 · 語彙と読み方"
+  },
+  {
+    "source": "背「乗る＝搭乘」還不夠；輸出時需要的是「交通機関に乗る」。",
+    "en": "Memorizing “乗る = ride” is not enough; to speak or write, you need “交通機関に乗る.”",
+    "ja": "「乗る＝搭乗する」と覚えるだけでは足りません。話したり書いたりするときに必要なのは「交通機関に乗る」です。"
+  },
+  {
+    "source": "本表保留原動詞索引的全部條目，並補上手寫筆記中的健康、外出、住宿搭配。每個角色都應附著到自己的述語，不能從相近中文翻譯倒推出同一助詞。",
+    "en": "This table keeps every entry from the original verb index and adds the health, going-out and lodging collocations from the handwritten notes. Each role should attach to its own predicate; you can’t work backwards from a similar translation to the same particle.",
+    "ja": "この表は元の動詞索引の項目をすべて残し、手書きノートにある健康・外出・宿泊の連語を補っています。それぞれの役割は、その述語に結び付けて覚える必要があります。訳語が似ているからといって、同じ助詞になると逆算することはできません。"
+  },
+  {
+    "source": "這些是本冊的基本教學框架，不宣稱列出每個動詞所有義項。例如",
+    "en": "These are this handbook’s basic teaching frames; they don’t claim to list every sense of every verb. For example, the table entry for ",
+    "ja": "これらはこの冊子の基本的な指導の枠組みであり、各動詞のすべての意味を挙げているわけではありません。たとえば"
+  },
+  {
+    "source": "的表格以「Nが終わる」為主，並不據此對任何其他語境做全面否定。",
+    "en": " is built around “Nが終わる”; this does not mean that every other context is ruled out.",
+    "ja": "の表は「Nが終わる」を中心にしていますが、それを根拠にほかの文脈をすべて否定するわけではありません。"
+  },
+  {
+    "source": "動詞與固定搭配索引",
+    "en": "Index of verbs and set collocations",
+    "ja": "動詞と決まった連語の索引"
+  },
+  {
+    "source": "動詞／搭配",
+    "en": "Verb / collocation",
+    "ja": "動詞／連語"
+  },
+  {
+    "source": "格框架",
+    "en": "Case frame",
+    "ja": "格フレーム"
+  },
+  {
+    "source": "例句／辨析",
+    "en": "Example / compare",
+    "ja": "例文／比較"
+  },
+  {
+    "source": "助詞隨角色改變",
+    "en": "The particle changes with the role",
+    "ja": "役割によって助詞が変わる"
+  },
+  {
+    "source": "交朋友",
+    "en": "Make friends",
+    "ja": "友人をつくる"
+  },
+  {
+    "source": "旅館に泊まる〔本版示例〕",
+    "en": "旅館に泊まる [this edition’s example]",
+    "ja": "旅館に泊まる〔この版の作例〕"
+  },
+  {
+    "source": "原手冊頁：P74、P93、P95",
+    "en": "Source handbook pages: P74, P93, P95",
+    "ja": "元の冊子のページ：P74、P93、P95"
+  },
+  {
+    "source": "述語的格框架與主要助詞",
+    "en": "Predicate case frames and the main particles",
+    "ja": "述語の格フレームと主な助詞"
+  },
+  {
+    "source": "動詞活用：て形、た形與補充詞彙",
+    "en": "Verb conjugation: te-form, ta-form and extra vocabulary",
+    "ja": "動詞の活用：て形・た形と補充語彙"
+  },
+  {
+    "source": "身體狀況：把名詞、助詞、動詞一起記",
+    "en": "Physical condition: learn the noun, particle and verb together",
+    "ja": "体調：名詞・助詞・動詞をまとめて覚える"
+  },
+  {
+    "source": "// 40 · 詞彙與讀音",
+    "en": "// 40 · Vocabulary and readings",
+    "ja": "// 40 · 語彙と読み方"
+  },
+  {
+    "source": "年、月、日會因年份、月份、日期、期間等用途改變讀法。",
+    "en": "年, 月 and 日 change their readings depending on use: a year, a month, a date, a length of time and so on.",
+    "ja": "年・月・日は、年や月を表すのか、日付なのか、期間なのかといった用途によって読み方が変わります。"
+  },
+  {
+    "source": "問月份；",
+    "en": " asks which month; ",
+    "ja": "は何月かを尋ね、"
+  },
+  {
+    "source": "問時長。",
+    "en": " asks for a length of time. ",
+    "ja": "は期間の長さを尋ねます。"
+  },
+  {
+    "source": "一日",
+    "en": "一日",
+    "ja": "一日"
+  },
+  {
+    "source": "當日期「1號」讀ついたち；作一天的期間／整天時常讀いちにち。不要從漢字相同推出所有位置都同音。",
+    "en": " is read ついたち as the date “the 1st”; as a one-day period or “all day,” it is usually read いちにち. Don’t assume that the same kanji are read the same way in every position.",
+    "ja": "は、日付の「1日」ならついたちと読み、1 日間という期間や丸一日の意味ではいちにちと読むことが多いです。漢字が同じだからといって、どの位置でも同じ読み方になると推測しないでください。"
+  },
+  {
+    "source": "原表的",
+    "en": "The original table’s ",
+    "ja": "元の表にある"
+  },
+  {
+    "source": "本",
+    "en": "本",
+    "ja": "本"
+  },
+  {
+    "source": "音變、",
+    "en": " sound changes, ",
+    "ja": "の音変化、"
+  },
+  {
+    "source": "一人／二人",
+    "en": "一人／二人",
+    "ja": "一人／二人"
+  },
+  {
+    "source": "20歳",
+    "en": "20歳",
+    "ja": "20歳"
+  },
+  {
+    "source": "與",
+    "en": " and ",
+    "ja": "と"
+  },
+  {
+    "source": "1～10日、20日",
+    "en": "1～10日、20日",
+    "ja": "1～10日、20日"
+  },
+  {
+    "source": "完整保留。新增手寫筆記的",
+    "en": " are all kept in full. From the handwritten notes, ",
+    "ja": "は、すべてそのまま残しています。手書きノートで新たに加わった"
+  },
+  {
+    "source": "一杯／二杯、一泊／二泊",
+    "en": "一杯／二杯、一泊／二泊",
+    "ja": "一杯／二杯、一泊／二泊"
+  },
+  {
+    "source": "補在同一區，避免和一般一／二的讀法混在一起。",
+    "en": " are added to the same section, so they don’t get mixed up with the ordinary readings of 一／二.",
+    "ja": "は同じ欄に補い、一般的な一／二の読み方と混ざらないようにしています。"
+  },
+  {
+    "source": "這些內容適合獨立背誦，不能完全依規則推導。",
+    "en": "These are best memorized on their own; they can’t be fully derived from rules.",
+    "ja": "これらは個別に覚えるのに向いており、規則だけで完全に導き出すことはできません。"
+  },
+  {
+    "source": "1〜10日、20日與20歳",
+    "en": "1〜10日, 20日 and 20歳",
+    "ja": "1〜10日、20日と20歳"
+  },
+  {
+    "source": "日期",
+    "en": "Date",
+    "ja": "日付"
+  },
+  {
+    "source": "本的音變",
+    "en": "Sound changes of 本",
+    "ja": "本の音変化"
+  },
+  {
+    "source": "一本・六本・八本・十本",
+    "en": "一本・六本・八本・十本",
+    "ja": "一本・六本・八本・十本"
+  },
+  {
+    "source": "三本・何本",
+    "en": "三本・何本",
+    "ja": "三本・何本"
+  },
+  {
+    "source": "二本・四本・五本・七本・九本",
+    "en": "二本・四本・五本・七本・九本",
+    "ja": "二本・四本・五本・七本・九本"
+  },
+  {
+    "source": "常用量詞與位置",
+    "en": "Common counters and their position",
+    "ja": "よく使う助数詞と位置"
+  },
+  {
+    "source": "量詞",
+    "en": "Counter",
+    "ja": "助数詞"
+  },
+  {
+    "source": "用途",
+    "en": "Use",
+    "ja": "用途"
+  },
+  {
+    "source": "例",
+    "en": "Example",
+    "ja": "例"
+  },
+  {
+    "source": "人",
+    "en": "人",
+    "ja": "人"
+  },
+  {
+    "source": "人數",
+    "en": "Number of people",
+    "ja": "人数"
+  },
+  {
+    "source": "枚",
+    "en": "枚",
+    "ja": "枚"
+  },
+  {
+    "source": "薄平物",
+    "en": "Thin, flat things",
+    "ja": "薄く平たい物"
+  },
+  {
+    "source": "細長物",
+    "en": "Long, thin things",
+    "ja": "細長い物"
+  },
+  {
+    "source": "冊",
+    "en": "冊",
+    "ja": "冊"
+  },
+  {
+    "source": "書本",
+    "en": "Books",
+    "ja": "書籍"
+  },
+  {
+    "source": "一般物品",
+    "en": "General objects",
+    "ja": "一般的な物"
+  },
+  {
+    "source": "回",
+    "en": "回",
+    "ja": "回"
+  },
+  {
+    "source": "次數",
+    "en": "Number of times",
+    "ja": "回数"
+  },
+  {
+    "source": "時間",
+    "en": "時間",
+    "ja": "時間"
+  },
+  {
+    "source": "時長",
+    "en": "Duration",
+    "ja": "時間の長さ"
+  },
+  {
+    "source": "日間／週間／年間",
+    "en": "日間／週間／年間",
+    "ja": "日間／週間／年間"
+  },
+  {
+    "source": "期間",
+    "en": "Period",
+    "ja": "期間"
+  },
+  {
+    "source": "三日間／一週間／三年間",
+    "en": "三日間／一週間／三年間",
+    "ja": "三日間／一週間／三年間"
+  },
+  {
+    "source": "易錯點",
+    "en": "Common trap",
+    "ja": "間違えやすい点"
+  },
+  {
+    "source": "易錯點 · RISK C",
+    "en": "Common trap · RISK C",
+    "ja": "間違えやすい点 · RISK C"
+  },
+  {
+    "source": "二時間を勉強します不成立",
+    "en": " 二時間を勉強します is incorrect",
+    "ja": "「二時間を勉強します」は成り立たない"
+  },
+  {
+    "source": "時長數量詞通常直接修飾動詞：二時間勉強します。",
+    "en": "Duration quantifiers usually modify the verb directly: 二時間勉強します.",
+    "ja": "時間の長さを表す数量詞は、ふつう直接動詞を修飾します：二時間勉強します。"
+  },
+  {
+    "source": "寫法",
+    "en": "Written form",
+    "ja": "表記"
+  },
+  {
+    "source": "讀法",
+    "en": "Reading",
+    "ja": "読み方"
+  },
+  {
+    "source": "單獨「年」與年數／年份等；須看詞組",
+    "en": "“年” on its own vs. numbers of years, specific years, etc.; look at the whole word",
+    "ja": "単独の「年」と、年数や何年という年など。語全体で判断する"
+  },
+  {
+    "source": "月／月份／月數；例：月、四月、三か月",
+    "en": "月 on its own / month names / numbers of months; e.g. 月, 四月, 三か月",
+    "ja": "単独の月／月名／月数。例：月、四月、三か月"
+  },
+  {
+    "source": "日／日期／天數；有固定特殊讀法",
+    "en": "日 on its own / dates / numbers of days; has fixed special readings",
+    "ja": "単独の日／日付／日数。決まった特殊な読み方がある"
+  },
+  {
+    "source": "日期1號／一天、整天",
+    "en": "The date “the 1st” / one day, all day",
+    "ja": "日付の「1日」／1 日間、丸一日"
+  },
+  {
+    "source": "杯數",
+    "en": "Number of cups or glasses",
+    "ja": "杯数"
+  },
+  {
+    "source": "住宿晚數",
+    "en": "Number of nights’ stay",
+    "ja": "宿泊数"
+  },
+  {
+    "source": "兩天一夜〔本版組合示例〕",
+    "en": "Two days, one night [example combined for this edition]",
+    "ja": "二日間で一泊〔この版で組み合わせた例〕"
+  },
+  {
+    "source": "上表補錄自兩頁手寫筆記；「一泊二日」是依讀音組合的示例，不標成手寫筆記的原句。量詞還有其他讀法與詞彙例外，本表不聲稱涵蓋全部。",
+    "en": " The table above is added from two pages of handwritten notes; “一泊二日” is an example built by combining readings and is not marked as a sentence from the handwritten notes. Counters have other readings and lexical exceptions too, and this table does not claim to cover them all.",
+    "ja": "上の表は 2 ページ分の手書きノートから補ったものです。「一泊二日」は読み方を組み合わせた例で、手書きノートの原文としては示していません。助数詞にはほかの読み方や語ごとの例外もあり、この表がすべてを網羅しているわけではありません。"
+  },
+  {
+    "source": "原手冊頁：P38、P39、P75、P95",
+    "en": "Source handbook pages: P38, P39, P75, P95",
+    "ja": "元の冊子のページ：P38、P39、P75、P95"
+  },
+  {
+    "source": "時間點、期間、頻率與截止",
+    "en": "Points in time, periods, frequency and deadlines",
+    "ja": "時点・期間・頻度・締め切り"
+  },
+  {
+    "source": "上一篇與下一篇",
+    "en": "Previous and next parts",
+    "ja": "前の回と次の回"
+  },
+  {
+    "source": "← 上一篇：5 互動與表達",
+    "en": "← Previous: 5 Interaction",
+    "ja": "← 前の回：5 やりとりと表現"
+  },
+  {
+    "source": "下一篇：7 總複習 →",
+    "en": "Next: 7 Review →",
+    "ja": "次の回：7 総復習 →"
+  }
+]

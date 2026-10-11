@@ -1,0 +1,970 @@
+/*
+ * Study notes in the Japan, Health and Other collections: reviewed static
+ * fragments with tables, Japanese examples, inline SVG and the note's own
+ * photos. Every colour is a token role; status colours mark real warnings only.
+ */
+.study-note {
+  max-width: calc(1100px + var(--line-gutter) + 2 * var(--gutter));
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-8);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.85;
+  overflow-wrap: break-word;
+}
+.study-note article,
+.study-note section {
+  min-width: 0;
+}
+.study-note p {
+  margin: 0 0 var(--space-4);
+}
+.study-note :is(b, strong) {
+  font-weight: 650;
+}
+.study-note :is(h1, h2, h3, h4) {
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.study-note h1 {
+  margin: var(--space-3) 0 var(--space-4);
+  font-size: clamp(24px, 2.8vw, 34px);
+}
+.study-note h2 {
+  margin: var(--space-8) 0 var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-decorative);
+  font-size: 23px;
+}
+.study-note h3 {
+  margin: var(--space-6) 0 var(--space-3);
+  font-size: 18px;
+}
+.study-note h4 {
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: 16px;
+}
+.study-note [id] {
+  scroll-margin-top: calc(var(--header-height) + var(--space-5));
+  scroll-margin-bottom: calc(var(--footer-height) + var(--space-4));
+}
+.study-note a {
+  color: var(--color-link);
+  text-underline-offset: 4px;
+}
+.study-note a:hover {
+  color: var(--color-action-hover);
+}
+.study-note ul,
+.study-note ol {
+  margin: var(--space-3) 0 var(--space-4);
+  padding-left: var(--space-5);
+}
+.study-note ul {
+  list-style: disc;
+}
+.study-note ol {
+  list-style: decimal;
+}
+.study-note li {
+  margin: var(--space-2) 0;
+}
+/* Japanese passages keep Japanese glyph forms inside Chinese and English pages.
+   Set on the element that carries lang, not on every :lang(ja) descendant, so
+   code-font parts such as window titles and kickers keep their font. */
+.study-note [lang|='ja'] {
+  font-family: var(--font-sans-ja);
+}
+.study-note .sn-small,
+.study-note .sn-caption {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.study-note :is(.sn-source, .sn-cite) {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-cite a {
+  text-decoration: none;
+}
+.study-note .sn-cite a:hover {
+  text-decoration: underline;
+}
+
+/* Head: comment-style kicker, lead, real counts and scope chips. */
+.study-note .sn-kicker {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  letter-spacing: 0.035em;
+}
+.study-note .sn-lead {
+  max-width: 82ch;
+  color: var(--color-text-secondary);
+  font-size: 17px;
+}
+.study-note .sn-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-stats li {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+.study-note .sn-stats b {
+  display: block;
+  color: var(--color-entity-file);
+  font-size: 22px;
+  line-height: 1.35;
+}
+.study-note .sn-stats span {
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.study-note .sn-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-chips li {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-chips li::before {
+  content: '· ';
+  content: '· ' / '';
+  color: var(--color-syntax-marker);
+}
+.study-note :is(.sn-toc, .sn-series) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-4);
+  margin: var(--space-5) 0;
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--color-border-decorative);
+  font-family: var(--font-code);
+  font-size: 13px;
+}
+/* Inline flow, not flex: a link's text and the Japanese spans inside it keep
+   the spaces between them. Padding keeps the 36px target. */
+.study-note :is(.sn-toc, .sn-series) a {
+  display: inline-block;
+  padding-block: 8px;
+  line-height: 20px;
+  text-decoration: none;
+}
+.study-note :is(.sn-toc, .sn-series) a:hover {
+  text-decoration: underline;
+}
+/* The series index marks the open note like the current buffer. */
+.study-note .sn-series {
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-series li {
+  margin: 0;
+}
+.study-note .sn-series a[aria-current='page'] {
+  padding-inline: var(--space-2);
+  box-shadow: inset 2px 0 0 var(--color-action-primary);
+  background: var(--color-surface-selected);
+  color: var(--color-text);
+}
+.study-note .sn-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-right: 0.45em;
+  vertical-align: -0.12em;
+}
+.study-note h2 .sn-icon {
+  color: var(--color-link);
+}
+.study-note .sn-section-kicker {
+  margin: var(--space-8) 0 calc(-1 * var(--space-4));
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+
+/* Callouts: info for scope and study notes; warning only for real warnings. */
+.study-note .sn-callout {
+  margin: var(--space-5) 0;
+  padding: var(--space-4) var(--space-5);
+  border-left: 3px solid var(--color-status-info);
+  background: var(--color-surface);
+}
+/* As in the medical notes: the warning colour marks the border and title only. */
+.study-note .sn-callout[data-status='warning'] {
+  border-left-color: var(--color-status-warning);
+  color: var(--color-text);
+}
+.study-note .sn-callout[data-status='warning'] .sn-callout-title {
+  color: var(--color-status-warning);
+}
+.study-note .sn-callout-title {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+/* A callout's kind (trap, core, compare…) is a type label, as in front matter. */
+/* The markup puts a real space after each label, so screen readers and copied
+   text keep the words apart; the margin only tops the gap up. */
+.study-note .sn-kind {
+  margin-right: var(--space-1);
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+.study-note :is(.sn-callout, .sn-card, .sn-tool, .sn-analysis) > :last-child {
+  margin-bottom: 0;
+}
+.study-note .sn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.study-note .sn-card {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+.study-note .sn-card h3 {
+  margin-top: 0;
+}
+.study-note .sn-card-kicker {
+  margin: 0 0 var(--space-1);
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-flow,
+.study-note .sn-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note :is(.sn-flow, .sn-steps) li {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.study-note :is(.sn-flow, .sn-steps) b {
+  display: block;
+  color: var(--color-text);
+  font-size: 15px;
+}
+.study-note .sn-flow li:not(:last-child) b::after {
+  content: ' →';
+  content: ' →' / '';
+  color: var(--color-link);
+  font-weight: 400;
+}
+.study-note .sn-steps {
+  counter-reset: sn-step;
+}
+.study-note .sn-steps li {
+  counter-increment: sn-step;
+}
+.study-note .sn-steps li::before {
+  content: counter(sn-step, decimal-leading-zero);
+  content: counter(sn-step, decimal-leading-zero) / '';
+  display: block;
+  color: var(--color-entity-file);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+
+/* Tables scroll inside their own focusable region, never the page. */
+.study-note .sn-table {
+  max-width: 100%;
+  margin: var(--space-5) 0 var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+}
+.study-note table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+.study-note .sn-table-wide table {
+  min-width: 720px;
+}
+.study-note .sn-table-narrow table {
+  min-width: 0;
+}
+.study-note caption {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-tab-inactive);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: left;
+}
+.study-note th,
+.study-note td {
+  padding: var(--space-2) var(--space-3);
+  border-block-start: 1px solid var(--color-border-decorative);
+  text-align: left;
+  vertical-align: top;
+}
+.study-note thead th {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 650;
+}
+.study-note tbody th {
+  font-weight: 600;
+}
+.study-note :is(th, td).num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.study-note td small,
+.study-note th small {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Japanese study components. */
+.study-note .sn-takeaway {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--color-entity-file);
+  color: var(--color-text);
+  font-size: 17px;
+}
+.study-note .sn-analysis {
+  margin: var(--space-4) 0 var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--edge-highlight);
+}
+.study-note .sn-analysis-label {
+  margin: 0 0 var(--space-2);
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-jp {
+  padding: 0 4px;
+  border-radius: var(--radius-chip);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.study-note .sn-example {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--color-border-strong);
+  background: var(--color-surface);
+}
+.study-note .sn-example > p {
+  margin: 0;
+}
+.study-note .sn-example > p[lang='ja'] {
+  color: var(--color-text);
+  font-size: 17px;
+}
+.study-note :is(.sn-gloss, .sn-example-note) {
+  color: var(--color-text-secondary);
+  font-size: 14.5px;
+}
+.study-note .sn-example-note {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+}
+/* The Japanese edition needs no Japanese gloss of a Japanese example. */
+.study-note > article[lang='ja'] .sn-gloss {
+  display: none;
+}
+.study-note .sn-model {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-model li {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+}
+.study-note .sn-model span {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-model b {
+  color: var(--color-entity-file);
+  font-size: 18px;
+}
+.study-note .sn-model small {
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+}
+.study-note .sn-diagram {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  overflow-x: auto;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-control);
+  background: var(--color-chrome);
+  font-size: 15px;
+  line-height: 1.9;
+}
+.study-note .sn-diagram p {
+  margin: 0;
+}
+.study-note .sn-related {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.study-note .sn-related::before {
+  content: '→ ';
+  content: '→ ' / '';
+  color: var(--color-syntax-marker);
+}
+.study-note .sn-pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-7) 0 var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+  font-family: var(--font-code);
+  font-size: 13px;
+}
+.study-note .sn-pager a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+}
+
+/* Photos sit in floating windows titled with their real file name and size. */
+.study-note .sn-photo {
+  margin: var(--space-5) 0 var(--space-6);
+  overflow: hidden;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-chrome);
+  box-shadow: var(--edge-highlight);
+}
+.study-note .sn-photo-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.study-note .sn-photo-head h3,
+.study-note .sn-photo-head h4 {
+  margin: 0;
+  font-size: 16px;
+}
+.study-note .sn-exif {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-frame {
+  position: relative;
+}
+.study-note .sn-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* Guides are drawn over the photo; each shape has a dark casing for contrast. */
+.study-note .sn-guides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.study-note .sn-guides[hidden] {
+  display: none;
+}
+.study-note .sn-guides :is(path, ellipse, rect, circle, line) {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.study-note .sn-guides .sn-case {
+  stroke: var(--color-chrome);
+  stroke-width: 5;
+}
+.study-note .sn-guides .sn-thirds-line {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 6;
+}
+.study-note .sn-guides .sn-lead-line {
+  stroke: var(--color-link);
+  stroke-width: 3;
+  stroke-dasharray: 10 7;
+  stroke-linecap: round;
+}
+.study-note .sn-guides .sn-keep {
+  stroke: var(--color-entity-file);
+  stroke-width: 3;
+}
+.study-note .sn-guides .sn-check {
+  stroke: var(--color-entity-kind);
+  stroke-width: 3;
+  stroke-dasharray: 8 5;
+}
+.study-note .sn-guides .sn-pin {
+  fill: var(--color-chrome);
+  stroke-width: 2.5;
+}
+.study-note .sn-guides .sn-pin-keep {
+  stroke: var(--color-entity-file);
+}
+.study-note .sn-guides .sn-pin-check {
+  stroke: var(--color-entity-kind);
+}
+.study-note .sn-guides text {
+  fill: var(--color-text);
+  font-family: var(--font-code);
+  font-size: 34px;
+  font-weight: 650;
+  text-anchor: middle;
+}
+.study-note article[data-hide-thirds] .sn-thirds,
+.study-note article[data-hide-marks] .sn-marks {
+  display: none;
+}
+.study-note .sn-photo figcaption {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+.study-note .sn-photo figcaption > :last-child {
+  margin-bottom: 0;
+}
+.study-note .sn-photo-notes {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-photo-notes li {
+  margin: var(--space-1) 0;
+}
+/* GPT composition atlas: generated illustrations share the photo window; the
+   title bar names them as generated, and their notes form a definition list. */
+.study-note .sn-atlas .sn-photo-head p {
+  margin: 2px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.study-note .sn-atlas .sn-photo-head .sn-atlas-kicker {
+  margin: 0 0 2px;
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-atlas-notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+}
+.study-note .sn-atlas-notes dt {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.study-note .sn-atlas-notes dd {
+  margin: 2px 0 0;
+}
+.study-note .sn-atlas-back {
+  margin: var(--space-3) 0 0;
+  font-size: 13.5px;
+}
+.study-note .sn-atlas-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: var(--space-5) 0;
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--color-border-decorative);
+  font-size: 14px;
+}
+.study-note .sn-atlas-group {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.study-note .sn-atlas-index ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-atlas-index li {
+  margin: 0;
+}
+/* Inline flow keeps the spaces around Japanese spans; padding keeps the target. */
+.study-note .sn-atlas-index a {
+  display: inline-block;
+  padding-block: 4px;
+}
+.study-note .sn-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.study-note .sn-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+.study-note .sn-legend svg {
+  flex: none;
+}
+.study-note .sn-legend :is(path, ellipse, line) {
+  fill: none;
+}
+.study-note .sn-legend .sn-legend-thirds {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+.study-note .sn-legend .sn-legend-lead {
+  stroke: var(--color-link);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
+.study-note .sn-legend .sn-legend-keep {
+  stroke: var(--color-entity-file);
+  stroke-width: 2;
+}
+.study-note .sn-legend .sn-legend-check {
+  stroke: var(--color-entity-kind);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+.study-note .sn-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.study-note .sn-pair .sn-photo {
+  margin: 0;
+}
+.study-note .sn-cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-cases > li {
+  margin: 0;
+}
+/* The photo index: small floating windows, filterable without losing content. */
+.study-note .sn-archive {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-archive > li {
+  margin: 0;
+}
+.study-note .sn-archive > li[hidden] {
+  display: none;
+}
+.study-note .sn-archive figure {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+}
+.study-note .sn-archive img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: var(--color-chrome);
+}
+.study-note .sn-archive figcaption {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.study-note .sn-archive figcaption b {
+  color: var(--color-text);
+  font-size: 14px;
+}
+.study-note .sn-grade {
+  justify-self: start;
+  padding: 0 6px;
+  border-radius: var(--radius-chip);
+  background: color-mix(
+    in srgb,
+    var(--color-entity-kind) 12%,
+    var(--color-surface)
+  );
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 11.5px;
+}
+.study-note .sn-file {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
+}
+
+/* Local tools: real controls, shown only where JavaScript can run them. */
+.study-note .sn-tool {
+  margin: var(--space-5) 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.study-note .sn-tool h3 {
+  margin-top: 0;
+}
+.study-note .sn-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-3);
+}
+.study-note .sn-controls label {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.study-note .sn-controls label.sn-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.study-note .sn-controls select {
+  min-height: 36px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-chrome);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.study-note input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-action-primary);
+}
+.study-note .sn-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+}
+.study-note .sn-results div {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+}
+.study-note .sn-results span {
+  display: block;
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-results output {
+  color: var(--color-entity-file);
+  font-family: var(--font-code);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.study-note .sn-guide-toggle[aria-pressed='true'] {
+  box-shadow: inset 0 -2px 0 var(--color-action-primary);
+  background: var(--color-surface-selected);
+  color: var(--color-text);
+}
+.study-note .sn-status {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+/* Checklists are real checkboxes that keep no state beyond the open page. */
+.study-note .sn-checklist {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-checklist li {
+  margin: 0;
+}
+.study-note .sn-checklist label {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+  cursor: pointer;
+}
+.study-note .sn-checklist input {
+  margin-top: 5px;
+}
+
+/* Folds keep long reference tables available without crowding the path. */
+.study-note .fold {
+  margin: var(--space-3) 0;
+}
+.study-note .fold > summary {
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+/* Sources: stable ids for every citation in the text. */
+.study-note .sn-sources {
+  display: grid;
+  margin: var(--space-4) 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+.study-note .sn-sources li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.study-note .sn-sid {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  line-height: 1.85;
+}
+.study-note .sn-sources small {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+}
+.study-note .content-tags {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+.study-note .content-tags li {
+  margin: 0;
+}
+.study-note
+  :is(a, summary, button, input, select, [tabindex='0']):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  .study-note {
+    padding-top: var(--space-4);
+  }
+  .study-note h2 {
+    margin-top: var(--space-7);
+    font-size: 21px;
+  }
+  .study-note :is(.sn-callout, .sn-tool, .sn-analysis) {
+    padding: var(--space-4);
+  }
+  .study-note .sn-section-kicker {
+    margin-top: var(--space-7);
+  }
+}
+@media (forced-colors: active) {
+  .study-note .sn-guides :is(path, ellipse, rect, circle, line) {
+    stroke: CanvasText;
+  }
+  .study-note .sn-guides text {
+    fill: CanvasText;
+  }
+}

@@ -10,6 +10,7 @@ import {
   isIndexable,
   listPosts,
   loadArticle,
+  loadCollectionNote,
   loadHardwareNote,
   loadMedicalNote,
   loadNetworkNote,
@@ -51,6 +52,13 @@ import {
   hardwareCopy,
   hardwareNotes,
 } from '../lib/hardware-notes.ts';
+import {
+  categoryCopy,
+  collectionCopy,
+  collectionEntries,
+  collectionNoteMeta,
+  collectionNoteSummaries,
+} from '../lib/note-collections.server.ts';
 import { NotFound } from '../features/misc/NotFound.tsx';
 import { Projects } from '../features/projects/Projects.tsx';
 import { loadProjectPageModule } from '../features/projects/project-page-module.ts';
@@ -73,12 +81,15 @@ function ProjectPageChunk(
 }
 
 function NotePageChunk(props: {
-  kind: 'hardware-note' | 'network-note';
+  kind: 'hardware-note' | 'network-note' | 'collection-note';
   html: string;
   locale: Locale;
 }) {
-  const { HardwareNote, NetworkNote } = use(loadNotePageModule());
-  return props.kind === 'hardware-note' ? (
+  const { CollectionNote, HardwareNote, NetworkNote } =
+    use(loadNotePageModule());
+  return props.kind === 'collection-note' ? (
+    <CollectionNote html={props.html} locale={props.locale} />
+  ) : props.kind === 'hardware-note' ? (
     <HardwareNote html={props.html} locale={props.locale} />
   ) : (
     <NetworkNote html={props.html} locale={props.locale} />
@@ -261,6 +272,24 @@ function loadView(route: RouteDescriptor) {
       return { kind: route.kind, category: route.category };
     case 'hardware-category':
       return { kind: route.kind, category: route.category };
+    case 'note-collection':
+      return {
+        kind: route.kind,
+        collection: route.collection,
+        summaries: collectionNoteSummaries(route.collection, locale),
+      };
+    case 'note-category':
+      return {
+        kind: route.kind,
+        collection: route.collection,
+        category: route.category,
+      };
+    case 'collection-note':
+      return {
+        kind: 'collection-note' as const,
+        noteId: route.noteId,
+        html: loadCollectionNote(route.noteId, locale),
+      };
     case 'network-note':
       return {
         kind: 'network-note' as const,
@@ -408,6 +437,25 @@ function describe(view: ViewData, locale: Locale) {
         title: withSite(hardwareNotes[view.noteId].title[locale]),
         description: hardwareNotes[view.noteId].description[locale],
       };
+    case 'note-collection':
+      return {
+        title: withSite(collectionCopy[view.collection].title[locale]),
+        description: collectionCopy[view.collection].intro[locale],
+      };
+    case 'note-category':
+      return {
+        title: withSite(
+          categoryCopy[view.category].title[locale] +
+            ' · ' +
+            collectionCopy[view.collection].title[locale],
+        ),
+        description: categoryCopy[view.category].intro[locale],
+      };
+    case 'collection-note':
+      return {
+        title: withSite(collectionNoteMeta[view.noteId].title[locale]),
+        description: collectionNoteMeta[view.noteId].description[locale],
+      };
     case 'projects':
       return {
         title: withSite(projectsCopy[locale].title),
@@ -458,6 +506,7 @@ export function loader({ params }: LoaderFunctionArgs) {
   // The explorer lists the real files of this workspace on every page.
   const workspace = {
     posts: listPosts(locale).map(({ slug, title }) => ({ slug, title })),
+    collections: collectionEntries(locale),
   };
   return {
     route,
@@ -611,27 +660,48 @@ function View({ data }: { data: PageData }) {
     case 'article':
       return <Article view={view} locale={locale} />;
     case 'notes':
-      return <Notes locale={locale} view={{ collection: 'all' }} />;
     case 'medical':
-      return <Notes locale={locale} view={{ collection: 'medical' }} />;
-    case 'medical-category':
+    case 'hardware':
       return (
         <Notes
           locale={locale}
-          view={{ collection: 'medical', category: view.category }}
+          view={{ collection: view.kind === 'notes' ? 'all' : view.kind }}
+          collections={data.workspace.collections}
         />
       );
-    case 'hardware':
-      return <Notes locale={locale} view={{ collection: 'hardware' }} />;
+    case 'medical-category':
     case 'hardware-category':
       return (
         <Notes
           locale={locale}
-          view={{ collection: 'hardware', category: view.category }}
+          view={
+            view.kind === 'medical-category'
+              ? { collection: 'medical', category: view.category }
+              : { collection: 'hardware', category: view.category }
+          }
+          collections={data.workspace.collections}
+        />
+      );
+    case 'note-collection':
+      return (
+        <Notes
+          locale={locale}
+          view={{ collection: view.collection }}
+          collections={data.workspace.collections}
+          summaries={view.summaries}
+        />
+      );
+    case 'note-category':
+      return (
+        <Notes
+          locale={locale}
+          view={{ collection: view.collection, category: view.category }}
+          collections={data.workspace.collections}
         />
       );
     case 'hardware-note':
     case 'network-note':
+    case 'collection-note':
       return (
         <Suspense fallback={null}>
           <NotePageChunk kind={view.kind} html={view.html} locale={locale} />

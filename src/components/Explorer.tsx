@@ -22,6 +22,7 @@ import {
   hardwareNotePath,
 } from '../lib/hardware-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
+import type { CollectionNoteLink } from '../lib/note-collections.ts';
 import {
   projectCategories,
   projectCategoryCopy,
@@ -320,6 +321,57 @@ export function Explorer({
                 ))}
               </TreeFolder>
             </li>
+            {files.collections.map((collection) => {
+              const note = (entry: CollectionNoteLink) => (
+                <li key={entry.id}>
+                  <TreeLink
+                    href={entry.href}
+                    kind="markdown"
+                    name={`${entry.id}.md`}
+                    note={{ text: entry.title, visible: false }}
+                    current={page(
+                      route.kind === 'collection-note' &&
+                        route.noteId === entry.id,
+                    )}
+                    onNavigate={onNavigate}
+                  />
+                </li>
+              );
+              return (
+                <li key={collection.id}>
+                  <TreeFolder
+                    locale={locale}
+                    href={collection.href}
+                    name={collection.title}
+                    note={{ text: collection.title, visible: false }}
+                    current={page(
+                      route.kind === 'note-collection' &&
+                        route.collection === collection.id,
+                    )}
+                    onNavigate={onNavigate}
+                  >
+                    {collection.categories.map((category) => (
+                      <li key={category.id}>
+                        <TreeFolder
+                          locale={locale}
+                          href={category.href}
+                          name={category.title}
+                          note={{ text: category.intro, visible: false }}
+                          current={page(
+                            route.kind === 'note-category' &&
+                              route.category === category.id,
+                          )}
+                          onNavigate={onNavigate}
+                        >
+                          {category.notes.map(note)}
+                        </TreeFolder>
+                      </li>
+                    ))}
+                    {collection.notes.map(note)}
+                  </TreeFolder>
+                </li>
+              );
+            })}
           </TreeFolder>
         </li>
         <li>

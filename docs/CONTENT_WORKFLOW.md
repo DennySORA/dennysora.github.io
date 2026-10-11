@@ -55,9 +55,17 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 - 電腦：`/zh-hant/note/hardware/computer/140mm-case-fans/`，原文位於 `content/notes/hardware/computer/140mm-case-fans.html`。內容是由研究報告重整的 140 mm 風扇評估與前 10 推薦，並在 2026-10-10 逐項回查來源；正文的「核對紀錄」列出與原報告的差異。
 
-五篇筆記均提供繁體中文、英文、日文全文，路徑使用 `/{locale}/note/…`；目錄、Explorer、標題摘要、標籤、互動結果及搜尋皆依目前語言呈現。中文 HTML 仍是結構與資料的來源；[`content/notes/translations/`](../content/notes/translations/) 每篇 JSON 逐段保存 `source`、`en`、`ja`，包含正文、表格、SVG 文字、無障礙標籤、程式註解及契約附錄中的說明文字。程式識別字、數值、連結、DOM ID 與 `data-*` 不隨翻譯改寫。截圖保留真實畫面，不假造已本地化的軟體。
+全部十四篇筆記均提供繁體中文、英文、日文全文，路徑使用 `/{locale}/note/…`；目錄、Explorer、標題摘要、標籤、互動結果及搜尋皆依目前語言呈現。中文 HTML 仍是結構與資料的來源；[`content/notes/translations/`](../content/notes/translations/) 每篇 JSON 逐段保存 `source`、`en`、`ja`，包含正文、表格、SVG 文字、無障礙標籤、程式註解及契約附錄中的說明文字。程式識別字、數值、連結、DOM ID 與 `data-*` 不隨翻譯改寫。截圖保留真實畫面，不假造已本地化的軟體。
 
 [`note-translations.ts`](../src/lib/note-translations.ts) 在建置時只替換文字並進行 HTML 跳脫；缺漏、空值、重複或不再對應原文的譯文會讓 `content:check` 失敗，不靜默回退中文。新增或修改中文段落時，必須同步維護英日對照；原稿已有的英文節標、圖表標籤與說明也明確列入對照，`en` 保留原文、`ja` 翻譯，新增英文說明時同樣需要人工盤點；`pre` 區塊依行比對，保留縮排與非翻譯程式內容。所有原有章節錨點和來源 URL 都保持一致。翻譯不代表重新執行實驗、刷新價格或取得人工專業審查；醫學筆記保留教育用途聲明、適應症與劑量條件、可核對來源、統計範圍及推論限制。
+
+日本、健康與其他三個集合（2026-10-12 新增）共用一份契約：[`note-collections.ts`](../src/lib/note-collections.ts) 只放 ID、分類與路徑，[`note-collections.server.ts`](../src/lib/note-collections.server.ts) 放三語標題、介紹、摘要、標籤與原文路徑。文字只以目前語言的 loader 資料送到頁面，不進入每一頁的 JavaScript bundle；首頁初始 JS 有 150 KiB gzip 上限。集合可以有分類資料夾（日本／日語、其他／拍攝技巧），也可以像健康一樣直接放筆記。新增筆記時：在兩個檔案登記 ID 與文字、把片段放在 `content/notes/<集合>/<分類>/<id>.html`（無分類時省略分類層），再依下方規則建立對照檔。
+
+- 日語：`/{locale}/note/japan/japanese/<id>/`，七篇依原手冊的分組串成系列（`japanese-structure` 到 `japanese-review`）。由 43 個主題的學習手冊重編；原手冊的個人測驗分數、手寫筆記照片、原頁影像與舊版全文都沒有公開，來源頁碼保留在第 7 篇的對照表。系列之間的連結一律用相對路徑（`../japanese-clauses/#nominal`），三種語言版本才會各自連到同語言的頁面。
+- 健康：`/{locale}/note/health/lumbar-spine-care/`。原稿中的個人症狀改寫為一般情境；2026-10-12 逐項回查 9 個來源，就醫警訊依 NHS 分成急診、當天就醫與門診三級，沒有來源支持的建議明確標為原稿的補充。
+- 拍攝技巧：`/{locale}/note/other/photography/landscape-photography/`。照片是作者本人的實拍，放在 `assets/notes/landscape-photography/`，沿用原稿內嵌的位元組、不重新壓縮；只有筆記實際引用的檔案才會在建置時複製，單元測試確認每張圖的宣告尺寸與檔案一致、資料夾內沒有未引用的檔案。疊圖依每張照片的實際比例重畫，只用 token class 上色。04A 章另有 21 張 GPT 生成的構圖示意圖（其中 5 張由作者提供），也放在同一個資料夾，檔名以 `gpt-` 開頭、沿用原稿的位元組；每張圖在視窗標題列寫「GPT 生成」、替代文字以生成來源開頭，章首說明它們不是實拍，圖中的地點、人物、招牌與相機參數都不是真實資料。圖上的中文標註是圖片的一部分，三種語言都一樣，圖下的文字負責說明。這些是筆記內容，不是 DESIGN §7 的站內插圖，不套用插圖風格與 Codex 生成流程；單元測試確認每張生成圖都有標示、實拍照片都沒有。
+
+這三個集合的片段可以有 `<img>`，但 `src` 必須是 `/assets/notes/<id>/` 下的同源檔案，並且附 `width`、`height` 與非空的 `alt`；其他 `src`、`srcset`、`style`、script 與事件屬性一律會讓 `content:check` 失敗。標上 `lang="ja"` 的元素是日文本身（例句、文法形式、讀音），對照工具在每個版本都逐字保留，不需要也不會產生對照條目；英日譯文只處理周圍的中文。因此這類元素裡不能放中文標籤、中文釋義或中文占位詞（例如「外層：」「／離開家」「傳聞：」），它們要放在元素外面，才會進入對照並被翻譯；帶編號的標題（`34｜について／…`）也不整個標成日文，英文版統一寫成 `34 | …`。句子裡沒有標記的日文，由 `markJapanese` 在輸出中文版與英文版時補上 `lang="ja"`：英文版沒有中文，所有假名與漢字段落都是日文；中文版和日文共用漢字，因此依該句英文譯文逐字保留的日文來劃界，再補標剩下的假名（例如「た形」的「た」）。日文版整頁已是日文，不另外標記。單元測試確認中文版與英文版沒有未標記的假名，讓讀屏軟體與字型都能切換成日文（WCAG 3.1.2）。例句的中文釋義用 `sn-gloss`，日文版以樣式隱藏，因為例句本身就是日文；對照檔仍需提供有意義的日文值。
 
 硬體筆記的圖表是內嵌 SVG，只用 `src/styles/hardware-notes.css` 的 class 取 token 色，不寫 `style`、字面色碼或 script；每張圖都要有可展開或並列的資料表。載入器拒絕 script、style、img、`src`／`style` 屬性等標記。互動工具（型號篩選、工作點滑桿、數量試算）由 `src/features/notes/hardware-note-tools.ts` 在本機重算，靜態 HTML 先寫好預設結果，沒有 JavaScript 時仍可讀；工具用到的報價放在 `data-*` 屬性，改價格時只改內容檔。性能數字分平台標示（Cybenetics、Tweakers、HWCooling 不混用絕對值），價格與庫存註明觀測日。
 

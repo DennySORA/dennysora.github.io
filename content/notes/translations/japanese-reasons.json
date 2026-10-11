@@ -1,0 +1,1467 @@
+[
+  {
+    "source": "// 日語 · 第 4 篇，共 7 篇 · 原稿 2026-10-10 · 本站重整與核對 2026-10-12",
+    "en": "// Japanese · Part 4 of 7 · original 2026-10-10 · rewritten and checked on this site 2026-10-12",
+    "ja": "// 日本語 · 第 4 回（全 7 回） · 原稿 2026-10-10 · 本サイトで再編・確認 2026-10-12"
+  },
+  {
+    "source": "日語筆記 4｜理由、意圖與資訊來源：んです、から、つもり、そう",
+    "en": "Japanese notes 4 | Reasons, intent, and information sources: んです, から, つもり, そう",
+    "ja": "日本語ノート 4｜理由、意図、情報源：んです、から、つもり、そう"
+  },
+  {
+    "source": "同樣譯成「因為」「好像」「打算」，日文會依語氣、資訊來源與決定者選擇不同的形式。這一篇整理理由、逆接、列舉、わけ、引用、計畫與推測。",
+    "en": "Even when they all come out as “because,” “seems,” or “plan to” in translation, Japanese chooses different forms depending on tone, the source of information, and who makes the decision. This note covers reasons, contrast, listing, わけ, quotation, plans, and inference.",
+    "ja": "訳すと同じ「理由」「推測」「予定」に見える表現でも、日本語では語気、情報源、決定者によって異なる形を選びます。このノートでは、理由、逆接、列挙、「わけ」、引用、予定、推測を整理します。"
+  },
+  {
+    "source": "初級課程 L1–L21 與後續課堂筆記",
+    "en": "Beginner course L1–L21 and later class notes",
+    "ja": "初級コース L1–L21 とその後の授業ノート"
+  },
+  {
+    "source": "原筆記、編輯解析與校訂分開標示",
+    "en": "Original notes, editor’s analysis, and revisions are labeled separately",
+    "ja": "元のノート・編集者の解説・校訂を分けて表示"
+  },
+  {
+    "source": "日文例句在三種語言版本中保持原文",
+    "en": "Japanese example sentences stay in the original in all three language editions",
+    "ja": "日本語の例文は三言語版すべてで原文のまま"
+  },
+  {
+    "source": "日語筆記系列",
+    "en": "Japanese notes series",
+    "ja": "日本語ノートシリーズ"
+  },
+  {
+    "source": "1 句子結構",
+    "en": "1 Sentence structure",
+    "ja": "1 文の構造"
+  },
+  {
+    "source": "2 活用與接續",
+    "en": "2 Conjugation",
+    "ja": "2 活用と接続"
+  },
+  {
+    "source": "3 時間與從句",
+    "en": "3 Time and clauses",
+    "ja": "3 時間と節"
+  },
+  {
+    "source": "4 理由與意圖",
+    "en": "4 Reasons and intent",
+    "ja": "4 理由と意図"
+  },
+  {
+    "source": "5 互動與表達",
+    "en": "5 Interaction",
+    "ja": "5 やりとりと表現"
+  },
+  {
+    "source": "6 詞彙與讀音",
+    "en": "6 Vocabulary",
+    "ja": "6 語彙と読み方"
+  },
+  {
+    "source": "7 總複習",
+    "en": "7 Review",
+    "ja": "7 総復習"
+  },
+  {
+    "source": "本篇主題",
+    "en": "Topics in this note",
+    "ja": "このノートのトピック"
+  },
+  {
+    "source": "20｜んです／のです：把事實放進背景",
+    "en": "20 | んです／のです: putting a fact in the background",
+    "ja": "20｜んです／のです：事実を背景として示す"
+  },
+  {
+    "source": "21｜から／ので／ため：理由、語體與語氣",
+    "en": "21 | から／ので／ため: reasons, style, and tone",
+    "ja": "21｜から／ので／ため：理由、文体、ニュアンス"
+  },
+  {
+    "source": "23｜たり／し／と／や／とか：列舉的對象不同",
+    "en": "23 | たり／し／と／や／とか: each lists something different",
+    "ja": "23｜たり／し／と／や／とか：列挙する対象の違い"
+  },
+  {
+    "source": "24｜わけ系列：推論、否定範圍與責任",
+    "en": "24 | The わけ family: inference, scope of negation, and responsibility",
+    "ja": "24｜わけの系列：推論、否定の範囲、責任"
+  },
+  {
+    "source": "25｜と思う／と言う／ように言う",
+    "en": "25 | と思う／と言う／ように言う",
+    "ja": "25｜と思う／と言う／ように言う"
+  },
+  {
+    "source": "26｜予定／つもり／ことにする／ことになる",
+    "en": "26 | 予定／つもり／ことにする／ことになる",
+    "ja": "26｜予定／つもり／ことにする／ことになる"
+  },
+  {
+    "source": "27｜かもしれない／でしょう／はず／に違いない",
+    "en": "27 | かもしれない／でしょう／はず／に違いない",
+    "ja": "27｜かもしれない／でしょう／はず／に違いない"
+  },
+  {
+    "source": "28｜そう／らしい／によると：訊息來源要分明",
+    "en": "28 | そう／らしい／によると: be clear about the source of information",
+    "ja": "28｜そう／らしい／によると：情報源をはっきりさせる"
+  },
+  {
+    "source": "// 20 · 理由與表達",
+    "en": "// 20 · Reasons and expression",
+    "ja": "// 20 · 理由と表現"
+  },
+  {
+    "source": "不是把所有です換成んです；它是在補足、詢問或解釋一個情境。",
+    "en": "It’s not about swapping every です for んです; んです fills in, asks about, or explains a situation.",
+    "ja": "すべての「です」を「んです」に置き換えるわけではありません。「んです」は状況を補足したり、尋ねたり、説明したりする表現です。"
+  },
+  {
+    "source": "編輯解析",
+    "en": "Editor’s analysis",
+    "ja": "編集者の解説"
+  },
+  {
+    "source": "報告狀況；",
+    "en": "reports a situation; ",
+    "ja": "は状況の報告、"
+  },
+  {
+    "source": "把發燒當成要說明的背景，例如解釋為什麼不舒服或請假。",
+    "en": "treats the fever as background that needs explaining, for example why you feel unwell or are taking time off. ",
+    "ja": "は発熱を説明すべき背景として示します。たとえば、具合が悪い理由や休む理由を説明するときです。"
+  },
+  {
+    "source": "則要求對方說明已察覺的異常。",
+    "en": "asks the other person to explain something unusual you’ve noticed.",
+    "ja": "は、気づいた異変について相手に説明を求めます。"
+  },
+  {
+    "source": "名詞與な形容詞的非過去肯定是",
+    "en": "For nouns and na-adjectives, the non-past affirmative is",
+    "ja": "名詞・な形容詞の非過去肯定は"
+  },
+  {
+    "source": "。過去與否定則保留相應普通形：",
+    "en": ". In the past and the negative, the corresponding plain form stays: ",
+    "ja": "。過去と否定では、対応する普通形をそのまま使います："
+  },
+  {
+    "source": "早期聊天把",
+    "en": "An early chat once listed",
+    "ja": "初期のチャットでは"
+  },
+  {
+    "source": "一度同時列在正確與錯誤位置，屬誤標；這個形式本身正確。本版不延續那個叉號。",
+    "en": "as both correct and incorrect at the same time, which was a labeling error; the form itself is correct. This edition does not carry that × over.",
+    "ja": "が一時、正しい例と誤った例の両方に載っていましたが、これは誤った表示です。形そのものは正しく、本版ではその×印を引き継ぎません。"
+  },
+  {
+    "source": "詞類",
+    "en": "Word class",
+    "ja": "品詞"
+  },
+  {
+    "source": "非過去肯定",
+    "en": "Non-past affirmative",
+    "ja": "非過去肯定"
+  },
+  {
+    "source": "否定",
+    "en": "Negative",
+    "ja": "否定"
+  },
+  {
+    "source": "過去",
+    "en": "Past",
+    "ja": "過去"
+  },
+  {
+    "source": "動詞",
+    "en": "Verb",
+    "ja": "動詞"
+  },
+  {
+    "source": "名詞",
+    "en": "Noun",
+    "ja": "名詞"
+  },
+  {
+    "source": "怎麼了？",
+    "en": "What’s wrong?",
+    "ja": "どうしたんですか。"
+  },
+  {
+    "source": "我感冒了，而且覺得發冷。",
+    "en": "I’ve caught a cold. I have chills, too.",
+    "ja": "風邪をひいたんです。寒気もします。"
+  },
+  {
+    "source": "備註",
+    "en": "Note",
+    "ja": "補足"
+  },
+  {
+    "source": "何ですか（なんですか）的 なん 是「何」的讀音；静かなんです 的 な＋んです 是接續。音近，但來源不同。",
+    "en": "In 何ですか（なんですか）, なん is the reading of “何”; in 静かなんです, な＋んです is a connection. They sound alike but have different origins.",
+    "ja": "「何ですか（なんですか）」の「なん」は「何」の読み方で、「静かなんです」の「な＋んです」は接続によるものです。音は似ていますが、成り立ちが異なります。"
+  },
+  {
+    "source": "原手冊頁：P10、P87、P93",
+    "en": "Source handbook pages: P10, P87, P93",
+    "ja": "元の冊子のページ：P10、P87、P93"
+  },
+  {
+    "source": "相關主題：",
+    "en": "Related topics: ",
+    "ja": "関連トピック："
+  },
+  {
+    "source": "から／ので／ため：理由、語體與語氣",
+    "en": "から／ので／ため: reasons, style, and tone",
+    "ja": "から／ので／ため：理由、文体、ニュアンス"
+  },
+  {
+    "source": "身體狀況：把名詞、助詞、動詞一起記",
+    "en": "Physical condition: learn the noun, particle, and verb together",
+    "ja": "体調：名詞・助詞・動詞をセットで覚える"
+  },
+  {
+    "source": "接續總表：だ／な／の／不加だ",
+    "en": "Connection chart: だ／な／の／without だ",
+    "ja": "接続一覧表：だ／な／の／だを付けない"
+  },
+  {
+    "source": "// 21 · 理由與表達",
+    "en": "// 21 · Reasons and expression",
+    "ja": "// 21 · 理由と表現"
+  },
+  {
+    "source": "「普通形＋ので」是基本教法，不是「丁寧形不能接」的禁令。",
+    "en": "“Plain form + ので” is the basic teaching pattern, not a rule that “polite forms can’t attach.”",
+    "ja": "「普通形＋ので」は基本的な教え方であって、「丁寧形には接続できない」という禁止ではありません。"
+  },
+  {
+    "source": "原手冊已修正",
+    "en": "The source handbook already corrected",
+    "ja": "元の冊子ではすでに"
+  },
+  {
+    "source": "可接普通體與丁寧體；這次把同樣重要的",
+    "en": "to allow both plain and polite style; this edition fills in the equally important",
+    "ja": "が普通体にも丁寧体にも接続できると修正しています。今回は、同じく重要な"
+  },
+  {
+    "source": "補完整：",
+    "en": "as well: ",
+    "ja": "も補います："
+  },
+  {
+    "source": "都可成立。",
+    "en": "are all acceptable.",
+    "ja": "はどちらも成り立ちます。"
+  },
+  {
+    "source": "往往更直接把前項提出為理由；",
+    "en": "tends to present the preceding clause more directly as a reason; ",
+    "ja": "は前の節をより直接的に理由として示す傾向があり、"
+  },
+  {
+    "source": "常較像情況說明。但「主觀／客觀」只是語感概括，不能拿來當真假分類。",
+    "en": "often reads more like an explanation of the situation. But “subjective vs. objective” is only a rough summary of the nuance, not a test of right and wrong. ",
+    "ja": "は状況の説明に近いことがよくあります。ただし「主観／客観」は語感の大まかなまとめにすぎず、正誤を分ける基準にはなりません。"
+  },
+  {
+    "source": "ので 也能引出禮貌請求",
+    "en": "ので can also introduce a polite request",
+    "ja": "「ので」は丁寧な依頼を導くこともでき"
+  },
+  {
+    "source": "，不是後句出現「ください」就一定錯。",
+    "en": ", so a following clause containing “ください” is not automatically wrong.",
+    "ja": "、後ろの文に「ください」があるからといって必ず誤りになるわけではありません。"
+  },
+  {
+    "source": "原因的",
+    "en": "Keep the causal",
+    "ja": "原因の"
+  },
+  {
+    "source": "與目的的",
+    "en": "and the purposive",
+    "ja": "と目的の"
+  },
+  {
+    "source": "要分開：",
+    "en": "apart: ",
+    "ja": "は区別します："
+  },
+  {
+    "source": "是原因；",
+    "en": "is a cause; ",
+    "ja": "は原因、"
+  },
+  {
+    "source": "常是目的／利益。先判前後事件關係，再看形式。",
+    "en": "usually expresses a purpose or benefit. Work out how the events relate first, then look at the form.",
+    "ja": "は多くの場合、目的や利益を表します。まず前後の出来事の関係を判断し、それから形を見ます。"
+  },
+  {
+    "source": "から：普通體",
+    "en": "から: plain style",
+    "ja": "から：普通体"
+  },
+  {
+    "source": "ので：普通體",
+    "en": "ので: plain style",
+    "ja": "ので：普通体"
+  },
+  {
+    "source": "丁寧體也成立",
+    "en": "Polite style also works",
+    "ja": "丁寧体でも可"
+  },
+  {
+    "source": "因為明天放假，所以待在家。",
+    "en": "I’m off tomorrow, so I’ll stay home.",
+    "ja": "明日は休みなので、家にいます。"
+  },
+  {
+    "source": "不好意思，電車正在誤點，請稍等。",
+    "en": "Excuse me. The train is running late, so please wait a moment.",
+    "ja": "すみません。電車が遅れていますので、少しお待ちください。"
+  },
+  {
+    "source": "本版自編語法示例，不是交通即時資訊。",
+    "en": "A grammar example written for this edition, not live transit information.",
+    "ja": "本版で作った文法の例文で、リアルタイムの交通情報ではありません。"
+  },
+  {
+    "source": "為什麼請假？／因為發燒了。",
+    "en": "Why were you absent from school? / Because I had a fever.",
+    "ja": "どうして学校を休みましたか。／熱があったからです。"
+  },
+  {
+    "source": "です 在整個理由回答的最外層；語氣仍需配合對話關係。",
+    "en": "です sits at the outermost layer of the whole reason answer; the tone still has to fit the relationship between the speakers.",
+    "ja": "「です」は理由を答える文全体のいちばん外側にあります。語気は、会話の相手との関係に合わせる必要があります。"
+  },
+  {
+    "source": "校訂",
+    "en": "Revision",
+    "ja": "校訂"
+  },
+  {
+    "source": "查核補充：東京外国語大学〈理由〉明列 から、ので 都能接普通形／丁寧形，並討論依賴、命令與語體的差異。",
+    "en": "Fact-check note: the Tokyo University of Foreign Studies grammar page on reasons explicitly lists both から and ので as attaching to plain or polite forms, and discusses differences involving requests, commands, and style. ",
+    "ja": "確認のための補足：東京外国語大学〈理由〉では、「から」「ので」のどちらも普通形／丁寧形に接続できることが明記され、依頼・命令・文体による違いも論じられています。"
+  },
+  {
+    "source": "本版由此修正過度簡化的接續表。",
+    "en": "This edition uses it to correct the oversimplified connection table.",
+    "ja": "本版ではこれに基づき、単純化しすぎていた接続表を修正しました。"
+  },
+  {
+    "source": "原手冊頁：P30、P42、P87",
+    "en": "Source handbook pages: P30, P42, P87",
+    "ja": "元の冊子のページ：P30、P42、P87"
+  },
+  {
+    "source": "移動目的、一般目的、用途與方法",
+    "en": "Purpose of movement, general purpose, use, and method",
+    "ja": "移動の目的、一般的な目的、用途と方法"
+  },
+  {
+    "source": "// 22 · 理由與表達",
+    "en": "// 22 · Reasons and expression",
+    "ja": "// 22 · 理由と表現"
+  },
+  {
+    "source": "先判是普通對比、反預期，還是書面讓步；不要只找中文「但是」。",
+    "en": "First decide whether it’s a plain contrast, something contrary to expectation, or a written-style concession; don’t just look for a word meaning “but.”",
+    "ja": "まず、普通の対比なのか、予想に反することなのか、書き言葉の譲歩なのかを判断します。「しかし」に当たる語を探すだけでは不十分です。"
+  },
+  {
+    "source": "常帶「照理應該不是這樣」的反預期；",
+    "en": "often carries a sense of contrary expectation, as in “it really shouldn’t be this way”; ",
+    "ja": "は「本来ならこうではないはずだ」という、予想に反する気持ちを伴うことが多く、"
+  },
+  {
+    "source": "可以是較一般的對比，也能接續話題、柔化請求。",
+    "en": "can express a more general contrast, and can also link topics or soften a request. ",
+    "ja": "はより一般的な対比で、話題をつないだり依頼を和らげたりすることもできます。"
+  },
+  {
+    "source": "承認前項，再指出未如預期的現實；",
+    "en": "acknowledges the first clause, then points to a reality that didn’t turn out as expected; ",
+    "ja": "は前の事柄を認めたうえで、期待どおりにならなかった現実を述べます。"
+  },
+  {
+    "source": "則更常見於正式讓步表述。",
+    "en": "is more typical of formal concessive statements.",
+    "ja": "は、改まった譲歩の表現でよく使われます。"
+  },
+  {
+    "source": "這不是情緒強弱的固定排名：",
+    "en": "This is not a fixed ranking of emotional intensity: ",
+    "ja": "これは感情の強さを決まった順に並べたものではありません："
+  },
+  {
+    "source": "不必每次都生氣，",
+    "en": "doesn’t always signal anger, and ",
+    "ja": "はいつも怒っているとは限らず、"
+  },
+  {
+    "source": "也不是在任何句子裡都能替換",
+    "en": "can’t replace",
+    "ja": "もどんな文でも"
+  },
+  {
+    "source": "。本版保留原手冊的語體傾向，不把它升格為絕對禁令。",
+    "en": " in just any sentence. This edition keeps the source handbook’s notes on register tendencies without turning them into absolute bans.",
+    "ja": "と置き換えられるわけではありません。本版では元の冊子が示す文体の傾向を残しつつ、それを絶対的な禁止にまでは格上げしません。"
+  },
+  {
+    "source": "形式",
+    "en": "Form",
+    "ja": "形式"
+  },
+  {
+    "source": "主要功能",
+    "en": "Main function",
+    "ja": "主な機能"
+  },
+  {
+    "source": "接續與來源內例句",
+    "en": "Connection and source examples",
+    "ja": "接続と元資料の例文"
+  },
+  {
+    "source": "明明……卻……",
+    "en": "Even though …, still …",
+    "ja": "期待や予想に反する結果を述べる"
+  },
+  {
+    "source": "V普通形／い形＋のに；な形・N＋なのに。薬を飲んだのに、まだ頭が痛いです。",
+    "en": "Plain-form V / i-adjective + のに; na-adjective / N + なのに. 薬を飲んだのに、まだ頭が痛いです。",
+    "ja": "V普通形／い形容詞＋のに、な形容詞・N＋なのに。例：薬を飲んだのに、まだ頭が痛いです。"
+  },
+  {
+    "source": "承認前項，後項卻未符合預期",
+    "en": "Acknowledges the first clause, but the second falls short of expectations",
+    "ja": "前の事柄は認めるが、後の事柄は期待どおりではない"
+  },
+  {
+    "source": "儘管……仍然……；較正式",
+    "en": "Despite …, still …; more formal",
+    "ja": "…であっても、なお…。より改まった言い方"
+  },
+  {
+    "source": "一般轉折，也可緩衝話題",
+    "en": "General contrast; can also cushion a topic",
+    "ja": "一般的な逆接。話題を切り出す前置きにも使う"
+  },
+  {
+    "source": "不要混淆用途のに",
+    "en": "Don’t confuse it with のに meaning “for”",
+    "ja": "用途の「のに」と混同しない"
+  },
+  {
+    "source": "這本書適合用來記漢字。",
+    "en": "This book is useful for learning kanji.",
+    "ja": "この本は漢字を覚えるのに便利です。"
+  },
+  {
+    "source": "用途：覚える＋の＋に。不是「明明記漢字卻方便」。",
+    "en": "Use: 覚える＋の＋に. It doesn’t mean “even though I memorize kanji, it’s convenient.”",
+    "ja": "用途：覚える＋の＋に。「漢字を覚えるにもかかわらず便利だ」という意味ではない。"
+  },
+  {
+    "source": "不好意思，可以教我一下嗎？",
+    "en": "Excuse me, could you tell me something?",
+    "ja": "すみませんが、ちょっと教えてください。"
+  },
+  {
+    "source": "が 在這裡是禮貌銜接，不必硬翻成「但是」。",
+    "en": "Here が is a polite lead-in; there’s no need to force it into “but.”",
+    "ja": "ここでの「が」は丁寧な前置きのつなぎで、無理に逆接の「しかし」として解釈する必要はありません。"
+  },
+  {
+    "source": "來源對 にもかかわらず 未提供四詞類完整接續，因此本版以已確認的原例與語感比較為主，不另造一條「普通形一律可接」的總公式。",
+    "en": "The source doesn’t give complete connections for all four word classes with にもかかわらず, so this edition relies mainly on confirmed original examples and comparisons of nuance, and doesn’t invent a blanket formula such as “any plain form can attach.”",
+    "ja": "元資料には「にもかかわらず」の四品詞すべての接続が示されていないため、本版では確認済みの元の例とニュアンスの比較を中心とし、「普通形ならどれでも接続できる」という包括的な公式は新たに作りません。"
+  },
+  {
+    "source": "原手冊頁：P45、P66、P87、P88",
+    "en": "Source handbook pages: P45, P66, P87, P88",
+    "ja": "元の冊子のページ：P45、P66、P87、P88"
+  },
+  {
+    "source": "こと／の與忘れる：分清內容、事實、結果",
+    "en": "こと／の and 忘れる: telling content, fact, and result apart",
+    "ja": "「こと／の」と「忘れる」：内容・事実・結果を区別する"
+  },
+  {
+    "source": "たり／し／と／や／とか：列舉的對象不同",
+    "en": "たり／し／と／や／とか: each lists something different",
+    "ja": "たり／し／と／や／とか：列挙する対象の違い"
+  },
+  {
+    "source": "// 23 · 理由與表達",
+    "en": "// 23 · Reasons and expression",
+    "ja": "// 23 · 理由と表現"
+  },
+  {
+    "source": "先看列舉的是名詞、活動，還是支持判斷的理由／特徵。",
+    "en": "First see whether you’re listing nouns, activities, or reasons/features that support a judgment.",
+    "ja": "まず、列挙しているのが名詞か、活動か、それとも判断を支える理由・特徴かを見ます。"
+  },
+  {
+    "source": "列名詞；",
+    "en": "lists nouns; ",
+    "ja": "は名詞を並べ、"
+  },
+  {
+    "source": "舉代表性活動；",
+    "en": "gives representative activities; ",
+    "ja": "は代表的な活動を挙げ、"
+  },
+  {
+    "source": "可並列事實、特徵或理由。手寫筆記的",
+    "en": "can line up facts, features, or reasons. In the handwritten notes,",
+    "ja": "は事実・特徴・理由を並べられます。手書きノートの"
+  },
+  {
+    "source": "同時用了",
+    "en": "combines",
+    "ja": "は、"
+  },
+  {
+    "source": "的追加與",
+    "en": "for addition and",
+    "ja": "による追加と"
+  },
+  {
+    "source": "的列舉，不是一個新的動詞活用。",
+    "en": "for listing; it is not a new verb conjugation.",
+    "ja": "による列挙を同時に使ったもので、新しい動詞の活用ではありません。"
+  },
+  {
+    "source": "從た形形成，但時態仍看最後",
+    "en": "is formed from the ta-form, but the tense still depends on the final",
+    "ja": "は、た形から作られますが、時制を決めるのは最後の"
+  },
+  {
+    "source": "也可以接丁寧形，像",
+    "en": "can also follow polite forms, as in",
+    "ja": "も丁寧形に接続できます。たとえば"
+  },
+  {
+    "source": "。這兩者再次說明：「看見た＝過去」「看到句內＝只能普通形」都不可靠。",
+    "en": ". Both show once again that “seeing た means past” and “inside a sentence means plain form only” are unreliable.",
+    "ja": "。この二つからも、「『た』があれば過去」「文の中なら普通形だけ」という見方はどちらも当てにならないことがわかります。"
+  },
+  {
+    "source": "Vた形 + り 只是列舉形態；整句時態、體與禮貌由最後的する決定。",
+    "en": "V (ta-form) + り is only a listing form; the tense, aspect, and politeness of the whole sentence are decided by the final する.",
+    "ja": "「Vた形 + り」は列挙の形にすぎません。文全体の時制・アスペクト・丁寧さは最後の「する」が決めます。"
+  },
+  {
+    "source": "形成",
+    "en": "Formation",
+    "ja": "作り方"
+  },
+  {
+    "source": "辭書形",
+    "en": "Dictionary form",
+    "ja": "辞書形"
+  },
+  {
+    "source": "整句時態",
+    "en": "Tense of the whole sentence",
+    "ja": "文全体の時制"
+  },
+  {
+    "source": "句子",
+    "en": "Sentence",
+    "ja": "文"
+  },
+  {
+    "source": "整句解讀",
+    "en": "How the whole sentence reads",
+    "ja": "文全体の解釈"
+  },
+  {
+    "source": "平常／之後會做這些事。",
+    "en": "Usually / will do these things.",
+    "ja": "ふだん／これからこうしたことをする。"
+  },
+  {
+    "source": "以前做了這些事。",
+    "en": "Did these things in the past.",
+    "ja": "以前こうしたことをした。"
+  },
+  {
+    "source": "當時持續做這類事情。",
+    "en": "Was doing things like these at the time.",
+    "ja": "当時こうしたことを続けてしていた。"
+  },
+  {
+    "source": "易錯點",
+    "en": "Common trap",
+    "ja": "間違えやすい点"
+  },
+  {
+    "source": "易錯點 · RISK A",
+    "en": "Common trap · RISK A",
+    "ja": "間違えやすい点 · RISK A"
+  },
+  {
+    "source": "前面的た不是整句過去",
+    "en": "The earlier た doesn’t make the whole sentence past",
+    "ja": "前の「た」は文全体の過去を表さない"
+  },
+  {
+    "source": "問句是 どんなことをしますか，回答結尾也應是 〜たりします。",
+    "en": "If the question is どんなことをしますか, the answer should also end in 〜たりします.",
+    "ja": "質問が「どんなことをしますか」なら、答えの文末も「〜たりします」になります。"
+  },
+  {
+    "source": "列舉不是完整清單",
+    "en": "Listing isn’t exhaustive",
+    "ja": "列挙は網羅的なリストではない"
+  },
+  {
+    "source": "土曜日は掃除したり、買い物したりします。 表示舉代表性活動，仍可能做其他事。",
+    "en": "土曜日は掃除したり、買い物したりします。 This names representative activities; you might still do other things.",
+    "ja": "「土曜日は掃除したり、買い物したりします。」は代表的な活動を挙げたもので、ほかのことをする可能性もあります。"
+  },
+  {
+    "source": "形容詞與名詞的延伸",
+    "en": "Extending to adjectives and nouns",
+    "ja": "形容詞と名詞への応用"
+  },
+  {
+    "source": "價格有時高、有時低。",
+    "en": "Prices are sometimes high and sometimes low.",
+    "ja": "値段が高かったり安かったりします。"
+  },
+  {
+    "source": "城市有時安靜、有時熱鬧。",
+    "en": "The town is sometimes quiet and sometimes lively.",
+    "ja": "町は静かだったりにぎやかだったりします。"
+  },
+  {
+    "source": "列舉內容",
+    "en": "What is listed",
+    "ja": "列挙するもの"
+  },
+  {
+    "source": "例",
+    "en": "Example",
+    "ja": "例"
+  },
+  {
+    "source": "完整名詞清單",
+    "en": "Complete list of nouns",
+    "ja": "名詞の完全なリスト"
+  },
+  {
+    "source": "名詞代表例",
+    "en": "Representative nouns",
+    "ja": "名詞の代表例"
+  },
+  {
+    "source": "活動代表例",
+    "en": "Representative activities",
+    "ja": "活動の代表例"
+  },
+  {
+    "source": "特徵／理由追加",
+    "en": "Adding features / reasons",
+    "ja": "特徴・理由の追加"
+  },
+  {
+    "source": "普通形＋し；丁寧形＋し亦可",
+    "en": "Plain form + し; polite form + し also works",
+    "ja": "普通形＋し。丁寧形＋しも可"
+  },
+  {
+    "source": "名詞／な形非過去肯定＋し",
+    "en": "Noun / na-adjective in the non-past affirmative + し",
+    "ja": "名詞／な形容詞の非過去肯定＋し"
+  },
+  {
+    "source": "休みだし、時間もあります。〔自編示例〕",
+    "en": "休みだし、時間もあります。 (example written for this edition)",
+    "ja": "休みだし、時間もあります。〔自作の例〕"
+  },
+  {
+    "source": "有溫泉，而且風景也漂亮。",
+    "en": "There are hot springs, and the scenery is beautiful too.",
+    "ja": "温泉もあるし、景色もきれいです。"
+  },
+  {
+    "source": "保留手寫筆記中的應用例。し 不要求每個分句都放も。",
+    "en": "This keeps the applied example from the handwritten notes. し doesn’t require も in every clause.",
+    "ja": "手書きノートの応用例をそのまま残しています。「し」を使っても、すべての節に「も」を入れる必要はありません。"
+  },
+  {
+    "source": "手寫筆記下方的小型「V＋こと／N＋に」樣註記未能可靠還原，沒有併成 し 的接續規則。し 的列舉與丁寧形例另參東京外大",
+    "en": "A small note resembling “V＋こと／N＋に” at the bottom of the handwritten notes couldn’t be reliably reconstructed, so it was not merged into the connection rules for し. For し in listing and with polite forms, see also Tokyo University of Foreign Studies",
+    "ja": "手書きノートの下部にある「V＋こと／N＋に」のような小さなメモは確実に復元できなかったため、「し」の接続規則には含めていません。「し」の列挙と丁寧形の例については、東京外大も参照"
+  },
+  {
+    "source": "原手冊頁：P43、P57、P59、P94",
+    "en": "Source handbook pages: P43, P57, P59, P94",
+    "ja": "元の冊子のページ：P43、P57、P59、P94"
+  },
+  {
+    "source": "副詞：時間、頻率、程度與限制",
+    "en": "Adverbs: time, frequency, degree, and limits",
+    "ja": "副詞：時間・頻度・程度・限定"
+  },
+  {
+    "source": "// 24 · 理由與表達",
+    "en": "// 24 · Reasons and expression",
+    "ja": "// 24 · 理由と表現"
+  },
+  {
+    "source": "わけではない、わけがない、わけにはいかない，分別否定不同層次。",
+    "en": "わけではない, わけがない, and わけにはいかない each negate at a different level.",
+    "ja": "「わけではない、わけがない、わけにはいかない」は、それぞれ否定する層が異なります。"
+  },
+  {
+    "source": "常否定一個概括或推論；",
+    "en": "usually negates a generalization or inference; ",
+    "ja": "は一般化や推論を否定することが多く、"
+  },
+  {
+    "source": "強烈否定可能性；",
+    "en": "strongly denies a possibility; ",
+    "ja": "は可能性を強く否定し、"
+  },
+  {
+    "source": "說的是責任、立場等因素使行為不合適。不要把三者都背成中文「不能」。",
+    "en": "says that factors such as responsibility or one’s position make the action inappropriate. Don’t memorize all three as simply “can’t.”",
+    "ja": "は、責任や立場などの要因で、そうするのが適切でないことを表します。三つとも「できない」とまとめて覚えないようにしましょう。"
+  },
+  {
+    "source": "是「不能選擇不去」，所以導出必須去。負號加在哪裡，比整句翻成哪個中文更重要。",
+    "en": "means “you can’t choose not to go,” which leads to “you must go.” Where the negation attaches matters more than how the whole sentence gets translated.",
+    "ja": "は「行かないという選択はできない」という意味なので、「行かなければならない」ことになります。否定がどこにかかるかのほうが、文全体をどう訳すかよりも重要です。"
+  },
+  {
+    "source": "同樣含わけ，但分別表示結論、部分否定、邏輯不可能與立場上的不能。",
+    "en": "All of them contain わけ, but they express, respectively, a conclusion, partial negation, logical impossibility, and an inability that comes from one’s position.",
+    "ja": "どれも「わけ」を含みますが、それぞれ結論、部分否定、論理的な不可能、立場上できないことを表します。"
+  },
+  {
+    "source": "核心",
+    "en": "Core",
+    "ja": "要点"
+  },
+  {
+    "source": "根據前文得出結論；難怪／也就是說",
+    "en": "Draws a conclusion from what came before; “no wonder” / “in other words”",
+    "ja": "前の内容から結論を導く。「道理で」／「つまり」"
+  },
+  {
+    "source": "並不是／不一定；部分否定",
+    "en": "“It’s not that …” / “not necessarily”; partial negation",
+    "ja": "「必ずしも〜ではない」。部分否定"
+  },
+  {
+    "source": "不可能；沒有道理",
+    "en": "Impossible; it makes no sense",
+    "ja": "あり得ない。筋が通らない"
+  },
+  {
+    "source": "因立場、責任、常識而不能",
+    "en": "Can’t, because of one’s position, responsibility, or common sense",
+    "ja": "立場・責任・常識から、できない"
+  },
+  {
+    "source": "不能不做，也就是必須做",
+    "en": "Can’t not do it, i.e., must do it",
+    "ja": "しないという選択はできない、つまり必ずする"
+  },
+  {
+    "source": "易錯點 · RISK B",
+    "en": "Common trap · RISK B",
+    "ja": "間違えやすい点 · RISK B"
+  },
+  {
+    "source": "不能做與不可能不是同一件事",
+    "en": "“Can’t do” and “impossible” are not the same thing",
+    "ja": "「できない」と「あり得ない」は別のこと"
+  },
+  {
+    "source": "わけがない 是邏輯／認知上的不可能；わけにはいかない 是能力上可做，但立場上不能。",
+    "en": "わけがない is a logical or cognitive impossibility; わけにはいかない means you are able to do it, but your position won’t allow it.",
+    "ja": "「わけがない」は論理的・認知的な不可能、「わけにはいかない」は能力的にはできても立場上できないことを表します。"
+  },
+  {
+    "source": "因為有工作，所以不能不去。",
+    "en": "It’s for work, so I can’t not go.",
+    "ja": "仕事なので、行かないわけにはいきません。"
+  },
+  {
+    "source": "外層限制的是「不去」這個選擇。",
+    "en": "The outer layer restricts the choice of “not going.”",
+    "ja": "外側の層が制限しているのは「行かない」という選択です。"
+  },
+  {
+    "source": "原手冊頁：P67、P88",
+    "en": "Source handbook pages: P67, P88",
+    "ja": "元の冊子のページ：P67、P88"
+  },
+  {
+    "source": "かもしれない／でしょう／はず／に違いない",
+    "en": "かもしれない／でしょう／はず／に違いない",
+    "ja": "かもしれない／でしょう／はず／に違いない"
+  },
+  {
+    "source": "ほうがいい、請求與禁止",
+    "en": "ほうがいい, requests, and prohibitions",
+    "ja": "ほうがいい、依頼と禁止"
+  },
+  {
+    "source": "// 25 · 意圖與資訊來源",
+    "en": "// 25 · Intent and information sources",
+    "ja": "// 25 · 意図と情報源"
+  },
+  {
+    "source": "說話內容、說話時間、要求的執行者，三者分開標記。",
+    "en": "What is said, when it is said, and who carries out a request are marked separately.",
+    "ja": "発話の内容、発話の時点、依頼を実行する人の三つは、別々に示されます。"
+  },
+  {
+    "source": "裡的",
+    "en": "uses",
+    "ja": "の"
+  },
+  {
+    "source": "引入想法內容；",
+    "en": "to introduce the content of a thought; ",
+    "ja": "は思考の内容を導き、"
+  },
+  {
+    "source": "引入發言內容。直接引語可以保留原話的です／ます／ください；間接轉述通常先把內容整理成普通形。",
+    "en": "uses it to introduce what was said. Direct quotation can keep the original です／ます／ください; indirect reporting usually recasts the content in the plain form first.",
+    "ja": "は発言の内容を導きます。直接引用では元の発話の「です／ます／ください」をそのまま残せますが、間接的な伝達ではふつう内容をまず普通形に整えます。"
+  },
+  {
+    "source": "不是引用任意事實，而是轉述要求／指示。看清誰說、對誰說，以及誰要去做：",
+    "en": "doesn’t quote just any fact; it relays a request or instruction. Watch who says it, to whom, and who is supposed to act: ",
+    "ja": "は、任意の事実を引用するのではなく、依頼や指示を伝えるものです。誰が、誰に言い、誰が行うのかをよく見ましょう："
+  },
+  {
+    "source": "中，要求的接受者是「私」。",
+    "en": "— here, the person receiving the request is “私.”",
+    "ja": "では、依頼を受ける人は「私」です。"
+  },
+  {
+    "source": "と 是引用助詞。放在 と思います 前面的「想法內容」使用",
+    "en": "と is the quotation particle. The “content of the thought” before と思います uses the ",
+    "ja": "「と」は引用の助詞です。「と思います」の前に来る「考えの内容」には"
+  },
+  {
+    "source": "普通形",
+    "en": "plain form",
+    "ja": "普通形"
+  },
+  {
+    "source": "；只有最外層的 思います 使用丁寧形。",
+    "en": "; only the outermost 思います is in the polite form.",
+    "ja": "を使い、いちばん外側の「思います」だけが丁寧形になります。"
+  },
+  {
+    "source": "非過去否定",
+    "en": "Non-past negative",
+    "ja": "非過去否定"
+  },
+  {
+    "source": "過去肯定",
+    "en": "Past affirmative",
+    "ja": "過去肯定"
+  },
+  {
+    "source": "過去否定",
+    "en": "Past negative",
+    "ja": "過去否定"
+  },
+  {
+    "source": "な形容詞與名詞的「非過去肯定」需要",
+    "en": "In the non-past affirmative, na-adjectives and nouns need",
+    "ja": "な形容詞と名詞の「非過去肯定」には、"
+  },
+  {
+    "source": "。× 静かと思います／学生と思います → ○",
+    "en": ". Not 静かと思います／学生と思います, but ",
+    "ja": "を付ける必要があります。「静かと思います／学生と思います」ではなく、"
+  },
+  {
+    "source": "例句與層級",
+    "en": "Examples and layers",
+    "ja": "例文と階層"
+  },
+  {
+    "source": "內層內容",
+    "en": "Inner content",
+    "ja": "内側の内容"
+  },
+  {
+    "source": "雨が降る 是被引用的普通形小句。",
+    "en": "雨が降る is the quoted plain-form clause.",
+    "ja": "「雨が降る」は引用される普通形の節。"
+  },
+  {
+    "source": "高くない 是い形容詞普通否定。",
+    "en": "高くない is the plain negative of an i-adjective.",
+    "ja": "「高くない」は、い形容詞の普通形否定。"
+  },
+  {
+    "source": "簡単だった 是な形容詞普通過去。",
+    "en": "簡単だった is the plain past of a na-adjective.",
+    "ja": "「簡単だった」は、な形容詞の普通形過去。"
+  },
+  {
+    "source": "先生ではない 是名詞普通否定。",
+    "en": "先生ではない is the plain negative of a noun.",
+    "ja": "「先生ではない」は名詞の普通形否定。"
+  },
+  {
+    "source": "辨析",
+    "en": "Compare",
+    "ja": "比較"
+  },
+  {
+    "source": "と思います當下提出判斷、意見或推測。",
+    "en": "と思います puts forward a judgment, opinion, or guess in the moment.",
+    "ja": "「と思います」は、その場で判断・意見・推測を述べます。"
+  },
+  {
+    "source": "と思っています表示持續抱持的想法、既定意向；語感較有延續性。",
+    "en": "と思っています expresses a thought held over time or a settled intention; it has a stronger sense of continuity.",
+    "ja": "「と思っています」は、持ち続けている考えや固まった意向を表し、継続的なニュアンスがあります。"
+  },
+  {
+    "source": "結構",
+    "en": "Structure",
+    "ja": "構造"
+  },
+  {
+    "source": "私は［明日は雨が降る］と思います。 內層的主語、助詞與時態先完整成立，再由引用助詞 と 接到外層 思います。",
+    "en": "私は［明日は雨が降る］と思います。 The inner clause’s subject, particles, and tense are complete first; then the quotation particle と links it to the outer 思います.",
+    "ja": "私は［明日は雨が降る］と思います。 内側の主語・助詞・時制がまず完全に成り立ち、そのうえで引用の助詞「と」が外側の「思います」につなぎます。"
+  },
+  {
+    "source": "用途",
+    "en": "Use",
+    "ja": "用途"
+  },
+  {
+    "source": "句型",
+    "en": "Pattern",
+    "ja": "文型"
+  },
+  {
+    "source": "想法／判斷",
+    "en": "Thought / judgment",
+    "ja": "考え／判断"
+  },
+  {
+    "source": "直接引述",
+    "en": "Direct quotation",
+    "ja": "直接引用"
+  },
+  {
+    "source": "間接引述",
+    "en": "Indirect quotation",
+    "ja": "間接引用"
+  },
+  {
+    "source": "要求做",
+    "en": "Asking someone to do something",
+    "ja": "するように求める"
+  },
+  {
+    "source": "要求不做",
+    "en": "Asking someone not to do something",
+    "ja": "しないように求める"
+  },
+  {
+    "source": "最後兩句為本版補上人物角色的示例。間接轉述時，人稱、場所與「今天／明天」等指示語要依轉述時點理解；不能只機械移除引號。",
+    "en": "The last two sentences are examples added in this edition to show who does what. In indirect reporting, person, place, and deictic words such as “today” and “tomorrow” have to be read from the time of reporting; you can’t just mechanically remove the quotation marks.",
+    "ja": "最後の二文は、人物の役割を示すために本版で補った例です。間接的に伝えるときは、人称・場所・「今日／明日」などの指示語を、伝える時点に合わせて解釈する必要があります。引用符を機械的に外すだけでは不十分です。"
+  },
+  {
+    "source": "原手冊頁：P31、P89",
+    "en": "Source handbook pages: P31, P89",
+    "ja": "元の冊子のページ：P31、P89"
+  },
+  {
+    "source": "んです／のです：把事實放進背景",
+    "en": "んです／のです: putting a fact in the background",
+    "ja": "んです／のです：事実を背景として示す"
+  },
+  {
+    "source": "そう／らしい／によると：訊息來源要分明",
+    "en": "そう／らしい／によると: be clear about the source of information",
+    "ja": "そう／らしい／によると：情報源をはっきりさせる"
+  },
+  {
+    "source": "予定／つもり／ことにする／ことになる",
+    "en": "予定／つもり／ことにする／ことになる",
+    "ja": "予定／つもり／ことにする／ことになる"
+  },
+  {
+    "source": "// 26 · 意圖與資訊來源",
+    "en": "// 26 · Intent and information sources",
+    "ja": "// 26 · 意図と情報源"
+  },
+  {
+    "source": "不是從弱到強排成一條線；它們分別凸顯安排、意志、決定者與形成的結果。",
+    "en": "They don’t line up on one scale from weak to strong; each highlights something different: an arrangement, an intention, who decides, or an outcome that came about.",
+    "ja": "弱いものから強いものへ一直線に並ぶわけではありません。それぞれ、取り決め、意志、決定者、成り行きの結果を際立たせます。"
+  },
+  {
+    "source": "予定",
+    "en": "予定",
+    "ja": "予定"
+  },
+  {
+    "source": "說明有這個安排，並不直接說安排是否出於自己的意志；",
+    "en": "states that such an arrangement exists, without directly saying whether it comes from your own will; ",
+    "ja": "は、そうした取り決めがあることを述べるだけで、それが自分の意志によるものかどうかは直接言いません。"
+  },
+  {
+    "source": "凸顯打算；",
+    "en": "highlights intention; ",
+    "ja": "は意図を際立たせ、"
+  },
+  {
+    "source": "聚焦自己的決定；",
+    "en": "focuses on your own decision; ",
+    "ja": "は自分の決定に焦点を当て、"
+  },
+  {
+    "source": "聚焦外在安排或情況所形成的結果。",
+    "en": "focuses on an outcome brought about by outside arrangements or circumstances.",
+    "ja": "は外部の取り決めや状況によって生じた結果に焦点を当てます。"
+  },
+  {
+    "source": "把",
+    "en": "Treating",
+    "ja": "覚え方として"
+  },
+  {
+    "source": "予定＝機票已買",
+    "en": "予定 = “the plane ticket is already bought”",
+    "ja": "予定＝航空券はもう買ってある"
+  },
+  {
+    "source": "當成記憶比喻可以，但它不是語意保證。同樣，",
+    "en": "as a memory aid is fine, but it doesn’t guarantee the meaning. Likewise, ",
+    "ja": "と考えるのは構いませんが、意味を保証するものではありません。同様に、"
+  },
+  {
+    "source": "不是任何臨時決定都最自然的說法。來源中「腦中決定／行程表」的比喻，本版只保留為理解輔助，不當成必要條件。",
+    "en": "is not the most natural choice for every spur-of-the-moment decision. The source’s metaphor of “a decision in your head / an itinerary” is kept in this edition only as an aid to understanding, not as a necessary condition.",
+    "ja": "も、その場で決めたことに対していつも最も自然な言い方だというわけではありません。元資料にある「頭の中で決めたこと／スケジュール帳」というたとえは、本版では理解の補助としてのみ残し、必要条件とはしません。"
+  },
+  {
+    "source": "接續",
+    "en": "Connection",
+    "ja": "接続"
+  },
+  {
+    "source": "側重",
+    "en": "Emphasis",
+    "ja": "重点"
+  },
+  {
+    "source": "來源例／本版示例",
+    "en": "Source example / example for this edition",
+    "ja": "元資料の例／本版の例"
+  },
+  {
+    "source": "Vる／Vない＋予定；Nの予定",
+    "en": "Vる／Vない＋予定; Nの予定",
+    "ja": "Vる／Vない＋予定、Nの予定"
+  },
+  {
+    "source": "已有安排、時程",
+    "en": "An arrangement or schedule already exists",
+    "ja": "すでに取り決め・日程がある"
+  },
+  {
+    "source": "打算、意圖",
+    "en": "Intention, plan",
+    "ja": "意向・意図"
+  },
+  {
+    "source": "自己做決定",
+    "en": "Deciding for yourself",
+    "ja": "自分で決める"
+  },
+  {
+    "source": "外在安排／情況形成",
+    "en": "External arrangement / result of circumstances",
+    "ja": "外部の取り決め／状況による成り行き"
+  },
+  {
+    "source": "不是所有つもり都表示未來打算",
+    "en": "Not every つもり expresses a future intention",
+    "ja": "「つもり」がいつも将来の意図を表すとは限らない"
+  },
+  {
+    "source": "我本來是想開個玩笑。",
+    "en": "I meant it as a joke.",
+    "ja": "冗談のつもりでした。"
+  },
+  {
+    "source": "來自早期整理的補充例。Nのつもり 不是「打算做」的基本接續。",
+    "en": "A supplementary example from an earlier summary. Nのつもり is not the basic connection for “intend to do.”",
+    "ja": "初期のまとめから取った補足例です。「Nのつもり」は、「〜するつもり（意図）」の基本的な接続ではありません。"
+  },
+  {
+    "source": "已經決定要去。",
+    "en": "I’ve decided to go.",
+    "ja": "行くことにしました。"
+  },
+  {
+    "source": "去的內容仍是未來；しました 是決定發生在過去。",
+    "en": "The going itself is still in the future; しました shows that the decision was made in the past.",
+    "ja": "行くこと自体はまだ未来のことで、「しました」は決定が過去に行われたことを表します。"
+  },
+  {
+    "source": "查核補充：國際交流基金討論 予定／つもり／ことにする 的視點，以及つもり不適合某些當場決定的語境。",
+    "en": "Fact-check note: the Japan Foundation discusses the viewpoints of 予定／つもり／ことにする, and how つもり doesn’t fit some contexts where a decision is made on the spot. ",
+    "ja": "確認のための補足：国際交流基金は、「予定／つもり／ことにする」の視点の違いと、その場で決めた事柄には「つもり」が合わない文脈があることを論じています。"
+  },
+  {
+    "source": "本版僅用來界定原筆記口訣的適用範圍。",
+    "en": "This edition uses it only to define the scope of the original notes’ rule of thumb.",
+    "ja": "本版では、元のノートの覚え方が当てはまる範囲を示すためだけに用いています。"
+  },
+  {
+    "source": "原手冊頁：P68、P91、P94",
+    "en": "Source handbook pages: P68, P91, P94",
+    "ja": "元の冊子のページ：P68、P91、P94"
+  },
+  {
+    "source": "と思う／と言う／ように言う",
+    "en": "と思う／と言う／ように言う",
+    "ja": "と思う／と言う／ように言う"
+  },
+  {
+    "source": "時間點、期間、頻率與截止",
+    "en": "Points in time, durations, frequency, and deadlines",
+    "ja": "時点・期間・頻度・締め切り"
+  },
+  {
+    "source": "// 27 · 意圖與資訊來源",
+    "en": "// 27 · Intent and information sources",
+    "ja": "// 27 · 意図と情報源"
+  },
+  {
+    "source": "不要只記把握度；還要問判斷從哪裡來，以及說話者承擔多強的斷言。",
+    "en": "Don’t just memorize degrees of certainty; also ask where the judgment comes from and how strong a claim the speaker is making.",
+    "ja": "確信の度合いだけを覚えるのではなく、判断の根拠がどこにあり、話し手がどの程度強く断定しているのかも考えましょう。"
+  },
+  {
+    "source": "提出一個可能性；",
+    "en": "raises a possibility; ",
+    "ja": "は可能性を一つ示し、"
+  },
+  {
+    "source": "作推測，也可用在確認共同認知的「對吧」。",
+    "en": "makes a guess, and can also be the “right?” that checks shared knowledge. ",
+    "ja": "は推測を表し、共通の認識を確かめる確認の用法（「〜でしょう？」）もあります。"
+  },
+  {
+    "source": "側重依規則、行程或已知條件得到的合理預期；",
+    "en": "emphasizes a reasonable expectation based on rules, schedules, or known conditions; ",
+    "ja": "は規則・予定・既知の条件から導かれる当然の見込みに重点があり、"
+  },
+  {
+    "source": "側重強烈確信。",
+    "en": "emphasizes strong conviction.",
+    "ja": "は強い確信に重点があります。"
+  },
+  {
+    "source": "同樣說「應該」，推論方法可能不同。",
+    "en": "Even when they all come out as “should,” the reasoning behind them can differ. ",
+    "ja": "どれも推量を表すように見えても、推論の方法は異なることがあります。"
+  },
+  {
+    "source": "沒有文法規定的固定百分比",
+    "en": "There is no fixed percentage set by grammar",
+    "ja": "文法で決まった固定のパーセンテージはありません"
+  },
+  {
+    "source": "，也不應把說話者的把握度當成事情真實發生的機率。",
+    "en": ", and the speaker’s confidence shouldn’t be mistaken for the actual probability that something will happen.",
+    "ja": "。また、話し手の確信度を、その事柄が実際に起こる確率とみなすべきでもありません。"
+  },
+  {
+    "source": "辨識問題",
+    "en": "Question to ask",
+    "ja": "見分けるための問い"
+  },
+  {
+    "source": "接續重點",
+    "en": "Connection notes",
+    "ja": "接続のポイント"
+  },
+  {
+    "source": "是否只提出可能？",
+    "en": "Is it only raising a possibility?",
+    "ja": "可能性を示すだけか？"
+  },
+  {
+    "source": "な形・N 非過去肯定不放だ",
+    "en": "na-adj. / N: no だ in the non-past affirmative",
+    "ja": "な形・Nの非過去肯定では「だ」を付けない"
+  },
+  {
+    "source": "推測，還是向對方確認？",
+    "en": "A guess, or checking with the listener?",
+    "ja": "推測か、相手への確認か？"
+  },
+  {
+    "source": "照已知條件，是否理應如此？",
+    "en": "Given what is known, should it be so?",
+    "ja": "既知の条件からすれば、当然そうなるか？"
+  },
+  {
+    "source": "是否強烈確信？",
+    "en": "Is the speaker strongly convinced?",
+    "ja": "強く確信しているか？"
+  },
+  {
+    "source": "な形・N 直接接",
+    "en": "na-adj. / N attach directly",
+    "ja": "な形・Nに直接付く"
+  },
+  {
+    "source": "可能曾經是學生。",
+    "en": "They may have been a student.",
+    "ja": "学生だったかもしれません。"
+  },
+  {
+    "source": "省略だ是指「非過去肯定」那一格；過去的だった不刪。",
+    "en": "Dropping だ applies only to the “non-past affirmative” cell; the past だった is not removed.",
+    "ja": "「だ」を省くのは「非過去肯定」の欄だけで、過去の「だった」は削りません。"
+  },
+  {
+    "source": "外部查核：東京外大對 かもしれません／にちがいありません／はずです 及 でしょう 的接續與功能說明。",
+    "en": "External check: Tokyo University of Foreign Studies’ explanations of the connections and functions of かもしれません／にちがいありません／はずです and でしょう. ",
+    "ja": "外部での確認：東京外大による「かもしれません／にちがいありません／はずです」と「でしょう」の接続と機能の説明。"
+  },
+  {
+    "source": "各句仍以完整語境判斷。",
+    "en": "Each sentence is still judged in its full context.",
+    "ja": "個々の文は、やはり文脈全体から判断します。"
+  },
+  {
+    "source": "原手冊頁：P65、P91、P94",
+    "en": "Source handbook pages: P65, P91, P94",
+    "ja": "元の冊子のページ：P65、P91、P94"
+  },
+  {
+    "source": "わけ系列：推論、否定範圍與責任",
+    "en": "The わけ family: inference, scope of negation, and responsibility",
+    "ja": "わけの系列：推論、否定の範囲、責任"
+  },
+  {
+    "source": "// 28 · 意圖與資訊來源",
+    "en": "// 28 · Intent and information sources",
+    "ja": "// 28 · 意図と情報源"
+  },
+  {
+    "source": "そうします 的そう、傳聞そう、樣態そう，不是一個可任意套用的接尾詞。",
+    "en": "The そう of そうします, hearsay そう, and appearance そう are not one suffix you can attach at will.",
+    "ja": "「そうします」の「そう」、伝聞の「そう」、様態の「そう」は、自由に付けられる一つの接尾辞ではありません。"
+  },
+  {
+    "source": "是轉述消息，",
+    "en": "reports something you heard, while ",
+    "ja": "は聞いた情報の伝達、"
+  },
+  {
+    "source": "是根據徵兆判斷；只差一個活用，資訊來源已經換了。",
+    "en": "is a judgment based on signs; change a single conjugation and the information source has already changed. ",
+    "ja": "は兆候に基づく判断です。活用が一つ違うだけで、情報源が変わってしまいます。"
+  },
+  {
+    "source": "則是在承接對方說法，不是新的天氣推測句型。",
+    "en": "acknowledges what the other person said; it is not a new pattern for guessing the weather.",
+    "ja": "は相手の話を受け止める表現で、天気を推測する新しい文型ではありません。"
+  },
+  {
+    "source": "在這份筆記處理的是間接消息／跡象推定，名詞與な形容詞非過去肯定通常直接接，不帶",
+    "en": "in these notes covers inference from indirect information or signs; nouns and na-adjectives in the non-past affirmative usually attach to it directly, without",
+    "ja": "は、このノートでは間接的な情報や兆候に基づく推定として扱います。名詞・な形容詞の非過去肯定にはふつう直接付き、省かれるのは"
+  },
+  {
+    "source": "另可有典型性用法，但不是本筆記原本的重點，不在這裡混合成同一規則。",
+    "en": "can also have a “typical of N” use, but that isn’t the original focus of these notes, so it isn’t mixed into the same rule here.",
+    "ja": "には典型性を表す用法もありますが、本ノートの元々の重点ではないため、ここでは同じ規則にまとめません。"
+  },
+  {
+    "source": "三者都可能譯成「好像／聽說」，但資訊來源與接續不同。",
+    "en": "All three might be translated as “seems” or “I hear,” but they differ in their source of information and in how they connect.",
+    "ja": "訳すと三つとも似た意味になりがちですが、情報源と接続が異なります。"
+  },
+  {
+    "source": "傳聞：普通形 + そうだ",
+    "en": "Hearsay: plain form + そうだ",
+    "ja": "伝聞：普通形 + そうだ"
+  },
+  {
+    "source": "樣態／徵兆そう",
+    "en": "Appearance / sign そう",
+    "ja": "様態／兆候の「そう」"
+  },
+  {
+    "source": "意思",
+    "en": "Meaning",
+    "ja": "意味"
+  },
+  {
+    "source": "看起來快下雨",
+    "en": "Looks like it’s about to rain",
+    "ja": "今にも雨が降るように見える"
+  },
+  {
+    "source": "看起來好吃",
+    "en": "Looks delicious",
+    "ja": "おいしく見える"
+  },
+  {
+    "source": "看起來簡單",
+    "en": "Looks easy",
+    "ja": "簡単に見える"
+  },
+  {
+    "source": "降りそう與降るそう",
+    "en": "降りそう vs. 降るそう",
+    "ja": "「降りそう」と「降るそう」"
+  },
+  {
+    "source": "降りそう = 根據眼前跡象；降るそう = 轉述聽來的資訊。",
+    "en": "降りそう = based on signs in front of you; 降るそう = relaying information you heard.",
+    "ja": "降りそう = 目の前の兆候に基づく。降るそう = 聞いた情報を伝える。"
+  },
+  {
+    "source": "根據間接消息或跡象判斷「似乎」",
+    "en": "Judges “it seems” from indirect information or signs",
+    "ja": "間接的な情報や兆候から「〜のようだ」と判断する"
+  },
+  {
+    "source": "轉述較明確來源",
+    "en": "Relays a more clearly identified source",
+    "ja": "比較的はっきりした情報源の内容を伝える"
+  },
+  {
+    "source": "進階辨析",
+    "en": "Advanced comparison",
+    "ja": "発展的な比較"
+  },
+  {
+    "source": "そうだ與らしい不要只背客觀／主觀",
+    "en": "Don’t just memorize そうだ and らしい as objective vs. subjective",
+    "ja": "「そうだ」と「らしい」を客観／主観だけで覚えない"
+  },
+  {
+    "source": "較穩定的判斷是：そうだ 偏向轉述來源；らしい 允許說話者根據間接資訊或跡象做推定。",
+    "en": "A more reliable way to tell them apart: そうだ leans toward relaying a source; らしい lets the speaker infer from indirect information or signs.",
+    "ja": "より確かな見分け方：「そうだ」は情報源の伝達に傾き、「らしい」は話し手が間接的な情報や兆候から推定することを許します。"
+  },
+  {
+    "source": "那樣做",
+    "en": "Do it that way",
+    "ja": "そのようにする"
+  },
+  {
+    "source": "原來如此／是這樣嗎",
+    "en": "I see / Is that so?",
+    "ja": "なるほど／そうなのか"
+  },
+  {
+    "source": "轉述消息",
+    "en": "Reporting what you heard",
+    "ja": "聞いた情報の伝達"
+  },
+  {
+    "source": "ます語幹／形容詞適當詞幹＋そうです",
+    "en": "masu stem / suitable adjective stem + そうです",
+    "ja": "ます形の語幹／形容詞の適切な語幹＋そうです"
+  },
+  {
+    "source": "徵兆／樣態",
+    "en": "Sign / appearance",
+    "ja": "兆候／様態"
+  },
+  {
+    "source": "引出資訊來源",
+    "en": "Introduces the source of information",
+    "ja": "情報源を示す"
+  },
+  {
+    "source": "樣態そう不能把名詞像動詞一樣直接接；いい／よい 的樣態是 よさそう，ない 是 なさそう。這兩項為查核後的接續補充，與原表分開標示。",
+    "en": "Appearance そう can’t attach directly to a noun the way it does to a verb; the appearance form of いい／よい is よさそう, and that of ない is なさそう. These two points are connection details added after fact-checking and are marked separately from the original table. ",
+    "ja": "様態の「そう」は、動詞と同じように名詞へ直接付けることはできません。「いい／よい」の様態は「よさそう」、「ない」は「なさそう」です。この二点は確認後に補った接続情報で、元の表とは分けて示しています。"
+  },
+  {
+    "source": "原手冊頁：P56、P90",
+    "en": "Source handbook pages: P56, P90",
+    "ja": "元の冊子のページ：P56、P90"
+  },
+  {
+    "source": "上一篇與下一篇",
+    "en": "Previous and next notes",
+    "ja": "前後のノート"
+  },
+  {
+    "source": "← 上一篇：3 時間與從句",
+    "en": "← Previous: 3 Time and clauses",
+    "ja": "← 前のノート：3 時間と節"
+  },
+  {
+    "source": "下一篇：5 互動與表達 →",
+    "en": "Next: 5 Interaction →",
+    "ja": "次のノート：5 やりとりと表現 →"
+  },
+  {
+    "source": "22｜のに／ものの／にもかかわらず／けど",
+    "en": "22 | のに／ものの／にもかかわらず／けど",
+    "ja": "22｜のに／ものの／にもかかわらず／けど"
+  },
+  {
+    "source": "［普通形小句］ + と + 思います",
+    "en": "［plain-form clause］ + と + 思います",
+    "ja": "［普通形の節］ + と + 思います"
+  },
+  {
+    "source": "「原話」＋と言う",
+    "en": "“Original words” + と言う",
+    "ja": "「元の発言」＋と言う"
+  },
+  {
+    "source": "理由問答：からです",
+    "en": "Asking and answering why: からです",
+    "ja": "理由の問答：からです"
+  }
+]

@@ -364,5 +364,218 @@
         "ターミナル"
       ]
     }
+  },
+  {
+    "id": "japanese",
+    "label": {
+      "zh-hant": "日語",
+      "en": "Japanese",
+      "ja": "日本語"
+    },
+    "aliases": {
+      "zh-hant": ["日文", "日本語", "Japanese language", "にほんご"],
+      "en": ["日文", "日本語", "Japanese language", "にほんご"],
+      "ja": ["日文", "日本語", "Japanese language", "にほんご"]
+    }
+  },
+  {
+    "id": "japanese-grammar",
+    "label": {
+      "zh-hant": "日語文法",
+      "en": "Japanese grammar",
+      "ja": "日本語文法"
+    },
+    "aliases": {
+      "zh-hant": ["文法", "grammar", "日本語の文法"],
+      "en": ["文法", "grammar", "日本語の文法"],
+      "ja": ["文法", "grammar", "日本語の文法"]
+    }
+  },
+  {
+    "id": "particles",
+    "label": {
+      "zh-hant": "助詞",
+      "en": "Particles",
+      "ja": "助詞"
+    },
+    "aliases": {
+      "zh-hant": ["格助詞", "particles", "てにをは", "joshi"],
+      "en": ["格助詞", "particles", "てにをは", "joshi"],
+      "ja": ["格助詞", "particles", "てにをは", "joshi"]
+    }
+  },
+  {
+    "id": "conjugation",
+    "label": {
+      "zh-hant": "活用",
+      "en": "Conjugation",
+      "ja": "活用"
+    },
+    "aliases": {
+      "zh-hant": ["動詞活用", "て形", "verb forms", "inflection"],
+      "en": ["動詞活用", "て形", "verb forms", "inflection"],
+      "ja": ["動詞活用", "て形", "verb forms", "inflection"]
+    }
+  },
+  {
+    "id": "clauses",
+    "label": {
+      "zh-hant": "從句",
+      "en": "Clauses",
+      "ja": "節"
+    },
+    "aliases": {
+      "zh-hant": [
+        "關係子句",
+        "連体修飾",
+        "relative clauses",
+        "subordinate clauses"
+      ],
+      "en": ["關係子句", "連体修飾", "relative clauses", "subordinate clauses"],
+      "ja": ["關係子句", "連体修飾", "relative clauses", "subordinate clauses"]
+    }
+  },
+  {
+    "id": "modality",
+    "label": {
+      "zh-hant": "語氣與推測",
+      "en": "Modality",
+      "ja": "モダリティ"
+    },
+    "aliases": {
+      "zh-hant": ["推測", "傳聞", "推量", "伝聞", "hearsay", "inference"],
+      "en": ["推測", "傳聞", "推量", "伝聞", "hearsay", "inference"],
+      "ja": ["推測", "傳聞", "推量", "伝聞", "hearsay", "inference"]
+    }
+  },
+  {
+    "id": "everyday-japanese",
+    "label": {
+      "zh-hant": "日常日語",
+      "en": "Everyday Japanese",
+      "ja": "日常の日本語"
+    },
+    "aliases": {
+      "zh-hant": ["生活日語", "日常会話", "conversation", "daily phrases"],
+      "en": ["生活日語", "日常会話", "conversation", "daily phrases"],
+      "ja": ["生活日語", "日常会話", "conversation", "daily phrases"]
+    }
+  },
+  {
+    "id": "vocabulary",
+    "label": {
+      "zh-hant": "詞彙",
+      "en": "Vocabulary",
+      "ja": "語彙"
+    },
+    "aliases": {
+      "zh-hant": ["單字", "単語", "vocab", "words"],
+      "en": ["單字", "単語", "vocab", "words"],
+      "ja": ["單字", "単語", "vocab", "words"]
+    }
+  },
+  {
+    "id": "katakana",
+    "label": {
+      "zh-hant": "片假名",
+      "en": "Katakana",
+      "ja": "カタカナ"
+    },
+    "aliases": {
+      "zh-hant": ["外來語", "外来語", "片仮名", "loanwords"],
+      "en": ["外來語", "外来語", "片仮名", "loanwords"],
+      "ja": ["外來語", "外来語", "片仮名", "loanwords"]
+    }
+  },
+  {
+    "id": "study-methods",
+    "label": {
+      "zh-hant": "學習方法",
+      "en": "Study methods",
+      "ja": "学習法"
+    },
+    "aliases": {
+      "zh-hant": ["複習", "復習", "勉強法", "review"],
+      "en": ["複習", "復習", "勉強法", "review"],
+      "ja": ["複習", "復習", "勉強法", "review"]
+    }
+  },
+  {
+    "id": "health",
+    "label": {
+      "zh-hant": "健康",
+      "en": "Health",
+      "ja": "健康"
+    },
+    "aliases": {
+      "zh-hant": ["衛教", "保健", "セルフケア", "self-care"],
+      "en": ["衛教", "保健", "セルフケア", "self-care"],
+      "ja": ["衛教", "保健", "セルフケア", "self-care"]
+    }
+  },
+  {
+    "id": "lower-back",
+    "label": {
+      "zh-hant": "腰背",
+      "en": "Lower back",
+      "ja": "腰"
+    },
+    "aliases": {
+      "zh-hant": ["腰痛", "腰椎", "back pain", "lumbar spine"],
+      "en": ["腰痛", "腰椎", "back pain", "lumbar spine"],
+      "ja": ["腰痛", "腰椎", "back pain", "lumbar spine"]
+    }
+  },
+  {
+    "id": "ergonomics",
+    "label": {
+      "zh-hant": "人體工學",
+      "en": "Ergonomics",
+      "ja": "人間工学"
+    },
+    "aliases": {
+      "zh-hant": ["坐姿", "工作站", "作業環境", "posture", "workstation"],
+      "en": ["坐姿", "工作站", "作業環境", "posture", "workstation"],
+      "ja": ["坐姿", "工作站", "作業環境", "posture", "workstation"]
+    }
+  },
+  {
+    "id": "photography",
+    "label": {
+      "zh-hant": "攝影",
+      "en": "Photography",
+      "ja": "写真"
+    },
+    "aliases": {
+      "zh-hant": ["拍照", "撮影", "camera", "photos"],
+      "en": ["拍照", "撮影", "camera", "photos"],
+      "ja": ["拍照", "撮影", "camera", "photos"]
+    }
+  },
+  {
+    "id": "landscape-photography",
+    "label": {
+      "zh-hant": "風景攝影",
+      "en": "Landscape photography",
+      "ja": "風景写真"
+    },
+    "aliases": {
+      "zh-hant": ["風景照", "風景撮影", "landscape", "outdoor photography"],
+      "en": ["風景照", "風景撮影", "landscape", "outdoor photography"],
+      "ja": ["風景照", "風景撮影", "landscape", "outdoor photography"]
+    }
+  },
+  {
+    "id": "composition",
+    "label": {
+      "zh-hant": "構圖",
+      "en": "Composition",
+      "ja": "構図"
+    },
+    "aliases": {
+      "zh-hant": ["三分法", "三分割法", "rule of thirds", "leading lines"],
+      "en": ["三分法", "三分割法", "rule of thirds", "leading lines"],
+      "ja": ["三分法", "三分割法", "rule of thirds", "leading lines"]
+    }
   }
 ]

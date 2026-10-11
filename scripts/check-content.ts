@@ -10,7 +10,9 @@ import {
 validateContent();
 const paths = publishedPaths();
 const noteEditions = publishedRoutes().filter((route) =>
-  ['medical-note', 'network-note', 'hardware-note'].includes(route.kind),
+  ['medical-note', 'network-note', 'hardware-note', 'collection-note'].includes(
+    route.kind,
+  ),
 ).length;
 const editions = locales
   .map((locale) => `${locale} ${listPosts(locale).length}`)
