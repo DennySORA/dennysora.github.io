@@ -106,7 +106,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 |---|---|---|---|
 | Tabline | `TabLine.tsx`／`.tabline` | 38px，手機為 52＋44px 兩列 | 左段寬度等於檔案樹（放收合鈕與品牌）；中段是 buffers；右段是搜尋、快速連結、語言與窄螢幕的檔案樹按鈕 |
 | Buffers | `.buffers`、`.tab` | 列高 | 每個區域一個 buffer，內頁以目前檔案 buffer（`.tab-preview`）插在所屬區域後。目前 buffer 用 `background` 底、粗體與左側 2px `action-primary` 標記 |
-| 檔案樹 | `Explorer.tsx`／`.sidebar` | 248px，sticky | neo-tree 外觀：展開箭頭、資料夾與檔案圖示、縮排導引線、空資料夾顯示「（空）」。名稱依目前語言顯示：頂層、資料夾與文件都用該語言的短名稱（例如「1 句子結構」「1 Structure」「1 文の構造」），短到在 248px 內完整顯示、不出現省略號，完整標題放在提示文字與讀屏文字；產品名稱（例如 dgxtop）各語言相同。資料夾預設收合，只展開通往目前頁面的路徑（目前頁面是資料夾時也展開它），每次換頁重新套用；資料夾圖示跟著開合狀態。沒有 JavaScript 時展開箭頭無法使用，所以全部展開。整個檔案樹可收合，收合後內容置中 |
+| 檔案樹 | `Explorer.tsx`／`.sidebar` | 248px，sticky | neo-tree 外觀：展開箭頭、資料夾與檔案圖示、縮排導引線、空資料夾顯示「（空）」。縮排與 neo-tree 預設相同（`indent_size` 2、`padding` 1）：以「格」排版，一格是等寬字的字元寬，像終端機一樣對齊整數像素；每列先空一格，每深一層多兩格，第 n 層的展開箭頭或標記在第 2n−1 格、圖示在第 2n+1 格，所以子項目的箭頭正好在上一層圖示下方，任何深度都一樣，列尾也留一格。第一層沒有標記；更深的檔案在自己那格畫「│」，同層最後一個畫「└」，祖先後面還有同層項目時在祖先那格延續「│」；線畫在列的上層，滑過或目前的列也看得到。沒有 JavaScript 時資料夾沒有展開箭頭，改畫和檔案相同的標記。名稱依目前語言顯示：頂層、資料夾與文件都用該語言的短名稱（例如「1 句子結構」「1 Structure」「1 文の構造」），以在 248px 內放得下為目標，但一律不截斷、不出現省略號：一列比檔案樹寬時（層級深或名稱長），檔案樹像 Vim 的 nowrap 視窗一樣可以向右捲動，每列與最寬的一列同寬，側欄的標題列固定不動，手機抽屜只橫捲檔案樹；完整標題放在提示文字與讀屏文字；產品名稱（例如 dgxtop）各語言相同。資料夾預設收合，只展開通往目前頁面的路徑（目前頁面是資料夾時也展開它），每次換頁重新套用；資料夾圖示跟著開合狀態。沒有 JavaScript 時展開箭頭無法使用，所以全部展開。整個檔案樹可收合，收合後內容置中 |
 | Winbar | `WinBar.tsx`／`.winbar` | 28px，sticky | 路徑麵包屑，每段帶圖示；有頁面的段落才是連結 |
 | Buffer | `main > .buffer`／`.container` | 行號欄 56px（≤1099px 為 48px，<768px 隱藏） | 見 §8 |
 | 狀態列 | `StatusLine.tsx`／`.statusbar` | 26px，fixed | 模式 ▶ 分支 ▶ 檔案 … 語言 │ 編碼 │ 檔案類型 ◀ 位置；powerline 箭頭用各段自己的底色裁出 |
@@ -315,6 +315,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖尺寸與宣告相符；320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；疊圖切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts) | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合 |
+| [`tests/unit/explorer.test.ts`](../tests/unit/explorer.test.ts)、[`tests/e2e/explorer.spec.ts`](../tests/e2e/explorer.spec.ts) | 檔案樹的開合、名稱語言與層級；每層縮排兩格、箭頭與圖示落在第 2n−1 與第 2n+1 格（有無 JavaScript 皆同），「│」「└」與祖先導引線依 neo-tree 規則出現；名稱不截斷，一列太寬時檔案樹向右捲動，頁面、標題列與抽屜不橫捲 |
 | [`tests/e2e/site.spec.ts`](../tests/e2e/site.spec.ts) | 第一次載入就是深色（含無 JavaScript）、Logo 原檔、快速連結、無第三方請求 |
 | [`tests/e2e/accessibility.spec.ts`](../tests/e2e/accessibility.spec.ts) | axe 的 WCAG 2.2 AA 檢查（各頁與各種狀態） |
 | [`scripts/check-artifact.ts`](../scripts/check-artifact.ts) | 每張插圖都有紀錄，且 SHA-256 與紀錄相符 |

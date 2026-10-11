@@ -369,6 +369,11 @@ a.tab:hover {
 }
 
 /* Explorer (neo-tree) ---------------------------------------------------- */
+@property --tree-cell {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 8px;
+}
 .sidebar-column {
   grid-area: sidebar;
   min-width: 0;
@@ -378,14 +383,14 @@ a.tab:hover {
 .sidebar {
   position: sticky;
   top: var(--tabline-h);
+  display: flex;
+  flex-direction: column;
   height: calc(100dvh - var(--tabline-h) - var(--footer-height));
-  overflow-y: auto;
-  padding-bottom: var(--space-4);
   font-family: var(--font-code);
   font-size: 13px;
-  scrollbar-width: thin;
 }
 .sidebar-head {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -396,16 +401,45 @@ a.tab:hover {
   font-size: 12px;
 }
 .explorer {
+  /* Rows sit on character cells, as neo-tree does in a terminal: one cell is
+     the code font's character width snapped to whole pixels, resolved here and
+     inherited as px so every row shares one grid. */
+  --tree-cell: round(1ch, 1px);
+  /* An indent marker's line, on a whole pixel inside its cell. */
+  --tree-line-x: round(down, var(--tree-cell) / 2, 1px);
+  --tree-line: linear-gradient(
+    var(--color-border-subtle),
+    var(--color-border-subtle)
+  );
   font-family: var(--font-code);
   font-size: 13px;
+}
+/* Like a nowrap window, the tree scrolls rather than cut a row short: both
+   ways in the sidebar, under its fixed title, and sideways in the drawer. */
+.sidebar .explorer {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-bottom: var(--space-4);
+  scrollbar-width: thin;
+}
+.menu-dialog .explorer {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+/* Rows share the widest row's width, so a highlight runs the whole line. */
+.explorer-root,
+.tree {
+  width: max-content;
+  min-width: 100%;
 }
 .explorer-root {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--tree-cell);
   height: 28px;
   margin-top: var(--space-1);
-  padding: 0 var(--space-3);
+  padding: 0 var(--tree-cell);
   color: var(--color-text);
   font-size: 12.5px;
   font-weight: 650;
@@ -417,16 +451,9 @@ a.tab:hover {
 .tree-children {
   list-style: none;
 }
-/* An indent guide runs down each open folder, under its expander. */
-.tree-children {
-  background: linear-gradient(
-      var(--color-border-subtle),
-      var(--color-border-subtle)
-    )
-    18px 0 / 1px 100% no-repeat;
-}
-.tree-children .tree-children {
-  background-position: 34px 0;
+/* Entries under ~/dennysora are level 1; each folder's list sets the next. */
+.tree {
+  --tree-level: 1;
 }
 /* A closed folder hides its children. Without JavaScript the arrows that open
    folders are unavailable, so the noscript style in root.tsx shows them all. */
@@ -438,12 +465,16 @@ a.tab:hover {
 .tree-link[data-expanded='false'] > .tree-icon-open {
   display: none;
 }
+/* neo-tree's indent (indent_size 2, padding 1): one cell of padding, then two
+   cells per level. The last two hold the row's expander or marker and a space,
+   so a folder's entries line up under its icon. One cell closes the row. */
 .tree-link {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--tree-cell);
   min-height: 26px;
-  padding: 0 var(--space-3) 0 12px;
+  padding: 0 var(--tree-cell) 0
+    calc((2 * var(--tree-level) - 1) * var(--tree-cell));
   color: var(--color-text-secondary);
   text-decoration: none;
   white-space: nowrap;
@@ -451,16 +482,49 @@ a.tab:hover {
     background-color var(--motion),
     color var(--motion);
 }
-.tree-children .tree-link {
-  padding-left: 28px;
-}
-.tree-children .tree-children .tree-link {
-  padding-left: 44px;
-}
 .tree-expander {
-  flex: 0 0 12px;
-  width: 12px;
-  color: var(--color-text-muted);
+  flex: 0 0 var(--tree-cell);
+  align-self: stretch;
+}
+/* Indent markers, as neo-tree draws them. The first level has none. Below it,
+   a file's own cell shows │, or └ for the last entry in its folder, and an
+   ancestor's cell continues │ while that ancestor has entries after it. */
+.tree-children > li > .tree-link > .tree-expander,
+.tree-children > li > .tree-folder-row > .tree-link > .tree-expander {
+  background: var(--tree-line) var(--tree-line-x) 0 / 1px 100% no-repeat;
+}
+.tree-children > li:last-child > .tree-link > .tree-expander,
+.tree-children
+  > li:last-child
+  > .tree-folder-row
+  > .tree-link
+  > .tree-expander {
+  background:
+    var(--tree-line) var(--tree-line-x) 0 / 1px 50% no-repeat,
+    var(--tree-line) 100% calc(50% - 0.5px) / calc(100% - var(--tree-line-x))
+      1px no-repeat;
+}
+/* A folder's own cell holds its disclosure button, neo-tree's expander.
+   Without JavaScript there is no expander, so root.tsx shows the marker. */
+.tree-folder-row > .tree-link > .tree-expander {
+  visibility: hidden;
+}
+/* Above the rows, so a hovered or current row keeps its markers as neo-tree's
+   cursor line does. */
+.tree-children {
+  position: relative;
+}
+.tree-children > li:not(:last-child) > .tree-children::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset-block: 0;
+  left: calc(
+    (2 * var(--tree-level) - 3) * var(--tree-cell) + var(--tree-line-x)
+  );
+  width: 1px;
+  background: var(--color-border-subtle);
+  pointer-events: none;
 }
 .tree-folder-row {
   position: relative;
@@ -468,7 +532,8 @@ a.tab:hover {
 .tree-folder-toggle {
   position: absolute;
   inset-block: 0;
-  left: 6px;
+  /* Centered on the row's expander cell. */
+  left: calc((2 * var(--tree-level) - 0.5) * var(--tree-cell) - 12px);
   display: grid;
   place-items: center;
   width: 24px;
@@ -480,12 +545,6 @@ a.tab:hover {
   transition:
     background-color var(--motion),
     color var(--motion);
-}
-.tree-children .tree-folder-toggle {
-  left: 22px;
-}
-.tree-children .tree-children .tree-folder-toggle {
-  left: 38px;
 }
 .tree-folder-toggle:hover {
   background: var(--color-surface-raised);
@@ -512,11 +571,6 @@ a.tab:hover {
 .tree-link:focus-visible {
   outline-offset: -2px;
 }
-.tree-name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .tree-link .icon {
   color: var(--color-text-muted);
 }
@@ -533,7 +587,8 @@ a.tab:hover {
   display: flex;
   align-items: center;
   min-height: 24px;
-  padding-left: 45px;
+  /* In the icon column of the folder's entries. */
+  padding-left: calc((2 * var(--tree-level) + 1) * var(--tree-cell));
   color: var(--color-text-muted);
   font-size: 12px;
 }

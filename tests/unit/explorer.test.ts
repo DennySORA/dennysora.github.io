@@ -62,8 +62,10 @@ describe('folder disclosures', () => {
           `${dictionaries[locale].folderExpand}: `,
         );
         expect(attribute(button, 'class')).toContain('requires-js');
-        expect(html).toContain(
-          `<ul id="${attribute(button, 'aria-controls')}" class="tree-children" data-collapsed="">`,
+        expect(html).toMatch(
+          new RegExp(
+            `<ul id="${attribute(button, 'aria-controls')}" class="tree-children" style="--tree-level:\\d+" data-collapsed="">`,
+          ),
         );
       }
       expect(
@@ -148,6 +150,34 @@ describe('folder disclosures', () => {
     expect(open(explorerHtml({ kind: 'library', locale: 'en' }))).toEqual([
       '/en/blog/',
     ]);
+  });
+
+  it("gives each folder's entries the next level, however deep the tree goes", () => {
+    const html = explorerHtml({
+      kind: 'network-note',
+      locale: 'zh-hant',
+      noteId: 'p2p-downloader',
+    });
+    const levels = new Map(
+      [
+        ...html.matchAll(
+          /<ul id="([^"]+)" class="tree-children" style="--tree-level:(\d+)"/g,
+        ),
+      ].map(([, id, level]) => [id!, Number(level)]),
+    );
+    const folders = [
+      ...html.matchAll(
+        /<button[^>]*aria-controls="([^"]+)"[^>]*>[\s\S]*?<\/button><a[^>]*href="([^"]+)"/g,
+      ),
+    ];
+    expect(folders).toHaveLength(16);
+    // A folder's entries sit one level below it, so the levels follow the
+    // path: /note/ holds level 2 and /note/software/network/p2p/ level 5.
+    for (const [, id, href] of folders) {
+      const depth = href!.split('/').filter(Boolean).length - 1;
+      expect(levels.get(id!), href).toBe(depth + 1);
+    }
+    expect(Math.max(...levels.values())).toBe(5);
   });
 
   it('keeps desktop and drawer disclosure IDs unique with the current child exposed', () => {

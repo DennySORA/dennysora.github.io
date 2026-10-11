@@ -232,3 +232,162 @@ test('without JavaScript all descendants and category links remain available', a
     await context.close();
   }
 });
+
+test('every level indents two cells with entries under their folder icon, as neo-tree draws it', async ({
+  browser,
+}) => {
+  const notePath = '/zh-hant/note/software/network/p2p/p2p-downloader/';
+  const pathToNote = [
+    '/zh-hant/note/',
+    '/zh-hant/note/software/',
+    '/zh-hant/note/software/network/',
+    '/zh-hant/note/software/network/p2p/',
+    notePath,
+  ];
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({ javaScriptEnabled });
+    try {
+      const page = await context.newPage();
+      await page.goto(notePath);
+      if (javaScriptEnabled)
+        await expect(page.locator('html')).toHaveAttribute(
+          'data-keys',
+          'ready',
+        );
+      const explorer = page.locator('.sidebar .explorer');
+      const cell = await explorer.evaluate((element) =>
+        parseFloat(getComputedStyle(element).getPropertyValue('--tree-cell')),
+      );
+      expect(cell).toBeGreaterThanOrEqual(6);
+      for (const [index, href] of pathToNote.entries()) {
+        const row = await explorer
+          .locator(`a.tree-link[href="${href}"]`)
+          .evaluate((link) => {
+            const edge = link
+              .closest('.explorer')!
+              .getBoundingClientRect().left;
+            const icon = [...link.querySelectorAll('.tree-icon')].find(
+              (svg) => svg.getBoundingClientRect().width > 0,
+            )!;
+            const toggle = link.parentElement!.querySelector(
+              ':scope > .tree-folder-toggle',
+            );
+            const box = toggle?.getBoundingClientRect();
+            return {
+              expander:
+                link.querySelector('.tree-expander')!.getBoundingClientRect()
+                  .left - edge,
+              icon: icon.getBoundingClientRect().left - edge,
+              toggle: box?.width ? box.left + box.width / 2 - edge : null,
+            };
+          });
+        // Level n: expander or marker in cell 2n-1, icon in cell 2n+1, so each
+        // entry's expander sits under its folder's icon.
+        const level = index + 1;
+        expect(row.expander, href).toBeCloseTo((2 * level - 1) * cell, 0);
+        expect(row.icon, href).toBeCloseTo((2 * level + 1) * cell, 0);
+        if (javaScriptEnabled && href !== notePath)
+          expect(row.toggle, href).toBeCloseTo((2 * level - 0.5) * cell, 0);
+      }
+      // The folder's last note closes with └ (two strokes), the others show │.
+      const strokes = (href: string) =>
+        explorer
+          .locator(`a.tree-link[href="${href}"] .tree-expander`)
+          .evaluate(
+            (expander) =>
+              getComputedStyle(expander).backgroundImage.split('gradient(')
+                .length - 1,
+          );
+      expect(await strokes(notePath)).toBe(1);
+      expect(
+        await strokes('/zh-hant/note/software/network/p2p/p2p-privacy/'),
+      ).toBe(2);
+      // Software has folders after it, so its cell continues │ down its
+      // entries; Networks is the last in Software, so its cell stays empty.
+      const guide = (href: string) =>
+        explorer
+          .locator('li', { has: page.locator(`a.tree-link[href="${href}"]`) })
+          .last()
+          .evaluate((item) => {
+            const list = item.querySelector(':scope > .tree-children')!;
+            const line = getComputedStyle(list, '::before');
+            return line.content === 'none' ? null : parseFloat(line.left);
+          });
+      expect(await guide('/zh-hant/note/software/')).toBeCloseTo(
+        3 * cell + Math.floor(cell / 2),
+        0,
+      );
+      expect(await guide('/zh-hant/note/software/network/')).toBeNull();
+    } finally {
+      await context.close();
+    }
+  }
+});
+
+test('a row wider than the Explorer scrolls the tree sideways instead of cutting the name', async ({
+  page,
+}) => {
+  const notePath = '/en/note/software/network/p2p/p2p-downloader/';
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(notePath);
+    await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
+    const drawer = width < 1100;
+    if (drawer)
+      await page
+        .getByRole('button', { name: 'Open explorer', exact: true })
+        .click();
+    const explorer = drawer
+      ? page.getByRole('dialog', { name: 'Explorer' }).locator('.explorer')
+      : page.locator('.sidebar .explorer');
+    // Today's names fit, so nothing scrolls until a row is wider.
+    expect(
+      await explorer.evaluate((tree) => tree.scrollWidth - tree.clientWidth),
+    ).toBeLessThanOrEqual(0);
+    await explorer
+      .locator(`a.tree-link[href="${notePath}"] .tree-name`)
+      .evaluate((name) => {
+        name.textContent =
+          'P2P downloader: core architecture and connection governance';
+      });
+    const end = await explorer.evaluate((tree, href) => {
+      tree.scrollLeft = tree.scrollWidth;
+      const name = tree.querySelector(
+        `a.tree-link[href="${href}"] .tree-name`,
+      )!;
+      const rows = [...tree.querySelectorAll<HTMLElement>('.tree-link')].filter(
+        (row) => row.offsetParent,
+      );
+      return {
+        scrollLeft: tree.scrollLeft,
+        clipped: name.scrollWidth > name.clientWidth,
+        nameEnd: name.getBoundingClientRect().right,
+        visibleEnd: tree.getBoundingClientRect().left + tree.clientWidth,
+        rowWidths: new Set(rows.map((row) => row.offsetWidth)).size,
+      };
+    }, notePath);
+    expect(end.scrollLeft).toBeGreaterThan(0);
+    expect(end.clipped).toBe(false);
+    expect(end.nameEnd).toBeLessThanOrEqual(end.visibleEnd);
+    // Every row is as wide as the longest, so a highlight runs the whole line.
+    expect(end.rowWidths).toBe(1);
+    // Only the tree scrolls: not the page, the sidebar title or the drawer.
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - innerWidth,
+      ),
+    ).toBeLessThanOrEqual(1);
+    if (drawer)
+      expect(
+        await page
+          .locator('dialog[open]')
+          .evaluate((dialog) => dialog.scrollWidth - dialog.clientWidth),
+      ).toBe(0);
+    else
+      expect(
+        await page
+          .locator('.sidebar-head')
+          .evaluate((head) => head.getBoundingClientRect().left),
+      ).toBe(0);
+  }
+});

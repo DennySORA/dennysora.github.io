@@ -12,11 +12,13 @@ import { htmlLang, isLocale } from './i18n/index.ts';
 import './styles/site.css';
 
 // Without JavaScript, interactive-only controls hide and their static alternatives show,
-// and every Explorer folder stays open because its arrow cannot open it.
+// and every Explorer folder stays open because its arrow cannot open it; the folder then
+// shows its indent marker where the arrow was, as neo-tree does without expanders.
 const noScriptStyles =
   '<style>.requires-js{display:none!important}.no-js-only{display:block!important}' +
   '.tree-children[data-collapsed]{display:block!important}' +
-  '.tree-link>.tree-icon-open{display:block!important}.tree-link>.tree-icon-closed{display:none!important}</style>';
+  '.tree-link>.tree-icon-open{display:block!important}.tree-link>.tree-icon-closed{display:none!important}' +
+  '.tree-folder-row>.tree-link>.tree-expander{visibility:visible!important}</style>';
 
 export default function Root() {
   // The page's own data decides the language, so a shared 404 hydrates unchanged.

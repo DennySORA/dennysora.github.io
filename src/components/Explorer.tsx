@@ -1,4 +1,11 @@
-import { useId, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useId,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import { routePath, type RouteDescriptor } from '../lib/route-manifest.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
@@ -22,6 +29,13 @@ const kindIcons: Record<Kind, IconName> = {
   folder: 'folder-open',
   external: 'newspaper',
 };
+
+/**
+ * How deep a row sits: 1 for the entries under ~/dennysora. Each folder gives
+ * its children the next level, which the stylesheet turns into neo-tree's
+ * indent of two cells per level, however deep the tree goes.
+ */
+const TreeLevel = createContext(1);
 
 type TreeLinkProps = {
   href: string;
@@ -101,6 +115,7 @@ function TreeFolder({
     setState({ path: currentPath, expanded: onPath });
   const expanded = state.path === currentPath ? state.expanded : onPath;
   const childrenId = useId();
+  const childLevel = useContext(TreeLevel) + 1;
   const t = dictionaries[locale];
   const label = `${expanded ? t.folderCollapse : t.folderExpand}: ${link.name}`;
   return (
@@ -124,9 +139,10 @@ function TreeFolder({
       <ul
         id={childrenId}
         className="tree-children"
+        style={{ '--tree-level': childLevel } as CSSProperties}
         data-collapsed={expanded ? undefined : ''}
       >
-        {children}
+        <TreeLevel value={childLevel}>{children}</TreeLevel>
       </ul>
     </>
   );
