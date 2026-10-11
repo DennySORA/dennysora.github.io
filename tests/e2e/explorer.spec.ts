@@ -24,7 +24,7 @@ test('folder arrows hide descendants repeatedly without navigating or losing foc
   for (const key of ['Enter', 'Space', 'Enter']) {
     await medical.press(key);
     await expect(medical).toHaveAttribute('aria-expanded', 'false');
-    await expect(medical).toHaveAccessibleName('展開資料夾: 醫學');
+    await expect(medical).toHaveAccessibleName(/^展開資料夾: 健康與醫學/);
     await expect(current).toBeHidden();
     await expect(
       explorer.getByRole('link', { name: /腦與中樞神經腫瘤/ }),

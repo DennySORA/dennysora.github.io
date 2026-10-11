@@ -5,7 +5,7 @@
   "assets": [
     {
       "path": "assets/illustrations/collection-network-v1.webp",
-      "purpose": "Feature icon for the Networks & P2P note collection (notes directory and the network folder page).",
+      "purpose": "Feature icon for the Software note folder and its Networks and P2P subfolders (notes directory and those folder pages).",
       "display": "88 px square",
       "width": 192,
       "height": 192,
@@ -25,7 +25,7 @@
     },
     {
       "path": "assets/illustrations/collection-medicine-v1.webp",
-      "purpose": "Feature icon for the Medicine note collection (notes directory and the medical folder page).",
+      "purpose": "Feature icon for the Health & medicine note folder and its Medicines and Pathology subfolders (notes directory and those folder pages).",
       "display": "88 px square",
       "width": 192,
       "height": 192,
@@ -145,7 +145,7 @@
     },
     {
       "path": "assets/illustrations/medical-notes.webp",
-      "purpose": "Cover of the medical folder page and the analgesics note.",
+      "purpose": "Cover of the analgesics note.",
       "display": "full content width, 1200:593",
       "width": 1200,
       "height": 593,
@@ -182,7 +182,7 @@
     },
     {
       "path": "assets/illustrations/collection-health-v1.webp",
-      "purpose": "Feature icon for the Health note collection (notes directory and the health folder page).",
+      "purpose": "Feature icon for the Daily care subfolder of Health & medicine (the Health & medicine folder page and its own page).",
       "display": "88 px square",
       "width": 192,
       "height": 192,
@@ -202,7 +202,7 @@
     },
     {
       "path": "assets/illustrations/collection-other-v1.webp",
-      "purpose": "Feature icon for the Other note collection and its photography folder (notes directory and the other folder pages).",
+      "purpose": "Feature icon for the Other note folder (notes directory and the other folder page).",
       "display": "88 px square",
       "width": 192,
       "height": 192,

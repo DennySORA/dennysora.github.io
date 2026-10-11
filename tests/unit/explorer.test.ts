@@ -8,10 +8,8 @@ import { hardwareNotes } from '../../src/lib/hardware-notes.ts';
 import { medicalNotes } from '../../src/lib/medical-notes.ts';
 import { networkNotes } from '../../src/lib/network-notes.ts';
 import { noteCopy } from '../../src/lib/notes-copy.ts';
-import {
-  collectionEntries,
-  collectionNoteMeta,
-} from '../../src/lib/note-collections.server.ts';
+import { collectionNoteMeta } from '../../src/lib/note-collections.server.ts';
+import { noteTree } from '../../src/lib/note-tree.server.ts';
 
 function attribute(tag: string, name: string) {
   return tag.match(new RegExp(`${name}="([^"]+)"`))?.[1];
@@ -35,7 +33,7 @@ function explorerHtml(route: Parameters<typeof Explorer>[0]['route']) {
     createElement(Explorer, {
       locale,
       route,
-      files: { posts: [], collections: collectionEntries(locale) },
+      files: { posts: [], notes: noteTree(locale) },
     }),
   );
 }
@@ -47,15 +45,15 @@ describe('folder disclosures', () => {
         createElement(Explorer, {
           locale,
           route: { kind: 'home', locale },
-          files: { posts: [], collections: collectionEntries(locale) },
+          files: { posts: [], notes: noteTree(locale) },
         }),
       );
       const buttons = [...html.matchAll(/<button\b[^>]*>/g)].map(
         (match) => match[0],
       );
-      // blog, note, network, medical (+2 categories), hardware (+1 category),
-      // japan (+1 category), health, other (+1 category), projects (+1 category)
-      expect(buttons).toHaveLength(15);
+      // blog, note, software (+network, +p2p), medical (+3 subfolders),
+      // hardware (+1), japan (+1), other, projects (+1 category)
+      expect(buttons).toHaveLength(16);
       // On the home page no folder is on the current path, so all start closed.
       for (const button of buttons) {
         expect(attribute(button, 'type')).toBe('button');
@@ -76,7 +74,7 @@ describe('folder disclosures', () => {
       );
       expect(
         links.filter((link) => link.includes('data-kind="folder"')),
-      ).toHaveLength(15);
+      ).toHaveLength(16);
       expect(links.every((link) => !link.includes('<button'))).toBe(true);
       expect(html).not.toContain(' hidden');
       // Every name is in the page's language: no slugs or .md file names.
@@ -117,7 +115,7 @@ describe('folder disclosures', () => {
         .filter(([, expanded]) => expanded)
         .map(([href]) => href);
     const home = folderStates(explorerHtml({ kind: 'home', locale: 'en' }));
-    expect(home).toHaveLength(15);
+    expect(home).toHaveLength(16);
     expect(home.every(([, expanded]) => !expanded)).toBe(true);
     expect(
       open(
@@ -136,10 +134,9 @@ describe('folder disclosures', () => {
     expect(
       open(
         explorerHtml({
-          kind: 'note-category',
+          kind: 'note-folder',
           locale: 'ja',
-          collection: 'japan',
-          category: 'japanese',
+          folder: 'japanese',
         }),
       ),
     ).toEqual(['/ja/note/', '/ja/note/japan/', '/ja/note/japan/japanese/']);
@@ -161,7 +158,7 @@ describe('folder disclosures', () => {
         locale: 'zh-hant',
         noteId: 'brain-cns-tumors',
       },
-      files: { posts: [], collections: collectionEntries('zh-hant') },
+      files: { posts: [], notes: noteTree('zh-hant') },
     });
     const html = renderToStaticMarkup(
       createElement(Fragment, null, explorer, explorer),
@@ -169,7 +166,7 @@ describe('folder disclosures', () => {
     const ids = [...html.matchAll(/aria-controls="([^"]+)"/g)].map(
       (match) => match[1],
     );
-    expect(ids).toHaveLength(30);
+    expect(ids).toHaveLength(32);
     expect(new Set(ids).size).toBe(ids.length);
     const current = [...html.matchAll(/<a\b[^>]*aria-current="page"[^>]*>/g)];
     expect(current).toHaveLength(2);

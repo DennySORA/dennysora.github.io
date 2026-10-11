@@ -28,11 +28,16 @@ describe('native network notes', () => {
         ...route,
         locale: 'en',
       });
-      expect(parseRoute('/zh-hant/note/network/unknown/')).toBeNull();
+      expect(
+        parseRoute('/zh-hant/note/software/network/p2p/unknown/'),
+      ).toBeNull();
+      expect(parseRoute(`/zh-hant/note/network/${noteId}/`)).toBeNull();
       expect(publishedPaths()).toContain(path.slice(0, -1));
-      expect(filePath(route)).toBe(`note/network/${noteId}.md`);
+      expect(filePath(route)).toBe(`note/software/network/p2p/${noteId}.md`);
       expect(navSection(route)).toBe('notes');
-      expect(crumbs(route)[2]?.href).toBe('/zh-hant/note/network/');
+      expect(crumbs(route)[4]?.href).toBe(
+        '/zh-hant/note/software/network/p2p/',
+      );
       const data = loader({
         params: { '*': path.slice(1) },
       } as unknown as LoaderFunctionArgs);

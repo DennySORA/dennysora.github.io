@@ -180,17 +180,17 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 | 檔案 | 用途 | 顯示尺寸 |
 |---|---|---|
-| `collection-network-v1.webp` | 「網路與 P2P」筆記集合 | 88px |
-| `collection-medicine-v1.webp` | 「醫學」筆記集合 | 88px |
+| `collection-network-v1.webp` | 「軟體」筆記資料夾與其下的網路、P2P | 88px |
+| `collection-medicine-v1.webp` | 「健康與醫學」筆記資料夾與其下的藥物、病理 | 88px |
 | `collection-hardware-v1.webp` | 「硬體」筆記集合與分類 | 88px |
 | `collection-tools-v1.webp` | 「專案／工具」目錄與工具資料夾 | 88px |
 | `collection-japan-v1.webp` | 「日本」筆記集合與日語分類 | 88px |
-| `collection-health-v1.webp` | 「健康」筆記集合 | 88px |
-| `collection-other-v1.webp` | 「其他」筆記集合與拍攝技巧分類 | 88px |
+| `collection-health-v1.webp` | 「健康與醫學」下的「日常照顧」 | 88px |
+| `collection-other-v1.webp` | 「其他」筆記資料夾 | 88px |
 | `search-telescope-v1.webp` | 全站搜尋頁首 | 112px |
 | `empty-blog-v1.webp` | 部落格沒有文章時 | ≤320px 寬 |
 | `not-found-v1.webp` | 404 | ≤360px 寬 |
-| `medical-notes.webp` | 醫學資料夾與筆記的封面（既有，非透明） | 內容寬 |
+| `medical-notes.webp` | 止痛藥筆記的封面（既有，非透明） | 內容寬 |
 
 **品牌圖**（`logo.png`、`logo-hero*.webp`、`avatar.png`、favicon）永遠不重畫、不改色、不加濾鏡、不裁切。可以放進浮動視窗外框裡，以 bytes 檢查守護。
 
@@ -251,14 +251,14 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 搜尋輸入 | `.search-field` | 凹陷 `chrome` 底、`/` 或 `>_` 提示圖示 | 聚焦時 `focus` 外框；狀態列切到 INSERT |
 | 篩選 | `.filter-row button[aria-pressed]` | 透明底 | 選中：`surface-selected`＋底部 2px 藍線 |
 | 檔案列表 | `.file-list`、`.collection-files` | 檔案圖示＋mono 檔名＋sans 標題 | hover 標題變連結色 |
-| 集合卡片 | `.collection` | 88px 插圖＋資料夾標題＋說明＋檔案列＋語言資訊 | hover 邊框變強 |
+| 集合卡片 | `.collection` | 88px 插圖＋資料夾標題＋說明＋檔案列 | hover 邊框變強 |
 | 搜尋結果 | `.site-search-results li` | 類型圖示＋中繼資料＋標題＋摘要＋路徑，每項只有一個連結 | hover／focus-within 左側 2px 標記 |
 | 空狀態 | `.empty-state` | 插圖或圖示＋h2＋說明＋**下一步動作** | 不可只留一句「沒有資料」 |
 | 錯誤晶片 | `.vim-error` | `danger-fill` 底、深色字、`circle-x`＋代碼 | — |
 | 程式碼區塊 | `.code-block` | `chrome` 底、`surface` 標題列（語言或檔名）、自身橫向捲動 | 複製按鈕回報真實結果 |
 | 筆記資料圖表 | `.hw-chart`（`hardware-notes.css`） | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表 | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動 |
 | 推薦卡片 | `.hw-pick` | `surface` 卡片＋名次（mono、`entity-file`）＋標題＋定位（`entity-kind`）＋數據列＋理由與注意＋證據標籤＋來源 | 單欄排列，每張卡片只有標題一個行號 |
-| 學習筆記 | `.study-note`（`study-notes.css`） | 日本、健康、其他三個集合共用：頁首（`//` 眉標、h1、導言、數字卡、範圍晶片）、章節眉標＋h2、在自身區域捲動的表格、`.sn-callout`（資訊色左邊框；`data-status="warning"` 只給真實警告，金色只上在邊框與標題，正文維持一般文字色） | 每個 h1、h2 一個行號；系列目錄以 `surface-selected`＋2px 標記表示目前這篇 |
+| 學習筆記 | `.study-note`（`study-notes.css`） | 日語系列、腰椎保護與風景攝影共用：頁首（`//` 眉標、h1、導言、數字卡、範圍晶片）、章節眉標＋h2、在自身區域捲動的表格、`.sn-callout`（資訊色左邊框；`data-status="warning"` 只給真實警告，金色只上在邊框與標題，正文維持一般文字色） | 每個 h1、h2 一個行號；系列目錄以 `surface-selected`＋2px 標記表示目前這篇 |
 | 日文例句與釋義 | `.sn-example`、`.sn-jp`、`.sn-gloss`、`.sn-analysis`、`.sn-takeaway` | 例句與日文表格欄位標 `lang="ja"`，使用日文字型並在三語版本逐字保留，元素裡不放中文標籤或釋義；句中其他日文由 `markJapanese` 在中文版與英文版輸出時補標 `lang="ja"`；類型標籤後是真正的空格；句中的日文形式用 `.sn-jp` 晶片（sans，不用等寬）；中文釋義 `.sn-gloss` 在日文版隱藏；編輯解析是 `surface` 面板，易錯點、核心、辨析等種類用 `entity-kind` 的 `.sn-kind` 類型標籤 | 不用狀態色區分種類；錯誤與正確形式以文字的 ×／○ 標示 |
 | 照片與構圖疊圖 | `.sn-photo`、`.sn-guides`、`.sn-legend` | 浮動視窗：`.float-title`（`image` 圖示＋實際檔名＋真實像素）、`chrome` 底、`--edge-highlight`。疊圖依照片的實際比例繪製：三分線 `text` 虛線、視線路徑 `link` 虛線、保留元素 `entity-file` 實線圈、檢查元素 `entity-kind` 虛線圈，每條線下方有 `chrome` 描邊；編號圓點對應圖下說明，圖例不只靠顏色 | 每張照片一個「輔助線」切換鈕（`aria-pressed`，只在 JavaScript 下顯示），全頁可關閉三分線或標記；沒有 JavaScript 時疊圖照常顯示；只有封面 eager，其餘 lazy；GPT 生成的構圖示意圖沿用同一個視窗，標題列寫「GPT 生成 · 寬 × 高」，替代文字以生成來源開頭，圖上的標註屬於圖片本身、不能關閉 |
 | 專案截圖 | `.project-shot`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋真實檔名＋真實像素尺寸）、`chrome` 底、`--edge-highlight`，不加陰影；截圖連到原尺寸檔；說明在下方 | 截圖不裁切、不加濾鏡，可識別資訊（序號、UUID）先打碼；只有第一張 eager，其餘 lazy；畫廊每列最少 420px |
@@ -313,7 +313,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | [`tests/unit/design.test.ts`](../tests/unit/design.test.ts) | tokens 數值與單一來源、全部文字角色的對比、模式色與主要按鈕的對比、品牌圖 bytes |
 | [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts) | buffers 是五個區域（README.md、blog、note、projects、paper-daily）；快速連結的名稱包含可見標籤；外框不再有點陣圖符號 |
 | [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖尺寸與宣告相符；320–1920px 不溢出、axe、無 JavaScript 可讀 |
-| [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日本、健康、其他集合只在正確路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；疊圖切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
+| [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；疊圖切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts) | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合 |
 | [`tests/e2e/site.spec.ts`](../tests/e2e/site.spec.ts) | 第一次載入就是深色（含無 JavaScript）、Logo 原檔、快速連結、無第三方請求 |
 | [`tests/e2e/accessibility.spec.ts`](../tests/e2e/accessibility.spec.ts) | axe 的 WCAG 2.2 AA 檢查（各頁與各種狀態） |

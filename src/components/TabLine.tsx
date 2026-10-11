@@ -71,16 +71,10 @@ function Buffers({
   )
     ? 'library'
     : [
-          'medical',
-          'medical-category',
+          'note-folder',
           'medical-note',
-          'network',
           'network-note',
-          'hardware',
-          'hardware-category',
           'hardware-note',
-          'note-collection',
-          'note-category',
           'collection-note',
         ].includes(route.kind)
       ? 'notes'

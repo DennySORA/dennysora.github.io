@@ -42,23 +42,14 @@ import { Article } from '../features/reader/Article.tsx';
 import { ResearchBridge } from '../features/research/ResearchBridge.tsx';
 import { Notes } from '../features/notes/Notes.tsx';
 import { MedicalNote } from '../features/notes/MedicalNote.tsx';
-import { medicalCategoryCopy, medicalNotes } from '../lib/medical-notes.ts';
+import { medicalNotes } from '../lib/medical-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
-import { NetworkNotes } from '../features/notes/NetworkNotes.tsx';
 import { loadNotePageModule } from '../features/notes/note-page-module.ts';
-import { networkCopy, networkNotes } from '../lib/network-notes.ts';
-import {
-  hardwareCategoryCopy,
-  hardwareCopy,
-  hardwareNotes,
-} from '../lib/hardware-notes.ts';
-import {
-  categoryCopy,
-  collectionCopy,
-  collectionEntries,
-  collectionNoteMeta,
-  collectionNoteSummaries,
-} from '../lib/note-collections.server.ts';
+import { networkNotes } from '../lib/network-notes.ts';
+import { hardwareNotes } from '../lib/hardware-notes.ts';
+import { collectionNoteMeta } from '../lib/note-collections.server.ts';
+import { noteFolderCopy, noteTree } from '../lib/note-tree.server.ts';
+import { noteFolders } from '../lib/note-tree.ts';
 import { NotFound } from '../features/misc/NotFound.tsx';
 import { Projects } from '../features/projects/Projects.tsx';
 import { loadProjectPageModule } from '../features/projects/project-page-module.ts';
@@ -264,26 +255,9 @@ function loadView(route: RouteDescriptor) {
       };
     }
     case 'notes':
-    case 'medical':
-    case 'network':
-    case 'hardware':
       return { kind: route.kind };
-    case 'medical-category':
-      return { kind: route.kind, category: route.category };
-    case 'hardware-category':
-      return { kind: route.kind, category: route.category };
-    case 'note-collection':
-      return {
-        kind: route.kind,
-        collection: route.collection,
-        summaries: collectionNoteSummaries(route.collection, locale),
-      };
-    case 'note-category':
-      return {
-        kind: route.kind,
-        collection: route.collection,
-        category: route.category,
-      };
+    case 'note-folder':
+      return { kind: route.kind, folder: route.folder };
     case 'collection-note':
       return {
         kind: 'collection-note' as const,
@@ -384,72 +358,35 @@ function describe(view: ViewData, locale: Locale) {
         description: view.article.edition.summary,
       };
     case 'notes':
-    case 'medical':
+      return {
+        title: withSite(noteCopy[locale].notes),
+        description: noteCopy[locale].intro,
+      };
+    case 'note-folder': {
+      // A subfolder is titled with its parent, as in "P2P · Networks".
+      const { parent } = noteFolders[view.folder];
+      const title = noteFolderCopy[view.folder].title[locale];
+      return {
+        title: withSite(
+          parent ? `${title} · ${noteFolderCopy[parent].title[locale]}` : title,
+        ),
+        description: noteFolderCopy[view.folder].intro[locale],
+      };
+    }
     case 'medical-note':
       return {
-        title: withSite(
-          view.kind === 'medical-note'
-            ? medicalNotes[view.noteId].title[locale]
-            : view.kind === 'medical'
-              ? noteCopy[locale].medical
-              : noteCopy[locale].notes,
-        ),
-        description:
-          view.kind === 'medical-note'
-            ? medicalNotes[view.noteId].description[locale]
-            : noteCopy[locale].intro,
-      };
-    case 'medical-category':
-      return {
-        title: withSite(
-          medicalCategoryCopy[locale][view.category].title +
-            ' · ' +
-            noteCopy[locale].medical,
-        ),
-        description: medicalCategoryCopy[locale][view.category].intro,
-      };
-    case 'network':
-      return {
-        title: withSite(networkCopy[locale].title),
-        description: networkCopy[locale].intro,
+        title: withSite(medicalNotes[view.noteId].title[locale]),
+        description: medicalNotes[view.noteId].description[locale],
       };
     case 'network-note':
       return {
         title: withSite(networkNotes[view.noteId].title[locale]),
         description: networkNotes[view.noteId].description[locale],
       };
-    case 'hardware':
-      return {
-        title: withSite(hardwareCopy[locale].title),
-        description: hardwareCopy[locale].intro,
-      };
-    case 'hardware-category':
-      return {
-        title: withSite(
-          hardwareCategoryCopy[locale][view.category].title +
-            ' · ' +
-            hardwareCopy[locale].title,
-        ),
-        description: hardwareCategoryCopy[locale][view.category].intro,
-      };
     case 'hardware-note':
       return {
         title: withSite(hardwareNotes[view.noteId].title[locale]),
         description: hardwareNotes[view.noteId].description[locale],
-      };
-    case 'note-collection':
-      return {
-        title: withSite(collectionCopy[view.collection].title[locale]),
-        description: collectionCopy[view.collection].intro[locale],
-      };
-    case 'note-category':
-      return {
-        title: withSite(
-          categoryCopy[view.category].title[locale] +
-            ' · ' +
-            collectionCopy[view.collection].title[locale],
-        ),
-        description: categoryCopy[view.category].intro[locale],
       };
     case 'collection-note':
       return {
@@ -506,7 +443,7 @@ export function loader({ params }: LoaderFunctionArgs) {
   // The explorer lists the real files of this workspace on every page.
   const workspace = {
     posts: listPosts(locale).map(({ slug, title }) => ({ slug, title })),
-    collections: collectionEntries(locale),
+    notes: noteTree(locale),
   };
   return {
     route,
@@ -660,43 +597,12 @@ function View({ data }: { data: PageData }) {
     case 'article':
       return <Article view={view} locale={locale} />;
     case 'notes':
-    case 'medical':
-    case 'hardware':
+    case 'note-folder':
       return (
         <Notes
           locale={locale}
-          view={{ collection: view.kind === 'notes' ? 'all' : view.kind }}
-          collections={data.workspace.collections}
-        />
-      );
-    case 'medical-category':
-    case 'hardware-category':
-      return (
-        <Notes
-          locale={locale}
-          view={
-            view.kind === 'medical-category'
-              ? { collection: 'medical', category: view.category }
-              : { collection: 'hardware', category: view.category }
-          }
-          collections={data.workspace.collections}
-        />
-      );
-    case 'note-collection':
-      return (
-        <Notes
-          locale={locale}
-          view={{ collection: view.collection }}
-          collections={data.workspace.collections}
-          summaries={view.summaries}
-        />
-      );
-    case 'note-category':
-      return (
-        <Notes
-          locale={locale}
-          view={{ collection: view.collection, category: view.category }}
-          collections={data.workspace.collections}
+          folder={view.kind === 'notes' ? null : view.folder}
+          tree={data.workspace.notes}
         />
       );
     case 'hardware-note':
@@ -715,8 +621,6 @@ function View({ data }: { data: PageData }) {
           showCover={view.noteId === 'analgesics'}
         />
       );
-    case 'network':
-      return <NetworkNotes locale={locale} />;
     case 'projects':
       return <Projects locale={locale} />;
     case 'project-category':

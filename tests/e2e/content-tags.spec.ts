@@ -1,21 +1,18 @@
 import { expect, test } from '@playwright/test';
 import { locales } from '../../src/i18n/index.ts';
 import { searchCopy } from '../../src/features/search/search-copy.ts';
-import {
-  medicalNoteIds,
-  medicalNotePath,
-  medicalNotes,
-} from '../../src/lib/medical-notes.ts';
+import { medicalNoteIds, medicalNotes } from '../../src/lib/medical-notes.ts';
+import { notePath } from '../../src/lib/note-tree.ts';
 import { networkNoteIds, networkNotes } from '../../src/lib/network-notes.ts';
 import { origin } from './helpers.ts';
 
 const notes = [
   ...medicalNoteIds.map((id) => ({
-    path: medicalNotePath(id),
+    path: notePath(id),
     tags: medicalNotes[id].tagIds,
   })),
   ...networkNoteIds.map((id) => ({
-    path: `/zh-hant/note/network/${id}/`,
+    path: notePath(id),
     tags: networkNotes[id].tagIds,
   })),
 ];
@@ -45,7 +42,7 @@ test('every note has accessible static header tags without JavaScript', async ({
 test('a header tag opens exact global results and Back returns to the note', async ({
   page,
 }) => {
-  await page.goto('/zh-hant/note/network/p2p-downloader/');
+  await page.goto('/zh-hant/note/software/network/p2p/p2p-downloader/');
   await page.locator('.content-tags [data-content-tag="p2p"]').click();
   await expect(page).toHaveURL('/zh-hant/search/?tag=p2p');
   await expect(page.locator('.site-search-results li')).toHaveCount(2);
@@ -113,10 +110,10 @@ test('tag links search articles and notes together without unrelated pages', asy
           tags: [tag],
         },
         {
-          id: '/note/network/p2p-downloader/',
+          id: '/note/software/network/p2p/p2p-downloader/',
           locale: 'zh-hant',
           kind: 'note',
-          href: '/zh-hant/note/network/p2p-downloader/',
+          href: '/zh-hant/note/software/network/p2p/p2p-downloader/',
           title: 'Example note',
           summary: 'Note summary',
           text: 'Body',

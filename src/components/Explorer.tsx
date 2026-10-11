@@ -1,28 +1,8 @@
 import { useId, useState, type ReactNode } from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import { routePath, type RouteDescriptor } from '../lib/route-manifest.ts';
-import {
-  networkCopy,
-  networkNoteIds,
-  networkNotes,
-} from '../lib/network-notes.ts';
-import {
-  medicalCategories,
-  medicalCategoryCopy,
-  medicalNoteIds,
-  medicalNotes,
-  medicalNotePath,
-} from '../lib/medical-notes.ts';
-import {
-  hardwareCategories,
-  hardwareCategoryCopy,
-  hardwareCopy,
-  hardwareNoteIds,
-  hardwareNotes,
-  hardwareNotePath,
-} from '../lib/hardware-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
-import type { CollectionNoteLink } from '../lib/note-collections.ts';
+import type { NoteTreeFolder } from '../lib/note-tree.ts';
 import {
   projectCategories,
   projectCategoryCopy,
@@ -152,6 +132,66 @@ function TreeFolder({
   );
 }
 
+/** One folder of the note tree with its subfolders and notes. */
+function NoteFolderNode({
+  folder,
+  locale,
+  route,
+  currentPath,
+  onNavigate,
+}: {
+  folder: NoteTreeFolder;
+  locale: Locale;
+  route: RouteDescriptor;
+  currentPath: string;
+  onNavigate?: (() => void) | undefined;
+}) {
+  return (
+    <li>
+      <TreeFolder
+        currentPath={currentPath}
+        locale={locale}
+        href={folder.href}
+        name={folder.title}
+        note={folder.intro}
+        current={
+          route.kind === 'note-folder' && route.folder === folder.id
+            ? 'page'
+            : undefined
+        }
+        onNavigate={onNavigate}
+      >
+        {folder.folders.map((inner) => (
+          <NoteFolderNode
+            key={inner.id}
+            folder={inner}
+            locale={locale}
+            route={route}
+            currentPath={currentPath}
+            onNavigate={onNavigate}
+          />
+        ))}
+        {folder.notes.map((note) => (
+          <li key={note.id}>
+            <TreeLink
+              href={note.href}
+              kind="markdown"
+              name={note.name}
+              note={note.title}
+              current={
+                'noteId' in route && route.noteId === note.id
+                  ? 'page'
+                  : undefined
+              }
+              onNavigate={onNavigate}
+            />
+          </li>
+        ))}
+      </TreeFolder>
+    </li>
+  );
+}
+
 /** The site as a neo-tree: every entry is a real page or an outside link. */
 export function Explorer({
   locale,
@@ -219,173 +259,16 @@ export function Explorer({
             current={areaState(route, 'notes')}
             onNavigate={onNavigate}
           >
-            <li>
-              <TreeFolder
-                currentPath={currentPath}
+            {files.notes.map((folder) => (
+              <NoteFolderNode
+                key={folder.id}
+                folder={folder}
                 locale={locale}
-                href={`/${locale}/note/network/`}
-                name={networkCopy[locale].title}
-                current={page(route.kind === 'network')}
-                onNavigate={onNavigate}
-              >
-                {networkNoteIds.map((id) => (
-                  <li key={id}>
-                    <TreeLink
-                      href={`/${locale}/note/network/${id}/`}
-                      kind="markdown"
-                      name={networkNotes[id].name[locale]}
-                      note={networkNotes[id].title[locale]}
-                      current={page(
-                        route.kind === 'network-note' && route.noteId === id,
-                      )}
-                      onNavigate={onNavigate}
-                    />
-                  </li>
-                ))}
-              </TreeFolder>
-            </li>
-            <li>
-              <TreeFolder
+                route={route}
                 currentPath={currentPath}
-                locale={locale}
-                href={`/${locale}/note/medical/`}
-                name={noteCopy[locale].medical}
-                current={page(route.kind === 'medical')}
                 onNavigate={onNavigate}
-              >
-                {medicalCategories.map((category) => (
-                  <li key={category}>
-                    <TreeFolder
-                      currentPath={currentPath}
-                      locale={locale}
-                      href={`/${locale}/note/medical/${category}/`}
-                      name={medicalCategoryCopy[locale][category].title}
-                      note={medicalCategoryCopy[locale][category].intro}
-                      current={page(
-                        route.kind === 'medical-category' &&
-                          route.category === category,
-                      )}
-                      onNavigate={onNavigate}
-                    >
-                      {medicalNoteIds
-                        .filter((id) => medicalNotes[id].category === category)
-                        .map((id) => (
-                          <li key={id}>
-                            <TreeLink
-                              href={medicalNotePath(id, locale)}
-                              kind="markdown"
-                              name={medicalNotes[id].name[locale]}
-                              note={medicalNotes[id].title[locale]}
-                              current={page(
-                                route.kind === 'medical-note' &&
-                                  route.noteId === id,
-                              )}
-                              onNavigate={onNavigate}
-                            />
-                          </li>
-                        ))}
-                    </TreeFolder>
-                  </li>
-                ))}
-              </TreeFolder>
-            </li>
-            <li>
-              <TreeFolder
-                currentPath={currentPath}
-                locale={locale}
-                href={`/${locale}/note/hardware/`}
-                name={hardwareCopy[locale].title}
-                current={page(route.kind === 'hardware')}
-                onNavigate={onNavigate}
-              >
-                {hardwareCategories.map((category) => (
-                  <li key={category}>
-                    <TreeFolder
-                      currentPath={currentPath}
-                      locale={locale}
-                      href={`/${locale}/note/hardware/${category}/`}
-                      name={hardwareCategoryCopy[locale][category].title}
-                      note={hardwareCategoryCopy[locale][category].intro}
-                      current={page(
-                        route.kind === 'hardware-category' &&
-                          route.category === category,
-                      )}
-                      onNavigate={onNavigate}
-                    >
-                      {hardwareNoteIds
-                        .filter((id) => hardwareNotes[id].category === category)
-                        .map((id) => (
-                          <li key={id}>
-                            <TreeLink
-                              href={hardwareNotePath(id, locale)}
-                              kind="markdown"
-                              name={hardwareNotes[id].name[locale]}
-                              note={hardwareNotes[id].title[locale]}
-                              current={page(
-                                route.kind === 'hardware-note' &&
-                                  route.noteId === id,
-                              )}
-                              onNavigate={onNavigate}
-                            />
-                          </li>
-                        ))}
-                    </TreeFolder>
-                  </li>
-                ))}
-              </TreeFolder>
-            </li>
-            {files.collections.map((collection) => {
-              const note = (entry: CollectionNoteLink) => (
-                <li key={entry.id}>
-                  <TreeLink
-                    href={entry.href}
-                    kind="markdown"
-                    name={entry.name}
-                    note={entry.title}
-                    current={page(
-                      route.kind === 'collection-note' &&
-                        route.noteId === entry.id,
-                    )}
-                    onNavigate={onNavigate}
-                  />
-                </li>
-              );
-              return (
-                <li key={collection.id}>
-                  <TreeFolder
-                    currentPath={currentPath}
-                    locale={locale}
-                    href={collection.href}
-                    name={collection.title}
-                    current={page(
-                      route.kind === 'note-collection' &&
-                        route.collection === collection.id,
-                    )}
-                    onNavigate={onNavigate}
-                  >
-                    {collection.categories.map((category) => (
-                      <li key={category.id}>
-                        <TreeFolder
-                          currentPath={currentPath}
-                          locale={locale}
-                          href={category.href}
-                          name={category.title}
-                          note={category.intro}
-                          current={page(
-                            route.kind === 'note-category' &&
-                              route.category === category.id,
-                          )}
-                          onNavigate={onNavigate}
-                        >
-                          {category.notes.map(note)}
-                        </TreeFolder>
-                      </li>
-                    ))}
-                    {collection.notes.map(note)}
-                  </TreeFolder>
-                </li>
-              );
-            })}
+              />
+            ))}
           </TreeFolder>
         </li>
         <li>

@@ -46,26 +46,30 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 筆記與部落格文章分開發布。`src/lib/medical-notes.ts`、`src/lib/network-notes.ts` 與 `src/lib/hardware-notes.ts` 保存筆記標題、摘要及實際內容對應的 `tagIds`；標籤須存在於受控 taxonomy，且至少一個，不可重複。筆記標題下的標籤由建置時加入，保留原有章節錨點，不在內容片段加入 script 或行內色彩。
 
-醫學依 `src/lib/medical-notes.ts` 的分類契約整理：
+筆記依一棵資料夾樹分類（2026-10-12 由作者重新分類）。[`note-tree.ts`](../src/lib/note-tree.ts) 是唯一的結構來源：每個資料夾的上層、圖示與插圖，以及每篇筆記放在哪個資料夾。網址就是資料夾路徑加上筆記 ID，Explorer、麵包屑、檔名、sitemap 與搜尋都從同一棵樹產生。[`note-tree.server.ts`](../src/lib/note-tree.server.ts) 保存每個資料夾的三語名稱與介紹，只以目前語言的 loader 資料送到頁面。資料夾頁先列子資料夾卡片，再列直接放在這一層的筆記與摘要。
 
-- 藥物：`/zh-hant/note/medical/drugs/analgesics/`，原文維持在 `content/notes/medical.html`。舊的 `/zh-hant/note/medical/analgesics/` 保留完整靜態正文與既有 fragment（canonical 指向新頁、noindex）；啟用 JavaScript 時帶原 fragment 轉址，無 JavaScript 時可直接閱讀原錨點。
-- 病理：`/zh-hant/note/medical/pathology/brain-cns-tumors/`，原文位於 `content/notes/medical/pathology/brain-cns-tumors.html`。
+- 軟體／網路／P2P：`/{locale}/note/software/network/p2p/`，P2P 下載器架構（`p2p-downloader`）與流量關聯研究（`p2p-privacy`）。
+- 健康與醫學：原本的「醫學」與「健康」合併，分成三個子資料夾。
+  - 藥物：`/{locale}/note/medical/drugs/analgesics/`。舊的 `/zh-hant/note/medical/analgesics/` 保留完整靜態正文與既有 fragment（canonical 指向新頁、noindex）；啟用 JavaScript 時帶原 fragment 轉址，無 JavaScript 時可直接閱讀原錨點。
+  - 病理：`/{locale}/note/medical/pathology/brain-cns-tumors/`。
+  - 日常照顧：`/{locale}/note/medical/daily-care/lumbar-spine-care/`。
+- 硬體／電腦：`/{locale}/note/hardware/computer/140mm-case-fans/`。內容是由研究報告重整的 140 mm 風扇評估與前 10 推薦，並在 2026-10-10 逐項回查來源；正文的「核對紀錄」列出與原報告的差異。
+- 日本／日語：`/{locale}/note/japan/japanese/<id>/`，七篇系列。
+- 其他：不再分子資料夾，筆記直接放在 `/{locale}/note/other/<id>/`，目前是 `landscape-photography`。
 
-硬體依 `src/lib/hardware-notes.ts` 的分類契約整理：
-
-- 電腦：`/zh-hant/note/hardware/computer/140mm-case-fans/`，原文位於 `content/notes/hardware/computer/140mm-case-fans.html`。內容是由研究報告重整的 140 mm 風扇評估與前 10 推薦，並在 2026-10-10 逐項回查來源；正文的「核對紀錄」列出與原報告的差異。
+重新分類沒有替舊網址加轉址（作者決定）：`/{locale}/note/network/…`、`/{locale}/note/health/…` 與 `/{locale}/note/other/photography/…` 現在回傳 404。內容片段依資料夾路徑放在 `content/notes/<資料夾路徑>/<id>.html`；P2P 兩篇（`content/notes/<id>.html`）與止痛藥（`content/notes/medical.html`）維持原本的位置。新增資料夾時，在 `note-tree.ts` 登記上層、圖示與插圖，並在 `note-tree.server.ts` 同時寫好繁中、英文、日文的名稱與介紹；新增筆記時，在 `noteFolderOf` 指定資料夾。[`note-tree.test.ts`](../tests/unit/note-tree.test.ts) 確認每個資料夾與筆記在三種語言都有頁面且路徑能往返解析、舊路徑不是頁面、英文名稱與介紹沒有中日文字、日文沒有只屬於繁體中文的字形。
 
 全部十四篇筆記均提供繁體中文、英文、日文全文，路徑使用 `/{locale}/note/…`；目錄、Explorer、標題摘要、標籤、互動結果及搜尋皆依目前語言呈現。中文 HTML 仍是結構與資料的來源；[`content/notes/translations/`](../content/notes/translations/) 每篇 JSON 逐段保存 `source`、`en`、`ja`，包含正文、表格、SVG 文字、無障礙標籤、程式註解及契約附錄中的說明文字。程式識別字、數值、連結、DOM ID 與 `data-*` 不隨翻譯改寫。截圖保留真實畫面，不假造已本地化的軟體。
 
 [`note-translations.ts`](../src/lib/note-translations.ts) 在建置時只替換文字並進行 HTML 跳脫；缺漏、空值、重複或不再對應原文的譯文會讓 `content:check` 失敗，不靜默回退中文。新增或修改中文段落時，必須同步維護英日對照；原稿已有的英文節標、圖表標籤與說明也明確列入對照，`en` 保留原文、`ja` 翻譯，新增英文說明時同樣需要人工盤點；`pre` 區塊依行比對，保留縮排與非翻譯程式內容。所有原有章節錨點和來源 URL 都保持一致。翻譯不代表重新執行實驗、刷新價格或取得人工專業審查；醫學筆記保留教育用途聲明、適應症與劑量條件、可核對來源、統計範圍及推論限制。
 
-日本、健康與其他三個集合（2026-10-12 新增）共用一份契約：[`note-collections.ts`](../src/lib/note-collections.ts) 只放 ID、分類與路徑，[`note-collections.server.ts`](../src/lib/note-collections.server.ts) 放三語標題、介紹、摘要、標籤與原文路徑。文字只以目前語言的 loader 資料送到頁面，不進入每一頁的 JavaScript bundle；首頁初始 JS 有 150 KiB gzip 上限。集合可以有分類資料夾（日本／日語、其他／拍攝技巧），也可以像健康一樣直接放筆記。新增筆記時：在兩個檔案登記 ID 與文字、把片段放在 `content/notes/<集合>/<分類>/<id>.html`（無分類時省略分類層），再依下方規則建立對照檔。
+日語系列、腰椎保護與風景攝影（2026-10-12 新增）是學習筆記格式，共用一份契約：[`note-collections.ts`](../src/lib/note-collections.ts) 只放 ID，[`note-collections.server.ts`](../src/lib/note-collections.server.ts) 放三語標題、短名稱、摘要與標籤，原文路徑由資料夾樹推得。文字只以目前語言的 loader 資料送到頁面，不進入每一頁的 JavaScript bundle；首頁初始 JS 有 150 KiB gzip 上限。新增這類筆記時：在兩個檔案登記 ID 與文字、在 `note-tree.ts` 指定資料夾、把片段放在 `content/notes/<資料夾路徑>/<id>.html`，再依下方規則建立對照檔。
 
-- 日語：`/{locale}/note/japan/japanese/<id>/`，七篇依原手冊的分組串成系列（`japanese-structure` 到 `japanese-review`）。由 43 個主題的學習手冊重編；原手冊的個人測驗分數、手寫筆記照片、原頁影像與舊版全文都沒有公開，來源頁碼保留在第 7 篇的對照表。系列之間的連結一律用相對路徑（`../japanese-clauses/#nominal`），三種語言版本才會各自連到同語言的頁面。
-- 健康：`/{locale}/note/health/lumbar-spine-care/`。原稿中的個人症狀改寫為一般情境；2026-10-12 逐項回查 9 個來源，就醫警訊依 NHS 分成急診、當天就醫與門診三級，沒有來源支持的建議明確標為原稿的補充。
-- 拍攝技巧：`/{locale}/note/other/photography/landscape-photography/`。照片是作者本人的實拍，放在 `assets/notes/landscape-photography/`，沿用原稿內嵌的位元組、不重新壓縮；只有筆記實際引用的檔案才會在建置時複製，單元測試確認每張圖的宣告尺寸與檔案一致、資料夾內沒有未引用的檔案。疊圖依每張照片的實際比例重畫，只用 token class 上色。04A 章另有 21 張 GPT 生成的構圖示意圖（其中 5 張由作者提供），也放在同一個資料夾，檔名以 `gpt-` 開頭、沿用原稿的位元組；每張圖在視窗標題列寫「GPT 生成」、替代文字以生成來源開頭，章首說明它們不是實拍，圖中的地點、人物、招牌與相機參數都不是真實資料。圖上的中文標註是圖片的一部分，三種語言都一樣，圖下的文字負責說明。這些是筆記內容，不是 DESIGN §7 的站內插圖，不套用插圖風格與 Codex 生成流程；單元測試確認每張生成圖都有標示、實拍照片都沒有。
+- 日語：七篇依原手冊的分組串成系列（`japanese-structure` 到 `japanese-review`）。由 43 個主題的學習手冊重編；原手冊的個人測驗分數、手寫筆記照片、原頁影像與舊版全文都沒有公開，來源頁碼保留在第 7 篇的對照表。系列之間的連結一律用相對路徑（`../japanese-clauses/#nominal`），三種語言版本才會各自連到同語言的頁面。
+- 腰椎保護（健康與醫學／日常照顧）：原稿中的個人症狀改寫為一般情境；2026-10-12 逐項回查 9 個來源，就醫警訊依 NHS 分成急診、當天就醫與門診三級，沒有來源支持的建議明確標為原稿的補充。
+- 風景攝影（其他）：照片是作者本人的實拍，放在 `assets/notes/landscape-photography/`，沿用原稿內嵌的位元組、不重新壓縮；只有筆記實際引用的檔案才會在建置時複製，單元測試確認每張圖的宣告尺寸與檔案一致、資料夾內沒有未引用的檔案。疊圖依每張照片的實際比例重畫，只用 token class 上色。04A 章另有 21 張 GPT 生成的構圖示意圖（其中 5 張由作者提供），也放在同一個資料夾，檔名以 `gpt-` 開頭、沿用原稿的位元組；每張圖在視窗標題列寫「GPT 生成」、替代文字以生成來源開頭，章首說明它們不是實拍，圖中的地點、人物、招牌與相機參數都不是真實資料。圖上的中文標註是圖片的一部分，三種語言都一樣，圖下的文字負責說明。這些是筆記內容，不是 DESIGN §7 的站內插圖，不套用插圖風格與 Codex 生成流程；單元測試確認每張生成圖都有標示、實拍照片都沒有。
 
-這三個集合的片段可以有 `<img>`，但 `src` 必須是 `/assets/notes/<id>/` 下的同源檔案，並且附 `width`、`height` 與非空的 `alt`；其他 `src`、`srcset`、`style`、script 與事件屬性一律會讓 `content:check` 失敗。標上 `lang="ja"` 的元素是日文本身（例句、文法形式、讀音），對照工具在每個版本都逐字保留，不需要也不會產生對照條目；英日譯文只處理周圍的中文。因此這類元素裡不能放中文標籤、中文釋義或中文占位詞（例如「外層：」「／離開家」「傳聞：」），它們要放在元素外面，才會進入對照並被翻譯；帶編號的標題（`34｜について／…`）也不整個標成日文，英文版統一寫成 `34 | …`。句子裡沒有標記的日文，由 `markJapanese` 在輸出中文版與英文版時補上 `lang="ja"`：英文版沒有中文，所有假名與漢字段落都是日文；中文版和日文共用漢字，因此依該句英文譯文逐字保留的日文來劃界，再補標剩下的假名（例如「た形」的「た」）。日文版整頁已是日文，不另外標記。單元測試確認中文版與英文版沒有未標記的假名，讓讀屏軟體與字型都能切換成日文（WCAG 3.1.2）。例句的中文釋義用 `sn-gloss`，日文版以樣式隱藏，因為例句本身就是日文；對照檔仍需提供有意義的日文值。
+這些學習筆記的片段可以有 `<img>`，但 `src` 必須是 `/assets/notes/<id>/` 下的同源檔案，並且附 `width`、`height` 與非空的 `alt`；其他 `src`、`srcset`、`style`、script 與事件屬性一律會讓 `content:check` 失敗。標上 `lang="ja"` 的元素是日文本身（例句、文法形式、讀音），對照工具在每個版本都逐字保留，不需要也不會產生對照條目；英日譯文只處理周圍的中文。因此這類元素裡不能放中文標籤、中文釋義或中文占位詞（例如「外層：」「／離開家」「傳聞：」），它們要放在元素外面，才會進入對照並被翻譯；帶編號的標題（`34｜について／…`）也不整個標成日文，英文版統一寫成 `34 | …`。句子裡沒有標記的日文，由 `markJapanese` 在輸出中文版與英文版時補上 `lang="ja"`：英文版沒有中文，所有假名與漢字段落都是日文；中文版和日文共用漢字，因此依該句英文譯文逐字保留的日文來劃界，再補標剩下的假名（例如「た形」的「た」）。日文版整頁已是日文，不另外標記。單元測試確認中文版與英文版沒有未標記的假名，讓讀屏軟體與字型都能切換成日文（WCAG 3.1.2）。例句的中文釋義用 `sn-gloss`，日文版以樣式隱藏，因為例句本身就是日文；對照檔仍需提供有意義的日文值。
 
 硬體筆記的圖表是內嵌 SVG，只用 `src/styles/hardware-notes.css` 的 class 取 token 色，不寫 `style`、字面色碼或 script；每張圖都要有可展開或並列的資料表。載入器拒絕 script、style、img、`src`／`style` 屬性等標記。互動工具（型號篩選、工作點滑桿、數量試算）由 `src/features/notes/hardware-note-tools.ts` 在本機重算，靜態 HTML 先寫好預設結果，沒有 JavaScript 時仍可讀；工具用到的報價放在 `data-*` 屬性，改價格時只改內容檔。性能數字分平台標示（Cybenetics、Tweakers、HWCooling 不混用絕對值），價格與庫存註明觀測日。
 

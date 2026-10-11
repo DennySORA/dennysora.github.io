@@ -497,9 +497,7 @@
   color: var(--color-link);
   text-decoration: underline;
 }
-.collection-meta,
-.note-card > p,
-.network-note-list small {
+.note-card > p {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -550,44 +548,44 @@
   color: var(--color-link);
   text-decoration: underline;
 }
-.network-note-list {
+.note-list {
   display: grid;
   margin-top: var(--space-5);
   border-top: 1px solid var(--color-border-subtle);
   list-style: none;
 }
-.network-note-list li {
+.note-list li {
   display: grid;
   gap: var(--space-1);
   padding: var(--space-5) 0;
   border-bottom: 1px solid var(--color-border-subtle);
 }
-.network-note-list h2 {
+.note-list h2 {
   font-size: 19px;
   line-height: 1.5;
 }
-.network-note-list h2 a {
+.note-list h2 a {
   display: inline-flex;
   align-items: flex-start;
   gap: var(--space-2);
   color: var(--color-text);
   text-decoration: none;
 }
-.network-note-list h2 a .icon {
+.note-list h2 a .icon {
   flex: none;
   margin-top: 5px;
   color: var(--color-entity-file);
 }
-.network-note-list h2 a:hover {
+.note-list h2 a:hover {
   color: var(--color-link);
   text-decoration: underline;
 }
-.network-note-file {
+.note-list-file {
   color: var(--color-text-muted);
   font-family: var(--font-code);
   font-size: 12px;
 }
-.network-note-list p:not(.network-note-file) {
+.note-list p:not(.note-list-file) {
   color: var(--color-text-secondary);
   font-size: 15px;
   line-height: 1.8;

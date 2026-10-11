@@ -7,7 +7,7 @@ test('translated diagram labels stay inside their SVG viewports', async ({
   const failures: { path: string; labels: (string | undefined)[] }[] = [];
   for (const locale of ['en', 'ja']) {
     for (const path of [
-      'note/network/p2p-downloader',
+      'note/software/network/p2p/p2p-downloader',
       'note/hardware/computer/140mm-case-fans',
     ]) {
       await page.goto(`/${locale}/${path}/`);
@@ -104,7 +104,7 @@ for (const locale of ['en', 'ja'] as const) {
     const external = trackExternalRequests(page);
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    await page.goto(`/${locale}/note/network/p2p-downloader/`);
+    await page.goto(`/${locale}/note/software/network/p2p/p2p-downloader/`);
     await page.screenshot({
       path: testInfo.outputPath(`${locale}-downloader-1440.png`),
     });
@@ -139,7 +139,7 @@ for (const locale of ['en', 'ja'] as const) {
       locale === 'en' ? 'Notes export created' : 'エクスポートを作成',
     );
 
-    await page.goto(`/${locale}/note/network/p2p-privacy/`);
+    await page.goto(`/${locale}/note/software/network/p2p/p2p-privacy/`);
     await page.screenshot({
       path: testInfo.outputPath(`${locale}-privacy-1440.png`),
     });

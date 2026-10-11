@@ -1,5 +1,4 @@
 import {
-  medicalCategories,
   medicalNoteIds,
   medicalNotes,
   type MedicalNoteId,
@@ -10,17 +9,15 @@ import {
   type NetworkNoteId,
 } from './network-notes.ts';
 import {
-  hardwareCategories,
   hardwareNoteIds,
   hardwareNotes,
   type HardwareNoteId,
 } from './hardware-notes.ts';
 import {
   collectionNoteIds,
-  noteCollectionIds,
-  noteCollections,
   type CollectionNoteId,
 } from './note-collections.ts';
+import { folderTrail, noteFolderIds, noteFolderOf } from './note-tree.ts';
 import {
   collectionNoteMeta,
   collectionNoteSource,
@@ -263,22 +260,12 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'library', locale },
       { kind: 'search', locale },
       { kind: 'notes', locale },
-      { kind: 'medical', locale },
-      { kind: 'network', locale },
-      { kind: 'hardware', locale },
       { kind: 'projects', locale },
       { kind: 'tags', locale },
       { kind: 'research', locale },
     );
-    for (const category of medicalCategories)
-      routes.push({ kind: 'medical-category', locale, category });
-    for (const category of hardwareCategories)
-      routes.push({ kind: 'hardware-category', locale, category });
-    for (const collection of noteCollectionIds) {
-      routes.push({ kind: 'note-collection', locale, collection });
-      for (const category of noteCollections[collection].categories)
-        routes.push({ kind: 'note-category', locale, collection, category });
-    }
+    for (const folder of noteFolderIds)
+      routes.push({ kind: 'note-folder', locale, folder });
     for (const category of projectCategories)
       routes.push({ kind: 'project-category', locale, category });
     for (const post of listPosts(locale))
@@ -486,7 +473,7 @@ export function loadHardwareNote(
   const html = readFileSync(
     join(
       contentRoot,
-      `notes/hardware/${hardwareNotes[id].category}/${id}.html`,
+      `notes/${folderTrail(noteFolderOf[id]).join('/')}/${id}.html`,
     ),
     'utf8',
   );

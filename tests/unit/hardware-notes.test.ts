@@ -12,17 +12,15 @@ import {
   loadHardwareNote,
   publishedPaths,
 } from '../../src/lib/content.server.ts';
-import {
-  hardwareNoteIds,
-  hardwareNotePath,
-} from '../../src/lib/hardware-notes.ts';
+import { hardwareNoteIds } from '../../src/lib/hardware-notes.ts';
+import { notePath as treeNotePath } from '../../src/lib/note-tree.ts';
 import {
   navSection,
   parseRoute,
   routePath,
 } from '../../src/lib/route-manifest.ts';
 import { crumbs, filePath, fileKind } from '../../src/lib/workspace.ts';
-import { collectionEntries } from '../../src/lib/note-collections.server.ts';
+import { noteTree } from '../../src/lib/note-tree.server.ts';
 
 const notePath = '/zh-hant/note/hardware/computer/140mm-case-fans/';
 
@@ -33,7 +31,7 @@ describe('hardware notes', () => {
       locale: 'zh-hant',
       noteId: '140mm-case-fans',
     } as const;
-    expect(hardwareNotePath('140mm-case-fans')).toBe(notePath);
+    expect(treeNotePath('140mm-case-fans')).toBe(notePath);
     expect(parseRoute(notePath)).toEqual(route);
     expect(routePath(route)).toBe(notePath);
     expect(filePath(route)).toBe('note/hardware/computer/140mm-case-fans.md');
@@ -58,7 +56,7 @@ describe('hardware notes', () => {
       expect(publishedPaths()).toContain(`/${locale}/note/hardware`);
       expect(publishedPaths()).toContain(`/${locale}/note/hardware/computer`);
       expect(
-        fileKind({ kind: 'hardware-category', locale, category: 'computer' }),
+        fileKind({ kind: 'note-folder', locale, folder: 'computer' }),
       ).toBe('folder');
     }
     expect(publishedPaths()).toContain(notePath.slice(0, -1));
@@ -145,8 +143,8 @@ describe('hardware notes', () => {
     const all = renderToStaticMarkup(
       createElement(Notes, {
         locale: 'en',
-        view: { collection: 'all' },
-        collections: collectionEntries('en'),
+        folder: null,
+        tree: noteTree('en'),
       }),
     );
     expect(all).toContain('href="/en/note/hardware/"');
@@ -155,8 +153,8 @@ describe('hardware notes', () => {
     const category = renderToStaticMarkup(
       createElement(Notes, {
         locale: 'ja',
-        view: { collection: 'hardware', category: 'computer' },
-        collections: collectionEntries('ja'),
+        folder: 'computer',
+        tree: noteTree('ja'),
       }),
     );
     expect(category).toContain('コンピューター');

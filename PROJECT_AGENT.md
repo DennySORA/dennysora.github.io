@@ -20,9 +20,9 @@
 
 ## Critical contracts
 
-- Every UI string exists in all three locales. Language links point only to published editions, and missing translations are stated, never invented.
+- Everything is published in all three locales: Traditional Chinese, English and Japanese (owner rule, 2026-10-12). Any change that adds or edits text ships its English and Japanese translations in the same change, covering UI strings, pages, notes, folder and Explorer names, metadata, alt text and generated labels. Never publish Chinese-only text, placeholders or untranslated fragments; text that cannot be translated yet is not published. Language links point only to published editions.
 - Browsing makes no third-party requests and sets no cookies or storage. Comments are GitHub-native links; Paper Daily is the external site `https://paper.dennysora.me/`.
-- Existing URLs keep working: legacy paths and anchors are served by static bridges, published heading anchors are frozen, and unknown paths return a real 404.
+- Unknown paths return a real 404.
 - Brand images are the recorded repository files or their recorded derivatives, byte-checked against `data/brand-assets.json`; never recoloured, redrawn or filtered. Generated illustrations pass the transparency acceptance and are recorded in `data/illustration-assets.json` (DESIGN.md §7).
 - Colour roles stay semantic: status colours only for real states, no opacity or filter dimming, WCAG 2.2 AA contrast.
 - Pages remain readable and navigable without JavaScript, with keyboard access, visible focus and reduced motion.

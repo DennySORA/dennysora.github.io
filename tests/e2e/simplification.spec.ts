@@ -51,7 +51,9 @@ for (const locale of locales)
       page.locator('#library-papers-title, .quiet-note'),
     ).toHaveCount(0);
     expect(
-      (await request.get('/zh-hant/note/network/p2p-privacy/')).status(),
+      (
+        await request.get('/zh-hant/note/software/network/p2p/p2p-privacy/')
+      ).status(),
     ).toBe(200);
   });
 
@@ -137,7 +139,7 @@ for (const [width, height] of [
     for (const path of [
       '/zh-hant/',
       '/en/blog/',
-      '/zh-hant/note/network/p2p-privacy/',
+      '/zh-hant/note/software/network/p2p/p2p-privacy/',
     ]) {
       await page.goto(path);
       await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');

@@ -367,7 +367,7 @@ test('notes, languages and phone navigation work without JavaScript', async ({
   await expect(page.locator('h1')).toContainText('止痛藥指南');
   await expect(page.locator('main')).toContainText('Acetaminophen');
   await page.goto(`${origin}/en/note/medical/`);
-  await expect(page.locator('h1')).toContainText('Medicine');
+  await expect(page.locator('h1')).toContainText('Health & medicine');
   await expect(page.locator('.menu-button')).toBeHidden();
   await expect(page.locator('.reader-tools')).toBeHidden();
   // The editor tabs are plain links, so every area stays reachable without scripts.

@@ -2,11 +2,11 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { trackExternalRequests } from './helpers.ts';
 
-const photo = '/zh-hant/note/other/photography/landscape-photography/';
+const photo = '/zh-hant/note/other/landscape-photography/';
 const structure = '/zh-hant/note/japan/japanese/japanese-structure/';
-const lumbar = '/zh-hant/note/health/lumbar-spine-care/';
+const lumbar = '/zh-hant/note/medical/daily-care/lumbar-spine-care/';
 
-test('Japan, Health and Other folders lead to their notes', async ({
+test('Japan, Health & medicine and Other folders lead to their notes', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
@@ -16,7 +16,7 @@ test('Japan, Health and Other folders lead to their notes', async ({
   await expect(page).toHaveURL(/\/note\/japan\/$/);
   await main.getByRole('link', { name: '日語', exact: true }).click();
   await expect(page).toHaveURL(/\/note\/japan\/japanese\/$/);
-  await main.getByRole('link', { name: /japanese-structure\.md/ }).click();
+  await main.getByRole('link', { name: /句子結構/ }).click();
   await expect(page.locator('#note-title')).toContainText('句子結構');
   await expect(page.locator('.cmdline')).toContainText(
     'note/japan/japanese/japanese-structure.md',
@@ -27,14 +27,16 @@ test('Japan, Health and Other folders lead to their notes', async ({
   await page.locator('.sn-pager').getByRole('link').click();
   await expect(page).toHaveURL(/\/japanese-conjugation\/$/);
 
-  await page.goto('/zh-hant/note/health/');
+  await page.goto('/zh-hant/note/medical/');
+  await main.getByRole('link', { name: '日常照顧', exact: true }).click();
+  await expect(page).toHaveURL(/\/note\/medical\/daily-care\/$/);
   await main.getByRole('link', { name: /腰椎保護/ }).click();
-  await expect(page).toHaveURL(/\/note\/health\/lumbar-spine-care\/$/);
+  await expect(page).toHaveURL(new RegExp(`${lumbar}$`));
   await expect(page.locator('#triage')).toBeVisible();
 
   await page.goto('/zh-hant/note/other/');
-  await main.getByRole('link', { name: '拍攝技巧', exact: true }).click();
-  await main.getByRole('link', { name: /landscape-photography\.md/ }).click();
+  // Other holds the photography note directly, without a subfolder.
+  await main.getByRole('link', { name: /風景攝影/ }).click();
   await expect(page).toHaveURL(new RegExp(`${photo}$`));
   expect(external).toEqual([]);
   expect(await page.context().cookies()).toEqual([]);
@@ -105,7 +107,7 @@ test('editions keep Japanese examples and hide glosses only in Japanese', async 
       '../japanese-structure/',
     );
   }
-  await page.goto('/en/note/other/photography/landscape-photography/');
+  await page.goto('/en/note/other/landscape-photography/');
   await expect(page.locator('#pg-near')).toHaveText('about 1.21 m');
   await page.locator('#pg-archive-filter').check();
   await expect(page.locator('#pg-archive-count')).toContainText('of 31');
@@ -144,8 +146,8 @@ test('the new notes are accessible, fit every width and read without JavaScript'
   }
   for (const path of [
     '/en/note/japan/',
-    '/ja/note/health/',
-    '/en/note/other/photography/',
+    '/ja/note/medical/daily-care/',
+    '/en/note/other/',
   ]) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })

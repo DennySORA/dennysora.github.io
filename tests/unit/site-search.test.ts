@@ -25,10 +25,10 @@ const architecture = {
   aliases: ['system design', '系統設計'],
 };
 const note: SiteSearchDocument = {
-  id: '/note/network/p2p-downloader/',
+  id: '/note/software/network/p2p/p2p-downloader/',
   locale: 'zh-hant',
   kind: 'note',
-  href: '/zh-hant/note/network/p2p-downloader/',
+  href: '/zh-hant/note/software/network/p2p/p2p-downloader/',
   title: 'P2P Downloader',
   summary: '連線治理',
   text: 'A body-only mention of choke_lease. 使用可恢復命令。',

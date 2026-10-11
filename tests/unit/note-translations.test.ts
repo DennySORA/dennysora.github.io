@@ -5,7 +5,6 @@ import type { LoaderFunctionArgs } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { loader, meta } from '../../src/app/page.tsx';
 import { Notes } from '../../src/features/notes/Notes.tsx';
-import { NetworkNotes } from '../../src/features/notes/NetworkNotes.tsx';
 import { locales } from '../../src/i18n/index.ts';
 import { publishedRoutes } from '../../src/lib/content.server.ts';
 import { routePath } from '../../src/lib/route-manifest.ts';
@@ -14,10 +13,8 @@ import {
   noteTranslationSources,
   translateNote,
 } from '../../src/lib/note-translations.ts';
-import {
-  collectionEntries,
-  collectionNoteSource,
-} from '../../src/lib/note-collections.server.ts';
+import { collectionNoteSource } from '../../src/lib/note-collections.server.ts';
+import { noteTree } from '../../src/lib/note-tree.server.ts';
 import { collectionNoteIds } from '../../src/lib/note-collections.ts';
 
 describe('note translation contract', () => {
@@ -207,10 +204,17 @@ describe('note translation contract', () => {
         renderToStaticMarkup(
           createElement(Notes, {
             locale,
-            view: { collection: 'all' },
-            collections: collectionEntries(locale),
+            folder: null,
+            tree: noteTree(locale),
           }),
-        ) + renderToStaticMarkup(createElement(NetworkNotes, { locale }));
+        ) +
+        renderToStaticMarkup(
+          createElement(Notes, {
+            locale,
+            folder: 'p2p',
+            tree: noteTree(locale),
+          }),
+        );
       const noteLinks = [
         ...html.matchAll(/href="(\/(?:zh-hant|en|ja)\/note\/[^"]+)"/g),
       ].map((match) => match[1]!);

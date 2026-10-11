@@ -16,7 +16,6 @@ export function Collection({
   count,
   intro,
   files,
-  available,
 }: {
   art: string;
   href: string;
@@ -24,7 +23,6 @@ export function Collection({
   count: string;
   intro: string;
   files: CollectionFile[];
-  available: string;
 }) {
   return (
     <li className="collection">
@@ -58,10 +56,6 @@ export function Collection({
             </li>
           ))}
         </ul>
-        <p className="collection-meta">
-          <Icon name="globe" size={14} />
-          {available}
-        </p>
       </div>
     </li>
   );

@@ -19,9 +19,10 @@ test('hardware folders lead to the fan note and its local tools recompute', asyn
     .getByRole('link', { name: '電腦', exact: true })
     .click();
   await expect(page).toHaveURL(/\/note\/hardware\/computer\/$/);
+  // A folder without subfolders lists its notes by title.
   await page
     .locator('main')
-    .getByRole('link', { name: /140mm-case-fans\.md/ })
+    .getByRole('link', { name: /^140 mm 風扇評估/ })
     .click();
   await expect(page.locator('#hardware-title')).toContainText('前 10 推薦');
   await expect(page.locator('.cmdline')).toContainText(

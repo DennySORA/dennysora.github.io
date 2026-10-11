@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { origin, trackExternalRequests } from './helpers.ts';
 
-const base = '/zh-hant/note/network/';
+const base = '/zh-hant/note/software/network/p2p/';
 test('network notes retain native navigation, three-language editions and safe local tools', async ({
   page,
 }) => {

@@ -1,6 +1,10 @@
-import { medicalNotes } from './medical-notes.ts';
-import { hardwareNotes } from './hardware-notes.ts';
-import { collectionNotes, type CollectionEntry } from './note-collections.ts';
+import {
+  folderPath,
+  folderTrail,
+  noteFolderOf,
+  type NoteFolderId,
+  type NoteTreeFolder,
+} from './note-tree.ts';
 import { projectPages } from './project-pages.ts';
 import type { Locale } from '../i18n/index.ts';
 import {
@@ -17,8 +21,8 @@ import { papersUrl } from './site.ts';
 
 export type WorkspaceFiles = {
   posts: { slug: string; title: string }[];
-  /** Note collections whose copy arrives as loader data, in the page's language. */
-  collections: CollectionEntry[];
+  /** The note/ tree in the page's language; its copy arrives as loader data. */
+  notes: NoteTreeFolder[];
 };
 
 export type AreaKey = NavSection | 'papers';
@@ -48,11 +52,20 @@ export function areas(locale: Locale): Area[] {
 /** A path segment; segments without a page of their own have no link. */
 export type Crumb = { label: string; href: string | null };
 
+/** Each folder from the top of note/ down to this one, named by its URL segment. */
+function folderCrumbs(folder: NoteFolderId, locale: Locale): Crumb[] {
+  return folderTrail(folder).map((id) => ({
+    label: id,
+    href: folderPath(id, locale),
+  }));
+}
+
 export function crumbs(route: RouteDescriptor): Crumb[] {
   const locale = routeLocale(route);
   const home: Crumb = { label: 'dennysora', href: `/${locale}/` };
   const blog: Crumb = { label: 'blog', href: `/${locale}/blog/` };
   const tags: Crumb = { label: 'tags', href: `/${locale}/blog/tags/` };
+  const note: Crumb = { label: 'note', href: `/${locale}/note/` };
   const self = routePath(route);
   switch (route.kind) {
     case 'root':
@@ -64,100 +77,18 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, { label: 'search', href: self }];
     case 'notes':
       return [home, { label: 'note', href: self }];
-    case 'medical':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'medical', href: self },
-      ];
-    case 'network':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'network', href: self },
-      ];
+    case 'note-folder':
+      return [home, note, ...folderCrumbs(route.folder, locale)];
     case 'network-note':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'network', href: `/${locale}/note/network/` },
-        { label: `${route.noteId}.md`, href: self },
-      ];
-    case 'medical-category':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'medical', href: `/${locale}/note/medical/` },
-        { label: route.category, href: self },
-      ];
     case 'medical-note':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'medical', href: `/${locale}/note/medical/` },
-        {
-          label: medicalNotes[route.noteId].category,
-          href: `/${locale}/note/medical/${medicalNotes[route.noteId].category}/`,
-        },
-        { label: `${route.noteId}.md`, href: self },
-      ];
-    case 'hardware':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'hardware', href: self },
-      ];
-    case 'hardware-category':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'hardware', href: `/${locale}/note/hardware/` },
-        { label: route.category, href: self },
-      ];
     case 'hardware-note':
+    case 'collection-note':
       return [
         home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: 'hardware', href: `/${locale}/note/hardware/` },
-        {
-          label: hardwareNotes[route.noteId].category,
-          href: `/${locale}/note/hardware/${hardwareNotes[route.noteId].category}/`,
-        },
+        note,
+        ...folderCrumbs(noteFolderOf[route.noteId], locale),
         { label: `${route.noteId}.md`, href: self },
       ];
-    case 'note-collection':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: route.collection, href: self },
-      ];
-    case 'note-category':
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        {
-          label: route.collection,
-          href: `/${locale}/note/${route.collection}/`,
-        },
-        { label: route.category, href: self },
-      ];
-    case 'collection-note': {
-      const { collection, category } = collectionNotes[route.noteId];
-      return [
-        home,
-        { label: 'note', href: `/${locale}/note/` },
-        { label: collection, href: `/${locale}/note/${collection}/` },
-        ...(category
-          ? [
-              {
-                label: category,
-                href: `/${locale}/note/${collection}/${category}/`,
-              },
-            ]
-          : []),
-        { label: `${route.noteId}.md`, href: self },
-      ];
-    }
     case 'projects':
       return [home, { label: 'projects', href: self }];
     case 'project-category':
@@ -198,13 +129,7 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
 const folders: RouteDescriptor['kind'][] = [
   'library',
   'notes',
-  'medical',
-  'medical-category',
-  'network',
-  'hardware',
-  'hardware-category',
-  'note-collection',
-  'note-category',
+  'note-folder',
   'projects',
   'project-category',
   'tags',

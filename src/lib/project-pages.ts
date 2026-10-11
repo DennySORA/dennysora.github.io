@@ -1,4 +1,4 @@
-import { dictionaries, localeNames, type Locale } from '../i18n/index.ts';
+import type { Locale } from '../i18n/index.ts';
 
 // Projects are folders of project pages. A page exists only in the languages
 // it was written in; folders list every page and link its nearest edition.
@@ -110,19 +110,6 @@ export const projectsCopy: Record<
     count: (n) => `${n} 件のプロジェクト`,
   },
 };
-
-/** The editions a page has, and, when the reader's language is not one, that it is missing. */
-export function projectEditionsLabel(
-  id: ProjectPageId,
-  locale: Locale,
-): string {
-  const names = projectPages[id].editions.map(
-    (edition) => localeNames[edition],
-  );
-  return hasProjectEdition(id, locale)
-    ? names.join(' · ')
-    : `${names.join(' · ')} · ${dictionaries[locale].unavailableTranslation}`;
-}
 
 export const projectCategoryCopy: Record<
   Locale,

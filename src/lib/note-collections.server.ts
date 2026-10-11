@@ -1,89 +1,8 @@
 import type { Locale } from '../i18n/index.ts';
-import {
-  categoryPath,
-  collectionNoteIds,
-  collectionNotePath,
-  collectionNotes,
-  collectionPath,
-  noteCollectionIds,
-  noteCollections,
-  type CollectionEntry,
-  type CollectionNoteId,
-  type NoteCategoryId,
-  type NoteCollectionId,
-} from './note-collections.ts';
+import type { CollectionNoteId } from './note-collections.ts';
+import { folderTrail, noteFolderOf } from './note-tree.ts';
 
 type Text = Record<Locale, string>;
-
-export const collectionCopy: Record<
-  NoteCollectionId,
-  { title: Text; intro: Text; available: Text }
-> = {
-  japan: {
-    title: { 'zh-hant': '日本', en: 'Japan', ja: '日本' },
-    intro: {
-      'zh-hant':
-        '與日本相關的學習筆記。目前收錄日語初級文法與詞彙的重編筆記，例句、編輯解析與校訂分開標示。',
-      en: 'Study notes related to Japan. It currently holds a reorganized set of notes on beginner Japanese grammar and vocabulary, with examples, editorial analysis and revisions labelled separately.',
-      ja: '日本に関する学習ノート。現在は初級日本語の文法と語彙を再編集したノートを収録し、例文・編集者の解説・校訂を区別して記載しています。',
-    },
-    available: {
-      'zh-hant': '繁體中文 · English · 日本語 · 學習筆記',
-      en: '繁體中文 · English · 日本語 · Study notes',
-      ja: '繁體中文 · English · 日本語 · 学習ノート',
-    },
-  },
-  health: {
-    title: { 'zh-hant': '健康', en: 'Health', ja: '健康' },
-    intro: {
-      'zh-hant':
-        '日常健康與自我照護的衛教整理，附可核對的公開來源。僅供教育參考，不是個人診斷或治療建議。',
-      en: 'Health education notes on everyday self-care, with public sources you can check. Educational only, not a personal diagnosis or treatment advice.',
-      ja: '日常のセルフケアに関する健康教育ノート。確認できる公開資料を添えています。学習用であり、個人の診断や治療の助言ではありません。',
-    },
-    available: {
-      'zh-hant': '繁體中文 · English · 日本語 · 僅供教育參考',
-      en: '繁體中文 · English · 日本語 · Educational reference only',
-      ja: '繁體中文 · English · 日本語 · 学習用の参考資料',
-    },
-  },
-  other: {
-    title: { 'zh-hant': '其他', en: 'Other', ja: 'その他' },
-    intro: {
-      'zh-hant': '不屬於其他分類的學習筆記。目前收錄拍攝技巧。',
-      en: 'Study notes that fit none of the other collections. It currently holds photography techniques.',
-      ja: 'ほかの分類に入らない学習ノート。現在は撮影テクニックを収録しています。',
-    },
-    available: {
-      'zh-hant': '繁體中文 · English · 日本語 · 學習筆記',
-      en: '繁體中文 · English · 日本語 · Study notes',
-      ja: '繁體中文 · English · 日本語 · 学習ノート',
-    },
-  },
-};
-
-export const categoryCopy: Record<
-  NoteCategoryId,
-  { title: Text; intro: Text }
-> = {
-  japanese: {
-    title: { 'zh-hant': '日語', en: 'Japanese', ja: '日本語' },
-    intro: {
-      'zh-hant':
-        '日語文法與詞彙：先找述語、分清格角色，再決定接續與語氣。共七篇，依主題串成一套。',
-      en: 'Japanese grammar and vocabulary: find the predicate, sort out each role, then choose the connection and tone. Seven notes that form one series.',
-      ja: '日本語の文法と語彙：述語を見つけ、格の役割を分けてから、接続と語気を決める。テーマ別の 7 本で 1 つのシリーズです。',
-    },
-  },
-  photography: {
-    title: { 'zh-hant': '拍攝技巧', en: 'Photography', ja: '撮影テクニック' },
-    intro: {
-      'zh-hant': '以真實照片學構圖、光線、曝光與現場流程。',
-      en: 'Composition, light, exposure and field routines, learned from real photos.',
-      ja: '実際の写真で学ぶ構図・光・露出・現場での手順。',
-    },
-  },
-};
 
 export const collectionNoteMeta = {
   'japanese-structure': {
@@ -268,54 +187,8 @@ export const collectionNoteMeta = {
   }
 >;
 
-/** Repository path of a note's reviewed Traditional Chinese source fragment. */
+/** Repository path of a note's reviewed Traditional Chinese source fragment;
+ * the content folders mirror the note/ tree. */
 export function collectionNoteSource(id: CollectionNoteId): string {
-  const { collection, category } = collectionNotes[id];
-  return `notes/${collection}/${category ? `${category}/` : ''}${id}.html`;
-}
-
-/** The new collections in the reader's language, for the explorer and directories. */
-export function collectionEntries(locale: Locale): CollectionEntry[] {
-  const link = (id: CollectionNoteId) => ({
-    id,
-    href: collectionNotePath(id, locale),
-    name: collectionNoteMeta[id].name[locale],
-    title: collectionNoteMeta[id].title[locale],
-  });
-  return noteCollectionIds.map((collection) => ({
-    id: collection,
-    href: collectionPath(collection, locale),
-    title: collectionCopy[collection].title[locale],
-    intro: collectionCopy[collection].intro[locale],
-    available: collectionCopy[collection].available[locale],
-    categories: noteCollections[collection].categories.map((category) => ({
-      id: category,
-      href: categoryPath(collection, category, locale),
-      title: categoryCopy[category].title[locale],
-      intro: categoryCopy[category].intro[locale],
-      notes: collectionNoteIds
-        .filter((id) => collectionNotes[id].category === category)
-        .map(link),
-    })),
-    notes: collectionNoteIds
-      .filter(
-        (id) =>
-          collectionNotes[id].collection === collection &&
-          collectionNotes[id].category === null,
-      )
-      .map(link),
-  }));
-}
-
-/** Summaries shown only on a flat collection's own page. */
-export function collectionNoteSummaries(
-  collection: NoteCollectionId,
-  locale: Locale,
-): { id: CollectionNoteId; description: string }[] {
-  return collectionNoteIds
-    .filter((id) => collectionNotes[id].collection === collection)
-    .map((id) => ({
-      id,
-      description: collectionNoteMeta[id].description[locale],
-    }));
+  return `notes/${folderTrail(noteFolderOf[id]).join('/')}/${id}.html`;
 }

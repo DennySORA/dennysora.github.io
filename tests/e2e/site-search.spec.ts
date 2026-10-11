@@ -21,12 +21,14 @@ for (const locale of locales) {
     await input.press('Enter');
     await expect(input).toBeFocused();
     const result = page.locator('.site-search-results li').filter({
-      has: page.locator(`a[href="/${locale}/note/network/p2p-privacy/"]`),
+      has: page.locator(
+        `a[href="/${locale}/note/software/network/p2p/p2p-privacy/"]`,
+      ),
     });
     await expect(result).toBeVisible();
     await expect(result.locator('a')).toHaveAttribute(
       'href',
-      `/${locale}/note/network/p2p-privacy/`,
+      `/${locale}/note/software/network/p2p/p2p-privacy/`,
     );
     await expect(result.locator('.site-search-meta')).toContainText(t.note);
     await expect(result).not.toContainText(t.fallback);
@@ -143,7 +145,7 @@ test('static search pages and full-text note index are served from the productio
   const documents = (await response.json()) as Parameters<typeof searchSite>[0];
   expect(
     searchSite(documents, 'ngosang', 'note', 'en').map((item) => item.href),
-  ).toContain('/en/note/network/p2p-downloader/');
+  ).toContain('/en/note/software/network/p2p/p2p-downloader/');
   for (const locale of locales) {
     const page = await request.get(`/${locale}/search/`);
     expect(page.status()).toBe(200);

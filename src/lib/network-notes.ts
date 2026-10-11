@@ -51,26 +51,3 @@ export const networkNotes = {
     tagIds: readonly string[];
   }
 >;
-export const networkCopy: Record<
-  Locale,
-  { title: string; intro: string; available: string }
-> = {
-  'zh-hant': {
-    title: '網路與 P2P',
-    intro:
-      '分散式下載、連線治理與網路隱私研究。設計、觀測與已驗證能力分開記錄。',
-    available: '繁體中文 · English · 日本語 · 設計與研究筆記',
-  },
-  en: {
-    title: 'Networks & P2P',
-    intro:
-      'Distributed downloading, connection management and network privacy research. Designs, observations and verified capabilities are kept distinct.',
-    available: '繁體中文 · English · 日本語 · Design and research notes',
-  },
-  ja: {
-    title: 'ネットワークと P2P',
-    intro:
-      '分散ダウンロード、接続管理、ネットワークプライバシーの研究。設計・観測・検証済みの能力を区別します。',
-    available: '繁體中文 · English · 日本語 · 設計・研究ノート',
-  },
-};

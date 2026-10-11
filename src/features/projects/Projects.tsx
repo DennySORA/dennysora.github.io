@@ -5,7 +5,6 @@ import {
   projectCategories,
   projectCategoryCopy,
   projectEdition,
-  projectEditionsLabel,
   projectPageIds,
   projectPagePath,
   projectPages,
@@ -56,9 +55,6 @@ export function Projects({
                   lang: htmlLang[edition],
                 };
               })}
-              available={ids
-                .map((id) => projectEditionsLabel(id, locale))
-                .join(' / ')}
             />
           );
         })}

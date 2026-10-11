@@ -12,9 +12,10 @@ test('medical categories, original URL and translated guide remain navigable', a
     .locator('main')
     .getByRole('link', { name: '病理', exact: true })
     .click();
+  await expect(page).toHaveURL(/\/note\/medical\/pathology\/$/);
   await page
     .locator('main')
-    .getByRole('link', { name: /brain-cns-tumors.md/ })
+    .getByRole('link', { name: /^腦與中樞神經系統腫瘤/ })
     .click();
   await expect(page.locator('#medical-title')).toHaveText(
     '腦與中樞神經系統腫瘤：分類與膠質瘤入門',

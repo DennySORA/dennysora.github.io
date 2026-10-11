@@ -11,7 +11,7 @@ import {
 } from '../../src/lib/content.server.ts';
 import { parseRoute, routePath } from '../../src/lib/route-manifest.ts';
 import { filePath } from '../../src/lib/workspace.ts';
-import { collectionEntries } from '../../src/lib/note-collections.server.ts';
+import { noteTree } from '../../src/lib/note-tree.server.ts';
 
 const path = '/zh-hant/note/medical/drugs/analgesics/';
 describe('medical notes', () => {
@@ -150,8 +150,8 @@ it('keeps medical category buffers immediately after the note area', () => {
         { initialEntries: [`/zh-hant/note/medical/${category}/`] },
         createElement(TabLine, {
           locale: 'zh-hant',
-          route: { kind: 'medical-category', locale: 'zh-hant', category },
-          files: { posts: [], collections: collectionEntries('zh-hant') },
+          route: { kind: 'note-folder', locale: 'zh-hant', folder: category },
+          files: { posts: [], notes: noteTree('zh-hant') },
           languageLinks: [],
           explorer: {
             id: 'test-explorer',

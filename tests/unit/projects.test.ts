@@ -21,7 +21,6 @@ import {
 import { readImageSize } from '../../src/lib/image-size.server.ts';
 import {
   projectEdition,
-  projectEditionsLabel,
   projectPagePath,
   projectPages,
   projectsCopy,
@@ -32,7 +31,7 @@ import {
   routePath,
 } from '../../src/lib/route-manifest.ts';
 import { crumbs, fileKind, filePath } from '../../src/lib/workspace.ts';
-import { collectionEntries } from '../../src/lib/note-collections.server.ts';
+import { noteTree } from '../../src/lib/note-tree.server.ts';
 
 function load(path: string) {
   return loader({
@@ -105,15 +104,6 @@ describe('project editions and links', () => {
     expect(projectPagePath('dgxtop', 'ja')).toBe('/ja/projects/tools/dgxtop/');
   });
 
-  it('lists all available translations', () => {
-    expect(projectEditionsLabel('dgxtop', 'en')).toBe(
-      '繁體中文 · English · 日本語',
-    );
-    expect(projectEditionsLabel('dgxtop', 'ja')).toBe(
-      '繁體中文 · English · 日本語',
-    );
-  });
-
   it('links language switching only to published editions', () => {
     const data = load('/en/projects/tools/dgxtop/');
     expect(data.languageLinks).toEqual([
@@ -146,7 +136,7 @@ describe('project folders and explorer', () => {
         createElement(Explorer, {
           locale,
           route: { kind: 'projects', locale },
-          files: { posts: [], collections: collectionEntries(locale) },
+          files: { posts: [], notes: noteTree(locale) },
         }),
       );
       expect(explorer).toContain(`href="/${locale}/projects/"`);

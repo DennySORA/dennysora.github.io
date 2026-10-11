@@ -1,27 +1,15 @@
+import type { MedicalNoteId } from './medical-notes.ts';
+import type { NetworkNoteId } from './network-notes.ts';
+import type { HardwareNoteId } from './hardware-notes.ts';
+import type { CollectionNoteId } from './note-collections.ts';
 import {
-  medicalCategories,
-  medicalNoteIds,
-  medicalNotes,
-  type MedicalCategory,
-  type MedicalNoteId,
-} from './medical-notes.ts';
-import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
-import {
-  hardwareCategories,
-  hardwareNoteIds,
-  hardwareNotes,
-  type HardwareCategory,
-  type HardwareNoteId,
-} from './hardware-notes.ts';
-import {
-  collectionNotePath,
-  findCollectionNote,
-  hasCategory,
-  isNoteCollection,
-  type CollectionNoteId,
-  type NoteCategoryId,
-  type NoteCollectionId,
-} from './note-collections.ts';
+  folderPath,
+  noteKind,
+  notePath,
+  resolveNotePath,
+  type NoteFolderId,
+  type NoteId,
+} from './note-tree.ts';
 import {
   hasProjectEdition,
   projectCategories,
@@ -41,21 +29,10 @@ export type RouteDescriptor =
   | { kind: 'library'; locale: Locale }
   | { kind: 'search'; locale: Locale }
   | { kind: 'notes'; locale: Locale }
-  | { kind: 'network'; locale: Locale }
+  | { kind: 'note-folder'; locale: Locale; folder: NoteFolderId }
   | { kind: 'network-note'; locale: Locale; noteId: NetworkNoteId }
-  | { kind: 'medical'; locale: Locale }
-  | { kind: 'medical-category'; locale: Locale; category: MedicalCategory }
   | { kind: 'medical-note'; locale: Locale; noteId: MedicalNoteId }
-  | { kind: 'hardware'; locale: Locale }
-  | { kind: 'hardware-category'; locale: Locale; category: HardwareCategory }
   | { kind: 'hardware-note'; locale: Locale; noteId: HardwareNoteId }
-  | { kind: 'note-collection'; locale: Locale; collection: NoteCollectionId }
-  | {
-      kind: 'note-category';
-      locale: Locale;
-      collection: NoteCollectionId;
-      category: NoteCategoryId;
-    }
   | { kind: 'collection-note'; locale: Locale; noteId: CollectionNoteId }
   | { kind: 'projects'; locale: Locale }
   | { kind: 'project-category'; locale: Locale; category: ProjectCategory }
@@ -81,66 +58,20 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
   const locale = first;
   if (rest.some((part) => !segment.test(part))) return null;
   if (!section) return { kind: 'home', locale };
-  const [a, b, c] = rest;
+  const [a, b] = rest;
   switch (section) {
     case 'search':
     case 'research':
       return rest.length === 0 ? { kind: section, locale } : null;
-    case 'note':
+    case 'note': {
       if (rest.length === 0) return { kind: 'notes', locale };
-      if (a === 'network') {
-        if (rest.length === 1) return { kind: 'network', locale };
-        return rest.length === 2 && networkNoteIds.some((id) => id === b)
-          ? { kind: 'network-note', locale, noteId: b as NetworkNoteId }
-          : null;
-      }
-      if (a === 'hardware') {
-        if (rest.length === 1) return { kind: 'hardware', locale };
-        if (!hardwareCategories.some((category) => category === b)) return null;
-        if (rest.length === 2)
-          return {
-            kind: 'hardware-category',
-            locale,
-            category: b as HardwareCategory,
-          };
-        return rest.length === 3 &&
-          hardwareNoteIds.some(
-            (id) => id === c && hardwareNotes[id].category === b,
-          )
-          ? { kind: 'hardware-note', locale, noteId: c as HardwareNoteId }
-          : null;
-      }
-      if (a && isNoteCollection(a)) {
-        if (rest.length === 1)
-          return { kind: 'note-collection', locale, collection: a };
-        if (b && hasCategory(a, b)) {
-          if (rest.length === 2)
-            return {
-              kind: 'note-category',
-              locale,
-              collection: a,
-              category: b,
-            };
-          const noteId = rest.length === 3 && c && findCollectionNote(a, b, c);
-          return noteId ? { kind: 'collection-note', locale, noteId } : null;
-        }
-        // A flat collection files its notes directly under the collection.
-        const noteId = rest.length === 2 && b && findCollectionNote(a, null, b);
-        return noteId ? { kind: 'collection-note', locale, noteId } : null;
-      }
-      if (a !== 'medical') return null;
-      if (rest.length === 1) return { kind: 'medical', locale };
-      if (!medicalCategories.some((category) => category === b)) return null;
-      if (rest.length === 2)
-        return {
-          kind: 'medical-category',
-          locale,
-          category: b as MedicalCategory,
-        };
-      return rest.length === 3 &&
-        medicalNoteIds.some((id) => id === c && medicalNotes[id].category === b)
-        ? { kind: 'medical-note', locale, noteId: c as MedicalNoteId }
-        : null;
+      // Folders and notes come from the note tree; anything else is not a page.
+      const found = resolveNotePath(rest);
+      if (!found) return null;
+      return 'folder' in found
+        ? { kind: 'note-folder', locale, folder: found.folder }
+        : noteRoute(found.noteId, locale);
+    }
     case 'projects':
       if (rest.length === 0) return { kind: 'projects', locale };
       if (!projectCategories.some((category) => category === a)) return null;
@@ -180,6 +111,24 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
   }
 }
 
+/** A note's route, of the kind that renders it. */
+export function noteRoute(id: NoteId, locale: Locale): RouteDescriptor {
+  switch (noteKind(id)) {
+    case 'network-note':
+      return { kind: 'network-note', locale, noteId: id as NetworkNoteId };
+    case 'medical-note':
+      return { kind: 'medical-note', locale, noteId: id as MedicalNoteId };
+    case 'hardware-note':
+      return { kind: 'hardware-note', locale, noteId: id as HardwareNoteId };
+    case 'collection-note':
+      return {
+        kind: 'collection-note',
+        locale,
+        noteId: id as CollectionNoteId,
+      };
+  }
+}
+
 export function routePath(route: RouteDescriptor): string {
   switch (route.kind) {
     case 'root':
@@ -194,28 +143,13 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/blog/${route.slug}/`;
     case 'notes':
       return `/${route.locale}/note/`;
-    case 'network':
-      return `/${route.locale}/note/network/`;
+    case 'note-folder':
+      return folderPath(route.folder, route.locale);
     case 'network-note':
-      return `/${route.locale}/note/network/${route.noteId}/`;
-    case 'medical':
-      return `/${route.locale}/note/medical/`;
-    case 'medical-category':
-      return `/${route.locale}/note/medical/${route.category}/`;
     case 'medical-note':
-      return `/${route.locale}/note/medical/${medicalNotes[route.noteId].category}/${route.noteId}/`;
-    case 'hardware':
-      return `/${route.locale}/note/hardware/`;
-    case 'hardware-category':
-      return `/${route.locale}/note/hardware/${route.category}/`;
     case 'hardware-note':
-      return `/${route.locale}/note/hardware/${hardwareNotes[route.noteId].category}/${route.noteId}/`;
-    case 'note-collection':
-      return `/${route.locale}/note/${route.collection}/`;
-    case 'note-category':
-      return `/${route.locale}/note/${route.collection}/${route.category}/`;
     case 'collection-note':
-      return collectionNotePath(route.noteId, route.locale);
+      return notePath(route.noteId, route.locale);
     case 'projects':
       return `/${route.locale}/projects/`;
     case 'project-category':
@@ -260,16 +194,10 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'tag':
       return 'library';
     case 'notes':
-    case 'medical':
-    case 'medical-category':
-    case 'medical-note':
-    case 'network':
+    case 'note-folder':
     case 'network-note':
-    case 'hardware':
-    case 'hardware-category':
+    case 'medical-note':
     case 'hardware-note':
-    case 'note-collection':
-    case 'note-category':
     case 'collection-note':
       return 'notes';
     case 'projects':
