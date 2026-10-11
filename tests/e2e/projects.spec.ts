@@ -27,11 +27,16 @@ test('the projects buffer leads through Tools to dgxtop and its other edition', 
     .getByRole('link', { name: /dgxtop\.md/ })
     .click();
   await expect(tab).toHaveURL(new RegExp(`${page}$`));
-  await expect(tab.locator('h1')).toContainText('never shows a fake zero');
+  await expect(tab.locator('h1')).toContainText(
+    'terminal GPU monitor built for DGX Spark',
+  );
+  await expect(tab.locator('#install ~ .code-block code')).toContainText(
+    'install.sh | bash',
+  );
   await expect(tab.locator('.cmdline')).toContainText(
     'projects/tools/dgxtop.md',
   );
-  await expect(tab.locator('main figure.dg')).toHaveCount(7);
+  await expect(tab.locator('main figure.dg')).toHaveCount(1);
   await expect(tab.locator('main .project-shot img')).toHaveCount(7);
   // Every screenshot decodes once it has been scrolled into view.
   for (const image of await tab.locator('main .project-shot img').all()) {
@@ -42,10 +47,10 @@ test('the projects buffer leads through Tools to dgxtop and its other edition', 
   }
   await tab
     .locator('.project-sections')
-    .getByRole('link', { name: 'Exact history' })
+    .getByRole('link', { name: 'Architecture' })
     .click();
-  await expect(tab).toHaveURL(/#history$/);
-  await expect(tab.locator('#history')).toBeInViewport();
+  await expect(tab).toHaveURL(/#architecture$/);
+  await expect(tab.locator('#architecture')).toBeInViewport();
 
   await tab.locator('.header-language summary').click();
   await tab
@@ -54,7 +59,7 @@ test('the projects buffer leads through Tools to dgxtop and its other edition', 
     .click();
   await expect(tab).toHaveURL(/\/zh-hant\/projects\/tools\/dgxtop\/$/);
   await expect(tab.locator('html')).toHaveAttribute('lang', 'zh-Hant');
-  await expect(tab.locator('#architecture')).toContainText('六個元件');
+  await expect(tab.locator('#architecture')).toContainText('架構');
   expect(external).toEqual([]);
   expect(await tab.context().cookies()).toEqual([]);
   expect(
@@ -75,7 +80,7 @@ test('Japanese readers get the complete Japanese project edition', async ({
   await file.click();
   await expect(tab.locator('html')).toHaveAttribute('lang', 'ja');
   await expect(tab.locator('#architecture')).toBeVisible();
-  await expect(tab.locator('main figure.dg')).toHaveCount(7);
+  await expect(tab.locator('main figure.dg')).toHaveCount(1);
   await expect(tab.locator('main .project-shot img')).toHaveCount(7);
 });
 
@@ -116,16 +121,16 @@ test('the dgxtop page is accessible, fits every width and reads without JavaScri
   const staticTab = await context.newPage();
   await staticTab.goto(page);
   await expect(staticTab.locator('h1')).toBeVisible();
-  await expect(staticTab.locator('#tradeoffs')).toBeAttached();
-  await expect(staticTab.locator('main figure.dg')).toHaveCount(7);
+  await expect(staticTab.locator('#architecture')).toBeAttached();
+  await expect(staticTab.locator('main figure.dg')).toHaveCount(1);
   await expect(staticTab.locator('main template, main [hidden]')).toHaveCount(
     0,
   );
   await staticTab
     .locator('.project-sections')
-    .getByRole('link', { name: 'Trade-offs' })
+    .getByRole('link', { name: 'Architecture' })
     .click();
-  await expect(staticTab).toHaveURL(/#tradeoffs$/);
-  await expect(staticTab.locator('#tradeoffs')).toBeInViewport();
+  await expect(staticTab).toHaveURL(/#architecture$/);
+  await expect(staticTab.locator('#architecture')).toBeInViewport();
   await context.close();
 });

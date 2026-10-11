@@ -1,21 +1,16 @@
 import type { ReactNode } from 'react';
 import type { ProjectEdition } from '../../../lib/project-pages.ts';
 
-// Every claim here comes from the dgxtop repository: spec/dgxtop-v2, the
-// README, docs/process/v2-rewrite and docs/validation (checked 2026-10-11).
+// What dgxtop does, what it runs on and how it is built, as the dgxtop
+// README states it in English, Traditional Chinese and Japanese (checked
+// 2026-10-11).
 
 export const sectionIds = [
-  'why',
+  'install',
+  'features',
   'screens',
+  'capabilities',
   'architecture',
-  'isolation',
-  'arbitration',
-  'history',
-  'actions',
-  'budget',
-  'boundaries',
-  'tradeoffs',
-  'links',
 ] as const;
 export type SectionId = (typeof sectionIds)[number];
 
@@ -30,8 +25,16 @@ export const shotFiles = [
 ] as const;
 export type ShotFile = (typeof shotFiles)[number];
 
-type Table = { caption?: string; head: string[]; rows: string[][] };
-type Diagram = { title: string; text: string };
+// github.com's raw path redirects to the same file as the README's
+// raw.githubusercontent.com URL; the asset policy keeps that host out of
+// bundles (src/lib/asset-policy.ts), and curl -L follows the redirect.
+export const installCommand =
+  'curl -fsSL https://github.com/DennySORA/dgxtop/raw/main/install.sh | bash';
+
+type Table = { head: string[]; rows: string[][] };
+
+/** One feature or capability: a bold name, its text and an optional list. */
+export type Point = { title: string; text: ReactNode; list?: string[] };
 
 export type DgxtopCopy = {
   eyebrow: string;
@@ -41,96 +44,50 @@ export type DgxtopCopy = {
   openImage: string;
   sections: Record<SectionId, string>;
   shots: Record<ShotFile, { alt: string; caption: string }>;
-  why: { intro: string; table: Table; outro: string };
+  install: {
+    platforms: string;
+    installer: ReactNode;
+    source: string;
+  };
+  features: { intro: string; points: Point[] };
   screens: { intro: string };
+  capabilities: Point[];
   architecture: {
-    intro: ReactNode;
-    diagram: Diagram & {
+    intro: string;
+    diagram: {
+      title: string;
+      text: string;
       data: string;
       control: string;
+      adapters: string;
       dataNodes: [string, string][];
       controlNodes: [string, string][];
-      adapters: string;
     };
-    table: Table;
-    outro: string;
+    components: Table;
+    codeIntro: string;
+    code: Table;
   };
-  isolation: {
-    paragraphs: ReactNode[];
-    diagram: Diagram & {
-      parent: string;
-      threads: string[];
-      hosts: string;
-      fresh: string;
-      late: string;
-      pipe: string;
-      lifecycle: string;
-      states: string[];
-      quarantine: string;
-    };
-  };
-  arbitration: {
-    intro: ReactNode;
-    diagram: Diagram & {
-      inputs: [string, string][];
-      steps: string[];
-      outcomes: string;
-      selected: string;
-      conflict: string;
-      missing: string[];
-      average: string;
-      axes: string;
-      axisNames: string[];
-    };
-    table: Table;
-    outro: string;
-  };
-  history: {
-    paragraphs: ReactNode[];
-    diagram: Diagram & {
-      buckets: string[];
-      delta: string;
-      bridge: string;
-      gap: string;
-      legend: string;
-    };
-  };
-  actions: {
-    paragraphs: ReactNode[];
-    diagram: Diagram & {
-      steps: [string, string][];
-      outcomes: string[];
-      notes: string[];
-    };
-  };
-  budget: {
-    intro: string;
-    table: Table;
-    overload: ReactNode;
-    diagram: Diagram & { states: [string, string][] };
-  };
-  boundaries: {
-    paragraphs: ReactNode[];
-    diagram: Diagram & {
-      root: [string, string];
-      crates: [string, string][];
-      depends: string;
-      core: [string, string];
-      check: string;
-    };
-  };
-  tradeoffs: ReactNode[];
-  links: { label: string; href: string }[];
 };
-
-const repository = 'https://github.com/DennySORA/dgxtop';
-const blob = `${repository}/blob/main`;
 
 const code = (text: string) => <code>{text}</code>;
 
+const crates = [
+  'dgxtop',
+  'dgxtop-core',
+  'dgxtop-runtime',
+  'dgxtop-adapters',
+  'dgxtop-collectors',
+  'dgxtop-store',
+  'dgxtop-manager',
+  'dgxtop-ui',
+] as const;
+
+const crateRows = (contents: readonly string[]) =>
+  crates.map((crate, index) => [crate, contents[index] ?? '']);
+
 const en: DgxtopCopy = {
   eyebrow: 'Tools · Rust · Ratatui · updated 2026-10-11',
-  lead: 'dgxtop watches the CPU, GPUs, memory, disks, network and GPU processes of an NVIDIA DGX Spark, or any Linux host with NVIDIA GPUs, from a terminal. Version 2 is a complete rewrite around one rule: a value it cannot read is never shown as 0. This page explains the architecture behind that rule, and what each choice costs.',
+  lead: 'dgxtop is a terminal monitor for NVIDIA GPUs. One screen shows every GPU’s utilization, memory, temperature, power and clocks, the processes using it, and the rest of the machine: CPU, memory, disks and network. It keeps the history, up to 24 hours of charts saved on disk for 7 days, so a job that ran overnight is still there after a restart. It is built for the DGX Spark and runs on any Linux machine with NVIDIA GPUs.',
   facts: {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
@@ -140,17 +97,11 @@ const en: DgxtopCopy = {
   sectionsLabel: 'Sections',
   openImage: 'Open the full-size image',
   sections: {
-    why: 'Why a rewrite',
-    screens: 'What it shows',
-    architecture: 'Six components, two paths',
-    isolation: 'A hung driver stalls one host, not the screen',
-    arbitration: 'Explainable sources, never an average',
-    history: 'Exact history',
-    actions: 'Protected process termination',
-    budget: 'Budgets and overload',
-    boundaries: 'Boundaries and verification',
-    tradeoffs: 'Trade-offs',
-    links: 'Read more',
+    install: 'Install',
+    features: 'Features',
+    screens: 'Screens',
+    capabilities: 'Capabilities',
+    architecture: 'Architecture',
   },
   shots: {
     'dgx-spark-overview.webp': {
@@ -189,457 +140,176 @@ const en: DgxtopCopy = {
         'Settings shows each value as saved and as in effect, where it came from, and whether it applies live or after a restart.',
     },
   },
-  why: {
+  install: {
+    platforms:
+      'Linux on x86_64 or aarch64 with glibc 2.34 or newer (Ubuntu 22.04, Debian 12, RHEL 9 and later), DGX Spark included. WSL 2 runs the Linux build. GPU metrics need the NVIDIA driver; without it, CPU, memory, disks and network still work. WSL 1, musl, macOS and Windows are not supported.',
+    installer: (
+      <>
+        The installer picks the build for your CPU, checks it against the
+        release’s {code('SHA256SUMS')} and installs it to {code('~/.local/bin')}
+        . The previous version is kept, and {code('./install.sh --rollback')}{' '}
+        brings it back.
+      </>
+    ),
+    source: 'Source code, full usage and every release:',
+  },
+  features: {
     intro:
-      'Version 1 sampled hardware inside the UI loop, so a slow driver call froze the screen. It kept data, history and UI state in one shared struct, chose the CPU temperature by the names and scan order of thermal zones, and showed values it could not read as 0. The v2 specification lists ten findings like these and gives each a design answer:',
-    table: {
-      head: ['Finding in v1', 'Answer in v2'],
-      rows: [
-        [
-          'Processes identified by PID alone',
-          'A ProcessKey (host, boot, PID namespace, PID, start time), a held pidfd and a two-step confirmation',
+      'htop centers on the CPU, and nvtop and nvidia-smi show GPUs only while you watch. dgxtop puts the GPUs first, shows the whole machine around them, and keeps the history.',
+    points: [
+      {
+        title: 'Every GPU at a glance.',
+        text: 'Utilization, memory, temperature, power, clocks and fans for each GPU, with live charts.',
+      },
+      {
+        title: 'Full GPU details.',
+        text: 'One GPU at a time, with everything the driver reports; a value the GPU does not report gets no row:',
+        list: [
+          'performance state and throttle reasons, clocks',
+          'memory and the memory bus, PCIe link and traffic, NVLink-C2C',
+          'thermal limits, power and energy',
+          'CUDA and driver versions',
+          'NUMA and CPU affinity, P2P paths, device and firmware',
         ],
-        [
-          'Missing values became 0',
-          'Read status, sample kind, quality and freshness on separate axes; a missing value is null with a reason',
+      },
+      {
+        title: 'GPU processes.',
+        text: 'Every process using a GPU, with its GPU, type (compute or graphics), GPU memory, CPU and RAM. Filter by GPU or name, sort by any column, and stop a process after a confirmation.',
+      },
+      {
+        title: 'History.',
+        text: 'Charts from 5 minutes to 24 hours on one time axis, saved on disk for 7 days and kept across restarts and reboots:',
+        list: [
+          'CPU, memory, disks and network',
+          'each GPU’s utilization, memory, temperature and power',
+          'now, average and maximum for every chart',
+          'each GPU’s last 1, 6, 12 and 24 hours, with the energy it used',
         ],
-        [
-          'Unified-memory semantics mixed up',
-          'System RAM, GPU framebuffer and per-process allocations kept apart',
-        ],
-        [
-          'Bandwidth estimated from utilization',
-          'Measured, derived and estimated values kept apart; no throughput without a byte counter',
-        ],
-        [
-          'Interval and totals assumed, not measured',
-          'The effective interval confirmed by the scheduler; real elapsed time and counter deltas',
-        ],
-        [
-          'History windows misaligned',
-          'Time buckets that carry the boot, the coverage and the gaps',
-        ],
-        [
-          'One PID on several GPUs counted twice',
-          'Host CPU and memory sampled once per ProcessKey, then joined to each GPU',
-        ],
-        [
-          'Installer did not verify downloads',
-          'Checksum and archive checks, with the previous binary kept for rollback',
-        ],
-        [
-          'Sampling blocked the UI',
-          'Control, sampling and rendering separated; drivers isolated in their own processes',
-        ],
-        [
-          'Builds not reproducible',
-          'A committed Cargo.lock, a pinned toolchain and release gates',
-        ],
-      ],
-    },
-    outro:
-      'The rewrite was specified before it was written: 40 requirements, 15 work packages and 40 acceptance cases. It was then built as an eight-crate Rust workspace against a fixed core contract, roughly 157,000 lines of Rust with 1,373 tests.',
+      },
+      {
+        title: 'The whole machine.',
+        text: 'CPU usage per core, CPU temperature and power where the hardware reports them, memory and swap, disk throughput and filesystem capacity, network throughput.',
+      },
+      {
+        title: 'Made for DGX Spark.',
+        text: 'The GB10 shares memory with the CPU: dgxtop shows how much system RAM GPU processes hold, and the GB10’s NVLink-C2C link. Native aarch64 build.',
+      },
+      {
+        title: 'Settings in the app.',
+        text: 'Change the sampling interval and the display modules. Each setting shows its saved and effective value, where it came from, and whether it applies now or after a restart.',
+      },
+    ],
   },
   screens: {
     intro:
-      'Four tabs: Overview, GPU, History and Settings. These screenshots come from the two machines it was tested on.',
+      'Four views: Overview, GPU, History and Settings, on the two machines dgxtop was tested on.',
   },
+  capabilities: [
+    {
+      title: 'Several GPUs per machine.',
+      text: 'Tested on a DGX Spark (GB10) and on a workstation with an RTX 5080 and an RTX 3060.',
+    },
+    {
+      title: 'Light.',
+      text: 'Written in Rust. It redraws only when something changes, at most 4 times a second, and keeps its data within a fixed 256 MiB.',
+    },
+    {
+      title: 'Any terminal size.',
+      text: 'The full layout from 80×24, a compact one below that. Keyboard and mouse.',
+    },
+    {
+      title: 'Private.',
+      text: 'No network access and no telemetry. Settings and history are files only you can read, and command lines and environments are never stored.',
+    },
+    {
+      title: 'Safe modes.',
+      text: (
+        <>
+          {code('--read-only')} turns off process actions. {code('--replay')}{' '}
+          shows simulated data for demos and tests. {code('--diagnostics-json')}{' '}
+          prints versions and health.
+        </>
+      ),
+    },
+    {
+      title: 'Safe upgrades.',
+      text: 'The installer verifies every download and keeps the previous version for a one-command rollback.',
+    },
+  ],
   architecture: {
-    intro: (
-      <>
-        Every value travels the data path, and every user intent travels the
-        control path. The Manager is the only writer: it alone holds the store
-        writer and the process-action port, so neither the Viewer nor the
-        Controller can change data or send a signal.
-      </>
-    ),
+    intro:
+      'dgxtop is one program built from six components. Readings travel the data path; your keys and commands travel the control path.',
     diagram: {
       title: 'Architecture: six components, two paths',
-      text: 'Solid accents mark the data path, dashed ones the control path. The Viewer never reads the store; it draws the view model the Manager publishes.',
+      text: 'Solid accents mark the data path, dashed ones the control path.',
       data: 'data path',
       control: 'control path',
-      adapters: 'one process each',
+      adapters: 'one background process each',
       dataNodes: [
         ['Linux + NVIDIA driver', '/proc · sysfs · NVML'],
-        ['Adapter hosts', ''],
-        ['Collector', 'normalize · de-duplicate · arbitrate · rates'],
-        ['Manager', 'the only writer'],
-        ['Store', 'snapshots · history · config · audit'],
-        ['Manager', 'projection'],
-        ['Viewer', 'immutable view model · Ratatui'],
+        ['Adapters', ''],
+        ['Collectors', 'units · sources · rates'],
+        ['Manager', 'sampling · settings · the only writer'],
+        ['Store', 'snapshot · history · settings · action log'],
+        ['Viewer', 'screens · Ratatui'],
       ],
       controlNodes: [
-        ['Controller', 'keys · mouse · CLI → typed command'],
-        ['Manager', 'validate · authorize'],
-        ['config · scheduler · action adapter', 'pidfd for signals'],
-        ['audit + result', 'durable before any signal'],
-        ['Store → Viewer', 'the outcome is shown'],
+        ['Controller', 'keys · mouse · command line'],
+        ['Manager', 'checks each command'],
+        ['Settings · sampling · process actions', ''],
+        ['Viewer', 'shows the result'],
       ],
     },
-    table: {
-      head: ['Component', 'Its one job', 'Must not'],
+    components: {
+      head: ['Component', 'What it does'],
       rows: [
         [
-          'Adapter',
-          'Talk to one driver or kernel interface; return native values with their source, timing and errors',
-          'Pick an authoritative value, average sources, write the store, render',
+          'Adapters',
+          'Read the hardware: /proc, hwmon, thermal zones, powercap, NVML for the GPUs, network and filesystems. Each adapter runs in its own background process.',
         ],
         [
-          'Collector',
-          'Normalize units, de-duplicate proven aliases, arbitrate, derive rates',
-          'Call driver internals, run SQL, change settings, send signals',
+          'Collectors',
+          'Turn raw readings into metrics: units, duplicates, the best source for each value, and rates from counters.',
         ],
         [
           'Manager',
-          'Schedule sampling, own policy and configuration, authorize commands, commit data, project view models',
-          'Lay out the screen, or wait on a blocking driver call',
+          'Schedules sampling, applies settings, checks commands, and is the only part that writes data.',
         ],
         [
           'Store',
-          'Keep snapshots, history, configuration and the audit log',
-          'Choose sensors, run commands',
+          'Holds the live snapshot, the history, the settings and the log of process actions.',
         ],
         [
           'Viewer',
-          'Lay out display modules and draw immutable view models',
-          'Sample, read or write the store, compute rates, authorize anything',
+          'Draws the screen with Ratatui from ready-made views of the data.',
         ],
         [
           'Controller',
-          'Turn keys, clicks and flags into typed commands with stable IDs',
-          'Decide sources, send signals, draw',
+          'Turns keys, mouse clicks and command-line options into commands.',
         ],
       ],
     },
-    outro:
-      'Ten display modules register at compile time and receive only their view model and their area of the screen. A module that panics is isolated as a module error instead of taking sampling down with it.',
-  },
-  isolation: {
-    paragraphs: [
-      <>
-        A timeout says a result is late. It does not cancel the call: a thread
-        stuck inside a vendor library cannot be stopped safely. So every live
-        adapter runs in its own resident child process, the same binary started
-        as an adapter host, and talks to the parent over anonymous pipes in
-        length-prefixed JSON frames of at most 1 MiB.
-      </>,
-      <>
-        A host that misses its deadline turns degraded. After three failures a
-        circuit breaker opens and retries back off 1, 2, 4 … 60 seconds. A host
-        is replaced only after it has been reaped; one that cannot be reaped is
-        quarantined, and there are never more than eight.
-      </>,
-      <>
-        The parent runs a fixed set of threads and no async runtime: nothing
-        here does network I/O, and {code('spawn_blocking')} would only hide the
-        same uncancellable call behind a future. One 256 MiB budget covers all
-        managed data, and every queue has a byte limit as well as an item limit,
-        because a bounded channel counts messages, not bytes.
-      </>,
-    ],
-    diagram: {
-      title: 'Runtime: one parent, resident hosts',
-      text: 'Here the NVML host has timed out. CPU, memory and the screen keep updating from the other hosts.',
-      parent: 'dgxtop parent process',
-      threads: [
-        'terminal · input and render, at most 4 fps',
-        'Manager · 2 ms control slices',
-        'supervisor · pipes and reaping',
-        'collector workers × 2',
-        'hot store · single writer',
-        'history queries × 2',
-        'config · audit · archive · log',
-        'process action worker',
-      ],
-      hosts: 'adapter hosts · one process each',
-      fresh: 'fresh',
-      late: 'timeout',
-      pipe: 'anonymous pipes · length-prefixed JSON · ≤ 1 MiB per frame',
-      lifecycle: 'a host that keeps failing',
-      states: [
-        'degraded',
-        'circuit open',
-        'backoff 1 s · 2 s · 4 s … 60 s',
-        'probe',
-        'warmup',
-      ],
-      quarantine: 'not reaped → quarantined · at most 8 hosts',
+    codeIntro:
+      'The code is a Rust workspace of eight crates around one shared contract crate.',
+    code: {
+      head: ['Crate', 'Contains'],
+      rows: crateRows([
+        'The program: startup, command line and wiring',
+        'Shared types: metrics, units, commands and interfaces',
+        'Background processes, IPC, workers and terminal I/O',
+        'procfs, sysfs, NVML and process actions',
+        'Normalization, source selection and rates',
+        'Snapshot, history, settings and the action log (SQLite)',
+        'Sampling, settings, commands and views',
+        'Screens, widgets and the key map',
+      ]),
     },
   },
-  arbitration: {
-    intro: (
-      <>
-        Linux can expose one sensor through several interfaces, and a label does
-        not prove what it measures: {code('temp1')} is not necessarily the CPU.
-        dgxtop first decides what a reading means, as a metric key of host,
-        boot, entity, metric and scope, and only then compares readings of the
-        same key.
-      </>
-    ),
-    diagram: {
-      title: 'Arbitration: nine steps per metric key',
-      text: 'Every candidate, the reason it was kept or dropped, its age and its origin travel with the committed value.',
-      inputs: [
-        ['A · hwmon · package 0', '68 °C'],
-        ['B · thermal zone', '42 °C'],
-      ],
-      steps: [
-        'map meaning',
-        'normalize units',
-        'validate',
-        'check freshness',
-        'de-duplicate origins',
-        'rank candidates',
-        'detect conflict',
-        'hysteresis · 3 wins · 5 s',
-        'commit + explanation',
-      ],
-      outcomes: 'possible results',
-      selected: 'selected · 68 °C · hwmon',
-      conflict: 'source conflict · A 68 °C / B 42 °C',
-      missing: ['unsupported', 'read failed', 'stale'],
-      average: 'never an average',
-      axes: 'four separate axes, never one trust score',
-      axisNames: ['read status', 'sample kind', 'quality', 'freshness'],
-    },
-    table: {
-      caption:
-        'Synthetic example. A: hwmon package 0 reads 68 °C. B: a thermal zone reads 42 °C.',
-      head: ['Situation', 'What dgxtop does', 'What you see'],
-      rows: [
-        [
-          'B is the SoC zone',
-          'Different metrics; nothing to compare',
-          'CPU package 68 °C, SoC 42 °C',
-        ],
-        [
-          'B is a proven alias of A',
-          'One sensor reached two ways, counted once',
-          'One value, with a note on the mismatch',
-        ],
-        [
-          'A and B are independent, equal and aligned',
-          '26 °C apart, beyond tolerance: a conflict, value null',
-          'Source conflict with both readings, never 55 °C',
-        ],
-        [
-          'B reports a fault',
-          'B excluded, A selected',
-          '68 °C from A, with B marked faulty',
-        ],
-      ],
-    },
-    outro:
-      'A switch to another source needs three consecutive wins and at least five seconds, so a value does not flap between sensors. Read status, sample kind, quality and freshness stay four separate axes instead of one trust score.',
-  },
-  history: {
-    paragraphs: [
-      <>
-        A rate is the difference of two {code('u64')} counters divided by the
-        real elapsed time on {code('CLOCK_BOOTTIME')}, which keeps counting
-        through suspend. A counter reset, a new boot or a source change starts a
-        new segment instead of producing a negative or invented rate.
-      </>,
-      <>
-        A one-minute rollup cannot know when inside an interval the bytes moved.
-        Totals therefore count only intervals that lie fully inside a window,
-        and an interval that crosses a minute boundary is kept as an exact
-        bridge and counted once, never split in proportion.
-      </>,
-      <>
-        Gauges are time-weighted, a value counts only until its source’s stale
-        deadline, and gaps stay gaps. History lives in {code('history.sqlite3')}{' '}
-        for seven days, at most 1 GiB, so earlier runs are charted too. The
-        archive writes with {code('synchronous=NORMAL')}, the action audit with{' '}
-        {code('FULL')}: losing the last second of a chart is acceptable, losing
-        the record of a signal is not.
-      </>,
-    ],
-    diagram: {
-      title: 'History: counters, bridges and gaps',
-      text: 'The bridge crosses a minute boundary and is counted once, in any window that holds all of it; the gap is drawn as a gap, not as zero.',
-      buckets: ['12:00–12:01', '12:01–12:02', '12:02–12:03'],
-      delta: 'Δ counter ÷ Δt',
-      bridge: 'bridge',
-      gap: 'gap',
-      legend: 'dots are samples; each line is one exact interval',
-    },
-  },
-  actions: {
-    paragraphs: [
-      <>
-        Terminating the wrong process is the worst thing a monitor can do, so
-        termination is a two-step, audited action on a {code('ProcessKey')}{' '}
-        (host, boot, PID namespace, PID and start time), never on a row index or
-        a bare PID.
-      </>,
-      <>
-        Prepare checks the user, refuses root sessions, PID 1, dgxtop and its
-        own hosts, opens a {code('pidfd')} and re-checks the identity in{' '}
-        {code('/proc')}. The confirmation is a single-use token valid for 10
-        seconds. The intent is written with {code('synchronous=FULL')} before
-        the signal, and the signal goes through the pidfd held since
-        preparation, so a reused PID cannot be hit.
-      </>,
-      <>
-        The result says <em>signal sent</em> apart from <em>exit observed</em>.
-        A crash between the durable intent and the outcome is recorded as
-        unknown and never resent: a database commit and a system call share no
-        transaction, so the honest guarantee is at most once. {code('SIGKILL')}{' '}
-        stays off unless {code('actions.allow_force')} is set, and{' '}
-        {code('--read-only')} turns every action off.
-      </>,
-    ],
-    diagram: {
-      title: 'Process termination: at most one SIGTERM',
-      text: 'Every refusal sends nothing, and the action can be cancelled until the signal is being sent.',
-      steps: [
-        ['K', 'select a GPU process'],
-        ['prepare', 'same user · no root · not PID 1, dgxtop or its hosts'],
-        ['pidfd_open', 'verify the /proc identity'],
-        ['confirm', '10 s single-use token · y'],
-        ['audit intent', 'SQLite synchronous=FULL'],
-        ['pidfd_send_signal', 'SIGTERM'],
-      ],
-      outcomes: ['signal sent', 'exit observed', 'still running'],
-      notes: [
-        'crash after the intent → unknown, never resent',
-        'SIGKILL off unless allow_force',
-      ],
-    },
-  },
-  budget: {
-    intro:
-      'Every allocation dgxtop manages draws on one 256 MiB ledger, split by purpose. These are admission limits, not measured memory: allocator overhead, thread stacks and the NVIDIA library come on top, which is why the specification sets a separate 384 MiB target for the whole process tree.',
-    table: {
-      caption: 'The 256 MiB data budget (defaults)',
-      head: ['Partition', 'MiB', 'Holds'],
-      rows: [
-        ['Catalog and metadata', '24', 'Names, tombstones, arbitration state'],
-        ['Raw candidates', '32', '60 s of evidence for source diagnostics'],
-        ['Hot state', '16', '512 series, 256 processes, 1,024 GPU links'],
-        ['Full-resolution history', '32', 'The last 300 s'],
-        ['Minute aggregates', '96', '24 h of rollups, source changes and gaps'],
-        ['Ingress', '8', 'Every live IPC and decoding buffer'],
-        ['Presentation', '12', 'View models and the formatting cache'],
-        ['History queries', '16', 'Snapshots pinned by running queries'],
-        [
-          'Control and reserve',
-          '20',
-          'Commands, archive journal, log, safety reserve',
-        ],
-      ],
-    },
-    overload: (
-      <>
-        Under load dgxtop degrades visibly instead of silently. Pressure stops
-        optional work and draws at most 2 fps; throttling limits queries and
-        stretches the sampling period, which a banner shows as effective against
-        configured. Recovery takes one step per 30 healthy seconds, and missing
-        samples are never back-filled.
-      </>
-    ),
-    diagram: {
-      title: 'Overload states',
-      text: 'Entered by queue bytes at 75 % or slow collection (pressured) and memory at 90 % (throttled).',
-      states: [
-        ['normal', 'full rate'],
-        ['pressured', 'optional work stops · 2 fps'],
-        ['throttled', 'queries limited · period stretched'],
-        ['recovering', 'one step per 30 s'],
-      ],
-    },
-  },
-  boundaries: {
-    paragraphs: [
-      <>
-        The workspace has eight crates. Each implementation crate depends only
-        on {code('dgxtop-core')}, and only the composition root sees them all; a
-        CI script reads {code('cargo metadata')} and fails the build if a crate
-        reaches another. The core never depends on NVML, libc, SQLite or the UI.
-      </>,
-      <>
-        Format, lint, 1,373 tests (1,372 on aarch64), the dependency boundaries
-        and the real-hardware suites pass on a Debian 13 workstation with an RTX
-        5080 and an RTX 3060, and on a DGX Spark. The acceptance report tracks
-        40 cases: 14 pass, 24 are not run yet (mostly opt-in end-to-end suites),
-        and 2 are blocked on three 30-minute benchmark runs and a 72-hour soak.
-        Until those exist, no platform is called validated, and the performance
-        numbers stay targets.
-      </>,
-    ],
-    diagram: {
-      title: 'Workspace: one contract crate at the centre',
-      text: 'Concrete implementations meet only in the composition root.',
-      root: ['dgxtop', 'composition root + CLI'],
-      crates: [
-        ['dgxtop-runtime', 'hosts · IPC · workers'],
-        ['dgxtop-adapters', 'procfs · NVML · pidfd'],
-        ['dgxtop-collectors', 'arbitration · rates'],
-        ['dgxtop-store', 'history · SQLite'],
-        ['dgxtop-manager', 'use cases · sessions'],
-        ['dgxtop-ui', 'Ratatui · keymap'],
-      ],
-      depends: '→ dgxtop-core only',
-      core: ['dgxtop-core', 'types · units · ports · commands · byte budget'],
-      check: 'enforced in CI · check_boundaries.py',
-    },
-  },
-  tradeoffs: [
-    <>
-      <strong>A process per adapter, not a thread.</strong> More resident memory
-      and IPC, in exchange for a hung driver that cannot freeze anything else.
-    </>,
-    <>
-      <strong>
-        Fixed threads and crossbeam channels, not an async runtime.
-      </strong>{' '}
-      There is no network I/O to justify one.
-    </>,
-    <>
-      <strong>A compile-time registry, not plugins.</strong> No unstable Rust
-      ABI and no new attack surface for adapters and display modules.
-    </>,
-    <>
-      <strong>Conflicts shown, not averaged.</strong> Less tidy, but never a
-      number that no sensor reported.
-    </>,
-    <>
-      <strong>At most one signal, not retries.</strong> An unknown outcome is
-      shown as unknown.
-    </>,
-    <>
-      <strong>Redraw on change, at most 4 fps.</strong> A monitor does not need
-      60 fps, and a slow terminal must never block input.
-    </>,
-  ],
-  links: [
-    {
-      label: 'Source code and README (English · 繁體中文 · 日本語)',
-      href: repository,
-    },
-    {
-      label: 'Specification (Traditional Chinese)',
-      href: `${repository}/tree/main/spec/dgxtop-v2`,
-    },
-    {
-      label: 'Latest release: install script and binaries',
-      href: `${repository}/releases/latest`,
-    },
-    {
-      label: 'Implementation decisions D-01 to D-61',
-      href: `${blob}/docs/design/DECISIONS.md`,
-    },
-    {
-      label: 'Validation report and evidence',
-      href: `${blob}/docs/validation/VALIDATION.md`,
-    },
-  ],
 };
 
 const zh: DgxtopCopy = {
   eyebrow: '工具 · Rust · Ratatui · 2026-10-11 更新',
-  lead: 'dgxtop 在終端裡監看 NVIDIA DGX Spark，或任何裝了 NVIDIA GPU 的 Linux 主機：CPU、GPU、記憶體、磁碟、網路與 GPU 程序。第二版是一次完整重寫，圍繞一條規則：讀不到的值，絕不顯示成 0。這一頁說明撐起這條規則的架構，以及每個選擇的代價。',
+  lead: 'dgxtop 是 NVIDIA GPU 的終端監控工具。一個畫面就能看到每張 GPU 的使用率、記憶體、溫度、功耗與時脈、使用它的程序，以及整台機器的 CPU、記憶體、磁碟與網路。它會保留歷史：最長 24 小時的圖表在磁碟上保存 7 天，夜裡跑的工作重開之後還看得到。它為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用。',
   facts: {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
@@ -649,17 +319,11 @@ const zh: DgxtopCopy = {
   sectionsLabel: '章節',
   openImage: '開啟原尺寸圖片',
   sections: {
-    why: '為什麼重寫',
+    install: '安裝',
+    features: '功能',
     screens: '畫面',
-    architecture: '六個元件、兩條路徑',
-    isolation: '驅動卡住，只拖住一個 host',
-    arbitration: '可解釋的來源，不取平均',
-    history: '精確的歷史',
-    actions: '受保護的程序終止',
-    budget: '資源預算與過載',
-    boundaries: '邊界與驗證',
-    tradeoffs: '取捨',
-    links: '延伸閱讀',
+    capabilities: '能力',
+    architecture: '架構',
   },
   shots: {
     'dgx-spark-overview.webp': {
@@ -698,424 +362,162 @@ const zh: DgxtopCopy = {
         '設定頁同時列出每個值的已保存值與生效值、它從哪裡來，以及是即時生效還是需要重新啟動。',
     },
   },
-  why: {
-    intro:
-      '第一版在 UI 迴圈裡採樣硬體，驅動呼叫一慢，整個畫面就凍住。它把資料、歷史與 UI 狀態放在同一個共用結構裡，依 thermal zone 的名稱與掃描順序挑 CPU 溫度，讀不到的值直接顯示成 0。v2 規格列出十個這類問題，並為每一個給出設計上的答案：',
-    table: {
-      head: ['v1 的問題', 'v2 的答案'],
-      rows: [
-        [
-          '只用 PID 辨識程序',
-          'ProcessKey（主機、開機、PID namespace、PID、啟動時間）、預先持有的 pidfd 與兩階段確認',
-        ],
-        [
-          '缺值變成 0',
-          '讀取狀態、資料種類、品質與新鮮度分成不同的軸；缺值是附原因的 null',
-        ],
-        [
-          '統一記憶體的語意混在一起',
-          '系統 RAM、GPU framebuffer 與各程序的配置分開',
-        ],
-        [
-          '從使用率推估頻寬',
-          '量測、衍生、估算分開；沒有位元組計數器就不給吞吐量',
-        ],
-        [
-          '更新間隔與累計量是假設而非量測',
-          '由排程器確認的有效間隔；真實經過時間與 counter 差值',
-        ],
-        ['歷史時窗錯位', '帶有開機、覆蓋率與空窗資訊的時間桶'],
-        [
-          '同一個 PID 在多張 GPU 上被重算',
-          '每個 ProcessKey 只採樣一次主機 CPU 與記憶體，再關聯到各張 GPU',
-        ],
-        [
-          '安裝程式不驗證下載內容',
-          '驗證 checksum 與壓縮檔結構，保留舊執行檔以便回滾',
-        ],
-        ['採樣卡住 UI', '控制、採樣與繪製分離；驅動隔離在各自的程序'],
-        ['建置不可重現', '提交 Cargo.lock、固定工具鏈與 release gate'],
-      ],
-    },
-    outro:
-      '這次重寫先寫規格再寫程式：40 項需求、15 個工作包、40 個驗收案例。之後依固定的 core 契約建成八個 crate 的 Rust workspace，約 157,000 行 Rust，附 1,373 項測試。',
-  },
-  screens: {
-    intro: '四個分頁：總覽、GPU、歷史與設定。以下截圖來自實際測試的兩台機器。',
-  },
-  architecture: {
-    intro: (
+  install: {
+    platforms:
+      '支援 x86_64 或 aarch64 的 Linux，glibc 2.34 以上（Ubuntu 22.04、Debian 12、RHEL 9 及更新版本），包括 DGX Spark。WSL 2 可以執行 Linux 版。GPU 指標需要 NVIDIA 驅動；沒有驅動時，CPU、記憶體、磁碟與網路照常顯示。不支援 WSL 1、musl、macOS 與 Windows。',
+    installer: (
       <>
-        每個數值走資料路徑，每個使用者意圖走控制路徑。Manager
-        是唯一的寫入者：只有它持有 Store 的寫入權與程序操作的 port，所以 Viewer
-        與 Controller 既不能改資料，也不能送訊號。
+        安裝程式會依 CPU 選擇對應的版本，以 release 的 {code('SHA256SUMS')}{' '}
+        驗證後安裝到 {code('~/.local/bin')}。舊版本會保留，執行{' '}
+        {code('./install.sh --rollback')} 就能還原。
       </>
     ),
+    source: '原始碼、完整用法與所有版本：',
+  },
+  features: {
+    intro:
+      'htop 以 CPU 為主，nvtop 和 nvidia-smi 只在你盯著的時候顯示 GPU。dgxtop 以 GPU 為主，把整台機器放在旁邊，而且保留歷史。',
+    points: [
+      {
+        title: '一眼看完所有 GPU。',
+        text: '每張 GPU 的使用率、記憶體、溫度、功耗、時脈與風扇，附即時圖表。',
+      },
+      {
+        title: '完整的 GPU 細節。',
+        text: '一次看一張 GPU，列出驅動回報的所有資訊；GPU 不回報的值不會佔一行：',
+        list: [
+          '效能狀態與降頻原因、時脈',
+          '記憶體與記憶體匯流排、PCIe 連線與流量、NVLink-C2C',
+          '溫度上限、功耗與耗電量',
+          'CUDA 與驅動版本',
+          'NUMA 與 CPU 親和性、P2P 路徑、裝置與韌體',
+        ],
+      },
+      {
+        title: 'GPU 程序。',
+        text: '所有使用 GPU 的程序，以及所在的 GPU、類型（運算或圖形）、GPU 記憶體、CPU 與 RAM。可依 GPU 或名稱篩選、依任一欄排序，確認後即可結束程序。',
+      },
+      {
+        title: '歷史紀錄。',
+        text: '5 分鐘到 24 小時的圖表共用一條時間軸，寫入磁碟保存 7 天，重開程式或重開機都還在：',
+        list: [
+          'CPU、記憶體、磁碟與網路',
+          '每張 GPU 的使用率、記憶體、溫度與功耗',
+          '每張圖都標出目前值、平均與最大值',
+          '每張 GPU 最近 1、6、12、24 小時的統計與耗電量',
+        ],
+      },
+      {
+        title: '整台機器。',
+        text: '每顆核心的 CPU 使用率、硬體有回報時的 CPU 溫度與功耗、記憶體與 swap、磁碟流量與檔案系統容量、網路流量。',
+      },
+      {
+        title: '為 DGX Spark 打造。',
+        text: 'GB10 與 CPU 共用記憶體：dgxtop 會顯示 GPU 程序佔用多少系統 RAM，以及 GB10 的 NVLink-C2C 連線。提供原生 aarch64 版本。',
+      },
+      {
+        title: '程式內設定。',
+        text: '調整採樣間隔與顯示模組。每項設定都顯示儲存值與生效值、來源，以及是立即生效還是重開後生效。',
+      },
+    ],
+  },
+  screens: {
+    intro: '四個畫面：總覽、GPU、歷史與設定，截自實際測試的兩台機器。',
+  },
+  capabilities: [
+    {
+      title: '一台機器多張 GPU。',
+      text: '已在 DGX Spark（GB10）與裝有 RTX 5080 和 RTX 3060 的工作站上測試。',
+    },
+    {
+      title: '輕量。',
+      text: '以 Rust 撰寫。只在內容變化時重繪，每秒最多 4 次，資料使用量固定在 256 MiB 以內。',
+    },
+    {
+      title: '任何終端尺寸。',
+      text: '80×24 以上顯示完整版面，更小時改用精簡版面。支援鍵盤與滑鼠。',
+    },
+    {
+      title: '隱私。',
+      text: '不連網，也不回傳任何資料。設定與歷史是只有你能讀的檔案，不會儲存命令列與環境變數。',
+    },
+    {
+      title: '安全模式。',
+      text: (
+        <>
+          {code('--read-only')} 關閉程序操作；{code('--replay')}{' '}
+          用模擬資料做展示或測試；{code('--diagnostics-json')}{' '}
+          輸出版本與健康狀態。
+        </>
+      ),
+    },
+    {
+      title: '安全升級。',
+      text: '安裝程式會驗證每個下載的檔案，並保留上一版，一個指令就能還原。',
+    },
+  ],
+  architecture: {
+    intro:
+      'dgxtop 是由六個元件組成的單一程式。讀值走資料路徑；你的按鍵與指令走控制路徑。',
     diagram: {
       title: '架構：六個元件、兩條路徑',
-      text: '實線左緣是資料路徑，虛線左緣是控制路徑。Viewer 從不讀 Store，它只畫 Manager 發布的 view model。',
+      text: '實線標示資料路徑，虛線標示控制路徑。',
       data: '資料路徑',
       control: '控制路徑',
-      adapters: '各自一個程序',
+      adapters: '各自在背景程序中執行',
       dataNodes: [
         ['Linux + NVIDIA 驅動', '/proc · sysfs · NVML'],
-        ['Adapter host', ''],
-        ['Collector', '正規化 · 去重 · 仲裁 · 速率'],
-        ['Manager', '唯一的寫入者'],
-        ['Store', '快照 · 歷史 · 設定 · 稽核'],
-        ['Manager', '投影'],
-        ['Viewer', '不可變 view model · Ratatui'],
+        ['Adapter', ''],
+        ['Collector', '單位 · 來源 · 速率'],
+        ['Manager', '採樣 · 設定 · 唯一寫入者'],
+        ['Store', '快照 · 歷史 · 設定 · 操作紀錄'],
+        ['Viewer', '畫面 · Ratatui'],
       ],
       controlNodes: [
-        ['Controller', '按鍵 · 滑鼠 · CLI → 型別化命令'],
-        ['Manager', '驗證 · 授權'],
-        ['設定 · 排程 · 操作 adapter', '訊號透過 pidfd'],
-        ['稽核 + 結果', '送訊號之前先落盤'],
-        ['Store → Viewer', '顯示結果'],
+        ['Controller', '按鍵 · 滑鼠 · 命令列'],
+        ['Manager', '檢查每個指令'],
+        ['設定 · 採樣 · 程序操作', ''],
+        ['Viewer', '顯示結果'],
       ],
     },
-    table: {
-      head: ['元件', '唯一的職責', '明確禁止'],
+    components: {
+      head: ['元件', '功能'],
       rows: [
         [
           'Adapter',
-          '對接一種驅動或核心介面；回傳原生數值，附來源、時間與錯誤',
-          '自選權威數值、跨來源平均、直接寫 Store、繪製',
+          '讀取硬體：/proc、hwmon、thermal zone、powercap、GPU 的 NVML、網路與檔案系統。每個 adapter 在自己的背景程序裡執行。',
         ],
         [
           'Collector',
-          '正規化單位、去除已證明的別名、仲裁、計算速率',
-          '呼叫驅動內部、執行 SQL、修改設定、送訊號',
+          '把原始讀值整理成指標：單位、重複的來源、每個值的最佳來源，以及由計數器算出的速率。',
         ],
-        [
-          'Manager',
-          '排程採樣、管理政策與設定、授權命令、提交資料、產生 view model',
-          '排版畫面，或在事件迴圈裡等待會阻塞的驅動呼叫',
-        ],
-        ['Store', '保存快照、歷史、設定與稽核紀錄', '自行挑選感測器、執行命令'],
-        [
-          'Viewer',
-          '排版顯示模組，繪製不可變的 view model',
-          '自行採樣、讀寫 Store、計算速率、授權任何操作',
-        ],
-        [
-          'Controller',
-          '把按鍵、點擊與參數轉成帶穩定 ID 的型別化命令',
-          '判定來源、送訊號、繪製',
-        ],
+        ['Manager', '排定採樣、套用設定、檢查指令，也是唯一寫入資料的元件。'],
+        ['Store', '保存即時快照、歷史、設定與程序操作紀錄。'],
+        ['Viewer', '用整理好的畫面資料，以 Ratatui 繪製畫面。'],
+        ['Controller', '把按鍵、滑鼠點擊與命令列選項轉成指令。'],
       ],
     },
-    outro:
-      '十個顯示模組在編譯期註冊，只拿到自己的 view model 與畫面區域。某個模組 panic 時，它被隔離成模組錯誤，不會連帶拖垮採樣。',
-  },
-  isolation: {
-    paragraphs: [
-      <>
-        逾時只代表結果晚到，並沒有取消那次呼叫：卡在廠商函式庫裡的執行緒無法安全地停下來。所以每個
-        live adapter 都在自己的常駐子程序裡執行（同一個執行檔以 adapter host
-        模式啟動），透過匿名管線與父程序交換附長度前綴、每個最多 1 MiB 的 JSON
-        frame。
-      </>,
-      <>
-        錯過期限的 host 會轉為降級；連續失敗 3 次後 circuit breaker 打開，重試依
-        1、2、4……60 秒退避。只有確實回收（reap）後才會換上新的 host；回收不了的
-        host 會被隔離，而且同時最多只有 8 個。
-      </>,
-      <>
-        父程序只有固定數量的執行緒，不用 async runtime：這裡沒有網路 I/O，而{' '}
-        {code('spawn_blocking')} 只會把同一個無法取消的呼叫藏到 future
-        後面。所有受管資料共用一份 256 MiB
-        預算，每條佇列除了筆數上限還有位元組上限，因為有界 channel
-        只數訊息，不數位元組。
-      </>,
-    ],
-    diagram: {
-      title: '執行模型：一個父程序，常駐的 host',
-      text: '這裡 NVML host 已經逾時，CPU、記憶體與畫面仍由其他 host 持續更新。',
-      parent: 'dgxtop 父程序',
-      threads: [
-        '終端 · 輸入與繪製，最多 4 fps',
-        'Manager · 每輪 2 ms 的控制迴圈',
-        'supervisor · 管線與回收',
-        'collector worker × 2',
-        'hot store · 單一寫入者',
-        '歷史查詢 × 2',
-        '設定 · 稽核 · 封存 · 日誌',
-        '程序操作 worker',
-      ],
-      hosts: 'adapter host · 各自一個程序',
-      fresh: '新鮮',
-      late: '逾時',
-      pipe: '匿名管線 · 長度前綴 JSON · 每個 frame ≤ 1 MiB',
-      lifecycle: '持續失敗的 host',
-      states: [
-        '降級',
-        'circuit 打開',
-        '退避 1 s · 2 s · 4 s … 60 s',
-        '探測',
-        '暖機',
-      ],
-      quarantine: '回收不了 → 隔離 · 最多 8 個 host',
+    codeIntro:
+      '程式碼是 8 個 crate 組成的 Rust workspace，圍繞一個共用的契約 crate。',
+    code: {
+      head: ['Crate', '內容'],
+      rows: crateRows([
+        '主程式：啟動、命令列與組裝',
+        '共用型別：指標、單位、指令與介面',
+        '背景程序、IPC、worker 與終端 I/O',
+        'procfs、sysfs、NVML 與程序操作',
+        '正規化、來源選擇與速率',
+        '快照、歷史、設定與操作紀錄（SQLite）',
+        '採樣、設定、指令與畫面資料',
+        '畫面、元件與按鍵對應',
+      ]),
     },
   },
-  arbitration: {
-    intro: (
-      <>
-        Linux 可能用好幾個介面暴露同一顆感測器，標籤也不保證它量的是什麼：
-        {code('temp1')}
-        不一定是 CPU。dgxtop
-        先決定一筆讀值代表什麼（由主機、開機、實體、指標與範圍組成的 metric
-        key），然後只比較同一個 key 的讀值。
-      </>
-    ),
-    diagram: {
-      title: '仲裁：每個 metric key 九個步驟',
-      text: '每個候選、它被保留或排除的原因、age 與來源，都跟著提交的數值一起保存。',
-      inputs: [
-        ['A · hwmon · package 0', '68 °C'],
-        ['B · thermal zone', '42 °C'],
-      ],
-      steps: [
-        '建立語意對應',
-        '正規化單位',
-        '硬性驗證',
-        '檢查新鮮度',
-        '同源去重',
-        '排序候選',
-        '檢查衝突',
-        '遲滯 · 連勝 3 次 · 5 秒',
-        '提交與解釋',
-      ],
-      outcomes: '可能的結果',
-      selected: '選中 · 68 °C · hwmon',
-      conflict: '來源衝突 · A 68 °C／B 42 °C',
-      missing: ['不支援', '讀取失敗', '過期'],
-      average: '絕不取平均',
-      axes: '四個獨立的軸，不壓成一個信任分數',
-      axisNames: ['讀取狀態', '資料種類', '品質', '新鮮度'],
-    },
-    table: {
-      caption:
-        '合成範例。A：hwmon package 0 讀到 68 °C；B：一個 thermal zone 讀到 42 °C。',
-      head: ['情境', 'dgxtop 怎麼處理', '畫面上看到'],
-      rows: [
-        [
-          'B 是 SoC 的 zone',
-          '不同指標，不互相比較',
-          'CPU package 68 °C、SoC 42 °C',
-        ],
-        [
-          'B 是 A 已證明的別名',
-          '同一顆感測器的兩個入口，只算一票',
-          '一個數值，附不一致的提示',
-        ],
-        [
-          'A、B 是獨立、同級且已對齊的量測',
-          '相差 26 °C，超過容差：衝突，數值為 null',
-          '來源衝突與兩個讀值，絕不顯示 55 °C',
-        ],
-        ['B 回報 fault', '排除 B，選中 A', '68 °C 來自 A，並標示 B 故障'],
-      ],
-    },
-    outro:
-      '要切換到另一個來源，必須連續勝出 3 次且至少經過 5 秒，數值不會在感測器之間來回跳。讀取狀態、資料種類、品質與新鮮度維持四個獨立的軸，不壓成一個信任分數。',
-  },
-  history: {
-    paragraphs: [
-      <>
-        速率是兩個 {code('u64')} counter 的差值，除以
-        {code('CLOCK_BOOTTIME')}
-        上的真實經過時間；這個時鐘在休眠期間也會繼續計時。counter
-        歸零、重新開機或來源切換時，會開始新的區段，而不是產生負的或捏造的速率。
-      </>,
-      <>
-        一分鐘的彙總無法知道區間裡的位元組是在哪一刻流動的。所以時窗總量只計入完全落在窗內的區間；跨越分鐘邊界的區間以精確的
-        bridge 保存、只算一次，絕不按比例拆分。
-      </>,
-      <>
-        gauge
-        依時間加權，數值只有效到來源的過期期限為止，空窗就留著空窗。歷史存在{' '}
-        {code('history.sqlite3')}，保留 7 天、最多 1
-        GiB，之前執行的紀錄也會畫出來。封存使用 {code('synchronous=NORMAL')}
-        ，操作稽核使用 {code('FULL')}
-        ：圖表少了最後一秒可以接受，訊號的紀錄不見則不行。
-      </>,
-    ],
-    diagram: {
-      title: '歷史：counter、bridge 與空窗',
-      text: 'bridge 跨越分鐘邊界，只在完整包含它的時窗裡算一次；空窗畫成空窗，不畫成 0。',
-      buckets: ['12:00–12:01', '12:01–12:02', '12:02–12:03'],
-      delta: 'Δ counter ÷ Δt',
-      bridge: 'bridge',
-      gap: '空窗',
-      legend: '圓點是採樣點；每一段線是一個精確的區間',
-    },
-  },
-  actions: {
-    paragraphs: [
-      <>
-        終止錯的程序，是監控工具最糟的失誤。所以終止是兩階段、有稽核的操作，對象是{' '}
-        {code('ProcessKey')}
-        （主機、開機、PID namespace、PID 與啟動時間），絕不是列號或單獨的 PID。
-      </>,
-      <>
-        準備階段檢查使用者，拒絕 root 會話、PID 1、dgxtop 本身與它自己的
-        host，開啟 {code('pidfd')} 後再透過 {code('/proc')}
-        重新核對身分。確認用的是 10 秒內有效的一次性 token。送訊號之前先以{' '}
-        {code('synchronous=FULL')}
-        寫入 intent，訊號再透過準備時就持有的 pidfd 送出，所以重用的 PID
-        不會被誤擊。
-      </>,
-      <>
-        結果會分開標示<em>已送出訊號</em>與<em>已觀察到結束</em>。如果在 intent
-        落盤後、結果寫入前崩潰，該操作記為未知且絕不重送：資料庫 commit
-        與系統呼叫沒有共同的交易，所以誠實的保證是「至多一次」。
-        {code('SIGKILL')} 預設關閉，除非設定 {code('actions.allow_force')}；
-        {code('--read-only')} 會關閉所有操作。
-      </>,
-    ],
-    diagram: {
-      title: '程序終止：至多一次 SIGTERM',
-      text: '每一種拒絕都不會送出任何訊號；在訊號送出之前，操作都可以取消。',
-      steps: [
-        ['K', '選取一個 GPU 程序'],
-        ['準備', '同使用者 · 非 root · 不是 PID 1、dgxtop 或其 host'],
-        ['pidfd_open', '核對 /proc 身分'],
-        ['確認', '10 秒一次性 token · y'],
-        ['稽核 intent', 'SQLite synchronous=FULL'],
-        ['pidfd_send_signal', 'SIGTERM'],
-      ],
-      outcomes: ['已送出訊號', '已觀察到結束', '仍在執行'],
-      notes: [
-        'intent 之後崩潰 → 未知，絕不重送',
-        'SIGKILL 預設關閉（allow_force）',
-      ],
-    },
-  },
-  budget: {
-    intro:
-      'dgxtop 管理的每一筆配置都從同一本 256 MiB 的帳目扣除，並依用途分區。這些是准入上限，不是量到的記憶體：配置器開銷、執行緒堆疊與 NVIDIA 函式庫都另外計算，所以規格另外為整個程序樹訂了 384 MiB 的目標。',
-    table: {
-      caption: '256 MiB 資料預算（預設值）',
-      head: ['分區', 'MiB', '內容'],
-      rows: [
-        ['目錄與 metadata', '24', '名稱、tombstone、仲裁前態'],
-        ['原始候選', '32', '供來源診斷的 60 秒證據'],
-        ['即時狀態', '16', '512 條序列、256 個程序、1,024 個 GPU 關聯'],
-        ['原解析歷史', '32', '最近 300 秒'],
-        ['分鐘彙總', '96', '24 小時的彙總、來源切換與空窗'],
-        ['輸入（ingress）', '8', '所有存活的 IPC 與解碼 buffer'],
-        ['呈現', '12', 'view model 與格式化快取'],
-        ['歷史查詢', '16', '執行中查詢釘住的快照'],
-        ['控制與保留', '20', '命令、封存 journal、日誌、安全保留'],
-      ],
-    },
-    overload: (
-      <>
-        負載過高時，dgxtop
-        會看得見地降級，而不是默默失真。壓力狀態先停掉可選工作、繪製降到最多 2
-        fps；節流狀態限制查詢並拉長採樣週期，橫幅會同時顯示設定值與實際值。恢復時每
-        30 秒健康才退一級，遺失的採樣絕不補值。
-      </>
-    ),
-    diagram: {
-      title: '過載狀態',
-      text: '佇列位元組達 75% 或採集變慢時進入壓力狀態；記憶體達 90% 時進入節流狀態。',
-      states: [
-        ['正常', '完整速率'],
-        ['壓力', '停可選工作 · 2 fps'],
-        ['節流', '限制查詢 · 拉長週期'],
-        ['恢復中', '每 30 秒退一級'],
-      ],
-    },
-  },
-  boundaries: {
-    paragraphs: [
-      <>
-        workspace 有八個 crate。每個實作 crate 只依賴 {code('dgxtop-core')}
-        ，只有組裝根看得到全部；CI 腳本讀取 {code('cargo metadata')}，任何 crate
-        依賴另一個實作 crate 就讓建置失敗。core 本身從不依賴 NVML、libc、SQLite
-        或 UI。
-      </>,
-      <>
-        格式、lint、1,373 項測試（aarch64 上 1,372
-        項）、依賴邊界與真實硬體測試，在裝有 RTX 5080 與 RTX 3060 的 Debian 13
-        工作站和 DGX Spark 上都通過。驗收報告追蹤 40 個案例：14 個通過、24
-        個尚未執行（多半是需要另外啟動的端對端測試），2 個要等 3 次 30
-        分鐘的效能基準與 72 小時
-        soak。在這些完成之前，沒有任何平台被宣稱為已驗收，效能數字也仍只是目標。
-      </>,
-    ],
-    diagram: {
-      title: 'Workspace：一個契約 crate 在中心',
-      text: '具體實作只在組裝根相遇。',
-      root: ['dgxtop', '組裝根 + CLI'],
-      crates: [
-        ['dgxtop-runtime', 'host · IPC · worker'],
-        ['dgxtop-adapters', 'procfs · NVML · pidfd'],
-        ['dgxtop-collectors', '仲裁 · 速率'],
-        ['dgxtop-store', '歷史 · SQLite'],
-        ['dgxtop-manager', '用例 · 會話'],
-        ['dgxtop-ui', 'Ratatui · keymap'],
-      ],
-      depends: '→ 只依賴 dgxtop-core',
-      core: ['dgxtop-core', '型別 · 單位 · port · 命令 · 位元組預算'],
-      check: 'CI 檢查 · check_boundaries.py',
-    },
-  },
-  tradeoffs: [
-    <>
-      <strong>每個 adapter 一個程序，而不是一條執行緒。</strong>
-      多付常駐記憶體與 IPC 的成本，換來卡住的驅動無法凍結其他任何東西。
-    </>,
-    <>
-      <strong>固定的執行緒與 crossbeam channel，而不是 async runtime。</strong>
-      沒有網路 I/O 值得引入它。
-    </>,
-    <>
-      <strong>編譯期註冊，而不是外掛。</strong>
-      adapter 與顯示模組不需要不穩定的 Rust ABI，也不增加攻擊面。
-    </>,
-    <>
-      <strong>顯示衝突，而不是取平均。</strong>
-      畫面沒那麼整齊，但絕不出現沒有任何感測器回報過的數字。
-    </>,
-    <>
-      <strong>至多一次訊號，而不是重試。</strong>
-      結果未知，就顯示未知。
-    </>,
-    <>
-      <strong>只在變化時重繪，最多 4 fps。</strong>
-      監控不需要 60 fps，而且慢的終端絕不能卡住輸入。
-    </>,
-  ],
-  links: [
-    {
-      label: '原始碼與 README（English · 繁體中文 · 日本語）',
-      href: repository,
-    },
-    {
-      label: '規格（繁體中文）',
-      href: `${repository}/tree/main/spec/dgxtop-v2`,
-    },
-    {
-      label: '最新發佈版：安裝指令與執行檔',
-      href: `${repository}/releases/latest`,
-    },
-    {
-      label: '實作決策 D-01 到 D-61',
-      href: `${blob}/docs/design/DECISIONS.md`,
-    },
-    {
-      label: '驗證報告與證據',
-      href: `${blob}/docs/validation/VALIDATION.md`,
-    },
-  ],
 };
 
 const ja: DgxtopCopy = {
   eyebrow: 'ツール · Rust · Ratatui · 2026-10-11 更新',
-  lead: 'dgxtop は NVIDIA DGX Spark、または NVIDIA GPU を搭載した Linux ホストの CPU、GPU、メモリ、ディスク、ネットワーク、GPU プロセスをターミナルで監視します。バージョン 2 は「読み取れない値を 0 と表示しない」という 1 つの原則を軸に全面的に書き直しました。このページでは、その原則を支える構成と、それぞれの設計判断に伴うコストを説明します。',
+  lead: 'dgxtop は NVIDIA GPU のためのターミナルモニターです。1 つの画面に、各 GPU の使用率、メモリ、温度、電力、クロック、それを使うプロセス、そしてマシンの CPU、メモリ、ディスク、ネットワークを表示します。最大 24 時間のグラフを 7 日間ディスクに保存するので、夜間に動かしたジョブも再起動後に確認できます。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます。',
   facts: {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
@@ -1125,17 +527,11 @@ const ja: DgxtopCopy = {
   sectionsLabel: '目次',
   openImage: '原寸の画像を開く',
   sections: {
-    why: '書き直した理由',
-    screens: '表示できるもの',
-    architecture: '6 つの構成要素、2 つの経路',
-    isolation: 'ドライバーが止まっても画面は動く',
-    arbitration: '平均せず、出所を説明する',
-    history: '正確な履歴',
-    actions: '安全策を備えたプロセス終了',
-    budget: '資源予算と過負荷',
-    boundaries: '境界と検証',
-    tradeoffs: '設計上のトレードオフ',
-    links: '関連資料',
+    install: 'インストール',
+    features: '機能',
+    screens: '画面',
+    capabilities: '特長',
+    architecture: 'アーキテクチャ',
   },
   shots: {
     'dgx-spark-overview.webp': {
@@ -1174,457 +570,168 @@ const ja: DgxtopCopy = {
         '設定画面では、各項目の保存値と現在の適用値、その出所、即時適用か再起動が必要かを確認できます。',
     },
   },
-  why: {
+  install: {
+    platforms:
+      'x86_64 または aarch64 の Linux で、glibc 2.34 以降（Ubuntu 22.04、Debian 12、RHEL 9 以降）。DGX Spark も含みます。WSL 2 では Linux 版が動きます。GPU の値には NVIDIA ドライバーが必要で、ない場合も CPU、メモリ、ディスク、ネットワークは表示します。WSL 1、musl、macOS、Windows には対応していません。',
+    installer: (
+      <>
+        インストーラーは CPU に合ったビルドを選び、リリースの{' '}
+        {code('SHA256SUMS')} で検証してから {code('~/.local/bin')}{' '}
+        にインストールします。以前のバージョンは残り、
+        {code('./install.sh --rollback')} で戻せます。
+      </>
+    ),
+    source: 'ソースコード、詳しい使い方、すべてのリリース：',
+  },
+  features: {
     intro:
-      'バージョン 1 は UI ループ内でハードウェアをサンプリングしていたため、ドライバー呼び出しが遅くなると画面全体が固まりました。データ、履歴、UI 状態を 1 つの共有構造体に入れ、thermal zone の名前と走査順で CPU 温度を選び、読み取れない値を 0 と表示していました。v2 の仕様ではこうした問題を 10 項目挙げ、それぞれに設計上の回答を用意しています。',
-    table: {
-      head: ['v1 の問題', 'v2 の対応'],
-      rows: [
-        [
-          'PID だけでプロセスを識別',
-          'ProcessKey（ホスト、起動、PID namespace、PID、開始時刻）、事前に保持する pidfd、2 段階の確認',
+      'htop は CPU が中心で、nvtop や nvidia-smi は見ている間だけ GPU を表示します。dgxtop は GPU を中心に、マシン全体を並べて表示し、履歴も残します。',
+    points: [
+      {
+        title: 'すべての GPU をひと目で。',
+        text: '各 GPU の使用率、メモリ、温度、電力、クロック、ファンをライブグラフ付きで表示します。',
+      },
+      {
+        title: 'GPU の詳細。',
+        text: '1 台ずつ、ドライバーが報告するすべての情報を表示します。GPU が報告しない値は行を作りません：',
+        list: [
+          'パフォーマンスステートとスロットルの理由、クロック',
+          'メモリとメモリバス、PCIe リンクと転送量、NVLink-C2C',
+          '温度の上限、電力と消費電力量',
+          'CUDA とドライバーのバージョン',
+          'NUMA と CPU アフィニティ、P2P 経路、デバイスとファームウェア',
         ],
-        [
-          '欠損値を 0 に変換',
-          '読み取り状態、データ種別、品質、鮮度を別々の軸に分離。欠損値は理由付きの null',
+      },
+      {
+        title: 'GPU プロセス。',
+        text: 'GPU を使うすべてのプロセスを、GPU、種別（計算またはグラフィックス）、GPU メモリ、CPU、RAM とともに表示します。GPU や名前で絞り込み、任意の列で並べ替え、確認のうえでプロセスを終了できます。',
+      },
+      {
+        title: '履歴。',
+        text: '5 分から 24 時間のグラフを 1 本の時間軸で表示します。履歴は 7 日間ディスクに保存され、再起動しても残ります：',
+        list: [
+          'CPU、メモリ、ディスク、ネットワーク',
+          '各 GPU の使用率、メモリ、温度、電力',
+          'すべてのグラフに現在値、平均、最大値',
+          '各 GPU の直近 1・6・12・24 時間の統計と消費電力量',
         ],
-        [
-          '統合メモリの意味が混在',
-          'システム RAM、GPU framebuffer、プロセスごとの割り当てを区別',
-        ],
-        [
-          '使用率から帯域幅を推定',
-          '測定値、導出値、推定値を区別。バイトカウンターがなければスループットを出さない',
-        ],
-        [
-          '更新間隔と累計量が測定ではなく仮定',
-          'スケジューラーが実際の間隔を確認。実経過時間とカウンターの差分を使用',
-        ],
-        [
-          '履歴の時間窓がずれる',
-          '起動、カバー範囲、欠測区間の情報を持つ時間バケット',
-        ],
-        [
-          '複数 GPU 上の同じ PID を重複計上',
-          'ProcessKey ごとにホストの CPU とメモリを 1 回だけサンプリングし、各 GPU に関連付ける',
-        ],
-        [
-          'インストーラーがダウンロード内容を検証しない',
-          'チェックサムとアーカイブ構造を検証し、ロールバック用に以前の実行ファイルを保持',
-        ],
-        [
-          'サンプリングが UI をブロック',
-          '制御、サンプリング、描画を分離。ドライバーを個別のプロセスに隔離',
-        ],
-        [
-          'ビルドを再現できない',
-          'Cargo.lock をコミットし、ツールチェーンを固定してリリースの検証条件を設定',
-        ],
-      ],
-    },
-    outro:
-      '実装に先立って、40 項目の要件、15 の作業パッケージ、40 の受け入れケースを仕様にまとめました。その後、固定した core の契約に従い、8 crate の Rust workspace として実装しています。Rust は約 157,000 行、テストは 1,373 件です。',
+      },
+      {
+        title: 'マシン全体。',
+        text: 'コアごとの CPU 使用率、ハードウェアが報告する CPU の温度と電力、メモリとスワップ、ディスクの転送量とファイルシステムの容量、ネットワークの転送量。',
+      },
+      {
+        title: 'DGX Spark のために。',
+        text: 'GB10 は CPU とメモリを共有しています。dgxtop は GPU プロセスが使うシステム RAM の量と、GB10 の NVLink-C2C リンクを表示します。aarch64 ネイティブビルドです。',
+      },
+      {
+        title: 'アプリ内の設定。',
+        text: 'サンプリング間隔と表示モジュールを変更できます。各設定の保存値と適用中の値、その出所、すぐ反映されるか再起動が必要かを表示します。',
+      },
+    ],
   },
   screens: {
     intro:
-      '概要、GPU、履歴、設定の 4 つのタブがあります。以下は実際にテストした 2 台のスクリーンショットです。',
+      '概要、GPU、履歴、設定の 4 つの画面です。実際にテストした 2 台のマシンで撮影しました。',
   },
+  capabilities: [
+    {
+      title: '1 台のマシンに複数の GPU。',
+      text: 'DGX Spark（GB10）と、RTX 5080 と RTX 3060 を積んだワークステーションでテスト済みです。',
+    },
+    {
+      title: '軽量。',
+      text: 'Rust 製です。変化があったときだけ最大で毎秒 4 回描画し、データは固定の 256 MiB に収めます。',
+    },
+    {
+      title: 'どの端末サイズでも。',
+      text: '80×24 以上ではフルレイアウト、それ未満ではコンパクト表示です。キーボードとマウスに対応しています。',
+    },
+    {
+      title: 'プライバシー。',
+      text: 'ネットワークアクセスもテレメトリーもありません。設定と履歴は本人だけが読めるファイルで、コマンドラインや環境変数は保存しません。',
+    },
+    {
+      title: '安全なモード。',
+      text: (
+        <>
+          {code('--read-only')} でプロセス操作を無効にします。
+          {code('--replay')} はシミュレーションデータでデモやテストを行い、
+          {code('--diagnostics-json')} はバージョンと状態を出力します。
+        </>
+      ),
+    },
+    {
+      title: '安全な更新。',
+      text: 'インストーラーはダウンロードしたファイルをすべて検証し、以前のバージョンを残すので、1 コマンドで戻せます。',
+    },
+  ],
   architecture: {
-    intro: (
-      <>
-        数値はデータ経路を通り、利用者の意図は制御経路を通ります。Manager
-        が唯一の書き込み主体です。Store の書き込み権限とプロセス操作の port
-        を持つのは Manager だけなので、Viewer と Controller
-        はデータを変更することも、シグナルを送ることもできません。
-      </>
-    ),
+    intro:
+      'dgxtop は 6 つの構成要素からなる 1 つのプログラムです。読み取った値はデータ経路を、キー操作やコマンドは制御経路を通ります。',
     diagram: {
-      title: '構成：6 つの要素、2 つの経路',
-      text: '左端の実線がデータ経路、破線が制御経路です。Viewer は Store を読まず、Manager が公開する view model を描画します。',
+      title: 'アーキテクチャ：6 つの構成要素、2 つの経路',
+      text: '実線がデータ経路、破線が制御経路です。',
       data: 'データ経路',
       control: '制御経路',
-      adapters: 'それぞれ独立したプロセス',
+      adapters: 'それぞれ専用のバックグラウンドプロセス',
       dataNodes: [
         ['Linux + NVIDIA ドライバー', '/proc · sysfs · NVML'],
-        ['Adapter host', ''],
-        ['Collector', '正規化 · 重複排除 · 仲裁 · レート'],
-        ['Manager', '唯一の書き込み主体'],
-        ['Store', 'スナップショット · 履歴 · 設定 · 監査'],
-        ['Manager', '投影'],
-        ['Viewer', '不変の view model · Ratatui'],
+        ['Adapter', ''],
+        ['Collector', '単位 · 出所 · レート'],
+        ['Manager', 'サンプリング · 設定 · 唯一の書き込み主体'],
+        ['Store', 'スナップショット · 履歴 · 設定 · 操作の記録'],
+        ['Viewer', '画面 · Ratatui'],
       ],
       controlNodes: [
-        ['Controller', 'キー · マウス · CLI → 型付きコマンド'],
-        ['Manager', '検証 · 認可'],
-        ['設定 · スケジューラー · 操作 adapter', 'シグナルは pidfd 経由'],
-        ['監査 + 結果', 'シグナル送信前に永続化'],
-        ['Store → Viewer', '結果を表示'],
+        ['Controller', 'キー · マウス · コマンドライン'],
+        ['Manager', 'コマンドを確認'],
+        ['設定 · サンプリング · プロセス操作', ''],
+        ['Viewer', '結果を表示'],
       ],
     },
-    table: {
-      head: ['構成要素', '担当する責務', '行ってはいけないこと'],
+    components: {
+      head: ['構成要素', '役割'],
       rows: [
         [
           'Adapter',
-          '1 種類のドライバーまたはカーネルインターフェースと通信し、ネイティブ値を出所、時刻、エラーとともに返す',
-          '権威値の選択、複数出所の平均、Store への書き込み、描画',
+          'ハードウェアを読みます：/proc、hwmon、thermal zone、powercap、GPU の NVML、ネットワーク、ファイルシステム。各 adapter は専用のバックグラウンドプロセスで動きます。',
         ],
         [
           'Collector',
-          '単位の正規化、同一由来と確認できた別名の重複排除、仲裁、レートの算出',
-          'ドライバー内部の呼び出し、SQL の実行、設定変更、シグナル送信',
+          '読み取り値を指標に整えます：単位、重複する出所、値ごとの最適な出所、カウンターからのレート。',
         ],
         [
           'Manager',
-          'サンプリングの計画、方針と設定の管理、コマンドの認可、データのコミット、view model の生成',
-          '画面のレイアウト、イベントループ内でブロッキングするドライバー呼び出しを待つこと',
+          'サンプリングの計画、設定の適用、コマンドの確認を行い、データを書き込む唯一の構成要素です。',
         ],
         [
           'Store',
-          'スナップショット、履歴、設定、監査ログの保存',
-          'センサーの選択、コマンド実行',
+          'ライブスナップショット、履歴、設定、プロセス操作の記録を保持します。',
         ],
-        [
-          'Viewer',
-          '表示モジュールの配置と、不変の view model の描画',
-          'サンプリング、Store の読み書き、レート計算、操作の認可',
-        ],
+        ['Viewer', '整えられた表示用データから、Ratatui で画面を描きます。'],
         [
           'Controller',
-          'キー、クリック、フラグを安定した ID を持つ型付きコマンドに変換',
-          '出所の決定、シグナル送信、描画',
+          'キー、マウス操作、コマンドラインオプションをコマンドに変換します。',
         ],
       ],
     },
-    outro:
-      '10 個の表示モジュールはコンパイル時に登録され、自分の view model と画面領域だけを受け取ります。あるモジュールが panic してもモジュールエラーとして隔離され、サンプリングまで巻き込んで停止させません。',
-  },
-  isolation: {
-    paragraphs: [
-      <>
-        タイムアウトは結果が遅いことを示すだけで、呼び出しを取り消しません。ベンダーのライブラリ内で停止したスレッドを安全に止めることはできないため、各
-        live adapter は専用の常駐子プロセスで動きます。同じ実行ファイルを
-        adapter host モードで起動し、長さを先頭に付けた最大 1 MiB の JSON
-        フレームを匿名パイプで親プロセスと交換します。
-      </>,
-      <>
-        期限を超えた host は縮退状態になります。3
-        回連続で失敗するとサーキットブレーカーが開き、再試行は 1、2、4…60
-        秒の間隔でバックオフします。host
-        の交換は回収（reap）が完了してから行い、回収できない host
-        は隔離します。同時に存在する数は最大 8 個です。
-      </>,
-      <>
-        親プロセスは固定数のスレッドを使い、async runtime
-        は使いません。ネットワーク I/O がなく、{code('spawn_blocking')}
-        を使っても、取り消せない同じ呼び出しが future
-        の背後に隠れるだけだからです。管理対象の全データで 256 MiB
-        の予算を共有し、各キューには件数とバイト数の両方の上限を設けます。有界
-        channel が数えるのはメッセージ数で、バイト数ではありません。
-      </>,
-    ],
-    diagram: {
-      title: '実行モデル：1 つの親プロセスと常駐 host',
-      text: 'ここでは NVML host がタイムアウトしています。CPU、メモリ、画面は他の host により更新を続けます。',
-      parent: 'dgxtop 親プロセス',
-      threads: [
-        'ターミナル · 入力と描画、最大 4 fps',
-        'Manager · 制御処理の時間枠 2 ms',
-        'supervisor · パイプと回収',
-        'collector worker × 2',
-        'hot store · 単一ライター',
-        '履歴クエリ × 2',
-        '設定 · 監査 · アーカイブ · ログ',
-        'プロセス操作 worker',
-      ],
-      hosts: 'adapter host · それぞれ独立したプロセス',
-      fresh: '最新',
-      late: 'タイムアウト',
-      pipe: '匿名パイプ · 長さ付き JSON · 1 フレーム ≤ 1 MiB',
-      lifecycle: '失敗が続く host',
-      states: [
-        '縮退',
-        'サーキット開放',
-        'バックオフ 1 s · 2 s · 4 s … 60 s',
-        '試行',
-        'ウォームアップ',
-      ],
-      quarantine: '回収不可 → 隔離 · host は最大 8 個',
+    codeIntro:
+      'コードは、共通の契約 crate を中心にした 8 つの crate からなる Rust workspace です。',
+    code: {
+      head: ['Crate', '内容'],
+      rows: crateRows([
+        'プログラム本体：起動、コマンドライン、組み立て',
+        '共通の型：指標、単位、コマンド、インターフェース',
+        'バックグラウンドプロセス、IPC、worker、端末 I/O',
+        'procfs、sysfs、NVML、プロセス操作',
+        '正規化、出所の選択、レート',
+        'スナップショット、履歴、設定、操作の記録（SQLite）',
+        'サンプリング、設定、コマンド、表示用データ',
+        '画面、ウィジェット、キーマップ',
+      ]),
     },
   },
-  arbitration: {
-    intro: (
-      <>
-        Linux
-        は同じセンサーを複数のインターフェースで公開することがあります。ラベルだけでは何を測るかも確定せず、
-        {code('temp1')} が CPU とは限りません。dgxtop
-        はまず、ホスト、起動、エンティティ、指標、範囲で構成する metric key
-        により読み取り値の意味を定め、同じ key の値だけを比較します。
-      </>
-    ),
-    diagram: {
-      title: '仲裁：metric key ごとの 9 段階',
-      text: '各候補、採用または除外した理由、経過時間、出所を、コミットする値とともに保存します。',
-      inputs: [
-        ['A · hwmon · package 0', '68 °C'],
-        ['B · thermal zone', '42 °C'],
-      ],
-      steps: [
-        '意味を対応付ける',
-        '単位を正規化',
-        '妥当性検証',
-        '鮮度を確認',
-        '同一由来を重複排除',
-        '候補を順位付け',
-        '競合を検出',
-        'ヒステリシス · 3 回連勝 · 5 秒',
-        'コミットと説明',
-      ],
-      outcomes: '起こり得る結果',
-      selected: '採用 · 68 °C · hwmon',
-      conflict: '出所の競合 · A 68 °C／B 42 °C',
-      missing: ['非対応', '読み取り失敗', '期限切れ'],
-      average: '平均にはしない',
-      axes: '単一の信頼度スコアにせず、4 つの独立した軸で表す',
-      axisNames: ['読み取り状態', 'データ種別', '品質', '鮮度'],
-    },
-    table: {
-      caption:
-        '合成例。A：hwmon package 0 が 68 °C を報告。B：ある thermal zone が 42 °C を報告。',
-      head: ['状況', 'dgxtop の処理', '画面の表示'],
-      rows: [
-        [
-          'B が SoC の zone',
-          '異なる指標なので比較しない',
-          'CPU package 68 °C、SoC 42 °C',
-        ],
-        [
-          'B が A と同一であると確認済みの別名',
-          '同じセンサーへの 2 つの入口として 1 つに数える',
-          '1 つの値と、不一致に関する注記',
-        ],
-        [
-          'A と B が独立し、同等で、条件もそろった測定',
-          '26 °C の差が許容範囲を超えるため競合とし、値は null',
-          '出所の競合と両方の値を表示。55 °C にはしない',
-        ],
-        [
-          'B が fault を報告',
-          'B を除外して A を採用',
-          'A の 68 °C を表示し、B の故障を明記',
-        ],
-      ],
-    },
-    outro:
-      '別の出所への切り替えには、3 回連続での優位と最低 5 秒の経過を必要とし、値がセンサー間を行き来するのを防ぎます。読み取り状態、データ種別、品質、鮮度は単一の信頼度スコアにまとめず、4 つの独立した軸として保ちます。',
-  },
-  history: {
-    paragraphs: [
-      <>
-        レートは 2 つの {code('u64')} カウンターの差分を、
-        {code('CLOCK_BOOTTIME')}
-        による実経過時間で割った値です。この時計はサスペンド中も進みます。カウンターのリセット、再起動、出所の変更があれば新しい区間を開始し、負のレートや架空のレートを作りません。
-      </>,
-      <>
-        1
-        分単位の集計では、その区間のどの瞬間にバイトが流れたかは分かりません。そのため総量には時間窓の内側に完全に収まる区間だけを含めます。分の境界をまたぐ区間は正確な
-        bridge として保持し、1 回だけ数え、比例配分はしません。
-      </>,
-      <>
-        ゲージ値は時間で重み付けし、出所の鮮度期限までだけ有効とします。欠測区間は欠測のまま残します。履歴は
-        {code('history.sqlite3')} に 7 日間、最大 1 GiB
-        保存するため、以前の実行時の記録も表示できます。アーカイブへの書き込みは
-        {code('synchronous=NORMAL')}、操作監査は {code('FULL')}
-        を使います。グラフの最後の 1
-        秒が失われることは許容しても、シグナル送信の記録が失われることは許容しません。
-      </>,
-    ],
-    diagram: {
-      title: '履歴：カウンター、bridge、欠測区間',
-      text: '分の境界をまたぐ bridge は、その全体を含む時間窓で 1 回だけ数えます。欠測区間は 0 にせず、空白として描画します。',
-      buckets: ['12:00–12:01', '12:01–12:02', '12:02–12:03'],
-      delta: 'Δ カウンター ÷ Δt',
-      bridge: 'bridge',
-      gap: '欠測区間',
-      legend: '点はサンプル、各線分は正確な 1 つの区間',
-    },
-  },
-  actions: {
-    paragraphs: [
-      <>
-        監視ツールにとって、誤ったプロセスを終了することは最悪の失敗です。そのため終了操作は
-        {code('ProcessKey')}
-        （ホスト、起動、PID namespace、PID、開始時刻）を対象に、監査付きの 2
-        段階で行います。行番号や PID だけを対象にはしません。
-      </>,
-      <>
-        準備段階で利用者を確認し、root セッション、PID 1、dgxtop 自身とその host
-        を拒否します。{code('pidfd')} を開いてから {code('/proc')}
-        で識別情報を再確認します。確認には 10
-        秒間有効な一度限りのトークンを使います。シグナル送信前に
-        {code('synchronous=FULL')}で intent を書き込み、準備段階から保持している
-        pidfd 経由で送信するため、再利用された PID を誤って終了させません。
-      </>,
-      <>
-        結果は<em>シグナル送信済み</em>と<em>終了を観察済み</em>
-        を分けて示します。intent
-        の永続化後、結果の記録前にクラッシュした場合は不明と記録し、再送しません。データベースのコミットとシステムコールに共通のトランザクションはないため、保証できるのは「高々
-        1 回」です。{code('SIGKILL')} は {code('actions.allow_force')}
-        を設定しない限り無効で、{code('--read-only')}{' '}
-        はすべての操作を無効にします。
-      </>,
-    ],
-    diagram: {
-      title: 'プロセス終了：SIGTERM は高々 1 回',
-      text: 'どの拒否条件でもシグナルは送りません。送信が始まるまでは操作を取り消せます。',
-      steps: [
-        ['K', 'GPU プロセスを選択'],
-        ['準備', '同じ利用者 · root 以外 · PID 1、dgxtop、その host を除く'],
-        ['pidfd_open', '/proc の識別情報を確認'],
-        ['確認', '10 秒間有効な一度限りのトークン · y'],
-        ['intent を監査記録', 'SQLite synchronous=FULL'],
-        ['pidfd_send_signal', 'SIGTERM'],
-      ],
-      outcomes: ['シグナル送信済み', '終了を観察済み', '実行継続中'],
-      notes: [
-        'intent 記録後にクラッシュ → 不明、再送しない',
-        'SIGKILL は既定で無効（allow_force）',
-      ],
-    },
-  },
-  budget: {
-    intro:
-      'dgxtop が管理するすべての割り当ては、用途別に区分した共通の 256 MiB の予算から差し引きます。これは割り当てを許可する上限で、メモリの実測値ではありません。アロケーターのオーバーヘッド、スレッドのスタック、NVIDIA ライブラリは別途加わるため、仕様ではプロセスツリー全体に 384 MiB の目標を別に設けています。',
-    table: {
-      caption: '256 MiB のデータ予算（既定値）',
-      head: ['区分', 'MiB', '内容'],
-      rows: [
-        ['カタログとメタデータ', '24', '名前、tombstone、仲裁の状態'],
-        ['未加工の候補', '32', '出所診断用の 60 秒分の証拠'],
-        ['現在の状態', '16', '512 系列、256 プロセス、1,024 件の GPU 関連付け'],
-        ['元の解像度の履歴', '32', '直近 300 秒'],
-        ['分単位の集計', '96', '24 時間の集計、出所の変更、欠測区間'],
-        ['入力（ingress）', '8', '稼働中のすべての IPC とデコード用バッファ'],
-        ['表示', '12', 'view model と整形キャッシュ'],
-        ['履歴クエリ', '16', '実行中のクエリが固定するスナップショット'],
-        [
-          '制御と予備',
-          '20',
-          'コマンド、アーカイブ journal、ログ、安全用の予備領域',
-        ],
-      ],
-    },
-    overload: (
-      <>
-        過負荷時には、dgxtop
-        は精度を黙って落とすのではなく、縮退状態を明示します。圧迫状態では任意の作業を止め、描画を最大
-        2 fps
-        にします。抑制状態ではクエリを制限し、サンプリング周期を延ばし、バナーに設定値と実際の値を併記します。回復時は正常な状態が
-        30 秒続くごとに 1 段階ずつ戻し、失われたサンプルを補間しません。
-      </>
-    ),
-    diagram: {
-      title: '過負荷の状態',
-      text: 'キューのバイト使用量が 75% に達するか収集が遅くなると圧迫状態に入り、メモリが 90% に達すると抑制状態に入ります。',
-      states: [
-        ['正常', '通常のレート'],
-        ['圧迫', '任意の作業を停止 · 2 fps'],
-        ['抑制', 'クエリを制限 · 周期を延長'],
-        ['回復中', '30 秒ごとに 1 段階戻す'],
-      ],
-    },
-  },
-  boundaries: {
-    paragraphs: [
-      <>
-        workspace は 8 crate で構成されます。各実装 crate が依存するのは
-        {code('dgxtop-core')}{' '}
-        だけで、すべてを参照できるのは組み立ての起点だけです。CI スクリプトが{' '}
-        {code('cargo metadata')} を読み、実装 crate が別の実装 crate
-        に依存するとビルドを失敗させます。core 自体は NVML、libc、SQLite、UI
-        に依存しません。
-      </>,
-      <>
-        フォーマット、lint、1,373 件のテスト（aarch64 では 1,372
-        件）、依存関係の境界、実機テストは、RTX 5080 と RTX 3060 を搭載する
-        Debian 13 ワークステーションと DGX Spark
-        の両方で合格しています。受け入れ報告は 40 ケースを追跡しており、14
-        件が合格、24
-        件が未実行（多くは明示的な起動を要するエンドツーエンドテスト）、2 件が
-        30 分のベンチマーク 3 回と 72
-        時間の連続稼働テストを待っています。これらがそろうまでは、どのプラットフォームも受け入れ検証済みとはせず、性能値も目標値のままです。
-      </>,
-    ],
-    diagram: {
-      title: 'Workspace：中心に 1 つの契約 crate',
-      text: '具体的な実装が交わるのは、組み立ての起点だけです。',
-      root: ['dgxtop', '組み立ての起点 + CLI'],
-      crates: [
-        ['dgxtop-runtime', 'host · IPC · worker'],
-        ['dgxtop-adapters', 'procfs · NVML · pidfd'],
-        ['dgxtop-collectors', '仲裁 · レート'],
-        ['dgxtop-store', '履歴 · SQLite'],
-        ['dgxtop-manager', 'ユースケース · セッション'],
-        ['dgxtop-ui', 'Ratatui · keymap'],
-      ],
-      depends: '→ dgxtop-core だけに依存',
-      core: ['dgxtop-core', '型 · 単位 · port · コマンド · バイト予算'],
-      check: 'CI で検査 · check_boundaries.py',
-    },
-  },
-  tradeoffs: [
-    <>
-      <strong>adapter ごとにスレッドではなくプロセスを使う。</strong>
-      常駐メモリと IPC
-      のコストは増えますが、ドライバーが停止しても他の処理を固めません。
-    </>,
-    <>
-      <strong>
-        async runtime ではなく、固定スレッドと crossbeam channel を使う。
-      </strong>
-      導入する理由となるネットワーク I/O がないためです。
-    </>,
-    <>
-      <strong>プラグインではなく、コンパイル時に登録する。</strong>
-      adapter と表示モジュールのために不安定な Rust ABI
-      を使う必要がなく、新たな攻撃面も増やしません。
-    </>,
-    <>
-      <strong>平均を取らず、競合を表示する。</strong>
-      画面は多少整わなくても、どのセンサーも報告していない数値は出しません。
-    </>,
-    <>
-      <strong>再試行せず、シグナルは高々 1 回にする。</strong>
-      結果が不明なら、不明と表示します。
-    </>,
-    <>
-      <strong>変化したときだけ、最大 4 fps で再描画する。</strong>
-      監視に 60 fps
-      は不要です。遅いターミナルでも入力をブロックしてはいけません。
-    </>,
-  ],
-  links: [
-    {
-      label: 'ソースコードと README（English · 繁體中文 · 日本語）',
-      href: repository,
-    },
-    {
-      label: '仕様（繁体字中国語）',
-      href: `${repository}/tree/main/spec/dgxtop-v2`,
-    },
-    {
-      label: '最新リリース：インストールスクリプトとバイナリ',
-      href: `${repository}/releases/latest`,
-    },
-    {
-      label: '実装判断 D-01～D-61',
-      href: `${blob}/docs/design/DECISIONS.md`,
-    },
-    {
-      label: '検証報告と証拠',
-      href: `${blob}/docs/validation/VALIDATION.md`,
-    },
-  ],
 };
 
 export const dgxtopCopy: Record<ProjectEdition, DgxtopCopy> = {

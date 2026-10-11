@@ -8,6 +8,7 @@ import { ProjectPage } from '../../src/features/projects/ProjectPage.tsx';
 import { Projects } from '../../src/features/projects/Projects.tsx';
 import {
   dgxtopCopy,
+  installCommand,
   sectionIds,
   shotFiles,
 } from '../../src/features/projects/dgxtop/copy.tsx';
@@ -164,7 +165,7 @@ describe('project folders and explorer', () => {
 
 describe('dgxtop page', () => {
   for (const locale of locales) {
-    it(`${locale} renders every section, diagram, screenshot and tag`, () => {
+    it(`${locale} renders every section, the install command, features, components, screenshots and tags`, () => {
       const data = load(`/${locale}/projects/tools/dgxtop/`);
       if (data.view.kind !== 'project') throw new Error('Expected a project');
       const html = renderToStaticMarkup(
@@ -175,16 +176,17 @@ describe('dgxtop page', () => {
         expect(html).toContain(`id="${id}"`);
         expect(html).toContain(`href="#${id}"`);
       }
-      for (const id of [
-        'architecture',
-        'runtime',
-        'arbitration',
-        'history',
-        'actions',
-        'overload',
-        'crates',
+      expect(html).toContain(installCommand);
+      for (const point of [...t.features.points, ...t.capabilities])
+        expect(html).toContain(point.title);
+      // One figure: the architecture; components and crates are tables.
+      expect(html.match(/<figure class="dg"/g)).toHaveLength(1);
+      expect(html).toContain('aria-labelledby="dg-architecture-title"');
+      for (const [name] of [
+        ...t.architecture.components.rows,
+        ...t.architecture.code.rows,
       ])
-        expect(html).toContain(`aria-labelledby="dg-${id}-title"`);
+        expect(html).toContain(`<td>${name}</td>`);
       for (const file of shotFiles) {
         expect(html).toContain(`src="/assets/projects/dgxtop/${file}"`);
         expect(html).toContain(t.shots[file].caption);

@@ -9,7 +9,6 @@ test('translated diagram labels stay inside their SVG viewports', async ({
     for (const path of [
       'note/network/p2p-downloader',
       'note/hardware/computer/140mm-case-fans',
-      'projects/tools/dgxtop',
     ]) {
       await page.goto(`/${locale}/${path}/`);
       await page.evaluate(() => document.fonts.ready);

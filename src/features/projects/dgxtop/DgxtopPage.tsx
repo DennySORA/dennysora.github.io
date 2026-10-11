@@ -10,35 +10,23 @@ import {
 } from '../../../lib/project-pages.ts';
 import {
   dgxtopCopy,
+  installCommand,
   sectionIds,
   type DgxtopCopy,
+  type Point,
   type SectionId,
   type ShotFile,
 } from './copy.tsx';
-import {
-  ActionDiagram,
-  ArbitrationDiagram,
-  ArchitectureDiagram,
-  CratesDiagram,
-  HistoryDiagram,
-  OverloadDiagram,
-  RuntimeDiagram,
-} from './diagrams.tsx';
+import { ArchitectureDiagram } from './diagrams.tsx';
 
 const page = projectPages.dgxtop;
 
 const sectionIcons: Record<SectionId, IconName> = {
-  why: 'book',
+  install: 'prompt',
+  features: 'sparkles',
   screens: 'image',
+  capabilities: 'cpu',
   architecture: 'network',
-  isolation: 'shield',
-  arbitration: 'branch',
-  history: 'clock',
-  actions: 'keyboard',
-  budget: 'server',
-  boundaries: 'package',
-  tradeoffs: 'list',
-  links: 'link',
 };
 
 function Section({
@@ -107,25 +95,18 @@ function Shot({
 
 function DataTable({
   label,
-  table: { caption, head, rows },
-  numeric = [],
+  table: { head, rows },
 }: {
   label: string;
-  table: DgxtopCopy['why']['table'];
-  numeric?: number[];
+  table: DgxtopCopy['architecture']['components'];
 }) {
   return (
     <ScrollRegion className="table-scroll" label={label}>
       <table>
-        {caption ? <caption>{caption}</caption> : null}
         <thead>
           <tr>
-            {head.map((cell, index) => (
-              <th
-                key={cell}
-                scope="col"
-                className={numeric.includes(index) ? 'num' : undefined}
-              >
+            {head.map((cell) => (
+              <th key={cell} scope="col">
                 {cell}
               </th>
             ))}
@@ -135,12 +116,7 @@ function DataTable({
           {rows.map((row) => (
             <tr key={row[0]}>
               {row.map((cell, index) => (
-                <td
-                  key={index}
-                  className={numeric.includes(index) ? 'num' : undefined}
-                >
-                  {cell}
-                </td>
+                <td key={index}>{cell}</td>
               ))}
             </tr>
           ))}
@@ -150,7 +126,27 @@ function DataTable({
   );
 }
 
-/** The dgxtop design page: screenshots first, then each part of the architecture. */
+/** Features and capabilities: a bold name, its text and an optional list. */
+function Points({ points }: { points: Point[] }) {
+  return (
+    <ul className="project-points">
+      {points.map((point) => (
+        <li key={point.title}>
+          <strong>{point.title}</strong> {point.text}
+          {point.list ? (
+            <ul>
+              {point.list.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** The dgxtop page: what it does, how to install it and how it is built. */
 export function DgxtopPage({ locale }: { locale: ProjectEdition }) {
   const t = dgxtopCopy[locale];
   const shot = (file: ShotFile, eager = false) => (
@@ -221,10 +217,32 @@ export function DgxtopPage({ locale }: { locale: ProjectEdition }) {
       <div className="prose project-body">
         {shot('dgx-spark-overview.webp', true)}
 
-        <Section id="why" title={t.sections.why}>
-          <p>{t.why.intro}</p>
-          <DataTable label={t.sections.why} table={t.why.table} />
-          <p>{t.why.outro}</p>
+        <Section id="install" title={t.sections.install}>
+          <div className="code-block project-install">
+            <div className="code-toolbar">
+              <span className="code-label" data-entity="file">
+                bash
+              </span>
+            </div>
+            <pre>
+              <code className="language-bash">{installCommand}</code>
+            </pre>
+          </div>
+          <p>{t.install.platforms}</p>
+          <p>{t.install.installer}</p>
+          <p>
+            {t.install.source}{' '}
+            <a href={page.repository}>
+              {page.repository.replace('https://', '')}
+              <Icon name="arrow-up-right" size={14} />
+              <span className="sr-only">（{dictionaries[locale].newTab}）</span>
+            </a>
+          </p>
+        </Section>
+
+        <Section id="features" title={t.sections.features}>
+          <p>{t.features.intro}</p>
+          <Points points={t.features.points} />
         </Section>
 
         <Section id="screens" title={t.sections.screens}>
@@ -243,87 +261,22 @@ export function DgxtopPage({ locale }: { locale: ProjectEdition }) {
           </div>
         </Section>
 
+        <Section id="capabilities" title={t.sections.capabilities}>
+          <Points points={t.capabilities} />
+        </Section>
+
         <Section id="architecture" title={t.sections.architecture}>
           <p>{t.architecture.intro}</p>
           <ArchitectureDiagram t={t.architecture.diagram} />
           <DataTable
             label={t.sections.architecture}
-            table={t.architecture.table}
+            table={t.architecture.components}
           />
-          <p>{t.architecture.outro}</p>
-        </Section>
-
-        <Section id="isolation" title={t.sections.isolation}>
-          <RuntimeDiagram t={t.isolation.diagram} />
-          {t.isolation.paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </Section>
-
-        <Section id="arbitration" title={t.sections.arbitration}>
-          <p>{t.arbitration.intro}</p>
-          <ArbitrationDiagram t={t.arbitration.diagram} />
+          <p>{t.architecture.codeIntro}</p>
           <DataTable
-            label={t.sections.arbitration}
-            table={t.arbitration.table}
+            label={t.architecture.codeIntro}
+            table={t.architecture.code}
           />
-          <p>{t.arbitration.outro}</p>
-        </Section>
-
-        <Section id="history" title={t.sections.history}>
-          <HistoryDiagram t={t.history.diagram} />
-          {t.history.paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </Section>
-
-        <Section id="actions" title={t.sections.actions}>
-          <ActionDiagram t={t.actions.diagram} />
-          {t.actions.paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </Section>
-
-        <Section id="budget" title={t.sections.budget}>
-          <p>{t.budget.intro}</p>
-          <DataTable
-            label={t.sections.budget}
-            table={t.budget.table}
-            numeric={[1]}
-          />
-          <OverloadDiagram t={t.budget.diagram} />
-          <p>{t.budget.overload}</p>
-        </Section>
-
-        <Section id="boundaries" title={t.sections.boundaries}>
-          <CratesDiagram t={t.boundaries.diagram} />
-          {t.boundaries.paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </Section>
-
-        <Section id="tradeoffs" title={t.sections.tradeoffs}>
-          <ul>
-            {t.tradeoffs.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section id="links" title={t.sections.links}>
-          <ul className="project-links">
-            {t.links.map((link) => (
-              <li key={link.href}>
-                <a href={link.href}>
-                  {link.label}
-                  <Icon name="arrow-up-right" size={14} />
-                  <span className="sr-only">
-                    （{dictionaries[locale].newTab}）
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
         </Section>
       </div>
     </>

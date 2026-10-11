@@ -113,7 +113,7 @@ test('search has useful no-JavaScript navigation and an index with note body con
   ]);
   expect(
     index.find((entry) => entry.href === '/en/projects/tools/dgxtop/')?.text,
-  ).toContain('source conflict');
+  ).toContain('one-command rollback');
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();

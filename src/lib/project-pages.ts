@@ -23,15 +23,15 @@ export const projectPages = {
     repository: 'https://github.com/DennySORA/dgxtop',
     updatedAt: '2026-10-11',
     title: {
-      'zh-hant': 'dgxtop：設計一個不顯示假 0 的 GPU 終端監控工具',
-      en: 'dgxtop: designing a GPU terminal monitor that never shows a fake zero',
-      ja: 'dgxtop：偽のゼロを表示しない GPU ターミナルモニターの設計',
+      'zh-hant': 'dgxtop：為 DGX Spark 打造的終端 GPU 監控工具',
+      en: 'dgxtop: a terminal GPU monitor built for DGX Spark',
+      ja: 'dgxtop：DGX Spark のために作ったターミナル GPU モニター',
     },
     description: {
       'zh-hant':
-        '給 NVIDIA DGX Spark 與 GPU Linux 主機的 Rust 終端監控工具。六個元件、兩條路徑、單一寫入者：隔離的 adapter host、可解釋的來源仲裁、精確歷史與受保護的程序終止，以及每個取捨背後的理由。',
-      en: 'A Rust terminal monitor for NVIDIA DGX Spark and GPU Linux hosts. Six components, two paths and one writer: isolated adapter hosts, explainable source arbitration, exact history and protected process termination, with the reasons behind each trade-off.',
-      ja: 'NVIDIA DGX Spark と GPU 搭載 Linux ホスト向けの Rust 製ターミナルモニター。6 つのコンポーネント、2 つの経路、単一の書き込み主体。隔離された adapter host、説明可能なデータソース選択、正確な履歴と保護されたプロセス終了、そして各設計判断の理由を紹介します。',
+        '在一個終端畫面裡看每張 NVIDIA GPU、使用它的程序與整台機器，歷史紀錄重開後仍在。為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用：功能、安裝與架構。',
+      en: 'Every NVIDIA GPU, the processes using it and the whole machine on one terminal screen, with history that survives restarts. Built for DGX Spark, runs on any Linux machine with NVIDIA GPUs: features, install and architecture.',
+      ja: 'NVIDIA GPU、それを使うプロセス、マシン全体を 1 つのターミナル画面に表示し、再起動しても履歴が残ります。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます：機能、インストール、アーキテクチャ。',
     },
     shots: [
       { file: 'dgx-spark-overview.webp', width: 1909, height: 961 },
