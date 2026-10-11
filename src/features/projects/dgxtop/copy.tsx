@@ -135,7 +135,7 @@ const en: DgxtopCopy = {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
       'Linux x86_64 / aarch64 (glibc 2.34+) · tested on a DGX Spark (GB10) and on an RTX 5080 + RTX 3060 workstation',
-    status: 'v2.0.1, released 2026-10-11',
+    status: 'v2, released 2026-10-11',
   },
   sectionsLabel: 'Sections',
   openImage: 'Open the full-size image',
@@ -644,7 +644,7 @@ const zh: DgxtopCopy = {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
       'Linux x86_64／aarch64（glibc 2.34 以上）· 已在 DGX Spark（GB10）與 RTX 5080 + RTX 3060 工作站上測試',
-    status: 'v2.0.1，2026-10-11 發佈',
+    status: 'v2，2026-10-11 發佈',
   },
   sectionsLabel: '章節',
   openImage: '開啟原尺寸圖片',
@@ -1120,7 +1120,7 @@ const ja: DgxtopCopy = {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
       'Linux x86_64／aarch64（glibc 2.34 以降）· DGX Spark（GB10）と RTX 5080 + RTX 3060 搭載ワークステーションでテスト済み',
-    status: 'v2.0.1（2026-10-11 リリース）',
+    status: 'v2（2026-10-11 リリース）',
   },
   sectionsLabel: '目次',
   openImage: '原寸の画像を開く',
