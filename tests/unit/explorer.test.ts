@@ -9,6 +9,29 @@ function attribute(tag: string, name: string) {
   return tag.match(new RegExp(`${name}="([^"]+)"`))?.[1];
 }
 
+/** Each folder row as [folder link, open?], in tree order. */
+function folderStates(html: string) {
+  return [
+    ...html.matchAll(
+      /<div class="tree-folder-row"><button[^>]*aria-expanded="(true|false)"[^>]*>[\s\S]*?<\/button><a[^>]*href="([^"]+)"[^>]*data-expanded="(true|false)"/g,
+    ),
+  ].map(([, button, href, link]) => {
+    expect(link, href).toBe(button);
+    return [href!, button === 'true'] as const;
+  });
+}
+
+function explorerHtml(route: Parameters<typeof Explorer>[0]['route']) {
+  const locale = 'locale' in route ? route.locale : 'zh-hant';
+  return renderToStaticMarkup(
+    createElement(Explorer, {
+      locale,
+      route,
+      files: { posts: [], collections: collectionEntries(locale) },
+    }),
+  );
+}
+
 describe('folder disclosures', () => {
   for (const locale of locales) {
     it(`${locale} gives every folder a separate named disclosure and real navigation link`, () => {
@@ -25,15 +48,16 @@ describe('folder disclosures', () => {
       // blog, note, network, medical (+2 categories), hardware (+1 category),
       // japan (+1 category), health, other (+1 category), projects (+1 category)
       expect(buttons).toHaveLength(15);
+      // On the home page no folder is on the current path, so all start closed.
       for (const button of buttons) {
         expect(attribute(button, 'type')).toBe('button');
-        expect(attribute(button, 'aria-expanded')).toBe('true');
+        expect(attribute(button, 'aria-expanded')).toBe('false');
         expect(attribute(button, 'aria-label')).toContain(
-          `${dictionaries[locale].folderCollapse}: `,
+          `${dictionaries[locale].folderExpand}: `,
         );
         expect(attribute(button, 'class')).toContain('requires-js');
         expect(html).toContain(
-          `<ul id="${attribute(button, 'aria-controls')}" class="tree-children">`,
+          `<ul id="${attribute(button, 'aria-controls')}" class="tree-children" data-collapsed="">`,
         );
       }
       expect(
@@ -54,6 +78,48 @@ describe('folder disclosures', () => {
       expect(html).toContain(dictionaries[locale].emptyFolder);
     });
   }
+
+  it('opens only the folders on the path to the current page', () => {
+    const open = (html: string) =>
+      folderStates(html)
+        .filter(([, expanded]) => expanded)
+        .map(([href]) => href);
+    const home = folderStates(explorerHtml({ kind: 'home', locale: 'en' }));
+    expect(home).toHaveLength(15);
+    expect(home.every(([, expanded]) => !expanded)).toBe(true);
+    expect(
+      open(
+        explorerHtml({
+          kind: 'medical-note',
+          locale: 'zh-hant',
+          noteId: 'brain-cns-tumors',
+        }),
+      ),
+    ).toEqual([
+      '/zh-hant/note/',
+      '/zh-hant/note/medical/',
+      '/zh-hant/note/medical/pathology/',
+    ]);
+    // A folder page opens itself as well as its parents.
+    expect(
+      open(
+        explorerHtml({
+          kind: 'note-category',
+          locale: 'ja',
+          collection: 'japan',
+          category: 'japanese',
+        }),
+      ),
+    ).toEqual(['/ja/note/', '/ja/note/japan/', '/ja/note/japan/japanese/']);
+    expect(
+      open(
+        explorerHtml({ kind: 'project', locale: 'en', projectId: 'dgxtop' }),
+      ),
+    ).toEqual(['/en/projects/', '/en/projects/tools/']);
+    expect(open(explorerHtml({ kind: 'library', locale: 'en' }))).toEqual([
+      '/en/blog/',
+    ]);
+  });
 
   it('keeps desktop and drawer disclosure IDs unique with the current child exposed', () => {
     const explorer = createElement(Explorer, {

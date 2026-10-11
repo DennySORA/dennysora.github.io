@@ -108,13 +108,16 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
     await expect(trigger).toBeFocused();
   }
   await trigger.click();
-  // The drawer lists the real workspace and the published medical note.
+  // The drawer lists the real workspace and the published medical note; its
+  // folders are off the current path, so they start closed.
   await expect(
     dialog.getByRole('link', { name: /README\.md/ }),
   ).toHaveAttribute('aria-current', 'page');
-  await expect(
-    dialog.getByRole('link', { name: /analgesics\.md/ }),
-  ).toHaveAttribute('href', '/ja/note/medical/drugs/analgesics/');
+  const analgesics = dialog.locator(
+    'a[href="/ja/note/medical/drugs/analgesics/"]',
+  );
+  await expect(analgesics).toHaveCount(1);
+  await expect(analgesics).toBeHidden();
   await expect(
     dialog.locator('a[href*="/blog/"][href$="-principles/"]'),
   ).toHaveCount(0);

@@ -1,6 +1,6 @@
 import { useId, useState, type ReactNode } from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
-import type { RouteDescriptor } from '../lib/route-manifest.ts';
+import { routePath, type RouteDescriptor } from '../lib/route-manifest.ts';
 import {
   networkCopy,
   networkNoteIds,
@@ -71,13 +71,26 @@ function TreeLink({
       onClick={onNavigate}
       title={note.visible ? undefined : note.text}
       data-kind={kind}
+      data-expanded={kind === 'folder' ? String(expanded) : undefined}
     >
       <span className="tree-expander" aria-hidden="true" />
-      <Icon
-        name={kind === 'folder' && !expanded ? 'folder' : kindIcons[kind]}
-        size={16}
-        className="tree-icon"
-      />
+      {kind === 'folder' ? (
+        // Both icons ship; CSS shows the one matching the folder's state.
+        <>
+          <Icon
+            name="folder-open"
+            size={16}
+            className="tree-icon tree-icon-open"
+          />
+          <Icon
+            name="folder"
+            size={16}
+            className="tree-icon tree-icon-closed"
+          />
+        </>
+      ) : (
+        <Icon name={kindIcons[kind]} size={16} className="tree-icon" />
+      )}
       <span className="tree-name">{name}</span>{' '}
       {note.visible ? (
         <span className="tree-note">{note.text}</span>
@@ -89,16 +102,27 @@ function TreeLink({
   );
 }
 
-/** Disclosure and navigation are separate controls; hiding keeps child state. */
+/**
+ * Disclosure and navigation are separate controls; hiding keeps child state.
+ * Folders start closed except those on the path to the current page, and each
+ * navigation applies that default again.
+ */
 function TreeFolder({
   locale,
+  currentPath,
   children,
   ...link
 }: Omit<TreeLinkProps, 'kind' | 'expanded'> & {
   locale: Locale;
+  /** The current page's path; a folder whose link starts it is open. */
+  currentPath: string;
   children: ReactNode;
 }) {
-  const [expanded, setExpanded] = useState(true);
+  const onPath = currentPath.startsWith(link.href);
+  const [state, setState] = useState({ path: currentPath, expanded: onPath });
+  if (state.path !== currentPath)
+    setState({ path: currentPath, expanded: onPath });
+  const expanded = state.path === currentPath ? state.expanded : onPath;
   const childrenId = useId();
   const t = dictionaries[locale];
   const label = `${expanded ? t.folderCollapse : t.folderExpand}: ${link.name}`;
@@ -112,13 +136,19 @@ function TreeFolder({
           aria-controls={childrenId}
           aria-label={label}
           title={label}
-          onClick={() => setExpanded((open) => !open)}
+          onClick={() =>
+            setState((folder) => ({ ...folder, expanded: !folder.expanded }))
+          }
         >
           <Icon name={expanded ? 'chevron-down' : 'chevron-right'} size={12} />
         </button>
         <TreeLink {...link} kind="folder" expanded={expanded} />
       </div>
-      <ul id={childrenId} className="tree-children" hidden={!expanded}>
+      <ul
+        id={childrenId}
+        className="tree-children"
+        data-collapsed={expanded ? undefined : ''}
+      >
         {children}
       </ul>
     </>
@@ -139,6 +169,7 @@ export function Explorer({
 }) {
   const t = dictionaries[locale];
   const page = (match: boolean) => (match ? ('page' as const) : undefined);
+  const currentPath = routePath(route);
   return (
     <div className="explorer">
       <p className="explorer-root" aria-hidden="true">
@@ -158,6 +189,7 @@ export function Explorer({
         </li>
         <li>
           <TreeFolder
+            currentPath={currentPath}
             locale={locale}
             href={`/${locale}/blog/`}
             name="blog"
@@ -186,6 +218,7 @@ export function Explorer({
         </li>
         <li>
           <TreeFolder
+            currentPath={currentPath}
             locale={locale}
             href={`/${locale}/note/`}
             name="note"
@@ -195,6 +228,7 @@ export function Explorer({
           >
             <li>
               <TreeFolder
+                currentPath={currentPath}
                 locale={locale}
                 href={`/${locale}/note/network/`}
                 name={networkCopy[locale].title}
@@ -223,6 +257,7 @@ export function Explorer({
             </li>
             <li>
               <TreeFolder
+                currentPath={currentPath}
                 locale={locale}
                 href={`/${locale}/note/medical/`}
                 name={noteCopy[locale].medical}
@@ -233,6 +268,7 @@ export function Explorer({
                 {medicalCategories.map((category) => (
                   <li key={category}>
                     <TreeFolder
+                      currentPath={currentPath}
                       locale={locale}
                       href={`/${locale}/note/medical/${category}/`}
                       name={medicalCategoryCopy[locale][category].title}
@@ -273,6 +309,7 @@ export function Explorer({
             </li>
             <li>
               <TreeFolder
+                currentPath={currentPath}
                 locale={locale}
                 href={`/${locale}/note/hardware/`}
                 name={hardwareCopy[locale].title}
@@ -283,6 +320,7 @@ export function Explorer({
                 {hardwareCategories.map((category) => (
                   <li key={category}>
                     <TreeFolder
+                      currentPath={currentPath}
                       locale={locale}
                       href={`/${locale}/note/hardware/${category}/`}
                       name={hardwareCategoryCopy[locale][category].title}
@@ -340,6 +378,7 @@ export function Explorer({
               return (
                 <li key={collection.id}>
                   <TreeFolder
+                    currentPath={currentPath}
                     locale={locale}
                     href={collection.href}
                     name={collection.title}
@@ -353,6 +392,7 @@ export function Explorer({
                     {collection.categories.map((category) => (
                       <li key={category.id}>
                         <TreeFolder
+                          currentPath={currentPath}
                           locale={locale}
                           href={category.href}
                           name={category.title}
@@ -376,6 +416,7 @@ export function Explorer({
         </li>
         <li>
           <TreeFolder
+            currentPath={currentPath}
             locale={locale}
             href={`/${locale}/projects/`}
             name="projects"
@@ -386,6 +427,7 @@ export function Explorer({
             {projectCategories.map((category) => (
               <li key={category}>
                 <TreeFolder
+                  currentPath={currentPath}
                   locale={locale}
                   href={`/${locale}/projects/${category}/`}
                   name={projectCategoryCopy[locale][category].title}

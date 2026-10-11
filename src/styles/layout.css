@@ -428,6 +428,16 @@ a.tab:hover {
 .tree-children .tree-children {
   background-position: 34px 0;
 }
+/* A closed folder hides its children. Without JavaScript the arrows that open
+   folders are unavailable, so the noscript style in root.tsx shows them all. */
+.tree-children[data-collapsed] {
+  display: none;
+}
+/* Folders ship both icons; the one matching the folder's state shows. */
+.tree-link[data-expanded='true'] > .tree-icon-closed,
+.tree-link[data-expanded='false'] > .tree-icon-open {
+  display: none;
+}
 .tree-link {
   display: flex;
   align-items: center;

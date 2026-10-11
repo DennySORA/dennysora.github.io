@@ -11,9 +11,12 @@ import { StrictMode } from 'react';
 import { htmlLang, isLocale } from './i18n/index.ts';
 import './styles/site.css';
 
-// Without JavaScript, interactive-only controls hide and their static alternatives show.
+// Without JavaScript, interactive-only controls hide and their static alternatives show,
+// and every Explorer folder stays open because its arrow cannot open it.
 const noScriptStyles =
-  '<style>.requires-js{display:none!important}.no-js-only{display:block!important}</style>';
+  '<style>.requires-js{display:none!important}.no-js-only{display:block!important}' +
+  '.tree-children[data-collapsed]{display:block!important}' +
+  '.tree-link>.tree-icon-open{display:block!important}.tree-link>.tree-icon-closed{display:none!important}</style>';
 
 export default function Root() {
   // The page's own data decides the language, so a shared 404 hydrates unchanged.

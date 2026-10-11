@@ -52,6 +52,40 @@ test('folder arrows hide descendants repeatedly without navigating or losing foc
   ).toBe(0);
 });
 
+test('folders start closed except the path to the current page, again after each navigation', async ({
+  page,
+}) => {
+  await page.goto(brainPath);
+  await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
+  const explorer = page.locator('.sidebar .explorer');
+  const open = async () =>
+    (
+      await explorer
+        .locator('.tree-folder-toggle[aria-expanded="true"]')
+        .evaluateAll((buttons) =>
+          buttons.map(
+            (button) =>
+              button.parentElement?.querySelector('a')?.getAttribute('href') ??
+              '',
+          ),
+        )
+    ).sort();
+  expect(await open()).toEqual([
+    '/zh-hant/note/',
+    '/zh-hant/note/medical/',
+    '/zh-hant/note/medical/pathology/',
+  ]);
+  await expect(explorer.locator(`a[href="${brainPath}"]`)).toBeVisible();
+  await expect(explorer.locator('a[href$="/drugs/analgesics/"]')).toBeHidden();
+  // A folder opened by hand closes again when another page becomes current.
+  await folderToggle(explorer, '/zh-hant/blog/').click();
+  await page.locator('.tab[data-area="projects"]').click();
+  await expect(page).toHaveURL('/zh-hant/projects/');
+  await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
+  expect(await open()).toEqual(['/zh-hant/projects/']);
+  await expect(explorer.locator(`a[href="${brainPath}"]`)).toBeHidden();
+});
+
 test('nested folders keep independent state through parent and whole-explorer toggles', async ({
   page,
 }) => {
@@ -62,26 +96,30 @@ test('nested folders keep independent state through parent and whole-explorer to
   const drugs = folderToggle(explorer, `${medicalPath}drugs/`);
   const analgesics = explorer.locator('a[href$="/drugs/analgesics/"]');
   const current = explorer.locator(`a[href="${brainPath}"]`);
+  // Off the current path, drugs starts closed; opening it survives its parent.
+  await expect(drugs).toHaveAttribute('aria-expanded', 'false');
+  await expect(analgesics).toBeHidden();
   await drugs.click();
   await medical.click();
   await medical.click();
-  await expect(drugs).toHaveAttribute('aria-expanded', 'false');
-  await expect(analgesics).toBeHidden();
+  await expect(drugs).toHaveAttribute('aria-expanded', 'true');
+  await expect(analgesics).toBeVisible();
   await expect(current).toBeVisible();
   await page.locator('.desktop-explorer-toggle button').click();
   await page.locator('.desktop-explorer-toggle button').click();
-  await expect(drugs).toHaveAttribute('aria-expanded', 'false');
-  await expect(analgesics).toBeHidden();
+  await expect(drugs).toHaveAttribute('aria-expanded', 'true');
+  await expect(analgesics).toBeVisible();
   // Two rapid toggle events finish in the starting state.
   await drugs.dblclick();
-  await expect(drugs).toHaveAttribute('aria-expanded', 'false');
+  await expect(drugs).toHaveAttribute('aria-expanded', 'true');
   await drugs.click();
-  await expect(analgesics).toBeVisible();
+  await expect(analgesics).toBeHidden();
   const blog = folderToggle(explorer, '/zh-hant/blog/');
-  await blog.click();
   await expect(explorer.locator('.tree-empty')).toBeHidden();
   await blog.click();
   await expect(explorer.locator('.tree-empty')).toBeVisible();
+  await blog.click();
+  await expect(explorer.locator('.tree-empty')).toBeHidden();
 });
 
 for (const locale of ['zh-hant', 'en', 'ja']) {
@@ -91,6 +129,7 @@ for (const locale of ['zh-hant', 'en', 'ja']) {
     await page.goto(`/${locale}/`);
     await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
     const explorer = page.locator('.sidebar .explorer');
+    await folderToggle(explorer, `/${locale}/note/`).click();
     await folderToggle(explorer, `/${locale}/note/medical/`).click();
     await explorer.locator(`a[href="/${locale}/note/medical/"]`).click();
     await expect(page).toHaveURL(`/${locale}/note/medical/`);
@@ -129,8 +168,10 @@ test('drawer disclosure stays open and collapsed descendants pass accessibility 
   });
   await opener.click();
   const dialog = page.getByRole('dialog', { name: 'Explorer', exact: true });
+  await folderToggle(dialog, '/en/note/').click();
   const medical = folderToggle(dialog, '/en/note/medical/');
   await medical.click();
+  await expect(medical).toHaveAttribute('aria-expanded', 'true');
   await expect(dialog).toBeVisible();
   await expect(medical).toBeFocused();
   await expect(dialog.locator(`a[href="${brainPath}"]`)).toBeHidden();
