@@ -106,7 +106,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 |---|---|---|---|
 | Tabline | `TabLine.tsx`／`.tabline` | 38px，手機為 52＋44px 兩列 | 左段寬度等於檔案樹（放收合鈕與品牌）；中段是 buffers；右段是搜尋、快速連結、語言與窄螢幕的檔案樹按鈕 |
 | Buffers | `.buffers`、`.tab` | 列高 | 每個區域一個 buffer，內頁以目前檔案 buffer（`.tab-preview`）插在所屬區域後。目前 buffer 用 `background` 底、粗體與左側 2px `action-primary` 標記 |
-| 檔案樹 | `Explorer.tsx`／`.sidebar` | 248px，sticky | neo-tree 外觀：展開箭頭、資料夾與檔案圖示、縮排導引線、空資料夾顯示「（空）」。資料夾預設收合，只展開通往目前頁面的路徑（目前頁面是資料夾時也展開它），每次換頁重新套用；資料夾圖示跟著開合狀態。沒有 JavaScript 時展開箭頭無法使用，所以全部展開。整個檔案樹可收合，收合後內容置中 |
+| 檔案樹 | `Explorer.tsx`／`.sidebar` | 248px，sticky | neo-tree 外觀：展開箭頭、資料夾與檔案圖示、縮排導引線、空資料夾顯示「（空）」。名稱依目前語言顯示：頂層、資料夾與文件都用該語言的短名稱（例如「1 句子結構」「1 Structure」「1 文の構造」），短到在 248px 內完整顯示、不出現省略號，完整標題放在提示文字與讀屏文字；產品名稱（例如 dgxtop）各語言相同。資料夾預設收合，只展開通往目前頁面的路徑（目前頁面是資料夾時也展開它），每次換頁重新套用；資料夾圖示跟著開合狀態。沒有 JavaScript 時展開箭頭無法使用，所以全部展開。整個檔案樹可收合，收合後內容置中 |
 | Winbar | `WinBar.tsx`／`.winbar` | 28px，sticky | 路徑麵包屑，每段帶圖示；有頁面的段落才是連結 |
 | Buffer | `main > .buffer`／`.container` | 行號欄 56px（≤1099px 為 48px，<768px 隱藏） | 見 §8 |
 | 狀態列 | `StatusLine.tsx`／`.statusbar` | 26px，fixed | 模式 ▶ 分支 ▶ 檔案 … 語言 │ 編碼 │ 檔案類型 ◀ 位置；powerline 箭頭用各段自己的底色裁出 |

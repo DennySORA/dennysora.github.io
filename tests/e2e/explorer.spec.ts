@@ -27,7 +27,7 @@ test('folder arrows hide descendants repeatedly without navigating or losing foc
     await expect(medical).toHaveAccessibleName('展開資料夾: 醫學');
     await expect(current).toBeHidden();
     await expect(
-      explorer.getByRole('link', { name: /brain-cns-tumors.md/ }),
+      explorer.getByRole('link', { name: /腦與中樞神經腫瘤/ }),
     ).toHaveCount(0);
     await expect(medical).toBeFocused();
     await expect(page).toHaveURL(brainPath);
@@ -85,6 +85,33 @@ test('folders start closed except the path to the current page, again after each
   expect(await open()).toEqual(['/zh-hant/projects/']);
   await expect(explorer.locator(`a[href="${brainPath}"]`)).toBeHidden();
 });
+
+for (const locale of ['zh-hant', 'en', 'ja']) {
+  test(`${locale} names show in full in the page's language`, async ({
+    page,
+  }) => {
+    await page.goto(`/${locale}/`);
+    await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
+    const explorer = page.locator('.sidebar .explorer');
+    // Open every folder, level by level.
+    for (let level = 0; level < 4; level++) {
+      const closed = explorer.locator(
+        '.tree-folder-toggle[aria-expanded="false"]:visible',
+      );
+      for (let count = await closed.count(); count > 0; count--)
+        await closed.first().click();
+    }
+    const names = await explorer.locator('.tree-name').evaluateAll((elements) =>
+      elements.map((element) => ({
+        name: element.textContent ?? '',
+        clipped: element.scrollWidth > element.clientWidth,
+      })),
+    );
+    expect(names.length).toBeGreaterThan(30);
+    expect(names.filter(({ clipped }) => clipped)).toEqual([]);
+    expect(names.filter(({ name }) => name.endsWith('.md'))).toEqual([]);
+  });
+}
 
 test('nested folders keep independent state through parent and whole-explorer toggles', async ({
   page,

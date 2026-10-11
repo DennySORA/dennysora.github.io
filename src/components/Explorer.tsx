@@ -46,9 +46,10 @@ const kindIcons: Record<Kind, IconName> = {
 type TreeLinkProps = {
   href: string;
   kind: Kind;
+  /** Short name in the page's language, short enough to show in full. */
   name: string;
-  /** Plain-language meaning of the file name, shown or announced beside it. */
-  note: { text: string; visible: boolean };
+  /** Full title or description, offered as a tooltip and read after the name. */
+  note?: string | undefined;
   current?: 'page' | 'true' | undefined;
   onNavigate?: (() => void) | undefined;
   expanded?: boolean;
@@ -69,7 +70,7 @@ function TreeLink({
       href={href}
       aria-current={current}
       onClick={onNavigate}
-      title={note.visible ? undefined : note.text}
+      title={note}
       data-kind={kind}
       data-expanded={kind === 'folder' ? String(expanded) : undefined}
     >
@@ -91,12 +92,8 @@ function TreeLink({
       ) : (
         <Icon name={kindIcons[kind]} size={16} className="tree-icon" />
       )}
-      <span className="tree-name">{name}</span>{' '}
-      {note.visible ? (
-        <span className="tree-note">{note.text}</span>
-      ) : (
-        <span className="sr-only"> — {note.text}</span>
-      )}
+      <span className="tree-name">{name}</span>
+      {note ? <span className="sr-only"> — {note}</span> : null}
       {kind === 'external' ? <Icon name="arrow-up-right" size={12} /> : null}
     </a>
   );
@@ -181,8 +178,7 @@ export function Explorer({
           <TreeLink
             href={`/${locale}/`}
             kind="markdown"
-            name="README.md"
-            note={{ text: t.navAbout, visible: true }}
+            name={t.navAbout}
             current={areaState(route, 'home')}
             onNavigate={onNavigate}
           />
@@ -192,8 +188,7 @@ export function Explorer({
             currentPath={currentPath}
             locale={locale}
             href={`/${locale}/blog/`}
-            name="blog"
-            note={{ text: t.navLibrary, visible: true }}
+            name={t.navLibrary}
             current={areaState(route, 'library')}
             onNavigate={onNavigate}
           >
@@ -205,8 +200,7 @@ export function Explorer({
                 <TreeLink
                   href={`/${locale}/blog/${post.slug}/`}
                   kind="markdown"
-                  name={`${post.slug}.md`}
-                  note={{ text: post.title, visible: false }}
+                  name={post.title}
                   current={page(
                     route.kind === 'article' && route.slug === post.slug,
                   )}
@@ -221,8 +215,7 @@ export function Explorer({
             currentPath={currentPath}
             locale={locale}
             href={`/${locale}/note/`}
-            name="note"
-            note={{ text: noteCopy[locale].notes, visible: true }}
+            name={noteCopy[locale].notes}
             current={areaState(route, 'notes')}
             onNavigate={onNavigate}
           >
@@ -232,7 +225,6 @@ export function Explorer({
                 locale={locale}
                 href={`/${locale}/note/network/`}
                 name={networkCopy[locale].title}
-                note={{ text: networkCopy[locale].title, visible: false }}
                 current={page(route.kind === 'network')}
                 onNavigate={onNavigate}
               >
@@ -241,11 +233,8 @@ export function Explorer({
                     <TreeLink
                       href={`/${locale}/note/network/${id}/`}
                       kind="markdown"
-                      name={`${id}.md`}
-                      note={{
-                        text: networkNotes[id].title[locale],
-                        visible: false,
-                      }}
+                      name={networkNotes[id].name[locale]}
+                      note={networkNotes[id].title[locale]}
                       current={page(
                         route.kind === 'network-note' && route.noteId === id,
                       )}
@@ -261,7 +250,6 @@ export function Explorer({
                 locale={locale}
                 href={`/${locale}/note/medical/`}
                 name={noteCopy[locale].medical}
-                note={{ text: noteCopy[locale].medical, visible: false }}
                 current={page(route.kind === 'medical')}
                 onNavigate={onNavigate}
               >
@@ -272,10 +260,7 @@ export function Explorer({
                       locale={locale}
                       href={`/${locale}/note/medical/${category}/`}
                       name={medicalCategoryCopy[locale][category].title}
-                      note={{
-                        text: medicalCategoryCopy[locale][category].intro,
-                        visible: false,
-                      }}
+                      note={medicalCategoryCopy[locale][category].intro}
                       current={page(
                         route.kind === 'medical-category' &&
                           route.category === category,
@@ -289,11 +274,8 @@ export function Explorer({
                             <TreeLink
                               href={medicalNotePath(id, locale)}
                               kind="markdown"
-                              name={`${id}.md`}
-                              note={{
-                                text: medicalNotes[id].title[locale],
-                                visible: false,
-                              }}
+                              name={medicalNotes[id].name[locale]}
+                              note={medicalNotes[id].title[locale]}
                               current={page(
                                 route.kind === 'medical-note' &&
                                   route.noteId === id,
@@ -313,7 +295,6 @@ export function Explorer({
                 locale={locale}
                 href={`/${locale}/note/hardware/`}
                 name={hardwareCopy[locale].title}
-                note={{ text: hardwareCopy[locale].title, visible: false }}
                 current={page(route.kind === 'hardware')}
                 onNavigate={onNavigate}
               >
@@ -324,10 +305,7 @@ export function Explorer({
                       locale={locale}
                       href={`/${locale}/note/hardware/${category}/`}
                       name={hardwareCategoryCopy[locale][category].title}
-                      note={{
-                        text: hardwareCategoryCopy[locale][category].intro,
-                        visible: false,
-                      }}
+                      note={hardwareCategoryCopy[locale][category].intro}
                       current={page(
                         route.kind === 'hardware-category' &&
                           route.category === category,
@@ -341,11 +319,8 @@ export function Explorer({
                             <TreeLink
                               href={hardwareNotePath(id, locale)}
                               kind="markdown"
-                              name={`${id}.md`}
-                              note={{
-                                text: hardwareNotes[id].title[locale],
-                                visible: false,
-                              }}
+                              name={hardwareNotes[id].name[locale]}
+                              note={hardwareNotes[id].title[locale]}
                               current={page(
                                 route.kind === 'hardware-note' &&
                                   route.noteId === id,
@@ -365,8 +340,8 @@ export function Explorer({
                   <TreeLink
                     href={entry.href}
                     kind="markdown"
-                    name={`${entry.id}.md`}
-                    note={{ text: entry.title, visible: false }}
+                    name={entry.name}
+                    note={entry.title}
                     current={page(
                       route.kind === 'collection-note' &&
                         route.noteId === entry.id,
@@ -382,7 +357,6 @@ export function Explorer({
                     locale={locale}
                     href={collection.href}
                     name={collection.title}
-                    note={{ text: collection.title, visible: false }}
                     current={page(
                       route.kind === 'note-collection' &&
                         route.collection === collection.id,
@@ -396,7 +370,7 @@ export function Explorer({
                           locale={locale}
                           href={category.href}
                           name={category.title}
-                          note={{ text: category.intro, visible: false }}
+                          note={category.intro}
                           current={page(
                             route.kind === 'note-category' &&
                               route.category === category.id,
@@ -419,8 +393,7 @@ export function Explorer({
             currentPath={currentPath}
             locale={locale}
             href={`/${locale}/projects/`}
-            name="projects"
-            note={{ text: projectsCopy[locale].title, visible: true }}
+            name={projectsCopy[locale].title}
             current={areaState(route, 'projects')}
             onNavigate={onNavigate}
           >
@@ -431,10 +404,7 @@ export function Explorer({
                   locale={locale}
                   href={`/${locale}/projects/${category}/`}
                   name={projectCategoryCopy[locale][category].title}
-                  note={{
-                    text: projectCategoryCopy[locale][category].intro,
-                    visible: false,
-                  }}
+                  note={projectCategoryCopy[locale][category].intro}
                   current={page(
                     route.kind === 'project-category' &&
                       route.category === category,
@@ -448,13 +418,10 @@ export function Explorer({
                         <TreeLink
                           href={projectPagePath(id, locale)}
                           kind="markdown"
-                          name={`${id}.md`}
-                          note={{
-                            text: projectPages[id].title[
-                              projectEdition(id, locale)
-                            ],
-                            visible: false,
-                          }}
+                          name={id}
+                          note={
+                            projectPages[id].title[projectEdition(id, locale)]
+                          }
                           current={page(
                             route.kind === 'project' && route.projectId === id,
                           )}
@@ -471,8 +438,8 @@ export function Explorer({
           <TreeLink
             href={papersUrl}
             kind="external"
-            name="paper-daily"
-            note={{ text: `${t.navPapers}（${t.newTab}）`, visible: false }}
+            name={t.navPapers}
+            note={t.newTab}
             onNavigate={onNavigate}
           />
         </li>

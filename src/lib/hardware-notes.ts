@@ -8,6 +8,11 @@ export const hardwareNotes = {
   '140mm-case-fans': {
     category: 'computer',
     tagIds: ['hardware', 'pc-cooling', 'case-fans'],
+    name: {
+      'zh-hant': '140 mm 機殼風扇',
+      en: '140 mm case fans',
+      ja: '140 mm ケースファン',
+    },
     title: {
       'zh-hant': '140 mm 風扇評估：靜音、風壓、風量與前 10 推薦',
       en: '140 mm fans: quiet airflow, static pressure and a top 10',
@@ -25,6 +30,8 @@ export const hardwareNotes = {
   {
     category: HardwareCategory;
     tagIds: readonly string[];
+    /** Short name shown in the Explorer; fits the sidebar in full. */
+    name: Record<Locale, string>;
     title: Record<Locale, string>;
     description: Record<Locale, string>;
   }

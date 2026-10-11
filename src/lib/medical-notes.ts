@@ -8,6 +8,11 @@ export const medicalNotes = {
   analgesics: {
     category: 'drugs',
     tagIds: ['medicine', 'pharmacology', 'analgesics', 'drug-safety'],
+    name: {
+      'zh-hant': '止痛藥',
+      en: 'Pain medicines',
+      ja: '鎮痛薬',
+    },
     title: {
       'zh-hant': '止痛藥指南：種類、作用與用藥注意事項',
       en: 'Pain medicine guide: types, effects and precautions',
@@ -23,6 +28,11 @@ export const medicalNotes = {
   'brain-cns-tumors': {
     category: 'pathology',
     tagIds: ['medicine', 'pathology', 'brain-tumors', 'glioma'],
+    name: {
+      'zh-hant': '腦與中樞神經腫瘤',
+      en: 'Brain & CNS tumors',
+      ja: '脳・中枢神経腫瘍',
+    },
     title: {
       'zh-hant': '腦與中樞神經系統腫瘤：分類與膠質瘤入門',
       en: 'Brain and CNS tumors: classification and an introduction to gliomas',
@@ -40,6 +50,8 @@ export const medicalNotes = {
   {
     category: MedicalCategory;
     tagIds: readonly string[];
+    /** Short name shown in the Explorer; fits the sidebar in full. */
+    name: Record<Locale, string>;
     title: Record<Locale, string>;
     description: Record<Locale, string>;
   }

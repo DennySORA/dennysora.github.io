@@ -88,6 +88,11 @@ export const categoryCopy: Record<
 export const collectionNoteMeta = {
   'japanese-structure': {
     tagIds: ['japanese', 'japanese-grammar', 'particles'],
+    name: {
+      'zh-hant': '1 句子結構',
+      en: '1 Structure',
+      ja: '1 文の構造',
+    },
     title: {
       'zh-hant': '日語筆記 1｜句子結構：述語、格框架與助詞',
       en: 'Japanese notes 1 | Sentence structure: predicates, case frames and particles',
@@ -102,6 +107,11 @@ export const collectionNoteMeta = {
   },
   'japanese-conjugation': {
     tagIds: ['japanese', 'japanese-grammar', 'conjugation'],
+    name: {
+      'zh-hant': '2 活用與接續',
+      en: '2 Conjugation',
+      ja: '2 活用と接続',
+    },
     title: {
       'zh-hant': '日語筆記 2｜活用與接續：普通形、て形與自他動詞',
       en: 'Japanese notes 2 | Conjugation and connection: plain forms, te-forms and transitivity',
@@ -116,6 +126,11 @@ export const collectionNoteMeta = {
   },
   'japanese-clauses': {
     tagIds: ['japanese', 'japanese-grammar', 'clauses'],
+    name: {
+      'zh-hant': '3 時間與從句',
+      en: '3 Time and clauses',
+      ja: '3 時間と節',
+    },
     title: {
       'zh-hant': '日語筆記 3｜時間與從句：とき、名詞化、關係子句與目的',
       en: 'Japanese notes 3 | Time and clauses: toki, nominalization, relative clauses and purpose',
@@ -130,6 +145,11 @@ export const collectionNoteMeta = {
   },
   'japanese-reasons': {
     tagIds: ['japanese', 'japanese-grammar', 'modality'],
+    name: {
+      'zh-hant': '4 理由與意圖',
+      en: '4 Reasons & intent',
+      ja: '4 理由と意図',
+    },
     title: {
       'zh-hant': '日語筆記 4｜理由、意圖與資訊來源：んです、から、つもり、そう',
       en: 'Japanese notes 4 | Reasons, intentions and sources: n desu, kara, tsumori and sō',
@@ -144,6 +164,11 @@ export const collectionNoteMeta = {
   },
   'japanese-expressions': {
     tagIds: ['japanese', 'japanese-grammar', 'everyday-japanese'],
+    name: {
+      'zh-hant': '5 互動與表達',
+      en: '5 Interaction',
+      ja: '5 やりとりと表現',
+    },
     title: {
       'zh-hant': '日語筆記 5｜互動與日常表達：授受、比較、副詞與店家用語',
       en: 'Japanese notes 5 | Everyday interaction: giving and receiving, comparison, adverbs and shop phrases',
@@ -158,6 +183,11 @@ export const collectionNoteMeta = {
   },
   'japanese-vocabulary': {
     tagIds: ['japanese', 'vocabulary', 'katakana'],
+    name: {
+      'zh-hant': '6 詞彙與讀音',
+      en: '6 Vocabulary',
+      ja: '6 語彙と読み方',
+    },
     title: {
       'zh-hant': '日語筆記 6｜詞彙與讀音：片假名、名詞、動詞索引與量詞',
       en: 'Japanese notes 6 | Vocabulary and readings: katakana, nouns, a verb index and counters',
@@ -172,6 +202,11 @@ export const collectionNoteMeta = {
   },
   'japanese-review': {
     tagIds: ['japanese', 'japanese-grammar', 'study-methods'],
+    name: {
+      'zh-hant': '7 總複習',
+      en: '7 Review',
+      ja: '7 総復習',
+    },
     title: {
       'zh-hant': '日語筆記 7｜總複習：43 個易錯點、接續總表與校訂紀錄',
       en: 'Japanese notes 7 | Review: 43 common traps, a connection table and the revision log',
@@ -186,6 +221,11 @@ export const collectionNoteMeta = {
   },
   'lumbar-spine-care': {
     tagIds: ['health', 'lower-back', 'ergonomics'],
+    name: {
+      'zh-hant': '腰椎保護',
+      en: 'Lower-back care',
+      ja: '腰を守る',
+    },
     title: {
       'zh-hant': '腰椎保護：姿勢、睡眠、運動與就醫警訊',
       en: 'Lower back care: posture, sleep, exercise and red flags',
@@ -200,6 +240,11 @@ export const collectionNoteMeta = {
   },
   'landscape-photography': {
     tagIds: ['photography', 'landscape-photography', 'composition'],
+    name: {
+      'zh-hant': '風景攝影',
+      en: 'Landscape photos',
+      ja: '風景写真',
+    },
     title: {
       'zh-hant': '風景攝影：從 31 張實拍與 21 張構圖示意圖學構圖、光線與曝光',
       en: 'Landscape photography from 31 real photos and 21 composition diagrams: composition, light and exposure',
@@ -214,7 +259,13 @@ export const collectionNoteMeta = {
   },
 } as const satisfies Record<
   CollectionNoteId,
-  { tagIds: readonly string[]; title: Text; description: Text }
+  {
+    tagIds: readonly string[];
+    /** Short name shown in the Explorer; fits the sidebar in full. */
+    name: Text;
+    title: Text;
+    description: Text;
+  }
 >;
 
 /** Repository path of a note's reviewed Traditional Chinese source fragment. */
@@ -228,6 +279,7 @@ export function collectionEntries(locale: Locale): CollectionEntry[] {
   const link = (id: CollectionNoteId) => ({
     id,
     href: collectionNotePath(id, locale),
+    name: collectionNoteMeta[id].name[locale],
     title: collectionNoteMeta[id].title[locale],
   });
   return noteCollectionIds.map((collection) => ({

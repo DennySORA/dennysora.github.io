@@ -403,7 +403,7 @@ test('desktop Explorer remains visible and usable without JavaScript', async ({
   await expect(page.locator('.desktop-explorer-toggle')).toBeHidden();
   await page
     .locator('#desktop-explorer')
-    .getByRole('link', { name: /analgesics\.md/ })
+    .getByRole('link', { name: /^Pain medicines/ })
     .click();
   await expect(page).toHaveURL(`${origin}/en/note/medical/drugs/analgesics/`);
   await expect(page.locator('h1')).toContainText('Pain medicine guide');

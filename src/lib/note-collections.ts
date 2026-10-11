@@ -104,6 +104,8 @@ export function collectionNotePath(
 export type CollectionNoteLink = {
   id: CollectionNoteId;
   href: string;
+  /** Short name for the Explorer, in the page's language. */
+  name: string;
   title: string;
 };
 export type CollectionCategoryEntry = {

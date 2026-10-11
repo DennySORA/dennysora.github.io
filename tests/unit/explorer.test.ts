@@ -3,7 +3,15 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { Explorer } from '../../src/components/Explorer.tsx';
 import { dictionaries, locales } from '../../src/i18n/index.ts';
-import { collectionEntries } from '../../src/lib/note-collections.server.ts';
+import { decodeEntities } from '../../src/lib/html.ts';
+import { hardwareNotes } from '../../src/lib/hardware-notes.ts';
+import { medicalNotes } from '../../src/lib/medical-notes.ts';
+import { networkNotes } from '../../src/lib/network-notes.ts';
+import { noteCopy } from '../../src/lib/notes-copy.ts';
+import {
+  collectionEntries,
+  collectionNoteMeta,
+} from '../../src/lib/note-collections.server.ts';
 
 function attribute(tag: string, name: string) {
   return tag.match(new RegExp(`${name}="([^"]+)"`))?.[1];
@@ -71,10 +79,34 @@ describe('folder disclosures', () => {
       ).toHaveLength(15);
       expect(links.every((link) => !link.includes('<button'))).toBe(true);
       expect(html).not.toContain(' hidden');
-      expect(html).toContain('brain-cns-tumors.md');
-      expect(html).toContain('analgesics.md');
-      expect(html).toContain('140mm-case-fans.md');
-      expect(html).toContain('dgxtop.md');
+      // Every name is in the page's language: no slugs or .md file names.
+      const t = dictionaries[locale];
+      const names = [...html.matchAll(/class="tree-name">([^<]+)</g)].map(
+        ([, name]) => decodeEntities(name!),
+      );
+      expect(
+        names.filter((name) => /\.md$|^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(name)),
+      ).toEqual([]);
+      expect(names.slice(0, 3)).toEqual([
+        t.navAbout,
+        t.navLibrary,
+        noteCopy[locale].notes,
+      ]);
+      expect(names).toEqual(
+        expect.arrayContaining([
+          medicalNotes['brain-cns-tumors'].name[locale],
+          medicalNotes.analgesics.name[locale],
+          hardwareNotes['140mm-case-fans'].name[locale],
+          networkNotes['p2p-privacy'].name[locale],
+          collectionNoteMeta['japanese-structure'].name[locale],
+          'dgxtop',
+          t.navPapers,
+        ]),
+      );
+      // The full title stays available as the tooltip and to screen readers.
+      expect(html).toContain(
+        `title="${medicalNotes.analgesics.title[locale]}"`,
+      );
       expect(html).toContain(dictionaries[locale].emptyFolder);
     });
   }

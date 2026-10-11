@@ -110,9 +110,10 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
   await trigger.click();
   // The drawer lists the real workspace and the published medical note; its
   // folders are off the current path, so they start closed.
-  await expect(
-    dialog.getByRole('link', { name: /README\.md/ }),
-  ).toHaveAttribute('aria-current', 'page');
+  await expect(dialog.getByRole('link', { name: /^自己紹介/ })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   const analgesics = dialog.locator(
     'a[href="/ja/note/medical/drugs/analgesics/"]',
   );
@@ -121,7 +122,7 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
   await expect(
     dialog.locator('a[href*="/blog/"][href$="-principles/"]'),
   ).toHaveCount(0);
-  await dialog.getByRole('link', { name: /^blog/ }).click();
+  await dialog.getByRole('link', { name: /^ブログ/ }).click();
   await expect(page).toHaveURL('/ja/blog/');
   await page.goBack();
   await expect(page).toHaveURL('/ja/');
@@ -230,7 +231,7 @@ test('text and controls keep contrast in normal, hover, focus and selected state
     ['.tab[aria-current="page"]', 4.5],
     ['.tab:not([aria-current])', 4.5],
     ['.sidebar .tree-link[aria-current="page"]', 4.5],
-    ['.sidebar .tree-note', 4.5],
+    ['.sidebar .tree-link:not([aria-current])', 4.5],
     ['.breadcrumbs a', 4.5],
     ['.status-item', 4.5],
     ['.status-mode', 4.5],

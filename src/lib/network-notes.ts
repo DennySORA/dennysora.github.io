@@ -5,6 +5,11 @@ export type NetworkNoteId = (typeof networkNoteIds)[number];
 export const networkNotes = {
   'p2p-downloader': {
     tagIds: ['p2p', 'architecture', 'networking'],
+    name: {
+      'zh-hant': 'P2P 下載器',
+      en: 'P2P downloader',
+      ja: 'P2P ダウンローダー',
+    },
     title: {
       'zh-hant': 'P2P Downloader v2.3：核心架構與連線治理',
       en: 'P2P Downloader v2.3: core architecture and connection governance',
@@ -19,6 +24,11 @@ export const networkNotes = {
   },
   'p2p-privacy': {
     tagIds: ['p2p', 'privacy', 'security'],
+    name: {
+      'zh-hant': 'P2P 匿名性',
+      en: 'P2P anonymity',
+      ja: 'P2P の匿名性',
+    },
     title: {
       'zh-hant': 'P2P 匿名性：數位調查與端對端流量關聯',
       en: 'P2P anonymity: digital investigations and end-to-end traffic correlation',
@@ -34,6 +44,8 @@ export const networkNotes = {
 } satisfies Record<
   NetworkNoteId,
   {
+    /** Short name shown in the Explorer; fits the sidebar in full. */
+    name: Record<Locale, string>;
     title: Record<Locale, string>;
     description: Record<Locale, string>;
     tagIds: readonly string[];
