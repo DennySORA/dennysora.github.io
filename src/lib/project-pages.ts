@@ -21,7 +21,7 @@ export const projectPages = {
     editions: ['zh-hant', 'en', 'ja'],
     tagIds: ['architecture', 'rust', 'gpu', 'system-monitoring'],
     repository: 'https://github.com/DennySORA/dgxtop',
-    updatedAt: '2026-10-11',
+    updatedAt: '2026-10-12',
     title: {
       'zh-hant': 'dgxtop：為 DGX Spark 打造的終端 GPU 監控工具',
       en: 'dgxtop: a terminal GPU monitor built for DGX Spark',
@@ -29,18 +29,18 @@ export const projectPages = {
     },
     description: {
       'zh-hant':
-        '在一個終端畫面裡看每張 NVIDIA GPU、使用它的程序與整台機器，歷史紀錄重開後仍在。為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用：功能、安裝與架構。',
-      en: 'Every NVIDIA GPU, the processes using it and the whole machine on one terminal screen, with history that survives restarts. Built for DGX Spark, runs on any Linux machine with NVIDIA GPUs: features, install and architecture.',
-      ja: 'NVIDIA GPU、それを使うプロセス、マシン全体を 1 つのターミナル画面に表示し、再起動しても履歴が残ります。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます：機能、インストール、アーキテクチャ。',
+        '在一個終端畫面裡看每張 NVIDIA GPU、每個工作佔用多少記憶體與整台機器，並記錄每個 GPU 工作從開始到結束。為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用：功能、安裝與架構。',
+      en: 'Every NVIDIA GPU, each job’s share of its memory and the whole machine on one terminal screen, plus a record of every GPU job from start to end. Built for DGX Spark, runs on any Linux machine with NVIDIA GPUs: features, install and architecture.',
+      ja: 'NVIDIA GPU、ジョブごとのメモリ使用量、マシン全体を 1 つのターミナル画面に表示し、すべての GPU ジョブを開始から終了まで記録します。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます：機能、インストール、アーキテクチャ。',
     },
     shots: [
-      { file: 'dgx-spark-overview.webp', width: 1909, height: 961 },
-      { file: 'workstation-overview.webp', width: 1906, height: 966 },
-      { file: 'dgx-spark-gpu.webp', width: 1922, height: 960 },
-      { file: 'workstation-gpu.webp', width: 1906, height: 976 },
-      { file: 'dgx-spark-history.webp', width: 1906, height: 956 },
-      { file: 'workstation-history.webp', width: 1907, height: 971 },
-      { file: 'dgx-spark-settings.webp', width: 1916, height: 957 },
+      { file: 'dgx-spark-overview.webp', width: 1909, height: 969 },
+      { file: 'workstation-overview.webp', width: 1918, height: 967 },
+      { file: 'dgx-spark-gpu.webp', width: 1913, height: 962 },
+      { file: 'workstation-gpu.webp', width: 1914, height: 963 },
+      { file: 'workstation-overview-history.webp', width: 1913, height: 957 },
+      { file: 'workstation-process-history.webp', width: 1910, height: 952 },
+      { file: 'workstation-process-run.webp', width: 1919, height: 959 },
     ],
   },
 } as const satisfies Record<

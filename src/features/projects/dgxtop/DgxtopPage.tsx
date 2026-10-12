@@ -253,9 +253,9 @@ export function DgxtopPage({ locale }: { locale: ProjectEdition }) {
                 'workstation-overview.webp',
                 'dgx-spark-gpu.webp',
                 'workstation-gpu.webp',
-                'dgx-spark-history.webp',
-                'workstation-history.webp',
-                'dgx-spark-settings.webp',
+                'workstation-overview-history.webp',
+                'workstation-process-history.webp',
+                'workstation-process-run.webp',
               ] as const
             ).map((file) => shot(file))}
           </div>

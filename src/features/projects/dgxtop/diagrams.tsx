@@ -108,6 +108,11 @@ export function ArchitectureDiagram({
           ),
         )}
       </Flow>
+      <Flow path="data" label={t.history}>
+        {t.historyNodes.map(([title, text], index) => (
+          <Node key={`${title}-${index}`} title={title} text={text} />
+        ))}
+      </Flow>
       <Flow path="control" label={t.control}>
         {t.controlNodes.map(([title, text], index) => (
           <Node key={`${title}-${index}`} title={title} text={text} />
