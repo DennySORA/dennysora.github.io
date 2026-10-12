@@ -91,12 +91,12 @@ describe('folder disclosures', () => {
       expect(
         names.filter((name) => /\.md$|^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(name)),
       ).toEqual([]);
-      // Projects come first, then the README, the blog and the notes.
+      // The README comes first, then the projects, the blog and the notes.
       expect(names.slice(0, 6)).toEqual([
+        t.navAbout,
         projectsCopy[locale].title,
         projectCategoryCopy[locale].tools.title,
         'dgxtop',
-        t.navAbout,
         t.navLibrary,
         noteCopy[locale].notes,
       ]);

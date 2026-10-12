@@ -43,7 +43,7 @@ test('folder arrows hide descendants repeatedly without navigating or losing foc
   await note.press('Tab');
   await expect(explorer.locator('a[href="/zh-hant/note/"]')).toBeFocused();
   // Hidden descendants are skipped: focus moves on to the next entry, the
-  // papers link (the projects folder is the first entry of the tree).
+  // papers link (the projects folder comes right after the README).
   await page.keyboard.press('Tab');
   await expect(explorer.locator('a[data-kind="external"]')).toBeFocused();
   await note.click();

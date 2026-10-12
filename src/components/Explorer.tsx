@@ -231,6 +231,15 @@ export function Explorer({
       </p>
       <ul className="tree">
         <li>
+          <TreeLink
+            href={`/${locale}/`}
+            kind="markdown"
+            name={t.navAbout}
+            current={areaState(route, 'home')}
+            onNavigate={onNavigate}
+          />
+        </li>
+        <li>
           <TreeFolder
             currentPath={currentPath}
             locale={locale}
@@ -275,15 +284,6 @@ export function Explorer({
               </li>
             ))}
           </TreeFolder>
-        </li>
-        <li>
-          <TreeLink
-            href={`/${locale}/`}
-            kind="markdown"
-            name={t.navAbout}
-            current={areaState(route, 'home')}
-            onNavigate={onNavigate}
-          />
         </li>
         <li>
           <TreeFolder
