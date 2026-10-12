@@ -4,6 +4,8 @@ import { Icon, type IconName } from '../../../components/Icon.tsx';
 import { ScrollRegion } from '../../../components/ScrollRegion.tsx';
 import { dictionaries } from '../../../i18n/index.ts';
 import {
+  projectDiagramFile,
+  projectDiagramUrl,
   projectPages,
   projectShotUrl,
   type ProjectEdition,
@@ -12,7 +14,10 @@ import {
   dgxtopCopy,
   installCommand,
   sectionIds,
+  techDiagrams,
+  techSectionIds,
   type DgxtopCopy,
+  type DiagramName,
   type Point,
   type SectionId,
   type ShotFile,
@@ -27,6 +32,16 @@ const sectionIcons: Record<SectionId, IconName> = {
   screens: 'image',
   capabilities: 'cpu',
   architecture: 'network',
+  'data-path': 'arrow',
+  isolation: 'server',
+  sources: 'branch',
+  history: 'clock',
+  'process-history': 'list',
+  'gpu-memory': 'tag',
+  actions: 'shield',
+  limits: 'retry',
+  storage: 'files',
+  code: 'package',
 };
 
 function Section({
@@ -89,6 +104,48 @@ function Shot({
         </a>
       </div>
       <figcaption>{caption}</figcaption>
+    </figure>
+  );
+}
+
+/**
+ * A GPT-generated diagram in the same image-preview float as a screenshot,
+ * labelled as generated. Each edition loads the image drawn in its language.
+ */
+function Diagram({
+  name,
+  locale,
+  t,
+}: {
+  name: DiagramName;
+  locale: ProjectEdition;
+  t: DgxtopCopy;
+}) {
+  const diagram = page.diagrams.find((item) => item.name === name);
+  if (!diagram) throw new Error(`Unknown dgxtop diagram: ${name}`);
+  const url = projectDiagramUrl('dgxtop', diagram, locale);
+  return (
+    <figure className="project-diagram">
+      <div className="project-shot-frame">
+        <div className="float-title">
+          <Icon name="image" size={14} />
+          <span>{projectDiagramFile(diagram, locale)}</span>
+          <span className="float-meta">
+            {`${t.generated.title} · ${diagram.width} × ${diagram.height}`}
+          </span>
+        </div>
+        <a href={url} title={t.openImage}>
+          <img
+            src={url}
+            width={diagram.width}
+            height={diagram.height}
+            alt={t.generated.alt + t.diagrams[name].alt}
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      </div>
+      <figcaption>{t.diagrams[name].caption}</figcaption>
     </figure>
   );
 }
@@ -267,17 +324,28 @@ export function DgxtopPage({ locale }: { locale: ProjectEdition }) {
 
         <Section id="architecture" title={t.sections.architecture}>
           <p>{t.architecture.intro}</p>
+          <Diagram name="architecture" locale={locale} t={t} />
           <ArchitectureDiagram t={t.architecture.diagram} />
           <DataTable
             label={t.sections.architecture}
             table={t.architecture.components}
           />
-          <p>{t.architecture.codeIntro}</p>
-          <DataTable
-            label={t.architecture.codeIntro}
-            table={t.architecture.code}
-          />
+          <p>{t.architecture.next}</p>
         </Section>
+
+        {techSectionIds.map((id) => {
+          const section = t.tech[id];
+          return (
+            <Section key={id} id={id} title={t.sections[id]}>
+              <p>{section.intro}</p>
+              <Diagram name={techDiagrams[id]} locale={locale} t={t} />
+              <Points points={section.points} />
+              {section.table ? (
+                <DataTable label={t.sections[id]} table={section.table} />
+              ) : null}
+            </Section>
+          );
+        })}
       </div>
     </>
   );

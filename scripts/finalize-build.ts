@@ -23,6 +23,8 @@ import { escapeHtml } from '../src/lib/html.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
 import { papersUrl } from '../src/lib/site.ts';
 import {
+  projectDiagramFile,
+  projectDiagramUrl,
   projectPageIds,
   projectPages,
   projectShotUrl,
@@ -53,6 +55,19 @@ for (const id of projectPageIds)
       join('assets/projects', id, shot.file),
       join(output, projectShotUrl(id, shot)),
     );
+// So do its diagrams, one per edition the page is published in.
+for (const id of projectPageIds)
+  for (const diagram of projectPages[id].diagrams)
+    for (const edition of projectPages[id].editions)
+      cpSync(
+        join(
+          'assets/projects',
+          id,
+          'diagrams',
+          projectDiagramFile(diagram, edition),
+        ),
+        join(output, projectDiagramUrl(id, diagram, edition)),
+      );
 // A note's photos ship only when its published fragment shows them.
 for (const id of collectionNoteIds) {
   const html = readFileSync(join('content', collectionNoteSource(id)), 'utf8');

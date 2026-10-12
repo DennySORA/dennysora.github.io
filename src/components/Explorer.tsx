@@ -231,6 +231,52 @@ export function Explorer({
       </p>
       <ul className="tree">
         <li>
+          <TreeFolder
+            currentPath={currentPath}
+            locale={locale}
+            href={`/${locale}/projects/`}
+            name={projectsCopy[locale].title}
+            current={areaState(route, 'projects')}
+            onNavigate={onNavigate}
+          >
+            {projectCategories.map((category) => (
+              <li key={category}>
+                <TreeFolder
+                  currentPath={currentPath}
+                  locale={locale}
+                  href={`/${locale}/projects/${category}/`}
+                  name={projectCategoryCopy[locale][category].title}
+                  note={projectCategoryCopy[locale][category].intro}
+                  current={page(
+                    route.kind === 'project-category' &&
+                      route.category === category,
+                  )}
+                  onNavigate={onNavigate}
+                >
+                  {projectPageIds
+                    .filter((id) => projectPages[id].category === category)
+                    .map((id) => (
+                      <li key={id}>
+                        <TreeLink
+                          href={projectPagePath(id, locale)}
+                          kind="markdown"
+                          name={id}
+                          note={
+                            projectPages[id].title[projectEdition(id, locale)]
+                          }
+                          current={page(
+                            route.kind === 'project' && route.projectId === id,
+                          )}
+                          onNavigate={onNavigate}
+                        />
+                      </li>
+                    ))}
+                </TreeFolder>
+              </li>
+            ))}
+          </TreeFolder>
+        </li>
+        <li>
           <TreeLink
             href={`/${locale}/`}
             kind="markdown"
@@ -284,52 +330,6 @@ export function Explorer({
                 currentPath={currentPath}
                 onNavigate={onNavigate}
               />
-            ))}
-          </TreeFolder>
-        </li>
-        <li>
-          <TreeFolder
-            currentPath={currentPath}
-            locale={locale}
-            href={`/${locale}/projects/`}
-            name={projectsCopy[locale].title}
-            current={areaState(route, 'projects')}
-            onNavigate={onNavigate}
-          >
-            {projectCategories.map((category) => (
-              <li key={category}>
-                <TreeFolder
-                  currentPath={currentPath}
-                  locale={locale}
-                  href={`/${locale}/projects/${category}/`}
-                  name={projectCategoryCopy[locale][category].title}
-                  note={projectCategoryCopy[locale][category].intro}
-                  current={page(
-                    route.kind === 'project-category' &&
-                      route.category === category,
-                  )}
-                  onNavigate={onNavigate}
-                >
-                  {projectPageIds
-                    .filter((id) => projectPages[id].category === category)
-                    .map((id) => (
-                      <li key={id}>
-                        <TreeLink
-                          href={projectPagePath(id, locale)}
-                          kind="markdown"
-                          name={id}
-                          note={
-                            projectPages[id].title[projectEdition(id, locale)]
-                          }
-                          current={page(
-                            route.kind === 'project' && route.projectId === id,
-                          )}
-                          onNavigate={onNavigate}
-                        />
-                      </li>
-                    ))}
-                </TreeFolder>
-              </li>
             ))}
           </TreeFolder>
         </li>

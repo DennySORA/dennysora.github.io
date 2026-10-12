@@ -125,8 +125,12 @@
   margin-top: var(--space-2);
 }
 
-/* Screenshots: an image-preview float with the real file name and size. */
-.project-body .project-shot {
+/*
+ * Screenshots and generated diagrams: an image-preview float with the real
+ * file name and size; a diagram's float also says it was GPT-generated.
+ */
+.project-body .project-shot,
+.project-body .project-diagram {
   margin: var(--space-5) 0 var(--space-6);
 }
 .project-shot-frame {
@@ -136,6 +140,17 @@
   background: var(--color-chrome);
   box-shadow: var(--edge-highlight);
 }
+/*
+ * A diagram's "GPT-generated · width × height" label does not fit beside its
+ * file name on a phone, so the title bar wraps between the two, never inside.
+ */
+.project-shot-frame .float-title {
+  flex-wrap: wrap;
+  padding-block: 4px;
+}
+.project-shot-frame .float-title > span {
+  white-space: nowrap;
+}
 .project-shot-frame > a {
   display: block;
 }
@@ -143,7 +158,8 @@
   outline: 2px solid var(--color-focus);
   outline-offset: -2px;
 }
-.project-body .project-shot img {
+.project-body .project-shot img,
+.project-body .project-diagram img {
   display: block;
   width: 100%;
   height: auto;
@@ -151,7 +167,8 @@
   border-radius: 0;
   background: var(--color-chrome);
 }
-.project-body .project-shot figcaption {
+.project-body .project-shot figcaption,
+.project-body .project-diagram figcaption {
   margin-top: var(--space-2);
   color: var(--color-text-muted);
   font-size: 14px;

@@ -15,6 +15,16 @@ export type ProjectShot = {
   height: number;
 };
 
+/**
+ * A GPT-generated technical diagram with its text drawn in, one image per
+ * edition at assets/projects/<page>/diagrams/<name>-<edition>.webp.
+ */
+export type ProjectDiagram = {
+  name: string;
+  width: number;
+  height: number;
+};
+
 export const projectPages = {
   dgxtop: {
     category: 'tools',
@@ -42,6 +52,19 @@ export const projectPages = {
       { file: 'workstation-process-history.webp', width: 1910, height: 952 },
       { file: 'workstation-process-run.webp', width: 1919, height: 959 },
     ],
+    diagrams: [
+      { name: 'architecture', width: 1536, height: 1024 },
+      { name: 'one-sample', width: 1536, height: 1024 },
+      { name: 'isolation', width: 1536, height: 1024 },
+      { name: 'source-arbitration', width: 1536, height: 1024 },
+      { name: 'history-tiers', width: 1536, height: 1024 },
+      { name: 'process-history', width: 1536, height: 1024 },
+      { name: 'gpu-memory', width: 1536, height: 1024 },
+      { name: 'safe-actions', width: 1536, height: 1024 },
+      { name: 'budgets', width: 1536, height: 1024 },
+      { name: 'storage', width: 1536, height: 1024 },
+      { name: 'crates', width: 1536, height: 1024 },
+    ],
   },
 } as const satisfies Record<
   ProjectPageId,
@@ -54,6 +77,7 @@ export const projectPages = {
     title: Partial<Record<Locale, string>>;
     description: Partial<Record<Locale, string>>;
     shots: readonly ProjectShot[];
+    diagrams: readonly ProjectDiagram[];
   }
 >;
 
@@ -81,6 +105,22 @@ export function projectPagePath(id: ProjectPageId, locale: Locale): string {
 
 export function projectShotUrl(id: ProjectPageId, shot: ProjectShot): string {
   return `/assets/projects/${id}/${shot.file}`;
+}
+
+/** The file of a diagram in one edition: its text is in that language. */
+export function projectDiagramFile(
+  diagram: ProjectDiagram,
+  edition: Locale,
+): string {
+  return `${diagram.name}-${edition}.webp`;
+}
+
+export function projectDiagramUrl(
+  id: ProjectPageId,
+  diagram: ProjectDiagram,
+  edition: Locale,
+): string {
+  return `/assets/projects/${id}/diagrams/${projectDiagramFile(diagram, edition)}`;
 }
 
 export const projectsCopy: Record<

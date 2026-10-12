@@ -45,6 +45,21 @@ test('the projects buffer leads through Tools to dgxtop and its other edition', 
       .poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth))
       .toBeGreaterThan(1800);
   }
+  // Each technical section shows its diagram, labelled as GPT-generated and
+  // drawn in English; each one decodes once it has been scrolled into view.
+  const diagrams = tab.locator('main .project-diagram');
+  await expect(diagrams).toHaveCount(11);
+  await expect(diagrams.first().locator('.float-meta')).toHaveText(
+    'GPT-generated · 1536 × 1024',
+  );
+  for (const image of await diagrams.locator('img').all()) {
+    await expect(image).toHaveAttribute('src', /-en\.webp$/);
+    await expect(image).toHaveAttribute('alt', /^GPT-generated diagram: /);
+    await image.scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth))
+      .toBe(1536);
+  }
   await tab
     .locator('.project-sections')
     .getByRole('link', { name: 'Architecture' })
@@ -82,6 +97,15 @@ test('Japanese readers get the complete Japanese project edition', async ({
   await expect(tab.locator('#architecture')).toBeVisible();
   await expect(tab.locator('main figure.dg')).toHaveCount(1);
   await expect(tab.locator('main .project-shot img')).toHaveCount(7);
+  const diagrams = tab.locator('main .project-diagram');
+  await expect(diagrams).toHaveCount(11);
+  await expect(diagrams.first().locator('img')).toHaveAttribute(
+    'src',
+    '/assets/projects/dgxtop/diagrams/architecture-ja.webp',
+  );
+  await expect(diagrams.first().locator('.float-meta')).toHaveText(
+    'GPT 生成 · 1536 × 1024',
+  );
 });
 
 test('the dgxtop page is accessible, fits every width and reads without JavaScript', async ({
@@ -123,6 +147,7 @@ test('the dgxtop page is accessible, fits every width and reads without JavaScri
   await expect(staticTab.locator('h1')).toBeVisible();
   await expect(staticTab.locator('#architecture')).toBeAttached();
   await expect(staticTab.locator('main figure.dg')).toHaveCount(1);
+  await expect(staticTab.locator('main .project-diagram img')).toHaveCount(11);
   await expect(staticTab.locator('main template, main [hidden]')).toHaveCount(
     0,
   );

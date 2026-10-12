@@ -112,13 +112,13 @@ gh api graphql \
 
 `content/projects/projects.json` 保留首頁能力證據所使用的真實 repository 連結。2026-10-03 依擁有者指示移除 Projects 清單、專案詳情與 Privacy 頁，舊網址回傳 404，不再進入 sitemap 或導覽。首頁另移除作品、探索、工程之外、完整紀錄及最後聯絡區塊。
 
-2026-10-11 依擁有者指示新增「專案／工具」：`/{locale}/projects/` 與分類資料夾 `/{locale}/projects/tools/` 三語都有；專案頁只在實際撰寫的語言發布。目前 dgxtop 的架構與設計說明已具備繁體中文、英文、日文全文：`/zh-hant/projects/tools/dgxtop/`、`/en/projects/tools/dgxtop/`、`/ja/projects/tools/dgxtop/`。三語都包含圖表文字、表格、截圖說明及替代文字，原有截圖保持不變。舊的扁平網址 `/<locale>/projects/dgxtop/` 與 Privacy 仍回傳 404。
+2026-10-11 依擁有者指示新增「專案／工具」：`/{locale}/projects/` 與分類資料夾 `/{locale}/projects/tools/` 三語都有；專案頁只在實際撰寫的語言發布。目前 dgxtop 的架構與設計說明已具備繁體中文、英文、日文全文：`/zh-hant/projects/tools/dgxtop/`、`/en/projects/tools/dgxtop/`、`/ja/projects/tools/dgxtop/`。三語都包含圖表文字、表格、截圖說明及替代文字，原有截圖保持不變。頁面後半是依實作撰寫的技術章節（一筆資料的路徑、adapter 隔離、來源仲裁、分層歷史、程序歷史、各程序的 GPU 記憶體、程序操作、資源上限、磁碟上的檔案與程式碼結構），每節附一張 GPT 生成的技術圖，三種語言各有自己的一張；dgxtop 的 README 連到這些章節。舊的扁平網址 `/<locale>/projects/dgxtop/` 與 Privacy 仍回傳 404。
 
 新增專案頁的方式：
 
 - 在 [`src/lib/project-pages.ts`](../src/lib/project-pages.ts) 登記分類、`editions`（實際寫好的語言）、`tagIds`、標題、摘要與截圖清單（檔名與真實像素尺寸）。
 - 正文放在 `src/features/projects/<id>/`：文字集中在 copy 檔，每個語言一份；圖表用 `src/styles/projects.css` 的 `.dg` 配方畫成真正的文字，只用 token class，不寫字面色碼。
-- 截圖放在 `assets/projects/<id>/`，只有頁面列出的檔案才會發布；截圖裡的序號、UUID、權杖等可識別資訊先打碼。生成的插圖照 [設計系統 §7](DESIGN.md#7-插圖與生成圖片) 處理，不拿來當內容圖。
+- 截圖放在 `assets/projects/<id>/`，只有頁面列出的檔案才會發布；截圖裡的序號、UUID、權杖等可識別資訊先打碼。生成的插圖照 [設計系統 §7](DESIGN.md#7-插圖與生成圖片) 處理，不拿來當內容圖。GPT 生成的含文字技術圖則照 §7「含文字的技術圖」生成與驗收，放在 `assets/projects/<id>/diagrams/`，每種語言一張並在 `project-pages.ts` 登記，頁面用 §9 的「專案技術圖」呈現。
 - 專案頁的程式碼是獨立 chunk，只在專案網址載入；預先渲染會先等它載好，所以靜態 HTML 有完整內容，沒有 JavaScript 也能讀。
 
 ## 品牌素材

@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { LoaderFunctionArgs } from 'react-router';
@@ -8,9 +9,11 @@ import { ProjectPage } from '../../src/features/projects/ProjectPage.tsx';
 import { Projects } from '../../src/features/projects/Projects.tsx';
 import {
   dgxtopCopy,
+  diagramNames,
   installCommand,
   sectionIds,
   shotFiles,
+  techSectionIds,
 } from '../../src/features/projects/dgxtop/copy.tsx';
 import { locales } from '../../src/i18n/index.ts';
 import {
@@ -20,6 +23,7 @@ import {
 } from '../../src/lib/content.server.ts';
 import { readImageSize } from '../../src/lib/image-size.server.ts';
 import {
+  projectDiagramFile,
   projectEdition,
   projectPagePath,
   projectPages,
@@ -175,13 +179,36 @@ describe('dgxtop page', () => {
       expect(html).toContain('aria-labelledby="dg-architecture-title"');
       for (const [name] of [
         ...t.architecture.components.rows,
-        ...t.architecture.code.rows,
+        ...(t.tech.code.table?.rows ?? []),
+        ...(t.tech.storage.table?.rows ?? []),
       ])
         expect(html).toContain(`<td>${name}</td>`);
+      for (const id of techSectionIds)
+        for (const point of t.tech[id].points)
+          expect(html, id).toContain(point.title);
       for (const file of shotFiles) {
         expect(html).toContain(`src="/assets/projects/dgxtop/${file}"`);
         expect(html).toContain(t.shots[file].caption);
       }
+      // Every generated diagram is labelled as such and drawn in this
+      // edition's language; no other edition's image is loaded.
+      expect(html.match(/<figure class="project-diagram"/g)).toHaveLength(
+        diagramNames.length,
+      );
+      for (const name of diagramNames) {
+        const src = `/assets/projects/dgxtop/diagrams/${name}-${locale}.webp`;
+        expect(html).toContain(`src="${src}"`);
+        expect(html).toContain(`alt="${t.generated.alt}`);
+        expect(html).toContain(t.diagrams[name].caption);
+        expect(t.diagrams[name].alt.length, name).toBeGreaterThan(80);
+      }
+      expect(
+        html.match(
+          new RegExp(`${t.generated.title} · 1536 × 1024</span>`, 'g'),
+        ),
+      ).toHaveLength(diagramNames.length);
+      for (const other of locales.filter((edition) => edition !== locale))
+        expect(html).not.toContain(`-${other}.webp`);
       // Only the screenshot already in view on load is fetched eagerly.
       expect(html.match(/loading="eager"/g)).toHaveLength(1);
       for (const id of projectPages.dgxtop.tagIds)
@@ -205,5 +232,24 @@ describe('dgxtop page', () => {
     expect(projectPages.dgxtop.shots.map((shot) => shot.file)).toEqual([
       ...shotFiles,
     ]);
+  });
+
+  it('ships every diagram in every edition at the size its page declares, and nothing else', () => {
+    const { diagrams, editions } = projectPages.dgxtop;
+    expect(diagrams.map((diagram) => diagram.name)).toEqual([...diagramNames]);
+    const files = diagrams.flatMap((diagram) =>
+      editions.map((edition) => projectDiagramFile(diagram, edition)),
+    );
+    for (const diagram of diagrams)
+      for (const edition of editions) {
+        const file = `assets/projects/dgxtop/diagrams/${projectDiagramFile(diagram, edition)}`;
+        expect(readImageSize(file), file).toEqual({
+          width: diagram.width,
+          height: diagram.height,
+        });
+      }
+    expect(readdirSync('assets/projects/dgxtop/diagrams').sort()).toEqual(
+      files.sort(),
+    );
   });
 });

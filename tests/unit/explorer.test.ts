@@ -10,6 +10,10 @@ import { networkNotes } from '../../src/lib/network-notes.ts';
 import { noteCopy } from '../../src/lib/notes-copy.ts';
 import { collectionNoteMeta } from '../../src/lib/note-collections.server.ts';
 import { noteTree } from '../../src/lib/note-tree.server.ts';
+import {
+  projectCategoryCopy,
+  projectsCopy,
+} from '../../src/lib/project-pages.ts';
 
 function attribute(tag: string, name: string) {
   return tag.match(new RegExp(`${name}="([^"]+)"`))?.[1];
@@ -87,7 +91,11 @@ describe('folder disclosures', () => {
       expect(
         names.filter((name) => /\.md$|^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(name)),
       ).toEqual([]);
-      expect(names.slice(0, 3)).toEqual([
+      // Projects come first, then the README, the blog and the notes.
+      expect(names.slice(0, 6)).toEqual([
+        projectsCopy[locale].title,
+        projectCategoryCopy[locale].tools.title,
+        'dgxtop',
         t.navAbout,
         t.navLibrary,
         noteCopy[locale].notes,

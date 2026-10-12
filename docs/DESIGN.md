@@ -196,9 +196,9 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 **生成新圖片的流程**（透過 Codex，擁有者已核准的範圍化路徑）：
 
-1. 先確認現有圖示或 CSS 無法表達。每個任務最多規劃 6 張，超過要先問擁有者。
+1. 先確認現有圖示或 CSS 無法表達。張數不設上限，依內容需要規劃。
 2. 前置條件：`codex --version` 成功、`codex login status` 為已登入、不是在被委派的子代理裡（`OPS_TOOLS_ACPX_DEPTH` 未設定或為 0）。
-3. 每次呼叫只生成一張，依序進行，不平行、不重試到滿意為止，每張最多修正一次。只送出 brief，不送原始碼、私人資料或螢幕截圖。在私人暫存目錄執行，並設 300 秒逾時：
+3. 每次呼叫只生成一張，每張在自己的私人暫存目錄執行；同一批的 brief 一次全部送出、平行生成，不要一張等一張。不重試到滿意為止：每張最多修正兩次，每次都在 brief 寫明上一張錯在哪裡，仍不合格就改用圖示、CSS 或程式繪製的圖。只送出 brief，不送原始碼、私人資料或螢幕截圖。設 300 秒逾時（含大量文字的技術圖 480 秒），逾時的只重送那幾張：
 
    ```text
    codex exec --cd <scratch> --skip-git-repo-check --sandbox workspace-write --ephemeral --json -
@@ -223,6 +223,18 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 6. **處理**：依 alpha 主體加 6% 邊界裁切，在預乘 alpha 下用 Lanczos 縮放到顯示尺寸的 2 倍，再以 `cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv` 轉成 WebP，並對最終 bytes 重跑驗收。
 7. **命名與紀錄**：放在 `assets/illustrations/<用途>-v<N>.webp`，不覆蓋既有檔（要改就升版號）。在 `data/illustration-assets.json` 記錄用途、顯示尺寸、寬高、bytes、SHA-256、透明度結果、來源（實際工具，模型未回報就寫 `unknown`）、brief 摘要與 brief 的 SHA-256。`scripts/check-artifact.ts` 會拒絕沒有紀錄或 bytes 不符的插圖。
 8. 條件不成立時回報 `codex_image_unavailable` 與原因，改用圖示或 CSS，並留下 brief。
+
+### 含文字的技術圖
+
+專案頁的技術章節可以用 Codex 生成含文字的架構圖、流程圖與資料圖。它們是內容圖，不是上面的站內插圖：不套用星座線稿風格、背景不透明，也不記在 `data/illustration-assets.json`；生成照上面第 2、3、8 步。
+
+- **內容**：圖上的每個名稱、數字與箭頭都要對得上實作（程式碼與實際行為），規格文件只是參考；舉例的數值在圖上標明是示意。程式改了，圖就重生。
+- **語言**：每張圖做繁體中文、英文、日文三份，各是一張圖；檔名、程式碼識別字、路徑、系統呼叫與產品名稱保留原文。
+- **風格**：1536×1024（3:2）；背景 `#0c1118`；面板 `#131c27` 配 `#35465c` 外框，群組外框 `#526780`；標題 `#e6edf5`、副標 `#a0b0c5`；元件名稱 `#96c3ff`；程式碼與路徑用等寬字 `#83d8cf`，資料路徑是 `#83d8cf` 實線箭頭，控制路徑是 `#ccafff` 虛線。不用紅、綠、金等狀態色，沒有浮水印、簽名或外框。同一組圖的標題位置、字級層次與配色一致，同一張圖的三種語言版面一致；畫面均勻分配，不留大片空白。
+- **Brief**：列出每個元素的確切文字（`|` 表示換行），再寫構圖與每條箭頭的起點和終點。對應關係用箭頭容易接錯時，改用同色色塊對應。
+- **驗收**：逐字核對每個標籤（日文的濁點與半濁點、中文的繁體字形），逐條核對箭頭的起點與終點；量測尺寸、四角背景與色相，確認沒有狀態色；再看風格：對齊、留白、字級，以及與同組圖、三種語言是否一致。任一項不合格就修正 brief 重生。
+- **處理與命名**：以 `cwebp -q 92 -m 6 -sharp_yuv` 轉成 WebP，放在 `assets/projects/<id>/diagrams/<name>-<edition>.webp`，在 `project-pages.ts` 登記名稱與真實像素。
+- **呈現**：用 §9 的「專案技術圖」配方；正文要完整說明圖上的內容，圖不是唯一的資訊來源。
 
 ## 8. Buffer 語法：頁面內容怎麼寫
 
@@ -263,6 +275,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 照片與構圖疊圖 | `.sn-photo`、`.sn-guides`、`.sn-legend` | 浮動視窗：`.float-title`（`image` 圖示＋實際檔名＋真實像素）、`chrome` 底、`--edge-highlight`。疊圖依照片的實際比例繪製：三分線 `text` 虛線、視線路徑 `link` 虛線、保留元素 `entity-file` 實線圈、檢查元素 `entity-kind` 虛線圈，每條線下方有 `chrome` 描邊；編號圓點對應圖下說明，圖例不只靠顏色 | 每張照片一個「輔助線」切換鈕（`aria-pressed`，只在 JavaScript 下顯示），全頁可關閉三分線或標記；沒有 JavaScript 時疊圖照常顯示；只有封面 eager，其餘 lazy；GPT 生成的構圖示意圖沿用同一個視窗，標題列寫「GPT 生成 · 寬 × 高」，替代文字以生成來源開頭，圖上的標註屬於圖片本身、不能關閉 |
 | 專案截圖 | `.project-shot`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋真實檔名＋真實像素尺寸）、`chrome` 底、`--edge-highlight`，不加陰影；截圖連到原尺寸檔；說明在下方 | 截圖不裁切、不加濾鏡，可識別資訊（序號、UUID）先打碼；只有第一張 eager，其餘 lazy；畫廊每列最少 420px |
 | 專案架構圖 | `.dg`（`projects.css`） | 標題列（粗體標題＋一句讀法）＋由真正文字組成的節點與箭頭（清單，時間軸用內嵌 SVG）；資料路徑 `entity-file` 實線、控制路徑 `entity-kind` 虛線、節點 `surface`、晶片 `border-subtle` | 不用狀態色（圖裡沒有真實狀態）；窄螢幕流程改成直向 ↓，SVG 在自身可聚焦區域捲動；整張圖只有一個行號 |
+| 專案技術圖 | `.project-diagram`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋「GPT 生成 · 寬 × 高」，英文為 「GPT-generated · 寬 × 高」）、`chrome` 底、`--edge-highlight`，不加陰影；圖連到原尺寸檔；說明在下方 | 每種語言載入自己的那張；替代文字以生成來源開頭；全部 lazy；圖上的文字屬於圖片本身，正文完整說明同樣的內容 |
 
 ## 10. 互動、狀態與動態
 
@@ -312,7 +325,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 |---|---|
 | [`tests/unit/design.test.ts`](../tests/unit/design.test.ts) | tokens 數值與單一來源、全部文字角色的對比、模式色與主要按鈕的對比、品牌圖 bytes |
 | [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts) | buffers 是五個區域（README.md、blog、note、projects、paper-daily）；快速連結的名稱包含可見標籤；外框不再有點陣圖符號 |
-| [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖尺寸與宣告相符；320–1920px 不溢出、axe、無 JavaScript 可讀 |
+| [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖與技術圖的尺寸與宣告相符，技術圖在三種語言都標明 GPT 生成並載入該語言的檔案；320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；疊圖切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts) | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合 |
 | [`tests/unit/explorer.test.ts`](../tests/unit/explorer.test.ts)、[`tests/e2e/explorer.spec.ts`](../tests/e2e/explorer.spec.ts) | 檔案樹的開合、名稱語言與層級；每層縮排兩格、箭頭與圖示落在第 2n−1 與第 2n+1 格（有無 JavaScript 皆同），「│」「└」與祖先導引線依 neo-tree 規則出現；名稱不截斷，一列太寬時檔案樹向右捲動，頁面、標題列與抽屜不橫捲 |
