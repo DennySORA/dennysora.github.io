@@ -145,7 +145,7 @@ const crateRows = (contents: readonly string[]) =>
 
 const en: DgxtopCopy = {
   eyebrow: 'Tools · Rust · Ratatui · updated 2026-10-12',
-  lead: 'dgxtop is a terminal monitor for NVIDIA GPUs. One screen shows every GPU’s utilization, memory, temperature, power and clocks, which job holds how much of its memory, each in its own color, and the rest of the machine: CPU, memory, disks and network. Every GPU job is recorded from start to end with its command line, peak memory and how it ended, and the history stays on disk across restarts. It is built for the DGX Spark and runs on any Linux machine with NVIDIA GPUs.',
+  lead: 'dgxtop is a terminal monitor for NVIDIA GPUs on Linux and DGX Spark. One screen shows every GPU’s utilization, memory, temperature, power and clocks, which job holds how much of its memory, each in its own color, and the rest of the machine: CPU, memory, disks and network. Every GPU job is recorded from start to end with its command line, peak memory and how it ended, and the history stays on disk across restarts. It is built for the DGX Spark and runs on any Linux machine with NVIDIA GPUs.',
   facts: {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
@@ -823,7 +823,7 @@ const en: DgxtopCopy = {
 
 const zh: DgxtopCopy = {
   eyebrow: '工具 · Rust · Ratatui · 2026-10-12 更新',
-  lead: 'dgxtop 是 NVIDIA GPU 的終端監控工具。一個畫面就能看到每張 GPU 的使用率、記憶體、溫度、功耗與時脈，每個工作佔用多少記憶體（各有自己的顏色），以及整台機器的 CPU、記憶體、磁碟與網路。每個 GPU 工作從開始到結束都有紀錄，包括命令列、記憶體峰值與結束方式；歷史寫入磁碟，重開之後還在。它為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用。',
+  lead: 'dgxtop 是 Linux 與 DGX Spark 上的 NVIDIA GPU 終端監控工具。一個畫面就能看到每張 GPU 的使用率、記憶體、溫度、功耗與時脈，每個工作佔用多少記憶體（各有自己的顏色），以及整台機器的 CPU、記憶體、磁碟與網路。每個 GPU 工作從開始到結束都有紀錄，包括命令列、記憶體峰值與結束方式；歷史寫入磁碟，重開之後還在。它為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用。',
   facts: {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:
@@ -1473,7 +1473,7 @@ const zh: DgxtopCopy = {
 
 const ja: DgxtopCopy = {
   eyebrow: 'ツール · Rust · Ratatui · 2026-10-12 更新',
-  lead: 'dgxtop は NVIDIA GPU のためのターミナルモニターです。1 つの画面に、各 GPU の使用率、メモリ、温度、電力、クロック、どのジョブがメモリをどれだけ使っているか（それぞれの色で）、そしてマシンの CPU、メモリ、ディスク、ネットワークを表示します。すべての GPU ジョブを開始から終了まで、コマンドライン、メモリのピーク、終わり方とともに記録し、履歴は再起動してもディスクに残ります。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます。',
+  lead: 'dgxtop は Linux と DGX Spark の NVIDIA GPU 向けターミナルモニターです。1 つの画面に、各 GPU の使用率、メモリ、温度、電力、クロック、どのジョブがメモリをどれだけ使っているか（それぞれの色で）、そしてマシンの CPU、メモリ、ディスク、ネットワークを表示します。すべての GPU ジョブを開始から終了まで、コマンドライン、メモリのピーク、終わり方とともに記録し、履歴は再起動してもディスクに残ります。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます。',
   facts: {
     stack: 'Rust 1.92 · Ratatui · crossterm · NVML · SQLite',
     platforms:

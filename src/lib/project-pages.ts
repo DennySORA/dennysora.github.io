@@ -33,15 +33,15 @@ export const projectPages = {
     repository: 'https://github.com/DennySORA/dgxtop',
     updatedAt: '2026-10-12',
     title: {
-      'zh-hant': 'dgxtop：為 DGX Spark 打造的終端 GPU 監控工具',
-      en: 'dgxtop: a terminal GPU monitor built for DGX Spark',
-      ja: 'dgxtop：DGX Spark のために作ったターミナル GPU モニター',
+      'zh-hant': 'dgxtop：Linux 與 DGX Spark 上的 NVIDIA GPU 終端監控工具',
+      en: 'dgxtop: a terminal monitor for NVIDIA GPUs on Linux and DGX Spark',
+      ja: 'dgxtop：Linux と DGX Spark の NVIDIA GPU 向けターミナルモニター',
     },
     description: {
       'zh-hant':
-        '在一個終端畫面裡看每張 NVIDIA GPU、每個工作佔用多少記憶體與整台機器，並記錄每個 GPU 工作從開始到結束。為 DGX Spark 打造，也能在任何裝有 NVIDIA GPU 的 Linux 主機上使用：功能、安裝與架構。',
-      en: 'Every NVIDIA GPU, each job’s share of its memory and the whole machine on one terminal screen, plus a record of every GPU job from start to end. Built for DGX Spark, runs on any Linux machine with NVIDIA GPUs: features, install and architecture.',
-      ja: 'NVIDIA GPU、ジョブごとのメモリ使用量、マシン全体を 1 つのターミナル画面に表示し、すべての GPU ジョブを開始から終了まで記録します。DGX Spark のために作り、NVIDIA GPU を搭載したどの Linux マシンでも動きます：機能、インストール、アーキテクチャ。',
+        '在一個終端畫面裡看每張 NVIDIA GPU、每個工作佔用多少記憶體與整台機器，並記錄每個 GPU 工作從開始到結束，包括它怎麼結束。功能、安裝，以及運作原理的技術深入解析。',
+      en: 'Every NVIDIA GPU, each job’s share of its memory and the whole machine on one terminal screen, plus a record of every GPU job from start to end, including how it ended. Features, install and a technical deep dive into how it works.',
+      ja: 'NVIDIA GPU、ジョブごとのメモリ使用量、マシン全体を 1 つのターミナル画面に表示し、すべての GPU ジョブを開始から終了まで、終わり方とともに記録します。機能、インストール、仕組みの技術解説。',
     },
     shots: [
       { file: 'dgx-spark-overview.webp', width: 1909, height: 969 },

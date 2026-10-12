@@ -28,7 +28,7 @@ test('the projects buffer leads through Tools to dgxtop and its other edition', 
     .click();
   await expect(tab).toHaveURL(new RegExp(`${page}$`));
   await expect(tab.locator('h1')).toContainText(
-    'terminal GPU monitor built for DGX Spark',
+    'terminal monitor for NVIDIA GPUs on Linux and DGX Spark',
   );
   await expect(tab.locator('#install ~ .code-block code')).toContainText(
     'install.sh | bash',
