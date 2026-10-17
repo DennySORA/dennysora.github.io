@@ -90,81 +90,6 @@
     "ja": "動画と音声トラックは作者の Hugging Face データセットにあり、URL は特定のコミットに固定しています。ページが最初に読み込むのは本サイトのポスターと静止画だけで、動画は再生を押したときに Hugging Face から取得します。"
   },
   {
-    "source": "本文章節",
-    "en": "Sections of this note",
-    "ja": "このノートの節"
-  },
-  {
-    "source": "結論",
-    "en": "Conclusions",
-    "ja": "結論"
-  },
-  {
-    "source": "建議組合",
-    "en": "Recommended setups",
-    "ja": "おすすめの構成"
-  },
-  {
-    "source": "比較影片",
-    "en": "Comparison videos",
-    "ja": "比較動画"
-  },
-  {
-    "source": "實驗設計",
-    "en": "Experiment design",
-    "ja": "実験の設計"
-  },
-  {
-    "source": "速度",
-    "en": "Speed",
-    "ja": "速度"
-  },
-  {
-    "source": "記憶體",
-    "en": "Memory",
-    "ja": "メモリ"
-  },
-  {
-    "source": "畫面指標",
-    "en": "Image metrics",
-    "ja": "画質の指標"
-  },
-  {
-    "source": "參考圖貼上",
-    "en": "Copy-through",
-    "ja": "参照画像の貼り付け"
-  },
-  {
-    "source": "各元件畫面",
-    "en": "Every component",
-    "ja": "コンポーネントごとの画面"
-  },
-  {
-    "source": "其他觀察",
-    "en": "Other observations",
-    "ja": "そのほかの観察"
-  },
-  {
-    "source": "NF4 載入失敗",
-    "en": "NF4 load failures",
-    "ja": "NF4 のロード失敗"
-  },
-  {
-    "source": "限制",
-    "en": "Limits",
-    "ja": "限界"
-  },
-  {
-    "source": "後續",
-    "en": "Follow-ups",
-    "ja": "今後の課題"
-  },
-  {
-    "source": "檔案與核對",
-    "en": "Files and checks",
-    "ja": "ファイルと照合"
-  },
-  {
     "source": "速度先看加速方式，再看量化。同一種加速下，INT8 比 FP8 快約 4–10%，BF16 慢 1.6–2.0 倍（權重量加倍：8 步一次呼叫要從主機搬 310 GB，而不是 155 GB）；原版 50 步比 PAI 8 步慢 6.0–6.4 倍。",
     "en": "Acceleration matters first, quantization second. With the same acceleration, INT8 is about 4–10% faster than FP8 and BF16 is 1.6–2.0× slower (twice the weights: an 8-step call moves 310 GB from host memory instead of 155 GB). Base 50-step is 6.0–6.4× slower than PAI 8-step.",
     "ja": "速度はまず高速化の方式で決まり、量子化はその次です。同じ高速化なら INT8 は FP8 より約 4–10% 速く、BF16 は 1.6–2.0 倍遅くなります（重みが 2 倍：8 ステップの 1 回の呼び出しでホストから 310 GB を転送し、FP8 なら 155 GB）。ベース 50 ステップは PAI 8 ステップより 6.0–6.4 倍遅くなります。"
@@ -208,6 +133,11 @@
     "source": "// 01 · Conclusions",
     "en": "// 01 · Conclusions",
     "ja": "// 01 · 結論"
+  },
+  {
+    "source": "結論",
+    "en": "Conclusions",
+    "ja": "結論"
   },
   {
     "source": "FP8 · PAI 8 步（現行）",
@@ -345,9 +275,19 @@
     "ja": "用途に合わせてコンポーネントを選びます。seed とプロンプトは 1 つずつなので、現行のコンポーネントを替える前に複数の seed で確かめてください（参照："
   },
   {
+    "source": "後續",
+    "en": "Follow-ups",
+    "ja": "今後の課題"
+  },
+  {
     "source": "// 02 · Recommended setups",
     "en": "// 02 · Recommended setups",
     "ja": "// 02 · おすすめの構成"
+  },
+  {
+    "source": "建議組合",
+    "en": "Recommended setups",
+    "ja": "おすすめの構成"
   },
   {
     "source": "每支影片是 2×2 同步畫面，每格都是原始的 768×448（整支 1540×900、24 fps、124 幀），格與格之間留 4 px 間隔。畫面上沒有任何文字標籤，每一格是哪個元件寫在影片下方。37 個成片的元件都至少出現在一組。",
@@ -870,9 +810,14 @@
     "ja": "40 個のコンポーネントの全設定"
   },
   {
-    "source": "// 04 · Method",
-    "en": "// 04 · Method",
-    "ja": "// 04 · 実験方法"
+    "source": "// 09 · Method",
+    "en": "// 09 · Method",
+    "ja": "// 09 · 実験方法"
+  },
+  {
+    "source": "實驗設計",
+    "en": "Experiment design",
+    "ja": "実験の設計"
   },
   {
     "source": "載入",
@@ -1045,9 +990,14 @@
     "ja": "速度の全数値"
   },
   {
-    "source": "// 05 · Speed",
-    "en": "// 05 · Speed",
-    "ja": "// 05 · 速度"
+    "source": "// 04 · Speed",
+    "en": "// 04 · Speed",
+    "ja": "// 04 · 速度"
+  },
+  {
+    "source": "速度",
+    "en": "Speed",
+    "ja": "速度"
   },
   {
     "source": "torch 配置峰值",
@@ -1160,9 +1110,9 @@
     "ja": "1 回の呼び出しでホストから GPU に転送する重み：8 ステップの FP8／INT8 は 155 GB、BF16 は 310 GB、4 ステップは 78 GB、ベース 50 ステップは 965 GB です。"
   },
   {
-    "source": "// 06 · Memory",
-    "en": "// 06 · Memory",
-    "ja": "// 06 · メモリ"
+    "source": "// 05 · Memory",
+    "en": "// 05 · Memory",
+    "ja": "// 05 · メモリ"
   },
   {
     "source": "記憶體與顯存",
@@ -1240,9 +1190,14 @@
     "ja": "PSNR／SSIM：同じ系列の基準との差（同じ LoRA の FP8 attention の BF16 版。ベースは公式精度の BF16）。高いほど基準に近いという意味で、画質の良し悪しではありません。拡散モデルでは、ごく小さな数値差が別の細部へと広がります。"
   },
   {
-    "source": "// 07 · Image metrics",
-    "en": "// 07 · Image metrics",
-    "ja": "// 07 · 画質の指標"
+    "source": "// 06 · Image metrics",
+    "en": "// 06 · Image metrics",
+    "ja": "// 06 · 画質の指標"
+  },
+  {
+    "source": "畫面指標",
+    "en": "Image metrics",
+    "ja": "画質の指標"
   },
   {
     "source": "參考圖 1：橘色長髮、披著深褐色羽毛斗篷、手拿羽毛筆的角色；透明背景在模型的輸入裡變成黑色。",
@@ -1390,9 +1345,9 @@
     "ja": "実際には、参照ありでは Turbo 4 ステップかベースを優先してください。透過 PNG を背景色に重ねてからアップロードすれば貼り付けが目立ちにくくなるかもしれませんが、貼り付け自体が減るかはまだ検証していません。"
   },
   {
-    "source": "// 08 · Reference copy-through",
-    "en": "// 08 · Reference copy-through",
-    "ja": "// 08 · 参照画像の貼り付け"
+    "source": "// 07 · Reference copy-through",
+    "en": "// 07 · Reference copy-through",
+    "ja": "// 07 · 参照画像の貼り付け"
   },
   {
     "source": "有參考：參考圖原樣貼上",
@@ -1465,9 +1420,14 @@
     "ja": "各列は第 0・31・62・93・123 フレームです。折りたたみを開くと、そのコンポーネントの元の出力（768×448、音声付き、Hugging Face から読み込み）を再生できます。SSIM は同じ系列の基準との差です。"
   },
   {
-    "source": "// 09 · Every component",
-    "en": "// 09 · Every component",
-    "ja": "// 09 · コンポーネント別"
+    "source": "// 08 · Every component",
+    "en": "// 08 · Every component",
+    "ja": "// 08 · コンポーネント別"
+  },
+  {
+    "source": "各元件畫面",
+    "en": "Every component",
+    "ja": "コンポーネントごとの画面"
   },
   {
     "source": "同一種加速內，FP8、INT8、BF16 與 attention 變體的鏡頭、構圖與角色位置都一樣，差在細節（髮飾、劍光形狀、碎石、背景建築）（目視）。",
@@ -1510,6 +1470,11 @@
     "ja": "// 10 · そのほかの観察"
   },
   {
+    "source": "其他觀察",
+    "en": "Other observations",
+    "ja": "そのほかの観察"
+  },
+  {
     "source": "三個 NF4 元件（原版、Turbo 8 步、Turbo 4 步，都是 AdaLN off、常駐 GPU）用同一個剪枝單檔，都在 load_dit 階段以同一個錯誤失敗：",
     "en": "The three NF4 components (base, Turbo 8-step and Turbo 4-step, all with AdaLN off and resident on the GPU) share one pruned single file, and all failed in the load_dit stage with the same error:",
     "ja": "NF4 の 3 個（ベース、Turbo 8 ステップ、Turbo 4 ステップ。いずれも AdaLN off で GPU に常駐）は同じプルーニング済みの単一ファイルを使い、どれも load_dit 段階で同じエラーにより失敗しました。"
@@ -1523,6 +1488,11 @@
     "source": "// 11 · Load failures",
     "en": "// 11 · Load failures",
     "ja": "// 11 · ロード失敗"
+  },
+  {
+    "source": "NF4 載入失敗",
+    "en": "NF4 load failures",
+    "ja": "NF4 のロード失敗"
   },
   {
     "source": "每個情境只有一個提示詞、一個 seed（42）。畫面差異與參考圖貼上的幀數只代表這次取樣，要下定論需要多個 seed 與提示詞。",
@@ -1558,6 +1528,11 @@
     "source": "// 12 · Limits",
     "en": "// 12 · Limits",
     "ja": "// 12 · 限界"
+  },
+  {
+    "source": "限制",
+    "en": "Limits",
+    "ja": "限界"
   },
   {
     "source": "用 3–5 個 seed 與多個提示詞重跑幾個候選（FP8／INT8 · PAI 8 步、Turbo 4 步、INT8 原版），確認參考圖貼上與畫面偏好。",
@@ -1628,5 +1603,40 @@
     "source": "// 14 · Files & checks",
     "en": "// 14 · Files & checks",
     "ja": "// 14 · ファイルと照合"
+  },
+  {
+    "source": "檔案與核對",
+    "en": "Files and checks",
+    "ja": "ファイルと照合"
+  },
+  {
+    "source": "本文分頁",
+    "en": "Sections of this note",
+    "ja": "このノートのタブ"
+  },
+  {
+    "source": "總覽",
+    "en": "Overview",
+    "ja": "概要"
+  },
+  {
+    "source": "比較影片",
+    "en": "Comparison videos",
+    "ja": "比較動画"
+  },
+  {
+    "source": "記憶體",
+    "en": "Memory",
+    "ja": "メモリ"
+  },
+  {
+    "source": "各元件",
+    "en": "Components",
+    "ja": "コンポーネント"
+  },
+  {
+    "source": "方法與說明",
+    "en": "Method & notes",
+    "ja": "方法と補足"
   }
 ]

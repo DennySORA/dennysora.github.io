@@ -172,7 +172,7 @@ export function noteMeta(id: NoteId) {
   }
 }
 
-/** The note/ tree in one language, as the Explorer and folder pages show it. */
+/** The note/ tree and the ai/ area in one language, as the Explorer and folder pages show them. */
 export function noteTree(
   locale: Locale,
   parent: NoteFolderId | null = null,

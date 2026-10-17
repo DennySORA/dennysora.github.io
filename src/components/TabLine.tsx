@@ -1,6 +1,6 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react';
 import { dictionaries, type Locale } from '../i18n/index.ts';
-import type { RouteDescriptor } from '../lib/route-manifest.ts';
+import { navSection, type RouteDescriptor } from '../lib/route-manifest.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { projectsCopy } from '../lib/project-pages.ts';
 import { contactEmail, githubUrl } from '../lib/site.ts';
@@ -9,6 +9,7 @@ import {
   areaState,
   crumbs,
   fileKind,
+  isAreaLanding,
   type Area,
   type AreaKey,
   type WorkspaceFiles,
@@ -34,6 +35,7 @@ const areaIcons: Record<AreaKey, IconName> = {
   home: 'markdown',
   library: 'folder',
   notes: 'folder',
+  ai: 'folder',
   projects: 'folder',
   papers: 'newspaper',
 };
@@ -59,28 +61,14 @@ function Buffers({
     home: t.navAbout,
     library: t.navLibrary,
     notes: noteCopy[locale].notes,
+    ai: t.navAi,
     projects: projectsCopy[locale].title,
     papers: `${t.navPapers}（${t.newTab}）`,
   };
-  const landing = ['root', 'home', 'library', 'notes', 'projects'].includes(
-    route.kind,
-  );
+  const landing = isAreaLanding(route);
   const current = landing ? null : path[path.length - 1];
-  const after: AreaKey | null = ['article', 'topic', 'tags', 'tag'].includes(
-    route.kind,
-  )
-    ? 'library'
-    : [
-          'note-folder',
-          'medical-note',
-          'network-note',
-          'hardware-note',
-          'collection-note',
-        ].includes(route.kind)
-      ? 'notes'
-      : ['project-category', 'project'].includes(route.kind)
-        ? 'projects'
-        : null;
+  // A page inside an area opens right after that area's buffer.
+  const after: AreaKey | null = landing ? null : navSection(route);
   const list = useRef<HTMLUListElement>(null);
   // Keep the open buffer in view when the row scrolls on narrow screens.
   useEffect(() => {
@@ -104,8 +92,7 @@ function Buffers({
   ) : null;
   const tab = (area: Area) => {
     const state = areaState(route, area.key);
-    const folder =
-      area.key === 'library' || area.key === 'notes' || area.key === 'projects';
+    const folder = ['library', 'notes', 'ai', 'projects'].includes(area.key);
     return (
       <li key={area.key}>
         <a

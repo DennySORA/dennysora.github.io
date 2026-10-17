@@ -177,24 +177,48 @@ test('the new notes are accessible, fit every width and read without JavaScript'
   await context.close();
 });
 
-const comparison = '/zh-hant/note/ai/video/comparisons/h3-dit-components/';
+const comparison = '/zh-hant/ai/video/comparisons/h3-dit-components/';
+const tabIds = [
+  'tab-overview',
+  'tab-videos',
+  'tab-speed',
+  'tab-memory',
+  'tab-image',
+  'tab-components',
+  'tab-method',
+];
 
-test('AI / Video / Data comparisons leads to the H3 DiT note, whose videos wait for play', async ({
+test('AI is a top-level area that leads to the H3 DiT note, whose videos wait for play', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
+  // AI sits beside the notes in the Explorer and the tabline, not inside them.
   await page.goto('/zh-hant/note/');
   const main = page.locator('main');
-  await main.getByRole('link', { name: 'AI', exact: true }).click();
-  await expect(page).toHaveURL(/\/note\/ai\/$/);
+  await expect(main.locator('a[href="/zh-hant/ai/"]')).toHaveCount(0);
+  await expect(
+    page.locator(
+      '#desktop-explorer .tree > li > .tree-folder-row a[href="/zh-hant/ai/"]',
+    ),
+  ).toHaveCount(1);
+  await page.locator('.buffers a[data-area="ai"]').click();
+  await expect(page).toHaveURL(/\/zh-hant\/ai\/$/);
+  await expect(page.locator('.buffers a[data-area="ai"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   await main.getByRole('link', { name: '影片', exact: true }).click();
-  await expect(page).toHaveURL(/\/note\/ai\/video\/$/);
+  await expect(page).toHaveURL(/\/zh-hant\/ai\/video\/$/);
   await main.getByRole('link', { name: '數據比較', exact: true }).click();
-  await expect(page).toHaveURL(/\/note\/ai\/video\/comparisons\/$/);
+  await expect(page).toHaveURL(/\/zh-hant\/ai\/video\/comparisons\/$/);
   await main.getByRole('link', { name: /H3 DiT 元件比較/ }).click();
   await expect(page).toHaveURL(new RegExp(`${comparison}$`));
   await expect(page.locator('.cmdline')).toContainText(
-    'note/ai/video/comparisons/h3-dit-components.md',
+    'ai/video/comparisons/h3-dit-components.md',
+  );
+  await expect(page.locator('.buffers a[data-area="ai"]')).toHaveAttribute(
+    'aria-current',
+    'true',
   );
   // 16 comparison grids and 37 raw outputs, none of them loaded yet.
   const videos = page.locator('.study-note video');
@@ -207,8 +231,6 @@ test('AI / Video / Data comparisons leads to the H3 DiT note, whose videos wait 
       /^https:\/\/huggingface\.co\/datasets\/DennySORA\/dennysora-site-media\/resolve\/[0-9a-f]{40}\/notes\/h3-dit-components\//,
     );
   }
-  await page.locator('#gallery-ref2va').scrollIntoViewIfNeeded();
-  await page.locator('#files').scrollIntoViewIfNeeded();
   expect(
     await videos.evaluateAll((items) =>
       items.every(
@@ -220,6 +242,7 @@ test('AI / Video / Data comparisons leads to the H3 DiT note, whose videos wait 
   ).toBe(true);
 
   // The audio switcher picks one tile's track without loading anything.
+  await page.getByRole('tab', { name: '比較影片' }).click();
   const grid = page.locator('#grid-a1-t2va-fp8');
   const video = grid.locator('video');
   const choose = (tile: string) =>
@@ -252,7 +275,52 @@ test('AI / Video / Data comparisons leads to the H3 DiT note, whose videos wait 
   expect(await page.context().cookies()).toEqual([]);
 });
 
-test('the H3 DiT note is accessible in every edition, fits every width and reads without JavaScript', async ({
+test('the H3 DiT note shows one content tab at a time and follows links into other tabs', async ({
+  page,
+}) => {
+  await page.goto(comparison);
+  const tablist = page.getByRole('tablist');
+  await expect(tablist.getByRole('tab')).toHaveCount(tabIds.length);
+  const panel = (id: string) => page.locator(`#${id}`);
+  const shown = async (id: string) => {
+    await expect(panel(id)).toBeVisible();
+    for (const other of tabIds.filter((item) => item !== id))
+      await expect(panel(other)).toBeHidden();
+    await expect(page.locator(`#${id}-tab`)).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  };
+  // The overview with the conclusions comes first.
+  await shown('tab-overview');
+  await expect(page.locator('#conclusions')).toBeVisible();
+  await page.getByRole('tab', { name: '速度' }).click();
+  await shown('tab-speed');
+  await expect(page).toHaveURL(/#tab-speed$/);
+  await expect(page.locator('#chart-speed-t2va')).toBeVisible();
+  // Arrow keys move between tabs, as in any tablist.
+  await page.keyboard.press('ArrowRight');
+  await shown('tab-memory');
+  await expect(page.locator('#tab-memory-tab')).toBeFocused();
+  await page.keyboard.press('End');
+  await shown('tab-method');
+  await page.keyboard.press('Home');
+  await shown('tab-overview');
+  // A link into another tab opens it: the NF4 card points at the failures.
+  await page.getByRole('tab', { name: '各元件' }).click();
+  await shown('tab-components');
+  await page.locator('#run-dit5080-ref2va-nf4-base').getByRole('link').click();
+  await shown('tab-method');
+  await expect(page.locator('#failures')).toBeInViewport();
+  // A deep link opens its tab, after a reload too.
+  await page.goto(`${comparison}#copy-evidence`);
+  await shown('tab-image');
+  await expect(page.locator('#copy-evidence')).toBeInViewport();
+  await page.goto(`${comparison}#tab-videos`);
+  await shown('tab-videos');
+});
+
+test('the H3 DiT note is accessible in every edition and tab, fits every width and reads without JavaScript', async ({
   page,
   browser,
 }) => {
@@ -284,10 +352,27 @@ test('the H3 DiT note is accessible in every edition, fits every width and reads
       .analyze();
     expect(results.violations, path).toEqual([]);
   }
+  // Every tab, at the narrowest width and with axe, in one edition.
+  await page.goto(comparison.replace('zh-hant', 'en'));
+  for (const id of tabIds) {
+    await page.locator(`#${id}-tab`).click();
+    await page.setViewportSize({ width: 320, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+      `${id} at 320`,
+    ).toBe(true);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations, id).toEqual([]);
+  }
   for (const path of [
-    '/en/note/ai/',
-    '/ja/note/ai/video/',
-    '/zh-hant/note/ai/video/comparisons/',
+    '/en/ai/',
+    '/ja/ai/video/',
+    '/zh-hant/ai/video/comparisons/',
   ]) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })
@@ -296,17 +381,23 @@ test('the H3 DiT note is accessible in every edition, fits every width and reads
     expect(results.violations, path).toEqual([]);
   }
 
+  // Without scripts every panel shows and the tab row is a table of contents.
   const context = await browser.newContext({ javaScriptEnabled: false });
   const staticPage = await context.newPage();
   await staticPage.goto(comparison.replace('zh-hant', 'en'));
   await expect(staticPage.locator('#note-title')).toContainText(
     'Comparing H3 DiT components',
   );
+  for (const id of tabIds)
+    await expect(staticPage.locator(`#${id}`)).toBeVisible();
+  await expect(staticPage.locator('[role="tab"]')).toHaveCount(0);
+  await staticPage.locator(`a[href="#tab-speed"]`).click();
+  await expect(staticPage).toHaveURL(/#tab-speed$/);
+  await expect(staticPage.locator('#tab-speed')).toBeInViewport();
   // Native controls still play every video; only the audio switcher needs scripts.
   await expect(
     staticPage.locator('#grid-a1-t2va-fp8 video[controls]'),
   ).toBeVisible();
   await expect(staticPage.locator('#grid-a1-t2va-fp8 .sn-audio')).toBeHidden();
-  await expect(staticPage.locator('#chart-speed-t2va')).toBeVisible();
   await context.close();
 });

@@ -39,6 +39,7 @@ describe('workspace chrome', () => {
       '/ja/',
       '/ja/blog/',
       '/ja/note/',
+      '/ja/ai/',
       '/ja/projects/',
       'https://paper.dennysora.me/',
     ]);
@@ -55,5 +56,16 @@ describe('workspace chrome', () => {
     expect(
       areaState({ kind: 'research', locale: 'en' }, 'papers'),
     ).toBeUndefined();
+    // The AI area's top folder is its landing page; its notes sit inside it.
+    expect(
+      areaState({ kind: 'note-folder', locale: 'en', folder: 'ai' }, 'ai'),
+    ).toBe('page');
+    const comparison = {
+      kind: 'collection-note',
+      locale: 'en',
+      noteId: 'h3-dit-components',
+    } as const;
+    expect(areaState(comparison, 'ai')).toBe('true');
+    expect(areaState(comparison, 'notes')).toBeUndefined();
   });
 });

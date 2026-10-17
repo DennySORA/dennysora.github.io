@@ -4,6 +4,8 @@ import type { HardwareNoteId } from './hardware-notes.ts';
 import type { CollectionNoteId } from './note-collections.ts';
 import {
   folderPath,
+  noteArea,
+  noteFolderOf,
   noteKind,
   notePath,
   resolveNotePath,
@@ -43,7 +45,7 @@ export type RouteDescriptor =
   | { kind: 'tag'; locale: Locale; tagId: string }
   | { kind: 'research'; locale: Locale };
 export type RouteKind = RouteDescriptor['kind'];
-export type NavSection = 'home' | 'library' | 'notes' | 'projects';
+export type NavSection = 'home' | 'library' | 'notes' | 'ai' | 'projects';
 
 // Slugs that would collide with fixed Library routes.
 export const reservedSlugs = ['tags', 'topics'] as const;
@@ -67,6 +69,14 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
       if (rest.length === 0) return { kind: 'notes', locale };
       // Folders and notes come from the note tree; anything else is not a page.
       const found = resolveNotePath(rest);
+      if (!found) return null;
+      return 'folder' in found
+        ? { kind: 'note-folder', locale, folder: found.folder }
+        : noteRoute(found.noteId, locale);
+    }
+    case 'ai': {
+      // The AI area is the note tree's ai folder, served at the top level.
+      const found = resolveNotePath(rest, 'ai');
       if (!found) return null;
       return 'folder' in found
         ? { kind: 'note-folder', locale, folder: found.folder }
@@ -194,12 +204,14 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'tag':
       return 'library';
     case 'notes':
+      return 'notes';
     case 'note-folder':
+      return noteArea(route.folder);
     case 'network-note':
     case 'medical-note':
     case 'hardware-note':
     case 'collection-note':
-      return 'notes';
+      return noteArea(noteFolderOf[route.noteId]);
     case 'projects':
     case 'project-category':
     case 'project':

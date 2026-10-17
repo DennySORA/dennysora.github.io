@@ -31,8 +31,13 @@
   .copy-button,
   .backlink,
   .search-block,
+  .sn-tabs,
   .requires-js {
     display: none !important;
+  }
+  /* Paper gets every content tab, one after another. */
+  .sn-tabpanel[hidden] {
+    display: block !important;
   }
   /* Paper gets the document alone: no grid, gutter or line numbers. */
   .workbench {

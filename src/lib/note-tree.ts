@@ -10,7 +10,9 @@ import {
 
 // The note/ tree: every folder in display order, named by its URL segment, and
 // the folder that holds each note. Routes, the Explorer, folder pages and
-// breadcrumbs all derive from it, so regrouping notes is a change here.
+// breadcrumbs all derive from it, so regrouping notes is a change here. The
+// ai folder is the one top folder outside note/: it is a site area of its own
+// at /<locale>/ai/ (owner, 2026-10-18), built from the same folders and notes.
 export const noteFolderIds = [
   'software',
   'network',
@@ -95,7 +97,7 @@ export function noteKind(id: NoteId): NoteKind {
   return 'collection-note';
 }
 
-/** The folders from the top of note/ down to this one. */
+/** The folders from the top of the tree down to this one. */
 export function folderTrail(folder: NoteFolderId): NoteFolderId[] {
   const trail: NoteFolderId[] = [];
   for (let at: NoteFolderId | null = folder; at; at = noteFolders[at].parent)
@@ -103,8 +105,18 @@ export function folderTrail(folder: NoteFolderId): NoteFolderId[] {
   return trail;
 }
 
+/** The site area a folder belongs to: note/, or the top-level ai/ area. */
+export type NoteArea = 'notes' | 'ai';
+export function noteArea(folder: NoteFolderId): NoteArea {
+  return folderTrail(folder)[0] === 'ai' ? 'ai' : 'notes';
+}
+
 export function folderPath(folder: NoteFolderId, locale: Locale): string {
-  return `/${locale}/note/${folderTrail(folder).join('/')}/`;
+  const trail = folderTrail(folder).join('/');
+  // The ai folder is its own area, so its path starts at the locale.
+  return noteArea(folder) === 'ai'
+    ? `/${locale}/${trail}/`
+    : `/${locale}/note/${trail}/`;
 }
 
 export function notePath(id: NoteId, locale: Locale = 'zh-hant'): string {
@@ -126,14 +138,20 @@ export function notesUnder(folder: NoteFolderId): NoteId[] {
   return noteIds.filter((id) => folderTrail(noteFolderOf[id]).includes(folder));
 }
 
-/** The folder or note at note/<segments>/, or null when there is none. */
+/**
+ * The folder or note at note/<segments>/, or at ai/<segments>/ for the AI
+ * area; null when there is none, so a folder is never a page in both areas.
+ */
 export function resolveNotePath(
   segments: readonly string[],
+  area: NoteArea = 'notes',
 ): { folder: NoteFolderId } | { noteId: NoteId } | null {
+  // The AI area's top folder is ai itself; note/ holds the other top folders.
+  const path = area === 'ai' ? ['ai', ...segments] : segments;
   let parent: NoteFolderId | null = null;
-  for (const [index, segment] of segments.entries()) {
+  for (const [index, segment] of path.entries()) {
     const folder: NoteFolderId | undefined = subfolders(parent).find(
-      (id) => id === segment,
+      (id) => id === segment && noteArea(id) === area,
     );
     if (folder) {
       parent = folder;
@@ -141,7 +159,7 @@ export function resolveNotePath(
     }
     // Only the last segment can name a note, filed in the folder reached so far.
     const noteId =
-      index === segments.length - 1 && parent
+      index === path.length - 1 && parent
         ? notesIn(parent).find((id) => id === segment)
         : undefined;
     return noteId ? { noteId } : null;

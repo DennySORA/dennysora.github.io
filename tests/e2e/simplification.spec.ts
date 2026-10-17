@@ -33,6 +33,7 @@ for (const locale of locales)
       'README.md',
       'blog',
       'note',
+      'ai',
       'projects',
       'paper-daily',
     ]);

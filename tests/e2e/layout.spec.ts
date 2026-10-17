@@ -289,6 +289,7 @@ test('the workbench names the open file and links every area, with Paper Daily o
     /README\.md/,
     /blog/,
     /note/,
+    /^ai/,
     /projects/,
     /paper-daily/,
   ]);

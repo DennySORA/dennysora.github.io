@@ -180,6 +180,69 @@ export function enhanceCollectionNote(
       );
   }
 
+  // Content tabs: without JavaScript every panel shows and the tab row is a
+  // table of contents. Here it becomes an ARIA tablist that shows one panel;
+  // the URL keeps the open tab, so a link or a reload returns to it.
+  const tabs = Array.from(
+    root.querySelectorAll<HTMLAnchorElement>('[data-tabs] a[href^="#"]'),
+  );
+  const panelOf = (tab: HTMLAnchorElement) =>
+    Array.from(root.querySelectorAll<HTMLElement>('.sn-tabpanel')).find(
+      (panel) => `#${panel.id}` === tab.hash,
+    );
+  const showTab = (index: number) =>
+    tabs.forEach((tab, at) => {
+      tab.setAttribute('aria-selected', String(at === index));
+      tab.tabIndex = at === index ? 0 : -1;
+      const panel = panelOf(tab);
+      if (panel) panel.hidden = at !== index;
+    });
+  const openTab = (index: number, focus: boolean) => {
+    const tab = tabs[index];
+    if (!tab) return;
+    showTab(index);
+    if (focus) tab.focus();
+    history.replaceState(history.state, '', tab.hash);
+    // Start the new panel at its top when the page is scrolled past it.
+    const panel = panelOf(tab);
+    if (panel && panel.getBoundingClientRect().top < 0)
+      panel.scrollIntoView({ block: 'start' });
+  };
+  tabs[0]?.parentElement?.setAttribute('role', 'tablist');
+  tabs.forEach((tab, index) => {
+    const panel = panelOf(tab);
+    tab.setAttribute('role', 'tab');
+    if (panel) {
+      tab.setAttribute('aria-controls', panel.id);
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', tab.id);
+    }
+    tab.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+        openTab(index, false);
+      },
+      { signal },
+    );
+    tab.addEventListener(
+      'keydown',
+      (event) => {
+        const next = {
+          ArrowRight: index + 1,
+          ArrowLeft: index - 1,
+          Home: 0,
+          End: tabs.length - 1,
+        }[event.key];
+        if (next === undefined) return;
+        event.preventDefault();
+        openTab((next + tabs.length) % tabs.length, true);
+      },
+      { signal },
+    );
+  });
+  if (tabs.length) showTab(0);
+
   // A link into a folded section opens it, and a filtered card comes back.
   const openHash = () => {
     let id: string;
@@ -192,6 +255,10 @@ export function enhanceCollectionNote(
       (node) => node.id === id,
     );
     if (!el) return;
+    // A link into another tab opens that tab first.
+    const panel = el.closest<HTMLElement>('.sn-tabpanel');
+    const tab = panel ? tabs.findIndex((item) => panelOf(item) === panel) : -1;
+    if (tab >= 0) showTab(tab);
     if (el.closest<HTMLElement>('[data-grade]')?.hidden) {
       const filter = get<HTMLInputElement>('pg-archive-filter');
       if (filter) filter.checked = false;

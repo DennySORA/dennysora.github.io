@@ -9,7 +9,7 @@ import {
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import { routePath, type RouteDescriptor } from '../lib/route-manifest.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
-import type { NoteTreeFolder } from '../lib/note-tree.ts';
+import { noteArea, type NoteTreeFolder } from '../lib/note-tree.ts';
 import {
   projectCategories,
   projectCategoryCopy,
@@ -155,12 +155,17 @@ function NoteFolderNode({
   route,
   currentPath,
   onNavigate,
+  current = route.kind === 'note-folder' && route.folder === folder.id
+    ? 'page'
+    : undefined,
 }: {
   folder: NoteTreeFolder;
   locale: Locale;
   route: RouteDescriptor;
   currentPath: string;
   onNavigate?: (() => void) | undefined;
+  /** An area's top folder marks the whole area, as the other areas do. */
+  current?: 'page' | 'true' | undefined;
 }) {
   return (
     <li>
@@ -170,11 +175,7 @@ function NoteFolderNode({
         href={folder.href}
         name={folder.title}
         note={folder.intro}
-        current={
-          route.kind === 'note-folder' && route.folder === folder.id
-            ? 'page'
-            : undefined
-        }
+        current={current}
         onNavigate={onNavigate}
       >
         {folder.folders.map((inner) => (
@@ -321,18 +322,33 @@ export function Explorer({
             current={areaState(route, 'notes')}
             onNavigate={onNavigate}
           >
-            {files.notes.map((folder) => (
-              <NoteFolderNode
-                key={folder.id}
-                folder={folder}
-                locale={locale}
-                route={route}
-                currentPath={currentPath}
-                onNavigate={onNavigate}
-              />
-            ))}
+            {files.notes
+              .filter((folder) => noteArea(folder.id) === 'notes')
+              .map((folder) => (
+                <NoteFolderNode
+                  key={folder.id}
+                  folder={folder}
+                  locale={locale}
+                  route={route}
+                  currentPath={currentPath}
+                  onNavigate={onNavigate}
+                />
+              ))}
           </TreeFolder>
         </li>
+        {files.notes
+          .filter((folder) => noteArea(folder.id) === 'ai')
+          .map((folder) => (
+            <NoteFolderNode
+              key={folder.id}
+              folder={folder}
+              locale={locale}
+              route={route}
+              currentPath={currentPath}
+              onNavigate={onNavigate}
+              current={areaState(route, 'ai')}
+            />
+          ))}
         <li>
           <TreeLink
             href={papersUrl}
