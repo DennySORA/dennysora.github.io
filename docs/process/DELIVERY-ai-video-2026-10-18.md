@@ -13,7 +13,7 @@
 - GitHub Pages 整站上限 1 GB，原始資料夾 261 MB，其中 2×2 影片約 140 MB，之後還會有其他比較。依擁有者指示（「幫我把重元素放到 hugging face 讓 github page 能讀」），影片與音軌放在擁有者的公開 Hugging Face 資料集 `DennySORA/dennysora-site-media`，commit `43901d943cf6685015e3c448decbc975456aa386`；本站只放封面與靜態畫格（63 個檔案，3.5 MB）。
 - 這是「瀏覽不向第三方發出請求」的唯一例外，擁有者同意，已寫進 `PROJECT_AGENT.md`、`README.md`、`docs/CONTENT_WORKFLOW.md` 與 `docs/DESIGN.md`。範圍限制在：`<video>`、`<audio>` 一律 `preload="none"`、不 `autoplay`，網址固定在一個 commit，而且必須記錄在 `data/note-media.json`；`content:check` 拒絕其他寫法。所以載入頁面時不連任何第三方，讀者按下播放才向 Hugging Face 取用影片。
 - CORS：`<video>` 與 `<audio>` 播放跨來源檔案不需要 CORS。實測 Hugging Face 的回應：`resolve` 先 302 轉到 `us.aws.cdn.hf.co`，再回 `206 Partial Content`、`content-type: video/mp4`、`accept-ranges: bytes`，兩段都帶 `access-control-allow-origin`，都沒有 `Set-Cookie`。上傳後逐一比對 90 個檔案的 `x-linked-size` 與 `x-linked-etag`（SHA-256），全部相符。
-- 資料集內容：`grids/` 16 支、`outputs/` 37 個（原始輸出逐位元組上傳）、`audio/` 37 條（直接複製，未重新編碼），合計 259.6 MB；資料集說明寫明影片都是 AI 生成的測試輸出，權利保留。
+- 資料集內容：`grids/` 16 支、`outputs/` 37 個（原始輸出逐位元組上傳）、`audio/` 37 條（直接複製，未重新編碼），合計 259.6 MB；資料集說明寫明影片都是 AI 生成的測試輸出，版權屬於擁有者（© 2026 DennySORA），保留一切權利。
 
 ## 重整與修訂
 
@@ -23,7 +23,7 @@
 - 圖表、表格與頁首數字都由報告內嵌的資料（recorder 與每秒取樣）產生；圖表沿用 `.hw-chart` 配方（現行元件以 `entity-file` 標出，其他 `border-strong`），每張圖都有資料表。原報告 32 欄的大表拆成設定、速度、記憶體、畫面指標四張表。
 - 依資料重新核對原報告的每一個範圍，修正兩處：有參考與純文字的每步時間比是 3.2–4.5 倍（原寫 3.2–4.4，INT8 原版 4.54）；BF16 載入時間是 21–30 秒（原寫 21–29，最長 29.8 秒）。「唯一的有界載入」改為 FP8 · PAI 8 步走有界載入（四個 FP8 · PAI 8 步元件都是）。三組「輸出逐位相同」以解碼後的影像與聲音 MD5 重新驗證，對照組確實不同。這些都記在正文的「檔案與核對」。
 - 寫給擁有者本人的內容改成給讀者：「要等你確認才改」等下一步改寫為「後續」，內部的 overlay 修正細節與「未簽章」的 sidecar 說明拿掉；元件、管線與硬體名稱（Video Console 4.0、te-gb10、vae-5080、audio-3060、SGLang）保留，run ID 與節點 UUID 沒有公開。
-- 需要擁有者留意：有參考情境的兩張角色參考圖（1448×1086 的透明 PNG）照原報告收錄在證據圖與影片裡；公開前請確認可以發布。資料集說明目前寫「權利保留」，若要開放再利用，需要另選授權。
+- 版權：有參考情境的兩張角色參考圖（1448×1086 的透明 PNG）照原報告收錄在證據圖與影片裡。擁有者確認（2026-10-18）參考圖與所有輸出都是擁有者生成的作品、版權屬於擁有者；筆記的「閱讀範圍」與「檔案與核對」、以及 Hugging Face 資料集說明都寫明「© 2026 DennySORA，保留一切權利」，不授權再利用。
 
 ## 結構與設計
 
