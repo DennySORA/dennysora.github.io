@@ -781,6 +781,255 @@
   overflow-wrap: anywhere;
 }
 
+/* Comparison videos share the photo window. The video streams from the
+   recorded dataset only after play; the legend mirrors the 2×2 tiles. */
+.study-note .sn-video .sn-photo-head p {
+  margin: 2px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.study-note .sn-frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--color-chrome);
+}
+.study-note code {
+  padding: 1px 5px;
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+  font-family: var(--font-code);
+  font-size: 0.88em;
+  overflow-wrap: anywhere;
+}
+.study-note .sn-tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-tiles li {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.study-note .sn-tiles b {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.study-note :is(.sn-tiles, .sn-run-head) code {
+  padding: 0;
+  background: none;
+  color: var(--color-entity-file);
+  font-size: 12px;
+}
+.study-note .sn-pos {
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-tile-stats {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-tiles .sn-tile-empty {
+  color: var(--color-text-muted);
+}
+.study-note .sn-audio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+.study-note .sn-audio-label {
+  margin-right: var(--space-1);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+.study-note .sn-media-links {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+/* Reference copy-through: the model's inputs, then the same frames per step count. */
+.study-note .sn-evidence {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  list-style: none;
+}
+.study-note .sn-evidence + .sn-evidence {
+  padding-top: 0;
+}
+.study-note .sn-evidence li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  margin: 0;
+}
+.study-note .sn-evidence img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-chip);
+  background: var(--color-chrome);
+}
+.study-note .sn-evidence span {
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+/* Every component: its five-frame strip, figures and the raw output in a fold. */
+.study-note .sn-runs {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+.study-note .sn-runs > li {
+  margin: 0;
+}
+.study-note .sn-run {
+  overflow: hidden;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.study-note .sn-run-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-2);
+}
+.study-note .sn-run-head h5 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.study-note .sn-run > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--color-chrome);
+}
+.study-note .sn-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+}
+.study-note .sn-figures div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+}
+.study-note .sn-figures dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+.study-note .sn-figures dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.study-note .sn-figures small {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.study-note .sn-run .fold {
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-3);
+}
+.study-note .sn-run video {
+  display: block;
+  width: 100%;
+  max-width: 768px;
+  height: auto;
+  margin: var(--space-2) 0;
+  background: var(--color-chrome);
+}
+/* A component that never produced a video is a real error state. */
+.study-note .sn-run-error {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 var(--space-4) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--color-status-danger);
+  background: var(--color-chrome);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.study-note .sn-run-error .sn-icon {
+  color: var(--color-status-danger);
+}
+.study-note .sn-error {
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-status-danger);
+  background: var(--color-chrome);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.study-note .sn-error code {
+  padding: 0;
+  background: none;
+  color: var(--color-text);
+}
+/* Terms: a definition list that becomes one column on narrow screens. */
+.study-note .sn-terms {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-4) 0;
+}
+.study-note .sn-terms dt {
+  color: var(--color-entity-kind);
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.85;
+}
+.study-note .sn-terms dd {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+.study-note .hw-figure > .sn-caption {
+  font-size: 13.5px;
+}
+@media (min-width: 560px) {
+  .study-note .sn-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .study-note .sn-terms {
+    grid-template-columns: minmax(0, 11em) minmax(0, 1fr);
+  }
+  .study-note .sn-terms dd {
+    margin: 0;
+  }
+}
+
 /* Local tools: real controls, shown only where JavaScript can run them. */
 .study-note .sn-tool {
   margin: var(--space-5) 0;
@@ -856,7 +1105,7 @@
   font-size: 20px;
   font-variant-numeric: tabular-nums;
 }
-.study-note .sn-guide-toggle[aria-pressed='true'] {
+.study-note :is(.sn-guide-toggle, .sn-audio button)[aria-pressed='true'] {
   box-shadow: inset 0 -2px 0 var(--color-action-primary);
   background: var(--color-surface-selected);
   color: var(--color-text);

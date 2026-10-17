@@ -65,6 +65,53 @@
     }
   },
   {
+    "id": "video-generation",
+    "label": {
+      "zh-hant": "影片生成",
+      "en": "Video generation",
+      "ja": "動画生成"
+    },
+    "aliases": {
+      "zh-hant": [
+        "video generation",
+        "T2V",
+        "文字生成影片",
+        "影音生成",
+        "動画生成"
+      ],
+      "en": ["T2V", "text-to-video", "AI video", "影片生成", "動画生成"],
+      "ja": ["video generation", "T2V", "動画 AI", "影片生成"]
+    }
+  },
+  {
+    "id": "diffusion-transformer",
+    "label": {
+      "zh-hant": "DiT",
+      "en": "DiT",
+      "ja": "DiT"
+    },
+    "aliases": {
+      "zh-hant": [
+        "diffusion transformer",
+        "擴散模型",
+        "擴散 Transformer",
+        "拡散モデル"
+      ],
+      "en": [
+        "diffusion transformer",
+        "diffusion model",
+        "擴散模型",
+        "拡散モデル"
+      ],
+      "ja": [
+        "diffusion transformer",
+        "拡散モデル",
+        "拡散 Transformer",
+        "擴散模型"
+      ]
+    }
+  },
+  {
     "id": "agent",
     "label": {
       "zh-hant": "Agent",

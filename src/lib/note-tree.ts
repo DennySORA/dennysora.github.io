@@ -23,6 +23,9 @@ export const noteFolderIds = [
   'computer',
   'japan',
   'japanese',
+  'ai',
+  'video',
+  'comparisons',
   'other',
 ] as const;
 export type NoteFolderId = (typeof noteFolderIds)[number];
@@ -42,6 +45,9 @@ export const noteFolders = {
   computer: { parent: 'hardware', icon: 'cpu', art: art('hardware') },
   japan: { parent: null, icon: 'torii', art: art('japan') },
   japanese: { parent: 'japan', icon: 'torii', art: art('japan') },
+  ai: { parent: null, icon: 'sparkles', art: art('ai') },
+  video: { parent: 'ai', icon: 'film', art: art('ai') },
+  comparisons: { parent: 'video', icon: 'chart', art: art('ai') },
   other: { parent: null, icon: 'camera', art: art('other') },
 } as const satisfies Record<
   NoteFolderId,
@@ -77,6 +83,7 @@ export const noteFolderOf = {
   'japanese-review': 'japanese',
   'lumbar-spine-care': 'daily-care',
   'landscape-photography': 'other',
+  'h3-dit-components': 'comparisons',
 } as const satisfies Record<NoteId, NoteFolderId>;
 
 /** Which page renders a note: each kind has its own reviewed fragment format. */

@@ -1,8 +1,9 @@
 import type { Locale } from '../../i18n/index.ts';
 import { collectionToolCopy } from './note-tool-copy.ts';
 
-// Progressive enhancement only: no requests, storage or telemetry. The static
-// markup already shows every photo guide and each tool's default result.
+// Progressive enhancement only: no requests of its own, storage or telemetry.
+// The static markup already shows every photo guide and each tool's default
+// result, and a grid's extra audio loads only once the reader plays its video.
 
 /** Hyperfocal distance H = f²/(N·c) + f; focused at H, the near limit is H/2 (all mm). */
 export function hyperfocal(focal: number, aperture: number, coc: number) {
@@ -122,6 +123,63 @@ export function enhanceCollectionNote(
   }
   if (get('pg-thirds')) layers();
 
+  // Comparison grids: one video, one audio track per tile. The video's own
+  // track is the top-left tile; another tile's <audio> follows the video while
+  // the video is muted. Nothing loads before the reader presses play.
+  for (const grid of root.querySelectorAll<HTMLElement>('[data-grid]')) {
+    const video = grid.querySelector('video');
+    if (!video) continue;
+    const tracks = new Map(
+      Array.from(
+        grid.querySelectorAll<HTMLAudioElement>('audio[data-tile]'),
+        (audio) => [Number(audio.dataset['tile']), audio] as const,
+      ),
+    );
+    const buttons = Array.from(
+      grid.querySelectorAll<HTMLButtonElement>('button[data-audio]'),
+    );
+    let active = 0;
+    const sync = () => {
+      const audio = tracks.get(active);
+      if (!audio) return;
+      if (Math.abs(audio.currentTime - video.currentTime) > 0.12)
+        audio.currentTime = video.currentTime;
+      audio.playbackRate = video.playbackRate;
+      audio.volume = video.volume;
+      if (video.paused) audio.pause();
+      else if (audio.paused) audio.play().catch(() => undefined);
+    };
+    const select = (tile: number) => {
+      active = tile;
+      for (const audio of tracks.values()) audio.pause();
+      video.muted = tile !== 0;
+      for (const button of buttons)
+        button.setAttribute(
+          'aria-pressed',
+          String(Number(button.dataset['audio']) === tile),
+        );
+      sync();
+    };
+    for (const name of ['play', 'pause', 'seeked', 'timeupdate', 'ratechange'])
+      video.addEventListener(name, sync, { signal });
+    // Unmuting in the player returns to the video's own track, so two tracks
+    // never play at once.
+    video.addEventListener(
+      'volumechange',
+      () => {
+        if (!video.muted && active !== 0) select(0);
+        else sync();
+      },
+      { signal },
+    );
+    for (const button of buttons)
+      button.addEventListener(
+        'click',
+        () => select(Number(button.dataset['audio'])),
+        { signal },
+      );
+  }
+
   // A link into a folded section opens it, and a filtered card comes back.
   const openHash = () => {
     let id: string;
@@ -150,6 +208,7 @@ export function enhanceCollectionNote(
   if (location.hash) openHash();
   return () => {
     abort.abort();
+    for (const audio of root.querySelectorAll('audio')) audio.pause();
     root.removeAttribute('data-hide-thirds');
     root.removeAttribute('data-hide-marks');
   };

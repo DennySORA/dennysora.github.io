@@ -365,3 +365,31 @@ export const headingAnchorsSchema = z.record(
     ),
   ),
 );
+
+/** Videos and audio that notes stream from the owner's Hugging Face dataset. */
+export const noteMediaSchema = z
+  .object({
+    checkedAt: z.iso.date(),
+    note: text,
+    repository: https,
+    files: z.array(
+      z
+        .object({
+          path: z
+            .string()
+            .regex(
+              /^notes\/[a-z0-9]+(?:-[a-z0-9]+)*\/[a-z0-9-]+\/[a-z0-9-]+\.(?:mp4|m4a)$/,
+            ),
+          revision: commit,
+          bytes: z.number().int().positive(),
+          sha256: hash,
+          width: z.number().int().positive().optional(),
+          height: z.number().int().positive().optional(),
+          seconds: z.number().positive(),
+          audioTracks: z.number().int().nonnegative(),
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+export type NoteMedia = z.infer<typeof noteMediaSchema>;

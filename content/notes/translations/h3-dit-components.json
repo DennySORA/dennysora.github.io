@@ -1,0 +1,1632 @@
+[
+  {
+    "source": "// AI · Video · 量測 2026-10-17–18 · 本站重整 2026-10-18",
+    "en": "// AI · Video · measured 2026-10-17–18 · rewritten for this site 2026-10-18",
+    "ja": "// AI · Video · 計測 2026-10-17〜18 · 本サイトで再構成 2026-10-18"
+  },
+  {
+    "source": "H3 DiT 元件比較：RTX 5080 上的量化、加速 LoRA 與 attention",
+    "en": "Comparing H3 DiT components on an RTX 5080: quantization, acceleration LoRAs and attention",
+    "ja": "H3 DiT コンポーネント比較：RTX 5080 での量子化・高速化 LoRA・attention"
+  },
+  {
+    "source": "同一份文字條件、同一組參考 latent、同一個 seed、同一組解碼器，只換 DiT 元件。40 個元件裡 37 個產生影片、3 個載入失敗，涵蓋純文字與有參考兩種情境下的量化、加速 LoRA、AdaLN 與 attention 組合；每個成片的元件都放進了可以同步播放的 2×2 比較影片。",
+    "en": "Same text conditioning, same reference latents, same seed and same decoders: only the DiT component changes. Of 40 components, 37 produced a video and 3 failed to load. They cover combinations of quantization, acceleration LoRA, AdaLN mode and attention in a text-only and a reference-image scenario, and every component that produced a video appears in a synchronized 2×2 comparison video.",
+    "ja": "テキスト条件・参照 latent・seed・デコーダーをすべて同じにして、DiT コンポーネントだけを入れ替えました。40 個のうち 37 個が動画を出力し、3 個はロードに失敗しました。テキストのみと参照画像ありの 2 つのシナリオで、量子化・高速化 LoRA・AdaLN・attention の組み合わせを比べています。出力のあったコンポーネントはどれも、同期再生できる 2×2 比較動画に入っています。"
+  },
+  {
+    "source": "純文字最快：INT8 · PAI 8 步（現行 28.9 s）",
+    "en": "Fastest text-only run: INT8 · PAI 8-step (current: 28.9 s)",
+    "ja": "テキストのみの最速：INT8 · PAI 8 ステップ（現行 28.9 s）"
+  },
+  {
+    "source": "有參考最快：INT8 · Turbo 4 步（現行 115.5 s）",
+    "en": "Fastest reference run: INT8 · Turbo 4-step (current: 115.5 s)",
+    "ja": "参照ありの最速：INT8 · Turbo 4 ステップ（現行 115.5 s）"
+  },
+  {
+    "source": "21–43 幀",
+    "en": "21–43 frames",
+    "ja": "21–43 フレーム"
+  },
+  {
+    "source": "有參考時 PAI 8 步與 Turbo 8 步原樣貼上參考圖（共 124 幀）",
+    "en": "in which PAI 8-step and Turbo 8-step paste a reference picture in as-is (of 124)",
+    "ja": "参照ありで PAI 8 ステップと Turbo 8 ステップが参照画像をそのまま貼り付けたフレーム（全 124）"
+  },
+  {
+    "source": "AdaLN online 每次呼叫在去噪步驟外的固定成本",
+    "en": "fixed cost of AdaLN online per call, outside the denoising steps",
+    "ja": "AdaLN online の呼び出しごとの固定コスト（デノイズステップ外）"
+  },
+  {
+    "source": "16 支",
+    "en": "16 videos",
+    "ja": "16 本"
+  },
+  {
+    "source": "2×2 同步比較影片，37 個成片元件都至少出現一次",
+    "en": "synchronized 2×2 comparisons; each of the 37 components with a video appears at least once",
+    "ja": "同期再生の 2×2 比較動画。出力のあった 37 個はどれも 1 回以上登場"
+  },
+  {
+    "source": "768×448 · 124 幀 · 24 fps（5.17 秒）",
+    "en": "768×448 · 124 frames · 24 fps (5.17 s)",
+    "ja": "768×448 · 124 フレーム · 24 fps（5.17 秒）"
+  },
+  {
+    "source": "seed 42，每個元件相同",
+    "en": "seed 42 for every component",
+    "ja": "seed 42（全コンポーネント共通）"
+  },
+  {
+    "source": "一個提示詞、一個 seed：差異只代表這次取樣",
+    "en": "one prompt and one seed per scenario: differences describe this sample only",
+    "ja": "シナリオごとにプロンプト 1 つ・seed 1 つ：差はこのサンプルだけのもの"
+  },
+  {
+    "source": "影片放在 Hugging Face，按下播放才載入",
+    "en": "videos are hosted on Hugging Face and load only when you press play",
+    "ja": "動画は Hugging Face にあり、再生を押したときだけ読み込まれます"
+  },
+  {
+    "source": "閱讀範圍",
+    "en": "Scope",
+    "ja": "このノートの範囲"
+  },
+  {
+    "source": "這是作者在自己的影片生成管線（Video Console 4.0）上做的一次實測。DiT 跑在 RTX 5080，以逐層串流把權重從主機記憶體搬上 GPU；文字條件由 DGX 上的 te-gb10 以 BF16 產生一次、所有元件共用；解碼固定用 vae-5080（影像）與 audio-3060（聲音）。所以差異只來自 DiT 元件本身。",
+    "en": "This is one measurement on the author's own video pipeline (Video Console 4.0). The DiT runs on an RTX 5080 and streams its weights layer by layer from host memory to the GPU; the text conditioning was produced once by te-gb10 on a DGX, in BF16, and shared by every component; decoding always uses vae-5080 for video and audio-3060 for audio. Differences therefore come from the DiT component alone.",
+    "ja": "作者自身の動画生成パイプライン（Video Console 4.0）で行った 1 回の実測です。DiT は RTX 5080 で動かし、重みをホストメモリから GPU へレイヤー単位でストリーミングします。テキスト条件は DGX 上の te-gb10 が BF16 で 1 回だけ生成し、全コンポーネントで共有しました。デコードは常に vae-5080（映像）と audio-3060（音声）です。したがって差は DiT コンポーネントだけから生じています。"
+  },
+  {
+    "source": "每個情境只有一個提示詞與一個 seed，畫面差異與參考圖貼上的幀數只代表這次取樣。畫面指標是客觀量，不等於好不好看。所有影片都是模型生成的測試輸出，不是真實拍攝。",
+    "en": "Each scenario uses one prompt and one seed, so the visual differences and copy-through frame counts describe this sample only. The image metrics are objective measures, not judgements of quality. Every clip is AI-generated test output, not real footage.",
+    "ja": "シナリオごとにプロンプトと seed は 1 つだけなので、映像の差や貼り付けのフレーム数はこのサンプルだけのものです。画質の指標は客観値で、見た目の良し悪しとは別です。動画はすべてモデルが生成したテスト出力で、実写ではありません。"
+  },
+  {
+    "source": "影片與音軌放在作者的 Hugging Face 資料集，網址固定在同一個 commit。頁面先只載入本站的封面與靜態畫格，按下播放時才向 Hugging Face 取用影片。",
+    "en": "The videos and audio tracks live in the author's Hugging Face dataset, linked at one fixed commit. The page first loads only this site's posters and still frames; a video is fetched from Hugging Face only when you press play.",
+    "ja": "動画と音声トラックは作者の Hugging Face データセットにあり、URL は特定のコミットに固定しています。ページが最初に読み込むのは本サイトのポスターと静止画だけで、動画は再生を押したときに Hugging Face から取得します。"
+  },
+  {
+    "source": "本文章節",
+    "en": "Sections of this note",
+    "ja": "このノートの節"
+  },
+  {
+    "source": "結論",
+    "en": "Conclusions",
+    "ja": "結論"
+  },
+  {
+    "source": "建議組合",
+    "en": "Recommended setups",
+    "ja": "おすすめの構成"
+  },
+  {
+    "source": "比較影片",
+    "en": "Comparison videos",
+    "ja": "比較動画"
+  },
+  {
+    "source": "實驗設計",
+    "en": "Experiment design",
+    "ja": "実験の設計"
+  },
+  {
+    "source": "速度",
+    "en": "Speed",
+    "ja": "速度"
+  },
+  {
+    "source": "記憶體",
+    "en": "Memory",
+    "ja": "メモリ"
+  },
+  {
+    "source": "畫面指標",
+    "en": "Image metrics",
+    "ja": "画質の指標"
+  },
+  {
+    "source": "參考圖貼上",
+    "en": "Copy-through",
+    "ja": "参照画像の貼り付け"
+  },
+  {
+    "source": "各元件畫面",
+    "en": "Every component",
+    "ja": "コンポーネントごとの画面"
+  },
+  {
+    "source": "其他觀察",
+    "en": "Other observations",
+    "ja": "そのほかの観察"
+  },
+  {
+    "source": "NF4 載入失敗",
+    "en": "NF4 load failures",
+    "ja": "NF4 のロード失敗"
+  },
+  {
+    "source": "限制",
+    "en": "Limits",
+    "ja": "限界"
+  },
+  {
+    "source": "後續",
+    "en": "Follow-ups",
+    "ja": "今後の課題"
+  },
+  {
+    "source": "檔案與核對",
+    "en": "Files and checks",
+    "ja": "ファイルと照合"
+  },
+  {
+    "source": "速度先看加速方式，再看量化。同一種加速下，INT8 比 FP8 快約 4–10%，BF16 慢 1.6–2.0 倍（權重量加倍：8 步一次呼叫要從主機搬 310 GB，而不是 155 GB）；原版 50 步比 PAI 8 步慢 6.0–6.4 倍。",
+    "en": "Acceleration matters first, quantization second. With the same acceleration, INT8 is about 4–10% faster than FP8 and BF16 is 1.6–2.0× slower (twice the weights: an 8-step call moves 310 GB from host memory instead of 155 GB). Base 50-step is 6.0–6.4× slower than PAI 8-step.",
+    "ja": "速度はまず高速化の方式で決まり、量子化はその次です。同じ高速化なら INT8 は FP8 より約 4–10% 速く、BF16 は 1.6–2.0 倍遅くなります（重みが 2 倍：8 ステップの 1 回の呼び出しでホストから 310 GB を転送し、FP8 なら 155 GB）。ベース 50 ステップは PAI 8 ステップより 6.0–6.4 倍遅くなります。"
+  },
+  {
+    "source": "純文字：現行的 FP8 · PAI 8 步仍是最均衡的選擇。去噪 28.9 秒、載入 38 秒；FP8 走有界載入，程序峰值只有 23.7 GiB，呼叫時系統還剩 22.6 GiB。INT8 · PAI 8 步快 2.9 秒（26.0 秒），但載入多 35 秒、載入時程序峰值 48 GiB。",
+    "en": "Text only: the current FP8 · PAI 8-step is still the best balance. It denoises in 28.9 s and loads in 38 s; FP8 uses the bounded loader, so the process peaks at only 23.7 GiB and 22.6 GiB of system memory stays free during the call. INT8 · PAI 8-step is 2.9 s faster (26.0 s) but loads 35 s slower and peaks at 48 GiB while loading.",
+    "ja": "テキストのみ：現行の FP8 · PAI 8 ステップが今も最もバランスの良い選択です。デノイズ 28.9 秒、ロード 38 秒。FP8 は上限付きロードを使うので、プロセスのピークは 23.7 GiB にとどまり、呼び出し中もシステムに 22.6 GiB の空きがあります。INT8 · PAI 8 ステップは 2.9 秒速い（26.0 秒）ものの、ロードが 35 秒長く、ロード中のプロセスピークは 48 GiB です。"
+  },
+  {
+    "source": "有參考：Turbo 4 步又快又穩。INT8 74.4 秒、FP8 78.6 秒，比現行的 FP8 · PAI 8 步（115.5 秒）快 32–36%，而且沒有參考圖貼上。",
+    "en": "With references: Turbo 4-step is both fast and clean. INT8 takes 74.4 s and FP8 78.6 s, 32–36% faster than the current FP8 · PAI 8-step (115.5 s), and neither pastes in a reference picture.",
+    "ja": "参照あり：Turbo 4 ステップが速くて安定しています。INT8 は 74.4 秒、FP8 は 78.6 秒で、現行の FP8 · PAI 8 ステップ（115.5 秒）より 32–36% 速く、参照画像の貼り付けも起きません。"
+  },
+  {
+    "source": "有參考時，PAI 8 步與 Turbo 8 步會把參考圖原樣貼進畫面：透明 PNG 的透明區被轉成黑色，模型在片段中段直接輸出這張黑底角色圖，PAI 8 步 21–22 幀、Turbo 8 步 37–43 幀（共 124 幀）。BF16、FP8、INT8 都一樣，所以這是加速 LoRA 的行為，不是量化誤差。",
+    "en": "With references, PAI 8-step and Turbo 8-step paste a reference picture into the shot as-is: the transparent areas of the PNG references become black, and mid-clip the model outputs that black-backed character picture, for 21–22 frames with PAI 8-step and 37–43 with Turbo 8-step, out of 124. BF16, FP8 and INT8 behave the same, so this comes from the acceleration LoRA, not from quantization error.",
+    "ja": "参照ありでは、PAI 8 ステップと Turbo 8 ステップが参照画像をそのまま画面に貼り付けます。透過 PNG の透明部分は黒に変換され、クリップの中盤でモデルがその黒背景のキャラクター画像をそのまま出力します。PAI 8 ステップで 21–22 フレーム、Turbo 8 ステップで 37–43 フレーム（全 124 フレーム中）。BF16・FP8・INT8 のどれでも同じなので、量子化誤差ではなく高速化 LoRA の挙動です。"
+  },
+  {
+    "source": "AdaLN online 每次呼叫在去噪步驟之外要花 23–32 秒（fixed 2–8 秒、off 2–3 秒，都含釋放回主機）。Turbo 與原版沒有對應的 fixed sidecar，只能用 online 或 off：INT8 · Turbo 4 步純文字的 4 個去噪步驟合計只有 14.8 秒，整個 denoise_av 階段卻是 39.8 秒。BF16 online 的第一步還會再多 15–30 秒。",
+    "en": "AdaLN online spends 23–32 s per call outside the denoising steps (fixed 2–8 s, off 2–3 s, all including the release back to host memory). Turbo and base have no matching fixed sidecar, so they can only run online or off: for INT8 · Turbo 4-step text-only, the four denoising steps take 14.8 s in total, yet the whole denoise_av stage takes 39.8 s. With BF16 online the first step adds another 15–30 s.",
+    "ja": "AdaLN online は呼び出しごとに、デノイズステップの外で 23–32 秒かかります（fixed は 2–8 秒、off は 2–3 秒。いずれもホストへの解放を含む）。Turbo とベースには対応する fixed サイドカーがないため online か off しか使えず、INT8 · Turbo 4 ステップ（テキストのみ）では 4 ステップの合計が 14.8 秒なのに、denoise_av 段階全体は 39.8 秒です。BF16 の online では最初のステップがさらに 15–30 秒長くなります。"
+  },
+  {
+    "source": "畫面風格由加速 LoRA 決定。同一種加速內，量化與 attention 只改變細節，鏡頭與構圖一致；純文字時 Turbo 比 PAI 與原版更亮、更銳、動態更大，PAI 8 步的光線與色調比較接近原版。",
+    "en": "The acceleration LoRA sets the look. Within one acceleration, quantization and attention change only details while camera and composition stay the same. In text-only runs Turbo is brighter, sharper and more animated than PAI and base, and PAI 8-step stays closer to base in light and colour.",
+    "ja": "映像の雰囲気は高速化 LoRA で決まります。同じ高速化の中では、量子化と attention が変えるのは細部だけで、カメラと構図は同じです。テキストのみでは Turbo が PAI やベースより明るく、シャープで、動きも大きく、PAI 8 ステップは光と色調がベースに近くなります。"
+  },
+  {
+    "source": "有些設定完全不影響輸出：同一種 attention 下的 AdaLN fixed、online、off，以及用完後的 drop 與 host，解碼後的影像與聲音逐位相同，只影響速度與記憶體。",
+    "en": "Some settings do not change the output at all: AdaLN fixed, online and off with the same attention, and drop versus host after use, decode to bit-identical video and audio. They change only speed and memory.",
+    "ja": "出力にまったく影響しない設定もあります。同じ attention での AdaLN fixed・online・off と、使用後の drop と host は、デコード後の映像と音声がビット単位で一致し、変わるのは速度とメモリだけです。"
+  },
+  {
+    "source": "NF4 三個元件都載入失敗：剪枝單檔缺少 comfy_quant 量化中繼資料，釘選版本的 SGLang loader 直接拒絕；要換權重或 loader 才能測。",
+    "en": "All three NF4 components failed to load: the pruned single file lacks comfy_quant quantization metadata, and the pinned SGLang loader rejects it. Testing NF4 needs other weights or another loader.",
+    "ja": "NF4 の 3 個はすべてロードに失敗しました。プルーニング済みの単一ファイルに comfy_quant の量子化メタデータがなく、固定バージョンの SGLang ローダーが拒否します。試すには別の重みかローダーが必要です。"
+  },
+  {
+    "source": "// 01 · Conclusions",
+    "en": "// 01 · Conclusions",
+    "ja": "// 01 · 結論"
+  },
+  {
+    "source": "FP8 · PAI 8 步（現行）",
+    "en": "FP8 · PAI 8-step (current)",
+    "ja": "FP8 · PAI 8 ステップ（現行）"
+  },
+  {
+    "source": "28.9 s；載入 38 s，程序峰值 23.7 GiB，呼叫時系統還剩 22.6 GiB",
+    "en": "28.9 s; loads in 38 s, process peak 23.7 GiB, 22.6 GiB of system memory free during the call",
+    "ja": "28.9 s。ロード 38 s、プロセスのピーク 23.7 GiB、呼び出し中のシステム空き 22.6 GiB"
+  },
+  {
+    "source": "INT8 · Turbo 4 步",
+    "en": "INT8 · Turbo 4-step",
+    "ja": "INT8 · Turbo 4 ステップ"
+  },
+  {
+    "source": "74.4 s；或 FP8 · Turbo 4 步 78.6 s。兩者都沒有參考圖貼上，呼叫時系統還剩約 15 GiB",
+    "en": "74.4 s, or FP8 · Turbo 4-step at 78.6 s. Neither pastes in a reference picture, and about 15 GiB of system memory stays free during the call",
+    "ja": "74.4 s。または FP8 · Turbo 4 ステップで 78.6 s。どちらも参照画像の貼り付けはなく、呼び出し中のシステム空きは約 15 GiB"
+  },
+  {
+    "source": "INT8 · PAI 8 步",
+    "en": "INT8 · PAI 8-step",
+    "ja": "INT8 · PAI 8 ステップ"
+  },
+  {
+    "source": "26.0 s：每次快 2.9 s，但載入多 35 s、載入時程序峰值 48 GiB，大約 12 次呼叫後才回本",
+    "en": "26.0 s: 2.9 s faster per call, but it loads 35 s slower and peaks at 48 GiB while loading, so it pays off only after about 12 calls",
+    "ja": "26.0 s。1 回あたり 2.9 s 速いものの、ロードが 35 s 長く、ロード中のプロセスピークは 48 GiB。元が取れるのは約 12 回目以降"
+  },
+  {
+    "source": "同上：INT8 · Turbo 4 步",
+    "en": "Same as above: INT8 · Turbo 4-step",
+    "ja": "上と同じ：INT8 · Turbo 4 ステップ"
+  },
+  {
+    "source": "31.5 s（4 個去噪步驟只占 14.8 s，其餘大多是 AdaLN online 的固定成本）",
+    "en": "31.5 s (the four denoising steps take only 14.8 s; most of the rest is the fixed cost of AdaLN online)",
+    "ja": "31.5 s（4 ステップのデノイズは 14.8 s だけで、残りの大半は AdaLN online の固定コスト）"
+  },
+  {
+    "source": "Turbo 4 步本身就是日常預設",
+    "en": "Turbo 4-step is already the everyday default",
+    "ja": "Turbo 4 ステップがそもそも普段の既定"
+  },
+  {
+    "source": "INT8 · 原版",
+    "en": "INT8 · Base",
+    "ja": "INT8 · ベース"
+  },
+  {
+    "source": "166.6 s；最接近官方精度的是 INT8 · 原版 · exact attn（216.7 s，SSIM 0.850，所有近似版本中最高）",
+    "en": "166.6 s. Closest to official precision: INT8 · Base · exact attn (216.7 s, SSIM 0.850, the highest of all approximations)",
+    "ja": "166.6 s。公式精度に最も近いのは INT8 · ベース · exact attn（216.7 s、SSIM 0.850 で近似版の中で最高）"
+  },
+  {
+    "source": "672.3 s（約 11 分鐘）",
+    "en": "672.3 s (about 11 minutes)",
+    "ja": "672.3 s（約 11 分）"
+  },
+  {
+    "source": "BF16 · 原版 · 官方精度",
+    "en": "BF16 · Base · official precision",
+    "ja": "BF16 · ベース · 公式精度"
+  },
+  {
+    "source": "1,507.3 s（約 25 分鐘）",
+    "en": "1,507.3 s (about 25 minutes)",
+    "ja": "1,507.3 s（約 25 分）"
+  },
+  {
+    "source": "日常使用 BF16 系列：慢 1.8–2.0 倍，AdaLN fixed／online 的 BF16 呼叫時系統可用記憶體只剩 6.8–9.3 GiB",
+    "en": "BF16 for everyday use: 1.8–2.0× slower, and BF16 with AdaLN fixed or online leaves only 6.8–9.3 GiB of system memory free during the call",
+    "ja": "BF16 系列の日常使用：1.8–2.0 倍遅く、AdaLN fixed／online の BF16 では呼び出し中のシステム空きが 6.8–9.3 GiB しか残らない"
+  },
+  {
+    "source": "PAI 8 步與 Turbo 8 步（參考圖貼上 21–43 幀）；BF16 的 online／off 變體（整卡 NVML 15.4–15.9 GiB，幾乎用滿 15.92 GiB）；NF4（無法載入）",
+    "en": "PAI 8-step and Turbo 8-step (21–43 copy-through frames); the BF16 online and off variants (15.4–15.9 GiB whole-card NVML peak, nearly all of the 15.92 GiB); NF4 (fails to load)",
+    "ja": "PAI 8 ステップと Turbo 8 ステップ（参照画像の貼り付けが 21–43 フレーム）、BF16 の online／off バリアント（カード全体の NVML ピーク 15.4–15.9 GiB で、15.92 GiB をほぼ使い切る）、NF4（ロード不可）"
+  },
+  {
+    "source": "依用途建議的元件",
+    "en": "Recommended components by use",
+    "ja": "用途別のおすすめコンポーネント"
+  },
+  {
+    "source": "用途",
+    "en": "Use",
+    "ja": "用途"
+  },
+  {
+    "source": "純文字（T2VA）",
+    "en": "Text only (T2VA)",
+    "ja": "テキストのみ（T2VA）"
+  },
+  {
+    "source": "有參考（Ref2VA）",
+    "en": "With references (Ref2VA)",
+    "ja": "参照あり（Ref2VA）"
+  },
+  {
+    "source": "日常預設",
+    "en": "Everyday default",
+    "ja": "普段の既定"
+  },
+  {
+    "source": "大量連續生成（DiT 常駐）",
+    "en": "Long batches (DiT kept loaded)",
+    "ja": "大量の連続生成（DiT を常駐）"
+  },
+  {
+    "source": "想要 Turbo 的亮、銳與動態",
+    "en": "When you want Turbo's brighter, sharper, livelier look",
+    "ja": "Turbo の明るさ・シャープさ・動きが欲しいとき"
+  },
+  {
+    "source": "定稿、要最好的畫面",
+    "en": "Final renders, best image",
+    "ja": "仕上げ・最高の画質"
+  },
+  {
+    "source": "官方精度對照（只在比對時用）",
+    "en": "Official-precision reference (for comparisons only)",
+    "ja": "公式精度の比較基準（比較のときだけ）"
+  },
+  {
+    "source": "不建議",
+    "en": "Not recommended",
+    "ja": "おすすめしない"
+  },
+  {
+    "source": "依用途挑元件。只有一個 seed 與一個提示詞，換掉現行元件之前，建議先用多個 seed 確認（見",
+    "en": "Pick a component by use. There is only one seed and one prompt, so check with several seeds before replacing a current component (see ",
+    "ja": "用途に合わせてコンポーネントを選びます。seed とプロンプトは 1 つずつなので、現行のコンポーネントを替える前に複数の seed で確かめてください（参照："
+  },
+  {
+    "source": "// 02 · Recommended setups",
+    "en": "// 02 · Recommended setups",
+    "ja": "// 02 · おすすめの構成"
+  },
+  {
+    "source": "每支影片是 2×2 同步畫面，每格都是原始的 768×448（整支 1540×900、24 fps、124 幀），格與格之間留 4 px 間隔。畫面上沒有任何文字標籤，每一格是哪個元件寫在影片下方。37 個成片的元件都至少出現在一組。",
+    "en": "Each video is a synchronized 2×2 grid in which every tile keeps its native 768×448 pixels (1540×900 overall, 24 fps, 124 frames) with a 4 px gutter. No labels are drawn on the frames; the tiles are listed under each video. Each of the 37 components with a video appears in at least one grid.",
+    "ja": "どの動画も 2×2 の同期画面で、各マスは元の 768×448 のまま（全体 1540×900、24 fps、124 フレーム）、マスの間に 4 px の余白があります。画面に文字ラベルはなく、各マスのコンポーネントは動画の下に書いてあります。出力のあった 37 個は、どれも少なくとも 1 本の動画に入っています。"
+  },
+  {
+    "source": "預設播放左上那格的聲音。啟用 JavaScript 時，可以用影片下方的按鈕改聽另一格；每支 MP4 也帶了每一格的音軌，用 VLC 或 mpv 開啟就能切換。影片由各元件的原始輸出重新組合、以 CRF 18 重新編碼，聲音沒有重新編碼。",
+    "en": "The top-left tile's audio plays by default. With JavaScript, the buttons under a video switch to another tile; each MP4 also carries one audio track per tile, which VLC or mpv can switch. The grids were rebuilt from each component's raw output and re-encoded at CRF 18; the audio is not re-encoded.",
+    "ja": "既定では左上のマスの音声が流れます。JavaScript が有効なら、動画の下のボタンで別のマスに切り替えられます。どの MP4 にもマスごとの音声トラックが入っているので、VLC や mpv で開けば切り替えられます。動画は各コンポーネントの元の出力から組み直して CRF 18 で再エンコードしたもので、音声は再エンコードしていません。"
+  },
+  {
+    "source": "片段沒有對白，聲音是模型依提示詞生成的音效與配樂：純文字是風聲、碎石、落地、金屬碰撞與動畫片頭風格的鼓和吉他，有參考是廢墟的風聲、羽毛、鈴聲、撞擊與管弦打擊樂。",
+    "en": "The clips have no dialogue; the audio is the model's generated sound effects and music for each prompt: wind, debris, a landing, a metal clash and anime-opening drums and guitar in the text-only scenario; wind over ruins, feathers, a bell, an impact and orchestral percussion with references.",
+    "ja": "セリフはなく、音声はプロンプトに沿ってモデルが生成した効果音と音楽です。テキストのみでは風・がれき・着地・金属の衝突とアニメのオープニング風のドラムとギター、参照ありでは廃墟を渡る風・羽根・鈴の音・衝撃音とオーケストラの打楽器です。"
+  },
+  {
+    "source": "同量化，比四種加速",
+    "en": "Same quantization, four accelerations",
+    "ja": "同じ量子化で 4 つの高速化を比べる"
+  },
+  {
+    "source": "四格依序是 PAI 8 步（左上）、Turbo 8 步（右上）、Turbo 4 步（左下）、原版 50 步（右下）。",
+    "en": "The tiles are always PAI 8-step (top left), Turbo 8-step (top right), Turbo 4-step (bottom left) and base 50-step (bottom right).",
+    "ja": "マスの並びは常に PAI 8 ステップ（左上）、Turbo 8 ステップ（右上）、Turbo 4 ステップ（左下）、ベース 50 ステップ（右下）です。"
+  },
+  {
+    "source": "顯存",
+    "en": "VRAM",
+    "ja": "VRAM"
+  },
+  {
+    "source": "左上",
+    "en": "Top left",
+    "ja": "左上"
+  },
+  {
+    "source": "右上",
+    "en": "Top right",
+    "ja": "右上"
+  },
+  {
+    "source": "FP8 · Turbo 8 步",
+    "en": "FP8 · Turbo 8-step",
+    "ja": "FP8 · Turbo 8 ステップ"
+  },
+  {
+    "source": "左下",
+    "en": "Bottom left",
+    "ja": "左下"
+  },
+  {
+    "source": "FP8 · Turbo 4 步",
+    "en": "FP8 · Turbo 4-step",
+    "ja": "FP8 · Turbo 4 ステップ"
+  },
+  {
+    "source": "右下",
+    "en": "Bottom right",
+    "ja": "右下"
+  },
+  {
+    "source": "FP8 · 原版",
+    "en": "FP8 · Base",
+    "ja": "FP8 · ベース"
+  },
+  {
+    "source": "靜音",
+    "en": "Mute",
+    "ja": "ミュート"
+  },
+  {
+    "source": "純文字 · FP8：四種加速",
+    "en": "Text only · FP8: four accelerations",
+    "ja": "テキストのみ · FP8：4 つの高速化"
+  },
+  {
+    "source": "同樣是 FP8，只換加速方式。",
+    "en": "All FP8; only the acceleration changes.",
+    "ja": "どれも FP8 で、高速化だけが違います。"
+  },
+  {
+    "source": "要聽哪一格的聲音",
+    "en": "Which tile to listen to",
+    "ja": "どのマスの音声を聴くか"
+  },
+  {
+    "source": "聲音",
+    "en": "Audio",
+    "ja": "音声"
+  },
+  {
+    "source": "在 Hugging Face 開啟 MP4",
+    "en": "Open the MP4 on Hugging Face",
+    "ja": "Hugging Face で MP4 を開く"
+  },
+  {
+    "source": "4 條音軌",
+    "en": "4 audio tracks",
+    "ja": "音声トラック 4 本"
+  },
+  {
+    "source": "INT8 · Turbo 8 步",
+    "en": "INT8 · Turbo 8-step",
+    "ja": "INT8 · Turbo 8 ステップ"
+  },
+  {
+    "source": "純文字 · INT8：四種加速",
+    "en": "Text only · INT8: four accelerations",
+    "ja": "テキストのみ · INT8：4 つの高速化"
+  },
+  {
+    "source": "同樣是 INT8，只換加速方式。",
+    "en": "All INT8; only the acceleration changes.",
+    "ja": "どれも INT8 で、高速化だけが違います。"
+  },
+  {
+    "source": "BF16 · PAI 8 步",
+    "en": "BF16 · PAI 8-step",
+    "ja": "BF16 · PAI 8 ステップ"
+  },
+  {
+    "source": "BF16 · Turbo 8 步",
+    "en": "BF16 · Turbo 8-step",
+    "ja": "BF16 · Turbo 8 ステップ"
+  },
+  {
+    "source": "BF16 · Turbo 4 步",
+    "en": "BF16 · Turbo 4-step",
+    "ja": "BF16 · Turbo 4 ステップ"
+  },
+  {
+    "source": "BF16 · 原版",
+    "en": "BF16 · Base",
+    "ja": "BF16 · ベース"
+  },
+  {
+    "source": "純文字 · BF16：四種加速",
+    "en": "Text only · BF16: four accelerations",
+    "ja": "テキストのみ · BF16：4 つの高速化"
+  },
+  {
+    "source": "同樣是 BF16，只換加速方式。",
+    "en": "All BF16; only the acceleration changes.",
+    "ja": "どれも BF16 で、高速化だけが違います。"
+  },
+  {
+    "source": "近黑幀",
+    "en": "near-black",
+    "ja": "ほぼ黒"
+  },
+  {
+    "source": "有參考 · FP8：四種加速",
+    "en": "With references · FP8: four accelerations",
+    "ja": "参照あり · FP8：4 つの高速化"
+  },
+  {
+    "source": "PAI 8 步與 Turbo 8 步在中段出現黑底的參考圖；Turbo 4 步與原版沒有。",
+    "en": "PAI 8-step and Turbo 8-step show the black-backed reference picture mid-clip; Turbo 4-step and base do not.",
+    "ja": "PAI 8 ステップと Turbo 8 ステップでは中盤に黒背景の参照画像が出ます。Turbo 4 ステップとベースでは出ません。"
+  },
+  {
+    "source": "有參考 · INT8：四種加速",
+    "en": "With references · INT8: four accelerations",
+    "ja": "参照あり · INT8：4 つの高速化"
+  },
+  {
+    "source": "INT8 也一樣：PAI 8 步與 Turbo 8 步貼上參考圖，Turbo 4 步與原版沒有。",
+    "en": "INT8 behaves the same: PAI 8-step and Turbo 8-step paste in the reference picture; Turbo 4-step and base do not.",
+    "ja": "INT8 も同じです。PAI 8 ステップと Turbo 8 ステップは参照画像を貼り付け、Turbo 4 ステップとベースは貼り付けません。"
+  },
+  {
+    "source": "有參考 · BF16：四種加速",
+    "en": "With references · BF16: four accelerations",
+    "ja": "参照あり · BF16：4 つの高速化"
+  },
+  {
+    "source": "BF16 也一樣，所以貼上不是量化造成的。",
+    "en": "BF16 behaves the same, so the copy-through is not caused by quantization.",
+    "ja": "BF16 でも同じなので、貼り付けは量子化が原因ではありません。"
+  },
+  {
+    "source": "同加速，比量化與設定",
+    "en": "Same acceleration, quantization and settings",
+    "ja": "同じ高速化で量子化と設定を比べる"
+  },
+  {
+    "source": "每組的四格寫在影片下方；Turbo 8 步只有 3 個元件，右下留空。",
+    "en": "Each video lists its four tiles below it; Turbo 8-step has only three components, so its bottom-right tile is empty.",
+    "ja": "各動画の 4 マスは動画の下に記載しています。Turbo 8 ステップはコンポーネントが 3 個だけなので、右下は空きです。"
+  },
+  {
+    "source": "FP8 · PAI 8 步 · exact attn",
+    "en": "FP8 · PAI 8-step · exact attn",
+    "ja": "FP8 · PAI 8 ステップ · exact attn"
+  },
+  {
+    "source": "純文字 · PAI 8 步：量化與 attention",
+    "en": "Text only · PAI 8-step: quantization and attention",
+    "ja": "テキストのみ · PAI 8 ステップ：量子化と attention"
+  },
+  {
+    "source": "FP8（現行）、INT8、BF16，以及把 attention 換成 exact 的 FP8。",
+    "en": "FP8 (current), INT8, BF16, and FP8 with exact attention.",
+    "ja": "FP8（現行）、INT8、BF16、そして attention を exact に替えた FP8。"
+  },
+  {
+    "source": "FP8 · PAI 8 步 · 用完釋放",
+    "en": "FP8 · PAI 8-step · drop after use",
+    "ja": "FP8 · PAI 8 ステップ · 使用後に解放"
+  },
+  {
+    "source": "BF16 · PAI 8 步 · exact attn",
+    "en": "BF16 · PAI 8-step · exact attn",
+    "ja": "BF16 · PAI 8 ステップ · exact attn"
+  },
+  {
+    "source": "BF16 · PAI 8 步 · exact attn · AdaLN off",
+    "en": "BF16 · PAI 8-step · exact attn · AdaLN off",
+    "ja": "BF16 · PAI 8 ステップ · exact attn · AdaLN off"
+  },
+  {
+    "source": "純文字 · PAI 8 步：不影響輸出的設定",
+    "en": "Text only · PAI 8-step: settings that do not change the output",
+    "ja": "テキストのみ · PAI 8 ステップ：出力に影響しない設定"
+  },
+  {
+    "source": "上排是 FP8 與用完釋放，下排是 BF16 exact attention 與再加上 AdaLN off；兩排各自逐位相同。",
+    "en": "Top row: FP8 and FP8 with drop after use; bottom row: BF16 with exact attention, and the same with AdaLN off. Each row is bit-identical.",
+    "ja": "上段は FP8 と使用後に解放する FP8、下段は exact attention の BF16 とそれに AdaLN off を加えたもの。どちらの段もビット単位で一致します。"
+  },
+  {
+    "source": "空格",
+    "en": "Empty",
+    "ja": "空き"
+  },
+  {
+    "source": "純文字 · Turbo 8 步：量化",
+    "en": "Text only · Turbo 8-step: quantization",
+    "ja": "テキストのみ · Turbo 8 ステップ：量子化"
+  },
+  {
+    "source": "Turbo 8 步只有 3 個元件，右下留空。",
+    "en": "Turbo 8-step has only three components, so the bottom-right tile is empty.",
+    "ja": "Turbo 8 ステップはコンポーネントが 3 個だけなので、右下は空きです。"
+  },
+  {
+    "source": "3 條音軌",
+    "en": "3 audio tracks",
+    "ja": "音声トラック 3 本"
+  },
+  {
+    "source": "BF16 · Turbo 4 步 · exact attn",
+    "en": "BF16 · Turbo 4-step · exact attn",
+    "ja": "BF16 · Turbo 4 ステップ · exact attn"
+  },
+  {
+    "source": "純文字 · Turbo 4 步：量化與 attention",
+    "en": "Text only · Turbo 4-step: quantization and attention",
+    "ja": "テキストのみ · Turbo 4 ステップ：量子化と attention"
+  },
+  {
+    "source": "FP8、INT8、BF16，以及 BF16 exact attention。",
+    "en": "FP8, INT8, BF16, and BF16 with exact attention.",
+    "ja": "FP8、INT8、BF16、そして exact attention の BF16。"
+  },
+  {
+    "source": "純文字 · 原版 50 步：量化與官方精度",
+    "en": "Text only · base 50-step: quantization and official precision",
+    "ja": "テキストのみ · ベース 50 ステップ：量子化と公式精度"
+  },
+  {
+    "source": "FP8、INT8、BF16，以及 BF16 官方精度。",
+    "en": "FP8, INT8, BF16, and BF16 at official precision.",
+    "ja": "FP8、INT8、BF16、そして公式精度の BF16。"
+  },
+  {
+    "source": "FP8 · 原版 · exact attn",
+    "en": "FP8 · Base · exact attn",
+    "ja": "FP8 · ベース · exact attn"
+  },
+  {
+    "source": "INT8 · 原版 · exact attn",
+    "en": "INT8 · Base · exact attn",
+    "ja": "INT8 · ベース · exact attn"
+  },
+  {
+    "source": "INT8 · 原版 · SubBlock",
+    "en": "INT8 · Base · SubBlock",
+    "ja": "INT8 · ベース · SubBlock"
+  },
+  {
+    "source": "BF16 · 原版 · AdaLN off · 官方精度",
+    "en": "BF16 · Base · AdaLN off · official precision",
+    "ja": "BF16 · ベース · AdaLN off · 公式精度"
+  },
+  {
+    "source": "純文字 · 原版 50 步：attention 變體",
+    "en": "Text only · base 50-step: attention variants",
+    "ja": "テキストのみ · ベース 50 ステップ：attention のバリアント"
+  },
+  {
+    "source": "FP8 與 INT8 的 exact attention、INT8 SubBlock，以及 AdaLN off 的官方精度（與官方精度逐位相同）。",
+    "en": "FP8 and INT8 with exact attention, INT8 with SubBlock, and official precision with AdaLN off (bit-identical to official precision).",
+    "ja": "exact attention の FP8 と INT8、SubBlock の INT8、AdaLN off の公式精度（公式精度とビット単位で一致）。"
+  },
+  {
+    "source": "有參考 · PAI 8 步：量化與設定",
+    "en": "With references · PAI 8-step: quantization and settings",
+    "ja": "参照あり · PAI 8 ステップ：量子化と設定"
+  },
+  {
+    "source": "FP8（現行）、INT8、BF16，以及 BF16 exact attention 加 AdaLN off。",
+    "en": "FP8 (current), INT8, BF16, and BF16 with exact attention and AdaLN off.",
+    "ja": "FP8（現行）、INT8、BF16、そして exact attention と AdaLN off の BF16。"
+  },
+  {
+    "source": "有參考 · Turbo 8 步：量化",
+    "en": "With references · Turbo 8-step: quantization",
+    "ja": "参照あり · Turbo 8 ステップ：量子化"
+  },
+  {
+    "source": "BF16 · Turbo 4 步 · exact attn · AdaLN off",
+    "en": "BF16 · Turbo 4-step · exact attn · AdaLN off",
+    "ja": "BF16 · Turbo 4 ステップ · exact attn · AdaLN off"
+  },
+  {
+    "source": "有參考 · Turbo 4 步：量化與設定",
+    "en": "With references · Turbo 4-step: quantization and settings",
+    "ja": "参照あり · Turbo 4 ステップ：量子化と設定"
+  },
+  {
+    "source": "FP8、INT8、BF16，以及 BF16 exact attention 加 AdaLN off。",
+    "en": "FP8, INT8, BF16, and BF16 with exact attention and AdaLN off.",
+    "ja": "FP8、INT8、BF16、そして exact attention と AdaLN off の BF16。"
+  },
+  {
+    "source": "有參考 · 原版 50 步：量化與官方精度",
+    "en": "With references · base 50-step: quantization and official precision",
+    "ja": "参照あり · ベース 50 ステップ：量子化と公式精度"
+  },
+  {
+    "source": "// 03 · Comparison videos",
+    "en": "// 03 · Comparison videos",
+    "ja": "// 03 · 比較動画"
+  },
+  {
+    "source": "2×2 比較影片",
+    "en": "2×2 comparison videos",
+    "ja": "2×2 比較動画"
+  },
+  {
+    "source": "元件",
+    "en": "Component",
+    "ja": "コンポーネント"
+  },
+  {
+    "source": "情境",
+    "en": "Scenario",
+    "ja": "シナリオ"
+  },
+  {
+    "source": "量化",
+    "en": "Quantization",
+    "ja": "量子化"
+  },
+  {
+    "source": "加速 LoRA",
+    "en": "Acceleration LoRA",
+    "ja": "高速化 LoRA"
+  },
+  {
+    "source": "步數",
+    "en": "Steps",
+    "ja": "ステップ"
+  },
+  {
+    "source": "模式",
+    "en": "Mode",
+    "ja": "モード"
+  },
+  {
+    "source": "用完後",
+    "en": "After use",
+    "ja": "使用後"
+  },
+  {
+    "source": "狀態",
+    "en": "Status",
+    "ja": "状態"
+  },
+  {
+    "source": "成片",
+    "en": "rendered",
+    "ja": "出力あり"
+  },
+  {
+    "source": "NF4 · Turbo 8 步 · AdaLN off",
+    "en": "NF4 · Turbo 8-step · AdaLN off",
+    "ja": "NF4 · Turbo 8 ステップ · AdaLN off"
+  },
+  {
+    "source": "載入失敗",
+    "en": "load failed",
+    "ja": "ロード失敗"
+  },
+  {
+    "source": "NF4 · Turbo 4 步 · AdaLN off",
+    "en": "NF4 · Turbo 4-step · AdaLN off",
+    "ja": "NF4 · Turbo 4 ステップ · AdaLN off"
+  },
+  {
+    "source": "NF4 · 原版 · AdaLN off",
+    "en": "NF4 · Base · AdaLN off",
+    "ja": "NF4 · ベース · AdaLN off"
+  },
+  {
+    "source": "shift 是影像的 shift；聲音的 shift 在所有元件都是 3.0。",
+    "en": "shift is the video shift; the audio shift is 3.0 for every component.",
+    "ja": "shift は映像の shift です。音声の shift は全コンポーネントで 3.0 です。"
+  },
+  {
+    "source": "40 個元件的設定",
+    "en": "Settings of the 40 components",
+    "ja": "40 個のコンポーネントの設定"
+  },
+  {
+    "source": "FL2VA（純文字情境用）與 Ref2VA（有參考情境用）。",
+    "en": "FL2VA (used for the text-only scenario) and Ref2VA (for the reference scenario).",
+    "ja": "FL2VA（テキストのみのシナリオ用）と Ref2VA（参照ありのシナリオ用）。"
+  },
+  {
+    "source": "FP8、INT8（ConvRot）、BF16（原生，不量化）與 NF4（剪枝單檔）。",
+    "en": "FP8, INT8 (ConvRot), BF16 (native, unquantized) and NF4 (a pruned single file).",
+    "ja": "FP8、INT8（ConvRot）、BF16（ネイティブ、量子化なし）、NF4（プルーニング済みの単一ファイル）。"
+  },
+  {
+    "source": "加速",
+    "en": "Acceleration",
+    "ja": "高速化"
+  },
+  {
+    "source": "PAI 8 步、lightx2v 的 Turbo 8 步與 Turbo 4 步 LoRA，以及不掛 LoRA 的原版 50 步。步數與 shift 是各元件定義的一部分，也就是 LoRA 的採樣條件。",
+    "en": "PAI 8-step, the lightx2v Turbo 8-step and Turbo 4-step LoRAs, and base at 50 steps without a LoRA. Step count and shift belong to each component's definition: they are the LoRA's sampling contract.",
+    "ja": "PAI 8 ステップ、lightx2v の Turbo 8 ステップと Turbo 4 ステップの LoRA、そして LoRA なしのベース 50 ステップ。ステップ数と shift は各コンポーネントの定義の一部で、LoRA のサンプリング条件です。"
+  },
+  {
+    "source": "fixed 使用預先算好的 sidecar（只有 PAI 有）；Turbo 與原版用 online，在每次呼叫時準備；另有 off 變體。同一種 attention 下，三者的輸出逐位相同。",
+    "en": "fixed uses a precomputed sidecar (only PAI has one); Turbo and base use online, which prepares it on every call; some variants use off. With the same attention, all three give bit-identical output.",
+    "ja": "fixed は事前計算済みのサイドカーを使い（PAI のみ）、Turbo とベースは呼び出しのたびに準備する online を使います。off のバリアントもあります。同じ attention なら、3 つとも出力はビット単位で一致します。"
+  },
+  {
+    "source": "預設是 FP8 attention（sm120 的 FlashAttention）；exact 是精確的 SDPA；SubBlock 是區塊稀疏 attention。",
+    "en": "The default is FP8 attention (FlashAttention for sm120); exact is exact SDPA; SubBlock is block-sparse attention.",
+    "ja": "既定は FP8 attention（sm120 向けの FlashAttention）、exact は厳密な SDPA、SubBlock はブロック単位のスパース attention です。"
+  },
+  {
+    "source": "官方精度",
+    "en": "Official precision",
+    "ja": "公式精度"
+  },
+  {
+    "source": "exact 模式：BF16 權重加 exact attention，是原版系列的對照基準。其他元件都是近似（approximate）模式，NF4 的兩個 Turbo 元件是實驗（experimental）模式。",
+    "en": "exact mode: BF16 weights with exact attention, the reference for the base family. Every other component runs in approximate mode; the two NF4 Turbo components are experimental.",
+    "ja": "exact モード：BF16 の重みと exact attention の組み合わせで、ベース系列の比較基準です。ほかのコンポーネントはすべて approximate モードで、NF4 の Turbo 2 個は experimental モードです。"
+  },
+  {
+    "source": "預設把權重留在主機記憶體（host）；「用完釋放」是 drop。",
+    "en": "By default the weights stay in host memory (host); “drop after use” releases them (drop).",
+    "ja": "既定では重みをホストメモリに残します（host）。「使用後に解放」は drop です。"
+  },
+  {
+    "source": "逐層串流",
+    "en": "Layer streaming",
+    "ja": "レイヤー単位のストリーミング"
+  },
+  {
+    "source": "權重放在主機記憶體，去噪時一層一層搬到 GPU，所以 16 GB 的 RTX 5080 也能跑 BF16。NF4 元件則設計成整個常駐在 GPU。",
+    "en": "Weights sit in host memory and move to the GPU layer by layer during denoising, which is how a 16 GB RTX 5080 can run BF16. The NF4 components were set up to stay resident on the GPU instead.",
+    "ja": "重みはホストメモリに置き、デノイズ中に 1 層ずつ GPU に転送します。だから 16 GB の RTX 5080 でも BF16 を動かせます。NF4 のコンポーネントは GPU に常駐させる構成です。"
+  },
+  {
+    "source": "固定不變",
+    "en": "Held constant",
+    "ja": "固定した条件"
+  },
+  {
+    "source": "純文字情境（T2VA）用同一次文字編碼輸出（三個鏡頭的戰鬥提示詞）；有參考情境（Ref2VA）用同一份文字編碼、影像 VAE 編碼與聲音 VAE 編碼輸出（兩張角色圖）。每個 DiT 讀到的條件、參考 latent 與 job 參數完全相同。",
+    "en": "The text-only scenario (T2VA) reuses one text-encoder output (a three-shot battle prompt); the reference scenario (Ref2VA) reuses one set of text-encoder, video-VAE and audio-VAE encodings (two character pictures). Every DiT reads exactly the same conditioning, reference latents and job parameters.",
+    "ja": "テキストのみのシナリオ（T2VA）は 1 回分のテキストエンコーダー出力（3 カット構成のバトルのプロンプト）を、参照ありのシナリオ（Ref2VA）は 1 回分のテキストエンコード・映像 VAE エンコード・音声 VAE エンコードの出力（キャラクター画像 2 枚）を使い回します。どの DiT も、条件・参照 latent・ジョブのパラメーターはまったく同じです。"
+  },
+  {
+    "source": "seed 42、768×448、124 幀（24 fps）；DiT 之後一律由 vae-5080 與 audio-3060 解碼，再封裝成 MP4。",
+    "en": "Seed 42, 768×448, 124 frames at 24 fps. After the DiT, vae-5080 and audio-3060 always decode, and the result is muxed into an MP4.",
+    "ja": "seed 42、768×448、124 フレーム（24 fps）。DiT の後は常に vae-5080 と audio-3060 でデコードし、MP4 にまとめます。"
+  },
+  {
+    "source": "每個 DiT 都從停止狀態重新載入，只跑一次（載入後的第一次呼叫），量完就停止；同一時間只有一個 DiT 在記憶體裡。",
+    "en": "Every DiT starts from a stopped state, runs once (the first call after loading) and is stopped again; only one DiT is in memory at a time.",
+    "ja": "各 DiT は停止状態からロードし、1 回だけ実行（ロード直後の最初の呼び出し）して停止します。メモリ上の DiT は常に 1 つだけです。"
+  },
+  {
+    "source": "唯一的變數：DiT 元件",
+    "en": "The only variable: the DiT component",
+    "ja": "唯一の変数：DiT コンポーネント"
+  },
+  {
+    "source": "這裡的「元件」是 Video Console 能單獨載入的一個 DiT 設定：一個 checkpoint，加上量化、加速 LoRA、AdaLN、attention 與用完後處理方式的一種組合。",
+    "en": "A component here is one DiT configuration that Video Console loads as a unit: a checkpoint plus one combination of quantization, acceleration LoRA, AdaLN mode, attention and what happens after use.",
+    "ja": "ここでいうコンポーネントとは、Video Console が単体でロードできる DiT の設定のことです。チェックポイント 1 つに、量子化・高速化 LoRA・AdaLN・attention・使用後の扱いの組み合わせを 1 つ加えたものです。"
+  },
+  {
+    "source": "數字來源：recorder 對 DiT 載入與呼叫的量測（主機 monotonic 時鐘與 CUDA event；顯存是 torch allocator 峰值與 NVML 整卡取樣；主機記憶體是程序 RSS 取樣與 pinned 盤點），以及每秒一次的整機取樣（/proc/meminfo、nvidia-smi）。範圍不同的記憶體數字不能相加。畫面指標是用 ffmpeg 與 numpy 算的客觀量。",
+    "en": "Where the numbers come from: the recorder's measurements of each DiT load and call (host monotonic clock and CUDA events; VRAM as the torch allocator peak and NVML whole-card samples; host memory as process RSS samples and a pinned-memory inventory), plus whole-machine samples once per second (/proc/meminfo, nvidia-smi). Memory figures with different scopes must not be added together. The image metrics are objective measures computed with ffmpeg and numpy.",
+    "ja": "数値の出どころ：recorder による DiT のロードと呼び出しの計測（ホストの monotonic クロックと CUDA イベント。VRAM は torch アロケーターのピークと NVML によるカード全体のサンプリング、ホストメモリはプロセス RSS のサンプリングと pinned メモリの集計）と、1 秒ごとのマシン全体のサンプリング（/proc/meminfo、nvidia-smi）。範囲の違うメモリの数値は足し合わせられません。画質の指標は ffmpeg と numpy で計算した客観値です。"
+  },
+  {
+    "source": "40 個元件的完整設定",
+    "en": "Full settings of the 40 components",
+    "ja": "40 個のコンポーネントの全設定"
+  },
+  {
+    "source": "// 04 · Method",
+    "en": "// 04 · Method",
+    "ja": "// 04 · 実験方法"
+  },
+  {
+    "source": "載入",
+    "en": "Load",
+    "ja": "ロード"
+  },
+  {
+    "source": "DiT 去噪",
+    "en": "DiT denoise",
+    "ja": "DiT デノイズ"
+  },
+  {
+    "source": "每步 p50",
+    "en": "Per step p50",
+    "ja": "1 ステップ p50"
+  },
+  {
+    "source": "步驟合計",
+    "en": "Steps total",
+    "ja": "ステップ合計"
+  },
+  {
+    "source": "第一步額外",
+    "en": "First-step extra",
+    "ja": "初回ステップの追加分"
+  },
+  {
+    "source": "步驟外",
+    "en": "Outside the steps",
+    "ja": "ステップ外"
+  },
+  {
+    "source": "DiT 呼叫",
+    "en": "DiT call",
+    "ja": "DiT 呼び出し"
+  },
+  {
+    "source": "整個 run",
+    "en": "Whole run",
+    "ja": "run 全体"
+  },
+  {
+    "source": "單位都是秒。每步 p50 是每一步主機時間的中位數；第一步額外是第一步比穩定步驟多花的時間；DiT 呼叫是元件呼叫的牆鐘時間；整個 run 另含影像與聲音解碼及封裝。NF4 在載入時就失敗，只有載入時間。",
+    "en": "All values in seconds. Per step p50 is the median host time of one step; first-step extra is how much longer the first step took than the steady steps; DiT call is the wall time of the component call; the whole run also includes video and audio decoding and muxing. NF4 failed while loading, so it has only a load time.",
+    "ja": "単位はすべて秒。1 ステップ p50 は各ステップのホスト時間の中央値、初回ステップの追加分は初回が定常ステップより長くかかった時間、DiT 呼び出しはコンポーネント呼び出しの実時間、run 全体は映像・音声のデコードと多重化も含みます。NF4 はロード中に失敗したため、ロード時間だけです。"
+  },
+  {
+    "source": "速度的完整數字（秒）",
+    "en": "Every speed figure (seconds)",
+    "ja": "速度の全数値（秒）"
+  },
+  {
+    "source": "下面兩張圖是 recorder 量到的 DiT 去噪時間（denoise compute），完整數字在本節最後的表格。",
+    "en": "The two charts below show the DiT denoising time (denoise compute) measured by the recorder; the table at the end of this section has every figure.",
+    "ja": "下の 2 つの図は recorder が計測した DiT のデノイズ時間（denoise compute）です。全数値はこの節の最後の表にあります。"
+  },
+  {
+    "source": "純文字：DiT 去噪時間（s）",
+    "en": "Text only: DiT denoising time (s)",
+    "ja": "テキストのみ：DiT のデノイズ時間（s）"
+  },
+  {
+    "source": "由快到慢；圖例區分現行元件與其他元件。",
+    "en": "Fastest first; the legend tells the current component from the others.",
+    "ja": "速い順。凡例で現行コンポーネントとほかを区別しています。"
+  },
+  {
+    "source": "22 個純文字元件，由快到慢；完整數值見本節表格。",
+    "en": "22 text-only components, fastest first; the table in this section has every value.",
+    "ja": "テキストのみの 22 個、速い順。全数値はこの節の表にあります。"
+  },
+  {
+    "source": "現行元件",
+    "en": "Current component",
+    "ja": "現行コンポーネント"
+  },
+  {
+    "source": "其他元件",
+    "en": "Other components",
+    "ja": "ほかのコンポーネント"
+  },
+  {
+    "source": "INT8 · PAI 8 步最快（26.0 s），原版 50 步的官方精度最慢（407.8 s）。",
+    "en": "INT8 · PAI 8-step is fastest (26.0 s) and the official-precision base 50-step slowest (407.8 s).",
+    "ja": "最速は INT8 · PAI 8 ステップ（26.0 s）、最も遅いのは公式精度のベース 50 ステップ（407.8 s）。"
+  },
+  {
+    "source": "有參考：DiT 去噪時間（s）",
+    "en": "With references: DiT denoising time (s)",
+    "ja": "参照あり：DiT のデノイズ時間（s）"
+  },
+  {
+    "source": "15 個成片的有參考元件，由快到慢；NF4 沒有成片，不在圖上。",
+    "en": "The 15 reference components that produced a video, fastest first; NF4 produced none and is not shown.",
+    "ja": "出力のあった参照ありの 15 個、速い順。NF4 は出力がないため載せていません。"
+  },
+  {
+    "source": "INT8 · Turbo 4 步最快（74.4 s）；BF16 官方精度要 1,507.3 s，約 25 分鐘。",
+    "en": "INT8 · Turbo 4-step is fastest (74.4 s); BF16 at official precision takes 1,507.3 s, about 25 minutes.",
+    "ja": "最速は INT8 · Turbo 4 ステップ（74.4 s）。公式精度の BF16 は 1,507.3 s（約 25 分）かかります。"
+  },
+  {
+    "source": "有參考時序列長度是純文字的 2.7 倍（35,136 對 13,184 token），attention 是平方成本，所以每步慢 3.2–4.5 倍。",
+    "en": "With references the sequence is 2.7× as long as text-only (35,136 versus 13,184 tokens), and attention cost grows with its square, so each step is 3.2–4.5× slower.",
+    "ja": "参照ありでは系列長がテキストのみの 2.7 倍（35,136 対 13,184 トークン）で、attention のコストは 2 乗で増えるため、1 ステップが 3.2–4.5 倍遅くなります。"
+  },
+  {
+    "source": "denoise_av 階段拆解",
+    "en": "Inside the denoise_av stage",
+    "ja": "denoise_av 段階の内訳"
+  },
+  {
+    "source": "denoise_av 階段 = 去噪步驟合計 + 步驟外。步驟外是階段時間減去所有步驟（AdaLN 準備、輸入整理、釋放回主機等；recorder 沒有更細的分段），長短與 AdaLN 模式完全對應：online 23–32 秒、fixed 2–8 秒、off 2–3 秒。",
+    "en": "The denoise_av stage is the sum of the denoising steps plus the time outside them. Outside the steps is the stage time minus all steps (AdaLN preparation, input preparation, release back to host memory and so on; the recorder has no finer spans), and it follows the AdaLN mode exactly: online 23–32 s, fixed 2–8 s, off 2–3 s.",
+    "ja": "denoise_av 段階は、デノイズステップの合計とステップ外の時間からなります。ステップ外は段階全体からすべてのステップを引いた時間で（AdaLN の準備、入力の整理、ホストへの解放など。recorder にこれ以上細かい区間はありません）、長さは AdaLN モードと完全に対応しています。online は 23–32 秒、fixed は 2–8 秒、off は 2–3 秒です。"
+  },
+  {
+    "source": "純文字：denoise_av 階段（s）",
+    "en": "Text only: the denoise_av stage (s)",
+    "ja": "テキストのみ：denoise_av 段階（s）"
+  },
+  {
+    "source": "依整個階段由短到長；數字是整個階段的秒數。",
+    "en": "Shortest stage first; the number is the whole stage in seconds.",
+    "ja": "段階全体の短い順。数値は段階全体の秒数です。"
+  },
+  {
+    "source": "22 個純文字元件的 denoise_av 階段：去噪步驟合計與步驟外的時間；完整數值見本節表格。",
+    "en": "The denoise_av stage of 22 text-only components: time in the denoising steps and outside them; the table in this section has every value.",
+    "ja": "テキストのみ 22 個の denoise_av 段階：デノイズステップの合計とステップ外の時間。全数値はこの節の表にあります。"
+  },
+  {
+    "source": "去噪步驟合計",
+    "en": "Denoising steps",
+    "ja": "デノイズステップの合計"
+  },
+  {
+    "source": "online 的元件步驟外都是 23–32 秒：INT8 · Turbo 4 步的 4 步只要 14.8 秒，整個階段卻是 39.8 秒。",
+    "en": "Every online component spends 23–32 s outside the steps: the four steps of INT8 · Turbo 4-step take only 14.8 s, yet the stage takes 39.8 s.",
+    "ja": "online のコンポーネントはどれもステップ外が 23–32 秒。INT8 · Turbo 4 ステップは 4 ステップで 14.8 秒なのに、段階全体は 39.8 秒です。"
+  },
+  {
+    "source": "有參考：denoise_av 階段（s）",
+    "en": "With references: the denoise_av stage (s)",
+    "ja": "参照あり：denoise_av 段階（s）"
+  },
+  {
+    "source": "15 個成片的有參考元件的 denoise_av 階段：去噪步驟合計與步驟外的時間；完整數值見本節表格。",
+    "en": "The denoise_av stage of the 15 reference components that produced a video: time in the denoising steps and outside them; the table in this section has every value.",
+    "ja": "出力のあった参照ありの 15 個の denoise_av 段階：デノイズステップの合計とステップ外の時間。全数値はこの節の表にあります。"
+  },
+  {
+    "source": "有參考時步驟本身變慢，步驟外和純文字差不多：online 26–32 秒、fixed 5–8 秒、off 2–3 秒。",
+    "en": "With references the steps themselves get slower, while the time outside them stays about the same as text-only: online 26–32 s, fixed 5–8 s, off 2–3 s.",
+    "ja": "参照ありではステップ自体が遅くなりますが、ステップ外はテキストのみとほぼ同じです。online は 26–32 秒、fixed は 5–8 秒、off は 2–3 秒。"
+  },
+  {
+    "source": "載入時間",
+    "en": "Load time",
+    "ja": "ロード時間"
+  },
+  {
+    "source": "載入時間（從停止到就緒）受 page cache 影響：同一個 checkpoint 剛被讀過時比較快，表中記錄的是實際執行順序下的值。BF16 不用在載入時量化，所以載入最快（21–30 秒）；8-bit 元件要 36–119 秒。",
+    "en": "Load time (from stopped to ready) depends on the page cache: a checkpoint that was just read loads faster, and the table records the values in the order the runs happened. BF16 needs no quantization at load time, so it loads fastest (21–30 s); the 8-bit components take 36–119 s.",
+    "ja": "ロード時間（停止から準備完了まで）はページキャッシュの影響を受けます。直前に読まれたチェックポイントは速く、表の値は実際の実行順でのものです。BF16 はロード時に量子化しないので最も速く（21–30 秒）、8-bit のコンポーネントは 36–119 秒かかります。"
+  },
+  {
+    "source": "速度的完整數字",
+    "en": "Every speed figure",
+    "ja": "速度の全数値"
+  },
+  {
+    "source": "// 05 · Speed",
+    "en": "// 05 · Speed",
+    "ja": "// 05 · 速度"
+  },
+  {
+    "source": "torch 配置峰值",
+    "en": "torch allocated peak",
+    "ja": "torch 確保ピーク"
+  },
+  {
+    "source": "torch 保留峰值",
+    "en": "torch reserved peak",
+    "ja": "torch 予約ピーク"
+  },
+  {
+    "source": "整卡 NVML 峰值",
+    "en": "Whole-card NVML peak",
+    "ja": "カード全体の NVML ピーク"
+  },
+  {
+    "source": "呼叫時主機 RSS",
+    "en": "Host RSS during the call",
+    "ja": "呼び出し中のホスト RSS"
+  },
+  {
+    "source": "程序主機峰值",
+    "en": "Process host peak",
+    "ja": "プロセスのホストピーク"
+  },
+  {
+    "source": "系統可用最低",
+    "en": "Lowest free system memory",
+    "ja": "システム空きの最小値"
+  },
+  {
+    "source": "權重搬運",
+    "en": "Weights moved",
+    "ja": "重みの転送量"
+  },
+  {
+    "source": "預取等待",
+    "en": "Prefetch wait",
+    "ja": "プリフェッチ待ち"
+  },
+  {
+    "source": "範圍不同的數字不能相加：torch 兩欄是 DiT 程序自己的配置與保留；NVML 是整張卡（含其他程序）；主機 RSS 含 mmap 的檔案頁；系統可用最低是整機。權重搬運是每次呼叫從主機搬到 GPU 的量，BF16 的 online／off 變體沒有回報（—，不是 0）。",
+    "en": "Figures with different scopes do not add up: the two torch columns are the DiT process's own allocations and reservations; NVML covers the whole card, other processes included; host RSS includes mmapped file pages; lowest free memory is machine-wide. Weights moved is how much one call transfers from host memory to the GPU; the BF16 online and off variants do not report it (—, not 0).",
+    "ja": "範囲の違う数値は足し合わせられません。torch の 2 列は DiT プロセス自身の確保量と予約量、NVML はカード全体（ほかのプロセスを含む）、ホスト RSS は mmap されたファイルページを含み、システム空きの最小値はマシン全体の値です。重みの転送量は 1 回の呼び出しでホストから GPU に送る量で、BF16 の online／off バリアントは報告していません（— は 0 ではありません）。"
+  },
+  {
+    "source": "記憶體與顯存的完整數字",
+    "en": "Every memory and VRAM figure",
+    "ja": "メモリと VRAM の全数値"
+  },
+  {
+    "source": "看 OOM 風險以整個 run 期間系統可用記憶體的最低值為準（/proc/meminfo 的 MemAvailable，每秒取樣；整機 62.6 GiB，數字含其他常駐元件與桌面程式）。",
+    "en": "For OOM risk, go by the lowest available system memory over the whole run (MemAvailable from /proc/meminfo, sampled once per second; the machine has 62.6 GiB, and the figure includes the other resident components and desktop apps).",
+    "ja": "OOM のリスクは run 全体でのシステム空きメモリの最小値で判断します（/proc/meminfo の MemAvailable を 1 秒ごとに取得。マシン全体で 62.6 GiB、ほかの常駐コンポーネントやデスクトップアプリの分を含みます）。"
+  },
+  {
+    "source": "純文字：系統可用記憶體最低值（GiB）",
+    "en": "Text only: lowest free system memory (GiB)",
+    "ja": "テキストのみ：システム空きメモリの最小値（GiB）"
+  },
+  {
+    "source": "由多到少；越低越接近 OOM。",
+    "en": "Most headroom first; lower means closer to OOM.",
+    "ja": "多い順。低いほど OOM に近づきます。"
+  },
+  {
+    "source": "整個 run 期間 MemAvailable 的最低值，22 個純文字元件；完整數值見本節表格。",
+    "en": "Lowest MemAvailable over the whole run for 22 text-only components; the table in this section has every value.",
+    "ja": "run 全体での MemAvailable の最小値、テキストのみの 22 個。全数値はこの節の表にあります。"
+  },
+  {
+    "source": "BF16 的 fixed／online 元件只剩 6.8–9.3 GiB；FP8／INT8 · PAI 8 步還有 21.0–24.2 GiB。",
+    "en": "The BF16 fixed and online components leave only 6.8–9.3 GiB; FP8 and INT8 · PAI 8-step still leave 21.0–24.2 GiB.",
+    "ja": "BF16 の fixed／online のコンポーネントは 6.8–9.3 GiB しか残らず、FP8／INT8 · PAI 8 ステップはまだ 21.0–24.2 GiB 残ります。"
+  },
+  {
+    "source": "有參考：系統可用記憶體最低值（GiB）",
+    "en": "With references: lowest free system memory (GiB)",
+    "ja": "参照あり：システム空きメモリの最小値（GiB）"
+  },
+  {
+    "source": "整個 run 期間 MemAvailable 的最低值，15 個成片的有參考元件；完整數值見本節表格。",
+    "en": "Lowest MemAvailable over the whole run for the 15 reference components that produced a video; the table in this section has every value.",
+    "ja": "run 全体での MemAvailable の最小値、出力のあった参照ありの 15 個。全数値はこの節の表にあります。"
+  },
+  {
+    "source": "BF16 的 fixed／online 元件只剩 6.9–9.5 GiB；FP8／INT8 · PAI 8 步還有 24.0–24.3 GiB。",
+    "en": "The BF16 fixed and online components leave only 6.9–9.5 GiB; FP8 and INT8 · PAI 8-step still leave 24.0–24.3 GiB.",
+    "ja": "BF16 の fixed／online のコンポーネントは 6.9–9.5 GiB しか残らず、FP8／INT8 · PAI 8 ステップはまだ 24.0–24.3 GiB 残ります。"
+  },
+  {
+    "source": "BF16 的 AdaLN fixed／online 呼叫時，系統可用記憶體只剩 6.8–9.5 GiB；8-bit 的 online 變體 13.7–17.4 GiB；FP8／INT8 · PAI 8 步 21.0–24.3 GiB。",
+    "en": "BF16 with AdaLN fixed or online leaves only 6.8–9.5 GiB of system memory during the call; the 8-bit online variants 13.7–17.4 GiB; FP8 and INT8 · PAI 8-step 21.0–24.3 GiB.",
+    "ja": "AdaLN fixed／online の BF16 では呼び出し中のシステム空きが 6.8–9.5 GiB しかなく、8-bit の online バリアントは 13.7–17.4 GiB、FP8／INT8 · PAI 8 ステップは 21.0–24.3 GiB です。"
+  },
+  {
+    "source": "程序 RSS 含 mmap 的檔案頁（可以回收），所以 8-bit online 變體的 RSS 高，系統可用記憶體反而比 BF16 多；看 OOM 風險以系統可用記憶體為準。",
+    "en": "Process RSS includes mmapped file pages, which can be reclaimed, so the 8-bit online variants show a high RSS yet leave more free system memory than BF16; judge OOM risk by the free system memory.",
+    "ja": "プロセス RSS には mmap されたファイルページ（回収可能）が含まれるため、8-bit の online バリアントは RSS が大きいのに、システム空きは BF16 より多くなります。OOM のリスクはシステム空きで判断してください。"
+  },
+  {
+    "source": "有參考的 BF16 online／off 變體整卡 NVML 峰值 15.4–15.9 GiB，幾乎用滿 RTX 5080 的 15.92 GiB（BF16 · PAI 8 步為 13.8 GiB）；8-bit 版本 12.4–14.6 GiB。",
+    "en": "With references, the BF16 online and off variants peak at 15.4–15.9 GiB on the whole card (NVML), almost all of the RTX 5080's 15.92 GiB (BF16 · PAI 8-step: 13.8 GiB); the 8-bit versions peak at 12.4–14.6 GiB.",
+    "ja": "参照ありの BF16 online／off バリアントは、カード全体の NVML ピークが 15.4–15.9 GiB で、RTX 5080 の 15.92 GiB をほぼ使い切ります（BF16 · PAI 8 ステップは 13.8 GiB）。8-bit 版は 12.4–14.6 GiB です。"
+  },
+  {
+    "source": "每次呼叫從主機搬到 GPU 的權重：8 步的 FP8／INT8 為 155 GB、BF16 為 310 GB，4 步 78 GB，原版 50 步 965 GB。",
+    "en": "Weights moved from host memory to the GPU per call: 155 GB for 8-step FP8 and INT8, 310 GB for BF16, 78 GB for 4 steps and 965 GB for base 50-step.",
+    "ja": "1 回の呼び出しでホストから GPU に転送する重み：8 ステップの FP8／INT8 は 155 GB、BF16 は 310 GB、4 ステップは 78 GB、ベース 50 ステップは 965 GB です。"
+  },
+  {
+    "source": "// 06 · Memory",
+    "en": "// 06 · Memory",
+    "ja": "// 06 · メモリ"
+  },
+  {
+    "source": "記憶體與顯存",
+    "en": "Memory and VRAM",
+    "ja": "メモリと VRAM"
+  },
+  {
+    "source": "銳利度",
+    "en": "Sharpness",
+    "ja": "シャープネス"
+  },
+  {
+    "source": "動態量",
+    "en": "Motion",
+    "ja": "動き"
+  },
+  {
+    "source": "平均亮度",
+    "en": "Mean luma",
+    "ja": "平均輝度"
+  },
+  {
+    "source": "近黑幀數",
+    "en": "Near-black frames",
+    "ja": "ほぼ黒のフレーム数"
+  },
+  {
+    "source": "聲音平均",
+    "en": "Mean audio level",
+    "ja": "音声の平均レベル"
+  },
+  {
+    "source": "與參考 PSNR",
+    "en": "PSNR vs reference",
+    "ja": "基準との PSNR"
+  },
+  {
+    "source": "與參考 SSIM",
+    "en": "SSIM vs reference",
+    "ja": "基準との SSIM"
+  },
+  {
+    "source": "參考對象",
+    "en": "Reference",
+    "ja": "比較基準"
+  },
+  {
+    "source": "BF16 · 原版 · AdaLN off · 官方精度和它的參考逐位相同，所以 SSIM 是 1.000，PSNR 沒有數值。",
+    "en": "BF16 · Base · AdaLN off · official precision is bit-identical to its reference, so its SSIM is 1.000 and its PSNR has no value.",
+    "ja": "BF16 · ベース · AdaLN off · 公式精度は基準とビット単位で一致するため、SSIM は 1.000 で PSNR は値がありません。"
+  },
+  {
+    "source": "畫面指標的完整數字",
+    "en": "Every image metric",
+    "ja": "画質の指標の全数値"
+  },
+  {
+    "source": "銳利度：16 幀平均的 Laplacian 變異數。越高代表邊緣越多、越銳利；Turbo 的賽璐璐線條與速度線會拉高這個值，不等於細節更多。",
+    "en": "Sharpness: the Laplacian variance averaged over 16 frames. Higher means more and crisper edges; Turbo's cel lines and speed lines raise it, which is not the same as more detail.",
+    "ja": "シャープネス：16 フレーム平均のラプラシアン分散。高いほどエッジが多く鋭いことを示します。Turbo のセル調の線やスピード線でも上がるので、細部が多いという意味ではありません。"
+  },
+  {
+    "source": "動態量：相鄰幀灰階的平均絕對差。平均亮度：0–255 的平均灰階。",
+    "en": "Motion: the mean absolute difference between neighbouring frames in grey levels. Mean luma: the average grey level on a 0–255 scale.",
+    "ja": "動き：隣り合うフレームの濃淡の平均絶対差。平均輝度：0–255 の平均の濃淡。"
+  },
+  {
+    "source": "近黑幀：超過 20% 像素亮度低於 10 的幀數（共 124 幀），用來量參考圖貼上；純文字情境（夜景）最多 2 幀。",
+    "en": "Near-black frames: frames in which more than 20% of the pixels are below luma 10 (out of 124), used to count reference copy-through; the text-only night scene has at most 2.",
+    "ja": "ほぼ黒のフレーム：輝度 10 未満の画素が 20% を超えるフレームの数（全 124）。参照画像の貼り付けを数えるために使い、テキストのみ（夜景）では最大 2 フレームです。"
+  },
+  {
+    "source": "PSNR／SSIM：與同系列參考的差異（同 LoRA 的 BF16 FP8-attention 版；原版對 BF16 官方精度）。越高越接近參考，不代表畫質高低；擴散模型的微小數值差會被放大成不同細節。",
+    "en": "PSNR and SSIM: the difference from the reference of the same family (the BF16 version with FP8 attention for the same LoRA; for base, BF16 at official precision). Higher means closer to the reference, not better; in a diffusion model, tiny numerical differences grow into different details.",
+    "ja": "PSNR／SSIM：同じ系列の基準との差（同じ LoRA の FP8 attention の BF16 版。ベースは公式精度の BF16）。高いほど基準に近いという意味で、画質の良し悪しではありません。拡散モデルでは、ごく小さな数値差が別の細部へと広がります。"
+  },
+  {
+    "source": "// 07 · Image metrics",
+    "en": "// 07 · Image metrics",
+    "ja": "// 07 · 画質の指標"
+  },
+  {
+    "source": "參考圖 1：橘色長髮、披著深褐色羽毛斗篷、手拿羽毛筆的角色；透明背景在模型的輸入裡變成黑色。",
+    "en": "Reference picture 1: a character with long orange hair, a dark-brown feathered cloak and a feather quill; the transparent background has become black in the model's input.",
+    "ja": "参照画像 1：長いオレンジ髪で濃い茶色の羽根のマントをまとい、羽根ペンを持つキャラクター。透明な背景はモデルへの入力で黒になっている。"
+  },
+  {
+    "source": "參考圖 1",
+    "en": "Reference picture 1",
+    "ja": "参照画像 1"
+  },
+  {
+    "source": "：模型收到的樣子（透明區變黑）",
+    "en": ": as the model receives it (transparent areas turned black)",
+    "ja": "：モデルが受け取る状態（透明部分が黒）"
+  },
+  {
+    "source": "參考圖 2：銀白長髮繫粉紅緞帶、穿淺藍毛皮大衣、胸前有金色鈴鐺的角色，周圍有紫色鈴鐺光環；透明背景變成黑色。",
+    "en": "Reference picture 2: a character with long silver-white hair tied with pink ribbons, a light-blue fur coat and a golden bell on her chest, ringed by violet bells; the transparent background has become black.",
+    "ja": "参照画像 2：ピンクのリボンを結んだ長い銀白の髪、水色の毛皮のコート、胸元に金の鈴のキャラクターで、周りに紫の鈴の輪がある。透明な背景は黒になっている。"
+  },
+  {
+    "source": "參考圖 2",
+    "en": "Reference picture 2",
+    "ja": "参照画像 2"
+  },
+  {
+    "source": "PAI 8 步第 62 幀：橘髮角色揮出火焰羽刃，白髮角色站在黃昏的廢墟裡。",
+    "en": "PAI 8-step, frame 62: the orange-haired character swings a blazing feather blade while the white-haired character stands in the ruins at dusk.",
+    "ja": "PAI 8 ステップの第 62 フレーム：オレンジ髪のキャラクターが炎の羽根の刃を振り、白髪のキャラクターが夕暮れの廃墟に立っている。"
+  },
+  {
+    "source": "PAI 8 步",
+    "en": "PAI 8-step",
+    "ja": "PAI 8 ステップ"
+  },
+  {
+    "source": "· 第 62 幀",
+    "en": "· frame 62",
+    "ja": "· 第 62 フレーム"
+  },
+  {
+    "source": "Turbo 8 步第 62 幀：白髮角色出現在純黑背景上，沒有廢墟場景。",
+    "en": "Turbo 8-step, frame 62: the white-haired character appears on a plain black background with no ruined city.",
+    "ja": "Turbo 8 ステップの第 62 フレーム：白髪のキャラクターが真っ黒な背景に現れ、廃墟の場面がない。"
+  },
+  {
+    "source": "Turbo 8 步",
+    "en": "Turbo 8-step",
+    "ja": "Turbo 8 ステップ"
+  },
+  {
+    "source": "Turbo 4 步第 62 幀：橘髮角色握著羽毛的特寫，背景是黃昏天空。",
+    "en": "Turbo 4-step, frame 62: a close-up of the orange-haired character holding a feather against a dusk sky.",
+    "ja": "Turbo 4 ステップの第 62 フレーム：羽根を握るオレンジ髪のキャラクターのアップ、背景は夕暮れの空。"
+  },
+  {
+    "source": "Turbo 4 步",
+    "en": "Turbo 4-step",
+    "ja": "Turbo 4 ステップ"
+  },
+  {
+    "source": "原版 50 步第 62 幀：披著羽毛斗篷的橘髮角色持火焰劍躍過廢墟。",
+    "en": "Base 50-step, frame 62: the orange-haired character in a feathered cloak leaps over the ruins with a blazing sword.",
+    "ja": "ベース 50 ステップの第 62 フレーム：羽根のマントのオレンジ髪のキャラクターが炎の剣を持って廃墟の上を跳ぶ。"
+  },
+  {
+    "source": "原版 50 步",
+    "en": "Base 50-step",
+    "ja": "ベース 50 ステップ"
+  },
+  {
+    "source": "PAI 8 步第 74 幀：白髮角色出現在純黑背景上，沒有廢墟場景。",
+    "en": "PAI 8-step, frame 74: the white-haired character appears on a plain black background with no ruined city.",
+    "ja": "PAI 8 ステップの第 74 フレーム：白髪のキャラクターが真っ黒な背景に現れ、廃墟の場面がない。"
+  },
+  {
+    "source": "· 第 74 幀",
+    "en": "· frame 74",
+    "ja": "· 第 74 フレーム"
+  },
+  {
+    "source": "Turbo 8 步第 74 幀：白髮角色與紫色鈴鐺光環出現在純黑背景上，姿勢幾乎和參考圖 2 一樣。",
+    "en": "Turbo 8-step, frame 74: the white-haired character and her violet bell rings appear on a plain black background, in almost the same pose as reference picture 2.",
+    "ja": "Turbo 8 ステップの第 74 フレーム：白髪のキャラクターと紫の鈴の輪が真っ黒な背景に現れ、ポーズは参照画像 2 とほぼ同じ。"
+  },
+  {
+    "source": "Turbo 4 步第 74 幀：白髮角色站在黃昏的廢墟裡，手邊有紫色光芒。",
+    "en": "Turbo 4-step, frame 74: the white-haired character stands in the ruins at dusk with a violet glow at her hand.",
+    "ja": "Turbo 4 ステップの第 74 フレーム：白髪のキャラクターが夕暮れの廃墟に立ち、手元に紫の光がある。"
+  },
+  {
+    "source": "原版 50 步第 74 幀：白髮角色在廢墟前舉起手，放出紫色魔法。",
+    "en": "Base 50-step, frame 74: the white-haired character raises her hand in front of the ruins and casts violet magic.",
+    "ja": "ベース 50 ステップの第 74 フレーム：白髪のキャラクターが廃墟の前で手を上げ、紫の魔法を放つ。"
+  },
+  {
+    "source": "上排是模型實際收到的參考圖；下面兩列是同一幀在四種加速下的畫面（FP8、seed 42）。第 62 幀是 Turbo 8 步近黑比例最高的一幀，第 74 幀是 PAI 8 步近黑比例最高的一幀。",
+    "en": "The top row shows the reference pictures as the model actually receives them; the two rows below show the same frames under the four accelerations (FP8, seed 42). Frame 62 is Turbo 8-step’s darkest frame by near-black share, and frame 74 is PAI 8-step’s.",
+    "ja": "上段はモデルが実際に受け取る参照画像、下の 2 段は 4 つの高速化での同じフレームです（FP8、seed 42）。第 62 フレームは Turbo 8 ステップで、第 74 フレームは PAI 8 ステップで、ほぼ黒の画素の割合が最も高いフレームです。"
+  },
+  {
+    "source": "有參考情境的兩張角色圖是透明 PNG（1448×1086）。前處理以",
+    "en": "The two character pictures in the reference scenario are transparent PNGs (1448×1086). Preprocessing calls",
+    "ja": "参照ありのシナリオで使う 2 枚のキャラクター画像は透過 PNG（1448×1086）です。前処理の"
+  },
+  {
+    "source": "丟掉 alpha，而透明區底下的像素是黑色，所以模型收到的是黑底角色圖。PAI 8 步與 Turbo 8 步會在片段中段直接輸出這張黑底參考圖（姿勢、光暈、構圖幾乎一樣），而不是把角色畫進黃昏的廢墟；Turbo 4 步與原版 50 步在同一幀都把角色畫進了場景。",
+    "en": "and drops the alpha channel; the pixels under the transparent areas are black, so the model receives black-backed character pictures. PAI 8-step and Turbo 8-step output that black-backed picture mid-clip (almost the same pose, glow and framing) instead of drawing the character into the ruined city at dusk; Turbo 4-step and base 50-step draw the character into the scene in the same frames.",
+    "ja": "でアルファが捨てられ、透明部分の下の画素は黒なので、モデルが受け取るのは黒背景のキャラクター画像です。PAI 8 ステップと Turbo 8 ステップは、クリップの中盤でこの黒背景の参照画像をそのまま出力し（ポーズ・光・構図がほぼ同じ）、夕暮れの廃墟にキャラクターを描き込みません。Turbo 4 ステップとベース 50 ステップは、同じフレームでキャラクターを場面に描き込んでいます。"
+  },
+  {
+    "source": "量法：每幀計算亮度低於 10 的像素比例，超過 20% 記為近黑幀。純文字情境（夜景）最多只有 2 幀（轉場）；有參考情境裡原版與 Turbo 4 步都是 0 幀、PAI 8 步 21–22 幀、Turbo 8 步 37–43 幀。同一種加速下，BF16、FP8、INT8 的幀數幾乎一樣。",
+    "en": "How it is measured: for each frame, the share of pixels below luma 10; a frame above 20% counts as near-black. The text-only scenario (a night scene) has at most 2 such frames (transitions); with references, base and Turbo 4-step have 0, PAI 8-step 21–22 and Turbo 8-step 37–43. Within one acceleration, BF16, FP8 and INT8 give almost the same count.",
+    "ja": "測り方：各フレームで輝度 10 未満の画素の割合を求め、20% を超えたらほぼ黒のフレームとします。テキストのみ（夜景）では最大 2 フレーム（場面転換）。参照ありでは、ベースと Turbo 4 ステップが 0 フレーム、PAI 8 ステップが 21–22 フレーム、Turbo 8 ステップが 37–43 フレームです。同じ高速化なら、BF16・FP8・INT8 の数はほぼ同じです。"
+  },
+  {
+    "source": "有參考：近黑幀（幀／124）",
+    "en": "With references: near-black frames (of 124)",
+    "ja": "参照あり：ほぼ黒のフレーム（124 中）"
+  },
+  {
+    "source": "由多到少；圖例區分現行元件與其他元件。",
+    "en": "Most first; the legend tells the current component from the others.",
+    "ja": "多い順。凡例で現行コンポーネントとほかを区別しています。"
+  },
+  {
+    "source": "15 個成片的有參考元件的近黑幀數；Turbo 4 步與原版都是 0。",
+    "en": "Near-black frames of the 15 reference components that produced a video; Turbo 4-step and base are all 0.",
+    "ja": "出力のあった参照ありの 15 個のほぼ黒のフレーム数。Turbo 4 ステップとベースはすべて 0。"
+  },
+  {
+    "source": "幀（共 124）",
+    "en": "frames (of 124)",
+    "ja": "フレーム（全 124）"
+  },
+  {
+    "source": "Turbo 8 步 37–43 幀、PAI 8 步 21–22 幀；同一種加速下，量化幾乎不影響幀數。",
+    "en": "Turbo 8-step: 37–43 frames, PAI 8-step: 21–22; within one acceleration, quantization barely changes the count.",
+    "ja": "Turbo 8 ステップは 37–43 フレーム、PAI 8 ステップは 21–22 フレーム。同じ高速化なら、量子化による差はほとんどありません。"
+  },
+  {
+    "source": "實務上，有參考時優先用 Turbo 4 步或原版。透明 PNG 先鋪上底色再上傳，可能讓貼上比較不明顯，但會不會減少貼上還沒驗證。",
+    "en": "In practice, prefer Turbo 4-step or base when you use references. Flattening the transparent PNGs onto a background colour before uploading may make the copy-through less obvious, but whether it reduces it has not been tested.",
+    "ja": "実際には、参照ありでは Turbo 4 ステップかベースを優先してください。透過 PNG を背景色に重ねてからアップロードすれば貼り付けが目立ちにくくなるかもしれませんが、貼り付け自体が減るかはまだ検証していません。"
+  },
+  {
+    "source": "// 08 · Reference copy-through",
+    "en": "// 08 · Reference copy-through",
+    "ja": "// 08 · 参照画像の貼り付け"
+  },
+  {
+    "source": "有參考：參考圖原樣貼上",
+    "en": "With references: the reference picture pasted in as-is",
+    "ja": "参照あり：参照画像がそのまま貼り付けられる"
+  },
+  {
+    "source": "純文字（T2VA，FL2VA checkpoint）",
+    "en": "Text only (T2VA, FL2VA checkpoint)",
+    "ja": "テキストのみ（T2VA、FL2VA チェックポイント）"
+  },
+  {
+    "source": "對 BF16 · PAI 8 步",
+    "en": "vs BF16 · PAI 8-step",
+    "ja": "BF16 · PAI 8 ステップ 比"
+  },
+  {
+    "source": "第 0、31、62、93、123 幀的畫格",
+    "en": "Frames 0, 31, 62, 93 and 123",
+    "ja": "第 0・31・62・93・123 フレーム"
+  },
+  {
+    "source": "播放這個元件的原始輸出",
+    "en": "Play this component’s raw output",
+    "ja": "このコンポーネントの元の出力を再生"
+  },
+  {
+    "source": "原始輸出 MP4",
+    "en": "Raw output MP4",
+    "ja": "元の出力 MP4"
+  },
+  {
+    "source": "對 BF16 · Turbo 8 步",
+    "en": "vs BF16 · Turbo 8-step",
+    "ja": "BF16 · Turbo 8 ステップ 比"
+  },
+  {
+    "source": "對 BF16 · Turbo 4 步",
+    "en": "vs BF16 · Turbo 4-step",
+    "ja": "BF16 · Turbo 4 ステップ 比"
+  },
+  {
+    "source": "原版 50 步（無加速）",
+    "en": "Base 50-step (no acceleration)",
+    "ja": "ベース 50 ステップ（高速化なし）"
+  },
+  {
+    "source": "對 BF16 · 原版 · 官方精度",
+    "en": "vs BF16 · Base · official precision",
+    "ja": "BF16 · ベース · 公式精度 比"
+  },
+  {
+    "source": "有參考（Ref2VA，兩張角色圖）",
+    "en": "With references (Ref2VA, two character pictures)",
+    "ja": "参照あり（Ref2VA、キャラクター画像 2 枚）"
+  },
+  {
+    "source": "沒有成片：在 load_dit 階段載入失敗。",
+    "en": "No video: loading failed in the load_dit stage.",
+    "ja": "出力なし：load_dit 段階でロードに失敗しました。"
+  },
+  {
+    "source": "看 NF4 載入失敗的原因",
+    "en": "Why NF4 failed to load",
+    "ja": "NF4 がロードに失敗した理由"
+  },
+  {
+    "source": "每列是第 0、31、62、93、123 幀；展開可以播放該元件的原始輸出（768×448，含聲音，從 Hugging Face 載入）。SSIM 是和同系列參考的差異。",
+    "en": "Each strip shows frames 0, 31, 62, 93 and 123; open the fold to play that component's raw output (768×448 with sound, loaded from Hugging Face). SSIM is the difference from the reference of the same family.",
+    "ja": "各列は第 0・31・62・93・123 フレームです。折りたたみを開くと、そのコンポーネントの元の出力（768×448、音声付き、Hugging Face から読み込み）を再生できます。SSIM は同じ系列の基準との差です。"
+  },
+  {
+    "source": "// 09 · Every component",
+    "en": "// 09 · Every component",
+    "ja": "// 09 · コンポーネント別"
+  },
+  {
+    "source": "同一種加速內，FP8、INT8、BF16 與 attention 變體的鏡頭、構圖與角色位置都一樣，差在細節（髮飾、劍光形狀、碎石、背景建築）（目視）。",
+    "en": "Within one acceleration, FP8, INT8, BF16 and the attention variants share the same camera, composition and character positions; they differ in details such as hair ornaments, the shape of the sword light, debris and background buildings (by eye).",
+    "ja": "同じ高速化の中では、FP8・INT8・BF16 と attention のバリアントは、カメラ・構図・キャラクターの位置が同じで、違うのは細部（髪飾り、剣の光の形、がれき、背景の建物）です（目視）。"
+  },
+  {
+    "source": "純文字情境裡不同加速差很多：Turbo 4／8 步畫面更亮（平均亮度 76–82，PAI 與原版 60–63）、更銳（Laplacian 變異數 223–286，PAI 96–108、原版 120–144）、動態更大（相鄰幀差 18.7–21.4，PAI 11.7–14.2）。Turbo 4 步的動畫感（賽璐璐、速度線）最強（目視）。有參考時 Turbo 一樣更銳，但亮度與動態和其他差不多。",
+    "en": "In the text-only scenario the accelerations differ a lot: Turbo 4- and 8-step are brighter (mean luma 76–82 versus 60–63 for PAI and base), sharper (Laplacian variance 223–286 versus 96–108 for PAI and 120–144 for base) and more animated (frame difference 18.7–21.4 versus 11.7–14.2 for PAI). Turbo 4-step looks the most like anime, with cel shading and speed lines (by eye). With references Turbo is still sharper, but its brightness and motion are close to the others.",
+    "ja": "テキストのみでは高速化による差が大きく、Turbo 4／8 ステップは明るく（平均輝度 76–82、PAI とベースは 60–63）、シャープで（ラプラシアン分散 223–286、PAI は 96–108、ベースは 120–144）、動きも大きくなります（隣接フレーム差 18.7–21.4、PAI は 11.7–14.2）。アニメらしさ（セル調、スピード線）は Turbo 4 ステップが最も強く感じられます（目視）。参照ありでも Turbo はシャープですが、明るさと動きはほかとほぼ同じです。"
+  },
+  {
+    "source": "原版 50 步細節最多（眼睛高光、羽毛、紅線）；PAI 8 步的光線接近原版，但比較柔、比較暗（目視）。",
+    "en": "Base 50-step has the most detail (catchlights in the eyes, feathers, the red threads); PAI 8-step lights the scene like base but softer and darker (by eye).",
+    "ja": "細部が最も多いのはベース 50 ステップです（瞳のハイライト、羽根、赤い糸）。PAI 8 ステップは光の当たり方がベースに近いものの、やわらかく暗めです（目視）。"
+  },
+  {
+    "source": "INT8 · PAI 8 步呼叫時主機 RSS 只有 22 GiB，但載入時程序峰值 48–49 GiB；FP8 · PAI 8 步走有界載入，載入峰值 22.7–24.5 GiB。",
+    "en": "INT8 · PAI 8-step uses only 22 GiB of host RSS during the call, but the process peaks at 48–49 GiB while loading; FP8 · PAI 8-step uses the bounded loader and peaks at 22.7–24.5 GiB.",
+    "ja": "INT8 · PAI 8 ステップは呼び出し中のホスト RSS が 22 GiB だけですが、ロード中のプロセスピークは 48–49 GiB です。FP8 · PAI 8 ステップは上限付きロードを使い、ピークは 22.7–24.5 GiB です。"
+  },
+  {
+    "source": "attention 從 FP8 換成 exact（SDPA）會慢 4–35%，輸出也會變，但不一定更接近官方精度：最接近 BF16 官方精度的是 INT8 權重加 exact attention（SSIM 0.850），FP8 權重加 exact 只有 0.754。",
+    "en": "Switching attention from FP8 to exact (SDPA) costs 4–35% and changes the output, but not necessarily towards official precision: the closest to BF16 at official precision is INT8 weights with exact attention (SSIM 0.850), while FP8 weights with exact attention reach only 0.754.",
+    "ja": "attention を FP8 から exact（SDPA）に替えると 4–35% 遅くなり、出力も変わりますが、公式精度に近づくとは限りません。BF16 の公式精度に最も近いのは INT8 の重みと exact attention の組み合わせ（SSIM 0.850）で、FP8 の重みと exact では 0.754 にとどまります。"
+  },
+  {
+    "source": "SubBlock 稀疏 attention 只比 INT8 原版快 4%（159.6 對 166.6 秒），和官方精度的差距反而變大（SSIM 0.759 對 0.785）。",
+    "en": "SubBlock sparse attention is only 4% faster than INT8 base (159.6 versus 166.6 s), and it moves further from official precision (SSIM 0.759 versus 0.785).",
+    "ja": "SubBlock のスパース attention は INT8 のベースより 4% 速いだけで（159.6 対 166.6 秒）、公式精度との差はかえって広がります（SSIM 0.759 対 0.785）。"
+  },
+  {
+    "source": "解碼後逐位相同的三組：AdaLN fixed 與 off（BF16 · PAI 8 步 · exact attn）、AdaLN online 與 off（BF16 原版官方精度）、用完後 drop 與 host（FP8 · PAI 8 步）。對照組 FP8 attention 與 exact attention 的輸出不同。",
+    "en": "Three pairs decode to bit-identical output: AdaLN fixed and off (BF16 · PAI 8-step · exact attn), AdaLN online and off (BF16 base at official precision), and drop and host after use (FP8 · PAI 8-step). As a control, FP8 attention and exact attention give different output.",
+    "ja": "デコード後にビット単位で一致したのは 3 組です。AdaLN fixed と off（BF16 · PAI 8 ステップ · exact attn）、AdaLN online と off（公式精度の BF16 ベース）、使用後の drop と host（FP8 · PAI 8 ステップ）。対照として、FP8 attention と exact attention では出力が異なります。"
+  },
+  {
+    "source": "// 10 · Other observations",
+    "en": "// 10 · Other observations",
+    "ja": "// 10 · そのほかの観察"
+  },
+  {
+    "source": "三個 NF4 元件（原版、Turbo 8 步、Turbo 4 步，都是 AdaLN off、常駐 GPU）用同一個剪枝單檔，都在 load_dit 階段以同一個錯誤失敗：",
+    "en": "The three NF4 components (base, Turbo 8-step and Turbo 4-step, all with AdaLN off and resident on the GPU) share one pruned single file, and all failed in the load_dit stage with the same error:",
+    "ja": "NF4 の 3 個（ベース、Turbo 8 ステップ、Turbo 4 ステップ。いずれも AdaLN off で GPU に常駐）は同じプルーニング済みの単一ファイルを使い、どれも load_dit 段階で同じエラーにより失敗しました。"
+  },
+  {
+    "source": "這不是設定問題：權重本身沒有 comfy_quant 中繼資料，釘選版本的 SGLang 在 inspect_comfy_quant_markers 就拒絕載入，也不會自動改用其他精度。要測 NF4，需要帶這份中繼資料的權重或新版 loader。",
+    "en": "This is not a configuration problem: the weights themselves carry no comfy_quant metadata, so the pinned SGLang rejects them in inspect_comfy_quant_markers, and it does not fall back to another precision. Testing NF4 needs weights with that metadata or a newer loader.",
+    "ja": "設定の問題ではありません。重み自体に comfy_quant のメタデータがないため、固定バージョンの SGLang は inspect_comfy_quant_markers の時点でロードを拒否し、別の精度に切り替えることもしません。NF4 を試すには、このメタデータ付きの重みか新しいローダーが必要です。"
+  },
+  {
+    "source": "// 11 · Load failures",
+    "en": "// 11 · Load failures",
+    "ja": "// 11 · ロード失敗"
+  },
+  {
+    "source": "每個情境只有一個提示詞、一個 seed（42）。畫面差異與參考圖貼上的幀數只代表這次取樣，要下定論需要多個 seed 與提示詞。",
+    "en": "Each scenario has one prompt and one seed (42). The visual differences and the copy-through frame counts describe this sample only; firm conclusions need several seeds and prompts.",
+    "ja": "シナリオごとにプロンプトと seed（42）は 1 つだけです。映像の差や貼り付けのフレーム数はこのサンプルだけのもので、結論を出すには複数の seed とプロンプトが必要です。"
+  },
+  {
+    "source": "畫面指標（銳利度、動態量、亮度、近黑幀）是客觀量，不等於好不好看；PSNR／SSIM 只量和參考差多少，擴散模型的微小數值差會被放大成不同細節。",
+    "en": "The image metrics (sharpness, motion, brightness, near-black frames) are objective measures, not judgements of quality; PSNR and SSIM measure only the distance from a reference, and in a diffusion model tiny numerical differences grow into different details.",
+    "ja": "画質の指標（シャープネス、動き、明るさ、ほぼ黒のフレーム）は客観値で、見た目の良し悪しとは別です。PSNR／SSIM は基準との差を測るだけで、拡散モデルではごく小さな数値差が別の細部へと広がります。"
+  },
+  {
+    "source": "每個元件只量了載入後的第一次呼叫；常駐後的第二次呼叫可能略快。",
+    "en": "Each component was measured only on its first call after loading; a second call with the DiT kept loaded may be slightly faster.",
+    "ja": "各コンポーネントで計測したのはロード直後の最初の呼び出しだけです。常駐させた後の 2 回目はわずかに速いかもしれません。"
+  },
+  {
+    "source": "載入時間受 page cache 影響（同一 checkpoint 剛讀過會快），依實際執行順序記錄；元件之間的載入時間只能粗略比較。",
+    "en": "Load times depend on the page cache (a checkpoint that was just read loads faster) and were recorded in the order the runs happened, so they compare only roughly between components.",
+    "ja": "ロード時間はページキャッシュの影響を受け（直前に読んだチェックポイントは速い）、実際の実行順で記録しているので、コンポーネント間ではおおまかにしか比べられません。"
+  },
+  {
+    "source": "系統可用記憶體與整卡 NVML 是整機量測，包含其他常駐元件（vae-5080 的 pinned 記憶體、RTX 3060 上的聲音解碼器、Controller／Node 與桌面程式）。",
+    "en": "Free system memory and whole-card NVML are machine-wide and include the other resident components (vae-5080's pinned memory, the audio decoder on the RTX 3060, the Controller and Node, and desktop apps).",
+    "ja": "システムの空きメモリとカード全体の NVML はマシン全体の値で、ほかの常駐コンポーネント（vae-5080 の pinned メモリ、RTX 3060 上の音声デコーダー、Controller／Node、デスクトップアプリ）を含みます。"
+  },
+  {
+    "source": "BF16 的 online／off 變體沒有回報權重搬運量，表中以 — 表示（不是 0）。",
+    "en": "The BF16 online and off variants do not report the weights moved; the table shows — for them (not 0).",
+    "ja": "BF16 の online／off バリアントは重みの転送量を報告していないため、表では — としています（0 ではありません）。"
+  },
+  {
+    "source": "// 12 · Limits",
+    "en": "// 12 · Limits",
+    "ja": "// 12 · 限界"
+  },
+  {
+    "source": "用 3–5 個 seed 與多個提示詞重跑幾個候選（FP8／INT8 · PAI 8 步、Turbo 4 步、INT8 原版），確認參考圖貼上與畫面偏好。",
+    "en": "Rerun a few candidates (FP8 and INT8 · PAI 8-step, Turbo 4-step, INT8 base) with 3–5 seeds and several prompts to confirm the copy-through and the visual preferences.",
+    "ja": "いくつかの候補（FP8／INT8 · PAI 8 ステップ、Turbo 4 ステップ、INT8 のベース）を 3–5 個の seed と複数のプロンプトで再実行し、参照画像の貼り付けと映像の好みを確かめる。"
+  },
+  {
+    "source": "多 seed 驗證之後，再決定有參考的預設元件是否從 FP8 · PAI 8 步換成 INT8 · Turbo 4 步（或 FP8 · Turbo 4 步）。",
+    "en": "After the multi-seed check, decide whether the default reference component should move from FP8 · PAI 8-step to INT8 · Turbo 4-step (or FP8 · Turbo 4-step).",
+    "ja": "複数 seed での確認の後、参照ありの既定コンポーネントを FP8 · PAI 8 ステップから INT8 · Turbo 4 ステップ（または FP8 · Turbo 4 ステップ）に替えるかを決める。"
+  },
+  {
+    "source": "為 Turbo 與原版建立 base AdaLN sidecar，讓它們能用 fixed，省掉每次 23–32 秒的 online 固定成本。以 denoise_av 階段推估，INT8 · Turbo 4 步純文字可降到約 20 秒、有參考約 61–65 秒（推估，未量測）。",
+    "en": "Build a base AdaLN sidecar for Turbo and base so that they can run fixed and skip the 23–32 s online cost of every call. Estimated from the denoise_av stage, INT8 · Turbo 4-step would drop to about 20 s text-only and about 61–65 s with references (an estimate, not measured).",
+    "ja": "Turbo とベース用にベースの AdaLN サイドカーを作り、fixed で動かせるようにして、呼び出しごとの online の固定コスト 23–32 秒を省く。denoise_av 段階からの推定では、INT8 · Turbo 4 ステップはテキストのみで約 20 秒、参照ありで約 61–65 秒になる見込み（推定で、未計測）。"
+  },
+  {
+    "source": "把透明 PNG 參考圖先鋪上底色再上傳，比較貼上的幀數有沒有下降。",
+    "en": "Flatten the transparent PNG references onto a background colour before uploading, and compare whether the copy-through frame count drops.",
+    "ja": "透過 PNG の参照画像を背景色に重ねてからアップロードし、貼り付けのフレーム数が減るかを比べる。"
+  },
+  {
+    "source": "NF4：需要帶 comfy_quant 中繼資料的權重或新版 SGLang loader；目前的釘選版本不支援，先不處理。",
+    "en": "NF4: needs weights with comfy_quant metadata or a newer SGLang loader; the pinned version does not support it, so it is on hold.",
+    "ja": "NF4：comfy_quant のメタデータ付きの重みか新しい SGLang ローダーが必要です。固定中のバージョンは対応していないため、いったん保留します。"
+  },
+  {
+    "source": "// 13 · Follow-ups",
+    "en": "// 13 · Follow-ups",
+    "ja": "// 13 · 今後の課題"
+  },
+  {
+    "source": "影片：",
+    "en": "Videos: ",
+    "ja": "動画："
+  },
+  {
+    "source": "（Hugging Face 資料集，commit 43901d9）。grids 是 16 支 2×2 比較影片，outputs 是 37 個元件的原始輸出（逐位元組上傳），audio 是 37 條直接複製、沒有重新編碼的音軌。上傳後逐一比對 90 個檔案的大小與 SHA-256。",
+    "en": " (a Hugging Face dataset, commit 43901d9). grids holds the 16 2×2 comparison videos, outputs the raw output of the 37 components (uploaded byte for byte) and audio the 37 audio tracks, stream-copied without re-encoding. After the upload, the size and SHA-256 of all 90 files were checked one by one.",
+    "ja": "（Hugging Face のデータセット、コミット 43901d9）。grids は 2×2 比較動画 16 本、outputs は 37 個のコンポーネントの元の出力（バイト単位でそのままアップロード）、audio は再エンコードせずにコピーした音声トラック 37 本です。アップロード後に 90 ファイルすべてのサイズと SHA-256 を照合しました。"
+  },
+  {
+    "source": "本站：比較影片的封面（第 62 幀）、每個元件的 5 格畫格，以及參考圖貼上的 10 張圖。這些圖跟著頁面發布，不需要連到 Hugging Face。",
+    "en": "On this site: the comparison videos' posters (frame 62), each component's five-frame strip and the ten copy-through pictures. They ship with the page and need no connection to Hugging Face.",
+    "ja": "本サイト：比較動画のポスター（第 62 フレーム）、各コンポーネントの 5 コマの画像、参照画像の貼り付けの 10 枚。ページと一緒に配信され、Hugging Face への接続は不要です。"
+  },
+  {
+    "source": "原始報告的 2×2 影片把中文標籤畫在畫面上；這裡改從各元件的原始輸出重新組合成沒有文字的畫面，標籤改寫在影片下方，三種語言都能讀。",
+    "en": "The original report's 2×2 videos had Chinese labels drawn on the frames; here they were rebuilt from each component's raw output without any text, and the labels moved under the videos so that all three languages can read them.",
+    "ja": "元のレポートの 2×2 動画は中国語のラベルが画面に描かれていました。ここでは各コンポーネントの元の出力から文字のない画面に組み直し、ラベルは 3 言語で読めるよう動画の下に移しました。"
+  },
+  {
+    "source": "與原始報告（2026-10-18 02:14 產生）的差異：有參考與純文字的每步時間比改為 3.2–4.5 倍（原寫 3.2–4.4，INT8 原版為 4.54）；BF16 載入時間改為 21–30 秒（原寫 21–29，最長 29.8 秒）；「唯一的有界載入」改為 FP8 · PAI 8 步走有界載入（四個 FP8 · PAI 8 步元件都是）。",
+    "en": "Differences from the original report (generated 2026-10-18 02:14): the per-step ratio between references and text-only is now 3.2–4.5× (it said 3.2–4.4; INT8 base is 4.54); the BF16 load time is now 21–30 s (it said 21–29; the longest is 29.8 s); “the only bounded load” now reads that FP8 · PAI 8-step uses the bounded loader (all four FP8 · PAI 8-step components do).",
+    "ja": "元のレポート（2026-10-18 02:14 生成）との違い：参照ありとテキストのみの 1 ステップあたりの時間比を 3.2–4.5 倍に修正（元は 3.2–4.4、INT8 のベースは 4.54）。BF16 のロード時間を 21–30 秒に修正（元は 21–29、最長は 29.8 秒）。「唯一の上限付きロード」を、FP8 · PAI 8 ステップが上限付きロードを使う、という表現に修正（FP8 · PAI 8 ステップの 4 個はすべて該当）。"
+  },
+  {
+    "source": "逐位相同的三組，在本站重整時以解碼後影像與聲音的 MD5 重新驗證過。",
+    "en": "The three bit-identical pairs were verified again for this page by the MD5 of their decoded video and audio.",
+    "ja": "ビット単位で一致する 3 組は、本ページの再構成時に、デコード後の映像と音声の MD5 で改めて確認しました。"
+  },
+  {
+    "source": "頁面上的數字都來自原始報告內嵌的資料（recorder 與每秒取樣）；本站沒有重新量測。",
+    "en": "Every figure on this page comes from the data embedded in the original report (the recorder and the per-second samples); nothing was measured again for this site.",
+    "ja": "このページの数値はすべて元のレポートに埋め込まれたデータ（recorder と 1 秒ごとのサンプリング）によるもので、本サイトで計測し直したものはありません。"
+  },
+  {
+    "source": "// 14 · Files & checks",
+    "en": "// 14 · Files & checks",
+    "ja": "// 14 · ファイルと照合"
+  }
+]

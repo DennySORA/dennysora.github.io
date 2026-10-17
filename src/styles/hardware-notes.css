@@ -412,14 +412,15 @@
   box-shadow: inset 2px 0 0 var(--color-action-primary);
 }
 
-/* Charts: inline SVG coloured by token classes; data tables stay beside them. */
-.hardware-note .hw-figure {
+/* Charts: inline SVG coloured by token classes; data tables stay beside them.
+   Study notes reuse the same recipe (docs/DESIGN.md §9). */
+:is(.hardware-note, .study-note) .hw-figure {
   margin: var(--space-5) 0;
   border: 1px solid var(--color-border-decorative);
   border-radius: var(--radius-chip);
   background: var(--color-chrome);
 }
-.hardware-note .hw-figure figcaption {
+:is(.hardware-note, .study-note) .hw-figure figcaption {
   display: grid;
   gap: var(--space-1);
   padding: var(--space-3) var(--space-4);
@@ -428,25 +429,25 @@
   color: var(--color-text-secondary);
   font-size: 13px;
 }
-.hardware-note .hw-figure figcaption b {
+:is(.hardware-note, .study-note) .hw-figure figcaption b {
   color: var(--color-text);
   font-size: 14px;
 }
-.hardware-note .hw-figure > .hw-caption {
+:is(.hardware-note, .study-note) .hw-figure > .hw-caption {
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-border-decorative);
 }
-.hardware-note .hw-chart-scroll {
+:is(.hardware-note, .study-note) .hw-chart-scroll {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   padding: var(--space-3) var(--space-2);
 }
-.hardware-note .hw-chart-box {
+:is(.hardware-note, .study-note) .hw-chart-box {
   padding: var(--space-3) var(--space-3) var(--space-2);
 }
-.hardware-note .hw-chart {
+:is(.hardware-note, .study-note) .hw-chart {
   display: block;
   width: 100%;
   height: auto;
@@ -454,102 +455,102 @@
   font-family: var(--font-sans);
 }
 /* Bar lists and small multiples fit a 320 px screen; only the wide chart scrolls. */
-.hardware-note .hw-chart-list {
+:is(.hardware-note, .study-note) .hw-chart-list {
   max-width: 440px;
 }
-.hardware-note .hw-chart-small {
+:is(.hardware-note, .study-note) .hw-chart-small {
   max-width: 420px;
 }
-.hardware-note .hw-chart-wide {
+:is(.hardware-note, .study-note) .hw-chart-wide {
   min-width: 480px;
   max-width: 760px;
 }
-.hardware-note .hw-chart-pair {
+:is(.hardware-note, .study-note) .hw-chart-pair {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: var(--space-4);
   margin: var(--space-5) 0;
 }
-.hardware-note .hw-chart-pair .hw-figure {
+:is(.hardware-note, .study-note) .hw-chart-pair .hw-figure {
   margin: 0;
 }
-.hardware-note .hw-multiples {
+:is(.hardware-note, .study-note) .hw-multiples {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: var(--space-4);
   margin: var(--space-5) 0;
 }
-.hardware-note .hw-multiples .hw-figure {
+:is(.hardware-note, .study-note) .hw-multiples .hw-figure {
   margin: 0;
 }
-.hardware-note .hw-chart text {
+:is(.hardware-note, .study-note) .hw-chart text {
   fill: var(--color-text-secondary);
   font-size: 13px;
 }
-.hardware-note .hw-chart .hw-t-muted {
+:is(.hardware-note, .study-note) .hw-chart .hw-t-muted {
   fill: var(--color-text-muted);
   font-size: 12px;
 }
-.hardware-note .hw-chart .hw-t-value {
+:is(.hardware-note, .study-note) .hw-chart .hw-t-value {
   fill: var(--color-text);
   font-variant-numeric: tabular-nums;
 }
-.hardware-note .hw-chart .hw-t-strong {
+:is(.hardware-note, .study-note) .hw-chart .hw-t-strong {
   fill: var(--color-text);
   font-weight: 650;
 }
-.hardware-note .hw-chart .hw-gridline {
+:is(.hardware-note, .study-note) .hw-chart .hw-gridline {
   stroke: var(--color-border-subtle);
   stroke-width: 1;
 }
-.hardware-note .hw-chart .hw-axis {
+:is(.hardware-note, .study-note) .hw-chart .hw-axis {
   stroke: var(--color-border-decorative);
   stroke-width: 1;
 }
-.hardware-note .hw-chart .hw-bar {
+:is(.hardware-note, .study-note) .hw-chart .hw-bar {
   fill: var(--color-entity-file);
 }
-.hardware-note .hw-chart .hw-bar-muted {
+:is(.hardware-note, .study-note) .hw-chart .hw-bar-muted {
   fill: var(--color-border-strong);
 }
-.hardware-note .hw-chart .hw-whisker {
+:is(.hardware-note, .study-note) .hw-chart .hw-whisker {
   stroke: var(--color-text-muted);
   stroke-width: 1.5;
   stroke-linecap: round;
 }
-.hardware-note .hw-chart .hw-curve {
+:is(.hardware-note, .study-note) .hw-chart .hw-curve {
   fill: none;
   stroke: var(--color-border-strong);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.hardware-note .hw-chart .hw-curve-focus {
+:is(.hardware-note, .study-note) .hw-chart .hw-curve-focus {
   stroke: var(--color-entity-file);
   stroke-width: 2;
 }
-.hardware-note .hw-chart .hw-system {
+:is(.hardware-note, .study-note) .hw-chart .hw-system {
   fill: none;
   stroke: var(--color-entity-kind);
   stroke-width: 2;
   stroke-dasharray: 7 5;
   stroke-linecap: round;
 }
-.hardware-note .hw-chart .hw-key-system {
+:is(.hardware-note, .study-note) .hw-chart .hw-key-system {
   stroke: var(--color-entity-kind);
   stroke-width: 2;
   stroke-dasharray: 7 5;
 }
-.hardware-note .hw-chart .hw-key-fan {
+:is(.hardware-note, .study-note) .hw-chart .hw-key-fan {
   stroke: var(--color-entity-file);
   stroke-width: 2;
 }
-.hardware-note .hw-chart .hw-dot {
+:is(.hardware-note, .study-note) .hw-chart .hw-dot {
   fill: var(--color-entity-file);
   stroke: var(--color-chrome);
   stroke-width: 2;
 }
-.hardware-note .hw-chart .hw-point {
+:is(.hardware-note, .study-note) .hw-chart .hw-point {
   fill: var(--color-text);
   stroke: var(--color-chrome);
   stroke-width: 2;

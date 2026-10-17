@@ -34,7 +34,7 @@ describe('the note tree', () => {
   it('files each note in the folder the owner chose', () => {
     expect(
       noteFolderIds.filter((id) => noteFolders[id].parent === null),
-    ).toEqual(['software', 'medical', 'hardware', 'japan', 'other']);
+    ).toEqual(['software', 'medical', 'hardware', 'japan', 'ai', 'other']);
     expect(folderPath('p2p', 'zh-hant')).toBe(
       '/zh-hant/note/software/network/p2p/',
     );
@@ -52,6 +52,13 @@ describe('the note tree', () => {
       '/zh-hant/note/other/landscape-photography/',
     );
     expect(subfolders('other')).toEqual([]);
+    // AI / Video / Data comparisons holds the H3 DiT comparison.
+    expect(folderPath('comparisons', 'en')).toBe(
+      '/en/note/ai/video/comparisons/',
+    );
+    expect(notePath('h3-dit-components', 'ja')).toBe(
+      '/ja/note/ai/video/comparisons/h3-dit-components/',
+    );
   });
 
   it('answers every folder and note at its own path, in all three languages', () => {

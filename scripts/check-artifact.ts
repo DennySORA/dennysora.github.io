@@ -101,7 +101,9 @@ for (const file of files) {
   // Dark is present in the first HTML response, before any script runs.
   if (!/<html[^>]* data-theme="dark"/.test(html))
     failures.push(`Missing dark root: ${name}`);
-  for (const match of html.matchAll(/(?:href|src)="([^"#]+)(?:#[^"]*)?"/g)) {
+  for (const match of html.matchAll(
+    /(?:href|src|poster)="([^"#]+)(?:#[^"]*)?"/g,
+  )) {
     const raw = match[1];
     if (!raw || raw.startsWith('mailto:') || raw.startsWith('data:')) continue;
     const url = new URL(raw.replaceAll('&amp;', '&'), siteUrl + '/' + name);

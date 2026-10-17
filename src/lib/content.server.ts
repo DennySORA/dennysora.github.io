@@ -28,6 +28,7 @@ import {
   projectPages,
 } from './project-pages.ts';
 import { addNoteTags } from './note-tags.server.ts';
+import { noteMediaUrl } from './note-media.ts';
 import {
   markJapanese,
   translateNote,
@@ -41,6 +42,7 @@ import {
   commentsConfigSchema,
   contentTypesSchema,
   headingAnchorsSchema,
+  noteMediaSchema,
   postSchema,
   profileSchema,
   projectsSchema,
@@ -514,18 +516,91 @@ export function collectionNoteImages(id: CollectionNoteId, html: string) {
   });
 }
 
-/** Accepts only reviewed static markup: tables, inline SVG and the note's own photos. */
+export const loadNoteMedia = once(() =>
+  noteMediaSchema.parse(json(join(root, 'data/note-media.json'))),
+);
+
+/**
+ * A note's streamed media: recorded files of the owner's Hugging Face dataset,
+ * pinned to a commit, that load only when the reader presses play. A video
+ * declares its real size and may have a same-origin poster.
+ */
+export function collectionNoteMedia(id: CollectionNoteId, html: string) {
+  const recorded = new Map(
+    loadNoteMedia().files.map((file) => [noteMediaUrl(file), file]),
+  );
+  const read = (tag: string, kind: 'video' | 'audio') => {
+    const value = (name: string) =>
+      tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+    const has = (name: string) =>
+      new RegExp(`\\s${name}(?=[\\s=/>])`).test(tag);
+    const src = value('src') ?? '';
+    const file = recorded.get(src);
+    const extension = kind === 'video' ? '.mp4' : '.m4a';
+    if (
+      !file?.path.startsWith(`notes/${id}/`) ||
+      !src.endsWith(extension) ||
+      value('preload') !== 'none' ||
+      has('autoplay')
+    )
+      throw new Error(`Unrecorded or eager ${kind} in note ${id}: ${tag}`);
+    return { value, has, src, file };
+  };
+  const videos = [...html.matchAll(/<video\b[^>]*>/gi)].map(([tag]) => {
+    const { value, has, src, file } = read(tag, 'video');
+    const poster = value('poster');
+    const width = Number(value('width'));
+    const height = Number(value('height'));
+    if (
+      width !== file.width ||
+      height !== file.height ||
+      !has('controls') ||
+      !has('playsinline') ||
+      (poster !== undefined &&
+        !new RegExp(`^/assets/notes/${id}/[a-z0-9-]+\\.(?:webp|jpg)$`).test(
+          poster,
+        ))
+    )
+      throw new Error(`Unsized or unsafe video in note ${id}: ${tag}`);
+    return { src, poster: poster ?? null, width, height };
+  });
+  const audio = [...html.matchAll(/<audio\b[^>]*>/gi)].map(([tag]) => ({
+    src: read(tag, 'audio').src,
+  }));
+  if (
+    (html.match(/\sposter\s*=/gi) ?? []).length !==
+    videos.filter((video) => video.poster).length
+  )
+    throw new Error(`Poster outside a video in note ${id}`);
+  return { videos, audio };
+}
+
+/** Same-origin files a note's fragment shows: its photos and video posters. */
+export function collectionNoteAssets(id: CollectionNoteId, html: string) {
+  return [
+    ...collectionNoteImages(id, html).map((image) => image.src),
+    ...collectionNoteMedia(id, html).videos.flatMap((video) =>
+      video.poster ? [video.poster] : [],
+    ),
+  ];
+}
+
+/** Accepts only reviewed static markup: tables, inline SVG, the note's own photos and its recorded media. */
 export function checkCollectionNoteMarkup(id: CollectionNoteId, html: string) {
   if (
-    /<(?:script|iframe|object|embed|form|style|link|picture|source|video|audio)\b|\son[a-z]+\s*=|javascript:|\s(?:style|srcset)\s*=/i.test(
+    /<(?:script|iframe|object|embed|form|style|link|picture|source|track)\b|\son[a-z]+\s*=|javascript:|\s(?:style|srcset)\s*=/i.test(
       html,
     )
   )
     throw new Error(`Executable or styled markup in note ${id}`);
-  // Every src belongs to an <img> whose file is this note's own photo.
+  // Every src belongs to an <img> of this note's own photos or to its recorded media.
   const images = collectionNoteImages(id, html);
-  if ((html.match(/\ssrc\s*=/gi) ?? []).length !== images.length)
-    throw new Error(`Source attribute outside an image in note ${id}`);
+  const { videos, audio } = collectionNoteMedia(id, html);
+  if (
+    (html.match(/\ssrc\s*=/gi) ?? []).length !==
+    images.length + videos.length + audio.length
+  )
+    throw new Error(`Source attribute outside an image or media in note ${id}`);
   return images;
 }
 

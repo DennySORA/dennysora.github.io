@@ -187,6 +187,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | `collection-japan-v1.webp` | 「日本」筆記集合與日語分類 | 88px |
 | `collection-health-v1.webp` | 「健康與醫學」下的「日常照顧」 | 88px |
 | `collection-other-v1.webp` | 「其他」筆記資料夾 | 88px |
+| `collection-ai-v1.webp` | 「AI」筆記資料夾與其下的影片、數據比較 | 88px |
 | `search-telescope-v1.webp` | 全站搜尋頁首 | 112px |
 | `empty-blog-v1.webp` | 部落格沒有文章時 | ≤320px 寬 |
 | `not-found-v1.webp` | 404 | ≤360px 寬 |
@@ -268,11 +269,13 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 空狀態 | `.empty-state` | 插圖或圖示＋h2＋說明＋**下一步動作** | 不可只留一句「沒有資料」 |
 | 錯誤晶片 | `.vim-error` | `danger-fill` 底、深色字、`circle-x`＋代碼 | — |
 | 程式碼區塊 | `.code-block` | `chrome` 底、`surface` 標題列（語言或檔名）、自身橫向捲動 | 複製按鈕回報真實結果 |
-| 筆記資料圖表 | `.hw-chart`（`hardware-notes.css`） | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表 | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動 |
+| 筆記資料圖表 | `.hw-chart`（`hardware-notes.css`，硬體筆記與學習筆記共用） | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表。學習筆記的長條清單讓名稱獨占一行、數值接在長條之後，長名稱不會壓到數字 | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動 |
 | 推薦卡片 | `.hw-pick` | `surface` 卡片＋名次（mono、`entity-file`）＋標題＋定位（`entity-kind`）＋數據列＋理由與注意＋證據標籤＋來源 | 單欄排列，每張卡片只有標題一個行號 |
 | 學習筆記 | `.study-note`（`study-notes.css`） | 日語系列、腰椎保護與風景攝影共用：頁首（`//` 眉標、h1、導言、數字卡、範圍晶片）、章節眉標＋h2、在自身區域捲動的表格、`.sn-callout`（資訊色左邊框；`data-status="warning"` 只給真實警告，金色只上在邊框與標題，正文維持一般文字色） | 每個 h1、h2 一個行號；系列目錄以 `surface-selected`＋2px 標記表示目前這篇 |
 | 日文例句與釋義 | `.sn-example`、`.sn-jp`、`.sn-gloss`、`.sn-analysis`、`.sn-takeaway` | 例句與日文表格欄位標 `lang="ja"`，使用日文字型並在三語版本逐字保留，元素裡不放中文標籤或釋義；句中其他日文由 `markJapanese` 在中文版與英文版輸出時補標 `lang="ja"`；類型標籤後是真正的空格；句中的日文形式用 `.sn-jp` 晶片（sans，不用等寬）；中文釋義 `.sn-gloss` 在日文版隱藏；編輯解析是 `surface` 面板，易錯點、核心、辨析等種類用 `entity-kind` 的 `.sn-kind` 類型標籤 | 不用狀態色區分種類；錯誤與正確形式以文字的 ×／○ 標示 |
 | 照片與構圖疊圖 | `.sn-photo`、`.sn-guides`、`.sn-legend` | 浮動視窗：`.float-title`（`image` 圖示＋實際檔名＋真實像素）、`chrome` 底、`--edge-highlight`。疊圖依照片的實際比例繪製：三分線 `text` 虛線、視線路徑 `link` 虛線、保留元素 `entity-file` 實線圈、檢查元素 `entity-kind` 虛線圈，每條線下方有 `chrome` 描邊；編號圓點對應圖下說明，圖例不只靠顏色 | 每張照片一個「輔助線」切換鈕（`aria-pressed`，只在 JavaScript 下顯示），全頁可關閉三分線或標記；沒有 JavaScript 時疊圖照常顯示；只有封面 eager，其餘 lazy；GPT 生成的構圖示意圖沿用同一個視窗，標題列寫「GPT 生成 · 寬 × 高」，替代文字以生成來源開頭，圖上的標註屬於圖片本身、不能關閉 |
+| 比較影片 | `.sn-video`（`study-notes.css`） | 沿用照片浮動視窗：`.float-title`（`film` 圖示＋實際檔名＋真實像素與秒數）、標題與一句說明、`<video>`（原生控制列、`preload="none"`、同源封面）；下方是對應 2×2 畫面的圖例 `.sn-tiles`（位置 `entity-kind` mono、元件 ID `entity-file`），以及聲音切換 `.sn-audio`（安靜按鈕，`aria-pressed` 選中時 `surface-selected`＋底部 2px 藍線） | 影片畫面上不畫文字，三種語言共用一支影片；按下播放前不連任何第三方；聲音切換是 `requires-js`，沒有 JavaScript 時原生控制列照常播放預設音軌；窄於 560px 時圖例改為單欄 |
+| 元件卡片 | `.sn-run`（`study-notes.css`） | `surface` 卡片：標題（h5）＋元件 ID、5 格畫格條、`.sn-figures` 數據列、摺疊裡的原始輸出影片 | 畫格條 lazy；沒有成片的元件以 `.sn-run-error` 表示（`status-danger` 左邊框＋`circle-x`，因為那是真的錯誤） |
 | 專案截圖 | `.project-shot`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋真實檔名＋真實像素尺寸）、`chrome` 底、`--edge-highlight`，不加陰影；截圖連到原尺寸檔；說明在下方 | 截圖不裁切、不加濾鏡，可識別資訊（序號、UUID）先打碼；只有第一張 eager，其餘 lazy；畫廊每列最少 420px |
 | 專案架構圖 | `.dg`（`projects.css`） | 標題列（粗體標題＋一句讀法）＋由真正文字組成的節點與箭頭（清單，時間軸用內嵌 SVG）；資料路徑 `entity-file` 實線、控制路徑 `entity-kind` 虛線、節點 `surface`、晶片 `border-subtle` | 不用狀態色（圖裡沒有真實狀態）；窄螢幕流程改成直向 ↓，SVG 在自身可聚焦區域捲動；整張圖只有一個行號 |
 | 專案技術圖 | `.project-diagram`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋「GPT 生成 · 寬 × 高」，英文為 「GPT-generated · 寬 × 高」）、`chrome` 底、`--edge-highlight`，不加陰影；圖連到原尺寸檔；說明在下方 | 每種語言載入自己的那張；替代文字以生成來源開頭；全部 lazy；圖上的文字屬於圖片本身，正文完整說明同樣的內容 |
@@ -326,7 +329,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | [`tests/unit/design.test.ts`](../tests/unit/design.test.ts) | tokens 數值與單一來源、全部文字角色的對比、模式色與主要按鈕的對比、品牌圖 bytes |
 | [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts) | buffers 是五個區域（README.md、blog、note、projects、paper-daily）；快速連結的名稱包含可見標籤；外框不再有點陣圖符號 |
 | [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖與技術圖的尺寸與宣告相符，技術圖在三種語言都標明 GPT 生成並載入該語言的檔案；320–1920px 不溢出、axe、無 JavaScript 可讀 |
-| [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；疊圖切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
+| [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；H3 DiT 比較的影片與音軌只引用 `data/note-media.json` 記錄、固定 commit 的 Hugging Face 檔案，`preload="none"`、封面與影片同尺寸，載入頁面時沒有第三方請求；疊圖切換、聲音切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
 | [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts) | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合 |
 | [`tests/unit/explorer.test.ts`](../tests/unit/explorer.test.ts)、[`tests/e2e/explorer.spec.ts`](../tests/e2e/explorer.spec.ts) | 檔案樹的開合、名稱語言與層級；每層縮排兩格、箭頭與圖示落在第 2n−1 與第 2n+1 格（有無 JavaScript 皆同），「│」「└」與祖先導引線依 neo-tree 規則出現；名稱不截斷，一列太寬時檔案樹向右捲動，頁面、標題列與抽屜不橫捲 |
 | [`tests/e2e/site.spec.ts`](../tests/e2e/site.spec.ts) | 第一次載入就是深色（含無 JavaScript）、Logo 原檔、快速連結、無第三方請求 |

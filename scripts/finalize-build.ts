@@ -8,7 +8,7 @@ import {
 } from 'node:fs';
 import { join, dirname } from 'node:path';
 import {
-  collectionNoteImages,
+  collectionNoteAssets,
   isIndexable,
   listPosts,
   loadPosts,
@@ -68,11 +68,12 @@ for (const id of projectPageIds)
         ),
         join(output, projectDiagramUrl(id, diagram, edition)),
       );
-// A note's photos ship only when its published fragment shows them.
+// A note's photos and video posters ship only when its published fragment
+// shows them; the videos themselves stream from the recorded dataset.
 for (const id of collectionNoteIds) {
   const html = readFileSync(join('content', collectionNoteSource(id)), 'utf8');
-  for (const image of collectionNoteImages(id, html))
-    cpSync(image.src.slice(1), join(output, image.src));
+  for (const src of collectionNoteAssets(id, html))
+    cpSync(src.slice(1), join(output, src));
 }
 cpSync('CNAME', join(output, 'CNAME'));
 write('.nojekyll', '');

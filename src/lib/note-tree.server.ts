@@ -121,6 +121,33 @@ export const noteFolderCopy: Record<
       ja: '日本語の文法と語彙：述語を見つけ、格の役割を分けてから、接続と語気を決める。テーマ別の 7 本で 1 つのシリーズです。',
     },
   },
+  ai: {
+    title: { 'zh-hant': 'AI', en: 'AI', ja: 'AI' },
+    intro: {
+      'zh-hant':
+        'AI 模型的實測與研究筆記：在作者自己的硬體上執行模型，比較設定、速度、記憶體與輸出。量測、目視觀察與推估分開標示。',
+      en: 'Measurements and research notes on AI models, run on the author’s own hardware to compare settings, speed, memory and output. Measurements, visual observations and estimates are labelled separately.',
+      ja: 'AI モデルの実測と研究ノート。作者自身のハードウェアでモデルを動かし、設定・速度・メモリ・出力を比べます。計測値・目視の所見・推定は区別して記載します。',
+    },
+  },
+  video: {
+    title: { 'zh-hant': '影片', en: 'Video', ja: '動画' },
+    intro: {
+      'zh-hant':
+        '影片生成模型：從文字或參考圖生成影片與聲音時，不同元件與設定的實際表現。',
+      en: 'Video generation models: how different components and settings actually perform when they generate video and audio from text or reference pictures.',
+      ja: '動画生成モデル：テキストや参照画像から映像と音声を生成するとき、コンポーネントや設定ごとに実際どう違うか。',
+    },
+  },
+  comparisons: {
+    title: { 'zh-hant': '數據比較', en: 'Data comparisons', ja: 'データ比較' },
+    intro: {
+      'zh-hant':
+        '固定輸入、只換一個變數的對照實測：速度、記憶體、畫面指標與可同步播放的比較影片。影片放在 Hugging Face，按下播放才載入。',
+      en: 'Controlled comparisons that keep the input fixed and change one variable: speed, memory, image metrics and synchronized comparison videos. The videos are hosted on Hugging Face and load only when you press play.',
+      ja: '入力を固定して変数を 1 つだけ変える比較実測：速度、メモリ、画質の指標、同期再生できる比較動画。動画は Hugging Face にあり、再生を押したときだけ読み込まれます。',
+    },
+  },
   other: {
     title: { 'zh-hant': '其他', en: 'Other', ja: 'その他' },
     intro: {

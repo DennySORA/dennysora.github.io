@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-12",
+  "checkedAt": "2026-10-18",
   "note": "Every file in assets/illustrations/ that ships with the site. The build copies the directory; scripts/check-artifact.ts requires each listed file and its SHA-256. Style and generation rules: docs/DESIGN.md §7.",
   "style": "Constellation line art: flat two-tone shapes, thin lines joining round nodes, a few four-point sparkles; palette limited to #526780, #8ab8f5, #b2d5ff, #e6edf5, #ccafff, #83d8cf and one moon-gold accent #edca8b; transparent background; no text, frame or plate.",
   "assets": [
@@ -217,6 +217,26 @@
         "generatedAt": "2026-10-12",
         "brief": "Simple camera body with a lens of concentric rings beside a small square frame holding a two-peak mountain and a winding river; constellation nodes on the lens rim, frame corners and peaks; one moon-gold sun node.",
         "briefSha256": "ab733e5728dc98e7aad26ad304521a86924a713420894aa422539471e486c7d0"
+      },
+      "processing": "1254x1254 PNG cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha (Pillow RGBa) to 192x192, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
+    },
+    {
+      "path": "assets/illustrations/collection-ai-v1.webp",
+      "purpose": "Feature icon for the AI note folder and its Video and Data comparisons subfolders (notes directory and those folder pages).",
+      "display": "88 px square",
+      "width": 192,
+      "height": 192,
+      "format": "webp",
+      "bytes": 12572,
+      "sha256": "87a52c623ecfc2d24561c9078c785522005b1b1ff4d80072116617d06efc2f06",
+      "alpha": true,
+      "transparency": "Passed: decoded RGBA, transparent corners and outer frame (max alpha 1), subject padded on every side; the film window and sprocket holes are transparent, not filled; composited over #0c1118, white and magenta with no fringe, halo or plate.",
+      "source": {
+        "provider": "OpenAI Codex image_gen (codex-cli 0.163.0, built-in imagegen skill)",
+        "model": "unknown",
+        "generatedAt": "2026-10-18",
+        "brief": "Rounded film frame with sprocket nodes on its top and bottom edges, holding a neural-network constellation whose middle nodes outline a play triangle; three comparison bars joined by a line through round nodes over the lower right corner; one moon-gold node on the tallest bar; two four-point sparkles.",
+        "briefSha256": "dc63c4a692d3b993a28c6e851e29432e32dfa6bb49c89e9b9c1ee52970d424db"
       },
       "processing": "1254x1254 PNG cropped to the alpha>8 subject plus 6% margin (square), Lanczos resample in premultiplied alpha (Pillow RGBa) to 192x192, cwebp -q 90 -alpha_q 100 -m 6 -sharp_yuv; acceptance re-run on the WebP bytes."
     }

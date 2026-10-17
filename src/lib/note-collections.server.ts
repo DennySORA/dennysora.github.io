@@ -176,6 +176,30 @@ export const collectionNoteMeta = {
       ja: '同じ日に Pixel 9 で撮った写真で、主題・導線・フレーミング・焦点距離と立ち位置・露出・被写界深度・流水とフィルターを検討。超焦点距離と ND の試算、トリミング比較、4 週間の練習計画付き。GPT 生成と明記した構図図解 21 枚も収録。',
     },
   },
+  'h3-dit-components': {
+    tagIds: [
+      'video-generation',
+      'diffusion-transformer',
+      'quantization',
+      'gpu',
+    ],
+    name: {
+      'zh-hant': 'H3 DiT 元件比較',
+      en: 'H3 DiT components',
+      ja: 'H3 DiT 比較',
+    },
+    title: {
+      'zh-hant': 'H3 DiT 元件比較：RTX 5080 上的量化、加速 LoRA 與 attention',
+      en: 'Comparing H3 DiT components on an RTX 5080: quantization, acceleration LoRAs and attention',
+      ja: 'H3 DiT コンポーネント比較：RTX 5080 での量子化・高速化 LoRA・attention',
+    },
+    description: {
+      'zh-hant':
+        '40 個 DiT 元件在同一份條件、同一個 seed 下的速度、記憶體與畫面比較：FP8／INT8／BF16、PAI 與 Turbo 加速 LoRA、AdaLN 與 attention，附 16 支可以切換聲音的 2×2 比較影片。',
+      en: 'Speed, memory and image comparisons of 40 DiT components under the same conditioning and seed: FP8, INT8 and BF16, PAI and Turbo acceleration LoRAs, AdaLN and attention, with 16 synchronized 2×2 comparison videos whose audio you can switch.',
+      ja: '同じ条件・同じ seed で 40 個の DiT コンポーネントを比較：FP8／INT8／BF16、PAI と Turbo の高速化 LoRA、AdaLN、attention ごとの速度・メモリ・画面。音声を切り替えられる 2×2 比較動画 16 本付き。',
+    },
+  },
 } as const satisfies Record<
   CollectionNoteId,
   {
