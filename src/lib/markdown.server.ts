@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { extname, join, normalize, relative, sep } from 'node:path';
 import {
   Lexer,
@@ -9,12 +10,23 @@ import {
 } from 'marked';
 import markedFootnote from 'marked-footnote';
 import sanitizeHtml from 'sanitize-html';
-import { dictionaries, type Locale } from '../i18n/index.ts';
+import {
+  dictionaries,
+  htmlLang,
+  localeNames,
+  type Locale,
+} from '../i18n/index.ts';
 import { highlightCode, isHighlightable } from './highlight.server.ts';
 import { decodeEntities, escapeHtml } from './html.ts';
 import { readImageSize } from './image-size.server.ts';
 import { renderMath } from './math.server.ts';
 import { reservedIds } from './page-ids.ts';
+import {
+  postAssetFile,
+  postMediaUrl,
+  resolvePostSubtitles,
+} from './post-media.server.ts';
+import type { PostMediaFile } from './schema.ts';
 import { estimateReadingMinutes } from './reading-time.ts';
 
 export type Heading = { id: string; text: string; level: number };
@@ -24,7 +36,14 @@ export type RenderOptions = {
   /** Published heading anchors, in document order, that must keep their ids. */
   publishedAnchors?: ReadonlyArray<{ id: string; text: string }>;
   /** Directory holding the document's images and the URL prefix they are served from. */
-  assets?: { directory: string; urlPrefix: string };
+  assets?: {
+    directory: string;
+    urlPrefix: string;
+    /** Explicitly enabled by the draft-only preview entry point. */
+    allowLocalVideos?: true;
+    /** Only this article can resolve entries from the separate posts registry. */
+    postMedia?: { id: string; files: readonly PostMediaFile[] };
+  };
 };
 export type RenderedMarkdown = {
   html: string;
@@ -32,6 +51,8 @@ export type RenderedMarkdown = {
   text: string;
   minutes: number;
   images: RenderedImage[];
+  previewVideos: RenderedImage[];
+  subtitles: RenderedImage[];
   hasMath: boolean;
 };
 
@@ -104,13 +125,16 @@ export function renderMarkdown(
     ]);
   const explicitIds = new WeakMap<object, string>();
   const images: RenderedImage[] = [];
+  const previewVideos: RenderedImage[] = [];
+  const subtitles: RenderedImage[] = [];
+  const videoBlocks: string[] = [];
   const codeBlocks: { language: string; title: string | null; text: string }[] =
     [];
   const formulas: { tex: string; display: boolean }[] = [];
   // Generated code and math replace these unguessable slots after the author
   // content has been sanitized, so each follows its own bounded policy.
   const nonce = randomBytes(8).toString('hex');
-  const slot = (kind: 'code' | 'math', index: number) =>
+  const slot = (kind: 'code' | 'math' | 'video', index: number) =>
     `%%${kind}-${nonce}-${index}%%`;
 
   function assignId(text: string, explicit: string | undefined): string {
@@ -159,6 +183,65 @@ export function renderMarkdown(
       throw new Error(`Image needs descriptive alt text: ${token.href}`);
     const { url, width, height } = resolveImage(token.href);
     return `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" width="${width}" height="${height}" loading="lazy" decoding="async">`;
+  }
+
+  function videoHtml(token: Tokens.Image): string {
+    const assets = options.assets;
+    if (!assets)
+      throw new Error('Videos are only supported in article content');
+    const preview = assets.allowLocalVideos === true;
+    const label = token.text.trim();
+    if (!label) throw new Error('Video needs a descriptive label');
+    const href = decodeURIComponent(token.href);
+    if (/^[a-z][a-z0-9+.-]*:|^[/\\]|[?#\\]/i.test(href))
+      throw new Error('Video must be a relative article file');
+    const directory = realpathSync(assets.directory);
+    const file = normalize(join(directory, href));
+    if (!file.startsWith(directory + sep) || extname(file) !== '.mp4')
+      throw new Error('Video path is outside the article or unsupported');
+    const path = relative(directory, file).split(sep).join('/');
+    const registration = assets.postMedia;
+    if (
+      registration &&
+      assets.urlPrefix !== `/content-assets/posts/${registration.id}/`
+    )
+      throw new Error('Video asset prefix does not belong to its article');
+    const recorded = registration?.files.find(
+      (entry) => entry.path === `posts/${registration.id}/${path}`,
+    );
+    if (!preview && !recorded)
+      throw new Error(
+        'Unregistered local videos are only supported in draft previews',
+      );
+    const url = preview
+      ? assets.urlPrefix + path.split('/').map(encodeURIComponent).join('/')
+      : postMediaUrl(recorded!);
+    if (preview)
+      previewVideos.push({ source: postAssetFile(directory, path), url });
+    const poster = postAssetFile(directory, `${path.slice(0, -4)}.webp`);
+    const {
+      url: posterUrl,
+      width,
+      height,
+    } = resolveImage(relative(directory, poster));
+    if (!preview && (width !== recorded!.width || height !== recorded!.height))
+      throw new Error('Video poster size differs from registered media');
+    const tracks = recorded?.subtitles
+      ? resolvePostSubtitles(
+          directory,
+          assets.urlPrefix,
+          path,
+          preview ? undefined : recorded.seconds,
+        )
+      : [];
+    subtitles.push(...tracks.map(({ source, url }) => ({ source, url })));
+    const trackHtml = tracks
+      .map(
+        (track) =>
+          `<track kind="subtitles" src="${escapeHtml(track.url)}" srclang="${htmlLang[track.locale]}" label="${escapeHtml(localeNames[track.locale])}"${track.locale === options.locale ? ' default' : ''}>`,
+      )
+      .join('');
+    return `<video controls playsinline preload="none" src="${escapeHtml(url)}" poster="${escapeHtml(posterUrl)}" width="${width}" height="${height}" aria-label="${escapeHtml(label)}">${trackHtml}</video>`;
   }
 
   const math: TokenizerAndRendererExtension[] = [
@@ -249,7 +332,10 @@ export function renderMarkdown(
           const caption = image.title
             ? `<figcaption>${escapeHtml(image.title)}</figcaption>`
             : '';
-          return `<figure>${imageHtml(image)}${caption}</figure>\n`;
+          const media = /\.mp4(?:[?#]|$)/i.test(image.href)
+            ? slot('video', videoBlocks.push(videoHtml(image)) - 1)
+            : imageHtml(image);
+          return `<figure>${media}${caption}</figure>\n`;
         }
         return `<p>${this.parser.parseInline(token.tokens)}</p>\n`;
       },
@@ -404,11 +490,12 @@ export function renderMarkdown(
     allowProtocolRelative: false,
   });
 
-  const slots = new RegExp(`%%(code|math)-${nonce}-(\\d+)%%`, 'g');
+  const slots = new RegExp(`%%(code|math|video)-${nonce}-(\\d+)%%`, 'g');
   const prose = plainText(authored.replace(slots, ' '));
   const html = authored.replace(
     slots,
     (_match, kind: string, index: string) => {
+      if (kind === 'video') return videoBlocks[Number(index)] ?? '';
       if (kind === 'code') {
         const block = codeBlocks[Number(index)];
         return block ? codeBlockHtml(block, t.codeBlock) : '';
@@ -436,6 +523,8 @@ export function renderMarkdown(
       formulas: formulas.length,
     }),
     images,
+    previewVideos,
+    subtitles,
     hasMath: formulas.length > 0,
   };
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 // Make retained examples published only within this isolated test module.
-// Source metadata stays draft on disk and the production build stays empty.
+// Retained example metadata stays draft on disk; the real article is unaffected.
 vi.mock('node:fs', async (importOriginal) => {
   const fs = await importOriginal<typeof import('node:fs')>();
   return {

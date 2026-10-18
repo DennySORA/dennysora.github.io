@@ -34,7 +34,9 @@ function load(path: string) {
 }
 
 describe('publication boundaries', () => {
-  const retained = loadPosts()[0];
+  const retained = loadPosts().find(
+    (post) => post.id === 'engineering-principles',
+  );
   if (!retained) throw new Error('Expected retained source fixture');
   // Publication rules use an isolated fixture, not live example articles.
   const post = structuredClone(retained);
@@ -78,7 +80,9 @@ describe('publication boundaries', () => {
     expect(() => postSchema.parse({ ...value, extra: true })).toThrow();
   });
   it('keeps every unpublished example out of public article payloads', () => {
-    for (const retained of loadPosts())
+    for (const retained of loadPosts().filter(
+      (post) => post.id !== 'video-console',
+    ))
       for (const locale of locales) {
         expect(editionStatus(retained, locale, retained.revision)).toBe(
           'draft',
@@ -147,25 +151,27 @@ describe('route manifest', () => {
     expect(navSection({ kind: 'home', locale: 'en' })).toBe('home');
     expect(navSection({ kind: 'research', locale: 'en' })).toBeNull();
   });
-  it('keeps unpublished articles and unused taxonomy out of prerendering', () => {
+  it('prerenders the published article and only its populated taxonomy', () => {
     const paths = publishedPaths();
     expect(new Set(paths).size).toBe(paths.length);
-    for (const value of loadPosts())
-      for (const locale of locales) {
-        expect(value.editions).toEqual([]);
-        expect(paths).not.toContain(`/${locale}/blog/${value.slug}`);
-        for (const tag of value.tagIds)
-          expect(paths).not.toContain(`/${locale}/blog/tags/${tag}`);
-        for (const topic of value.topics)
-          expect(paths).not.toContain(`/${locale}/blog/topics/${topic}`);
-      }
     for (const locale of locales) {
+      expect(paths).toContain(`/${locale}/blog/video-console`);
+      expect(paths).toContain(`/${locale}/blog/tags/video-generation`);
+      expect(paths).toContain(`/${locale}/blog/topics/ai`);
+      for (const slug of [
+        'engineering-principles',
+        'production-systems',
+        'trilingual-model-research',
+      ])
+        expect(paths).not.toContain(`/${locale}/blog/${slug}`);
+      expect(paths).not.toContain(`/${locale}/blog/tags/llm`);
+      expect(paths).not.toContain(`/${locale}/blog/topics/engineering`);
       expect(paths).not.toContain(`/${locale}/papers`);
       expect(paths).not.toContain(`/${locale}/about`);
       expect(paths).toContain(`/${locale}/research`);
       expect(paths).toContain(prerenderPath({ kind: 'tags', locale }));
+      expect(tagsInLocale(locale)).toEqual(['video-generation']);
     }
-    for (const locale of locales) expect(tagsInLocale(locale)).toEqual([]);
   });
   it('keeps bridges out of the index', () => {
     const routes = publishedRoutes();
@@ -179,25 +185,50 @@ describe('route manifest', () => {
 });
 
 describe('loader', () => {
-  it('serves the empty blog with canonical, robots and language links', () => {
+  it('exposes all three published editions with matching canonical and language links', () => {
+    for (const locale of locales) {
+      const article = load(`/${locale}/blog/video-console`);
+      expect(article.view.kind).toBe('article');
+      expect(article.indexable).toBe(true);
+      expect(article.canonical).toBe(
+        `https://dennysora.me/${locale}/blog/video-console/`,
+      );
+      expect(article.languageLinks).toEqual(
+        locales.map((target) => ({
+          locale: target,
+          href: `/${target}/blog/video-console/`,
+        })),
+      );
+      expect(loadArticle(locale, 'video-console')?.post).not.toHaveProperty(
+        'locales',
+      );
+    }
+  });
+  it('serves the published blog with canonical, robots and language links', () => {
     const home = load('/zh-hant');
     if (home.view.kind !== 'home') throw new Error('Expected the README home');
     expect(home.canonical).toBe('https://dennysora.me/zh-hant/');
     expect(home.indexable).toBe(true);
     expect(home.view.profile.displayName).toBe('DennySORA');
-    expect(home.view.recent).toEqual([]);
+    expect(home.view.recent.map((post) => post.id)).toEqual(['video-console']);
     // Internal provenance notes stay in the repository.
     expect(JSON.stringify(home)).not.toContain('provenance');
     // The explorer lists the real files of the workspace on every page.
-    expect(home.workspace.posts).toEqual([]);
+    expect(home.workspace.posts.map((post) => post.slug)).toEqual([
+      'video-console',
+    ]);
     expect(home.view.projects.map((project) => project.id)).toContain('dgxtop');
     const research = load('/en/research');
     expect(research.indexable).toBe(false);
     const blog = load('/ja/blog');
     if (blog.view.kind !== 'library') throw new Error('Expected the blog');
     expect(blog.canonical).toBe('https://dennysora.me/ja/blog/');
-    expect(blog.view.posts).toEqual([]);
-    expect(blog.view.available).toEqual({ topics: [], types: [], tags: [] });
+    expect(blog.view.posts.map((post) => post.id)).toEqual(['video-console']);
+    expect(blog.view.available).toEqual({
+      topics: ['ai'],
+      types: ['case-study'],
+      tags: ['video-generation'],
+    });
     expect(blog.languageLinks.find((link) => link.locale === 'en')?.href).toBe(
       '/en/blog/',
     );
@@ -209,7 +240,7 @@ describe('loader', () => {
       '/ja/blog/trilingual-model-research',
       '/zh-hant/blog/production-systems',
       '/en/blog/tags/llm',
-      '/en/blog/topics/ai',
+      '/en/blog/topics/engineering',
       '/en/blog/tags/unknown-tag',
       '/en/blog/topics/unknown',
       '/en/projects/unknown',
@@ -238,12 +269,18 @@ describe('content graph', () => {
     );
     expect(research?.contentType).toBe('research-note');
     expect(research?.slug).toBe('trilingual-model-research');
-    for (const locale of locales) expect(listPosts(locale)).toEqual([]);
+    for (const locale of locales)
+      expect(listPosts(locale).map((post) => post.id)).toEqual([
+        'video-console',
+      ]);
   });
   it('never recommends unpublished content as related writing', () => {
     for (const locale of locales)
       for (const post of loadPosts())
-        expect(relatedPosts(locale, post.id)).toEqual([]);
+        for (const related of relatedPosts(locale, post.id)) {
+          expect(related.id).toBe('video-console');
+          expect(related.id).not.toBe(post.id);
+        }
   });
   it('keeps every published heading anchor, including section-N aliases', () => {
     const anchors = loadHeadingAnchors();

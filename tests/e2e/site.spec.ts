@@ -213,11 +213,13 @@ test('the former research page is a no-index bridge to both destinations', async
   ).toHaveAttribute('href', 'https://paper.dennysora.me/');
   await page.getByRole('link', { name: 'Read research notes' }).click();
   await expect(page).toHaveURL('/en/blog/?type=research-note');
-  await expect(page.locator('.article-row')).toHaveCount(0);
-  await expect(
-    page.getByRole('heading', { name: 'No posts yet' }),
-  ).toBeVisible();
-  await expect(page.locator('.filter-row')).toHaveCount(0);
+  // A type without published entries is ignored instead of hiding the blog.
+  await expect(page.locator('.article-row')).toHaveCount(1);
+  await expect(page.locator('.article-row-title a')).toHaveAttribute(
+    'href',
+    '/en/blog/video-console/',
+  );
+  await expect(page.locator('.active-conditions')).toHaveCount(0);
 });
 
 test('Paper Daily is its own site: every entry links straight to it and the old page only forwards', async ({
@@ -267,13 +269,13 @@ test('no third-party requests, cookies or storage; comments never load on their 
   page,
 }) => {
   const external = trackExternalRequests(page);
-  for (const path of ['/en/', '/ja/', '/en/blog/engineering-principles/'])
+  for (const path of ['/en/', '/ja/', '/en/blog/video-console/'])
     await page.goto(path);
   await page.goto('/en/blog/');
-  await page.getByRole('searchbox').fill('quantization');
+  await page.getByRole('searchbox').fill('zzzznomatch');
   await expect(page.locator('.article-row')).toHaveCount(0);
   await expect(
-    page.getByRole('heading', { name: 'No posts yet' }),
+    page.getByRole('heading', { name: dictionaries.en.emptyTitle }),
   ).toBeVisible();
   expect(external).toEqual([]);
   expect(await page.context().cookies()).toEqual([]);
@@ -317,8 +319,9 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
       await response.text(),
     );
     expect(parsed.errors).toBe(0);
-    expect(parsed.links).toHaveLength(0);
-    for (const link of parsed.links) expect(link).toContain(`/${locale}/blog/`);
+    expect(parsed.links).toEqual([
+      `https://dennysora.me/${locale}/blog/video-console/`,
+    ]);
   }
   const sitemap = await (await request.get('/sitemap.xml')).text();
   expect(
@@ -339,6 +342,10 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   expect(sitemap).toContain('https://dennysora.me/ja/projects/tools/dgxtop/');
   expect(sitemap).not.toContain('/projects/dgxtop/');
   expect(sitemap).not.toContain('/privacy/');
+  for (const locale of ['zh-hant', 'en', 'ja'])
+    expect(sitemap).toContain(
+      `https://dennysora.me/${locale}/blog/video-console/`,
+    );
   expect(sitemap).not.toContain('/blog/engineering-principles/');
   expect(sitemap).not.toContain('/blog/production-systems/');
   expect(sitemap).not.toContain('/blog/trilingual-model-research/');

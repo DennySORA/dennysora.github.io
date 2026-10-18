@@ -23,18 +23,27 @@ if (parsed.mode !== 'giscus') throw new Error('Fixture must use giscus');
 const giscus = parsed;
 
 describe('comment configuration', () => {
-  it('ships native GitHub threads that every language of an article shares', () => {
+  it('shares configured native threads and preserves per-article opt-out', () => {
     expect(loadComments()).toEqual({
       mode: 'github-native',
       repository: 'DennySORA/dennysora.github.io',
     });
-    const numbers = loadPosts().map((post) => post.discussionNumber);
+    const connected = loadPosts().filter((post) => post.commentsEnabled);
+    const numbers = connected.map((post) => post.discussionNumber);
     expect(new Set(numbers).size).toBe(numbers.length);
-    for (const post of loadPosts())
+    for (const post of connected)
       expect(commentsView(loadComments(), post)).toEqual({
         kind: 'native',
         url: `https://github.com/DennySORA/dennysora.github.io/discussions/${post.discussionNumber}`,
       });
+    const tutorial = loadPosts().find((post) => post.id === 'video-console');
+    expect(tutorial).toMatchObject({
+      commentsEnabled: false,
+      discussionNumber: null,
+    });
+    expect(commentsView(loadComments(), tutorial!)).toEqual({
+      kind: 'disabled',
+    });
     expect(
       commentsView(loadComments(), {
         discussionNumber: null,

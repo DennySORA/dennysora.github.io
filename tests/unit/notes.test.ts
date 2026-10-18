@@ -15,7 +15,7 @@ import { noteTree } from '../../src/lib/note-tree.server.ts';
 
 const path = '/zh-hant/note/medical/drugs/analgesics/';
 describe('medical notes', () => {
-  it('publishes all medical editions outside the empty blog', () => {
+  it('publishes all medical editions in the note area', () => {
     expect(parseRoute(path)).toEqual({
       kind: 'medical-note',
       locale: 'zh-hant',

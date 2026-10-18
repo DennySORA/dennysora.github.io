@@ -1,4 +1,11 @@
-import { copyFileSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -7,8 +14,155 @@ import {
   slugifyHeading,
 } from '../../src/lib/markdown.server.ts';
 import { estimateReadingMinutes } from '../../src/lib/reading-time.ts';
+import { htmlLang, locales } from '../../src/i18n/index.ts';
+import { readImageSize } from '../../src/lib/image-size.server.ts';
+import type { PostMediaFile } from '../../src/lib/schema.ts';
 
 const render = (markdown: string) => renderMarkdown(markdown, { locale: 'en' });
+
+describe('local video draft boundary', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'article-video-'));
+  afterAll(() => rmSync(directory, { recursive: true, force: true }));
+  writeFileSync(join(directory, 'demo.mp4'), 'local video fixture');
+  copyFileSync('assets/logo-hero.webp', join(directory, 'demo.webp'));
+  symlinkSync(join(directory, 'demo.mp4'), join(directory, 'alias.mp4'));
+  const assets = { directory, urlPrefix: '/content-assets/posts/fixture/' };
+  const preview = (text: string) =>
+    renderMarkdown(text, {
+      locale: 'en',
+      assets: { ...assets, allowLocalVideos: true },
+    });
+  it('requires opt-in and creates a controlled, labelled player with a poster', () => {
+    const text = '![A short workflow](./demo.mp4 "Watch the workflow")';
+    expect(() => renderMarkdown(text, { locale: 'en', assets })).toThrow(
+      'draft previews',
+    );
+    const result = preview(text);
+    expect(result.html).toContain('<video controls playsinline preload="none"');
+    expect(result.html).toContain('aria-label="A short workflow"');
+    expect(result.html).toContain(
+      'poster="/content-assets/posts/fixture/demo.webp"',
+    );
+    expect(result.html).toContain(
+      '<figcaption>Watch the workflow</figcaption>',
+    );
+    expect(result.previewVideos).toHaveLength(1);
+    expect(result.images).toHaveLength(1);
+    expect(result.html).not.toMatch(/autoplay|loop|onerror/);
+  });
+  it('rejects external, escaped, linked, missing, unlabelled and inline videos', () => {
+    for (const text of [
+      '![x](https://example.test/demo.mp4)',
+      '![x](../demo.mp4)',
+      '![x](%2E%2E/demo.mp4)',
+      '![x](./alias.mp4)',
+      '![x](./missing.mp4)',
+      '![](./demo.mp4)',
+      'Inline ![x](./demo.mp4)',
+    ])
+      expect(() => preview(text)).toThrow();
+    const raw = preview(
+      '<video src="https://example.test/demo.mp4" autoplay onplay="alert(1)"><source src="x"></video>',
+    );
+    expect(raw.html).not.toMatch(/<video|<source|autoplay|onplay/);
+    expect(raw.previewVideos).toEqual([]);
+  });
+});
+
+describe('registered article video and subtitle rendering', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'registered-article-video-'));
+  afterAll(() => rmSync(directory, { recursive: true, force: true }));
+  mkdirSync(join(directory, 'media'));
+  const poster = join(directory, 'media/demo.webp');
+  copyFileSync('assets/logo-hero.webp', poster);
+  for (const locale of locales)
+    writeFileSync(
+      join(directory, `media/demo.${locale}.vtt`),
+      `WEBVTT\n\n00:00:00.000 --> 00:00:01.000\n${locale} demonstration\n`,
+    );
+  const media: PostMediaFile = {
+    path: 'posts/fixture/media/demo.mp4',
+    revision: 'a'.repeat(40),
+    bytes: 100,
+    sha256: 'b'.repeat(64),
+    ...readImageSize(poster),
+    seconds: 1,
+    audioTracks: 1,
+    subtitles: true,
+  };
+  const assets = {
+    directory,
+    urlPrefix: '/content-assets/posts/fixture/',
+    postMedia: { id: 'fixture', files: [media] },
+  };
+  const markdown = '![Workflow demonstration](./media/demo.mp4)';
+  it('streams registered media without a local MP4 and emits native localized tracks', () => {
+    for (const locale of locales) {
+      const result = renderMarkdown(markdown, { locale, assets });
+      expect(result.html).toContain(`/resolve/${media.revision}/${media.path}`);
+      expect(result.html).toContain(`srclang="${htmlLang[locale]}" label=`);
+      expect(result.html.match(/ default>/g)).toHaveLength(1);
+      expect(result.html).toMatch(
+        new RegExp(`srclang="${htmlLang[locale]}" label="[^"]+" default>`),
+      );
+      expect(result.previewVideos).toEqual([]);
+      expect(result.subtitles.map((asset) => asset.url)).toEqual(
+        locales.map(
+          (language) =>
+            `/content-assets/posts/fixture/media/demo.${language}.vtt`,
+        ),
+      );
+      expect(result.images).toHaveLength(1);
+      expect(result.html).not.toMatch(/crossorigin|autoplay|<source/);
+    }
+    for (const change of [
+      { path: 'posts/another/media/demo.mp4' },
+      { revision: '0'.repeat(40) },
+      { width: media.width + 1 },
+    ])
+      expect(() =>
+        renderMarkdown(markdown, {
+          locale: 'en',
+          assets: {
+            ...assets,
+            postMedia: { id: 'fixture', files: [{ ...media, ...change }] },
+          },
+        }),
+      ).toThrow();
+  });
+  it('keeps local draft media and subtitles isolated while rejecting authored tracks', () => {
+    writeFileSync(join(directory, 'media/demo.mp4'), 'local draft fixture');
+    const draft = { ...media, revision: '0'.repeat(40), seconds: 0 };
+    const preview = renderMarkdown(markdown, {
+      locale: 'ja',
+      assets: {
+        ...assets,
+        allowLocalVideos: true,
+        postMedia: { id: 'fixture', files: [draft] },
+      },
+    });
+    expect(preview.html).toContain(
+      'src="/content-assets/posts/fixture/media/demo.mp4"',
+    );
+    expect(preview.previewVideos).toHaveLength(1);
+    expect(preview.subtitles).toHaveLength(3);
+    expect(() =>
+      renderMarkdown(markdown, {
+        locale: 'ja',
+        assets: {
+          ...assets,
+          postMedia: { id: 'fixture', files: [draft] },
+        },
+      }),
+    ).toThrow('placeholder');
+    const raw = renderMarkdown(
+      '<track kind="subtitles" src="https://evil.test/x.vtt" default>',
+      { locale: 'en', assets },
+    );
+    expect(raw.html).not.toContain('<track');
+    expect(raw.subtitles).toEqual([]);
+  });
+});
 
 describe('Markdown trust boundary', () => {
   it('strips scripts, event handlers, SVG, iframes and dangerous URLs', () => {

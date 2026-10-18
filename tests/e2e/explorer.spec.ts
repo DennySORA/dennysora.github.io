@@ -143,11 +143,12 @@ test('nested folders keep independent state through parent and whole-explorer to
   await drugs.click();
   await expect(analgesics).toBeHidden();
   const blog = folderToggle(explorer, '/zh-hant/blog/');
-  await expect(explorer.locator('.tree-empty')).toBeHidden();
+  const article = explorer.locator('a[href="/zh-hant/blog/video-console/"]');
+  await expect(article).toBeHidden();
   await blog.click();
-  await expect(explorer.locator('.tree-empty')).toBeVisible();
+  await expect(article).toBeVisible();
   await blog.click();
-  await expect(explorer.locator('.tree-empty')).toBeHidden();
+  await expect(article).toBeHidden();
 });
 
 for (const locale of ['zh-hant', 'en', 'ja']) {

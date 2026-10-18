@@ -2,6 +2,14 @@
 
 ## 內容來源
 
+### 含影片的本機草稿預覽
+
+尚未發布的文章可用獨立一段 `![影片描述](./media/demo.mp4 "圖說")` 保存待審閱素材；同目錄必須有同名 `demo.webp` 海報，尺寸應與影片一致。三語共用影像，描述與圖說各自翻譯。原始 HTML 的 `<video>` 仍不接受；影片路徑必須在文章目錄內，不能使用外部 URL、symlink 或行內影片。
+
+先執行 `pnpm build`，再執行 `node scripts/preview-post.ts <id>`。工具要求三語都是 draft，只把正文、已編譯樣式及文章引用的媒體複製到被 Git 忽略的 `.draft-preview/`；輸出的 `index.html` 可直接開啟，三語頁面可互相切換。這是獨立的草稿閱讀頁，不代表正式網站導覽已驗收。影片使用原生播放控制、`preload="none"`，不自動播放。
+
+此入口不改 publication、不寫入 `build/client`，也不進搜尋、RSS 或 sitemap。預覽不共用 production renderer cache；正常建置只接受已登錄、固定遠端 commit 的文章影片；未登錄的本機 MP4 會拒絕。正式發布前，仍須依下方影片託管規則完成授權上傳、固定 commit、媒體紀錄與對應的文章串流契約；不可把本機影片直接帶進 GitHub Pages 產物。
+
 文章的單一來源是 `content/posts/<id>/meta.json` 與同目錄 `<locale>.md`。語言值為 `zh-hant`、`en`、`ja`；完整欄位契約以 [schema](../src/lib/schema.ts) 為準。請從既有文章複製欄位結構，填入真實 id、slug、作者、日期、分類、來源，不要沿用另一篇文章的來源證據。
 
 「文章與研究」是同一個人工內容庫，以三個互不混用的維度整理，定義在 [`content/taxonomy/`](../content/taxonomy/)：
@@ -14,10 +22,10 @@
 
 1. 新增穩定 id 目錄及原文 Markdown，`sourceLocale` 指向原文，原文 `translationState` 為 `original`，`publication` 先為 `draft`。
 2. 填寫真實來源。`source.kind=original` 用於新作，`profile-adaptation` 用於既有履歷編輯整理，`legacy-blog` 僅用於有原始內容的匯入。來源 commit、path、URL 應可核對，不能用虛構 SHA；在草稿提交後填入其固定 commit，再做發布變更。
-3. 新譯文先設 `translationState=machine-draft`、`publication=draft`。缺少語言可省略該 edition。機器翻譯不自動成為 reviewed。
-4. 作者審閱完成後，填入可核對的 `reviewEvidence` HTTPS 連結與原文檔案 SHA-256，將譯文改為 `reviewed`、`published`。`source-published` 僅供本次繼承原站公開譯文，不能拿來跳過新稿審阅。
+3. 新譯文先設 `translationState=machine-draft`、`publication=draft`。缺少語言可省略該 edition。機器翻譯不自動成為 reviewed；代理審閱須逐項對照原文並保留證據，且不得標為人工審閱。
+4. 作者審閱，或依作者明示授權完成代理對照審閱後，填入可核對的 `reviewEvidence` HTTPS 連結與原文檔案 SHA-256，將譯文改為 `reviewed`、`published`。`source-published` 僅供本次繼承原站公開譯文，不能拿來跳過新稿審阅。
 5. 更新原文時同步更新 `updatedAt`；舊譯文 hash 不符會被判定 stale。先把譯文改回 draft，再重新審阅；不要只更新 hash 來略過審查。宣稱 published 卻 stale 的譯文會阻止建置。
-6. 執行 `pnpm verify`，檢查實際三語頁面，再由擁有者進行 PR 審阅及發布。
+6. 執行 `pnpm verify`，檢查實際三語頁面，再依擁有者授權提交與發布；直接發布流程仍遵守 main → release 契約。
 
 計算單篇原文 revision（示例指向既有文章）：
 
@@ -26,6 +34,14 @@ shasum -a 256 content/posts/engineering-principles/zh-hant.md
 ```
 
 id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明確的舊路徑 bridge。
+
+### 文章影片與內文分頁
+
+文章沿用相對 Markdown 影片語法，正式網址由 [`data/post-media.json`](../data/post-media.json) 決定，只允許資料集內的 `posts/<id>/media/<name>.mp4`。完成上傳後，記錄實際 commit、bytes、SHA-256、尺寸、時長與音軌數；零值或未固定 revision 會阻止發布。MP4 保留在本機且被 Git 忽略，不複製到 Pages；海報與字幕由建置複製至 `/content-assets/posts/<id>/media/`。
+
+有旁白的操作影片需同名 `.zh-hant.vtt`、`.en.vtt`、`.ja.vtt`，三份使用同一條時間軸、不能重疊或超過片長，只接受純文字字幕。renderer 產生三個受控 `<track>`，預設選取文章語言；原始 HTML 的 `<video>`／`<track>` 仍不接受。影片 `preload="none"`、不自動播放，讀者用原生 CC 選單切換字幕。操作示範可以保留真實應用語言與步驟編號，另以三語字幕解釋；游標、點擊提示、合成旁白、停頓剪輯與遮蔽範圍須在正文與 provenance 說明。
+
+長文分頁由 [`data/post-sections.json`](../data/post-sections.json) 列出每組連續 H2 的 ID 與三語標籤；所有 H2 必須恰好分配一次，原錨點不改。ArticleSections 與筆記共用分頁增強：鍵盤方向鍵／Home／End、網址深連結、切換後暫停隱藏影片；沒有 JavaScript 時顯示全文。正文與目錄仍引用同一組 heading IDs。
 
 ### 正文格式
 

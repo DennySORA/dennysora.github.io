@@ -75,8 +75,8 @@
     },
     {
       "path": "media/components-tour.ja.vtt",
-      "bytes": 884,
-      "sha256": "716e5defe664eac406f1705c4cb17066e244069c0f023cbd933651418aedca5a"
+      "bytes": 890,
+      "sha256": "b18ae10ce5497e617052993edb8f1cee98a048f0265c3e6194051f0b75ea4a29"
     },
     {
       "path": "media/components-tour.mp4",
@@ -119,8 +119,8 @@
     },
     {
       "path": "media/inference-tour.ja.vtt",
-      "bytes": 1107,
-      "sha256": "29d46361443735c34ab4eb628659501b4849d1bb03e04753e2581222eeb8982e"
+      "bytes": 1114,
+      "sha256": "b0c05a4165265ab2e995a8b97a1b445002fc7d8d7c712610b6b737cbe9fd2ca0"
     },
     {
       "path": "media/inference-tour.mp4",
@@ -192,8 +192,8 @@
     },
     {
       "path": "media/records-tour.ja.vtt",
-      "bytes": 931,
-      "sha256": "1e5f7b71a21a3b21819ef8346c0b282a08286d4d461b533cd826199d1f6fc93a"
+      "bytes": 937,
+      "sha256": "5a384916e4a35a3d3d724a95461119642e2f9d9b2477a4c9cd43b2b81f5958f8"
     },
     {
       "path": "media/records-tour.mp4",
@@ -265,8 +265,8 @@
     },
     {
       "path": "media/studio-tour.ja.vtt",
-      "bytes": 862,
-      "sha256": "5c4ef02bfef1f5a73826d35ddbc3afc19bc9fa8d814c5450c0145cd55b80c828"
+      "bytes": 868,
+      "sha256": "e2ce628688b4300c7d3bafd889dd2b5163d3ba3d488f2c270420df76baad1d2c"
     },
     {
       "path": "media/studio-tour.mp4",
@@ -309,8 +309,8 @@
     },
     {
       "path": "media/workflow.ja.vtt",
-      "bytes": 719,
-      "sha256": "b1f2345f1ba8bcdd22abce2e90c1c1c65a99ea9e6471bc5ab4de281a4db2d17c"
+      "bytes": 724,
+      "sha256": "f883a1c6bca411abff422cadc330a59a6034b2139434e5fc7a5fa825e3deaa10"
     },
     {
       "path": "media/workflow.mp4",

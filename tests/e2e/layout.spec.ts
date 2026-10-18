@@ -35,7 +35,7 @@ test('the home README answers who, what and where to look first on desktop and p
         (heading.textContent ?? '').replace(/^#+\s*/, ''),
       ),
     );
-  expect(names).toEqual(['我主要在做什麼', '一路走來']);
+  expect(names).toEqual(['我主要在做什麼', '一路走來', '最近的文章']);
   // Numbers share one gutter column: every numbered line is unpositioned and
   // measured from the same buffer, however deeply it is nested.
   const gutters = await page.locator('main .ln').evaluateAll((lines) => ({
@@ -49,7 +49,8 @@ test('the home README answers who, what and where to look first on desktop and p
   }));
   // The shortened résumé keeps all of its numbered lines; the start menu adds
   // four (blog, notes, search, Paper Daily) in place of the single call to action.
-  expect(gutters.count).toBe(59);
+  // The published article adds its recent heading, entry and archive link.
+  expect(gutters.count).toBe(62);
   expect(gutters.positioned).toBe(0);
   expect(gutters.parents).toBe(1);
 });
@@ -222,11 +223,12 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/zh-hant/blog/');
   const checks: [string, number][] = [
-    ['.empty-state p', 4.5],
+    ['.article-row-summary', 4.5],
     ['.search-scope', 4.5],
-    ['.empty-state h2', 4.5],
+    ['.article-row-title a', 4.5],
     ['.desktop-explorer-toggle button', 4.5],
-    ['.tree-empty', 4.5],
+    ['.article-row-meta', 4.5],
+    ['.tag-toggle', 4.5],
     ['.language-menu > summary', 4.5],
     ['.tab[aria-current="page"]', 4.5],
     ['.tab:not([aria-current])', 4.5],
@@ -264,8 +266,9 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   const file = page.locator('.sidebar .tree-link:not([aria-current])').first();
   await file.hover();
   expect(await contrastOf(file), 'explorer hover').toBeGreaterThanOrEqual(4.5);
-  // The one primary action on the empty blog keeps dark ink on its hover fill.
-  const primary = page.locator('.empty-state .button-primary');
+  // Search retains the shared primary-action contrast in its hover state.
+  await page.goto('/zh-hant/search/');
+  const primary = page.locator('main .button-primary');
   await primary.hover();
   // Reduced motion still runs a 0.01 ms transition; wait for its first frame.
   await expect(primary).toHaveCSS('background-color', 'rgb(162, 203, 255)');
@@ -315,10 +318,14 @@ test('the workbench names the open file and links every area, with Paper Daily o
   await expect(page.locator('.status-position')).toHaveText('Top');
   await page.mouse.wheel(0, 100_000);
   await expect(page.locator('.status-position')).toHaveText('Bot');
-  // Unpublished placeholder articles must not reappear as recent files.
+  // Recent files include the published article and exclude the retained drafts.
   await page.goto('/en/');
-  await expect(page.locator('.file-list a')).toHaveCount(0);
-  await expect(page.locator('#recent-title')).toHaveCount(0);
+  await expect(page.locator('.file-list a')).toHaveCount(1);
+  await expect(page.locator('.file-list a')).toHaveAttribute(
+    'href',
+    '/en/blog/video-console/',
+  );
+  await expect(page.locator('#recent-title')).toBeVisible();
 });
 
 for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])

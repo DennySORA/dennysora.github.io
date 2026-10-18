@@ -5,57 +5,87 @@ import { origin } from './helpers.ts';
 const rows = (page: Page) => page.locator('.article-row');
 
 for (const locale of locales) {
-  test(`${locale} blog is genuinely empty, without example articles or filters`, async ({
+  test(`${locale} blog lists the published article and populated filters`, async ({
     page,
   }) => {
     const t = dictionaries[locale];
     await page.goto(`/${locale}/blog/`);
+    await expect(rows(page)).toHaveCount(1);
+    await expect(rows(page).locator('.article-row-title a')).toHaveAttribute(
+      'href',
+      `/${locale}/blog/video-console/`,
+    );
+    await expect(rows(page)).toContainText('Video Console');
+    await expect(
+      page.getByRole('status').filter({ hasText: t.articleCount(1) }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('group', { name: t.topicFilter, exact: true }),
+    ).toBeVisible();
+    await expect(page.locator('.tag-filter')).toBeVisible();
     await expect(
       page.getByRole('heading', { name: t.noPostsTitle }),
-    ).toBeVisible();
-    await expect(page.getByText(t.noPostsText)).toBeVisible();
-    await expect(rows(page)).toHaveCount(0);
-    await expect(
-      page.getByRole('status').filter({ hasText: t.articleCount(0) }),
-    ).toBeVisible();
-    await expect(page.locator('.filter-row')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: t.clearAll })).toHaveCount(0);
+    ).toHaveCount(0);
     await expect(page.getByRole('heading', { name: t.emptyTitle })).toHaveCount(
       0,
     );
-    await expect(page.locator('.nojs-notice')).toHaveCount(0);
+    await expect(page.locator('.nojs-notice')).toBeHidden();
   });
 }
 
-test('searching an empty blog never requests an index or suggests a search failure', async ({
+test('article search loads the real index, combines filters, and clears a miss', async ({
   page,
 }) => {
   const requests: string[] = [];
   page.on('request', (request) => {
     if (request.url().includes('/pagefind/')) requests.push(request.url());
   });
-  await page.goto('/en/blog/?topic=ai&tag=llm&q=trilingual');
+  await page.goto('/en/blog/');
   const input = page.getByRole('searchbox', { name: 'Search articles' });
-  await expect(input).toHaveValue('trilingual');
+  await input.fill('Video Console');
+  await expect(page).toHaveURL(/\?q=Video\+Console$/);
+  await expect(page.locator('.article-list')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
   await expect(
-    page.getByRole('heading', { name: 'No posts yet' }),
+    page
+      .getByRole('status')
+      .filter({ hasText: dictionaries.en.articleCount(1) }),
   ).toBeVisible();
-  await input.fill('SentencePiece');
-  await expect(page).toHaveURL(/\?q=SentencePiece$/);
-  await expect(rows(page)).toHaveCount(0);
+  await expect.poll(() => requests.length).toBeGreaterThan(0);
   await expect(page.locator('.notice')).toHaveCount(0);
-  await expect(page.locator('.sort-toggle')).toHaveCount(0);
-  await expect(page.locator('.active-conditions')).toHaveCount(0);
-  expect(requests).toEqual([]);
-  await page.getByRole('button', { name: 'Clear search' }).click();
+  await page
+    .getByRole('group', { name: dictionaries.en.topicFilter, exact: true })
+    .getByRole('button', { name: 'AI & LLMs', exact: true })
+    .click();
+  const tag = page.locator('.tag-filter').getByRole('button');
+  await tag.click();
+  await expect(tag).toHaveAttribute('aria-pressed', 'true');
+  await expect(page).toHaveURL(/topic=ai&tag=video-generation$/);
+  await expect(rows(page)).toHaveCount(1);
+  await expect(page.locator('.article-list')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
+  await input.fill('zzzznomatch');
+  await expect(
+    page.getByRole('heading', { name: dictionaries.en.emptyTitle }),
+  ).toBeVisible();
+  await expect(rows(page)).toHaveCount(0);
+  await expect(page.locator('.sort-toggle')).toBeVisible();
+  await expect(page.locator('.active-conditions')).toBeVisible();
+  await page
+    .locator('.empty-state')
+    .getByRole('button', { name: dictionaries.en.clearAll })
+    .click();
   await expect(input).toHaveValue('');
-  await expect(input).toBeFocused();
   await expect(page).toHaveURL('/en/blog/');
+  await expect(rows(page)).toHaveCount(1);
+  await expect(page.locator('.active-conditions')).toHaveCount(0);
 });
 
-test('the README start menu opens global search even when the blog is empty', async ({
-  page,
-}) => {
+test('the README start menu opens global search', async ({ page }) => {
   await page.goto('/en/');
   await page
     .locator('.dashboard')
@@ -134,7 +164,7 @@ test('language links preserve the blog query in the title bar', async ({
   ).toHaveAttribute('href', '/en/blog/?q=model');
 });
 
-test('the empty blog remains readable without JavaScript', async ({
+test('the article list and taxonomy navigation remain readable without JavaScript', async ({
   browser,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
@@ -142,23 +172,28 @@ test('the empty blog remains readable without JavaScript', async ({
     const page = await context.newPage();
     await page.goto(`${origin}/en/blog/`);
     await expect(page.getByRole('searchbox')).toBeHidden();
-    await expect(
-      page.getByRole('heading', { name: 'No posts yet' }),
-    ).toBeVisible();
-    await expect(rows(page)).toHaveCount(0);
-    await expect(page.locator('.nojs-notice')).toHaveCount(0);
+    await expect(rows(page)).toHaveCount(1);
+    await expect(rows(page).locator('.article-row-title a')).toHaveAttribute(
+      'href',
+      '/en/blog/video-console/',
+    );
+    await expect(page.locator('.nojs-notice')).toBeVisible();
+    await page.locator('.nojs-notice a[href="/en/blog/topics/ai/"]').click();
+    await expect(rows(page)).toHaveCount(1);
   } finally {
     await context.close();
   }
 });
 
-test('feeds and old example URLs contain no published blog posts', async ({
+test('feeds and search publish only the article while old examples remain noindex bridges', async ({
   request,
 }) => {
   for (const locale of locales) {
     const feed = await request.get(`/${locale}/rss.xml`);
     expect(feed.status()).toBe(200);
-    expect(await feed.text()).not.toContain('<item>');
+    const xml = await feed.text();
+    expect(xml.match(/<item>/g)).toHaveLength(1);
+    expect(xml).toContain(`https://dennysora.me/${locale}/blog/video-console/`);
     for (const slug of [
       'engineering-principles',
       'production-systems',
@@ -172,7 +207,12 @@ test('feeds and old example URLs contain no published blog posts', async ({
       expect(notice).toContain(dictionaries[locale].noPostsTitle);
     }
   }
-  expect((await request.get('/pagefind/pagefind-entry.json')).status()).toBe(
-    404,
-  );
+  const entry = await request.get('/pagefind/pagefind-entry.json');
+  expect(entry.status()).toBe(200);
+  const index = (await entry.json()) as {
+    languages: Record<string, { page_count: number }>;
+  };
+  expect(Object.keys(index.languages).sort()).toEqual([...locales].sort());
+  for (const locale of locales)
+    expect(index.languages[locale]?.page_count).toBe(1);
 });

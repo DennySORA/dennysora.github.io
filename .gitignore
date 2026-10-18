@@ -11,3 +11,7 @@ coverage/
 !.env.example
 # Serena code-intelligence state is machine-local tool configuration.
 .serena/
+.draft-preview/
+
+# Heavy article media is uploaded separately and pinned in data/post-media.json.
+content/posts/*/media/*.mp4

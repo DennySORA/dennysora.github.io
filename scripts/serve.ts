@@ -19,6 +19,7 @@ const mime: Record<string, string> = {
   '.wasm': 'application/wasm',
   '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
+  '.vtt': 'text/vtt; charset=utf-8',
   '.data': 'text/x-script; charset=utf-8',
 };
 const server = createServer((request, response) => {

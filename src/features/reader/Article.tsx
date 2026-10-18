@@ -5,6 +5,7 @@ import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { linkIcon } from '../../components/link-icon.ts';
 import { Prose } from '../../components/Prose.tsx';
+import { ArticleSections } from '../../components/ArticleSections.tsx';
 import { TagLinks } from '../../components/TagLink.tsx';
 import {
   InlineTableOfContents,
@@ -111,7 +112,9 @@ export function Article({
                   <span>
                     {edition.translationState === 'original'
                       ? t.translationOriginal
-                      : t.translationInherited}
+                      : edition.translationState === 'reviewed'
+                        ? t.translationReviewed
+                        : t.translationInherited}
                   </span>
                 </p>
                 <div
@@ -136,7 +139,11 @@ export function Article({
                   </div>
                 ) : null}
               </header>
-              <Prose html={body.html} locale={locale} />
+              {body.sections ? (
+                <ArticleSections sections={body.sections} locale={locale} />
+              ) : (
+                <Prose html={body.html} locale={locale} />
+              )}
             </article>
             <EndOfBuffer />
 

@@ -277,5 +277,208 @@
         "level": 2
       }
     ]
+  },
+  "video-console": {
+    "zh-hant": [
+      {
+        "id": "showcase",
+        "text": "先看成品：十秒，兩種風格",
+        "level": 2
+      },
+      {
+        "id": "project-map",
+        "text": "整套系統，先看懂四個工作區",
+        "level": 2
+      },
+      {
+        "id": "workspace",
+        "text": "Studio：把一個想法拆成可以修改的鏡頭",
+        "level": 2
+      },
+      {
+        "id": "styles",
+        "text": "描述怎麼寫，才看得見想要的動作？",
+        "level": 2
+      },
+      {
+        "id": "workflow",
+        "text": "從描述到短片，我實際做了這幾步",
+        "level": 2
+      },
+      {
+        "id": "editing",
+        "text": "剪輯與效果：生成之後，還有人的選擇",
+        "level": 2
+      },
+      {
+        "id": "components",
+        "text": "元件與流程：PC 和 DGX 怎麼一起工作？",
+        "level": 2
+      },
+      {
+        "id": "records",
+        "text": "紀錄：除了「成功了嗎」，還要知道「發生了什麼」",
+        "level": 2
+      },
+      {
+        "id": "inference",
+        "text": "推理工具：直接試輸入，也能走向影片資料整理",
+        "level": 2
+      },
+      {
+        "id": "advanced",
+        "text": "連續鏡頭與換角：進階方向也要看清範圍",
+        "level": 2
+      },
+      {
+        "id": "comparison",
+        "text": "和市面上的工具，差別在哪裡？",
+        "level": 2
+      },
+      {
+        "id": "timing",
+        "text": "這次實際等了多久？",
+        "level": 2
+      },
+      {
+        "id": "uses",
+        "text": "適合拿來做什麼，又有哪些現實限制？",
+        "level": 2
+      }
+    ],
+    "en": [
+      {
+        "id": "showcase",
+        "text": "The finished video: ten seconds, two styles",
+        "level": 2
+      },
+      {
+        "id": "project-map",
+        "text": "Four workspaces that explain the whole system",
+        "level": 2
+      },
+      {
+        "id": "workspace",
+        "text": "Studio: breaking an idea into shots I can revise",
+        "level": 2
+      },
+      {
+        "id": "styles",
+        "text": "Writing descriptions that convey the action",
+        "level": 2
+      },
+      {
+        "id": "workflow",
+        "text": "The steps I took, from description to video",
+        "level": 2
+      },
+      {
+        "id": "editing",
+        "text": "Editing and effects: the choices that follow generation",
+        "level": 2
+      },
+      {
+        "id": "components",
+        "text": "Components and pipelines: how do the PC and DGX work together?",
+        "level": 2
+      },
+      {
+        "id": "records",
+        "text": "Records: seeing what happened, beyond success or failure",
+        "level": 2
+      },
+      {
+        "id": "inference",
+        "text": "Inference tools: trying inputs and organizing video data",
+        "level": 2
+      },
+      {
+        "id": "advanced",
+        "text": "Continuing a scene and replacing characters: keeping the scope clear",
+        "level": 2
+      },
+      {
+        "id": "comparison",
+        "text": "How does it differ from other tools?",
+        "level": 2
+      },
+      {
+        "id": "timing",
+        "text": "How long did it actually take?",
+        "level": 2
+      },
+      {
+        "id": "uses",
+        "text": "What is it useful for, and what are its practical limits?",
+        "level": 2
+      }
+    ],
+    "ja": [
+      {
+        "id": "showcase",
+        "text": "まずは完成した映像から：10秒で、2つのスタイル",
+        "level": 2
+      },
+      {
+        "id": "project-map",
+        "text": "システム全体を、4つの作業エリアから見る",
+        "level": 2
+      },
+      {
+        "id": "workspace",
+        "text": "Studio：アイデアを、修正できるショットに分ける",
+        "level": 2
+      },
+      {
+        "id": "styles",
+        "text": "望んだ動きを伝えるには、どう書けばいい？",
+        "level": 2
+      },
+      {
+        "id": "workflow",
+        "text": "説明文から短編動画まで、実際の手順",
+        "level": 2
+      },
+      {
+        "id": "editing",
+        "text": "編集とエフェクト：生成した後も、人が選ぶ",
+        "level": 2
+      },
+      {
+        "id": "components",
+        "text": "コンポーネントとパイプライン：PC と DGX はどう分担する？",
+        "level": 2
+      },
+      {
+        "id": "records",
+        "text": "記録：「成功したか」だけでなく、「何が起きたか」を見る",
+        "level": 2
+      },
+      {
+        "id": "inference",
+        "text": "推論ツール：入力を直接試し、動画のデータも整理する",
+        "level": 2
+      },
+      {
+        "id": "advanced",
+        "text": "連続するショットとキャラクターの置き換え：できる範囲を見極める",
+        "level": 2
+      },
+      {
+        "id": "comparison",
+        "text": "市販のツールとは、どこが違う？",
+        "level": 2
+      },
+      {
+        "id": "timing",
+        "text": "今回、実際にどのくらい待った？",
+        "level": 2
+      },
+      {
+        "id": "uses",
+        "text": "何に向いていて、どんな現実的な制約がある？",
+        "level": 2
+      }
+    ]
   }
 }

@@ -784,7 +784,7 @@
 /* Content tabs: with JavaScript one panel shows at a time; without it every
    panel shows and the row is a table of contents. The row sticks under the
    header and spans the gutter, so no line number shows beside it. */
-.study-note .sn-tabs {
+:is(.study-note, .article-sections) .sn-tabs {
   position: sticky;
   top: var(--header-height);
   z-index: 10;
@@ -794,13 +794,13 @@
   border-bottom: 1px solid var(--color-border-decorative);
   background: var(--color-background);
 }
-.study-note .sn-tablist {
+:is(.study-note, .article-sections) .sn-tablist {
   display: flex;
   gap: 2px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
 }
-.study-note .sn-tablist a {
+:is(.study-note, .article-sections) .sn-tablist a {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -816,26 +816,31 @@
     background-color var(--motion),
     color var(--motion);
 }
-.study-note .sn-tablist a:hover {
+:is(.study-note, .article-sections) .sn-tablist a:hover {
   background: var(--color-surface-raised);
   color: var(--color-text);
 }
-.study-note .sn-tablist a[aria-selected='true'] {
+:is(.study-note, .article-sections) .sn-tablist a[aria-selected='true'] {
   background: var(--color-surface-selected);
   color: var(--color-text);
   box-shadow: inset 0 -2px 0 var(--color-action-primary);
 }
-.study-note .sn-tablist .sn-icon {
+:is(.study-note, .article-sections) .sn-tablist .sn-icon {
   margin-right: 0;
   color: var(--color-link);
 }
-.study-note .sn-tablist a:focus-visible {
+:is(.study-note, .article-sections) .sn-tablist a:focus-visible {
   outline-offset: -2px;
 }
 /* Anchors land below the header and the sticky tab row. */
-.study-note .sn-tabpanel,
-.study-note .sn-tabpanel [id] {
+:is(.study-note, .article-sections) .sn-tabpanel,
+:is(.study-note, .article-sections) .sn-tabpanel [id] {
   scroll-margin-top: calc(var(--header-height) + 64px);
+}
+
+.article-sections .sn-tabs {
+  margin-right: 0;
+  padding-right: 0;
 }
 
 /* Comparison videos share the photo window. The video streams from the

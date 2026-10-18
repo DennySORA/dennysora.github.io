@@ -393,3 +393,65 @@ export const noteMediaSchema = z
   })
   .strict();
 export type NoteMedia = z.infer<typeof noteMediaSchema>;
+
+/** Article media is independent of the notes registry and markup policy. */
+export const postMediaRepository =
+  'https://huggingface.co/datasets/DennySORA/dennysora-site-media';
+export const postMediaFileSchema = z
+  .object({
+    path: z
+      .string()
+      .regex(
+        /^posts\/[a-z0-9]+(?:-[a-z0-9]+)*\/media\/[a-z0-9]+(?:-[a-z0-9]+)*\.mp4$/,
+      ),
+    revision: commit,
+    bytes: z.number().int().nonnegative(),
+    sha256: hash,
+    width: z.number().int().nonnegative(),
+    height: z.number().int().nonnegative(),
+    seconds: z.number().nonnegative(),
+    audioTracks: z.number().int().nonnegative(),
+    subtitles: z.literal(true).optional(),
+  })
+  .strict();
+export const postMediaSchema = z
+  .object({
+    checkedAt: z.iso.date(),
+    note: text,
+    repository: z.literal(postMediaRepository),
+    files: z
+      .array(postMediaFileSchema)
+      .refine(
+        (files) =>
+          new Set(files.map((file) => file.path)).size === files.length,
+        'Duplicate article media path',
+      ),
+  })
+  .strict();
+export type PostMediaFile = z.infer<typeof postMediaFileSchema>;
+
+/** Optional article navigation: adjacent H2 groups, shared by all editions. */
+const postSectionGroupSchema = z
+  .object({
+    id: safeId,
+    label: localizedSchema,
+    icon: z.enum(['list', 'film', 'server', 'chart', 'info']),
+    headings: z.array(safeId).min(1),
+  })
+  .strict();
+export type PostSectionGroup = z.infer<typeof postSectionGroupSchema>;
+export const postSectionsSchema = z.record(
+  safeId,
+  z
+    .array(postSectionGroupSchema)
+    .min(2)
+    .max(8)
+    .refine((groups) => {
+      const ids = groups.map((group) => group.id);
+      const headings = groups.flatMap((group) => group.headings);
+      return (
+        new Set(ids).size === ids.length &&
+        new Set(headings).size === headings.length
+      );
+    }, 'Article section IDs and headings must be unique'),
+);

@@ -1,5 +1,25 @@
 # 重建實作紀錄
 
+## 2026-10-18｜Video Console 三語介紹、配音操作影片與分頁發布
+
+狀態：實作、媒體託管與本機發布驗證完成；紀錄來源 `agent_reported`。網站基準 `17d56e1c50d50fc3369fa37a0989c90557bc9e24`，開始時乾淨。使用者要求完整介紹專案、市售差異、真實操作錄影，接續授權發布，並指定補上操作軌跡、kuro-tts 日文配音、三語字幕及類似 H3 DiT 筆記的內文分頁。
+
+文章有 13 節，分成總覽、Studio、設備與流程、紀錄與推理、工具比較與限制五頁；三語共用原錨點與影片。7 張介面截圖、原創動漫／寫實成品，以及五支新錄操作影片。Studio 64.46 秒、流程 55.54 秒、元件 64.79 秒、紀錄 64.92 秒、推理 78.04 秒；另有 10.33 秒成品，共內嵌 6 支影片。30 段日文合成旁白與 15 份 WebVTT 使用同一時間軸。游標、軌跡與點擊圈由實際瀏覽器事件驅動；操作等待剪短，旁白需要時保留停格，無關活動名稱遮蔽並裁去頂端 50 px。最終接觸表已逐段檢視；未將影片長度當生成耗時。
+
+生成示範時來源 `41bed3ac931a1466c757ec07f14cf674f4fee5c4`，擴寫 source inspection 為 `c5f064d056738822c6878654c6e2b05c5c494ad0`，不冒稱 deployed bundle 完全一致。補拍僅操作自建示範專案與紀錄、配置及空白推理表單；沒有再送生成／匯出、啟停元件或改設定，未執行語意分析、資料集輸出、訓練、換角或全部效果。原創兩段生成及第一次實際匯出證據與補拍分開敘述。市場比較引用當日官方文件，不宣稱跨產品 benchmark 或獨占功能。
+
+旁白使用指定 kuro-tts 的既有環境與模型，在 CPU 產生本次新文稿，避開其他使用者 GPU 工作。兩個離線 ASR 模型只檢查新音檔，針對關鍵誤讀改寫並重製；這是自動可辨識性核對，沒有宣稱人工聽感、母語口音或聲音品質認證。使用者這次的文章發布與指定配音範圍只涵蓋新教學旁白，不包含原始語料、模型、參考聲音或憑證。可公開 provenance 只留工具來源 commit、合成聲明、處理方式與成品 hashes。
+
+六支 MP4 已上傳至既有 Hugging Face dataset 的 `posts/video-console/media/`，固定 commit `2179b1bfa8e44187c42e57d34cbc0926f4077cbd`；逐檔遠端 `x-linked-size`／`x-linked-etag` 與本機 bytes／SHA-256 相符。`data/post-media.json` 擁有託管與字幕契約，MP4 不進 Git／Pages 產物；poster 與字幕同源。38 個本機媒體資產記錄於 provenance。未發布其他原始聲音或私人素材。
+
+原生 workers 在獨立 scratch 提供媒體契約、分頁、發布測試與三語對照審閱；root 是工作樹唯一 writer。英日審閱如實標為 AI 對照審閱，非作者逐字或人工母語審閱；證據見 [VIDEO-CONSOLE-REVIEW.md](VIDEO-CONSOLE-REVIEW.md)。分頁保留全部靜態內容、深連結、鍵盤與 no-JavaScript 導覽；切換時暫停隱藏影片。草稿 preview 與 production cache 隔離，字幕僅由受控 renderer 產生。
+
+前一版草稿曾通過 38 個核心測試及本機六影片播放、320–1920 寬度檢視；這些不代替本次新增旁白／分頁的發布驗收。最終 `pnpm verify` 通過：format、lint、types、180 unit tests、完整 build／artifact、119 Playwright tests。建置為 128 routes、576 files、initial JS gzip 144.5 KiB，未提高既有上限。首輪修正兩項舊內容假設：所有文章都有留言串，以及首頁沒有最近文章；保留本篇 comments disabled／null 與舊草稿 noindex 橋接。其後僅為日文字幕加入句子內換行，文字內容不變，重新通過 content check、7 項媒體契約測試、完整 build，並回到瀏覽器確認最終字幕。
+
+MCP 隔離瀏覽器對正式產物實測：六影片 currentTime 前進、readyState=4、audio decoded bytes 增加且無 media error；15 個文字軌全數載入 90 cues。三語各自預設正確字幕，已檢視繁中 1440／320、英文 1920、日文 1280 的畫面，頁面沒有水平溢出。播放前六影片 readyState=0，無第三方 resource request；切換分頁讓正在播放的影片實際 pause，console 無 error／warn。與完整 E2E 的深連結、鍵盤、no-JavaScript、axe、notes 回歸證據互相補充，不宣稱逐幀人工審核或完整聽辨全部旁白。發布使用已核對的 main → release 非強制更新；遠端部署結果以該提交的 Pages workflow 及正式站回讀為準。
+
+基礎設施文件的 JSON／canonical digest 以標準函式庫核對，其他 Fleet／Nano 工作保持原樣。docs repository 完整 executable gate 缺 trusted external boundary，仍為 BLOCKED / NOT RUN，不以網站檢查代替。新音檔、ASR／整合 scratch 與七份 managed 原始 screencast 已刪除並回讀不存在；來源服務與日常瀏覽器保持原狀。正式發布的 13 個 heading IDs 已登錄錨點契約。網站驗收 browser／loopback server 在正式站驗證後關閉。
+
 > 2026-09-26 更新：下列「設計」段落的石墨黑工作台與 Explorer 導覽，以及「搜尋使用分語系靜態 JSON」的取捨，已由 UI／UX v2.1 取代（semantic-dark tokens、三種任務版型、Pagefind）。現況見 [DELIVERY-v2.1.md](DELIVERY-v2.1.md)。
 
 2026-09-20。此紀錄承接 ZIP 的規格；本次使用者已授權本機完整重寫，取代 REQ-022 的歷史「僅規劃」限制。遠端移轉、部署、DNS、Nano 維運不在本機寫入範圍。
@@ -93,13 +113,13 @@ HTTP-only Playwright passed（2 cases）：29 個正式 routes、三語 search n
 
 實作盤點：
 
-| 內容 | 原狀態 | 本次結果 |
-|---|---|---|
-| 鎮痛藥指南、腦與中樞神經腫瘤 | 只有中文全文 | 每篇繁中、英文、日文全文 |
-| P2P Downloader、P2P 隱私研究 | 只有中文全文 | 每篇三語全文，包含原有契約／研究附錄 |
-| 140 mm 風扇評估 | 只有中文全文 | 三語正文、表格、圖表與互動訊息 |
-| dgxtop 架構與設計 | 繁中、英文 | 補齊日文正文、圖表、截圖說明與替代文字 |
-| profile、taxonomy、三篇 posts | 已有三語資料 | 保留資料；posts 的三語 draft 狀態不變 |
+| 內容                          | 原狀態       | 本次結果                               |
+| ----------------------------- | ------------ | -------------------------------------- |
+| 鎮痛藥指南、腦與中樞神經腫瘤  | 只有中文全文 | 每篇繁中、英文、日文全文               |
+| P2P Downloader、P2P 隱私研究  | 只有中文全文 | 每篇三語全文，包含原有契約／研究附錄   |
+| 140 mm 風扇評估               | 只有中文全文 | 三語正文、表格、圖表與互動訊息         |
+| dgxtop 架構與設計             | 繁中、英文   | 補齊日文正文、圖表、截圖說明與替代文字 |
+| profile、taxonomy、三篇 posts | 已有三語資料 | 保留資料；posts 的三語 draft 狀態不變  |
 
 五份 JSON 共 4,404 組 `source`／`en`／`ja` 對照；原 HTML 未變更。中文變更會觸發缺漏／陳舊對照檢查，原有英語說明另列明確對照。所有 15 份筆記版本的 ID、來源連結與 `data-*` 均由回歸測試逐項核對。目錄、Explorer、metadata、alternate links、語言切換、標籤與全站搜尋同步導向讀者選定的語言；沒有新增未發布文章。
 
@@ -116,7 +136,6 @@ HTTP-only Playwright passed（2 cases）：29 個正式 routes、三語 search n
 最終影響範圍重測：`medical-notes.spec.ts` 與 `note-translations.spec.ts`，以 `--grep 'translated diagram labels|note tools|brain guide is accessible' --max-failures=1 --global-timeout=20000` 選取四個案例，4 passed（11.5s）。涵蓋英日互動、搜尋／無結果、輸入失敗、匯出、語言切換、無 JS 正文與三語來源跳轉、SVG 邊界／碰撞。加強目的地檢查時曾誤用 `#sources h2`，已依原稿實際 `h2#sources` 改正後重測。未把中斷案例當 pass，未再次整套重跑；原 98 個通過案例加上修正後定向結果是本次 evidence boundary。
 
 最後重新執行 format、lint、typecheck、141 unit tests 與 production build，全部 passed。全站搜尋檔有 54 個公開頁面版本，其中 15 份筆記（每語言 5 份）；文章仍為 draft，沒有 Pagefind 文章索引是預期狀態。五份原始 HTML 與 HEAD 逐 bytes 一致；本次維持原 500,000-byte JSON 檔案上限。README 與兩份更新文件共 31 個相對連結皆存在，`git diff --check` passed。截圖、測試 log、browser profile、build 產物均未加入版本控制。commit、push、release branch 與正式站均未變更。
-
 
 ## 2026-10-11｜多語內容發布前核對
 

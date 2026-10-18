@@ -106,6 +106,16 @@ test('search has useful no-JavaScript navigation and an index with note body con
     index.find((entry) => entry.href.endsWith('/p2p-privacy/'))?.text,
   ).toContain('DAITA');
   expect(index.some((entry) => /\/privacy\//.test(entry.href))).toBe(false);
+  expect(
+    index
+      .filter((entry) => entry.kind === 'article')
+      .map((entry) => entry.href)
+      .sort(),
+  ).toEqual([
+    '/en/blog/video-console/',
+    '/ja/blog/video-console/',
+    '/zh-hant/blog/video-console/',
+  ]);
   // A project page is indexed in each language it was written in, and only those.
   expect(
     index

@@ -30,6 +30,16 @@ import {
 import { addNoteTags } from './note-tags.server.ts';
 import { noteMediaUrl } from './note-media.ts';
 import {
+  checkPostMediaMarkup,
+  loadPostMedia,
+  postMediaUrl,
+} from './post-media.server.ts';
+import {
+  loadPostSections,
+  partitionPostSections,
+  type PostSection,
+} from './post-sections.server.ts';
+import {
   markJapanese,
   translateNote,
   type NoteTranslation,
@@ -126,22 +136,52 @@ export const loadPosts = once((): LoadedPost[] => {
     );
 });
 
-const renders = new Map<string, RenderedMarkdown>();
-export function renderPost(id: string, locale: Locale): RenderedMarkdown {
+export type RenderedPost = RenderedMarkdown & {
+  sections: PostSection[] | null;
+};
+const renders = new Map<string, RenderedPost>();
+export function renderPost(
+  id: string,
+  locale: Locale,
+  options?: { mode: 'draft-preview' },
+): RenderedPost {
+  const preview = options?.mode === 'draft-preview';
+  if (
+    preview &&
+    loadPosts().find((post) => post.id === id)?.locales[locale]?.publication !==
+      'draft'
+  )
+    throw new Error('Local previews require an existing draft edition');
   const key = `${id}/${locale}`;
-  const cached = renders.get(key);
+  const cached = preview ? undefined : renders.get(key);
   if (cached) return cached;
   const directory = join(contentRoot, 'posts', id);
-  const rendered = renderMarkdown(
-    readFileSync(join(directory, `${locale}.md`), 'utf8'),
-    {
-      locale,
-      publishedAnchors: loadHeadingAnchors()[id]?.[locale] ?? [],
-      assets: { directory, urlPrefix: `/content-assets/posts/${id}/` },
-    },
+  const media = loadPostMedia().files.filter((file) =>
+    file.path.startsWith(`posts/${id}/`),
   );
-  renders.set(key, rendered);
-  return rendered;
+  const markdown = readFileSync(join(directory, `${locale}.md`), 'utf8');
+  const rendered = renderMarkdown(markdown, {
+    locale,
+    publishedAnchors: loadHeadingAnchors()[id]?.[locale] ?? [],
+    assets: {
+      directory,
+      urlPrefix: `/content-assets/posts/${id}/`,
+      postMedia: { id, files: media },
+      ...(preview ? { allowLocalVideos: true as const } : {}),
+    },
+  });
+  const groups = loadPostSections()[id];
+  const body: RenderedPost = {
+    ...rendered,
+    sections: groups
+      ? partitionPostSections(markdown, rendered, groups, locale)
+      : null,
+  };
+  if (!preview) {
+    checkPostMediaMarkup(id, locale, rendered.html, media);
+    renders.set(key, body);
+  }
+  return body;
 }
 
 export type PostSummary = {
@@ -208,7 +248,8 @@ export function loadArticle(locale: Locale, slug: string) {
     },
     // Local image paths stay on the build machine; only public output is returned.
     body: {
-      html: body.html,
+      html: body.sections ? '' : body.html,
+      sections: body.sections,
       headings: body.headings,
       minutes: body.minutes,
       hasMath: body.hasMath,
@@ -309,6 +350,15 @@ export function validateContent(): void {
   const problems: string[] = [];
   const posts = loadPosts();
   const postIds = new Set(posts.map((post) => post.id));
+  for (const id of Object.keys(loadPostSections()))
+    if (!postIds.has(id))
+      problems.push(`Article sections refer to unknown post: ${id}`);
+  for (const file of loadPostMedia().files) {
+    // The publication gate refuses draft registry placeholders, even when unused.
+    postMediaUrl(file);
+    if (!postIds.has(file.path.split('/')[1] ?? ''))
+      problems.push(`Unknown article owner for media: ${file.path}`);
+  }
   const projects = loadProjects();
   const projectIds = new Set(projects.map((project) => project.id));
   const { tags, topics, types } = loadTaxonomy();

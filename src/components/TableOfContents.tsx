@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { contentTabsChange } from '../lib/content-tabs.ts';
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import type { Heading } from '../lib/markdown.server.ts';
 
@@ -17,12 +18,14 @@ function useActiveHeading(ids: readonly string[]) {
     let frame = 0;
     const update = () => {
       frame = 0;
-      let current = ids[0] ?? null;
-      for (const id of ids) {
+      const visible = ids.flatMap((id) => {
         const element = document.getElementById(id);
-        if (element && element.getBoundingClientRect().top <= activationOffset)
-          current = id;
-      }
+        return element && !element.closest('[hidden]') ? [element] : [];
+      });
+      let current = visible[0]?.id ?? null;
+      for (const element of visible)
+        if (element.getBoundingClientRect().top <= activationOffset)
+          current = element.id;
       setActive(current);
     };
     const schedule = () => {
@@ -31,10 +34,12 @@ function useActiveHeading(ids: readonly string[]) {
     update();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
+    document.addEventListener(contentTabsChange, schedule);
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
+      document.removeEventListener(contentTabsChange, schedule);
     };
   }, [ids]);
   return active;
@@ -74,7 +79,10 @@ export function TableOfContents({
   locale: Locale;
 }) {
   const entries = tocEntries(headings);
-  const [ids] = useState(() => entries.map((entry) => entry.id));
+  const ids = useMemo(
+    () => tocEntries(headings).map((entry) => entry.id),
+    [headings],
+  );
   const active = useActiveHeading(ids);
   const t = dictionaries[locale];
   return (

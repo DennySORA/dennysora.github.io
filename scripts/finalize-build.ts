@@ -82,14 +82,14 @@ write(
   `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`,
 );
 
-// Article images and formula styles are copied only when published content uses them.
+// Article images, subtitle tracks and formula styles ship only when published content uses them.
 let usesMath = false;
 for (const post of loadPosts())
   for (const locale of post.editions) {
     const rendered = renderPost(post.id, locale);
     usesMath ||= rendered.hasMath;
-    for (const image of rendered.images)
-      cpSync(image.source, join(output, decodeURIComponent(image.url)));
+    for (const asset of [...rendered.images, ...rendered.subtitles])
+      cpSync(asset.source, join(output, decodeURIComponent(asset.url)));
   }
 if (usesMath) {
   const katex = join('node_modules', 'katex', 'dist');

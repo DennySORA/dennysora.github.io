@@ -8,11 +8,17 @@ import { gzipSync } from 'node:zlib';
 import {
   isIndexable,
   listPosts,
+  loadPosts,
+  renderPost,
   publishedPaths,
   publishedRoutes,
   siteUrl,
 } from '../src/lib/content.server.ts';
 import { locales } from '../src/i18n/index.ts';
+import {
+  checkPostMediaMarkup,
+  loadPostMedia,
+} from '../src/lib/post-media.server.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
 import brand from '../data/brand-assets.json' with { type: 'json' };
 import illustrations from '../data/illustration-assets.json' with { type: 'json' };
@@ -43,6 +49,39 @@ try {
   failures.push(`Invalid site search index: ${String(error)}`);
 }
 
+// Only published articles may emit subtitle tracks, with byte-identical local VTTs.
+const expectedSubtitles = new Map<string, string>();
+const postMedia = loadPostMedia().files;
+for (const post of loadPosts())
+  for (const locale of post.editions) {
+    const rendered = renderPost(post.id, locale);
+    const page = join(root, locale, 'blog', post.slug, 'index.html');
+    try {
+      const html = readFileSync(page, 'utf8');
+      checkPostMediaMarkup(post.id, locale, html, postMedia);
+      if (
+        JSON.stringify(html.match(/<video\b[\s\S]*?<\/video>/g) ?? []) !==
+        JSON.stringify(rendered.html.match(/<video\b[\s\S]*?<\/video>/g) ?? [])
+      )
+        failures.push(
+          `Article players differ from their validated source: ${post.id}/${locale}`,
+        );
+      for (const asset of rendered.subtitles) {
+        const name = asset.url.slice(1);
+        expectedSubtitles.set(name, asset.source);
+        if (!readFileSync(join(root, name)).equals(readFileSync(asset.source)))
+          failures.push(`Subtitle differs from its validated source: ${name}`);
+      }
+    } catch (error) {
+      failures.push(
+        `Invalid article media ${post.id}/${locale}: ${String(error)}`,
+      );
+    }
+  }
+for (const file of files)
+  if (extname(file) === '.vtt' && !expectedSubtitles.has(relative(root, file)))
+    failures.push(`Unreferenced subtitle artifact: ${relative(root, file)}`);
+
 // Every shipped illustration is recorded with its final bytes (docs/DESIGN.md §7).
 const recorded = new Set<string>();
 for (const asset of illustrations.assets) {
@@ -64,7 +103,7 @@ for (const file of files)
 for (const file of files) {
   const name = relative(root, file);
   if (
-    /(^|\/)(\.env[^/]*|\.git|\.serena|node_modules|docs|content|AGENTS\.md|PROJECT_AGENT\.md)(\/|$)|\.(sqlite|db|map|zip|pem|key)$/.test(
+    /(^|\/)(\.env[^/]*|\.git|\.serena|\.draft-preview|node_modules|docs|content|AGENTS\.md|PROJECT_AGENT\.md)(\/|$)|\.(sqlite|db|map|zip|pem|key|mp4|m4a|webm|wav|mp3)$/.test(
       name,
     )
   )
