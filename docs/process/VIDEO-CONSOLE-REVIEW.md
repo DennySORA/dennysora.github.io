@@ -2,15 +2,16 @@
 
 - 審閱日期：2026-10-18。
 - 審閱者：Codex AI agent。此紀錄是 AI 全文語意對照與內容範圍審閱，不代表作者逐字確認或人工母語審校。
-- 範圍：以繁體中文為來源，完整對照英文與日文；最終格式化後確認修訂只明確化「兩筆 DiT 元件紀錄」的說明。未發現阻擋發布的誤譯。
+- 範圍：以繁體中文為來源，已完成全文英文與日文語意對照。本次新增作者親自提供的前言，繁中逐字保留；英日另經兩個獨立 AI agent 對照，保留直接的批評語氣、第一人稱、段落順序及五項未來規劃，未發現阻擋發布的誤譯。既有正文 bytes 未改。
 - 結構：三語各有 13 個章節 anchors、14 個媒體引用與 10 個外部連結，順序一致；本地媒體目標均存在。
+- 前言界線：「又爛又貴」保留作者觀點；多機協調、任意系統、Skill／Agent 與 Prompt 是作者自述，不增加相容性或性能實測證明。TTS、聲音遷移、超分、多層級渲染、插件／滑塊及擴充模型均保留為後續規劃；聲音遷移譯為 voice conversion／音声変換，未升級成聲音複製。中文「更多的地方式是」照原文保留。
 - 事實界線：新 workflow 導覽未重跑匯出；Scene 未載入分析結果，未執行資料集匯出或訓練；兩筆不同輸入的 DiT 紀錄不構成性能基準。旁白、三語字幕與游標剪輯說明一致。
 - 限制：本次文字審閱未獨立重播全部最終影片、驗證逐幀遮罩與瀏覽器字幕選擇，亦未重跑生成或硬體量測。
 
 | 檔案                                     | SHA-256                                                            |
 | ---------------------------------------- | ------------------------------------------------------------------ |
-| `content/posts/video-console/zh-hant.md` | `0b3a457e195760f1bc7309a9765d7a2bd86916c90b1354a9ef6bada8c6fe670a` |
-| `content/posts/video-console/en.md`      | `fae209d1cfd7ea34cd130f1880e4460ef983c1cb4bfac3c675a6950ec97e4e32` |
-| `content/posts/video-console/ja.md`      | `1fd795a80e2c2b81443c5201b869d903a9b0fa6b3f891772ead69532cb2a78a8` |
+| `content/posts/video-console/zh-hant.md` | `fac0bb0d7bebf35b7e952c2d24e1385b196dfbbbac21a0a4c53061683cb8432a` |
+| `content/posts/video-console/en.md`      | `f8d433fa7bc5d1fce4700761163fb918115979c8580c990f786caf53986b7092` |
+| `content/posts/video-console/ja.md`      | `dc1fea8afdf180b9aba6b85fd3dbbe5817ea7a1b495b7e35efe88481e92704b0` |
 
 以上 hash 對應本次審閱的完整 Markdown bytes；後續任何編輯都須重新計算並確認。

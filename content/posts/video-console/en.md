@@ -1,3 +1,35 @@
+So, why did I develop this system in the first place?
+
+I honestly think the video-generation options on the market are crappy and expensive.
+
+And the ones that run locally basically give no thought at all to real workflow needs or the need to speed things up.
+
+So I decided to build my own.
+
+On the technical side, much of the work is engineering optimization. As for model techniques, I’ll experiment first and release that work gradually.
+
+I’ve made the whole workflow fit together: text → images → video.
+
+It is also highly extensible and gives you choices. If you actually have multiple computers available, this project lets you configure how they work together.
+
+I’ve split the components into very fine-grained pieces so they can run on any system.
+
+Too technical? Don’t understand it? No problem. The project provides a Skill you can plug straight into an Agent and have it help you optimize things.
+
+Then there’s editing. During development, I adjusted the Prompt recommendations so they can accommodate what you need from your Prompts.
+
+There are still plenty of features I’ll gradually add, including:
+
+1. TTS and voice conversion.
+2. Super-resolution.
+3. Multi-level rendering within the framework.
+4. Generation plugins and sliders.
+5. Support for more models.
+
+And so on. Development will probably be driven mainly by my own needs.
+
+---
+
 I have a shot in mind: a figure in a red jacket races across the rooftops, then leaps toward the setting sun. In the next scene, a blue race car turns into a gravel corner, trailing a cloud of dust.
 
 Turning that idea into a video involves more than generation. I need to write the descriptions, keep track of the versions I have tried, join the clips, see which machine is busy, find out why one attempt took longer, and locate the finished file.
