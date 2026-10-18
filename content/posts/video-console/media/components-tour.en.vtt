@@ -1,0 +1,24 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:10.728
+On the PC page, check whether the components that create video and process
+sound are ready to use.
+
+00:00:11.792 --> 00:00:20.894
+Switch to DGX to inspect the component that turns text into conditions for
+generation.
+
+00:00:21.958 --> 00:00:30.944
+Here, inspect each component’s task and what it passes to the next stage.
+
+00:00:32.667 --> 00:00:42.941
+Open the text-conditioning stage to inspect its component and its
+connections to other stages.
+
+00:00:44.000 --> 00:00:53.427
+Here, check each machine’s role, including the PC’s main video-generation
+task.
+
+00:00:54.500 --> 00:01:04.229
+This recording only inspects the configuration; it does not start or stop
+components or change settings during a run.

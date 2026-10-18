@@ -1,0 +1,49 @@
+{
+  "id": "video-console",
+  "slug": "video-console",
+  "author": "DennySORA",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-10-18",
+  "updatedAt": "2026-10-18",
+  "topics": ["ai"],
+  "contentType": "case-study",
+  "tagIds": ["video-generation"],
+  "featured": true,
+  "discussionNumber": null,
+  "commentsEnabled": false,
+  "relatedPostIds": [],
+  "relatedProjectIds": [],
+  "source": {
+    "repo": "DennySORA/video-console-v4",
+    "commit": "c5f064d056738822c6878654c6e2b05c5c494ad0",
+    "path": "README.md",
+    "url": "https://github.com/DennySORA/video-console-v4/blob/c5f064d056738822c6878654c6e2b05c5c494ad0/README.md",
+    "kind": "original"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "從生成到剪輯與診斷：完整走一遍我的 Video Console",
+      "summary": "用動漫與寫實短片，走遍 Studio、元件流程、紀錄與推理四個工作區，介紹 PC／DGX 分工、資料集工具、實際限制，以及和 Runway、Firefly、ComfyUI、專業剪輯軟體的差異。附截圖與五段操作錄影。",
+      "publication": "draft",
+      "translationState": "original",
+      "sourceRevision": null,
+      "reviewEvidence": null
+    },
+    "en": {
+      "title": "From generation to editing and diagnostics: a full tour of my Video Console",
+      "summary": "Explore Studio, components, records and inference through original anime and realistic clips, with PC/DGX collaboration, dataset tools, practical limits and comparisons with Runway, Firefly, ComfyUI and professional editors. Includes screenshots and five workflow recordings.",
+      "publication": "draft",
+      "translationState": "machine-draft",
+      "sourceRevision": "0b3a457e195760f1bc7309a9765d7a2bd86916c90b1354a9ef6bada8c6fe670a",
+      "reviewEvidence": null
+    },
+    "ja": {
+      "title": "生成から編集、診断まで：私の Video Console を一通り歩く",
+      "summary": "アニメ調と実写調の短編を通して、Studio、コンポーネント、記録、推論の4つの作業領域を紹介。PC／DGX の分担、データセット、制限、Runway・Firefly・ComfyUI・編集ソフトとの違いを、画面と5本の操作動画でたどります。",
+      "publication": "draft",
+      "translationState": "machine-draft",
+      "sourceRevision": "0b3a457e195760f1bc7309a9765d7a2bd86916c90b1354a9ef6bada8c6fe670a",
+      "reviewEvidence": null
+    }
+  }
+}

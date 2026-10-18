@@ -1,0 +1,29 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:10.125
+The text-input page provides fields for the descriptions and conditions
+required by the pipeline in use.
+
+00:00:11.208 --> 00:00:21.042
+A first-frame input is useful when you want an image to define the opening
+composition.
+
+00:00:22.125 --> 00:00:32.992
+Supported reference media depend on the pipeline; this walkthrough only
+inspects the settings and does not create a new video.
+
+00:00:34.083 --> 00:00:44.230
+The first data-preparation step opens video scene analysis, but no
+analysis is run here.
+
+00:00:45.292 --> 00:00:55.079
+This page is for reviewing and editing analysis results; no results have
+been loaded for this walkthrough.
+
+00:00:56.167 --> 00:01:06.383
+This step creates scene descriptions; it does not create subtitles to
+display in the video.
+
+00:01:07.458 --> 00:01:17.478
+The final page pairs videos with descriptions; no files are exported and
+no model is trained here.

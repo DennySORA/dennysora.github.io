@@ -1,0 +1,362 @@
+{
+  "createdAt": "2026-10-18",
+  "application": "Video Console 4.0",
+  "sourceCommit": "41bed3ac931a1466c757ec07f14cf674f4fee5c4",
+  "scope": "Original anime and realistic clips generated for a separate demo project. Expanded UI tours show only that project, operational configuration, empty inference forms and its own records. No user private media included. The generation sourceCommit and later sourceInspectionCommit are distinct; deployed UI parity is not assumed.",
+  "assets": [
+    {
+      "path": "images/effects.webp",
+      "bytes": 119428,
+      "sha256": "e804ec6d8729bdcc0f75ad1cf750c6b28155ece8a2d011f75eba5ba88a38f0c0"
+    },
+    {
+      "path": "images/pipeline.webp",
+      "bytes": 108928,
+      "sha256": "bb40bdf796066d5896278cbee7f55be53977736980ab17f5ba52ab005ee9811b"
+    },
+    {
+      "path": "images/prompt-editor.webp",
+      "bytes": 69510,
+      "sha256": "6d1fe7a3c987b5ad721a317663e7a21d71825cd0a10a1248af3b36f25a2ddc71"
+    },
+    {
+      "path": "images/records.webp",
+      "bytes": 126404,
+      "sha256": "c585492591e25ebb31fe16d70d05fcc4bbfcb942cf52cea04f4ee7a810d734b6"
+    },
+    {
+      "path": "images/render-complete.webp",
+      "bytes": 103752,
+      "sha256": "c5e975ca83672f347398c53098750abc20819577bcf3a4f215b2383c8ed10e06"
+    },
+    {
+      "path": "images/semantics.webp",
+      "bytes": 63438,
+      "sha256": "74e16c2b20384fbb1dfceffd9590652e09b0907b522dfba48e265f5068baf5b3"
+    },
+    {
+      "path": "images/studio-overview.webp",
+      "bytes": 149722,
+      "sha256": "df878b8f7801bf77b43d7fdc6e43613fb792e54b9254429522e43597ac57cc6f"
+    },
+    {
+      "path": "media/anime.mp4",
+      "bytes": 2297647,
+      "sha256": "1d4bd52cbd68cf01d8ccc7bfc17505a84592959a9c31112b4c6b0dd2046a2d6d",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 768,
+          "height": 448,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "5.175000"
+      }
+    },
+    {
+      "path": "media/anime.webp",
+      "bytes": 24738,
+      "sha256": "e30c76319790cda8c8a80339dcfbb2ebaed5107710c7dedfd6e677aef86e3d46"
+    },
+    {
+      "path": "media/components-tour.en.vtt",
+      "bytes": 752,
+      "sha256": "393ed7e002867c7115b8782630c7025b6ee9e487a106f7ecf929e0eccf3562c0"
+    },
+    {
+      "path": "media/components-tour.ja.vtt",
+      "bytes": 884,
+      "sha256": "716e5defe664eac406f1705c4cb17066e244069c0f023cbd933651418aedca5a"
+    },
+    {
+      "path": "media/components-tour.mp4",
+      "bytes": 4098929,
+      "sha256": "dc885b25a72216c06cb2dcffc39ad9110fc29850342fdef87cb1f60d5f2f328e",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1600,
+          "height": 950,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "64.791667"
+      }
+    },
+    {
+      "path": "media/components-tour.webp",
+      "bytes": 90998,
+      "sha256": "2bd40aecd24430ca77d6b8658122d9298a2e868b4494fa2ed526aaae631f358e"
+    },
+    {
+      "path": "media/components-tour.zh-hant.vtt",
+      "bytes": 682,
+      "sha256": "2c450f0b21e6fb94b881da81779eb5bb6405a29b8ad49eb9f1e453392935768f"
+    },
+    {
+      "path": "media/inference-tour.en.vtt",
+      "bytes": 931,
+      "sha256": "d8f4cca252c3349b0f6fb17a0af264c9384c6401cf1f2593eb409bb4f4ba3bff"
+    },
+    {
+      "path": "media/inference-tour.ja.vtt",
+      "bytes": 1107,
+      "sha256": "29d46361443735c34ab4eb628659501b4849d1bb03e04753e2581222eeb8982e"
+    },
+    {
+      "path": "media/inference-tour.mp4",
+      "bytes": 3494576,
+      "sha256": "e3aafa2041c64cfd7b3d25d482e8493b9db6d0de7a73df7120eb84245bc18337",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1600,
+          "height": 950,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "78.041667"
+      }
+    },
+    {
+      "path": "media/inference-tour.webp",
+      "bytes": 80078,
+      "sha256": "f983732cb9c0e22e395c832197b673f52016ed52b981e25109f817401a16fbf8"
+    },
+    {
+      "path": "media/inference-tour.zh-hant.vtt",
+      "bytes": 777,
+      "sha256": "2d278a583b9da5ebe4aab57a27d44df485241de9445457aaafa18117e6077f02"
+    },
+    {
+      "path": "media/realistic.mp4",
+      "bytes": 2188809,
+      "sha256": "d823a8f62f5cfd5207612f985f7d00f399f2685695a67e2d5828ea457349e541",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 768,
+          "height": 448,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "5.175000"
+      }
+    },
+    {
+      "path": "media/realistic.webp",
+      "bytes": 20486,
+      "sha256": "236cbc2b4c24beb645e7fb792cb88daf55da8af6becc27f3d64d50a2a8c49eb3"
+    },
+    {
+      "path": "media/records-tour.en.vtt",
+      "bytes": 766,
+      "sha256": "868ca4f21172521538809d7995a330e9bd2e2f3808a560739db1ca720953315c"
+    },
+    {
+      "path": "media/records-tour.ja.vtt",
+      "bytes": 931,
+      "sha256": "1e5f7b71a21a3b21819ef8346c0b282a08286d4d461b533cd826199d1f6fc93a"
+    },
+    {
+      "path": "media/records-tour.mp4",
+      "bytes": 6863911,
+      "sha256": "4b7eec5fdf9af4b7dc6f1651074e4acc192e13c8c2662e6f5a0e4c6c9d5ec7cc",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1600,
+          "height": 950,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "64.916667"
+      }
+    },
+    {
+      "path": "media/records-tour.webp",
+      "bytes": 83504,
+      "sha256": "3589dd81e5e9040fe546f797b3134486bc6b98e76992ac1b1f670fe30c5ca269"
+    },
+    {
+      "path": "media/records-tour.zh-hant.vtt",
+      "bytes": 682,
+      "sha256": "22c380e6834cb2f483ee4ff47b145080eb5744fdfceba24bbed230164898550e"
+    },
+    {
+      "path": "media/showcase.mp4",
+      "bytes": 4101560,
+      "sha256": "b4b5f6ae6f872f0b57b11d1190f6cec2ef527fbea4066b38ed855464f86143db",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 768,
+          "height": 448,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "10.333333"
+      }
+    },
+    {
+      "path": "media/showcase.webp",
+      "bytes": 23402,
+      "sha256": "cde86e4e56de4ccb45b89976b0b44eccdba947a00b0ba0ab7683b823a252d51a"
+    },
+    {
+      "path": "media/studio-tour.en.vtt",
+      "bytes": 728,
+      "sha256": "468473cc10200b10d63300a3650b6f0efb97141568cd3786328f9fbfbc965ea1"
+    },
+    {
+      "path": "media/studio-tour.ja.vtt",
+      "bytes": 862,
+      "sha256": "5c4ef02bfef1f5a73826d35ddbc3afc19bc9fa8d814c5450c0145cd55b80c828"
+    },
+    {
+      "path": "media/studio-tour.mp4",
+      "bytes": 8018042,
+      "sha256": "477ca2c82fe110f0a6dbae0d2a5ed5648de358ddfa608f1e9c72efc5f87fbf5b",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1600,
+          "height": 950,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "64.458333"
+      }
+    },
+    {
+      "path": "media/studio-tour.webp",
+      "bytes": 80592,
+      "sha256": "d02a2eedaf6297f5ae36432f83e3258a1d16c08cf2fb594df1f8d493a0846bf9"
+    },
+    {
+      "path": "media/studio-tour.zh-hant.vtt",
+      "bytes": 664,
+      "sha256": "eb21d11ded5579d4bbf48234dadb19d2848dd538c9ac3a17b196e7b7f1a8d2d7"
+    },
+    {
+      "path": "media/workflow.en.vtt",
+      "bytes": 618,
+      "sha256": "dea24080cbcde82e600defeb0eb8b0a5215cb19c404f33513a87ee2d40a156f7"
+    },
+    {
+      "path": "media/workflow.ja.vtt",
+      "bytes": 719,
+      "sha256": "b1f2345f1ba8bcdd22abce2e90c1c1c65a99ea9e6471bc5ab4de281a4db2d17c"
+    },
+    {
+      "path": "media/workflow.mp4",
+      "bytes": 8779753,
+      "sha256": "04ee439f12ab890c8b3eaa9a8bfce40df76e95e09739971a2c2a08768f725f3a",
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1600,
+          "height": 950,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "55.541667"
+      }
+    },
+    {
+      "path": "media/workflow.webp",
+      "bytes": 113130,
+      "sha256": "dc477ce4ff6e15b4033c05042ecb88a555a0346bbab9ee679c71ac961d197074"
+    },
+    {
+      "path": "media/workflow.zh-hant.vtt",
+      "bytes": 551,
+      "sha256": "659bc0ff085def3ca42e27f4088b3ffec104ce1eb540abfc2f19576d8874c3ce"
+    }
+  ],
+  "sourceInspectionCommit": "c5f064d056738822c6878654c6e2b05c5c494ad0",
+  "editing": "Five newly captured UI tutorials: event-driven pointer overlay with interpolated movement trails, click rings and step counters; unrelated activity labels hidden, top 50 pixels cropped. Long pauses removed; frames held where narration needs more time. Existing demo project only, without new generation/export or component changes. The earlier generation timings are separate measurements.",
+  "narration": {
+    "language": "ja",
+    "synthetic": true,
+    "engine": "kuro-tts",
+    "sourceCommit": "a0c0840c5909c8e6e847ebb087bbfe11484c3508",
+    "scope": "New tutorial narration requested by the owner for this public article. No corpus, reference audio, model files or credentials are included.",
+    "cues": 30,
+    "subtitles": ["zh-hant", "en", "ja"],
+    "validation": "Two offline ASR models checked only the new narration; discrepant phrases were rephrased and regenerated. This is an automated intelligibility check, not a human listening or voice-quality certification."
+  }
+}
