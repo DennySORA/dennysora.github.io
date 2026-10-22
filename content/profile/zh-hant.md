@@ -1,13 +1,5 @@
 ## 技能
 
-AI 與 LLM 工程
-
-Transformer 架構
-量化（FP8 · INT4 · W/A/KV）
-vLLM · TensorRT-LLM
-後訓練（SFT · DPO · GRPO）
-可解釋性（SAE · SVD）
-
 程式語言
 
 Go (Gin)
@@ -53,28 +45,6 @@ RESTful API
 
 ### v3.0.0 資深雲端工程師 趨勢科技 TrendMicro 2022.07 – 2026.04
 
-編排
-
-### Companion-Orchestrator Agent Center
-
-- 在 Google ADK 上設計並交付 Agent 編排平台，具備清晰的應用架構與模組邊界。
-
-- 實作 Agent-to-Agent（A2A）通訊，協調遠端 Agent。
-
-- 打造具備工具呼叫、狀態追蹤、重試與錯誤處理的 LLM Agent。
-
-- 交付用於情境測試與提示詞／工具除錯的 Web Playground；前端以 AI 輔助工作流程獨立開發。
-
-- 建立 CopilotKit adapter，並組合多步驟 LangGraph 流程。
-
-- 透過資料庫驅動的設定實現動態 Agent 載入，支援零停機上線。
-
-- 撰寫 ADK ↔ AGUI Middleware（Python 3.13+），提供 SSE 串流與 Human-in-the-Loop 工作流程，並與編排器整合。
-
-- 達成端到端 pipeline（A2A → ADK → LangGraph → CopilotKit），並獲跨組織的其他團隊採用。
-
-→ [ADK-AGUI Middleware (GitHub)](https://github.com/trendmicro/adk-agui-middleware)
-
 平台
 
 ### 平台開發與 API 管理
@@ -82,10 +52,6 @@ RESTful API
 - 打造以 plugin 為基礎的 API 平台，讓團隊不需修改核心即可交付整合功能；提供生命週期 hooks、驗證與流量限制。
 
 - 開發 Collector Manager，支援可設定的日誌路由、背壓與重試控制。
-
-- 建立 Mini-Companion 系統，以 GitHub 同步支援宣告式工作流程。
-
-- 實作 Companion Proxy，強制執行 PII 遮蔽與基於政策的請求過濾。
 
 基礎設施
 
@@ -99,25 +65,15 @@ RESTful API
 
 - 修復 CNI IP 耗盡與路由問題，穩定多租戶叢集。
 
-AI 與資安
+資安
 
-### AI 整合與資料安全
-
-- 打造 AWS Comprehend PII 管線，成本降低約 99%，同時維持偵測品質。
-
-- 建立 AI Proxy Adapter，整合 Amazon Bedrock 並執行政策管控。
+### 資料安全
 
 - 開發 Kafka → Neptune 管線，建置符合 MITRE 框架的知識圖譜。
-
-- 實作細緻的 AI 存取控制，具備可稽核性與租戶隔離。
 
 領導
 
 ### 技術領導
-
-- 為 CEO 的 NVIDIA 簡報製作高階主管層級 AI 展示。
-
-- 主辦 AI 工具與最佳實踐的內部工作坊。
 
 - 獲頒本季最佳員工（Employee of the Quarter）。
 
@@ -194,140 +150,6 @@ API
 2016 – 2020 · 電子工程系
 
 ## 技術深度
-
-### LLM 架構
-
-核心
-
-- Transformer 架構
-
-- Decoder-only 語言模型
-
-注意力機制
-
-- MHA · GQA · MQA
-
-- latent-attention 變體
-
-位置編碼
-
-- RoPE · NoPE
-
-- 混合式位置設計
-
-前饋層
-
-- SwiGLU · GEGLU
-
-正規化
-
-- RMSNorm
-
-殘差設計
-
-- 標準殘差路徑
-
-- 實驗性 attention-residual 變體
-
-分詞器
-
-- SentencePiece · Unigram
-
-### 訓練與後訓練
-
-預訓練
-
-- token／資料管線
-
-- 最佳化器
-
-- 學習率排程
-
-- 檢查點機制
-
-- 驗證 loss／困惑度
-
-- 吞吐量監控
-
-後訓練・已實作
-
-- SFT · DPO · GRPO
-
-研究／比較過
-
-- PPO · TRPO · DAPO
-
-### 推論與量化
-
-精度
-
-- FP16 · BF16 · FP8 · INT8 · INT4
-
-量化概念
-
-- W／A／KV 精度
-
-- PTQ · E4M3
-
-- W8A16KV8 型配置
-
-執行環境／服務
-
-- vLLM · TensorRT-LLM · Ollama
-
-效能
-
-- KV cache
-
-- 批次處理
-
-- 上下文長度
-
-- VRAM 估算
-
-- 吞吐量／每秒 tokens
-
-探索中
-
-- MXFP8 · NVFP4
-
-### 模型可解釋性
-
-學習中
-
-- 稀疏自動編碼器（SAE）
-
-- SVD
-
-- 激活分析
-
-- 激活修補
-
-- 電路層級解釋概念
-
-### 代理式 AI
-
-生產環境
-
-- Google ADK
-
-- Agent-to-Agent（A2A）
-
-- LangGraph · CopilotKit
-
-- AG-UI 整合
-
-- 工具執行
-
-- 狀態管理
-
-- Human-in-the-Loop
-
-- 串流（SSE）
-
-- 重試與錯誤處理
-
-- 動態 Agent 設定
 
 ### 後端與分散式系統
 
@@ -437,7 +259,7 @@ Python ★ 36 github.com/DennySORA/DLsite-Classification-Manager
 
 ### [Ops-Tools](https://github.com/DennySORA/Ops-Tools)
 
-DevOps CLI 工具箱：Terraform／Terragrunt 輔助、AI 工具、MCP server、資安掃描與 clean-code 自動化。
+DevOps CLI 工具箱：Terraform／Terragrunt 輔助、資安掃描與 clean-code 自動化。
 
 Rust ★ 9 github.com/DennySORA/Ops-Tools
 
@@ -447,35 +269,11 @@ Rust ★ 9 github.com/DennySORA/Ops-Tools
 
 Python ★ 1 github.com/DennySORA/Image-Tools
 
-### [Auto-Video-Organize](https://github.com/DennySORA/Auto-Video-Organize)
-
-極速 CLI 影片整理工具：批次 HEVC 編碼、檔案去重、縮圖總覽與智慧排序。
-
-Rust github.com/DennySORA/Auto-Video-Organize
-
 ### [httpulse](https://github.com/DennySORA/httpulse)
 
 即時 HTTP 延遲與網路品質監控的互動式 TUI——DNS、TLS、TTFB、RTT、抖動等指標。
 
 Rust github.com/DennySORA/httpulse
-
-## 社群
-
-### 硬核 AI 交流社 — Facebook 社團管理員
-
-社團管理員，負責 AI 論文交流與討論。
-
-[facebook.com/groups/915613384421068](https://www.facebook.com/groups/915613384421068)
-
-### AI 論文日報 — paper.dennysora.me
-
-- 每日收集 arXiv（11 個分類＋關鍵字查詢）、Hugging Face Daily Papers 與 AI 部落格論文。
-
-- 以 LLM 評分排序，精選論文翻譯為台灣繁體中文。
-
-- 自動發布日報／週報／月報至 GitHub Pages。
-
-[paper.dennysora.me](https://paper.dennysora.me)
 
 ## 技術筆記
 

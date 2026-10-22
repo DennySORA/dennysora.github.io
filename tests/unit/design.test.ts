@@ -163,14 +163,23 @@ describe('brand assets', () => {
 
 describe('structured About content', () => {
   const profile = loadProfile();
-  it('preserves every published résumé item in every language', () => {
+  it('preserves every retained résumé item in every language', () => {
     for (const locale of locales) {
       const text = JSON.stringify(localize(profile, locale));
       const source = readFileSync(`content/profile/${locale}.md`, 'utf8');
       const items = [...source.matchAll(/^- (.+)$/gm)].map(
         (match) => match[1]?.trim() ?? '',
       );
-      expect(items.length).toBeGreaterThan(60);
+      expect(items).toHaveLength(53);
+      expect(text).toContain('EKS');
+      expect(text).toContain('Kafka');
+      expect(profile.competencies.map((item) => item.id)).toEqual([
+        'backend',
+        'cloud',
+      ]);
+      expect(text).not.toMatch(
+        /Google ADK|LangGraph|CopilotKit|Paper Daily|AI 論文|LLM Architecture/,
+      );
       for (const item of items)
         expect(text, `${locale}: ${item}`).toContain(
           JSON.stringify(item).slice(1, -1),

@@ -10,9 +10,7 @@ import {
 
 // The note/ tree: every folder in display order, named by its URL segment, and
 // the folder that holds each note. Routes, the Explorer, folder pages and
-// breadcrumbs all derive from it, so regrouping notes is a change here. The
-// ai folder is the one top folder outside note/: it is a site area of its own
-// at /<locale>/ai/ (owner, 2026-10-18), built from the same folders and notes.
+// breadcrumbs all derive from it, so regrouping notes is a change here.
 export const noteFolderIds = [
   'software',
   'network',
@@ -25,9 +23,6 @@ export const noteFolderIds = [
   'computer',
   'japan',
   'japanese',
-  'ai',
-  'video',
-  'comparisons',
   'other',
 ] as const;
 export type NoteFolderId = (typeof noteFolderIds)[number];
@@ -47,9 +42,6 @@ export const noteFolders = {
   computer: { parent: 'hardware', icon: 'cpu', art: art('hardware') },
   japan: { parent: null, icon: 'torii', art: art('japan') },
   japanese: { parent: 'japan', icon: 'torii', art: art('japan') },
-  ai: { parent: null, icon: 'sparkles', art: art('ai') },
-  video: { parent: 'ai', icon: 'film', art: art('ai') },
-  comparisons: { parent: 'video', icon: 'chart', art: art('ai') },
   other: { parent: null, icon: 'camera', art: art('other') },
 } as const satisfies Record<
   NoteFolderId,
@@ -85,7 +77,6 @@ export const noteFolderOf = {
   'japanese-review': 'japanese',
   'lumbar-spine-care': 'daily-care',
   'landscape-photography': 'other',
-  'h3-dit-components': 'comparisons',
 } as const satisfies Record<NoteId, NoteFolderId>;
 
 /** Which page renders a note: each kind has its own reviewed fragment format. */
@@ -105,18 +96,8 @@ export function folderTrail(folder: NoteFolderId): NoteFolderId[] {
   return trail;
 }
 
-/** The site area a folder belongs to: note/, or the top-level ai/ area. */
-export type NoteArea = 'notes' | 'ai';
-export function noteArea(folder: NoteFolderId): NoteArea {
-  return folderTrail(folder)[0] === 'ai' ? 'ai' : 'notes';
-}
-
 export function folderPath(folder: NoteFolderId, locale: Locale): string {
-  const trail = folderTrail(folder).join('/');
-  // The ai folder is its own area, so its path starts at the locale.
-  return noteArea(folder) === 'ai'
-    ? `/${locale}/${trail}/`
-    : `/${locale}/note/${trail}/`;
+  return `/${locale}/note/${folderTrail(folder).join('/')}/`;
 }
 
 export function notePath(id: NoteId, locale: Locale = 'zh-hant'): string {
@@ -138,20 +119,15 @@ export function notesUnder(folder: NoteFolderId): NoteId[] {
   return noteIds.filter((id) => folderTrail(noteFolderOf[id]).includes(folder));
 }
 
-/**
- * The folder or note at note/<segments>/, or at ai/<segments>/ for the AI
- * area; null when there is none, so a folder is never a page in both areas.
- */
+/** The folder or note at note/<segments>/; null when there is none. */
 export function resolveNotePath(
   segments: readonly string[],
-  area: NoteArea = 'notes',
 ): { folder: NoteFolderId } | { noteId: NoteId } | null {
-  // The AI area's top folder is ai itself; note/ holds the other top folders.
-  const path = area === 'ai' ? ['ai', ...segments] : segments;
+  const path = segments;
   let parent: NoteFolderId | null = null;
   for (const [index, segment] of path.entries()) {
     const folder: NoteFolderId | undefined = subfolders(parent).find(
-      (id) => id === segment && noteArea(id) === area,
+      (id) => id === segment,
     );
     if (folder) {
       parent = folder;

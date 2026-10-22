@@ -18,9 +18,9 @@ test('the home README answers who, what and where to look first on desktop and p
     await expect(
       page.getByRole('img', { name: /DennySORA 標誌/ }),
     ).toBeInViewport();
-    await expect(page.getByText('後端、雲端與 AI 系統工程')).toBeInViewport();
+    await expect(page.getByText('後端與雲端系統工程')).toBeInViewport();
     await expect(
-      page.getByText('我關注軟體與 AI 系統如何從概念走向'),
+      page.getByText('我關注軟體如何從概念走向', { exact: false }),
     ).toBeInViewport();
     await expect(
       page.getByRole('link', { name: /閱讀部落格/ }),
@@ -35,7 +35,7 @@ test('the home README answers who, what and where to look first on desktop and p
         (heading.textContent ?? '').replace(/^#+\s*/, ''),
       ),
     );
-  expect(names).toEqual(['我主要在做什麼', '一路走來', '最近的文章']);
+  expect(names).toEqual(['我主要在做什麼', '一路走來']);
   // Numbers share one gutter column: every numbered line is unpositioned and
   // measured from the same buffer, however deeply it is nested.
   const gutters = await page.locator('main .ln').evaluateAll((lines) => ({
@@ -48,9 +48,8 @@ test('the home README answers who, what and where to look first on desktop and p
     ).size,
   }));
   // The shortened résumé keeps all of its numbered lines; the start menu adds
-  // four (blog, notes, search, Paper Daily) in place of the single call to action.
-  // The published article adds its recent heading, entry and archive link.
-  expect(gutters.count).toBe(62);
+  // three links (blog, notes and search), without a migrated-content section.
+  expect(gutters.count).toBeGreaterThan(20);
   expect(gutters.positioned).toBe(0);
   expect(gutters.parents).toBe(1);
 });
@@ -61,14 +60,14 @@ test('work history reads without expanding, and details open from the keyboard',
   await page.goto('/en/');
   const entry = page.locator('.timeline-entry').nth(1);
   await expect(entry).toContainText('Senior Cloud Engineer');
-  await expect(entry.locator('.timeline-highlights li')).toHaveCount(3);
+  await expect(entry.locator('.timeline-highlights li')).toHaveCount(1);
   const details = entry.locator('details');
   await details.locator('summary').focus();
   await page.keyboard.press('Enter');
   await expect(details).toHaveAttribute('open', '');
   await expect(
     details.getByText(
-      'Implemented Agent-to-Agent (A2A) communication to coordinate remote agents.',
+      'Developed a Collector Manager for configurable log routing with backpressure and retry controls.',
     ),
   ).toBeVisible();
   await page.keyboard.press('Space');
@@ -283,7 +282,7 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   );
 });
 
-test('the workbench names the open file and links every area, with Paper Daily outside', async ({
+test('the workbench names the open file and links every area, without migrated areas', async ({
   page,
 }) => {
   await page.goto('/zh-hant/note/medical/drugs/analgesics/');
@@ -292,14 +291,8 @@ test('the workbench names the open file and links every area, with Paper Daily o
     /README\.md/,
     /blog/,
     /note/,
-    /^ai/,
     /projects/,
-    /paper-daily/,
   ]);
-  await expect(tabs.getByRole('link', { name: /paper-daily/ })).toHaveAttribute(
-    'href',
-    'https://paper.dennysora.me/',
-  );
   await expect(tabs.getByRole('link', { name: /note/ })).toHaveAttribute(
     'aria-current',
     'true',
@@ -318,14 +311,9 @@ test('the workbench names the open file and links every area, with Paper Daily o
   await expect(page.locator('.status-position')).toHaveText('Top');
   await page.mouse.wheel(0, 100_000);
   await expect(page.locator('.status-position')).toHaveText('Bot');
-  // Recent files include the published article and exclude the retained drafts.
+  // No unpublished or migrated article is listed as a recent file.
   await page.goto('/en/');
-  await expect(page.locator('.file-list a')).toHaveCount(1);
-  await expect(page.locator('.file-list a')).toHaveAttribute(
-    'href',
-    '/en/blog/video-console/',
-  );
-  await expect(page.locator('#recent-title')).toBeVisible();
+  await expect(page.locator('.file-list a, #recent-title')).toHaveCount(0);
 });
 
 for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920])

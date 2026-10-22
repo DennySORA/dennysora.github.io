@@ -36,12 +36,11 @@ describe('comment configuration', () => {
         kind: 'native',
         url: `https://github.com/DennySORA/dennysora.github.io/discussions/${post.discussionNumber}`,
       });
-    const tutorial = loadPosts().find((post) => post.id === 'video-console');
-    expect(tutorial).toMatchObject({
+    const tutorial = {
       commentsEnabled: false,
       discussionNumber: null,
-    });
-    expect(commentsView(loadComments(), tutorial!)).toEqual({
+    };
+    expect(commentsView(loadComments(), tutorial)).toEqual({
       kind: 'disabled',
     });
     expect(

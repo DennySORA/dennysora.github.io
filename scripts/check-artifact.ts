@@ -155,10 +155,34 @@ for (const file of files) {
 // Removed pages must not survive as stale build output or published payloads.
 // Projects returned as folders of project pages; the old flat project URL did not.
 for (const locale of locales)
-  for (const page of ['privacy', 'projects/dgxtop'])
+  for (const page of [
+    'privacy',
+    'projects/dgxtop',
+    'ai',
+    'note/ai',
+    'research',
+    'papers',
+    'blog/video-console',
+    'blog/trilingual-model-research',
+    'blog/topics/ai',
+    'blog/tags/video-generation',
+    'blog/llm-context-window-three-tiers',
+    'blog/sae-sparse-autoencoder-llm-interpretability',
+  ])
     for (const suffix of ['', '.data'])
       if (existsSync(join(root, locale, page + suffix)))
         failures.push(`Removed page still emitted: ${locale}/${page}${suffix}`);
+
+for (const path of [
+  'detail/research',
+  'content-assets/posts/video-console',
+  'assets/notes/h3-dit-components',
+  'assets/illustrations/collection-ai-v1.webp',
+  'blog/llm-context-window-three-tiers',
+  'blog/sae-sparse-autoencoder-llm-interpretability',
+])
+  if (existsSync(join(root, path)))
+    failures.push(`Migrated content still emitted: ${path}`);
 
 for (const path of publishedPaths()) {
   const file = join(root, path, 'index.html');

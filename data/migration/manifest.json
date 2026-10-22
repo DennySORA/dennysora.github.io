@@ -7,22 +7,9 @@
       "sourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
       "sourceSha256": "1ac827ace72f4d0ff2f208d0106abb5d4443d5f583245f4add760e97f6744194",
       "markdownSha256": {
-        "zh-hant": "d4dbbea4d631315a1a8cc4a0159855c5dd1af9b057770e9afdbc61d52c99fff5",
-        "en": "dd75c954d68226cb9a7a079eba7f4533f562181c990644201663457682cc5da7",
-        "ja": "0522bbb74418674620a32a6c0bda070657077774c2df31a54f7fd1cddaed2021"
-      },
-      "status": "adapted-existing-profile",
-      "note": "Not a recovered legacy blog post. Existing published translations retained; new titles and summaries are editorial adaptations."
-    },
-    {
-      "contentId": "trilingual-model-research",
-      "sourcePath": "detail/research/index.html",
-      "sourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
-      "sourceSha256": "18b2ac81fc0ad2355d6e8cdfd0f11dc4468b6828cab7741f1f053e7df2b0fa63",
-      "markdownSha256": {
-        "zh-hant": "1ee99b349144bc6995977d271c237d5625da96b56821ffaa329298262e63bfa5",
-        "en": "cbc172fddcda509cda0cc57400eec8778ec0723915a6f80f19c53820952e56ba",
-        "ja": "8b638c1780d09fe6c2d38853f9ca78d2ba1caee2b25a7db851715ade58051298"
+        "zh-hant": "bd9e39809542799853a7f7187dfba23054683e65d0d061e663b5c70949a95ccf",
+        "en": "0432c5cf3e38fb43ac4acffb0f939b79cc782fbb2213ef6f3b8ea6908d47538b",
+        "ja": "9da5b3a8d56db74e6d73e014736d95ed1127dcf061153576db585f6300ec68b3"
       },
       "status": "adapted-existing-profile",
       "note": "Not a recovered legacy blog post. Existing published translations retained; new titles and summaries are editorial adaptations."
@@ -33,9 +20,9 @@
       "sourceCommit": "c21ae9e6f360953d348d45f6fc7b3b55d6e53800",
       "sourceSha256": "17e8303f456b8bc2dbe4fedda95ac9ea33310f3b09c41d6e900fc12b8aa6d467",
       "markdownSha256": {
-        "zh-hant": "b0b61c45007a940640ad2473ab9b0eceadc5d18a8e91da495dcb459fa05b31d0",
-        "en": "cd44e649def1ed6b5f7b1c4072b1784981d3579bc3967a01c0a9dbb6901a9b12",
-        "ja": "8ebf670079bf4a5a0cf3e190f32f64a6d3f9cf00cca6cfb0ea5ffe9c04d929cc"
+        "zh-hant": "3280f7547d362224754c96c453aebbe516c057a599019569bf7076d16b17a8c4",
+        "en": "22abbb7492d1397c8f0895d9940abaccf17735b3ec25c4a00a227b02311bf98b",
+        "ja": "d94cfca2f3884a2a70a42100b507aecc5cdcfe0316699fe7dc0b8130cae94a10"
       },
       "status": "adapted-existing-profile",
       "note": "Not a recovered legacy blog post. Existing published translations retained; new titles and summaries are editorial adaptations."
@@ -48,8 +35,6 @@
     "missingSlugs": [
       "tech-leadership-value-driven-discussion",
       "pact-framework-technical-discussion",
-      "llm-context-window-three-tiers",
-      "sae-sparse-autoencoder-llm-interpretability",
       "community-values-respect-technology"
     ],
     "importedCount": 0

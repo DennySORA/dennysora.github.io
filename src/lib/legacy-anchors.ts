@@ -9,7 +9,6 @@ export const legacyDestinations: Record<string, string> = {
   'comm-h': '/zh-hant/#readme-title',
   'notes-h': '/zh-hant/blog/',
   'prod-h': '/zh-hant/blog/production-systems/#prod-h',
-  'rnd-h': '/zh-hant/blog/trilingual-model-research/#rnd-h',
   'prin-h': '/zh-hant/blog/engineering-principles/#prin-h',
   'how-h': '/zh-hant/blog/engineering-principles/#how-h',
 };

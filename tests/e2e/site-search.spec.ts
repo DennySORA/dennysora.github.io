@@ -111,11 +111,7 @@ test('search has useful no-JavaScript navigation and an index with note body con
       .filter((entry) => entry.kind === 'article')
       .map((entry) => entry.href)
       .sort(),
-  ).toEqual([
-    '/en/blog/video-console/',
-    '/ja/blog/video-console/',
-    '/zh-hant/blog/video-console/',
-  ]);
+  ).toEqual([]);
   // A project page is indexed in each language it was written in, and only those.
   expect(
     index

@@ -1,7 +1,6 @@
 import {
   folderPath,
   folderTrail,
-  noteArea,
   noteFolderOf,
   type NoteFolderId,
   type NoteTreeFolder,
@@ -15,19 +14,18 @@ import {
   type NavSection,
   type RouteDescriptor,
 } from './route-manifest.ts';
-import { papersUrl } from './site.ts';
 
 // The site is presented as a code workspace: every page is a file or folder,
 // and the editor chrome (tabs, breadcrumbs, status bar) names it truthfully.
 
 export type WorkspaceFiles = {
   posts: { slug: string; title: string }[];
-  /** The note/ tree and the ai/ area in the page's language; their copy
+  /** The note/ tree in the page's language; their copy
    * arrives as loader data. */
   notes: NoteTreeFolder[];
 };
 
-export type AreaKey = NavSection | 'papers';
+export type AreaKey = NavSection;
 export type Area = {
   key: AreaKey;
   file: string;
@@ -35,20 +33,18 @@ export type Area = {
   external: boolean;
 };
 
-/** The workspace's top-level areas, in tab order. Paper Daily is its own site. */
+/** The workspace's top-level areas, in tab order. */
 export function areas(locale: Locale): Area[] {
   return [
     { key: 'home', file: 'README.md', href: `/${locale}/`, external: false },
     { key: 'library', file: 'blog', href: `/${locale}/blog/`, external: false },
     { key: 'notes', file: 'note', href: `/${locale}/note/`, external: false },
-    { key: 'ai', file: 'ai', href: `/${locale}/ai/`, external: false },
     {
       key: 'projects',
       file: 'projects',
       href: `/${locale}/projects/`,
       external: false,
     },
-    { key: 'papers', file: 'paper-daily', href: papersUrl, external: true },
   ];
 }
 
@@ -57,16 +53,14 @@ export type Crumb = { label: string; href: string | null };
 
 /**
  * Each folder from the top of its area down to this one, named by its URL
- * segment; note/ folders sit under a note crumb, the ai/ area at the top.
+ * segment; all folders sit under the note crumb.
  */
 function folderCrumbs(folder: NoteFolderId, locale: Locale): Crumb[] {
   const trail = folderTrail(folder).map((id) => ({
     label: id,
     href: folderPath(id, locale),
   }));
-  return noteArea(folder) === 'ai'
-    ? trail
-    : [{ label: 'note', href: `/${locale}/note/` }, ...trail];
+  return [{ label: 'note', href: `/${locale}/note/` }, ...trail];
 }
 
 export function crumbs(route: RouteDescriptor): Crumb[] {
@@ -126,8 +120,6 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, blog, tags];
     case 'tag':
       return [home, blog, tags, { label: route.tagId, href: self }];
-    case 'research':
-      return [home, { label: 'research.md', href: self }];
     case 'not-found':
       return [home, { label: '404', href: null }];
   }
@@ -163,12 +155,9 @@ export function fileKind(route: RouteDescriptor): FileKind {
   return 'markdown';
 }
 
-/** An area's own landing page, such as blog/ or ai/, rather than a page inside it. */
+/** An area's own landing page, such as blog/ or note/, rather than a page inside it. */
 export function isAreaLanding(route: RouteDescriptor): boolean {
-  return (
-    ['root', 'home', 'library', 'notes', 'projects'].includes(route.kind) ||
-    (route.kind === 'note-folder' && route.folder === 'ai')
-  );
+  return ['root', 'home', 'library', 'notes', 'projects'].includes(route.kind);
 }
 
 /** Section landing pages are the current page; articles and tags sit inside one. */

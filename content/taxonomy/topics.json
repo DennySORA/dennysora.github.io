@@ -24,14 +24,5 @@
       "en": "Implementation notes on backend services, cloud platforms and production systems.",
       "ja": "バックエンド、クラウド基盤、本番システムの実装記録。"
     }
-  },
-  {
-    "id": "ai",
-    "label": { "zh-hant": "AI 與 LLM", "en": "AI & LLMs", "ja": "AI と LLM" },
-    "description": {
-      "zh-hant": "語言模型、推論與 Agent 系統的研究筆記與實作。",
-      "en": "Research notes and implementation work on language models, inference and agent systems.",
-      "ja": "言語モデル、推論、エージェントシステムの研究ノートと実装。"
-    }
   }
 ]

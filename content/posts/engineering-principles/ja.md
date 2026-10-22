@@ -4,34 +4,6 @@
 
 抽象化は便利だが、デバッグと最適化にはその下にある仕組みの理解が必要。
 
-```text
-LLM API
-  ↓
-Inference Runtime
-  ↓
-KV Cache
-  ↓
-Attention / GEMM
-  ↓
-Memory / Precision
-  ↓
-GPU
-```
-
-### デプロイはモデル設計の一部
-
-アーキテクチャの判断はメモリ・レイテンシ・スループット・デプロイの制約に直結する。
-
-```text
-Architecture
-    │
-    ├── memory
-    ├── compute
-    ├── KV cache
-    ├── quantization
-    └── serving
-```
-
 ### 最適化の前に計測する
 
 最適化は思い込みではなく、観測可能なボトルネックから始めるべき。

@@ -9,7 +9,7 @@ import {
 import { dictionaries, type Locale } from '../i18n/index.ts';
 import { routePath, type RouteDescriptor } from '../lib/route-manifest.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
-import { noteArea, type NoteTreeFolder } from '../lib/note-tree.ts';
+import { type NoteTreeFolder } from '../lib/note-tree.ts';
 import {
   projectCategories,
   projectCategoryCopy,
@@ -19,7 +19,6 @@ import {
   projectPages,
   projectsCopy,
 } from '../lib/project-pages.ts';
-import { papersUrl } from '../lib/site.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
 import { Icon, type IconName } from './Icon.tsx';
 
@@ -322,41 +321,17 @@ export function Explorer({
             current={areaState(route, 'notes')}
             onNavigate={onNavigate}
           >
-            {files.notes
-              .filter((folder) => noteArea(folder.id) === 'notes')
-              .map((folder) => (
-                <NoteFolderNode
-                  key={folder.id}
-                  folder={folder}
-                  locale={locale}
-                  route={route}
-                  currentPath={currentPath}
-                  onNavigate={onNavigate}
-                />
-              ))}
+            {files.notes.map((folder) => (
+              <NoteFolderNode
+                key={folder.id}
+                folder={folder}
+                locale={locale}
+                route={route}
+                currentPath={currentPath}
+                onNavigate={onNavigate}
+              />
+            ))}
           </TreeFolder>
-        </li>
-        {files.notes
-          .filter((folder) => noteArea(folder.id) === 'ai')
-          .map((folder) => (
-            <NoteFolderNode
-              key={folder.id}
-              folder={folder}
-              locale={locale}
-              route={route}
-              currentPath={currentPath}
-              onNavigate={onNavigate}
-              current={areaState(route, 'ai')}
-            />
-          ))}
-        <li>
-          <TreeLink
-            href={papersUrl}
-            kind="external"
-            name={t.navPapers}
-            note={t.newTab}
-            onNavigate={onNavigate}
-          />
         </li>
       </ul>
     </div>

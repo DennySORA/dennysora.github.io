@@ -168,7 +168,7 @@ it('keeps medical category buffers immediately after the note area', () => {
       buffers.indexOf('href="/zh-hant/note/"'),
     );
     expect(buffers.indexOf('tab-preview')).toBeLessThan(
-      buffers.indexOf('href="https://paper.dennysora.me/"'),
+      buffers.indexOf('href="/zh-hant/projects/"'),
     );
     expect(buffers).toContain(category);
   }

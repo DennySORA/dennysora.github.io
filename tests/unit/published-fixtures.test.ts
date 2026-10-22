@@ -54,10 +54,7 @@ describe('published content fixtures', () => {
 
   it('ranks shared-tag relations instead of list position', () => {
     const related = relatedPosts('en', 'engineering-principles');
-    expect(related.map((post) => post.id)).toEqual([
-      'production-systems',
-      'trilingual-model-research',
-    ]);
+    expect(related.map((post) => post.id)).toEqual(['production-systems']);
     expect(related.length).toBeLessThanOrEqual(3);
   });
 });

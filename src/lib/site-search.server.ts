@@ -30,8 +30,7 @@ export function buildSiteSearch(
   routes: RouteDescriptor[],
 ): SiteSearchDocument[] {
   return routes.flatMap((route) => {
-    if (['root', 'not-found', 'search', 'research'].includes(route.kind))
-      return [];
+    if (['root', 'not-found', 'search'].includes(route.kind)) return [];
     const href = routePath(route);
     const html = readFileSync(join(output, href, 'index.html'), 'utf8');
     const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1];

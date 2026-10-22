@@ -1,15 +1,6 @@
-import { readFileSync } from 'node:fs';
-import { createElement } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { ArticleSections } from '../../src/components/ArticleSections.tsx';
-import { locales } from '../../src/i18n/index.ts';
-import { loadPosts, renderPost } from '../../src/lib/content.server.ts';
 import { renderMarkdown } from '../../src/lib/markdown.server.ts';
-import {
-  loadPostSections,
-  partitionPostSections,
-} from '../../src/lib/post-sections.server.ts';
+import { partitionPostSections } from '../../src/lib/post-sections.server.ts';
 import {
   postSectionsSchema,
   type PostSectionGroup,
@@ -113,54 +104,4 @@ describe('article sections contract', () => {
           .success,
       ).toBe(false);
   });
-});
-
-describe('video article navigation', () => {
-  it.each(locales)(
-    'keeps all 13 anchors and five readable static panels in %s',
-    (locale) => {
-      const source = readFileSync(
-        `content/posts/video-console/${locale}.md`,
-        'utf8',
-      );
-      const draft =
-        loadPosts().find((post) => post.id === 'video-console')?.locales[locale]
-          ?.publication === 'draft';
-      const rendered = renderPost(
-        'video-console',
-        locale,
-        draft ? { mode: 'draft-preview' } : undefined,
-      );
-      const expected = loadPostSections()['video-console'];
-      if (!expected || !rendered.sections)
-        throw new Error('Missing article sections');
-      const sections = partitionPostSections(
-        source,
-        rendered,
-        expected,
-        locale,
-      );
-      expect(rendered.sections).toEqual(sections);
-      expect(sections).toHaveLength(5);
-      expect(sections.map((section) => section.html).join('')).toBe(
-        rendered.html,
-      );
-      expect(
-        rendered.headings.filter((heading) => heading.level === 2),
-      ).toHaveLength(13);
-      const html = renderToStaticMarkup(
-        createElement(ArticleSections, { sections, locale }),
-      );
-      expect(html.match(/class="sn-tabpanel"/g)).toHaveLength(5);
-      expect(html.match(/class="prose"/g)).toHaveLength(5);
-      expect(html).not.toMatch(/\shidden(?:[ =>])|role="tab(?:list|panel)?"/);
-      for (const [index, section] of sections.entries()) {
-        expect(section.label).toBe(expected[index]?.label[locale]);
-        expect(html).toContain(`href="#${section.id}"`);
-        expect(html).toContain(`id="${section.id}-tab"`);
-      }
-      for (const heading of rendered.headings)
-        expect(html.split(`id="${heading.id}"`)).toHaveLength(2);
-    },
-  );
 });

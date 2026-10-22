@@ -4,34 +4,6 @@
 
 Abstractions are useful, but debugging and optimization require understanding the mechanism underneath them.
 
-```text
-LLM API
-  ↓
-Inference Runtime
-  ↓
-KV Cache
-  ↓
-Attention / GEMM
-  ↓
-Memory / Precision
-  ↓
-GPU
-```
-
-### Deployment Is Part of Model Design
-
-Architecture decisions affect memory, latency, throughput and deployment constraints.
-
-```text
-Architecture
-    │
-    ├── memory
-    ├── compute
-    ├── KV cache
-    ├── quantization
-    └── serving
-```
-
 ### Measure Before Optimizing
 
 Optimization should start from observable bottlenecks, not assumptions.

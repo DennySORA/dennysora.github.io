@@ -56,9 +56,9 @@ describe('folder disclosures', () => {
         (match) => match[0],
       );
       // blog, note, software (+network, +p2p), medical (+3 subfolders),
-      // hardware (+1), japan (+1), ai (+video, +comparisons), other,
+      // hardware (+1), japan (+1), other,
       // projects (+1 category)
-      expect(buttons).toHaveLength(19);
+      expect(buttons).toHaveLength(16);
       // On the home page no folder is on the current path, so all start closed.
       for (const button of buttons) {
         expect(attribute(button, 'type')).toBe('button');
@@ -81,7 +81,7 @@ describe('folder disclosures', () => {
       );
       expect(
         links.filter((link) => link.includes('data-kind="folder"')),
-      ).toHaveLength(19);
+      ).toHaveLength(16);
       expect(links.every((link) => !link.includes('<button'))).toBe(true);
       expect(html).not.toContain(' hidden');
       // Every name is in the page's language: no slugs or .md file names.
@@ -109,7 +109,6 @@ describe('folder disclosures', () => {
           networkNotes['p2p-privacy'].name[locale],
           collectionNoteMeta['japanese-structure'].name[locale],
           'dgxtop',
-          t.navPapers,
         ]),
       );
       // The full title stays available as the tooltip and to screen readers.
@@ -126,7 +125,7 @@ describe('folder disclosures', () => {
         .filter(([, expanded]) => expanded)
         .map(([href]) => href);
     const home = folderStates(explorerHtml({ kind: 'home', locale: 'en' }));
-    expect(home).toHaveLength(19);
+    expect(home).toHaveLength(16);
     expect(home.every(([, expanded]) => !expanded)).toBe(true);
     expect(
       open(
@@ -179,7 +178,7 @@ describe('folder disclosures', () => {
         /<button[^>]*aria-controls="([^"]+)"[^>]*>[\s\S]*?<\/button><a[^>]*href="([^"]+)"/g,
       ),
     ];
-    expect(folders).toHaveLength(19);
+    expect(folders).toHaveLength(16);
     // A folder's entries sit one level below it, so the levels follow the
     // path: /note/ holds level 2 and /note/software/network/p2p/ level 5.
     for (const [, id, href] of folders) {
@@ -205,7 +204,7 @@ describe('folder disclosures', () => {
     const ids = [...html.matchAll(/aria-controls="([^"]+)"/g)].map(
       (match) => match[1],
     );
-    expect(ids).toHaveLength(38);
+    expect(ids).toHaveLength(32);
     expect(new Set(ids).size).toBe(ids.length);
     const current = [...html.matchAll(/<a\b[^>]*aria-current="page"[^>]*>/g)];
     expect(current).toHaveLength(2);

@@ -13,7 +13,6 @@ import {
 } from '../../i18n/index.ts';
 import { noteCopy } from '../../lib/notes-copy.ts';
 import { pageIds } from '../../lib/page-ids.ts';
-import { papersUrl } from '../../lib/site.ts';
 
 type HomeView = Extract<ViewData, { kind: 'home' }>;
 type PostLinks = HomeView['posts'];
@@ -23,7 +22,6 @@ const yearMonth = (value: string) => value.replace('-', '.');
 const competencyIcons: Record<string, IconName> = {
   backend: 'server',
   cloud: 'cloud',
-  ai: 'sparkles',
 };
 
 /** The profile as the workspace README: front matter, logo, then the résumé. */
@@ -108,19 +106,6 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
                 <span className="dash-label">{t.searchSite}</span>
                 <span className="dash-hint" aria-hidden="true">
                   <kbd>/</kbd>
-                </span>
-              </a>
-            </li>
-            <li className="ln">
-              <a className="dash-item" href={papersUrl}>
-                <Icon name="newspaper" size={18} />
-                <span className="dash-label">
-                  {t.navPapers}
-                  <Icon name="arrow-up-right" size={14} />
-                  <span className="sr-only">（{t.newTab}）</span>
-                </span>
-                <span className="dash-hint" aria-hidden="true">
-                  paper.dennysora.me
                 </span>
               </a>
             </li>

@@ -35,9 +35,7 @@ const areaIcons: Record<AreaKey, IconName> = {
   home: 'markdown',
   library: 'folder',
   notes: 'folder',
-  ai: 'folder',
   projects: 'folder',
-  papers: 'newspaper',
 };
 
 function unlockScroll() {
@@ -61,9 +59,7 @@ function Buffers({
     home: t.navAbout,
     library: t.navLibrary,
     notes: noteCopy[locale].notes,
-    ai: t.navAi,
     projects: projectsCopy[locale].title,
-    papers: `${t.navPapers}（${t.newTab}）`,
   };
   const landing = isAreaLanding(route);
   const current = landing ? null : path[path.length - 1];
@@ -92,7 +88,7 @@ function Buffers({
   ) : null;
   const tab = (area: Area) => {
     const state = areaState(route, area.key);
-    const folder = ['library', 'notes', 'ai', 'projects'].includes(area.key);
+    const folder = ['library', 'notes', 'projects'].includes(area.key);
     return (
       <li key={area.key}>
         <a

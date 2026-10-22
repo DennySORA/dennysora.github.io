@@ -4,34 +4,6 @@
 
 抽象層很好用，但真正的除錯與最佳化，仍需要理解 abstraction 底下實際發生的事情。
 
-```text
-LLM API
-  ↓
-Inference Runtime
-  ↓
-KV Cache
-  ↓
-Attention / GEMM
-  ↓
-Memory / Precision
-  ↓
-GPU
-```
-
-### 部署是模型設計的一部分
-
-架構決策直接影響記憶體、延遲、吞吐量與部署限制。
-
-```text
-Architecture
-    │
-    ├── memory
-    ├── compute
-    ├── KV cache
-    ├── quantization
-    └── serving
-```
-
 ### 先量測，再最佳化
 
 最佳化應從可觀測的瓶頸開始，而不是假設。

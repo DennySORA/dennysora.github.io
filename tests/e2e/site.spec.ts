@@ -172,7 +172,7 @@ test('404 stays a real 404, removed articles are explicit and legacy paths keep 
   await expect(
     page.getByRole('link', { name: 'Back to the home page' }),
   ).toHaveAttribute('href', '/en/');
-  await page.goto('/blog/llm-context-window-three-tiers/');
+  await page.goto('/blog/tech-leadership-value-driven-discussion/');
   await expect(page.locator('h1')).toContainText('原始文章');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
@@ -200,82 +200,37 @@ test('404 stays a real 404, removed articles are explicit and legacy paths keep 
   await expect(page).toHaveURL('/en/');
 });
 
-test('the former research page is a no-index bridge to both destinations', async ({
-  page,
-}) => {
-  await page.goto('/en/research/');
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-    'content',
-    'noindex, follow',
-  );
-  await expect(
-    page.getByRole('link', { name: /Go to Paper Daily/ }),
-  ).toHaveAttribute('href', 'https://paper.dennysora.me/');
-  await page.getByRole('link', { name: 'Read research notes' }).click();
-  await expect(page).toHaveURL('/en/blog/?type=research-note');
-  // A type without published entries is ignored instead of hiding the blog.
-  await expect(page.locator('.article-row')).toHaveCount(1);
-  await expect(page.locator('.article-row-title a')).toHaveAttribute(
-    'href',
-    '/en/blog/video-console/',
-  );
-  await expect(page.locator('.active-conditions')).toHaveCount(0);
-});
-
-test('Paper Daily is its own site: every entry links straight to it and the old page only forwards', async ({
+test('migrated AI and video pages have no links or forwarding stubs', async ({
   page,
   request,
 }) => {
-  const external = trackExternalRequests(page);
   await page.goto('/en/');
-  for (const region of [
-    page.getByRole('navigation', { name: 'Main navigation' }),
-    page.getByRole('navigation', { name: 'Explorer' }),
-  ])
-    await expect(
-      region.getByRole('link', { name: /paper-daily|Paper Daily/ }),
-    ).toHaveAttribute('href', 'https://paper.dennysora.me/');
   await expect(
-    page.locator('.dashboard').getByRole('link', { name: /Paper Daily/ }),
-  ).toHaveAttribute('href', 'https://paper.dennysora.me/');
-  // Quick links hold the owner's own channels, each named by its visible label.
-  const quick = page.getByRole('navigation', { name: 'Quick links' });
-  await expect(quick.getByRole('link')).toHaveCount(2);
-  await expect(quick.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
-    'href',
-    'https://github.com/DennySORA',
-  );
-  await expect(quick.getByRole('link', { name: 'Email' })).toHaveAttribute(
-    'href',
-    'mailto:dennysora.main@gmail.com',
-  );
-  expect(external).toEqual([]);
-  // The former in-site page is a forwarding stub, not a page of its own.
-  for (const locale of ['zh-hant', 'en', 'ja']) {
-    const response = await request.get(`/${locale}/papers/`);
-    expect(response.status()).toBe(200);
-    const html = await response.text();
-    expect(html).toContain(
-      '<meta http-equiv="refresh" content="0;url=https://paper.dennysora.me/">',
-    );
-    expect(html).toContain('noindex');
-  }
-  const sitemap = await (await request.get('/sitemap.xml')).text();
-  expect(sitemap).not.toContain('/papers/');
-  expect(sitemap).not.toContain('/about/');
+    page.locator(
+      'a[href*="paper.dennysora.me"], a[href*="/ai/"], a[href*="/research/"]',
+    ),
+  ).toHaveCount(0);
+  for (const locale of ['zh-hant', 'en', 'ja'])
+    for (const path of [
+      'ai',
+      'research',
+      'papers',
+      'blog/video-console',
+      'blog/trilingual-model-research',
+    ])
+      expect((await request.get(`/${locale}/${path}/`)).status()).toBe(404);
 });
 
 test('no third-party requests, cookies or storage; comments never load on their own', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
-  for (const path of ['/en/', '/ja/', '/en/blog/video-console/'])
-    await page.goto(path);
+  for (const path of ['/en/', '/ja/', '/en/note/']) await page.goto(path);
   await page.goto('/en/blog/');
   await page.getByRole('searchbox').fill('zzzznomatch');
   await expect(page.locator('.article-row')).toHaveCount(0);
   await expect(
-    page.getByRole('heading', { name: dictionaries.en.emptyTitle }),
+    page.getByRole('heading', { name: dictionaries.en.noPostsTitle }),
   ).toBeVisible();
   expect(external).toEqual([]);
   expect(await page.context().cookies()).toEqual([]);
@@ -319,9 +274,7 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
       await response.text(),
     );
     expect(parsed.errors).toBe(0);
-    expect(parsed.links).toEqual([
-      `https://dennysora.me/${locale}/blog/video-console/`,
-    ]);
+    expect(parsed.links).toEqual([]);
   }
   const sitemap = await (await request.get('/sitemap.xml')).text();
   expect(
@@ -343,7 +296,7 @@ test('feeds, sitemap and published alternates agree with real pages', async ({
   expect(sitemap).not.toContain('/projects/dgxtop/');
   expect(sitemap).not.toContain('/privacy/');
   for (const locale of ['zh-hant', 'en', 'ja'])
-    expect(sitemap).toContain(
+    expect(sitemap).not.toContain(
       `https://dennysora.me/${locale}/blog/video-console/`,
     );
   expect(sitemap).not.toContain('/blog/engineering-principles/');

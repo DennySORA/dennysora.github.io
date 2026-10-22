@@ -1,13 +1,5 @@
 ## Skills
 
-AI & LLM Engineering
-
-Transformer Architecture
-Quantization (FP8 · INT4 · W/A/KV)
-vLLM · TensorRT-LLM
-Post-Training (SFT · DPO · GRPO)
-Interpretability (SAE · SVD)
-
 Programming Languages
 
 Go (Gin)
@@ -53,28 +45,6 @@ Study
 
 ### v3.0.0 Senior Cloud Engineer TrendMicro 趨勢科技 2022.07 – 2026.04
 
-Orchestration
-
-### Companion-Orchestrator Agent Center
-
-- Designed and shipped an agent-orchestration platform on Google ADK with clear app architecture and module boundaries.
-
-- Implemented Agent-to-Agent (A2A) communication to coordinate remote agents.
-
-- Built an LLM agent with tool use, state tracking, retries, and error handling.
-
-- Delivered a web Playground for scenario testing and prompt/tool debugging; frontend developed independently with AI-assisted workflows.
-
-- Created a CopilotKit adapter and composed multi-step LangGraph flows.
-
-- Enabled dynamic agent loading via database-backed configs for zero-downtime rollout.
-
-- Authored ADK ↔ AGUI Middleware (Python 3.13+) providing SSE streaming and Human-in-the-Loop workflows; integrated with the orchestrator.
-
-- Achieved an end-to-end pipeline A2A → ADK → LangGraph → CopilotKit adopted cross-org with other teams.
-
-→ [ADK-AGUI Middleware (GitHub)](https://github.com/trendmicro/adk-agui-middleware)
-
 Platform
 
 ### Platform Development & API Management
@@ -82,10 +52,6 @@ Platform
 - Built a plugin-based API platform that lets teams ship integrations without core changes; provided lifecycle hooks, auth, and rate limiting.
 
 - Developed a Collector Manager for configurable log routing with backpressure and retry controls.
-
-- Created a Mini-Companion system with GitHub-based sync for declarative workflows.
-
-- Implemented a Companion Proxy enforcing PII redaction and policy-based request filtering.
 
 Infrastructure
 
@@ -99,25 +65,15 @@ Infrastructure
 
 - Fixed CNI IP exhaustion and routing issues to stabilize multi-tenant clusters.
 
-AI & Security
+Security
 
-### AI Integration & Data Security
-
-- Built an AWS Comprehend PII pipeline that reduced costs by ~99% while preserving detection quality.
-
-- Created an AI Proxy Adapter with Amazon Bedrock integration and policy enforcement.
+### Data Security
 
 - Developed a Kafka → Neptune pipeline for MITRE-aligned knowledge graphs.
-
-- Implemented fine-grained AI access controls with auditability and tenant isolation.
 
 Leadership
 
 ### Technical Leadership
-
-- Produced executive-level AI demos for the CEO's NVIDIA presentation.
-
-- Led internal workshops on AI tooling and best practices.
 
 - Recognized as Employee of the Quarter.
 
@@ -194,140 +150,6 @@ National Taipei University of Technology 台北科技大學
 2016 – 2020 · Electronic Engineering
 
 ## Technical Depth
-
-### LLM Architecture
-
-Core
-
-- Transformer architecture
-
-- Decoder-only language models
-
-Attention
-
-- MHA · GQA · MQA
-
-- latent-attention variants
-
-Position Representation
-
-- RoPE · NoPE
-
-- hybrid positional designs
-
-Feed-forward
-
-- SwiGLU · GEGLU
-
-Normalization
-
-- RMSNorm
-
-Residual Design
-
-- standard residual paths
-
-- experimental attention-residual variants
-
-Tokenizer
-
-- SentencePiece · Unigram
-
-### Training & Post-training
-
-Pre-training
-
-- token / data pipeline
-
-- optimization
-
-- learning-rate scheduling
-
-- checkpointing
-
-- validation loss / perplexity
-
-- throughput monitoring
-
-Post-training · implemented
-
-- SFT · DPO · GRPO
-
-Studied / compared
-
-- PPO · TRPO · DAPO
-
-### Inference & Quantization
-
-Precision
-
-- FP16 · BF16 · FP8 · INT8 · INT4
-
-Quantization Concepts
-
-- W / A / KV precision
-
-- PTQ · E4M3
-
-- W8A16KV8-style configurations
-
-Runtime / Serving
-
-- vLLM · TensorRT-LLM · Ollama
-
-Performance
-
-- KV cache
-
-- batching
-
-- context length
-
-- VRAM estimation
-
-- throughput / tokens per second
-
-Exploring
-
-- MXFP8 · NVFP4
-
-### Model Interpretability
-
-CURRENT STUDY
-
-- Sparse Autoencoders (SAE)
-
-- SVD
-
-- activation analysis
-
-- activation patching
-
-- circuit-level interpretation concepts
-
-### Agentic AI
-
-PRODUCTION
-
-- Google ADK
-
-- Agent-to-Agent (A2A)
-
-- LangGraph · CopilotKit
-
-- AG-UI integration
-
-- tool execution
-
-- state management
-
-- Human-in-the-Loop
-
-- streaming (SSE)
-
-- retries & error handling
-
-- dynamic agent configuration
 
 ### Backend & Distributed Systems
 
@@ -437,7 +259,7 @@ Batch conversion between simplified and traditional Chinese across many files an
 
 ### [Ops-Tools](https://github.com/DennySORA/Ops-Tools)
 
-DevOps CLI toolbox: Terraform / Terragrunt helpers, AI tools, MCP server, security scanner and clean-code automation.
+DevOps CLI toolbox: Terraform / Terragrunt helpers, security scanner and clean-code automation.
 
 Rust ★ 9 github.com/DennySORA/Ops-Tools
 
@@ -447,35 +269,11 @@ Interactive batch tool for removing image backgrounds, with green-screen support
 
 Python ★ 1 github.com/DennySORA/Image-Tools
 
-### [Auto-Video-Organize](https://github.com/DennySORA/Auto-Video-Organize)
-
-Blazing fast CLI for automating video organization: batch HEVC encoding, file deduplication, contact sheets and intelligent sorting.
-
-Rust github.com/DennySORA/Auto-Video-Organize
-
 ### [httpulse](https://github.com/DennySORA/httpulse)
 
 Real-time HTTP latency & network quality monitoring with an interactive TUI — DNS, TLS, TTFB, RTT, jitter and more.
 
 Rust github.com/DennySORA/httpulse
-
-## Community
-
-### 硬核 AI 交流社 — Facebook Group Admin
-
-Admin of a Facebook group for AI paper exchange and discussion.
-
-[facebook.com/groups/915613384421068](https://www.facebook.com/groups/915613384421068)
-
-### AI Paper Daily — paper.dennysora.me
-
-- Collects papers daily from arXiv (11 categories + keyword queries), Hugging Face Daily Papers, and AI blogs.
-
-- LLM-scored and ranked; selected papers translated to Traditional Chinese.
-
-- Daily / weekly / monthly reports published automatically via GitHub Pages.
-
-[paper.dennysora.me](https://paper.dennysora.me)
 
 ## Tech Note
 

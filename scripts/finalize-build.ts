@@ -21,7 +21,6 @@ import { collectionNoteSource } from '../src/lib/note-collections.server.ts';
 import { dictionaries, locales, htmlLang } from '../src/i18n/index.ts';
 import { escapeHtml } from '../src/lib/html.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
-import { papersUrl } from '../src/lib/site.ts';
 import {
   projectDiagramFile,
   projectDiagramUrl,
@@ -134,7 +133,6 @@ const aliases: Record<string, string> = {
   detail: '/zh-hant/',
   'detail/about': '/zh-hant/',
   'detail/production': '/zh-hant/blog/production-systems/',
-  'detail/research': '/zh-hant/blog/trilingual-model-research/',
   'detail/depth': '/zh-hant/#competencies-title',
   blog: '/zh-hant/blog/',
 };
@@ -170,17 +168,6 @@ write('zh-hant/note/medical/analgesics/index.html', analgesicsFallback);
 for (const locale of locales) {
   // The profile is the locale home now; old About links keep their section anchor.
   write(`${locale}/about/index.html`, movedPage(`/${locale}/`, true));
-  // Paper Daily is its own site; the former in-site page only forwards to it.
-  const t = dictionaries[locale];
-  write(
-    `${locale}/papers/index.html`,
-    noticePage(
-      htmlLang[locale],
-      t.navPapers,
-      `<p class="eyebrow">DennySORA</p><h1>${escapeHtml(t.navPapers)}</h1><a href="${papersUrl}">${escapeHtml(papersUrl)} →</a>`,
-      `<meta http-equiv="refresh" content="0;url=${papersUrl}">`,
-    ),
-  );
 }
 for (const slug of migration.legacyBlog.missingSlugs)
   for (const prefix of ['blog', ...locales.map((locale) => `${locale}/blog`)]) {

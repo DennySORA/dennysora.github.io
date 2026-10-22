@@ -12,11 +12,6 @@
         "level": 3
       },
       {
-        "id": "section-3",
-        "text": "部署是模型設計的一部分",
-        "level": 3
-      },
-      {
         "id": "section-4",
         "text": "先量測，再最佳化",
         "level": 3
@@ -46,11 +41,6 @@
       {
         "id": "section-2",
         "text": "Understand the Abstraction Below",
-        "level": 3
-      },
-      {
-        "id": "section-3",
-        "text": "Deployment Is Part of Model Design",
         "level": 3
       },
       {
@@ -86,11 +76,6 @@
         "level": 3
       },
       {
-        "id": "section-3",
-        "text": "デプロイはモデル設計の一部",
-        "level": 3
-      },
-      {
         "id": "section-4",
         "text": "最適化の前に計測する",
         "level": 3
@@ -120,18 +105,8 @@
         "level": 2
       },
       {
-        "id": "section-2",
-        "text": "Agent 編排平台",
-        "level": 3
-      },
-      {
         "id": "section-3",
         "text": "雲端基礎設施最佳化",
-        "level": 3
-      },
-      {
-        "id": "section-4",
-        "text": "AI 資安與資料保護",
         "level": 3
       },
       {
@@ -147,18 +122,8 @@
         "level": 2
       },
       {
-        "id": "section-2",
-        "text": "Agent Orchestration Platform",
-        "level": 3
-      },
-      {
         "id": "section-3",
         "text": "Cloud Infrastructure Optimization",
-        "level": 3
-      },
-      {
-        "id": "section-4",
-        "text": "AI Security & Data Protection",
         "level": 3
       },
       {
@@ -174,310 +139,14 @@
         "level": 2
       },
       {
-        "id": "section-2",
-        "text": "エージェントオーケストレーションプラットフォーム",
-        "level": 3
-      },
-      {
         "id": "section-3",
         "text": "クラウドインフラ最適化",
-        "level": 3
-      },
-      {
-        "id": "section-4",
-        "text": "AI セキュリティとデータ保護",
         "level": 3
       },
       {
         "id": "section-5",
         "text": "プラットフォームエンジニアリング",
         "level": 3
-      }
-    ]
-  },
-  "trilingual-model-research": {
-    "zh-hant": [
-      {
-        "id": "rnd-h",
-        "text": "重點研究與開發",
-        "level": 2
-      },
-      {
-        "id": "section-2",
-        "text": "從零訓練的三語語言模型",
-        "level": 3
-      },
-      {
-        "id": "section-3",
-        "text": "自適應成長式 Transformer",
-        "level": 3
-      },
-      {
-        "id": "section-4",
-        "text": "日語發音與韻律評估",
-        "level": 3
-      },
-      {
-        "id": "section-5",
-        "text": "正在探索",
-        "level": 2
-      }
-    ],
-    "en": [
-      {
-        "id": "rnd-h",
-        "text": "Selected R&D",
-        "level": 2
-      },
-      {
-        "id": "section-2",
-        "text": "TriLingual Language Model from Scratch",
-        "level": 3
-      },
-      {
-        "id": "section-3",
-        "text": "Adaptive & Growing Transformer",
-        "level": 3
-      },
-      {
-        "id": "section-4",
-        "text": "Japanese Pronunciation & Prosody Evaluation",
-        "level": 3
-      },
-      {
-        "id": "section-5",
-        "text": "Currently Exploring",
-        "level": 2
-      }
-    ],
-    "ja": [
-      {
-        "id": "rnd-h",
-        "text": "研究・開発トピック",
-        "level": 2
-      },
-      {
-        "id": "section-2",
-        "text": "ゼロから学習する三言語モデル",
-        "level": 3
-      },
-      {
-        "id": "section-3",
-        "text": "適応型・成長型 Transformer",
-        "level": 3
-      },
-      {
-        "id": "section-4",
-        "text": "日本語の発音・韻律評価",
-        "level": 3
-      },
-      {
-        "id": "section-5",
-        "text": "現在探究中",
-        "level": 2
-      }
-    ]
-  },
-  "video-console": {
-    "zh-hant": [
-      {
-        "id": "showcase",
-        "text": "先看成品：十秒，兩種風格",
-        "level": 2
-      },
-      {
-        "id": "project-map",
-        "text": "整套系統，先看懂四個工作區",
-        "level": 2
-      },
-      {
-        "id": "workspace",
-        "text": "Studio：把一個想法拆成可以修改的鏡頭",
-        "level": 2
-      },
-      {
-        "id": "styles",
-        "text": "描述怎麼寫，才看得見想要的動作？",
-        "level": 2
-      },
-      {
-        "id": "workflow",
-        "text": "從描述到短片，我實際做了這幾步",
-        "level": 2
-      },
-      {
-        "id": "editing",
-        "text": "剪輯與效果：生成之後，還有人的選擇",
-        "level": 2
-      },
-      {
-        "id": "components",
-        "text": "元件與流程：PC 和 DGX 怎麼一起工作？",
-        "level": 2
-      },
-      {
-        "id": "records",
-        "text": "紀錄：除了「成功了嗎」，還要知道「發生了什麼」",
-        "level": 2
-      },
-      {
-        "id": "inference",
-        "text": "推理工具：直接試輸入，也能走向影片資料整理",
-        "level": 2
-      },
-      {
-        "id": "advanced",
-        "text": "連續鏡頭與換角：進階方向也要看清範圍",
-        "level": 2
-      },
-      {
-        "id": "comparison",
-        "text": "和市面上的工具，差別在哪裡？",
-        "level": 2
-      },
-      {
-        "id": "timing",
-        "text": "這次實際等了多久？",
-        "level": 2
-      },
-      {
-        "id": "uses",
-        "text": "適合拿來做什麼，又有哪些現實限制？",
-        "level": 2
-      }
-    ],
-    "en": [
-      {
-        "id": "showcase",
-        "text": "The finished video: ten seconds, two styles",
-        "level": 2
-      },
-      {
-        "id": "project-map",
-        "text": "Four workspaces that explain the whole system",
-        "level": 2
-      },
-      {
-        "id": "workspace",
-        "text": "Studio: breaking an idea into shots I can revise",
-        "level": 2
-      },
-      {
-        "id": "styles",
-        "text": "Writing descriptions that convey the action",
-        "level": 2
-      },
-      {
-        "id": "workflow",
-        "text": "The steps I took, from description to video",
-        "level": 2
-      },
-      {
-        "id": "editing",
-        "text": "Editing and effects: the choices that follow generation",
-        "level": 2
-      },
-      {
-        "id": "components",
-        "text": "Components and pipelines: how do the PC and DGX work together?",
-        "level": 2
-      },
-      {
-        "id": "records",
-        "text": "Records: seeing what happened, beyond success or failure",
-        "level": 2
-      },
-      {
-        "id": "inference",
-        "text": "Inference tools: trying inputs and organizing video data",
-        "level": 2
-      },
-      {
-        "id": "advanced",
-        "text": "Continuing a scene and replacing characters: keeping the scope clear",
-        "level": 2
-      },
-      {
-        "id": "comparison",
-        "text": "How does it differ from other tools?",
-        "level": 2
-      },
-      {
-        "id": "timing",
-        "text": "How long did it actually take?",
-        "level": 2
-      },
-      {
-        "id": "uses",
-        "text": "What is it useful for, and what are its practical limits?",
-        "level": 2
-      }
-    ],
-    "ja": [
-      {
-        "id": "showcase",
-        "text": "まずは完成した映像から：10秒で、2つのスタイル",
-        "level": 2
-      },
-      {
-        "id": "project-map",
-        "text": "システム全体を、4つの作業エリアから見る",
-        "level": 2
-      },
-      {
-        "id": "workspace",
-        "text": "Studio：アイデアを、修正できるショットに分ける",
-        "level": 2
-      },
-      {
-        "id": "styles",
-        "text": "望んだ動きを伝えるには、どう書けばいい？",
-        "level": 2
-      },
-      {
-        "id": "workflow",
-        "text": "説明文から短編動画まで、実際の手順",
-        "level": 2
-      },
-      {
-        "id": "editing",
-        "text": "編集とエフェクト：生成した後も、人が選ぶ",
-        "level": 2
-      },
-      {
-        "id": "components",
-        "text": "コンポーネントとパイプライン：PC と DGX はどう分担する？",
-        "level": 2
-      },
-      {
-        "id": "records",
-        "text": "記録：「成功したか」だけでなく、「何が起きたか」を見る",
-        "level": 2
-      },
-      {
-        "id": "inference",
-        "text": "推論ツール：入力を直接試し、動画のデータも整理する",
-        "level": 2
-      },
-      {
-        "id": "advanced",
-        "text": "連続するショットとキャラクターの置き換え：できる範囲を見極める",
-        "level": 2
-      },
-      {
-        "id": "comparison",
-        "text": "市販のツールとは、どこが違う？",
-        "level": 2
-      },
-      {
-        "id": "timing",
-        "text": "今回、実際にどのくらい待った？",
-        "level": 2
-      },
-      {
-        "id": "uses",
-        "text": "何に向いていて、どんな現実的な制約がある？",
-        "level": 2
       }
     ]
   }

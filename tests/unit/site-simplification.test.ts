@@ -36,9 +36,7 @@ describe('requested website simplification', () => {
         'home',
         'library',
         'notes',
-        'ai',
         'projects',
-        'papers',
       ]);
     });
     it(`${locale} names every quick link with its visible label and draws chrome icons as vectors`, () => {
@@ -81,7 +79,7 @@ describe('requested website simplification', () => {
         [...(buffers ?? '').matchAll(/class="tab-name">([^<]+)</g)].map(
           (match) => match[1],
         ),
-      ).toEqual(['README.md', 'blog', 'note', 'ai', 'projects', 'paper-daily']);
+      ).toEqual(['README.md', 'blog', 'note', 'projects']);
       expect(html).not.toMatch(/navigation-icons|activity-art|<img[^>]*sprite/);
     });
     it(`${locale} retains the core résumé, correct identity and repository evidence`, () => {

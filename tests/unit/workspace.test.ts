@@ -8,40 +8,31 @@ describe('workspace chrome', () => {
     expect(
       filePath({ kind: 'article', locale: 'ja', slug: 'production-systems' }),
     ).toBe('blog/production-systems.md');
-    expect(filePath({ kind: 'tag', locale: 'en', tagId: 'llm' })).toBe(
-      'blog/tags/llm/',
+    expect(filePath({ kind: 'tag', locale: 'en', tagId: 'architecture' })).toBe(
+      'blog/tags/architecture/',
     );
     expect(filePath({ kind: 'not-found' })).toBe('404');
   });
   it('links each breadcrumb segment that has a page, and only those', () => {
-    expect(crumbs({ kind: 'topic', locale: 'zh-hant', topicId: 'ai' })).toEqual(
-      [
-        { label: 'dennysora', href: '/zh-hant/' },
-        { label: 'blog', href: '/zh-hant/blog/' },
-        { label: 'topics', href: null },
-        { label: 'ai', href: '/zh-hant/blog/topics/ai/' },
-      ],
-    );
+    expect(
+      crumbs({ kind: 'topic', locale: 'zh-hant', topicId: 'engineering' }),
+    ).toEqual([
+      { label: 'dennysora', href: '/zh-hant/' },
+      { label: 'blog', href: '/zh-hant/blog/' },
+      { label: 'topics', href: null },
+      { label: 'engineering', href: '/zh-hant/blog/topics/engineering/' },
+    ]);
     expect(crumbs({ kind: 'root' })[0]).toEqual({
       label: 'dennysora',
       href: '/zh-hant/',
     });
   });
-  it('sends Paper Daily straight to its own site', () => {
-    const papers = areas('ja').find((area) => area.key === 'papers');
-    expect(papers).toEqual({
-      key: 'papers',
-      file: 'paper-daily',
-      href: 'https://paper.dennysora.me/',
-      external: true,
-    });
+  it('keeps only the retained areas in the workspace', () => {
     expect(areas('ja').map((area) => area.href)).toEqual([
       '/ja/',
       '/ja/blog/',
       '/ja/note/',
-      '/ja/ai/',
       '/ja/projects/',
-      'https://paper.dennysora.me/',
     ]);
   });
   it('marks landing pages as the page and inner pages as inside their area', () => {
@@ -54,18 +45,14 @@ describe('workspace chrome', () => {
       areaState({ kind: 'article', locale: 'en', slug: 'x' }, 'home'),
     ).toBeUndefined();
     expect(
-      areaState({ kind: 'research', locale: 'en' }, 'papers'),
-    ).toBeUndefined();
-    // The AI area's top folder is its landing page; its notes sit inside it.
-    expect(
-      areaState({ kind: 'note-folder', locale: 'en', folder: 'ai' }, 'ai'),
-    ).toBe('page');
-    const comparison = {
-      kind: 'collection-note',
-      locale: 'en',
-      noteId: 'h3-dit-components',
-    } as const;
-    expect(areaState(comparison, 'ai')).toBe('true');
-    expect(areaState(comparison, 'notes')).toBeUndefined();
+      areaState(
+        {
+          kind: 'collection-note',
+          locale: 'en',
+          noteId: 'landscape-photography',
+        },
+        'notes',
+      ),
+    ).toBe('true');
   });
 });

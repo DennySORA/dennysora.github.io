@@ -46,9 +46,7 @@ const en = {
   brandHome: 'DennySORA home',
   mainNav: 'Main navigation',
   navLibrary: 'Blog',
-  navAi: 'AI',
   navAbout: 'About me',
-  navPapers: 'Paper Daily',
   quickLinks: 'Quick links',
   explorerCollapse: 'Collapse Explorer',
   explorerExpand: 'Expand Explorer',
@@ -94,7 +92,7 @@ const en = {
   libraryEyebrow: 'Writing & thinking',
   libraryTitle: 'Blog',
   libraryIntro:
-    'Notes on engineering practice, model research and the reasoning behind each trade-off. You don’t need to decide whether it is a blog post or research first — start from the question you care about.',
+    'Notes on engineering practice and the reasoning behind each trade-off. Start from the question you care about.',
   searchLabel: 'Search articles',
   searchPlaceholder: 'Search articles, concepts or technologies…',
   clearSearch: 'Clear search',
@@ -152,7 +150,7 @@ const en = {
   adapted:
     'Adapted from the existing technical profile on 20 September 2026. This is not a recovered article from the former blog; the original profile remains available in Git history.',
   viewSource: 'View source',
-  authorNote: 'Writing about the thinking behind backend, cloud and AI work.',
+  authorNote: 'Writing about the thinking behind backend and cloud work.',
   aboutAuthor: 'About the author',
   copyLink: 'Copy link',
   linkCopied: 'Link copied',
@@ -198,13 +196,6 @@ const en = {
   commentsNative:
     'Discussion happens on GitHub, and every language version shares the same thread.',
 
-  researchBridgeEyebrow: 'This page has moved',
-  researchBridgeTitle: 'Research notes are now part of the blog.',
-  researchBridgeText:
-    'Automatically generated paper guides have their own entry. Choose where you want to go.',
-  researchBridgeNotes: 'Read research notes',
-  researchBridgePapers: 'Go to Paper Daily',
-
   notFoundTitle: 'This path doesn’t lead to a page.',
   notFoundText:
     'The address may have changed. Browse the blog, or return to the home page.',
@@ -226,9 +217,7 @@ const zh: Dictionary = {
   brandHome: 'DennySORA 首頁',
   mainNav: '主要導覽',
   navLibrary: '部落格',
-  navAi: 'AI',
   navAbout: '自我介紹',
-  navPapers: '論文日報',
   quickLinks: '快速連結',
   explorerCollapse: '收合檔案總管',
   explorerExpand: '展開檔案總管',
@@ -274,7 +263,7 @@ const zh: Dictionary = {
   libraryEyebrow: '寫作與思考',
   libraryTitle: '部落格',
   libraryIntro:
-    '記錄工程實作、模型研究，以及每一次取捨背後的思考。不必先決定這是部落格還是研究，從你想了解的問題開始。',
+    '記錄工程實務，以及每個取捨背後的思考。從你關心的問題開始閱讀。',
   searchLabel: '搜尋文章',
   searchPlaceholder: '搜尋文章、概念或技術名稱…',
   clearSearch: '清除搜尋',
@@ -328,7 +317,7 @@ const zh: Dictionary = {
   adapted:
     '於 2026 年 9 月 20 日整理自既有技術檔案，並非已刪除舊 blog 的復原文章；原始技術檔案保留於 Git 歷史。',
   viewSource: '查看本文來源',
-  authorNote: '記錄後端、雲端與 AI 實作中的思考。',
+  authorNote: '記錄後端與雲端實作中的思考。',
   aboutAuthor: '了解作者',
   copyLink: '複製文章連結',
   linkCopied: '已複製連結',
@@ -371,12 +360,6 @@ const zh: Dictionary = {
   commentsCount: (count: number) => `${count} 則留言`,
   commentsNative: '討論在 GitHub 進行，三種語言版本共用同一則討論串。',
 
-  researchBridgeEyebrow: '頁面已整合',
-  researchBridgeTitle: '研究筆記已整合至部落格。',
-  researchBridgeText: '自動論文導讀則有獨立入口。請選擇你要前往的地方。',
-  researchBridgeNotes: '閱讀研究筆記',
-  researchBridgePapers: '前往論文日報',
-
   notFoundTitle: '這條路徑沒有對應的頁面。',
   notFoundText: '網址可能已變更。你可以瀏覽部落格，或回到首頁。',
   returnHome: '回到首頁',
@@ -391,9 +374,7 @@ const ja: Dictionary = {
   brandHome: 'DennySORA ホーム',
   mainNav: 'メインナビゲーション',
   navLibrary: 'ブログ',
-  navAi: 'AI',
   navAbout: '自己紹介',
-  navPapers: '論文デイリー',
   quickLinks: 'クイックリンク',
   explorerCollapse: 'エクスプローラーを折りたたむ',
   explorerExpand: 'エクスプローラーを展開',
@@ -439,7 +420,7 @@ const ja: Dictionary = {
   libraryEyebrow: '執筆と思考',
   libraryTitle: 'ブログ',
   libraryIntro:
-    'エンジニアリングの実践、モデルの研究、そして各トレードオフの背景にある考えを記録しています。ブログか研究かを先に決める必要はありません。知りたい問いから始めてください。',
+    'エンジニアリングの実践と、各トレードオフの背景にある考えを記録しています。知りたい問いから始めてください。',
   searchLabel: '記事を検索',
   searchPlaceholder: '記事、概念、技術名で検索…',
   clearSearch: '検索をクリア',
@@ -497,7 +478,7 @@ const ja: Dictionary = {
   adapted:
     '2026 年 9 月 20 日に既存の技術プロフィールから再構成しました。削除された旧ブログの復元記事ではありません。原資料は Git 履歴に残っています。',
   viewSource: '出典を見る',
-  authorNote: 'バックエンド、クラウド、AI の実装で考えたことを記録しています。',
+  authorNote: 'バックエンドとクラウドの実装で考えたことを記録しています。',
   aboutAuthor: '著者について',
   copyLink: 'リンクをコピー',
   linkCopied: 'リンクをコピーしました',
@@ -541,13 +522,6 @@ const ja: Dictionary = {
   commentsEmpty: 'まだコメントはありません。',
   commentsCount: (count: number) => `${count} 件のコメント`,
   commentsNative: '議論は GitHub で行い、各言語版で同じスレッドを共有します。',
-
-  researchBridgeEyebrow: 'このページは統合されました',
-  researchBridgeTitle: '研究ノートはブログに統合されました。',
-  researchBridgeText:
-    '自動生成の論文ガイドには専用の入口があります。行き先を選んでください。',
-  researchBridgeNotes: '研究ノートを読む',
-  researchBridgePapers: '論文デイリーへ',
 
   notFoundTitle: 'このパスにページはありません。',
   notFoundText:

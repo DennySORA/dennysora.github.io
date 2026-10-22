@@ -8,7 +8,6 @@ import { htmlLang, type Locale } from '../../i18n/index.ts';
 import { noteCopy } from '../../lib/notes-copy.ts';
 import {
   findTreeFolder,
-  noteArea,
   noteFolders,
   treeNotes,
   type NoteFolderId,
@@ -100,12 +99,9 @@ export function Notes({
         </MdHeading>
         <p className="ln page-intro">{t.intro}</p>
         <ul className="ln collections">
-          {/* The AI area has a top-level page of its own, outside note/. */}
-          {tree
-            .filter((top) => noteArea(top.id) === 'notes')
-            .map((top) => (
-              <FolderCard key={top.id} folder={top} locale={locale} />
-            ))}
+          {tree.map((top) => (
+            <FolderCard key={top.id} folder={top} locale={locale} />
+          ))}
         </ul>
         <EndOfBuffer />
       </div>

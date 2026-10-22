@@ -42,10 +42,8 @@ test('folder arrows hide descendants repeatedly without navigating or losing foc
   await expect(current).toBeHidden();
   await note.press('Tab');
   await expect(explorer.locator('a[href="/zh-hant/note/"]')).toBeFocused();
-  // Hidden descendants are skipped: focus moves on to the next entry, the
-  // AI area's folder toggle (the projects folder comes right after the README).
-  await page.keyboard.press('Tab');
-  await expect(folderToggle(explorer, '/zh-hant/ai/')).toBeFocused();
+  // No migrated AI area remains after the note folder.
+  await expect(explorer.locator('a[href="/zh-hant/ai/"]')).toHaveCount(0);
   await note.click();
   await expect(current).toBeVisible();
   expect(
@@ -143,12 +141,13 @@ test('nested folders keep independent state through parent and whole-explorer to
   await drugs.click();
   await expect(analgesics).toBeHidden();
   const blog = folderToggle(explorer, '/zh-hant/blog/');
-  const article = explorer.locator('a[href="/zh-hant/blog/video-console/"]');
-  await expect(article).toBeHidden();
   await blog.click();
-  await expect(article).toBeVisible();
+  await expect(blog).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    explorer.locator('a[href="/zh-hant/blog/video-console/"]'),
+  ).toHaveCount(0);
   await blog.click();
-  await expect(article).toBeHidden();
+  await expect(blog).toHaveAttribute('aria-expanded', 'false');
 });
 
 for (const locale of ['zh-hant', 'en', 'ja']) {

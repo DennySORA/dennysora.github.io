@@ -13,7 +13,7 @@ export const localizedSchema = z
   .strict();
 export type LocalizedText = z.infer<typeof localizedSchema>;
 
-export const topicIds = ['engineering', 'systems', 'ai'] as const;
+export const topicIds = ['engineering', 'systems'] as const;
 export const contentTypeIds = [
   'essay',
   'tutorial',
@@ -195,7 +195,7 @@ export const profileSchema = z
           })
           .strict(),
       )
-      .length(3),
+      .length(2),
     featuredProjectIds: z.array(safeId).min(2).max(3),
     experience: z.array(
       z
@@ -224,25 +224,6 @@ export const profileSchema = z
         })
         .strict(),
     ),
-    currentFocus: z
-      .object({
-        updatedAt: z.iso.date(),
-        question: localizedSchema,
-        items: z
-          .array(
-            z
-              .object({
-                id: safeId,
-                title: localizedSchema,
-                text: localizedSchema,
-              })
-              .strict(),
-          )
-          .min(2)
-          .max(3),
-        postId: safeId,
-      })
-      .strict(),
     personal: z
       .object({
         intro: localizedSchema,

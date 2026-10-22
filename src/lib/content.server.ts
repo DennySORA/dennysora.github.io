@@ -305,7 +305,6 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'notes', locale },
       { kind: 'projects', locale },
       { kind: 'tags', locale },
-      { kind: 'research', locale },
     );
     for (const folder of noteFolderIds)
       routes.push({ kind: 'note-folder', locale, folder });
@@ -333,12 +332,7 @@ export function publishedRoutes(): RouteDescriptor[] {
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
-  if (
-    route.kind === 'not-found' ||
-    route.kind === 'research' ||
-    route.kind === 'search'
-  )
-    return false;
+  if (route.kind === 'not-found' || route.kind === 'search') return false;
   return true;
 }
 export function publishedPaths(): string[] {
@@ -445,8 +439,6 @@ export function validateContent(): void {
   const profile = loadProfile();
   for (const id of profile.featuredProjectIds)
     if (!projectIds.has(id)) problems.push(`Unknown featured project ${id}`);
-  if (!postIds.has(profile.currentFocus.postId))
-    problems.push(`Unknown current-focus post ${profile.currentFocus.postId}`);
   for (const competency of profile.competencies)
     for (const evidence of competency.evidence)
       if (

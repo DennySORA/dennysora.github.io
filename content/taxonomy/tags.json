@@ -13,19 +13,6 @@
     }
   },
   {
-    "id": "llm",
-    "label": {
-      "zh-hant": "LLM",
-      "en": "LLM",
-      "ja": "LLM"
-    },
-    "aliases": {
-      "zh-hant": ["大型語言模型", "語言模型"],
-      "en": ["large language model", "language model"],
-      "ja": ["大規模言語モデル", "言語モデル"]
-    }
-  },
-  {
     "id": "security",
     "label": {
       "zh-hant": "資安",
@@ -36,92 +23,6 @@
       "zh-hant": ["資訊安全", "security"],
       "en": ["infosec"],
       "ja": ["情報セキュリティ", "security"]
-    }
-  },
-  {
-    "id": "quantization",
-    "label": {
-      "zh-hant": "量化",
-      "en": "Quantization",
-      "ja": "量子化"
-    },
-    "aliases": {
-      "zh-hant": ["quantization", "PTQ"],
-      "en": ["PTQ", "量化"],
-      "ja": ["quantization", "PTQ"]
-    }
-  },
-  {
-    "id": "inference",
-    "label": {
-      "zh-hant": "推論",
-      "en": "Inference",
-      "ja": "推論"
-    },
-    "aliases": {
-      "zh-hant": ["inference", "serving"],
-      "en": ["serving", "推論"],
-      "ja": ["inference", "サービング"]
-    }
-  },
-  {
-    "id": "video-generation",
-    "label": {
-      "zh-hant": "影片生成",
-      "en": "Video generation",
-      "ja": "動画生成"
-    },
-    "aliases": {
-      "zh-hant": [
-        "video generation",
-        "T2V",
-        "文字生成影片",
-        "影音生成",
-        "動画生成"
-      ],
-      "en": ["T2V", "text-to-video", "AI video", "影片生成", "動画生成"],
-      "ja": ["video generation", "T2V", "動画 AI", "影片生成"]
-    }
-  },
-  {
-    "id": "diffusion-transformer",
-    "label": {
-      "zh-hant": "DiT",
-      "en": "DiT",
-      "ja": "DiT"
-    },
-    "aliases": {
-      "zh-hant": [
-        "diffusion transformer",
-        "擴散模型",
-        "擴散 Transformer",
-        "拡散モデル"
-      ],
-      "en": [
-        "diffusion transformer",
-        "diffusion model",
-        "擴散模型",
-        "拡散モデル"
-      ],
-      "ja": [
-        "diffusion transformer",
-        "拡散モデル",
-        "拡散 Transformer",
-        "擴散模型"
-      ]
-    }
-  },
-  {
-    "id": "agent",
-    "label": {
-      "zh-hant": "Agent",
-      "en": "Agents",
-      "ja": "エージェント"
-    },
-    "aliases": {
-      "zh-hant": ["代理", "agents"],
-      "en": ["agentic AI"],
-      "ja": ["agent", "エージェンティック"]
     }
   },
   {

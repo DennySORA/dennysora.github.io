@@ -80,9 +80,7 @@ describe('publication boundaries', () => {
     expect(() => postSchema.parse({ ...value, extra: true })).toThrow();
   });
   it('keeps every unpublished example out of public article payloads', () => {
-    for (const retained of loadPosts().filter(
-      (post) => post.id !== 'video-console',
-    ))
+    for (const retained of loadPosts())
       for (const locale of locales) {
         expect(editionStatus(retained, locale, retained.revision)).toBe(
           'draft',
@@ -127,8 +125,7 @@ describe('route manifest', () => {
       '/en/blog/tags/llm/extra/',
       '/en/blog/topics/',
       '/en/about/details/',
-      // The profile is the locale home and Paper Daily its own site; both
-      // former pages are static bridges, not routes.
+      // About is a static home redirect; the migrated papers entry is removed.
       '/en/about/',
       '/en/papers/',
       '/en/blog/Bad_Slug/',
@@ -149,95 +146,43 @@ describe('route manifest', () => {
       'library',
     );
     expect(navSection({ kind: 'home', locale: 'en' })).toBe('home');
-    expect(navSection({ kind: 'research', locale: 'en' })).toBeNull();
   });
-  it('prerenders the published article and only its populated taxonomy', () => {
+  it('prerenders no migrated AI or video pages', () => {
     const paths = publishedPaths();
     expect(new Set(paths).size).toBe(paths.length);
+    expect(paths).not.toEqual([]);
     for (const locale of locales) {
-      expect(paths).toContain(`/${locale}/blog/video-console`);
-      expect(paths).toContain(`/${locale}/blog/tags/video-generation`);
-      expect(paths).toContain(`/${locale}/blog/topics/ai`);
-      for (const slug of [
-        'engineering-principles',
-        'production-systems',
-        'trilingual-model-research',
-      ])
-        expect(paths).not.toContain(`/${locale}/blog/${slug}`);
-      expect(paths).not.toContain(`/${locale}/blog/tags/llm`);
-      expect(paths).not.toContain(`/${locale}/blog/topics/engineering`);
-      expect(paths).not.toContain(`/${locale}/papers`);
-      expect(paths).not.toContain(`/${locale}/about`);
-      expect(paths).toContain(`/${locale}/research`);
       expect(paths).toContain(prerenderPath({ kind: 'tags', locale }));
-      expect(tagsInLocale(locale)).toEqual(['video-generation']);
+      expect(paths).toContain(`/${locale}/projects/tools/dgxtop`);
+      expect(tagsInLocale(locale)).toEqual([]);
+      expect(listPosts(locale)).toEqual([]);
+      for (const path of [
+        'ai',
+        'research',
+        'papers',
+        'blog/video-console',
+        'blog/trilingual-model-research',
+        'blog/tags/video-generation',
+        'blog/topics/ai',
+      ]) {
+        expect(paths).not.toContain(`/${locale}/${path}`);
+        try {
+          load(`/${locale}/${path}`);
+          throw new Error('Expected 404');
+        } catch (error) {
+          expect(error).toBeInstanceOf(Response);
+          expect((error as Response).status).toBe(404);
+        }
+      }
     }
-  });
-  it('keeps bridges out of the index', () => {
-    const routes = publishedRoutes();
-    for (const route of routes.filter((item) => item.kind === 'research'))
-      expect(isIndexable(route)).toBe(false);
-    for (const route of routes.filter(
-      (item) => item.kind === 'article' || item.kind === 'tag',
-    ))
-      expect(isIndexable(route)).toBe(true);
   });
 });
 
-describe('loader', () => {
-  it('exposes all three published editions with matching canonical and language links', () => {
-    for (const locale of locales) {
-      const article = load(`/${locale}/blog/video-console`);
-      expect(article.view.kind).toBe('article');
-      expect(article.indexable).toBe(true);
-      expect(article.canonical).toBe(
-        `https://dennysora.me/${locale}/blog/video-console/`,
-      );
-      expect(article.languageLinks).toEqual(
-        locales.map((target) => ({
-          locale: target,
-          href: `/${target}/blog/video-console/`,
-        })),
-      );
-      expect(loadArticle(locale, 'video-console')?.post).not.toHaveProperty(
-        'locales',
-      );
-    }
-  });
-  it('serves the published blog with canonical, robots and language links', () => {
-    const home = load('/zh-hant');
-    if (home.view.kind !== 'home') throw new Error('Expected the README home');
-    expect(home.canonical).toBe('https://dennysora.me/zh-hant/');
-    expect(home.indexable).toBe(true);
-    expect(home.view.profile.displayName).toBe('DennySORA');
-    expect(home.view.recent.map((post) => post.id)).toEqual(['video-console']);
-    // Internal provenance notes stay in the repository.
-    expect(JSON.stringify(home)).not.toContain('provenance');
-    // The explorer lists the real files of the workspace on every page.
-    expect(home.workspace.posts.map((post) => post.slug)).toEqual([
-      'video-console',
-    ]);
-    expect(home.view.projects.map((project) => project.id)).toContain('dgxtop');
-    const research = load('/en/research');
-    expect(research.indexable).toBe(false);
-    const blog = load('/ja/blog');
-    if (blog.view.kind !== 'library') throw new Error('Expected the blog');
-    expect(blog.canonical).toBe('https://dennysora.me/ja/blog/');
-    expect(blog.view.posts.map((post) => post.id)).toEqual(['video-console']);
-    expect(blog.view.available).toEqual({
-      topics: ['ai'],
-      types: ['case-study'],
-      tags: ['video-generation'],
-    });
-    expect(blog.languageLinks.find((link) => link.locale === 'en')?.href).toBe(
-      '/en/blog/',
-    );
-  });
-  it('answers unknown paths, slugs and empty taxonomy with a real 404', () => {
+describe('retained content and empty blog', () => {
+  it('answers unknown paths, drafts and empty taxonomy with a real 404', () => {
     for (const path of [
       '/en/blog/not-a-post',
       '/en/blog/engineering-principles',
-      '/ja/blog/trilingual-model-research',
       '/zh-hant/blog/production-systems',
       '/en/blog/tags/llm',
       '/en/blog/topics/engineering',
@@ -245,7 +190,6 @@ describe('loader', () => {
       '/en/blog/topics/unknown',
       '/en/projects/unknown',
       '/en/about',
-      '/en/papers',
       '/xx/about',
     ]) {
       let status = 0;
@@ -257,50 +201,53 @@ describe('loader', () => {
       expect(status, path).toBe(404);
     }
   });
-});
-
-describe('content graph', () => {
-  it('validates taxonomy, relations, reserved slugs and published anchors', () => {
-    expect(() => validateContent()).not.toThrow();
-  });
-  it('retains source provenance without publishing examples in the blog', () => {
-    const research = loadPosts().find(
-      (post) => post.id === 'trilingual-model-research',
-    );
-    expect(research?.contentType).toBe('research-note');
-    expect(research?.slug).toBe('trilingual-model-research');
-    for (const locale of locales)
-      expect(listPosts(locale).map((post) => post.id)).toEqual([
-        'video-console',
+  it.each(locales)(
+    '%s keeps the localized home, notes and empty blog',
+    (locale) => {
+      const home = load(`/${locale}/`);
+      if (home.view.kind !== 'home') throw new Error('Expected home');
+      expect(home.canonical).toBe(`https://dennysora.me/${locale}/`);
+      expect(home.indexable).toBe(true);
+      expect(home.view.profile.displayName).toBe('DennySORA');
+      expect(home.view.recent).toEqual([]);
+      expect(home.workspace.posts).toEqual([]);
+      expect(home.view.projects.map((project) => project.id)).toEqual([
+        'dgxtop',
+        'httpulse',
       ]);
-  });
-  it('never recommends unpublished content as related writing', () => {
-    for (const locale of locales)
+      expect(JSON.stringify(home)).not.toContain('provenance');
+      const blog = load(`/${locale}/blog/`);
+      if (blog.view.kind !== 'library') throw new Error('Expected blog');
+      expect(blog.view.posts).toEqual([]);
+      expect(blog.view.available).toEqual({ topics: [], types: [], tags: [] });
+      expect(blog.languageLinks).toEqual(
+        locales.map((target) => ({ locale: target, href: `/${target}/blog/` })),
+      );
+      expect(isIndexable({ kind: 'search', locale })).toBe(false);
       for (const post of loadPosts())
-        for (const related of relatedPosts(locale, post.id)) {
-          expect(related.id).toBe('video-console');
-          expect(related.id).not.toBe(post.id);
-        }
-  });
-  it('keeps every published heading anchor, including section-N aliases', () => {
-    const anchors = loadHeadingAnchors();
-    let checked = 0;
-    for (const [id, editions] of Object.entries(anchors))
-      for (const [locale, headings] of Object.entries(editions)) {
-        const ids = renderPost(
-          id,
-          locale as (typeof locales)[number],
-        ).headings.map((heading) => heading.id);
-        for (const heading of headings ?? []) {
-          expect(ids, `${id}/${locale}`).toContain(heading.id);
-          checked++;
-        }
-      }
-    expect(checked).toBeGreaterThanOrEqual(51);
+        expect(relatedPosts(locale, post.id)).toEqual([]);
+    },
+  );
+  it('validates retained content and all its frozen heading anchors', () => {
+    expect(() => validateContent()).not.toThrow();
     expect(
-      renderPost('engineering-principles', 'ja').headings.map(
-        (heading) => heading.id,
-      ),
-    ).toContain('how-h');
+      loadPosts()
+        .map((post) => post.id)
+        .sort(),
+    ).toEqual(['engineering-principles', 'production-systems']);
+    const anchors = loadHeadingAnchors();
+    expect(Object.keys(anchors).sort()).toEqual([
+      'engineering-principles',
+      'production-systems',
+    ]);
+    for (const [id, editions] of Object.entries(anchors))
+      for (const locale of locales) {
+        const headings = editions[locale] ?? [];
+        expect(headings.length).toBeGreaterThan(0);
+        const actual = renderPost(id, locale).headings.map(
+          (heading) => heading.id,
+        );
+        expect(actual).toEqual(headings.map((heading) => heading.id));
+      }
   });
 });

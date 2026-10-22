@@ -26,16 +26,13 @@ for (const locale of locales)
     await expect(
       page.locator('main a[href*="/projects/"], a[href*="/privacy/"]'),
     ).toHaveCount(0);
-    // The tabline lists the areas as buffers; the open one is current, and
-    // Paper Daily is marked as leaving the site.
+    // The tabline lists the four retained areas; the open one is current.
     const buffers = page.locator('.buffers');
     await expect(buffers.locator('.tab-name')).toHaveText([
       'README.md',
       'blog',
       'note',
-      'ai',
       'projects',
-      'paper-daily',
     ]);
     await expect(buffers.locator(`a[href="/${locale}/"]`)).toHaveAttribute(
       'aria-current',
@@ -43,7 +40,7 @@ for (const locale of locales)
     );
     await expect(
       buffers.locator('a[href="https://paper.dennysora.me/"] svg'),
-    ).toHaveCount(2);
+    ).toHaveCount(0);
     await expect(page.locator('img[src*="navigation-icons"]')).toHaveCount(0);
     for (const path of ['projects/dgxtop/', 'privacy/'])
       expect((await request.get(`/${locale}/${path}`)).status()).toBe(404);

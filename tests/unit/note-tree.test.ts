@@ -9,7 +9,6 @@ import { publishedPaths } from '../../src/lib/content.server.ts';
 import { noteFolderCopy, noteTree } from '../../src/lib/note-tree.server.ts';
 import {
   folderPath,
-  noteArea,
   noteFolderIds,
   noteFolderOf,
   noteFolders,
@@ -35,7 +34,7 @@ describe('the note tree', () => {
   it('files each note in the folder the owner chose', () => {
     expect(
       noteFolderIds.filter((id) => noteFolders[id].parent === null),
-    ).toEqual(['software', 'medical', 'hardware', 'japan', 'ai', 'other']);
+    ).toEqual(['software', 'medical', 'hardware', 'japan', 'other']);
     expect(folderPath('p2p', 'zh-hant')).toBe(
       '/zh-hant/note/software/network/p2p/',
     );
@@ -53,14 +52,6 @@ describe('the note tree', () => {
       '/zh-hant/note/other/landscape-photography/',
     );
     expect(subfolders('other')).toEqual([]);
-    // AI is a top-level area of its own; Video / Data comparisons sit in it.
-    expect(folderPath('ai', 'zh-hant')).toBe('/zh-hant/ai/');
-    expect(folderPath('comparisons', 'en')).toBe('/en/ai/video/comparisons/');
-    expect(notePath('h3-dit-components', 'ja')).toBe(
-      '/ja/ai/video/comparisons/h3-dit-components/',
-    );
-    expect(noteArea('comparisons')).toBe('ai');
-    expect(noteArea('p2p')).toBe('notes');
   });
 
   it('answers every folder and note at its own path, in all three languages', () => {
@@ -70,7 +61,7 @@ describe('the note tree', () => {
         const route = { kind: 'note-folder', locale, folder } as const;
         expect(parseRoute(path), path).toEqual(route);
         expect(routePath(route)).toBe(path);
-        expect(navSection(route)).toBe(noteArea(folder));
+        expect(navSection(route)).toBe('notes');
         expect(fileKind(route)).toBe('folder');
         expect(publishedPaths()).toContain(path.slice(0, -1));
         expect(load(path).view).toMatchObject({ kind: 'note-folder', folder });
@@ -80,7 +71,7 @@ describe('the note tree', () => {
         const route = noteRoute(id, locale);
         expect(parseRoute(path), path).toEqual(route);
         expect(routePath(route)).toBe(path);
-        expect(navSection(route)).toBe(noteArea(noteFolderOf[id]));
+        expect(navSection(route)).toBe('notes');
         expect(publishedPaths()).toContain(path.slice(0, -1));
       }
     }
@@ -131,23 +122,6 @@ describe('the note tree', () => {
     expect(
       filePath({ kind: 'note-folder', locale: 'ja', folder: 'other' }),
     ).toBe('note/other/');
-    // The AI area starts at the top of the workspace, without a note crumb.
-    expect(
-      crumbs({
-        kind: 'collection-note',
-        locale: 'en',
-        noteId: 'h3-dit-components',
-      }).map((crumb) => crumb.label),
-    ).toEqual([
-      'dennysora',
-      'ai',
-      'video',
-      'comparisons',
-      'h3-dit-components.md',
-    ]);
-    expect(
-      filePath({ kind: 'note-folder', locale: 'zh-hant', folder: 'ai' }),
-    ).toBe('ai/');
   });
 
   it('shows folders as cards and filed notes with their summaries', () => {
@@ -156,12 +130,10 @@ describe('the note tree', () => {
       const root = renderToStaticMarkup(
         createElement(Notes, { locale, folder: null, tree }),
       );
-      for (const top of tree.filter((top) => noteArea(top.id) === 'notes')) {
+      for (const top of tree) {
         expect(root).toContain(`href="${top.href}"`);
         expect(root).toContain(noteFolders[top.id].art);
       }
-      // The AI area has its own page, not a card in note/.
-      expect(root).not.toContain(`href="${folderPath('ai', locale)}"`);
       const medical = renderToStaticMarkup(
         createElement(Notes, { locale, folder: 'medical', tree }),
       );

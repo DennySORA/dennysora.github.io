@@ -52,7 +52,9 @@
         }
       }
     ],
-    "links": { "repository": "https://github.com/DennySORA/dgxtop" },
+    "links": {
+      "repository": "https://github.com/DennySORA/dgxtop"
+    },
     "caseStudy": null,
     "relatedPostIds": [],
     "sources": [
@@ -112,73 +114,13 @@
         }
       }
     ],
-    "links": { "repository": "https://github.com/DennySORA/httpulse" },
+    "links": {
+      "repository": "https://github.com/DennySORA/httpulse"
+    },
     "caseStudy": null,
     "relatedPostIds": [],
     "sources": [
       "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html"
-    ]
-  },
-  {
-    "id": "adk-agui-middleware",
-    "title": "ADK ↔ AGUI Middleware",
-    "category": "work",
-    "status": "unknown",
-    "owner": "trendmicro / adk-agui-middleware",
-    "technologies": ["Python", "SSE", "Agent"],
-    "domain": {
-      "zh-hant": "Agent 串流整合",
-      "en": "Agent streaming integration",
-      "ja": "エージェントのストリーミング統合"
-    },
-    "headline": {
-      "zh-hant": "連接 Agent 編排與互動工作流程。",
-      "en": "Connecting agent orchestration with interactive workflows.",
-      "ja": "エージェントのオーケストレーションと対話的なワークフローをつなぐ。"
-    },
-    "summary": {
-      "zh-hant": "連接 ADK 與 AG-UI 的中介實作，提供 SSE 串流與 Human-in-the-Loop 工作流程，並與 Agent 編排器整合。",
-      "en": "Middleware connecting ADK and AG-UI, providing SSE streaming and Human-in-the-Loop workflows, integrated with the agent orchestrator.",
-      "ja": "ADK と AG-UI をつなぐミドルウェア。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、エージェントのオーケストレーターと統合しています。"
-    },
-    "role": {
-      "zh-hant": "依公開履歷：於趨勢科技工作期間撰寫並整合",
-      "en": "Per the published résumé: authored and integrated while at Trend Micro",
-      "ja": "公開している経歴より：トレンドマイクロ在籍中に開発・統合"
-    },
-    "points": [
-      {
-        "title": {
-          "zh-hant": "角色與脈絡",
-          "en": "Role and context",
-          "ja": "役割と背景"
-        },
-        "text": {
-          "zh-hant": "工作中的系統實作，不是個人獨有的專案。",
-          "en": "Work done in a professional role, not a personally owned project.",
-          "ja": "業務としての実装であり、個人が所有するプロジェクトではありません。"
-        }
-      },
-      {
-        "title": {
-          "zh-hant": "公開來源",
-          "en": "Public source",
-          "ja": "公開ソース"
-        },
-        "text": {
-          "zh-hant": "程式碼位於 Trend Micro 組織的 repository。",
-          "en": "The code lives in a repository owned by the Trend Micro organization.",
-          "ja": "コードは Trend Micro 組織のリポジトリにあります。"
-        }
-      }
-    ],
-    "links": {
-      "repository": "https://github.com/trendmicro/adk-agui-middleware"
-    },
-    "caseStudy": null,
-    "relatedPostIds": ["production-systems"],
-    "sources": [
-      "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/index.html"
     ]
   }
 ]

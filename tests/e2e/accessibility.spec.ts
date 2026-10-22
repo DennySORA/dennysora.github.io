@@ -1,3 +1,4 @@
+import { dictionaries } from '../../src/i18n/index.ts';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
@@ -18,12 +19,10 @@ for (const path of [
   '/en/',
   '/ja/',
   '/en/blog/',
-  '/en/blog/video-console/',
   '/en/note/',
   '/ja/note/medical/',
   '/zh-hant/note/medical/drugs/analgesics/',
   '/en/blog/tags/',
-  '/zh-hant/research/',
   '/en/missing-page/',
 ])
   test(`accessible content: ${path}`, async ({ page }) => {
@@ -40,15 +39,11 @@ test('accessible states: open details, language menu, typing, empty library, col
   await page.locator('.language-menu > summary').click();
   expect(await violations(page)).toEqual([]);
   await page.goto('/zh-hant/blog/?topic=ai&tag=video-generation');
-  await expect(page.locator('.article-row')).toHaveCount(1);
-  await expect(page.locator('.tag-filter button')).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
+  await expect(page.locator('.article-row')).toHaveCount(0);
   expect(await violations(page)).toEqual([]);
   await page.getByRole('searchbox').fill('zzzznomatch');
   await expect(
-    page.getByRole('heading', { name: '沒有符合這些條件的文章' }),
+    page.getByRole('heading', { name: dictionaries['zh-hant'].noPostsTitle }),
   ).toBeVisible();
   // The status line is in INSERT mode while the search field has focus.
   await expect(page.locator('.status-mode')).toHaveText('INSERT');

@@ -1,13 +1,5 @@
 ## スキル
 
-AI・LLM 開発
-
-Transformer アーキテクチャ
-量子化（FP8 · INT4 · W/A/KV）
-vLLM · TensorRT-LLM
-ポストトレーニング（SFT · DPO · GRPO）
-解釈可能性（SAE · SVD）
-
 プログラミング言語
 
 Go (Gin)
@@ -53,28 +45,6 @@ RESTful API
 
 ### v3.0.0 シニアクラウドエンジニア トレンドマイクロ Trend Micro 2022.07 – 2026.04
 
-オーケストレーション
-
-### Companion-Orchestrator Agent Center
-
-- Google ADK 上にエージェントオーケストレーションプラットフォームを設計・リリース。明確なアプリケーションアーキテクチャとモジュール境界を実現。
-
-- Agent-to-Agent（A2A）通信を実装し、リモートエージェントを連携。
-
-- ツール呼び出し・状態追跡・リトライ・エラー処理を備えた LLM エージェントを構築。
-
-- シナリオテストとプロンプト／ツールのデバッグ用 Web Playground を提供。フロントエンドは AI 支援ワークフローで独立開発。
-
-- CopilotKit アダプターを作成し、多段階の LangGraph フローを構成。
-
-- DB 駆動の設定による動的エージェントローディングを実現し、ゼロダウンタイムでリリース。
-
-- ADK ↔ AGUI Middleware（Python 3.13+）を開発。SSE ストリーミングと Human-in-the-Loop ワークフローを提供し、オーケストレーターと統合。
-
-- A2A → ADK → LangGraph → CopilotKit のエンドツーエンドパイプラインを実現し、他チームに組織横断で採用。
-
-→ [ADK-AGUI Middleware (GitHub)](https://github.com/trendmicro/adk-agui-middleware)
-
 プラットフォーム
 
 ### プラットフォーム開発と API 管理
@@ -82,10 +52,6 @@ RESTful API
 - プラグインベースの API プラットフォームを構築。コアを変更せずに統合機能をリリース可能にし、ライフサイクルフック・認証・レート制限を提供。
 
 - バックプレッシャーとリトライ制御を備えた、設定可能なログルーティングの Collector Manager を開発。
-
-- GitHub ベースの同期による宣言的ワークフローを実現する Mini-Companion システムを構築。
-
-- PII マスキングとポリシーベースのリクエストフィルタリングを強制する Companion Proxy を実装。
 
 インフラ
 
@@ -99,25 +65,15 @@ RESTful API
 
 - CNI IP 枯渇とルーティング問題を修正し、マルチテナントクラスタを安定化。
 
-AI とセキュリティ
+セキュリティ
 
-### AI 統合とデータセキュリティ
-
-- AWS Comprehend の PII パイプラインを構築し、検出品質を維持しながらコストを約 99% 削減。
-
-- Amazon Bedrock 統合とポリシー強制を備えた AI Proxy Adapter を作成。
+### データセキュリティ
 
 - MITRE 準拠のナレッジグラフ構築のため Kafka → Neptune パイプラインを開発。
-
-- 監査性とテナント分離を備えたきめ細かな AI アクセス制御を実装。
 
 リーダーシップ
 
 ### テクニカルリーダーシップ
-
-- CEO の NVIDIA プレゼンテーション向けにエグゼクティブレベルの AI デモを制作。
-
-- AI ツールとベストプラクティスの社内ワークショップを主導。
 
 - Employee of the Quarter（四半期最優秀社員）に選出。
 
@@ -194,140 +150,6 @@ API
 2016 – 2020 · 電子工学
 
 ## 技術的深さ
-
-### LLM アーキテクチャ
-
-コア
-
-- Transformer アーキテクチャ
-
-- decoder-only 言語モデル
-
-アテンション
-
-- MHA · GQA · MQA
-
-- latent-attention の亜種
-
-位置エンコーディング
-
-- RoPE · NoPE
-
-- ハイブリッドな位置設計
-
-フィードフォワード
-
-- SwiGLU · GEGLU
-
-正規化
-
-- RMSNorm
-
-残差設計
-
-- 標準的な残差パス
-
-- 実験的な attention-residual の亜種
-
-トークナイザー
-
-- SentencePiece · Unigram
-
-### 学習とポストトレーニング
-
-事前学習
-
-- トークン／データパイプライン
-
-- 最適化
-
-- 学習率スケジューリング
-
-- チェックポイント
-
-- 検証 loss／パープレキシティ
-
-- スループット監視
-
-ポストトレーニング・実装済み
-
-- SFT · DPO · GRPO
-
-学習・比較済み
-
-- PPO · TRPO · DAPO
-
-### 推論と量子化
-
-精度
-
-- FP16 · BF16 · FP8 · INT8 · INT4
-
-量子化の概念
-
-- W／A／KV 精度
-
-- PTQ · E4M3
-
-- W8A16KV8 型の構成
-
-ランタイム／サービング
-
-- vLLM · TensorRT-LLM · Ollama
-
-パフォーマンス
-
-- KV cache
-
-- バッチング
-
-- コンテキスト長
-
-- VRAM 見積もり
-
-- スループット／tokens per second
-
-探究中
-
-- MXFP8 · NVFP4
-
-### モデル解釈可能性
-
-学習中
-
-- スパースオートエンコーダ（SAE）
-
-- SVD
-
-- アクティベーション分析
-
-- アクティベーションパッチング
-
-- 回路レベルの解釈の概念
-
-### エージェンティック AI
-
-本番運用
-
-- Google ADK
-
-- Agent-to-Agent（A2A）
-
-- LangGraph · CopilotKit
-
-- AG-UI 統合
-
-- ツール実行
-
-- 状態管理
-
-- Human-in-the-Loop
-
-- ストリーミング（SSE）
-
-- リトライとエラー処理
-
-- 動的エージェント設定
 
 ### バックエンドと分散システム
 
@@ -437,7 +259,7 @@ Python ★ 36 github.com/DennySORA/DLsite-Classification-Manager
 
 ### [Ops-Tools](https://github.com/DennySORA/Ops-Tools)
 
-DevOps CLI ツールボックス：Terraform／Terragrunt ヘルパー、AI ツール、MCP サーバー、セキュリティスキャナー、クリーンコード自動化。
+DevOps CLI ツールボックス：Terraform／Terragrunt ヘルパー、セキュリティスキャナー、クリーンコード自動化。
 
 Rust ★ 9 github.com/DennySORA/Ops-Tools
 
@@ -447,35 +269,11 @@ Rust ★ 9 github.com/DennySORA/Ops-Tools
 
 Python ★ 1 github.com/DennySORA/Image-Tools
 
-### [Auto-Video-Organize](https://github.com/DennySORA/Auto-Video-Organize)
-
-動画整理を自動化する高速 CLI：バッチ HEVC エンコード、ファイル重複排除、コンタクトシート生成、インテリジェントなソート。
-
-Rust github.com/DennySORA/Auto-Video-Organize
-
 ### [httpulse](https://github.com/DennySORA/httpulse)
 
 リアルタイム HTTP レイテンシとネットワーク品質を監視するインタラクティブ TUI。DNS、TLS、TTFB、RTT、ジッターなどを追跡。
 
 Rust github.com/DennySORA/httpulse
-
-## コミュニティ
-
-### 硬核 AI 交流社 — Facebook グループ管理者
-
-AI 論文の交流と議論を行う Facebook グループの管理者。
-
-[facebook.com/groups/915613384421068](https://www.facebook.com/groups/915613384421068)
-
-### AI 論文デイリー — paper.dennysora.me
-
-- arXiv（11 カテゴリ＋キーワード検索）、Hugging Face Daily Papers、AI ブログから論文を毎日収集。
-
-- LLM でスコアリング・ランキングし、注目論文を台湾繁体中国語に翻訳。
-
-- 日次／週次／月次レポートを GitHub Pages に自動公開。
-
-[paper.dennysora.me](https://paper.dennysora.me)
 
 ## 技術ノート
 

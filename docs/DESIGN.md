@@ -12,15 +12,15 @@
 - **改規則要先問擁有者**：新增顏色、換字體、新增外框區塊（例如活動列、頁尾、浮動按鈕）、改變模式語意，都要擁有者明確同意，並在同一次變更裡更新本文件、tokens 與守護測試。
 - **單一真相來源**：
 
-| 項目 | 唯一來源 |
-|---|---|
-| 顏色、間距、圓角、外框尺寸、字體堆疊 | [`src/styles/tokens.css`](../src/styles/tokens.css) |
-| 圖示 | [`src/components/Icon.tsx`](../src/components/Icon.tsx) |
-| 檔案種類對應的圖示 | [`src/components/file-icons.ts`](../src/components/file-icons.ts) |
-| 外框 | `TabLine.tsx`、`Explorer.tsx`、`WinBar.tsx`、`StatusLine.tsx`，由 `SiteLayout.tsx` 組合 |
-| 插圖與生成圖片的紀錄 | [`data/illustration-assets.json`](../data/illustration-assets.json) |
-| 品牌圖的紀錄 | [`data/brand-assets.json`](../data/brand-assets.json) |
-| 所有介面文字（三語） | [`src/i18n/index.ts`](../src/i18n/index.ts) 與各功能的 copy 檔 |
+| 項目                                 | 唯一來源                                                                                |
+| ------------------------------------ | --------------------------------------------------------------------------------------- |
+| 顏色、間距、圓角、外框尺寸、字體堆疊 | [`src/styles/tokens.css`](../src/styles/tokens.css)                                     |
+| 圖示                                 | [`src/components/Icon.tsx`](../src/components/Icon.tsx)                                 |
+| 檔案種類對應的圖示                   | [`src/components/file-icons.ts`](../src/components/file-icons.ts)                       |
+| 外框                                 | `TabLine.tsx`、`Explorer.tsx`、`WinBar.tsx`、`StatusLine.tsx`，由 `SiteLayout.tsx` 組合 |
+| 插圖與生成圖片的紀錄                 | [`data/illustration-assets.json`](../data/illustration-assets.json)                     |
+| 品牌圖的紀錄                         | [`data/brand-assets.json`](../data/brand-assets.json)                                   |
+| 所有介面文字（三語）                 | [`src/i18n/index.ts`](../src/i18n/index.ts) 與各功能的 copy 檔                          |
 
 元件裡不寫字面色碼、不另開一套變數。只有兩個例外，且數值必須與 tokens 一致：列印樣式 [`print.css`](../src/styles/print.css)（紙張用淺色），以及建置腳本產生、沒有載入站內 CSS 的轉址頁（[`scripts/finalize-build.ts`](../scripts/finalize-build.ts) 的內嵌樣式）。
 
@@ -40,36 +40,36 @@
 
 Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支。`<html data-theme="dark">` 與 `<meta name="color-scheme" content="dark">` 必須出現在第一個 HTML 回應裡。數值來自 Noir Workbench 的 canonical 色票，對應到本站既有的 token 名稱；標為「本地」的是本站新增的編輯器語法角色。
 
-| Token（`--color-*`） | 值 | 角色 |
-|---|---|---|
-| `chrome`、`sidebar`、`tab-inactive` | `#080c12` | 最深層：tabline 底、命令列、檔案樹、程式碼與輸入框 |
-| `background` | `#0c1118` | 編輯器畫布（Vim 的 Normal） |
-| `surface` | `#131c27` | 面板、狀態列、摺疊列、卡片 |
-| `surface-raised` | `#1b2736` | hover、狀態列 b 段、次要按鈕 |
-| `surface-overlay` | `#233246` | 選單、浮動視窗等覆蓋層 |
-| `surface-selected` | `#233d59` | 目前項目、文字選取（Visual） |
-| `border-subtle` | `#253141` | 內部分隔線、縮排導引線 |
-| `border-decorative` | `#35465c` | 視窗分隔線、面板外框 |
-| `border-strong` | `#526780` | 強調外框、捲軸 |
-| `control-border` | `#8193ad` | 必要的控制項邊框（需 ≥3:1） |
-| `text` | `#e6edf5` | 主要文字 |
-| `text-secondary` | `#b8c5d6` | 次要文字、正文段落 |
-| `text-muted` | `#a0b0c5` | 可讀的中繼資料 |
-| `text-disabled` | `#748299` | 只用於停用的控制項 |
-| `action-primary` / `-hover` / `-active` | `#8ab8f5` / `#a2cbff` / `#6ea0e4` | 唯一的動作色系：主要按鈕、NORMAL 模式、目前 buffer 標記 |
-| `action-ink` | `#08111e` | 亮色填色上的深色字 |
-| `link` | `#96c3ff` | 連結、區段圖示、目前樹節點標記 |
-| `focus` | `#b2d5ff` | 焦點框 |
-| `status-info` | `#91c6ff` | 資訊 |
-| `entity-kind` | `#ccafff` | 類型與實體：front matter 的鍵、等級標籤、外部網站、VISUAL 模式 |
-| `entity-file` | `#83d8cf` | 檔案與技術標籤：Markdown 檔圖示、front matter 的值、字串 |
-| `entity-folder`（本地） | `#91c6ff` | 資料夾圖示 |
-| `status-success` / `warning` / `danger` | `#9bd2ac` / `#edca8b` / `#ffa8a1` | 只給真實狀態 |
-| `danger-fill` | `#ffaaa5` | 錯誤晶片的填色（例如 `E404`） |
-| `gutter`（本地） | `#5f6f86` | 行號（裝飾，≥3:1） |
-| `syntax-marker`（本地） | `#8593a8` | `#`、`---`、`//`、`:`、`-` 等 Markdown 標記（當文字讀，≥4.5:1） |
-| `syntax-constant`（本地） | `#f2b48a` | 程式碼裡的常數與數字 |
-| `overlay-scrim`（本地） | `#000000ad` | 對話框背景遮罩 |
+| Token（`--color-*`）                    | 值                                | 角色                                                            |
+| --------------------------------------- | --------------------------------- | --------------------------------------------------------------- |
+| `chrome`、`sidebar`、`tab-inactive`     | `#080c12`                         | 最深層：tabline 底、命令列、檔案樹、程式碼與輸入框              |
+| `background`                            | `#0c1118`                         | 編輯器畫布（Vim 的 Normal）                                     |
+| `surface`                               | `#131c27`                         | 面板、狀態列、摺疊列、卡片                                      |
+| `surface-raised`                        | `#1b2736`                         | hover、狀態列 b 段、次要按鈕                                    |
+| `surface-overlay`                       | `#233246`                         | 選單、浮動視窗等覆蓋層                                          |
+| `surface-selected`                      | `#233d59`                         | 目前項目、文字選取（Visual）                                    |
+| `border-subtle`                         | `#253141`                         | 內部分隔線、縮排導引線                                          |
+| `border-decorative`                     | `#35465c`                         | 視窗分隔線、面板外框                                            |
+| `border-strong`                         | `#526780`                         | 強調外框、捲軸                                                  |
+| `control-border`                        | `#8193ad`                         | 必要的控制項邊框（需 ≥3:1）                                     |
+| `text`                                  | `#e6edf5`                         | 主要文字                                                        |
+| `text-secondary`                        | `#b8c5d6`                         | 次要文字、正文段落                                              |
+| `text-muted`                            | `#a0b0c5`                         | 可讀的中繼資料                                                  |
+| `text-disabled`                         | `#748299`                         | 只用於停用的控制項                                              |
+| `action-primary` / `-hover` / `-active` | `#8ab8f5` / `#a2cbff` / `#6ea0e4` | 唯一的動作色系：主要按鈕、NORMAL 模式、目前 buffer 標記         |
+| `action-ink`                            | `#08111e`                         | 亮色填色上的深色字                                              |
+| `link`                                  | `#96c3ff`                         | 連結、區段圖示、目前樹節點標記                                  |
+| `focus`                                 | `#b2d5ff`                         | 焦點框                                                          |
+| `status-info`                           | `#91c6ff`                         | 資訊                                                            |
+| `entity-kind`                           | `#ccafff`                         | 類型與實體：front matter 的鍵、等級標籤、外部網站、VISUAL 模式  |
+| `entity-file`                           | `#83d8cf`                         | 檔案與技術標籤：Markdown 檔圖示、front matter 的值、字串        |
+| `entity-folder`（本地）                 | `#91c6ff`                         | 資料夾圖示                                                      |
+| `status-success` / `warning` / `danger` | `#9bd2ac` / `#edca8b` / `#ffa8a1` | 只給真實狀態                                                    |
+| `danger-fill`                           | `#ffaaa5`                         | 錯誤晶片的填色（例如 `E404`）                                   |
+| `gutter`（本地）                        | `#5f6f86`                         | 行號（裝飾，≥3:1）                                              |
+| `syntax-marker`（本地）                 | `#8593a8`                         | `#`、`---`、`//`、`:`、`-` 等 Markdown 標記（當文字讀，≥4.5:1） |
+| `syntax-constant`（本地）               | `#f2b48a`                         | 程式碼裡的常數與數字                                            |
+| `overlay-scrim`（本地）                 | `#000000ad`                       | 對話框背景遮罩                                                  |
 
 規則：
 
@@ -86,7 +86,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 ```text
 +------------------+----------------------------------------------------------------------------+
-| [=] (o) DennySORA| |README.md [d] blog [d] note [d] ai [d] projects paper-daily^ [/] GH @ lang|  <- tabline
+| [=] (o) DennySORA| |README.md [d] blog [d] note [d] projects [/] GH @ lang|  <- tabline
 +------------------+----------------------------------------------------------------------------+
 | Explorer         | ~ dennysora > [d] note > [md] analgesics.md                                |  <- winbar
 | ~/dennysora      |   1  ---                                                                   |
@@ -102,15 +102,15 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 圖例：`[=]` 檔案樹收合鈕、`(o)` Logo、`[d]` 資料夾、`[md]` Markdown 檔、`|README.md` 為目前 buffer 的左側標記、`^` 為外部連結、`GH @ lang` 為 GitHub、Email 與語言、`>`／`<` 為 powerline 箭頭。實際畫面用 `Icon.tsx` 的 SVG 圖示與三語文字。
 
-| 區塊 | 元件／class | 尺寸 | 規則 |
-|---|---|---|---|
-| Tabline | `TabLine.tsx`／`.tabline` | 38px，手機為 52＋44px 兩列 | 左段寬度等於檔案樹（放收合鈕與品牌）；中段是 buffers；右段是搜尋、快速連結、語言與窄螢幕的檔案樹按鈕 |
-| Buffers | `.buffers`、`.tab` | 列高 | 每個區域一個 buffer（README.md、blog、note、ai、projects、paper-daily；AI 自 2026-10-18 起是和筆記同一層的區域），內頁以目前檔案 buffer（`.tab-preview`）插在所屬區域後。目前 buffer 用 `background` 底、粗體與左側 2px `action-primary` 標記 |
-| 檔案樹 | `Explorer.tsx`／`.sidebar` | 248px，sticky | neo-tree 外觀：展開箭頭、資料夾與檔案圖示、縮排導引線、空資料夾顯示「（空）」。縮排與 neo-tree 預設相同（`indent_size` 2、`padding` 1）：以「格」排版，一格是等寬字的字元寬，像終端機一樣對齊整數像素；每列先空一格，每深一層多兩格，第 n 層的展開箭頭或標記在第 2n−1 格、圖示在第 2n+1 格，所以子項目的箭頭正好在上一層圖示下方，任何深度都一樣，列尾也留一格。第一層沒有標記；更深的檔案在自己那格畫「│」，同層最後一個畫「└」，祖先後面還有同層項目時在祖先那格延續「│」；線畫在列的上層，滑過或目前的列也看得到。沒有 JavaScript 時資料夾沒有展開箭頭，改畫和檔案相同的標記。名稱依目前語言顯示：頂層、資料夾與文件都用該語言的短名稱（例如「1 句子結構」「1 Structure」「1 文の構造」），以在 248px 內放得下為目標，但一律不截斷、不出現省略號：一列比檔案樹寬時（層級深或名稱長），檔案樹像 Vim 的 nowrap 視窗一樣可以向右捲動，每列與最寬的一列同寬，側欄的標題列固定不動，手機抽屜只橫捲檔案樹；完整標題放在提示文字與讀屏文字；產品名稱（例如 dgxtop）各語言相同。資料夾預設收合，只展開通往目前頁面的路徑（目前頁面是資料夾時也展開它），每次換頁重新套用；資料夾圖示跟著開合狀態。沒有 JavaScript 時展開箭頭無法使用，所以全部展開。整個檔案樹可收合，收合後內容置中 |
-| Winbar | `WinBar.tsx`／`.winbar` | 28px，sticky | 路徑麵包屑，每段帶圖示；有頁面的段落才是連結 |
-| Buffer | `main > .buffer`／`.container` | 行號欄 56px（≤1099px 為 48px，<768px 隱藏） | 見 §8 |
-| 狀態列 | `StatusLine.tsx`／`.statusbar` | 26px，fixed | 模式 ▶ 分支 ▶ 檔案 … 語言 │ 編碼 │ 檔案類型 ◀ 位置；powerline 箭頭用各段自己的底色裁出 |
-| 命令列 | `.cmdline` | 24px（<768px 隱藏） | NORMAL 時顯示 `"目前檔案路徑"`，INSERT／VISUAL 時顯示 `-- INSERT --`／`-- VISUAL --` |
+| 區塊    | 元件／class                    | 尺寸                                        | 規則                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------- | ------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tabline | `TabLine.tsx`／`.tabline`      | 38px，手機為 52＋44px 兩列                  | 左段寬度等於檔案樹（放收合鈕與品牌）；中段是 buffers；右段是搜尋、快速連結、語言與窄螢幕的檔案樹按鈕                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Buffers | `.buffers`、`.tab`             | 列高                                        | 每個區域一個 buffer（README.md、blog、note、projects；AI／影片內容與論文日報入口已於 2026-10-22 依擁有者要求移除），內頁以目前檔案 buffer（`.tab-preview`）插在所屬區域後。目前 buffer 用 `background` 底、粗體與左側 2px `action-primary` 標記                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 檔案樹  | `Explorer.tsx`／`.sidebar`     | 248px，sticky                               | neo-tree 外觀：展開箭頭、資料夾與檔案圖示、縮排導引線、空資料夾顯示「（空）」。縮排與 neo-tree 預設相同（`indent_size` 2、`padding` 1）：以「格」排版，一格是等寬字的字元寬，像終端機一樣對齊整數像素；每列先空一格，每深一層多兩格，第 n 層的展開箭頭或標記在第 2n−1 格、圖示在第 2n+1 格，所以子項目的箭頭正好在上一層圖示下方，任何深度都一樣，列尾也留一格。第一層沒有標記；更深的檔案在自己那格畫「│」，同層最後一個畫「└」，祖先後面還有同層項目時在祖先那格延續「│」；線畫在列的上層，滑過或目前的列也看得到。沒有 JavaScript 時資料夾沒有展開箭頭，改畫和檔案相同的標記。名稱依目前語言顯示：頂層、資料夾與文件都用該語言的短名稱（例如「1 句子結構」「1 Structure」「1 文の構造」），以在 248px 內放得下為目標，但一律不截斷、不出現省略號：一列比檔案樹寬時（層級深或名稱長），檔案樹像 Vim 的 nowrap 視窗一樣可以向右捲動，每列與最寬的一列同寬，側欄的標題列固定不動，手機抽屜只橫捲檔案樹；完整標題放在提示文字與讀屏文字；產品名稱（例如 dgxtop）各語言相同。資料夾預設收合，只展開通往目前頁面的路徑（目前頁面是資料夾時也展開它），每次換頁重新套用；資料夾圖示跟著開合狀態。沒有 JavaScript 時展開箭頭無法使用，所以全部展開。整個檔案樹可收合，收合後內容置中 |
+| Winbar  | `WinBar.tsx`／`.winbar`        | 28px，sticky                                | 路徑麵包屑，每段帶圖示；有頁面的段落才是連結                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Buffer  | `main > .buffer`／`.container` | 行號欄 56px（≤1099px 為 48px，<768px 隱藏） | 見 §8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 狀態列  | `StatusLine.tsx`／`.statusbar` | 26px，fixed                                 | 模式 ▶ 分支 ▶ 檔案 … 語言 │ 編碼 │ 檔案類型 ◀ 位置；powerline 箭頭用各段自己的底色裁出                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 命令列  | `.cmdline`                     | 24px（<768px 隱藏）                         | NORMAL 時顯示 `"目前檔案路徑"`，INSERT／VISUAL 時顯示 `-- INSERT --`／`-- VISUAL --`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 寬度：≥1100px 為 tabline＋檔案樹＋視窗；768–1099px 隱藏檔案樹，改由 tabline 右側按鈕開啟左側抽屜（dialog）；<768px 的 tabline 分成品牌列與可橫捲的 buffer 列，winbar、行號、命令列隱藏，狀態列放在頁面最後。支援 320–1920px，不可出現頁面層級的水平捲動。
 
@@ -118,16 +118,16 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 ## 4. 字體
 
-| 角色 | 字體 | 大小／行高 | 用途 |
-|---|---|---|---|
-| 首頁名稱 | sans 650 | 42px（手機 34px）／1.2 | 只在 README 的 `#` 標題 |
-| 頁面標題 h1 | sans 650 | 30px（手機 26px）／1.35 | 每頁一個 |
-| 區段標題 h2 | sans 650 | 21–23px／1.4，下方 1px `border-subtle` | Markdown 的 `##` |
-| 小標 h3 | sans 650 | 17–19px | 能力、經歷、筆記項目 |
-| 正文 | sans 400 | 15.5–17px／1.85–1.9（英文 1.78） | 中文約 30–40 字一行，英文 ≤72ch |
-| 外框與標籤 | mono | 12–13px | tabline、檔案樹、winbar、狀態列、按鈕、篩選、`//` 註解 |
-| 中繼資料 | mono | 12–12.5px | 日期、路徑、檔名、數量、鍵名 |
-| 程式碼 | mono | 14px／1.7 | 程式碼區塊與行內 code |
+| 角色        | 字體     | 大小／行高                             | 用途                                                   |
+| ----------- | -------- | -------------------------------------- | ------------------------------------------------------ |
+| 首頁名稱    | sans 650 | 42px（手機 34px）／1.2                 | 只在 README 的 `#` 標題                                |
+| 頁面標題 h1 | sans 650 | 30px（手機 26px）／1.35                | 每頁一個                                               |
+| 區段標題 h2 | sans 650 | 21–23px／1.4，下方 1px `border-subtle` | Markdown 的 `##`                                       |
+| 小標 h3     | sans 650 | 17–19px                                | 能力、經歷、筆記項目                                   |
+| 正文        | sans 400 | 15.5–17px／1.85–1.9（英文 1.78）       | 中文約 30–40 字一行，英文 ≤72ch                        |
+| 外框與標籤  | mono     | 12–13px                                | tabline、檔案樹、winbar、狀態列、按鈕、篩選、`//` 註解 |
+| 中繼資料    | mono     | 12–12.5px                              | 日期、路徑、檔名、數量、鍵名                           |
+| 程式碼      | mono     | 14px／1.7                              | 程式碼區塊與行內 code                                  |
 
 - sans：`--font-sans`（日文頁面 `--font-sans-ja`）；mono：`--font-code`（系統等寬字，CJK 落到系統字體）。**不下載任何字型檔**，也不使用 Nerd Font 字元。
 - Markdown 標記（`#`、`##`）用 mono 與 `syntax-marker` 色，標題文字仍是 sans。
@@ -139,13 +139,13 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **圓角**：`--radius-chip` 4px（晶片、摺疊列）、`--radius-control` 6px（按鈕、輸入框、程式碼區塊）、`--radius-card` 10px（面板、浮動視窗、卡片）。不用大膠囊、不做巢狀卡片。
 - **材質預算**（只能用在指名的區域）：
 
-| 區域 | 允許 | 限制 |
-|---|---|---|
-| 畫布、檔案樹、外框 | 實色 token | 不放背景圖、漸層、動態背景 |
-| 一般分組面板（`.collection`、`.comments-panel`） | 1px 內緣高光 `--edge-highlight` | 不加陰影 |
-| 凸起面板（目前只有首頁 Logo 浮動視窗 `.readme-logo`） | 頂部 3.5% 白光＋內緣＋`--panel-shadow` | 每個畫面最多 2 個 |
-| 主要按鈕 `.button-primary` | `action-primary → action-active` 的兩段漸層＋內緣 | 每個區域只有一個主要動作 |
-| 覆蓋層（語言選單、抽屜） | 不透明 `surface-overlay`＋`control-border`＋`--overlay-shadow` | 不用玻璃模糊 |
+| 區域                                                  | 允許                                                           | 限制                       |
+| ----------------------------------------------------- | -------------------------------------------------------------- | -------------------------- |
+| 畫布、檔案樹、外框                                    | 實色 token                                                     | 不放背景圖、漸層、動態背景 |
+| 一般分組面板（`.collection`、`.comments-panel`）      | 1px 內緣高光 `--edge-highlight`                                | 不加陰影                   |
+| 凸起面板（目前只有首頁 Logo 浮動視窗 `.readme-logo`） | 頂部 3.5% 白光＋內緣＋`--panel-shadow`                         | 每個畫面最多 2 個          |
+| 主要按鈕 `.button-primary`                            | `action-primary → action-active` 的兩段漸層＋內緣              | 每個區域只有一個主要動作   |
+| 覆蓋層（語言選單、抽屜）                              | 不透明 `surface-overlay`＋`control-border`＋`--overlay-shadow` | 不用玻璃模糊               |
 
 一律禁止：霓虹光暈、彩色模糊陰影、`text-shadow`、`backdrop-filter`、掃描線、雜訊、hover 時位移或浮起、逐列漸層。
 
@@ -157,16 +157,16 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **尺寸**：12–14px（行內中繼資料、外部標記）、16px（buffer、檔案樹、按鈕、winbar）、18–20px（選單、區段標題）、26px（h1）。
 - **顏色依角色，不另創色**：
 
-| 對象 | 圖示 | 顏色 |
-|---|---|---|
-| Markdown 檔案 | `markdown` | `entity-file` |
-| 資料夾 | `folder`／展開或目前時 `folder-open` | `entity-folder` |
-| 外部網站（論文日報） | `newspaper`＋`arrow-up-right` | `entity-kind` |
-| 搜尋 | `search`、提示字元 `prompt` | `link` |
-| 錯誤／找不到 | `circle-x` | `status-danger`（真的錯誤時） |
-| 區段標題與開始選單 | 依內容選（`briefcase`、`branch`、`pen`、`notebook`、`network`…） | `link` |
-| 一般外框圖示 | 例如 `sidebar`、`globe`、`github`、`mail` | `text-secondary`／`text-muted` |
-| 程式碼來源連結 | GitHub 網址用 `github`，其他用 `link`（`linkIcon()`） | `entity-file` |
+| 對象                 | 圖示                                                             | 顏色                           |
+| -------------------- | ---------------------------------------------------------------- | ------------------------------ |
+| Markdown 檔案        | `markdown`                                                       | `entity-file`                  |
+| 資料夾               | `folder`／展開或目前時 `folder-open`                             | `entity-folder`                |
+| 外部網站（論文日報） | `newspaper`＋`arrow-up-right`                                    | `entity-kind`                  |
+| 搜尋                 | `search`、提示字元 `prompt`                                      | `link`                         |
+| 錯誤／找不到         | `circle-x`                                                       | `status-danger`（真的錯誤時）  |
+| 區段標題與開始選單   | 依內容選（`briefcase`、`branch`、`pen`、`notebook`、`network`…） | `link`                         |
+| 一般外框圖示         | 例如 `sidebar`、`globe`、`github`、`mail`                        | `text-secondary`／`text-muted` |
+| 程式碼來源連結       | GitHub 網址用 `github`，其他用 `link`（`linkIcon()`）            | `entity-file`                  |
 
 - **無障礙**：旁邊有文字時圖示 `aria-hidden`（`Icon` 預設如此）；只有圖示的控制項必須有 `aria-label`，並以 `title` 提供提示；狀態圖示一定搭配文字。圖片裡的文字永遠不是真正的標籤。
 
@@ -178,20 +178,19 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 目前的插圖（以紀錄檔為準）：
 
-| 檔案 | 用途 | 顯示尺寸 |
-|---|---|---|
-| `collection-network-v1.webp` | 「軟體」筆記資料夾與其下的網路、P2P | 88px |
-| `collection-medicine-v1.webp` | 「健康與醫學」筆記資料夾與其下的藥物、病理 | 88px |
-| `collection-hardware-v1.webp` | 「硬體」筆記集合與分類 | 88px |
-| `collection-tools-v1.webp` | 「專案／工具」目錄與工具資料夾 | 88px |
-| `collection-japan-v1.webp` | 「日本」筆記集合與日語分類 | 88px |
-| `collection-health-v1.webp` | 「健康與醫學」下的「日常照顧」 | 88px |
-| `collection-other-v1.webp` | 「其他」筆記資料夾 | 88px |
-| `collection-ai-v1.webp` | 「AI」筆記資料夾與其下的影片、數據比較 | 88px |
-| `search-telescope-v1.webp` | 全站搜尋頁首 | 112px |
-| `empty-blog-v1.webp` | 部落格沒有文章時 | ≤320px 寬 |
-| `not-found-v1.webp` | 404 | ≤360px 寬 |
-| `medical-notes.webp` | 止痛藥筆記的封面（既有，非透明） | 內容寬 |
+| 檔案                          | 用途                                       | 顯示尺寸  |
+| ----------------------------- | ------------------------------------------ | --------- |
+| `collection-network-v1.webp`  | 「軟體」筆記資料夾與其下的網路、P2P        | 88px      |
+| `collection-medicine-v1.webp` | 「健康與醫學」筆記資料夾與其下的藥物、病理 | 88px      |
+| `collection-hardware-v1.webp` | 「硬體」筆記集合與分類                     | 88px      |
+| `collection-tools-v1.webp`    | 「專案／工具」目錄與工具資料夾             | 88px      |
+| `collection-japan-v1.webp`    | 「日本」筆記集合與日語分類                 | 88px      |
+| `collection-health-v1.webp`   | 「健康與醫學」下的「日常照顧」             | 88px      |
+| `collection-other-v1.webp`    | 「其他」筆記資料夾                         | 88px      |
+| `search-telescope-v1.webp`    | 全站搜尋頁首                               | 112px     |
+| `empty-blog-v1.webp`          | 部落格沒有文章時                           | ≤320px 寬 |
+| `not-found-v1.webp`           | 404                                        | ≤360px 寬 |
+| `medical-notes.webp`          | 止痛藥筆記的封面（既有，非透明）           | 內容寬    |
 
 **品牌圖**（`logo.png`、`logo-hero*.webp`、`avatar.png`、favicon）永遠不重畫、不改色、不加濾鏡、不裁切。可以放進浮動視窗外框裡，以 bytes 檢查守護。
 
@@ -251,35 +250,35 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 ## 9. 元件配方
 
-| 元件 | class | 外觀 | 狀態 |
-|---|---|---|---|
-| 主要按鈕 | `.button.button-primary` | 藍色兩段漸層、深色字、mono 13px、6px 圓角 | hover 改純 `action-hover`；按下改 `action-active` |
-| 次要按鈕 | `.button` | `surface-raised` 底＋`control-border` | hover `surface-overlay`；按下 `chrome` |
-| 安靜按鈕 | `.button.button-quiet` | 透明底＋`border-decorative` | hover `surface-raised` |
-| 文字動作 | `.text-action`、`.text-button` | mono 13px 連結色＋圖示 | hover 底線 |
-| 圖示按鈕 | `.icon-button` | 30px（手機 44px）、透明 | hover `surface-raised`，必須有名稱與 `title` |
-| 標籤 | `.label` | `entity-kind` 字＋12% 混入 `surface` 的底 | — |
-| 標籤連結 | `.tag-link` | mono＋`#` 標記 | hover 底線 |
-| 通知 | `.notice[data-status]` | 左側 3px 狀態色＋圖示＋文字 | 只用真實狀態 |
-| 搜尋輸入 | `.search-field` | 凹陷 `chrome` 底、`/` 或 `>_` 提示圖示 | 聚焦時 `focus` 外框；狀態列切到 INSERT |
-| 篩選 | `.filter-row button[aria-pressed]` | 透明底 | 選中：`surface-selected`＋底部 2px 藍線 |
-| 檔案列表 | `.file-list`、`.collection-files` | 檔案圖示＋mono 檔名＋sans 標題 | hover 標題變連結色 |
-| 集合卡片 | `.collection` | 88px 插圖＋資料夾標題＋說明＋檔案列 | hover 邊框變強 |
-| 搜尋結果 | `.site-search-results li` | 類型圖示＋中繼資料＋標題＋摘要＋路徑，每項只有一個連結 | hover／focus-within 左側 2px 標記 |
-| 空狀態 | `.empty-state` | 插圖或圖示＋h2＋說明＋**下一步動作** | 不可只留一句「沒有資料」 |
-| 錯誤晶片 | `.vim-error` | `danger-fill` 底、深色字、`circle-x`＋代碼 | — |
-| 程式碼區塊 | `.code-block` | `chrome` 底、`surface` 標題列（語言或檔名）、自身橫向捲動 | 複製按鈕回報真實結果 |
-| 筆記資料圖表 | `.hw-chart`（`hardware-notes.css`，硬體筆記與學習筆記共用） | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表。學習筆記的長條清單讓名稱獨占一行、數值接在長條之後，長名稱不會壓到數字 | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動 |
-| 推薦卡片 | `.hw-pick` | `surface` 卡片＋名次（mono、`entity-file`）＋標題＋定位（`entity-kind`）＋數據列＋理由與注意＋證據標籤＋來源 | 單欄排列，每張卡片只有標題一個行號 |
-| 學習筆記 | `.study-note`（`study-notes.css`） | 日語系列、腰椎保護與風景攝影共用：頁首（`//` 眉標、h1、導言、數字卡、範圍晶片）、章節眉標＋h2、在自身區域捲動的表格、`.sn-callout`（資訊色左邊框；`data-status="warning"` 只給真實警告，金色只上在邊框與標題，正文維持一般文字色） | 每個 h1、h2 一個行號；系列目錄以 `surface-selected`＋2px 標記表示目前這篇 |
-| 日文例句與釋義 | `.sn-example`、`.sn-jp`、`.sn-gloss`、`.sn-analysis`、`.sn-takeaway` | 例句與日文表格欄位標 `lang="ja"`，使用日文字型並在三語版本逐字保留，元素裡不放中文標籤或釋義；句中其他日文由 `markJapanese` 在中文版與英文版輸出時補標 `lang="ja"`；類型標籤後是真正的空格；句中的日文形式用 `.sn-jp` 晶片（sans，不用等寬）；中文釋義 `.sn-gloss` 在日文版隱藏；編輯解析是 `surface` 面板，易錯點、核心、辨析等種類用 `entity-kind` 的 `.sn-kind` 類型標籤 | 不用狀態色區分種類；錯誤與正確形式以文字的 ×／○ 標示 |
-| 照片與構圖疊圖 | `.sn-photo`、`.sn-guides`、`.sn-legend` | 浮動視窗：`.float-title`（`image` 圖示＋實際檔名＋真實像素）、`chrome` 底、`--edge-highlight`。疊圖依照片的實際比例繪製：三分線 `text` 虛線、視線路徑 `link` 虛線、保留元素 `entity-file` 實線圈、檢查元素 `entity-kind` 虛線圈，每條線下方有 `chrome` 描邊；編號圓點對應圖下說明，圖例不只靠顏色 | 每張照片一個「輔助線」切換鈕（`aria-pressed`，只在 JavaScript 下顯示），全頁可關閉三分線或標記；沒有 JavaScript 時疊圖照常顯示；只有封面 eager，其餘 lazy；GPT 生成的構圖示意圖沿用同一個視窗，標題列寫「GPT 生成 · 寬 × 高」，替代文字以生成來源開頭，圖上的標註屬於圖片本身、不能關閉 |
-| 內文分頁 | `.sn-tabs`、`.sn-tabpanel`（`study-notes.css`） | 筆記太長時把章節分到內文分頁：一列 mono 13px 的分頁連結（圖示＋名稱），sticky 在 winbar 下方並延伸蓋住行號欄；選中的分頁 `surface-selected`＋底部 2px `action-primary` 線 | 有 JavaScript 時是 ARIA tablist：一次顯示一個面板，方向鍵、Home、End 切換，網址記住目前分頁，連到其他分頁內容的錨點會先切換分頁；沒有 JavaScript 時所有面板依序顯示，分頁列就是目錄；列印時全部面板都印出、分頁列隱藏；窄螢幕時分頁列在自身範圍橫向捲動 |
-| 比較影片 | `.sn-video`（`study-notes.css`） | 沿用照片浮動視窗：`.float-title`（`film` 圖示＋實際檔名＋真實像素與秒數）、標題與一句說明、`<video>`（原生控制列、`preload="none"`、同源封面）；下方是對應 2×2 畫面的圖例 `.sn-tiles`（位置 `entity-kind` mono、元件 ID `entity-file`），以及聲音切換 `.sn-audio`（安靜按鈕，`aria-pressed` 選中時 `surface-selected`＋底部 2px 藍線） | 影片畫面上不畫文字，三種語言共用一支影片；按下播放前不連任何第三方；聲音切換是 `requires-js`，沒有 JavaScript 時原生控制列照常播放預設音軌；窄於 560px 時圖例改為單欄 |
-| 元件卡片 | `.sn-run`（`study-notes.css`） | `surface` 卡片：標題（h5）＋元件 ID、5 格畫格條、`.sn-figures` 數據列、摺疊裡的原始輸出影片 | 畫格條 lazy；沒有成片的元件以 `.sn-run-error` 表示（`status-danger` 左邊框＋`circle-x`，因為那是真的錯誤） |
-| 專案截圖 | `.project-shot`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋真實檔名＋真實像素尺寸）、`chrome` 底、`--edge-highlight`，不加陰影；截圖連到原尺寸檔；說明在下方 | 截圖不裁切、不加濾鏡，可識別資訊（序號、UUID）先打碼；只有第一張 eager，其餘 lazy；畫廊每列最少 420px |
-| 專案架構圖 | `.dg`（`projects.css`） | 標題列（粗體標題＋一句讀法）＋由真正文字組成的節點與箭頭（清單，時間軸用內嵌 SVG）；資料路徑 `entity-file` 實線、控制路徑 `entity-kind` 虛線、節點 `surface`、晶片 `border-subtle` | 不用狀態色（圖裡沒有真實狀態）；窄螢幕流程改成直向 ↓，SVG 在自身可聚焦區域捲動；整張圖只有一個行號 |
-| 專案技術圖 | `.project-diagram`（`projects.css`） | 浮動視窗：`.float-title`（`image` 圖示＋「GPT 生成 · 寬 × 高」，英文為 「GPT-generated · 寬 × 高」）、`chrome` 底、`--edge-highlight`，不加陰影；圖連到原尺寸檔；說明在下方 | 每種語言載入自己的那張；替代文字以生成來源開頭；全部 lazy；圖上的文字屬於圖片本身，正文完整說明同樣的內容 |
+| 元件           | class                                                                | 外觀                                                                                                                                                                                                                                                                                                                                                                        | 狀態                                                                                                                                                                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 主要按鈕       | `.button.button-primary`                                             | 藍色兩段漸層、深色字、mono 13px、6px 圓角                                                                                                                                                                                                                                                                                                                                   | hover 改純 `action-hover`；按下改 `action-active`                                                                                                                                                                                                                                       |
+| 次要按鈕       | `.button`                                                            | `surface-raised` 底＋`control-border`                                                                                                                                                                                                                                                                                                                                       | hover `surface-overlay`；按下 `chrome`                                                                                                                                                                                                                                                  |
+| 安靜按鈕       | `.button.button-quiet`                                               | 透明底＋`border-decorative`                                                                                                                                                                                                                                                                                                                                                 | hover `surface-raised`                                                                                                                                                                                                                                                                  |
+| 文字動作       | `.text-action`、`.text-button`                                       | mono 13px 連結色＋圖示                                                                                                                                                                                                                                                                                                                                                      | hover 底線                                                                                                                                                                                                                                                                              |
+| 圖示按鈕       | `.icon-button`                                                       | 30px（手機 44px）、透明                                                                                                                                                                                                                                                                                                                                                     | hover `surface-raised`，必須有名稱與 `title`                                                                                                                                                                                                                                            |
+| 標籤           | `.label`                                                             | `entity-kind` 字＋12% 混入 `surface` 的底                                                                                                                                                                                                                                                                                                                                   | —                                                                                                                                                                                                                                                                                       |
+| 標籤連結       | `.tag-link`                                                          | mono＋`#` 標記                                                                                                                                                                                                                                                                                                                                                              | hover 底線                                                                                                                                                                                                                                                                              |
+| 通知           | `.notice[data-status]`                                               | 左側 3px 狀態色＋圖示＋文字                                                                                                                                                                                                                                                                                                                                                 | 只用真實狀態                                                                                                                                                                                                                                                                            |
+| 搜尋輸入       | `.search-field`                                                      | 凹陷 `chrome` 底、`/` 或 `>_` 提示圖示                                                                                                                                                                                                                                                                                                                                      | 聚焦時 `focus` 外框；狀態列切到 INSERT                                                                                                                                                                                                                                                  |
+| 篩選           | `.filter-row button[aria-pressed]`                                   | 透明底                                                                                                                                                                                                                                                                                                                                                                      | 選中：`surface-selected`＋底部 2px 藍線                                                                                                                                                                                                                                                 |
+| 檔案列表       | `.file-list`、`.collection-files`                                    | 檔案圖示＋mono 檔名＋sans 標題                                                                                                                                                                                                                                                                                                                                              | hover 標題變連結色                                                                                                                                                                                                                                                                      |
+| 集合卡片       | `.collection`                                                        | 88px 插圖＋資料夾標題＋說明＋檔案列                                                                                                                                                                                                                                                                                                                                         | hover 邊框變強                                                                                                                                                                                                                                                                          |
+| 搜尋結果       | `.site-search-results li`                                            | 類型圖示＋中繼資料＋標題＋摘要＋路徑，每項只有一個連結                                                                                                                                                                                                                                                                                                                      | hover／focus-within 左側 2px 標記                                                                                                                                                                                                                                                       |
+| 空狀態         | `.empty-state`                                                       | 插圖或圖示＋h2＋說明＋**下一步動作**                                                                                                                                                                                                                                                                                                                                        | 不可只留一句「沒有資料」                                                                                                                                                                                                                                                                |
+| 錯誤晶片       | `.vim-error`                                                         | `danger-fill` 底、深色字、`circle-x`＋代碼                                                                                                                                                                                                                                                                                                                                  | —                                                                                                                                                                                                                                                                                       |
+| 程式碼區塊     | `.code-block`                                                        | `chrome` 底、`surface` 標題列（語言或檔名）、自身橫向捲動                                                                                                                                                                                                                                                                                                                   | 複製按鈕回報真實結果                                                                                                                                                                                                                                                                    |
+| 筆記資料圖表   | `.hw-chart`（`hardware-notes.css`，硬體筆記與學習筆記共用）          | 內嵌 SVG，只用 class 取 token：資料 `entity-file`、對照 `border-strong`、假設線 `entity-kind` 虛線、格線 `border-subtle`、文字只用 text 系列；兩個以上類別一定有圖例；每張圖都有資料表。學習筆記的長條清單讓名稱獨占一行、數值接在長條之後，長名稱不會壓到數字                                                                                                              | 數值放在 `<title>` 提示；長條清單在 320px 不捲動，只有寬圖在自身容器內捲動                                                                                                                                                                                                              |
+| 推薦卡片       | `.hw-pick`                                                           | `surface` 卡片＋名次（mono、`entity-file`）＋標題＋定位（`entity-kind`）＋數據列＋理由與注意＋證據標籤＋來源                                                                                                                                                                                                                                                                | 單欄排列，每張卡片只有標題一個行號                                                                                                                                                                                                                                                      |
+| 學習筆記       | `.study-note`（`study-notes.css`）                                   | 日語系列、腰椎保護與風景攝影共用：頁首（`//` 眉標、h1、導言、數字卡、範圍晶片）、章節眉標＋h2、在自身區域捲動的表格、`.sn-callout`（資訊色左邊框；`data-status="warning"` 只給真實警告，金色只上在邊框與標題，正文維持一般文字色）                                                                                                                                          | 每個 h1、h2 一個行號；系列目錄以 `surface-selected`＋2px 標記表示目前這篇                                                                                                                                                                                                               |
+| 日文例句與釋義 | `.sn-example`、`.sn-jp`、`.sn-gloss`、`.sn-analysis`、`.sn-takeaway` | 例句與日文表格欄位標 `lang="ja"`，使用日文字型並在三語版本逐字保留，元素裡不放中文標籤或釋義；句中其他日文由 `markJapanese` 在中文版與英文版輸出時補標 `lang="ja"`；類型標籤後是真正的空格；句中的日文形式用 `.sn-jp` 晶片（sans，不用等寬）；中文釋義 `.sn-gloss` 在日文版隱藏；編輯解析是 `surface` 面板，易錯點、核心、辨析等種類用 `entity-kind` 的 `.sn-kind` 類型標籤 | 不用狀態色區分種類；錯誤與正確形式以文字的 ×／○ 標示                                                                                                                                                                                                                                    |
+| 照片與構圖疊圖 | `.sn-photo`、`.sn-guides`、`.sn-legend`                              | 浮動視窗：`.float-title`（`image` 圖示＋實際檔名＋真實像素）、`chrome` 底、`--edge-highlight`。疊圖依照片的實際比例繪製：三分線 `text` 虛線、視線路徑 `link` 虛線、保留元素 `entity-file` 實線圈、檢查元素 `entity-kind` 虛線圈，每條線下方有 `chrome` 描邊；編號圓點對應圖下說明，圖例不只靠顏色                                                                           | 每張照片一個「輔助線」切換鈕（`aria-pressed`，只在 JavaScript 下顯示），全頁可關閉三分線或標記；沒有 JavaScript 時疊圖照常顯示；只有封面 eager，其餘 lazy；GPT 生成的構圖示意圖沿用同一個視窗，標題列寫「GPT 生成 · 寬 × 高」，替代文字以生成來源開頭，圖上的標註屬於圖片本身、不能關閉 |
+| 內文分頁       | `.sn-tabs`、`.sn-tabpanel`（`study-notes.css`）                      | 筆記太長時把章節分到內文分頁：一列 mono 13px 的分頁連結（圖示＋名稱），sticky 在 winbar 下方並延伸蓋住行號欄；選中的分頁 `surface-selected`＋底部 2px `action-primary` 線                                                                                                                                                                                                   | 有 JavaScript 時是 ARIA tablist：一次顯示一個面板，方向鍵、Home、End 切換，網址記住目前分頁，連到其他分頁內容的錨點會先切換分頁；沒有 JavaScript 時所有面板依序顯示，分頁列就是目錄；列印時全部面板都印出、分頁列隱藏；窄螢幕時分頁列在自身範圍橫向捲動                                 |
+| 比較影片       | `.sn-video`（`study-notes.css`）                                     | 沿用照片浮動視窗：`.float-title`（`film` 圖示＋實際檔名＋真實像素與秒數）、標題與一句說明、`<video>`（原生控制列、`preload="none"`、同源封面）；下方是對應 2×2 畫面的圖例 `.sn-tiles`（位置 `entity-kind` mono、元件 ID `entity-file`），以及聲音切換 `.sn-audio`（安靜按鈕，`aria-pressed` 選中時 `surface-selected`＋底部 2px 藍線）                                      | 影片畫面上不畫文字，三種語言共用一支影片；按下播放前不連任何第三方；聲音切換是 `requires-js`，沒有 JavaScript 時原生控制列照常播放預設音軌；窄於 560px 時圖例改為單欄                                                                                                                   |
+| 元件卡片       | `.sn-run`（`study-notes.css`）                                       | `surface` 卡片：標題（h5）＋元件 ID、5 格畫格條、`.sn-figures` 數據列、摺疊裡的原始輸出影片                                                                                                                                                                                                                                                                                 | 畫格條 lazy；沒有成片的元件以 `.sn-run-error` 表示（`status-danger` 左邊框＋`circle-x`，因為那是真的錯誤）                                                                                                                                                                              |
+| 專案截圖       | `.project-shot`（`projects.css`）                                    | 浮動視窗：`.float-title`（`image` 圖示＋真實檔名＋真實像素尺寸）、`chrome` 底、`--edge-highlight`，不加陰影；截圖連到原尺寸檔；說明在下方                                                                                                                                                                                                                                   | 截圖不裁切、不加濾鏡，可識別資訊（序號、UUID）先打碼；只有第一張 eager，其餘 lazy；畫廊每列最少 420px                                                                                                                                                                                   |
+| 專案架構圖     | `.dg`（`projects.css`）                                              | 標題列（粗體標題＋一句讀法）＋由真正文字組成的節點與箭頭（清單，時間軸用內嵌 SVG）；資料路徑 `entity-file` 實線、控制路徑 `entity-kind` 虛線、節點 `surface`、晶片 `border-subtle`                                                                                                                                                                                          | 不用狀態色（圖裡沒有真實狀態）；窄螢幕流程改成直向 ↓，SVG 在自身可聚焦區域捲動；整張圖只有一個行號                                                                                                                                                                                      |
+| 專案技術圖     | `.project-diagram`（`projects.css`）                                 | 浮動視窗：`.float-title`（`image` 圖示＋「GPT 生成 · 寬 × 高」，英文為 「GPT-generated · 寬 × 高」）、`chrome` 底、`--edge-highlight`，不加陰影；圖連到原尺寸檔；說明在下方                                                                                                                                                                                                 | 每種語言載入自己的那張；替代文字以生成來源開頭；全部 lazy；圖上的文字屬於圖片本身，正文完整說明同樣的內容                                                                                                                                                                               |
 
 ## 10. 互動、狀態與動態
 
@@ -325,14 +324,14 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 ## 14. 守護測試
 
-| 檢查 | 守護內容 |
-|---|---|
-| [`tests/unit/design.test.ts`](../tests/unit/design.test.ts) | tokens 數值與單一來源、全部文字角色的對比、模式色與主要按鈕的對比、品牌圖 bytes |
-| [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts) | buffers 是六個區域（README.md、blog、note、ai、projects、paper-daily）；快速連結的名稱包含可見標籤；外框不再有點陣圖符號 |
-| [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts) | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖與技術圖的尺寸與宣告相符，技術圖在三種語言都標明 GPT 生成並載入該語言的檔案；320–1920px 不溢出、axe、無 JavaScript 可讀 |
-| [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；H3 DiT 比較的影片與音軌只引用 `data/note-media.json` 記錄、固定 commit 的 Hugging Face 檔案，`preload="none"`、封面與影片同尺寸，載入頁面時沒有第三方請求；疊圖切換、聲音切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
-| [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts) | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合 |
-| [`tests/unit/explorer.test.ts`](../tests/unit/explorer.test.ts)、[`tests/e2e/explorer.spec.ts`](../tests/e2e/explorer.spec.ts) | 檔案樹的開合、名稱語言與層級；每層縮排兩格、箭頭與圖示落在第 2n−1 與第 2n+1 格（有無 JavaScript 皆同），「│」「└」與祖先導引線依 neo-tree 規則出現；名稱不截斷，一列太寬時檔案樹向右捲動，頁面、標題列與抽屜不橫捲 |
-| [`tests/e2e/site.spec.ts`](../tests/e2e/site.spec.ts) | 第一次載入就是深色（含無 JavaScript）、Logo 原檔、快速連結、無第三方請求 |
-| [`tests/e2e/accessibility.spec.ts`](../tests/e2e/accessibility.spec.ts) | axe 的 WCAG 2.2 AA 檢查（各頁與各種狀態） |
-| [`scripts/check-artifact.ts`](../scripts/check-artifact.ts) | 每張插圖都有紀錄，且 SHA-256 與紀錄相符 |
+| 檢查                                                                                                                                                           | 守護內容                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`tests/unit/design.test.ts`](../tests/unit/design.test.ts)                                                                                                    | tokens 數值與單一來源、全部文字角色的對比、模式色與主要按鈕的對比、品牌圖 bytes                                                                                                                                                                                                                                                                               |
+| [`tests/unit/site-simplification.test.ts`](../tests/unit/site-simplification.test.ts)                                                                          | buffers 是四個區域（README.md、blog、note、projects）；快速連結的名稱包含可見標籤；外框不再有點陣圖符號                                                                                                                                                                                                                                                       |
+| [`tests/unit/projects.test.ts`](../tests/unit/projects.test.ts)、[`tests/e2e/projects.spec.ts`](../tests/e2e/projects.spec.ts)                                 | 專案頁只在撰寫的語言發布；圖表不寫字面色碼；截圖與技術圖的尺寸與宣告相符，技術圖在三種語言都標明 GPT 生成並載入該語言的檔案；320–1920px 不溢出、axe、無 JavaScript 可讀                                                                                                                                                                                       |
+| [`tests/unit/collection-notes.test.ts`](../tests/unit/collection-notes.test.ts)、[`tests/e2e/collection-notes.spec.ts`](../tests/e2e/collection-notes.spec.ts) | 日語系列、腰椎保護與風景攝影只在所屬資料夾的路徑發布；片段不含 script、style 或遠端資源，照片尺寸與宣告相符、沒有未引用的照片；英日版沒有殘留中文、日文例句逐字保留，中文版與英文版沒有未標記的假名，生成的構圖示意圖在三種語言都標明 GPT 生成；已遷移的 AI／影片路徑、素材與媒體紀錄不再發布；疊圖切換、試算工具、320–1920px 不溢出、axe、無 JavaScript 可讀 |
+| [`tests/e2e/layout.spec.ts`](../tests/e2e/layout.spec.ts)                                                                                                      | 語意色、狀態色只用於真實狀態、各狀態的對比、行號共用同一欄、外框內容、320–1920px 不溢出、檔案樹收合                                                                                                                                                                                                                                                           |
+| [`tests/unit/explorer.test.ts`](../tests/unit/explorer.test.ts)、[`tests/e2e/explorer.spec.ts`](../tests/e2e/explorer.spec.ts)                                 | 檔案樹的開合、名稱語言與層級；每層縮排兩格、箭頭與圖示落在第 2n−1 與第 2n+1 格（有無 JavaScript 皆同），「│」「└」與祖先導引線依 neo-tree 規則出現；名稱不截斷，一列太寬時檔案樹向右捲動，頁面、標題列與抽屜不橫捲                                                                                                                                            |
+| [`tests/e2e/site.spec.ts`](../tests/e2e/site.spec.ts)                                                                                                          | 第一次載入就是深色（含無 JavaScript）、Logo 原檔、快速連結、無第三方請求                                                                                                                                                                                                                                                                                      |
+| [`tests/e2e/accessibility.spec.ts`](../tests/e2e/accessibility.spec.ts)                                                                                        | axe 的 WCAG 2.2 AA 檢查（各頁與各種狀態）                                                                                                                                                                                                                                                                                                                     |
+| [`scripts/check-artifact.ts`](../scripts/check-artifact.ts)                                                                                                    | 每張插圖都有紀錄，且 SHA-256 與紀錄相符                                                                                                                                                                                                                                                                                                                       |

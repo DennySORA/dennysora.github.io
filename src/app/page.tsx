@@ -39,7 +39,6 @@ import { searchCopy } from '../features/search/search-copy.ts';
 import { Library } from '../features/library/Library.tsx';
 import { TagIndex, TaxonomyPage } from '../features/library/TaxonomyPages.tsx';
 import { Article } from '../features/reader/Article.tsx';
-import { ResearchBridge } from '../features/research/ResearchBridge.tsx';
 import { Notes } from '../features/notes/Notes.tsx';
 import { MedicalNote } from '../features/notes/MedicalNote.tsx';
 import { medicalNotes } from '../lib/medical-notes.ts';
@@ -292,8 +291,6 @@ function loadView(route: RouteDescriptor) {
         projectId: route.projectId,
         tags: projectTags(route.projectId, locale),
       };
-    case 'research':
-      return { kind: 'research' as const };
     case 'not-found':
       return { kind: 'not-found' as const };
   }
@@ -415,11 +412,6 @@ function describe(view: ViewData, locale: Locale) {
         description: project.description[locale],
       };
     }
-    case 'research':
-      return {
-        title: withSite(t.researchBridgeEyebrow),
-        description: t.researchBridgeText,
-      };
     case 'not-found':
       return { title: withSite('404'), description: t.notFoundText };
   }
@@ -633,8 +625,6 @@ function View({ data }: { data: PageData }) {
           <ProjectPageChunk view={view} locale={locale} />
         </Suspense>
       );
-    case 'research':
-      return <ResearchBridge locale={locale} />;
     case 'not-found':
       return <NotFound locale={locale} />;
   }

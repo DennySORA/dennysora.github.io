@@ -28,7 +28,6 @@ import { searchArticles, type SearchHit } from '../../lib/pagefind-client.ts';
 import { pageIds } from '../../lib/page-ids.ts';
 import { parseRoute } from '../../lib/route-manifest.ts';
 import { matchSearch } from '../../lib/search.ts';
-import { papersUrl } from '../../lib/site.ts';
 
 type LibraryView = Extract<ViewData, { kind: 'library' }>;
 type SearchStatus = 'idle' | 'loading' | 'ready' | 'partial';
@@ -467,12 +466,6 @@ export function Library({
               <a className="button button-primary" href={`/${locale}/note/`}>
                 <Icon name="notebook" size={18} />
                 {t.browseNotes}
-              </a>
-              <a className="button button-quiet resource-link" href={papersUrl}>
-                <Icon name="newspaper" size={18} />
-                {t.researchBridgePapers}
-                <Icon name="arrow-up-right" size={14} />
-                <span className="sr-only">（{t.newTab}）</span>
               </a>
             </div>
           )}

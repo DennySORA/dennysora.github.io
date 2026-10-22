@@ -13,7 +13,6 @@ import {
   loadCollectionNote,
   loadNoteMedia,
 } from '../../src/lib/content.server.ts';
-import { noteMediaRepository, noteMediaUrl } from '../../src/lib/note-media.ts';
 import { readImageSize } from '../../src/lib/image-size.server.ts';
 import { collectionNoteIds } from '../../src/lib/note-collections.ts';
 import { collectionNoteSource } from '../../src/lib/note-collections.server.ts';
@@ -130,72 +129,18 @@ describe('study notes in the collection format', () => {
     expect(reject('<a href="javascript:void 0">x</a>')).toThrow();
   });
 
-  it('streams only recorded media pinned to a commit, and only after play', () => {
-    const media = loadNoteMedia();
-    const paths = media.files.map((file) => file.path);
-    expect(new Set(paths).size).toBe(paths.length);
-    expect(media.repository).toBe(noteMediaRepository);
-    for (const path of paths)
-      expect(collectionNoteIds).toContain(path.split('/')[1]);
-    const id = 'h3-dit-components';
-    const html = loadCollectionNote(id);
-    const { videos, audio } = collectionNoteMedia(id, html);
-    // 16 comparison grids and the raw output of the 37 rendered components.
-    expect(videos).toHaveLength(16 + 37);
-    expect(videos.filter((video) => video.poster)).toHaveLength(16);
-    expect(audio.length).toBeGreaterThan(0);
-    // Every link into the dataset names a recorded file, or the note's folder,
-    // at the recorded commit.
-    const recorded = new Set(media.files.map(noteMediaUrl));
-    const links = [
-      ...html.matchAll(/href="(https:\/\/huggingface\.co\/[^"]+)"/g),
-    ].map((match) => match[1]!);
-    expect(links.length).toBeGreaterThan(videos.length);
-    for (const href of links)
-      if (href.includes('/resolve/')) expect(recorded, href).toContain(href);
-      else
-        expect(href).toMatch(
-          new RegExp(`^${noteMediaRepository}/tree/[0-9a-f]{40}/notes/${id}$`),
-        );
-
-    const grid = media.files.find((file) =>
-      file.path.endsWith('/grids/a1-t2va-fp8.mp4'),
-    )!;
-    const src = noteMediaUrl(grid);
-    const video =
-      (attributes: string, note = id) =>
-      () =>
-        checkCollectionNoteMarkup(
-          note as typeof id,
-          `<video ${attributes}></video>`,
-        );
-    const sized = `width="${grid.width}" height="${grid.height}" controls`;
-    expect(
-      video(`src="${src}" ${sized} preload="none" playsinline`),
-    ).not.toThrow();
-    // Unpinned, eager, autoplaying, mis-sized or foreign media is refused.
-    for (const attributes of [
-      `src="${src.replace(/resolve\/[0-9a-f]{40}/, 'resolve/main')}" ${sized} preload="none" playsinline`,
-      `src="${src}" ${sized} preload="metadata" playsinline`,
-      `src="${src}" ${sized} autoplay preload="none" playsinline`,
-      `src="${src}" width="768" height="448" controls preload="none" playsinline`,
-      `src="${src}" poster="https://example.com/a.webp" ${sized} preload="none" playsinline`,
-    ])
-      expect(video(attributes), attributes).toThrow();
-    expect(
-      video(
-        `src="${src}" ${sized} preload="none" playsinline`,
-        'landscape-photography',
-      ),
-    ).toThrow();
+  it('has no registered or published note media after migration', () => {
+    expect(loadNoteMedia().files).toEqual([]);
+    for (const id of collectionNoteIds) {
+      const { videos, audio } = collectionNoteMedia(id, loadCollectionNote(id));
+      expect(videos).toEqual([]);
+      expect(audio).toEqual([]);
+    }
     expect(() =>
       checkCollectionNoteMarkup(
-        id,
-        `<audio src="${src.replace(/grids\/.*$/, 'audio/unknown.m4a')}" preload="none"></audio>`,
+        'landscape-photography',
+        '<video src="https://example.com/video.mp4" preload="none"></video>',
       ),
-    ).toThrow();
-    expect(() =>
-      checkCollectionNoteMarkup(id, '<track src="/a.vtt">'),
     ).toThrow();
   });
 
