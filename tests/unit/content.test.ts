@@ -152,7 +152,7 @@ describe('route manifest', () => {
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).not.toEqual([]);
     for (const locale of locales) {
-      expect(paths).toContain(prerenderPath({ kind: 'tags', locale }));
+      expect(paths).not.toContain(prerenderPath({ kind: 'tags', locale }));
       expect(paths).toContain(`/${locale}/projects/tools/dgxtop`);
       expect(tagsInLocale(locale)).toEqual([]);
       expect(listPosts(locale)).toEqual([]);
@@ -162,6 +162,7 @@ describe('route manifest', () => {
         'papers',
         'blog/video-console',
         'blog/trilingual-model-research',
+        'blog/tags',
         'blog/tags/video-generation',
         'blog/topics/ai',
       ]) {

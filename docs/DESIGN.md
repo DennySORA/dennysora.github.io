@@ -164,7 +164,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 | 外部網站（論文日報） | `newspaper`＋`arrow-up-right`                                    | `entity-kind`                  |
 | 搜尋                 | `search`、提示字元 `prompt`                                      | `link`                         |
 | 錯誤／找不到         | `circle-x`                                                       | `status-danger`（真的錯誤時）  |
-| 區段標題與開始選單   | 依內容選（`briefcase`、`branch`、`pen`、`notebook`、`network`…） | `link`                         |
+| 區段標題與社群連結   | 依內容選（`briefcase`、`branch`、`pen`、`notebook`、`network`…） | `link`                         |
 | 一般外框圖示         | 例如 `sidebar`、`globe`、`github`、`mail`                        | `text-secondary`／`text-muted` |
 | 程式碼來源連結       | GitHub 網址用 `github`，其他用 `link`（`linkIcon()`）            | `entity-file`                  |
 
@@ -238,7 +238,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 
 ## 8. Buffer 語法：頁面內容怎麼寫
 
-- **行號**：在一行內容的元素加上 `className="ln"`，數字由 CSS counter 產生，對輔助科技隱藏。所有行號以最近的 `.buffer`／`.container` 為定位基準，所以 `.ln` 元素本身與它到 buffer 之間的祖先都**不可以設定 `position`**。一個視覺列只能有一個行號；多欄並排的區塊（例如筆記集合卡片）把 `.ln` 加在整個容器上一次。行高與內容不同的列（例如開始選單）要讓列的 `line-height` 等於列高，數字才會置中。
+- **行號**：在一行內容的元素加上 `className="ln"`，數字由 CSS counter 產生，對輔助科技隱藏。所有行號以最近的 `.buffer`／`.container` 為定位基準，所以 `.ln` 元素本身與它到 buffer 之間的祖先都**不可以設定 `position`**。一個視覺列只能有一個行號；多欄並排的區塊（例如筆記集合卡片）把 `.ln` 加在整個容器上一次。行高與內容不同的列（例如社群連結）要讓列的 `line-height` 等於列高，數字才會置中。
 - **頁首**：用 `PageHead`，產生 `// 註解` 眉標與 `# 標題`，可帶 `icon` 與已記錄的 `art`。h2 以下用 `MdHeading`，可帶區段圖示。
 - **YAML front matter**：`---` 圍住，鍵用 `entity-kind`、值用 `entity-file`。只放真實資料。
 - **清單**：用 `- ` 標記，標記為 `syntax-marker`。
@@ -246,7 +246,8 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **結尾**：每個頁面最後放 `EndOfBuffer`（三行 `~`）。
 - **浮動視窗**：圖片或預覽放在有標題列的框裡（`.float-title`：圖示＋真實檔名＋可選的真實尺寸），例如首頁 Logo 與醫學封面。
 - **經歷**：`git log --graph` 樣式（`.git-log`），目前的項目以 `HEAD` 標示。
-- **開始選單**（`.dashboard`）：圖示＋標籤＋提示。提示只能是目的地路徑或**真的能用的按鍵**（例如 `/`）。
+- **首頁社群邀請**（`.community-recommendation`）：依擁有者 2026-10-24 指示，沒有可見的區段標題；邀請文字與品牌連結置中，三語邀請為 18–20px，社群名稱為 20–26px sans 粗體，Facebook 平台標示為 16px。保留可存取的區域名稱與既有錨點，連結在窄容器內換列，不新增背景、顏色或外框。
+- **首頁捷徑**：依同日指示移除首頁的閱讀部落格／筆記／全站搜尋捷徑；外框導覽、搜尋入口與鍵盤捷徑保留。
 
 ## 9. 元件配方
 

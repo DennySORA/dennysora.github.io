@@ -304,8 +304,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       { kind: 'search', locale },
       { kind: 'notes', locale },
       { kind: 'projects', locale },
-      { kind: 'tags', locale },
     );
+    if (tagsInLocale(locale).length) routes.push({ kind: 'tags', locale });
     for (const folder of noteFolderIds)
       routes.push({ kind: 'note-folder', locale, folder });
     for (const category of projectCategories)

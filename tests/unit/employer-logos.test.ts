@@ -21,10 +21,22 @@ const requestedCategory: Record<Locale, string> = {
   en: '[Gambling company] 天堂遊戲有限公司',
   ja: '[ギャンブル関連企業] 天堂遊戲有限公司',
 };
-const requestedDuration: Record<Locale, string> = {
-  'zh-hant': '（3 年 9 個月）',
-  en: '(3 years 9 months)',
-  ja: '（3年9か月）',
+const requestedDurations: Record<string, Record<Locale, string>> = {
+  'trend-micro': {
+    'zh-hant': '（3 年 9 個月）',
+    en: '(3 years 9 months)',
+    ja: '（3年9か月）',
+  },
+  kkstream: {
+    'zh-hant': '（1 年 1 個月）',
+    en: '(1 year 1 month)',
+    ja: '（1年1か月）',
+  },
+  tiantang: {
+    'zh-hant': '（6 個月）',
+    en: '(6 months)',
+    ja: '（6か月）',
+  },
 };
 
 function home(locale: Locale) {
@@ -45,7 +57,9 @@ describe('employer wordmarks', () => {
       const entries = html.split('<li class="timeline-entry"').slice(1);
       expect(entries).toHaveLength(view.profile.experience.length);
       expect(html.match(/class="timeline-employer-logo"/g)).toHaveLength(2);
-      expect(html.match(/class="timeline-duration"/g)).toHaveLength(1);
+      expect(html.match(/class="timeline-duration"/g)).toHaveLength(
+        view.profile.experience.filter((entry) => entry.kind === 'work').length,
+      );
       expect(
         view.profile.experience.find((entry) => entry.id === 'tiantang')
           ?.organization,
@@ -59,9 +73,9 @@ describe('employer wordmarks', () => {
         expect(rendered).toContain(`dateTime="${entry.startDate}"`);
         if (entry.endDate)
           expect(rendered).toContain(`dateTime="${entry.endDate}"`);
-        if (entry.id === 'trend-micro')
+        if (entry.kind === 'work')
           expect(rendered).toContain(
-            `<span class="timeline-duration">${requestedDuration[locale]}</span>`,
+            `<span class="timeline-duration">${requestedDurations[entry.id]?.[locale]}</span>`,
           );
         else expect(rendered).not.toContain('timeline-duration');
         if (logo) {
@@ -123,6 +137,12 @@ describe('calendar-month employment duration', () => {
       ['（3 年 9 個月）', '(3 years 9 months)', '（3年9か月）'],
     ],
     ['2025-12', '2026-01', ['（1 個月）', '(1 month)', '（1か月）']],
+    [
+      '2021-06',
+      '2022-07',
+      ['（1 年 1 個月）', '(1 year 1 month)', '（1年1か月）'],
+    ],
+    ['2019-01', '2019-07', ['（6 個月）', '(6 months)', '（6か月）']],
     ['2025-04', '2026-04', ['（1 年）', '(1 year)', '（1年）']],
     ['2026-04', '2026-04', ['（0 個月）', '(0 months)', '（0か月）']],
   ] as const)('%s to %s stays precise in all locales', (start, end, labels) => {

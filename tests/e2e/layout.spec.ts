@@ -140,9 +140,8 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
         property,
       );
   await page.goto('/zh-hant/');
-  // The start menu: action-family icons on readable labels.
-  expect(await colour('.dash-item > .icon')).toBe('rgb(150, 195, 255)');
-  expect(await colour('.dash-label')).toBe('rgb(230, 237, 245)');
+  // The community link retains the shared action-family colour.
+  expect(await colour('.community-link')).toBe('rgb(150, 195, 255)');
   // Front matter reads as YAML: keys in the entity colour, values as strings.
   expect(await colour('.front-matter dt')).toBe('rgb(204, 175, 255)');
   expect(await colour('.front-matter dd')).toBe('rgb(131, 216, 207)');
@@ -274,12 +273,13 @@ test('text and controls keep contrast in normal, hover, focus and selected state
   expect(await contrastOf(primary), 'primary hover').toBeGreaterThanOrEqual(
     4.5,
   );
-  const menu = page.locator('.dash-item').first();
+  const community = page.locator('.community-link');
   await page.goto('/zh-hant/');
-  await menu.hover();
-  expect(await contrastOf(menu), 'start menu hover').toBeGreaterThanOrEqual(
-    4.5,
-  );
+  await community.hover();
+  expect(
+    await contrastOf(community),
+    'community link hover',
+  ).toBeGreaterThanOrEqual(4.5);
 });
 
 test('the workbench names the open file and links every area, without migrated areas', async ({

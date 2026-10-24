@@ -12,7 +12,6 @@ import {
   formatYearMonthDuration,
   type Locale,
 } from '../../i18n/index.ts';
-import { noteCopy } from '../../lib/notes-copy.ts';
 import { pageIds } from '../../lib/page-ids.ts';
 
 type HomeView = Extract<ViewData, { kind: 'home' }>;
@@ -87,36 +86,6 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
             {profile.displayName}
           </MdHeading>
           <p className="ln readme-bio">{profile.introduction.shortBio}</p>
-          {/* A start-screen menu: each entry is a real link; the hint is its path or real key. */}
-          <ul className="dashboard">
-            <li className="ln">
-              <a className="dash-item" href={`/${locale}/blog/`}>
-                <Icon name="pen" size={18} />
-                <span className="dash-label">{t.readBlog}</span>
-                <span className="dash-hint" aria-hidden="true">
-                  ~/blog
-                </span>
-              </a>
-            </li>
-            <li className="ln">
-              <a className="dash-item" href={`/${locale}/note/`}>
-                <Icon name="notebook" size={18} />
-                <span className="dash-label">{noteCopy[locale].notes}</span>
-                <span className="dash-hint" aria-hidden="true">
-                  ~/note
-                </span>
-              </a>
-            </li>
-            <li className="ln">
-              <a className="dash-item" href={`/${locale}/search/#search`}>
-                <Icon name="search" size={18} />
-                <span className="dash-label">{t.searchSite}</span>
-                <span className="dash-hint" aria-hidden="true">
-                  <kbd>/</kbd>
-                </span>
-              </a>
-            </li>
-          </ul>
         </div>
         <figure className="readme-logo">
           <div className="float-title" aria-hidden="true">
@@ -136,21 +105,26 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
         </figure>
       </section>
 
-      <section className="md-section" aria-labelledby="community-title">
-        <MdHeading level={2} id="community-title" icon="network">
-          {t.communityTitle}
-        </MdHeading>
+      <section
+        className="md-section community-recommendation"
+        id="community-title"
+        aria-label={t.communityTitle}
+      >
         <p className="ln md-lead">{t.communityInvitation}</p>
-        <p className="ln">
+        <p className="ln community-action">
           <a
-            className="text-action"
+            className="text-action community-link"
             href="https://www.facebook.com/groups/915613384421068"
             rel="noopener noreferrer"
           >
-            <Icon name="network" size={18} />
-            <span lang="zh-Hant">硬核 AI 交流社</span>
-            <span> · Facebook</span>
-            <Icon name="arrow-up-right" size={14} />
+            <span className="community-link-name">
+              <Icon name="network" size={24} />
+              <span lang="zh-Hant">硬核 AI 交流社</span>
+            </span>
+            <span className="community-link-platform">
+              <span> · Facebook</span>
+              <Icon name="arrow-up-right" size={18} />
+            </span>
             <span className="sr-only">（{t.newTab}）</span>
           </a>
         </p>
@@ -323,7 +297,7 @@ function Experience({
           const employerLogo =
             entry.kind === 'work' ? employerLogos[entry.id] : undefined;
           const duration =
-            entry.id === 'trend-micro' && entry.endDate
+            entry.kind === 'work' && entry.endDate
               ? formatYearMonthDuration(entry.startDate, entry.endDate, locale)
               : null;
           const count = entry.details.reduce(

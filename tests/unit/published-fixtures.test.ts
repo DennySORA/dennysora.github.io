@@ -45,6 +45,7 @@ describe('published content fixtures', () => {
       for (const locale of locales) {
         expect(post.editions).toContain(locale);
         expect(paths).toContain(`/${locale}/blog/${post.slug}`);
+        expect(paths).toContain(`/${locale}/blog/tags`);
         for (const tag of post.tagIds)
           expect(paths).toContain(`/${locale}/blog/tags/${tag}`);
         for (const topic of post.topics)

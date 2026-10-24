@@ -23,12 +23,11 @@ for (const locale of locales) {
   });
 }
 
-test('the README start menu opens global search', async ({ page }) => {
+test('the site header still opens global search from the README', async ({
+  page,
+}) => {
   await page.goto('/en/');
-  await page
-    .locator('.dashboard')
-    .getByRole('link', { name: /Search the site/ })
-    .click();
+  await page.locator('.tabline-search').click();
   await expect(page).toHaveURL('/en/search/#search');
   await expect(page.getByRole('searchbox')).toBeVisible();
 });

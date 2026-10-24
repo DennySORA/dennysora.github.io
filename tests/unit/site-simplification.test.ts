@@ -80,6 +80,7 @@ describe('requested website simplification', () => {
           (match) => match[1],
         ),
       ).toEqual(['README.md', 'blog', 'note', 'projects']);
+      expect(html).toContain(`href="/${locale}/search/#search"`);
       expect(html).not.toMatch(/navigation-icons|activity-art|<img[^>]*sprite/);
     });
     it(`${locale} retains the core résumé, correct identity and repository evidence`, () => {
@@ -119,11 +120,16 @@ describe('requested website simplification', () => {
         expect(data.view.profile).not.toHaveProperty(key);
       expect(html).not.toContain('/projects/');
       expect(html).toContain('https://github.com/DennySORA/httpulse');
+      expect(html).not.toMatch(/class="dashboard"|class="dash-item"/);
       const community = html.match(
-        /<section[^>]*aria-labelledby="community-title"[^>]*>([\s\S]*?)<\/section>/,
+        /<section[^>]*id="community-title"[^>]*>([\s\S]*?)<\/section>/,
       )?.[1];
       expect(community).toBeDefined();
-      expect(community).toContain(dictionaries[locale].communityTitle);
+      expect(html).toContain(
+        `aria-label="${dictionaries[locale].communityTitle}"`,
+      );
+      expect(community).not.toMatch(/<h[1-6]\b/);
+      expect(community).toContain('class="text-action community-link"');
       expect(community).toContain(dictionaries[locale].communityInvitation);
       expect(community).toContain('<span lang="zh-Hant">硬核 AI 交流社</span>');
       expect(community).toContain(

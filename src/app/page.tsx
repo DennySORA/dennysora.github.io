@@ -203,6 +203,7 @@ function loadView(route: RouteDescriptor) {
       };
     }
     case 'tags': {
+      if (!tagsInLocale(locale).length) notFound();
       const posts = listPosts(locale);
       return {
         kind: 'tags' as const,
@@ -313,6 +314,8 @@ function availableLocales(route: RouteDescriptor): Locale[] {
       return locales.filter((locale) =>
         tagsInLocale(locale).includes(route.tagId),
       );
+    case 'tags':
+      return locales.filter((locale) => tagsInLocale(locale).length > 0);
     default:
       return [...locales];
   }
