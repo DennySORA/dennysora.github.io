@@ -9,6 +9,7 @@ import { linkIcon } from '../../components/link-icon.ts';
 import {
   dictionaries,
   formatCompactDate,
+  formatYearMonthDuration,
   type Locale,
 } from '../../i18n/index.ts';
 import { noteCopy } from '../../lib/notes-copy.ts';
@@ -22,6 +23,12 @@ const yearMonth = (value: string) => value.replace('-', '.');
 const competencyIcons: Record<string, IconName> = {
   backend: 'server',
   cloud: 'cloud',
+};
+
+// Official wordmarks stay local and unchanged; provenance lives in brand-assets.json.
+const employerLogos: Record<string, string> = {
+  'trend-micro': '/assets/employer-trend-micro.svg',
+  kkstream: '/assets/employer-kkstream.jpg',
 };
 
 /** The profile as the workspace README: front matter, logo, then the résumé. */
@@ -313,6 +320,12 @@ function Experience({
       <p className="ln md-lead">{t.experienceIntro}</p>
       <ol className="git-log">
         {profile.experience.map((entry) => {
+          const employerLogo =
+            entry.kind === 'work' ? employerLogos[entry.id] : undefined;
+          const duration =
+            entry.id === 'trend-micro' && entry.endDate
+              ? formatYearMonthDuration(entry.startDate, entry.endDate, locale)
+              : null;
           const count = entry.details.reduce(
             (sum, group) => sum + group.items.length,
             0,
@@ -341,10 +354,26 @@ function Experience({
                 ) : entry.current ? (
                   t.present
                 ) : null}
+                {duration ? (
+                  <span className="timeline-duration">{duration}</span>
+                ) : null}
                 {entry.kind === 'education' ? (
                   <span className="label">{t.educationStatus}</span>
                 ) : null}
               </p>
+              {employerLogo ? (
+                <p className="ln timeline-employer">
+                  <img
+                    className="timeline-employer-logo"
+                    src={employerLogo}
+                    alt=""
+                    width={144}
+                    height={32}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </p>
+              ) : null}
               <h3 className="ln timeline-role">
                 <Icon
                   name={entry.kind === 'education' ? 'graduation' : 'briefcase'}

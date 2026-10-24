@@ -78,6 +78,38 @@
       "derivedFrom": "assets/logo_full.png",
       "role": "README hero logo (2x). Derived from the master artwork: transparent side columns trimmed to the figure (alpha bounds x=746–2087 of 2816, plus an 8 px margin), resized with Lanczos to 784 px high, WebP quality 88 with lossless alpha. Same figure, no recolouring or redrawing.",
       "inspection": "Viewed at full size on the #0B1020 background: figure complete, edges clean, no halo. The master has no white sticker outline (logo.png does), so the page places a soft background glow behind it instead of filtering the image."
+    },
+    {
+      "path": "assets/employer-trend-micro.svg",
+      "gitBlob": "9572b3a5b77fcc488b5dd66a344da78b89aaa6db",
+      "sha256": "4c38452d4117e2bb77829601aca27ac6584ebdf4d42ce505c0f7b1ae0f933147",
+      "bytes": 5454,
+      "width": 144.704,
+      "height": 30.5,
+      "alpha": true,
+      "published": true,
+      "role": "Trend Micro wordmark before the historical employment heading in all three home-page locales. Adjacent organization text remains the accessible label.",
+      "sourceUrl": "https://www.trendmicro.com/content/dam/trendmicro/global/en/core/images/logos/tm-logo-red-white-t.svg",
+      "sourcePage": "https://www.trendmicro.com/en_us/business.html",
+      "retrievedAt": "2026-10-24",
+      "rights": "Company trademark; company-published artwork, not an open-source license. Used only to identify the employer in the existing work history; no endorsement claim.",
+      "inspection": "Official dark-background red-and-white wordmark. XML inspected: only svg, defs, clipPath, rect, g and path; no scripts, event handlers, external references or embedded media."
+    },
+    {
+      "path": "assets/employer-kkstream.jpg",
+      "gitBlob": "b91ff9fe87c0f81c639c68b656d5bdef99760bd9",
+      "sha256": "60ae8a43a37117aebb4fd5a76aeefe1f0c23842d072500adaacb4e15f57cbd2e",
+      "bytes": 8141,
+      "width": 400,
+      "height": 58,
+      "alpha": false,
+      "published": true,
+      "role": "KKStream wordmark before the historical employment heading in all three home-page locales. Adjacent organization text remains the accessible label.",
+      "sourceUrl": "https://mma.prnasia.com/media2/1668807/KKStream_logo_black_Logo.jpg",
+      "sourcePage": "https://en.prnasia.com/releases/apac/kkstream-expands-into-the-japanese-market-and-brings-industry-leading-streaming-technology-into-the-fitness-sector-341435.shtml",
+      "retrievedAt": "2026-10-24",
+      "rights": "Company trademark; company-published artwork, not an open-source license. Used only to identify the employer in the existing work history; no endorsement claim.",
+      "inspection": "Company-supplied wordmark in a press release attributed to KKStream. Viewed at original size: black wordmark on its original white background; no crop, recolour or filter."
     }
   ]
 }

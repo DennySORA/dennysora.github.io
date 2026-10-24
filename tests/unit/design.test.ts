@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { locales } from '../../src/i18n/index.ts';
 import { loadProfile } from '../../src/lib/content.server.ts';
 import { localize } from '../../src/lib/localize.ts';
+import { readImageSize } from '../../src/lib/image-size.server.ts';
 import brand from '../../data/brand-assets.json' with { type: 'json' };
 import aboutMap from '../../data/migration/about-sections.json' with { type: 'json' };
 
@@ -132,11 +133,15 @@ describe('semantic dark tokens', () => {
   });
 });
 
-// PNG keeps its size in IHDR; an extended (VP8X) WebP stores canvas size minus one.
-function dimensions(bytes: Buffer): [number, number] {
-  if (bytes.toString('ascii', 12, 16) === 'VP8X')
-    return [bytes.readUIntLE(24, 3) + 1, bytes.readUIntLE(27, 3) + 1];
-  return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+function dimensions(file: string): [number, number] {
+  if (file.endsWith('.svg')) {
+    const svg = readFileSync(file, 'utf8').match(/<svg\b[^>]*>/)?.[0] ?? '';
+    return ['width', 'height'].map((attribute) =>
+      Number(svg.match(new RegExp(`\\b${attribute}="([\\d.]+)"`))?.[1]),
+    ) as [number, number];
+  }
+  const { width, height } = readImageSize(file);
+  return [width, height];
 }
 
 describe('brand assets', () => {
@@ -149,7 +154,7 @@ describe('brand assets', () => {
         .digest('hex');
       expect(blob, asset.path).toBe(asset.gitBlob);
       expect(bytes.length, asset.path).toBe(asset.bytes);
-      expect(dimensions(bytes), asset.path).toEqual([
+      expect(dimensions(asset.path), asset.path).toEqual([
         asset.width,
         asset.height,
       ]);

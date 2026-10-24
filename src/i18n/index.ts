@@ -41,6 +41,38 @@ export function formatCompactDate(isoDate: string): string {
   return isoDate.replaceAll('-', '.');
 }
 
+/** Calendar-month difference, without inclusive-day counting or year rounding. */
+export function formatYearMonthDuration(
+  start: string,
+  end: string,
+  locale: Locale,
+): string | null {
+  const monthIndex = (value: string): number | null => {
+    const match = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(value);
+    return match ? Number(match[1]) * 12 + Number(match[2]) - 1 : null;
+  };
+  const first = monthIndex(start);
+  const last = monthIndex(end);
+  if (first === null || last === null || last < first) return null;
+  const years = Math.floor((last - first) / 12);
+  const months = (last - first) % 12;
+  const parts: string[] = [];
+  if (locale === 'en') {
+    if (years) parts.push(`${years} ${years === 1 ? 'year' : 'years'}`);
+    if (months || !years)
+      parts.push(`${months} ${months === 1 ? 'month' : 'months'}`);
+    return `(${parts.join(' ')})`;
+  }
+  if (locale === 'ja') {
+    if (years) parts.push(`${years}年`);
+    if (months || !years) parts.push(`${months}か月`);
+    return `（${parts.join('')}）`;
+  }
+  if (years) parts.push(`${years} 年`);
+  if (months || !years) parts.push(`${months} 個月`);
+  return `（${parts.join(' ')}）`;
+}
+
 const en = {
   skip: 'Skip to content',
   brandHome: 'DennySORA home',
