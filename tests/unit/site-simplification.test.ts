@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { loader, meta } from '../../src/app/page.tsx';
 import { TabLine } from '../../src/components/TabLine.tsx';
 import { Readme } from '../../src/features/home/Readme.tsx';
-import { locales } from '../../src/i18n/index.ts';
+import { dictionaries, locales } from '../../src/i18n/index.ts';
 import { publishedPaths } from '../../src/lib/content.server.ts';
 import { parseRoute } from '../../src/lib/route-manifest.ts';
 import { areas } from '../../src/lib/workspace.ts';
@@ -119,6 +119,18 @@ describe('requested website simplification', () => {
         expect(data.view.profile).not.toHaveProperty(key);
       expect(html).not.toContain('/projects/');
       expect(html).toContain('https://github.com/DennySORA/httpulse');
+      const community = html.match(
+        /<section[^>]*aria-labelledby="community-title"[^>]*>([\s\S]*?)<\/section>/,
+      )?.[1];
+      expect(community).toBeDefined();
+      expect(community).toContain(dictionaries[locale].communityTitle);
+      expect(community).toContain(dictionaries[locale].communityInvitation);
+      expect(community).toContain('<span lang="zh-Hant">硬核 AI 交流社</span>');
+      expect(community).toContain(
+        'href="https://www.facebook.com/groups/915613384421068" rel="noopener noreferrer"',
+      );
+      expect(community).toContain(dictionaries[locale].newTab);
+      expect(community).not.toMatch(/<(script|iframe|img)\b|target="_blank"/);
       const metadata = meta({ loaderData: data } as Parameters<typeof meta>[0]);
       expect(JSON.stringify(metadata)).toContain(
         '"name":"李汶道","alternateName":"DennySORA"',

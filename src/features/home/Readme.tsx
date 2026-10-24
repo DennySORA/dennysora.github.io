@@ -129,6 +129,26 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
         </figure>
       </section>
 
+      <section className="md-section" aria-labelledby="community-title">
+        <MdHeading level={2} id="community-title" icon="network">
+          {t.communityTitle}
+        </MdHeading>
+        <p className="ln md-lead">{t.communityInvitation}</p>
+        <p className="ln">
+          <a
+            className="text-action"
+            href="https://www.facebook.com/groups/915613384421068"
+            rel="noopener noreferrer"
+          >
+            <Icon name="network" size={18} />
+            <span lang="zh-Hant">硬核 AI 交流社</span>
+            <span> · Facebook</span>
+            <Icon name="arrow-up-right" size={14} />
+            <span className="sr-only">（{t.newTab}）</span>
+          </a>
+        </p>
+      </section>
+
       <Competencies
         profile={profile}
         projects={projects}

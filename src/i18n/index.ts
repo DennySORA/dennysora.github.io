@@ -71,6 +71,9 @@ const en = {
   newTab: 'external site',
   unavailableTranslation: 'not available in this language yet',
   allArticles: 'All articles',
+  communityTitle: 'Recommended community',
+  communityInvitation:
+    'Interested in AI? Everyone is welcome to join the conversation in this Facebook group.',
   competenciesTitle: 'What I work on',
   competenciesIntro:
     'Professional practice, personal projects and what I am still learning are kept apart, so each ability has context and something you can check.',
@@ -242,6 +245,8 @@ const zh: Dictionary = {
   newTab: '外部網站',
   unavailableTranslation: '尚無此語言版本',
   allArticles: '全部文章',
+  communityTitle: '社群推薦',
+  communityInvitation: '對 AI 有興趣嗎？歡迎大家來 Facebook 社團一起交流！',
   competenciesTitle: '我主要在做什麼',
   competenciesIntro:
     '把工作實務、個人實作與正在學習的方向分開，讓能力有脈絡，也有可查看的例子。',
@@ -399,6 +404,9 @@ const ja: Dictionary = {
   newTab: '外部サイト',
   unavailableTranslation: 'この言語の版はまだありません',
   allArticles: 'すべての記事',
+  communityTitle: 'おすすめのコミュニティ',
+  communityInvitation:
+    'AI に興味がありますか？Facebook グループで、ぜひ一緒に語り合いましょう！',
   competenciesTitle: '主に取り組んでいること',
   competenciesIntro:
     '業務での実践、個人での実装、学習中のことを分けて示し、それぞれの能力に背景と確認できる例を添えています。',
