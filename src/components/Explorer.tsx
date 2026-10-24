@@ -20,6 +20,7 @@ import {
   projectsCopy,
 } from '../lib/project-pages.ts';
 import { areaState, type WorkspaceFiles } from '../lib/workspace.ts';
+import { papersUrl } from '../lib/site.ts';
 import { Icon, type IconName } from './Icon.tsx';
 
 type Kind = 'markdown' | 'folder' | 'external';
@@ -331,6 +332,15 @@ export function Explorer({
               />
             ))}
           </TreeFolder>
+        </li>
+        <li>
+          <TreeLink
+            href={papersUrl}
+            kind="external"
+            name={t.navPapers}
+            note={t.newTab}
+            onNavigate={onNavigate}
+          />
         </li>
       </ul>
     </div>

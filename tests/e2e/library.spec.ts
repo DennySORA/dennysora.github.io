@@ -17,7 +17,9 @@ for (const locale of locales) {
       `/${locale}/note/`,
     );
     await expect(
-      page.locator('a[href*="paper.dennysora.me"], a[href*="video-console"]'),
+      page.locator(
+        'main a[href*="paper.dennysora.me"], a[href*="video-console"]',
+      ),
     ).toHaveCount(0);
     await expect(page.locator('.active-conditions')).toHaveCount(0);
   });

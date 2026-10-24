@@ -4,9 +4,10 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { Explorer } from '../../src/components/Explorer.tsx';
 import { TabLine } from '../../src/components/TabLine.tsx';
-import { locales, type Locale } from '../../src/i18n/index.ts';
+import { dictionaries, locales, type Locale } from '../../src/i18n/index.ts';
 import { noteTree } from '../../src/lib/note-tree.server.ts';
 import {
+  parseRoute,
   routePath,
   type RouteDescriptor,
 } from '../../src/lib/route-manifest.ts';
@@ -48,6 +49,24 @@ function navigation(
 
 describe('empty blog navigation category', () => {
   for (const locale of locales) {
+    it(`${locale} retains the external Paper Daily link in both explorers without restoring migrated routes`, () => {
+      const html = navigation(locale, { kind: 'home', locale }, []);
+      const links = [
+        ...html.matchAll(
+          /<a\b[^>]*href="https:\/\/paper\.dennysora\.me\/"[^>]*>[\s\S]*?<\/a>/g,
+        ),
+      ].map(([link]) => link);
+      expect(links).toHaveLength(2);
+      for (const link of links) {
+        expect(link).toContain('class="tree-link"');
+        expect(link).toContain('data-kind="external"');
+        expect(link).toContain(dictionaries[locale].navPapers);
+        expect(link).toContain(`title="${dictionaries[locale].newTab}"`);
+        expect(link).not.toMatch(/aria-current=|target="_blank"/);
+      }
+      for (const path of ['ai', 'papers', 'research'])
+        expect(parseRoute(`/${locale}/${path}/`)).toBeNull();
+    });
     for (const kind of ['home', 'library', 'search'] as const) {
       it(`${locale} hides the empty blog in tabs and both explorers on ${kind}`, () => {
         const html = navigation(locale, { kind, locale }, []);

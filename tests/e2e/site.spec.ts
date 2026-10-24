@@ -206,9 +206,7 @@ test('migrated AI and video pages have no links or forwarding stubs', async ({
 }) => {
   await page.goto('/en/');
   await expect(
-    page.locator(
-      'a[href*="paper.dennysora.me"], a[href*="/ai/"], a[href*="/research/"]',
-    ),
+    page.locator('a[href*="/ai/"], a[href*="/research/"], a[href*="/papers/"]'),
   ).toHaveCount(0);
   for (const locale of ['zh-hant', 'en', 'ja'])
     for (const path of [
