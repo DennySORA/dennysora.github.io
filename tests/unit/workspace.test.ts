@@ -28,12 +28,11 @@ describe('workspace chrome', () => {
     });
   });
   it('keeps only the retained areas in the workspace', () => {
-    expect(areas('ja').map((area) => area.href)).toEqual([
-      '/ja/',
-      '/ja/blog/',
-      '/ja/note/',
-      '/ja/projects/',
-    ]);
+    expect(
+      areas('ja', { posts: [{ slug: 'example', title: 'Example' }] }).map(
+        (area) => area.href,
+      ),
+    ).toEqual(['/ja/', '/ja/blog/', '/ja/note/', '/ja/projects/']);
   });
   it('marks landing pages as the page and inner pages as inside their area', () => {
     expect(areaState({ kind: 'home', locale: 'en' }, 'home')).toBe('page');

@@ -32,9 +32,8 @@ describe('requested website simplification', () => {
           } as unknown as LoaderFunctionArgs),
         ).toThrow();
       }
-      expect(areas(locale).map((area) => area.key)).toEqual([
+      expect(areas(locale, { posts: [] }).map((area) => area.key)).toEqual([
         'home',
-        'library',
         'notes',
         'projects',
       ]);
@@ -79,7 +78,7 @@ describe('requested website simplification', () => {
         [...(buffers ?? '').matchAll(/class="tab-name">([^<]+)</g)].map(
           (match) => match[1],
         ),
-      ).toEqual(['README.md', 'blog', 'note', 'projects']);
+      ).toEqual(['README.md', 'note', 'projects']);
       expect(html).toContain(`href="/${locale}/search/#search"`);
       expect(html).not.toMatch(/navigation-icons|activity-art|<img[^>]*sprite/);
     });

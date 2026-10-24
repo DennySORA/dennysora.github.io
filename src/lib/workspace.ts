@@ -33,11 +33,23 @@ export type Area = {
   external: boolean;
 };
 
-/** The workspace's top-level areas, in tab order. */
-export function areas(locale: Locale): Area[] {
+/** Navigable areas in tab order; an empty blog is not a navigation category. */
+export function areas(
+  locale: Locale,
+  files: Pick<WorkspaceFiles, 'posts'>,
+): Area[] {
   return [
     { key: 'home', file: 'README.md', href: `/${locale}/`, external: false },
-    { key: 'library', file: 'blog', href: `/${locale}/blog/`, external: false },
+    ...(files.posts.length
+      ? [
+          {
+            key: 'library' as const,
+            file: 'blog',
+            href: `/${locale}/blog/`,
+            external: false,
+          },
+        ]
+      : []),
     { key: 'notes', file: 'note', href: `/${locale}/note/`, external: false },
     {
       key: 'projects',

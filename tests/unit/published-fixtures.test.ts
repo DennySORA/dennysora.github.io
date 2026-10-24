@@ -23,6 +23,7 @@ vi.mock('node:fs', async (importOriginal) => {
 
 import { locales } from '../../src/i18n/index.ts';
 import {
+  isIndexable,
   loadArticle,
   loadPosts,
   publishedPaths,
@@ -45,6 +46,7 @@ describe('published content fixtures', () => {
       for (const locale of locales) {
         expect(post.editions).toContain(locale);
         expect(paths).toContain(`/${locale}/blog/${post.slug}`);
+        expect(isIndexable({ kind: 'library', locale })).toBe(true);
         expect(paths).toContain(`/${locale}/blog/tags`);
         for (const tag of post.tagIds)
           expect(paths).toContain(`/${locale}/blog/tags/${tag}`);

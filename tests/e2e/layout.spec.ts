@@ -22,9 +22,7 @@ test('the home README answers who, what and where to look first on desktop and p
     await expect(
       page.getByText('我關注軟體如何從概念走向', { exact: false }),
     ).toBeInViewport();
-    await expect(
-      page.getByRole('link', { name: /閱讀部落格/ }),
-    ).toHaveAttribute('href', '/zh-hant/blog/');
+    await expect(page.locator('a[href="/zh-hant/blog/"]')).toHaveCount(0);
   }
   // Structured sections, not one long Markdown article with a full contents tree.
   await expect(page.locator('.prose, .toc-aside, .toc-inline')).toHaveCount(0);
@@ -47,8 +45,7 @@ test('the home README answers who, what and where to look first on desktop and p
       lines.map((line) => (line as HTMLElement).offsetParent?.className),
     ).size,
   }));
-  // The shortened résumé keeps all of its numbered lines; the start menu adds
-  // three links (blog, notes and search), without a migrated-content section.
+  // The shortened résumé keeps its numbered lines without the removed shortcuts.
   expect(gutters.count).toBeGreaterThan(20);
   expect(gutters.positioned).toBe(0);
   expect(gutters.parents).toBe(1);
@@ -122,8 +119,9 @@ test('the explorer drawer traps focus, closes with Escape and restores focus and
   await expect(
     dialog.locator('a[href*="/blog/"][href$="-principles/"]'),
   ).toHaveCount(0);
-  await dialog.getByRole('link', { name: /^ブログ/ }).click();
-  await expect(page).toHaveURL('/ja/blog/');
+  await expect(dialog.locator('a[href="/ja/blog/"]')).toHaveCount(0);
+  await dialog.locator('a[href="/ja/note/"]').click();
+  await expect(page).toHaveURL('/ja/note/');
   await page.goBack();
   await expect(page).toHaveURL('/ja/');
   await expect(page.getByRole('dialog')).toBeHidden();
@@ -289,7 +287,6 @@ test('the workbench names the open file and links every area, without migrated a
   const tabs = page.locator('.buffers');
   await expect(tabs.getByRole('link')).toHaveText([
     /README\.md/,
-    /blog/,
     /note/,
     /projects/,
   ]);

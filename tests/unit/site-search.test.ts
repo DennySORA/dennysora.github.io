@@ -145,6 +145,7 @@ describe('global site search', () => {
       parseRoute('/en/'),
       parseRoute(note.href),
       parseRoute('/en/search/'),
+      parseRoute('/en/blog/'),
       parseRoute('/en/privacy/'),
     ].filter((route) => route !== null);
     for (const route of routes.filter((item) => item.kind !== 'search')) {
@@ -166,6 +167,7 @@ describe('global site search', () => {
     expect(index[0]?.tags[0]?.label.en).toBe('Architecture');
     expect(searchSite(index, 'system design', 'note', 'en')).toHaveLength(1);
     expect(index.map((item) => item.href)).not.toContain('/en/search/');
+    expect(index.map((item) => item.href)).not.toContain('/en/blog/');
     expect(searchSite(index, 'choke_lease', 'note', 'en')).toHaveLength(1);
   });
   it('publishes separate localized search pages', () => {

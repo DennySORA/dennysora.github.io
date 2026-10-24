@@ -77,7 +77,8 @@ test('folders start closed except the path to the current page, again after each
   await expect(explorer.locator(`a[href="${brainPath}"]`)).toBeVisible();
   await expect(explorer.locator('a[href$="/drugs/analgesics/"]')).toBeHidden();
   // A folder opened by hand closes again when another page becomes current.
-  await folderToggle(explorer, '/zh-hant/blog/').click();
+  await folderToggle(explorer, '/zh-hant/note/medical/drugs/').click();
+  await expect(explorer.locator('a[href="/zh-hant/blog/"]')).toHaveCount(0);
   await page.locator('.tab[data-area="projects"]').click();
   await expect(page).toHaveURL('/zh-hant/projects/');
   await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
@@ -140,14 +141,7 @@ test('nested folders keep independent state through parent and whole-explorer to
   await expect(drugs).toHaveAttribute('aria-expanded', 'true');
   await drugs.click();
   await expect(analgesics).toBeHidden();
-  const blog = folderToggle(explorer, '/zh-hant/blog/');
-  await blog.click();
-  await expect(blog).toHaveAttribute('aria-expanded', 'true');
-  await expect(
-    explorer.locator('a[href="/zh-hant/blog/video-console/"]'),
-  ).toHaveCount(0);
-  await blog.click();
-  await expect(blog).toHaveAttribute('aria-expanded', 'false');
+  await expect(explorer.locator('a[href="/zh-hant/blog/"]')).toHaveCount(0);
 });
 
 for (const locale of ['zh-hant', 'en', 'ja']) {

@@ -49,9 +49,11 @@ function unlockScroll() {
 function Buffers({
   locale,
   route,
+  files,
 }: {
   locale: Locale;
   route: RouteDescriptor;
+  files: WorkspaceFiles;
 }) {
   const t = dictionaries[locale];
   const path = crumbs(route);
@@ -111,7 +113,7 @@ function Buffers({
   return (
     <nav className="buffers" aria-label={t.mainNav}>
       <ul ref={list}>
-        {areas(locale).flatMap((area) =>
+        {areas(locale, files).flatMap((area) =>
           area.key === after ? [tab(area), currentTab] : [tab(area)],
         )}
         {current && !after ? currentTab : null}
@@ -238,7 +240,7 @@ export function TabLine({
         </span>
         <BrandLogo placement="header" locale={locale} />
       </div>
-      <Buffers locale={locale} route={route} />
+      <Buffers locale={locale} route={route} files={files} />
       <div className="tabline-tools">
         <a className="tabline-search" href={`/${locale}/search/#search`}>
           <Icon name="search" size={15} />

@@ -220,6 +220,8 @@ describe('retained content and empty blog', () => {
       const blog = load(`/${locale}/blog/`);
       if (blog.view.kind !== 'library') throw new Error('Expected blog');
       expect(blog.view.posts).toEqual([]);
+      expect(blog.indexable).toBe(false);
+      expect(isIndexable({ kind: 'library', locale })).toBe(false);
       expect(blog.view.available).toEqual({ topics: [], types: [], tags: [] });
       expect(blog.languageLinks).toEqual(
         locales.map((target) => ({ locale: target, href: `/${target}/blog/` })),

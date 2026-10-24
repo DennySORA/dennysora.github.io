@@ -333,6 +333,7 @@ export function publishedRoutes(): RouteDescriptor[] {
 }
 export function isIndexable(route: RouteDescriptor): boolean {
   if (route.kind === 'not-found' || route.kind === 'search') return false;
+  if (route.kind === 'library') return listPosts(route.locale).length > 0;
   return true;
 }
 export function publishedPaths(): string[] {

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sanitizeHtml from 'sanitize-html';
 import { decodeEntities } from './html.ts';
-import { loadTaxonomy } from './content.server.ts';
+import { isIndexable, loadTaxonomy } from './content.server.ts';
 import {
   routeLocale,
   routePath,
@@ -30,7 +30,7 @@ export function buildSiteSearch(
   routes: RouteDescriptor[],
 ): SiteSearchDocument[] {
   return routes.flatMap((route) => {
-    if (['root', 'not-found', 'search'].includes(route.kind)) return [];
+    if (route.kind === 'root' || !isIndexable(route)) return [];
     const href = routePath(route);
     const html = readFileSync(join(output, href, 'index.html'), 'utf8');
     const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1];

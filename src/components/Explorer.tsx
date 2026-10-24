@@ -285,33 +285,32 @@ export function Explorer({
             ))}
           </TreeFolder>
         </li>
-        <li>
-          <TreeFolder
-            currentPath={currentPath}
-            locale={locale}
-            href={`/${locale}/blog/`}
-            name={t.navLibrary}
-            current={areaState(route, 'library')}
-            onNavigate={onNavigate}
-          >
-            {files.posts.length === 0 ? (
-              <li className="tree-empty">{t.emptyFolder}</li>
-            ) : null}
-            {files.posts.map((post) => (
-              <li key={post.slug}>
-                <TreeLink
-                  href={`/${locale}/blog/${post.slug}/`}
-                  kind="markdown"
-                  name={post.title}
-                  current={page(
-                    route.kind === 'article' && route.slug === post.slug,
-                  )}
-                  onNavigate={onNavigate}
-                />
-              </li>
-            ))}
-          </TreeFolder>
-        </li>
+        {files.posts.length > 0 ? (
+          <li>
+            <TreeFolder
+              currentPath={currentPath}
+              locale={locale}
+              href={`/${locale}/blog/`}
+              name={t.navLibrary}
+              current={areaState(route, 'library')}
+              onNavigate={onNavigate}
+            >
+              {files.posts.map((post) => (
+                <li key={post.slug}>
+                  <TreeLink
+                    href={`/${locale}/blog/${post.slug}/`}
+                    kind="markdown"
+                    name={post.title}
+                    current={page(
+                      route.kind === 'article' && route.slug === post.slug,
+                    )}
+                    onNavigate={onNavigate}
+                  />
+                </li>
+              ))}
+            </TreeFolder>
+          </li>
+        ) : null}
         <li>
           <TreeFolder
             currentPath={currentPath}
