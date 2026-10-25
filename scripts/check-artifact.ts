@@ -33,6 +33,19 @@ function walk(directory: string): string[] {
   );
 }
 const files = walk(root);
+
+// Owner-retired learning series and fan review must not survive in a stale build.
+const retiredNotePath = /\/note\/japan(?:\/|["'?#\s]|$)|140mm-case-fans/;
+for (const file of files) {
+  const path = '/' + relative(root, file);
+  if (retiredNotePath.test(path))
+    failures.push(`Retired note artifact: ${path}`);
+  if (
+    ['.html', '.json', '.xml'].includes(extname(file)) &&
+    retiredNotePath.test(readFileSync(file, 'utf8'))
+  )
+    failures.push(`Retired note reference in artifact: ${path}`);
+}
 try {
   const search = parseSearchIndex(
     JSON.parse(readFileSync(join(root, 'site-search.json'), 'utf8')),

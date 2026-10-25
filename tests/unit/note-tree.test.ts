@@ -34,7 +34,7 @@ describe('the note tree', () => {
   it('files each note in the folder the owner chose', () => {
     expect(
       noteFolderIds.filter((id) => noteFolders[id].parent === null),
-    ).toEqual(['software', 'medical', 'hardware', 'japan', 'other']);
+    ).toEqual(['software', 'medical', 'hardware', 'other']);
     expect(folderPath('p2p', 'zh-hant')).toBe(
       '/zh-hant/note/software/network/p2p/',
     );

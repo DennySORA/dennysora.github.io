@@ -3,30 +3,14 @@ import AxeBuilder from '@axe-core/playwright';
 import { trackExternalRequests } from './helpers.ts';
 
 const photo = '/zh-hant/note/other/landscape-photography/';
-const structure = '/zh-hant/note/japan/japanese/japanese-structure/';
 const lumbar = '/zh-hant/note/medical/daily-care/lumbar-spine-care/';
 
-test('Japan, Health & medicine and Other folders lead to their notes', async ({
+test('Health & medicine and Other folders lead to their notes', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
   await page.goto('/zh-hant/note/');
   const main = page.locator('main');
-  await main.getByRole('link', { name: '日本', exact: true }).click();
-  await expect(page).toHaveURL(/\/note\/japan\/$/);
-  await main.getByRole('link', { name: '日語', exact: true }).click();
-  await expect(page).toHaveURL(/\/note\/japan\/japanese\/$/);
-  await main.getByRole('link', { name: /句子結構/ }).click();
-  await expect(page.locator('#note-title')).toContainText('句子結構');
-  await expect(page.locator('.cmdline')).toContainText(
-    'note/japan/japanese/japanese-structure.md',
-  );
-  await expect(page.locator('.sn-series [aria-current="page"]')).toHaveText(
-    '1 句子結構',
-  );
-  await page.locator('.sn-pager').getByRole('link').click();
-  await expect(page).toHaveURL(/\/japanese-conjugation\/$/);
-
   await page.goto('/zh-hant/note/medical/');
   await main.getByRole('link', { name: '日常照顧', exact: true }).click();
   await expect(page).toHaveURL(/\/note\/medical\/daily-care\/$/);
@@ -87,26 +71,7 @@ test('photo guides toggle and the local calculators recompute', async ({
   expect(external).toEqual([]);
 });
 
-test('editions keep Japanese examples and hide glosses only in Japanese', async ({
-  page,
-}) => {
-  for (const locale of ['en', 'ja'] as const) {
-    await page.goto(structure.replace('zh-hant', locale));
-    await expect(page.locator('.study-note article')).toHaveAttribute(
-      'lang',
-      locale,
-    );
-    await expect(
-      page.locator('p[lang="ja"]', { hasText: 'こちらはいかがですか。' }),
-    ).toBeVisible();
-    const gloss = page.locator('.sn-gloss').first();
-    if (locale === 'ja') await expect(gloss).toBeHidden();
-    else await expect(gloss).toBeVisible();
-    await expect(page.locator('.sn-series a').first()).toHaveAttribute(
-      'href',
-      '../japanese-structure/',
-    );
-  }
+test('the photography tools stay localized', async ({ page }) => {
   await page.goto('/en/note/other/landscape-photography/');
   await expect(page.locator('#pg-near')).toHaveText('about 1.21 m');
   await page.locator('#pg-archive-filter').check();
@@ -117,7 +82,7 @@ test('the new notes are accessible, fit every width and read without JavaScript'
   page,
   browser,
 }, testInfo) => {
-  for (const path of [photo, structure, lumbar]) {
+  for (const path of [photo, lumbar]) {
     await page.goto(path);
     for (const [width, height] of [
       [320, 900],
@@ -145,7 +110,7 @@ test('the new notes are accessible, fit every width and read without JavaScript'
     expect(results.violations, path).toEqual([]);
   }
   for (const path of [
-    '/en/note/japan/',
+    '/en/note/hardware/',
     '/ja/note/medical/daily-care/',
     '/en/note/other/',
   ]) {
@@ -167,12 +132,5 @@ test('the new notes are accessible, fit every width and read without JavaScript'
     staticPage.locator('button[data-guides="guides-gorge"]'),
   ).toBeHidden();
   await expect(staticPage.locator('.sn-archive > li')).toHaveCount(31);
-  await staticPage.goto(structure);
-  await staticPage
-    .locator('.sn-toc')
-    .getByRole('link', { name: /05｜/ })
-    .click();
-  await expect(staticPage).toHaveURL(/#topic$/);
-  await expect(staticPage.locator('#topic')).toBeInViewport();
   await context.close();
 });

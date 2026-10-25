@@ -138,7 +138,6 @@ describe('note translation contract', () => {
       'brain-cns-tumors': 'medical/pathology/brain-cns-tumors.html',
       'p2p-downloader': 'p2p-downloader.html',
       'p2p-privacy': 'p2p-privacy.html',
-      '140mm-case-fans': 'hardware/computer/140mm-case-fans.html',
       ...Object.fromEntries(
         collectionNoteIds.map((id) => [
           id,
@@ -158,10 +157,9 @@ describe('note translation contract', () => {
       (route) =>
         route.kind === 'medical-note' ||
         route.kind === 'network-note' ||
-        route.kind === 'hardware-note' ||
         route.kind === 'collection-note',
     );
-    expect(notes).toHaveLength((5 + collectionNoteIds.length) * 3);
+    expect(notes).toHaveLength((4 + collectionNoteIds.length) * 3);
     for (const route of notes) {
       if (!('noteId' in route)) throw new Error('Expected note');
       const path = routePath(route);

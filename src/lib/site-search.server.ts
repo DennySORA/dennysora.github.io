@@ -48,12 +48,9 @@ export function buildSiteSearch(
         kind:
           route.kind === 'article'
             ? 'article'
-            : [
-                  'medical-note',
-                  'network-note',
-                  'hardware-note',
-                  'collection-note',
-                ].includes(route.kind)
+            : ['medical-note', 'network-note', 'collection-note'].includes(
+                  route.kind,
+                )
               ? 'note'
               : 'page',
         href,

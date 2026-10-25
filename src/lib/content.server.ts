@@ -9,15 +9,10 @@ import {
   type NetworkNoteId,
 } from './network-notes.ts';
 import {
-  hardwareNoteIds,
-  hardwareNotes,
-  type HardwareNoteId,
-} from './hardware-notes.ts';
-import {
   collectionNoteIds,
   type CollectionNoteId,
 } from './note-collections.ts';
-import { folderTrail, noteFolderIds, noteFolderOf } from './note-tree.ts';
+import { noteFolderIds } from './note-tree.ts';
 import {
   collectionNoteMeta,
   collectionNoteSource,
@@ -320,8 +315,6 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'medical-note', locale, noteId });
     for (const noteId of networkNoteIds)
       routes.push({ kind: 'network-note', locale, noteId });
-    for (const noteId of hardwareNoteIds)
-      routes.push({ kind: 'hardware-note', locale, noteId });
     for (const noteId of collectionNoteIds)
       routes.push({ kind: 'collection-note', locale, noteId });
   }
@@ -364,19 +357,13 @@ export function validateContent(): void {
   if (new Set(types.map((type) => type.id)).size !== types.length)
     problems.push('Duplicate content type id');
   // Note IDs name translation files and search entries, so they are unique site-wide.
-  const noteIds = [
-    ...medicalNoteIds,
-    ...networkNoteIds,
-    ...hardwareNoteIds,
-    ...collectionNoteIds,
-  ];
+  const noteIds = [...medicalNoteIds, ...networkNoteIds, ...collectionNoteIds];
   for (const id of new Set(noteIds))
     if (noteIds.filter((item) => item === id).length > 1)
       problems.push(`Duplicate note id ${id}`);
   for (const [id, note] of Object.entries({
     ...medicalNotes,
     ...networkNotes,
-    ...hardwareNotes,
     ...collectionNoteMeta,
     ...projectPages,
   })) {
@@ -445,7 +432,6 @@ export function validateContent(): void {
   for (const locale of locales) {
     for (const id of medicalNoteIds) loadMedicalNote(id, locale);
     for (const id of networkNoteIds) loadNetworkNote(id, locale);
-    for (const id of hardwareNoteIds) loadHardwareNote(id, locale);
     for (const id of collectionNoteIds) loadCollectionNote(id, locale);
   }
   const paths = publishedPaths();
@@ -495,33 +481,6 @@ export function loadNetworkNote(
   return addNoteTags(
     noteEdition(html, id, locale),
     networkNotes[id].tagIds,
-    loadTaxonomy().tags,
-    locale,
-  );
-}
-
-/** A reviewed static fragment: inline SVG charts and tables, no scripts, styles or remote assets. */
-export function loadHardwareNote(
-  id: HardwareNoteId,
-  locale: Locale = 'zh-hant',
-): string {
-  if (!hardwareNoteIds.includes(id)) throw new Error('Unknown hardware note');
-  const html = readFileSync(
-    join(
-      contentRoot,
-      `notes/${folderTrail(noteFolderOf[id]).join('/')}/${id}.html`,
-    ),
-    'utf8',
-  );
-  if (
-    /<(?:script|iframe|object|embed|form|style|link|img)\b|\son[a-z]+\s*=|javascript:|\s(?:src|style)\s*=/i.test(
-      html,
-    )
-  )
-    throw new Error('Executable or styled markup in hardware note');
-  return addNoteTags(
-    noteEdition(html, id, locale),
-    hardwareNotes[id].tagIds,
     loadTaxonomy().tags,
     locale,
   );

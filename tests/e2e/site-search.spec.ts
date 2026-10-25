@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { medicalNoteIds } from '../../src/lib/medical-notes.ts';
 import { networkNoteIds } from '../../src/lib/network-notes.ts';
-import { hardwareNoteIds } from '../../src/lib/hardware-notes.ts';
 import { collectionNoteIds } from '../../src/lib/note-collections.ts';
 import { locales } from '../../src/i18n/index.ts';
 import { searchCopy } from '../../src/features/search/search-copy.ts';
@@ -96,10 +95,7 @@ test('search has useful no-JavaScript navigation and an index with note body con
     text: string;
   }[];
   expect(index.filter((entry) => entry.kind === 'note')).toHaveLength(
-    (medicalNoteIds.length +
-      networkNoteIds.length +
-      hardwareNoteIds.length +
-      collectionNoteIds.length) *
+    (medicalNoteIds.length + networkNoteIds.length + collectionNoteIds.length) *
       locales.length,
   );
   expect(

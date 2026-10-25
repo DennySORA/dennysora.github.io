@@ -1,6 +1,5 @@
 import type { IconName } from '../components/Icon.tsx';
 import type { Locale } from '../i18n/index.ts';
-import { hardwareNoteIds, type HardwareNoteId } from './hardware-notes.ts';
 import { medicalNoteIds, type MedicalNoteId } from './medical-notes.ts';
 import { networkNoteIds, type NetworkNoteId } from './network-notes.ts';
 import {
@@ -21,8 +20,6 @@ export const noteFolderIds = [
   'daily-care',
   'hardware',
   'computer',
-  'japan',
-  'japanese',
   'other',
 ] as const;
 export type NoteFolderId = (typeof noteFolderIds)[number];
@@ -40,24 +37,19 @@ export const noteFolders = {
   'daily-care': { parent: 'medical', icon: 'heart-pulse', art: art('health') },
   hardware: { parent: null, icon: 'cpu', art: art('hardware') },
   computer: { parent: 'hardware', icon: 'cpu', art: art('hardware') },
-  japan: { parent: null, icon: 'torii', art: art('japan') },
-  japanese: { parent: 'japan', icon: 'torii', art: art('japan') },
   other: { parent: null, icon: 'camera', art: art('other') },
 } as const satisfies Record<
   NoteFolderId,
   { parent: NoteFolderId | null; icon: IconName; art: string }
 >;
 
-export type NoteId =
-  NetworkNoteId | MedicalNoteId | HardwareNoteId | CollectionNoteId;
-export type NoteKind =
-  'network-note' | 'medical-note' | 'hardware-note' | 'collection-note';
+export type NoteId = NetworkNoteId | MedicalNoteId | CollectionNoteId;
+export type NoteKind = 'network-note' | 'medical-note' | 'collection-note';
 
 /** Every note in display order; IDs are unique across the whole tree. */
 export const noteIds: readonly NoteId[] = [
   ...networkNoteIds,
   ...medicalNoteIds,
-  ...hardwareNoteIds,
   ...collectionNoteIds,
 ];
 
@@ -67,14 +59,6 @@ export const noteFolderOf = {
   'p2p-privacy': 'p2p',
   analgesics: 'drugs',
   'brain-cns-tumors': 'pathology',
-  '140mm-case-fans': 'computer',
-  'japanese-structure': 'japanese',
-  'japanese-conjugation': 'japanese',
-  'japanese-clauses': 'japanese',
-  'japanese-reasons': 'japanese',
-  'japanese-expressions': 'japanese',
-  'japanese-vocabulary': 'japanese',
-  'japanese-review': 'japanese',
   'lumbar-spine-care': 'daily-care',
   'landscape-photography': 'other',
 } as const satisfies Record<NoteId, NoteFolderId>;
@@ -84,7 +68,6 @@ export function noteKind(id: NoteId): NoteKind {
   const has = (ids: readonly string[]) => ids.includes(id);
   if (has(networkNoteIds)) return 'network-note';
   if (has(medicalNoteIds)) return 'medical-note';
-  if (has(hardwareNoteIds)) return 'hardware-note';
   return 'collection-note';
 }
 

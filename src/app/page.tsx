@@ -11,7 +11,6 @@ import {
   listPosts,
   loadArticle,
   loadCollectionNote,
-  loadHardwareNote,
   loadMedicalNote,
   loadNetworkNote,
   loadComments,
@@ -45,7 +44,6 @@ import { medicalNotes } from '../lib/medical-notes.ts';
 import { noteCopy } from '../lib/notes-copy.ts';
 import { loadNotePageModule } from '../features/notes/note-page-module.ts';
 import { networkNotes } from '../lib/network-notes.ts';
-import { hardwareNotes } from '../lib/hardware-notes.ts';
 import { collectionNoteMeta } from '../lib/note-collections.server.ts';
 import { noteFolderCopy, noteTree } from '../lib/note-tree.server.ts';
 import { noteFolders } from '../lib/note-tree.ts';
@@ -71,16 +69,13 @@ function ProjectPageChunk(
 }
 
 function NotePageChunk(props: {
-  kind: 'hardware-note' | 'network-note' | 'collection-note';
+  kind: 'network-note' | 'collection-note';
   html: string;
   locale: Locale;
 }) {
-  const { CollectionNote, HardwareNote, NetworkNote } =
-    use(loadNotePageModule());
+  const { CollectionNote, NetworkNote } = use(loadNotePageModule());
   return props.kind === 'collection-note' ? (
     <CollectionNote html={props.html} locale={props.locale} />
-  ) : props.kind === 'hardware-note' ? (
-    <HardwareNote html={props.html} locale={props.locale} />
   ) : (
     <NetworkNote html={props.html} locale={props.locale} />
   );
@@ -276,12 +271,6 @@ function loadView(route: RouteDescriptor) {
         noteId: route.noteId,
         html: loadMedicalNote(route.noteId, locale),
       };
-    case 'hardware-note':
-      return {
-        kind: 'hardware-note' as const,
-        noteId: route.noteId,
-        html: loadHardwareNote(route.noteId, locale),
-      };
     case 'projects':
       return { kind: 'projects' as const };
     case 'project-category':
@@ -382,11 +371,6 @@ function describe(view: ViewData, locale: Locale) {
       return {
         title: withSite(networkNotes[view.noteId].title[locale]),
         description: networkNotes[view.noteId].description[locale],
-      };
-    case 'hardware-note':
-      return {
-        title: withSite(hardwareNotes[view.noteId].title[locale]),
-        description: hardwareNotes[view.noteId].description[locale],
       };
     case 'collection-note':
       return {
@@ -600,7 +584,6 @@ function View({ data }: { data: PageData }) {
           tree={data.workspace.notes}
         />
       );
-    case 'hardware-note':
     case 'network-note':
     case 'collection-note':
       return (

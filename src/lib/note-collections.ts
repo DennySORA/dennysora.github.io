@@ -1,16 +1,8 @@
-// Study notes kept as reviewed static fragments in the study-note format (the
-// Japanese series, lower-back care and landscape photography). Where each one is filed lives in note-tree.ts; localized copy
-// stays in note-collections.server.ts and reaches the browser only as loader
-// data for the current language.
+// Reviewed static study-note fragments: lower-back care and landscape photography.
+// Their folders live in note-tree.ts; localized copy stays in
+// note-collections.server.ts and reaches the browser as current-language loader data.
 
 export const collectionNoteIds = [
-  'japanese-structure',
-  'japanese-conjugation',
-  'japanese-clauses',
-  'japanese-reasons',
-  'japanese-expressions',
-  'japanese-vocabulary',
-  'japanese-review',
   'lumbar-spine-care',
   'landscape-photography',
 ] as const;

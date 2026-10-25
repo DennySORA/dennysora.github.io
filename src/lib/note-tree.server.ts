@@ -1,5 +1,4 @@
 import type { Locale } from '../i18n/index.ts';
-import { hardwareNotes, type HardwareNoteId } from './hardware-notes.ts';
 import { medicalNotes, type MedicalNoteId } from './medical-notes.ts';
 import { networkNotes, type NetworkNoteId } from './network-notes.ts';
 import { collectionNoteMeta } from './note-collections.server.ts';
@@ -103,24 +102,6 @@ export const noteFolderCopy: Record<
       ja: 'PC パーツと冷却：同条件の測定、仕様、価格、取り付け条件の比較。',
     },
   },
-  japan: {
-    title: { 'zh-hant': '日本', en: 'Japan', ja: '日本' },
-    intro: {
-      'zh-hant':
-        '與日本相關的學習筆記。目前收錄日語初級文法與詞彙的重編筆記，例句、編輯解析與校訂分開標示。',
-      en: 'Study notes related to Japan. It currently holds a reorganized set of notes on beginner Japanese grammar and vocabulary, with examples, editorial analysis and revisions labelled separately.',
-      ja: '日本に関する学習ノート。現在は初級日本語の文法と語彙を再編集したノートを収録し、例文・編集者の解説・校訂を区別して記載しています。',
-    },
-  },
-  japanese: {
-    title: { 'zh-hant': '日語', en: 'Japanese', ja: '日本語' },
-    intro: {
-      'zh-hant':
-        '日語文法與詞彙：先找述語、分清格角色，再決定接續與語氣。共七篇，依主題串成一套。',
-      en: 'Japanese grammar and vocabulary: find the predicate, sort out each role, then choose the connection and tone. Seven notes that form one series.',
-      ja: '日本語の文法と語彙：述語を見つけ、格の役割を分けてから、接続と語気を決める。テーマ別の 7 本で 1 つのシリーズです。',
-    },
-  },
   other: {
     title: { 'zh-hant': '其他', en: 'Other', ja: 'その他' },
     intro: {
@@ -138,8 +119,6 @@ export function noteMeta(id: NoteId) {
       return networkNotes[id as NetworkNoteId];
     case 'medical-note':
       return medicalNotes[id as MedicalNoteId];
-    case 'hardware-note':
-      return hardwareNotes[id as HardwareNoteId];
     case 'collection-note':
       return collectionNoteMeta[id as CollectionNoteId];
   }

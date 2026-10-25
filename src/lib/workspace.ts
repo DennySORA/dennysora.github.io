@@ -95,7 +95,6 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, ...folderCrumbs(route.folder, locale)];
     case 'network-note':
     case 'medical-note':
-    case 'hardware-note':
     case 'collection-note':
       return [
         home,

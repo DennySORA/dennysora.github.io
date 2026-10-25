@@ -6,10 +6,7 @@ test('translated diagram labels stay inside their SVG viewports', async ({
 }, testInfo) => {
   const failures: { path: string; labels: (string | undefined)[] }[] = [];
   for (const locale of ['en', 'ja']) {
-    for (const path of [
-      'note/software/network/p2p/p2p-downloader',
-      'note/hardware/computer/140mm-case-fans',
-    ]) {
+    for (const path of ['note/software/network/p2p/p2p-downloader']) {
       await page.goto(`/${locale}/${path}/`);
       await page.evaluate(() => document.fonts.ready);
       const overflow = await page
@@ -146,25 +143,6 @@ for (const locale of ['en', 'ja'] as const) {
     await expect(page.locator('#ppv-out')).toHaveText('8.26%');
     await page.locator('#candidate-n').selectOption('1000');
     await expect(page.locator('#ppv-out')).toHaveText('98.90%');
-
-    await page.goto(`/${locale}/note/hardware/computer/140mm-case-fans/`);
-    await page.screenshot({
-      path: testInfo.outputPath(`${locale}-fans-1440.png`),
-    });
-    await expect(page.locator('#hw-wp-result')).toContainText('40.1 CFM');
-    await page.locator('#hw-catalog-query').fill('no-such-model');
-    await expect(page.locator('#hw-catalog-count')).toContainText(
-      locale === 'en' ? 'no matches' : '該当するモデルがありません',
-    );
-    await page.locator('#hw-fan-count').fill('3');
-    await expect(page.locator('#hw-qty-result')).toContainText(
-      'Tsukumo ¥4,347',
-    );
-    await page.locator('#hw-fan-count').fill('0');
-    await expect(page.locator('#hw-qty-result')).toContainText(
-      locale === 'en' ? 'Enter a whole number' : '整数で入力',
-    );
-    await page.locator('#hw-catalog-reset').click();
 
     for (const path of [
       'medical/drugs/analgesics',

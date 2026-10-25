@@ -1,6 +1,5 @@
 import type { MedicalNoteId } from './medical-notes.ts';
 import type { NetworkNoteId } from './network-notes.ts';
-import type { HardwareNoteId } from './hardware-notes.ts';
 import type { CollectionNoteId } from './note-collections.ts';
 import {
   folderPath,
@@ -32,7 +31,6 @@ export type RouteDescriptor =
   | { kind: 'note-folder'; locale: Locale; folder: NoteFolderId }
   | { kind: 'network-note'; locale: Locale; noteId: NetworkNoteId }
   | { kind: 'medical-note'; locale: Locale; noteId: MedicalNoteId }
-  | { kind: 'hardware-note'; locale: Locale; noteId: HardwareNoteId }
   | { kind: 'collection-note'; locale: Locale; noteId: CollectionNoteId }
   | { kind: 'projects'; locale: Locale }
   | { kind: 'project-category'; locale: Locale; category: ProjectCategory }
@@ -116,8 +114,6 @@ export function noteRoute(id: NoteId, locale: Locale): RouteDescriptor {
       return { kind: 'network-note', locale, noteId: id as NetworkNoteId };
     case 'medical-note':
       return { kind: 'medical-note', locale, noteId: id as MedicalNoteId };
-    case 'hardware-note':
-      return { kind: 'hardware-note', locale, noteId: id as HardwareNoteId };
     case 'collection-note':
       return {
         kind: 'collection-note',
@@ -145,7 +141,6 @@ export function routePath(route: RouteDescriptor): string {
       return folderPath(route.folder, route.locale);
     case 'network-note':
     case 'medical-note':
-    case 'hardware-note':
     case 'collection-note':
       return notePath(route.noteId, route.locale);
     case 'projects':
@@ -197,7 +192,6 @@ export function navSection(route: RouteDescriptor): NavSection | null {
       return 'notes';
     case 'network-note':
     case 'medical-note':
-    case 'hardware-note':
     case 'collection-note':
       return 'notes';
     case 'projects':
