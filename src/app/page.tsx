@@ -22,7 +22,8 @@ import {
   tagsInLocale,
   topicsInLocale,
 } from '../lib/content.server.ts';
-import { commentsView } from '../lib/comments.ts';
+import { commentsView, commentTarget } from '../lib/comments.ts';
+import { Comments } from '../features/comments/Comments.tsx';
 import { localize } from '../lib/localize.ts';
 import {
   parseRoute,
@@ -256,7 +257,10 @@ function loadView(route: RouteDescriptor) {
             .tags.filter((tag) => article.post.tagIds.includes(tag.id))
             .map((tag) => [tag.id, tag.aliases[locale]]),
         ),
-        comments: commentsView(loadComments(), article.post),
+        comments: commentsView(loadComments(), {
+          ...article.post,
+          id: `article:${article.post.id}`,
+        }),
         author: localize(
           {
             name: profile.displayName,
@@ -428,6 +432,10 @@ export function loader({ params }: LoaderFunctionArgs) {
   if (!route) notFound();
   const locale = routeLocale(route);
   const view = loadView(route);
+  const target = commentTarget(
+    route,
+    view.kind === 'article' ? view.article.post : undefined,
+  );
   const available = availableLocales(route);
   const indexable = isIndexable(route);
   const canonical = siteUrl + routePath(route);
@@ -452,6 +460,8 @@ export function loader({ params }: LoaderFunctionArgs) {
     canonical,
     indexable,
     languageLinks,
+    commentId: target?.id ?? null,
+    comments: target ? commentsView(loadComments(), target) : null,
     hasMath: view.kind === 'article' && view.article.body.hasMath,
     view,
   };
@@ -500,6 +510,9 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
     href ? [{ label, href }] : [],
   );
   return [
+    ...(data.comments
+      ? [{ name: 'giscus:backlink', content: data.canonical }]
+      : []),
     { title: data.title },
     { name: 'description', content: data.description },
     { tagName: 'link', rel: 'canonical', href: data.canonical },
@@ -616,6 +629,15 @@ export default function Page() {
   return (
     <SiteLayout data={data}>
       <View data={data} />
+      {data.comments && data.view.kind !== 'article' ? (
+        <div className="container site-comments">
+          <Comments
+            key={`${data.locale}:${data.commentId}`}
+            view={data.comments}
+            locale={data.locale}
+          />
+        </div>
+      ) : null}
     </SiteLayout>
   );
 }

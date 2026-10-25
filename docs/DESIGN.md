@@ -301,7 +301,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **動態**：顏色、底色與邊框用 120–160ms 的 `ease-out` 過渡（`--motion`）；不使用 `transition: all`、hover 位移、循環動畫或動態背景。`prefers-reduced-motion` 時保留所有狀態、移除移動。
 - **強制色彩模式**：保留使用者的配色，目前項目改用真正的外框，powerline 箭頭隱藏。
 - **無 JavaScript**：所有內容與導覽都能讀。只在 JavaScript 下才有用的控制項加 `requires-js`；只給無 JavaScript 看的說明用 `no-js-only` 元素（由 head 裡的 noscript 樣式顯示）。**不要把內容放在 body 的 `<noscript>` 裡**，Chrome 的無 JavaScript 模擬會把它隱藏。
-- **不使用 storage 與 cookie**：介面狀態（例如檔案樹收合）只存在記憶體裡。
+- **站內介面不使用 storage 與 cookie**：檔案樹收合等狀態只存在記憶體裡。2026-10-25 依擁有者要求加入全站 giscus；讀者按下載入前不連線第三方，登入 GitHub 留言後 giscus 可能儲存登入階段。留言沿用 `.comments-panel` 與深色主題，不新增網站外框。
 
 ## 11. 之後加入新東西時怎麼做
 

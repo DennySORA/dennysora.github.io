@@ -11,7 +11,7 @@
   "tagIds": ["security", "privacy"],
   "featured": false,
   "discussionNumber": null,
-  "commentsEnabled": false,
+  "commentsEnabled": true,
   "relatedPostIds": [],
   "relatedProjectIds": [],
   "source": {

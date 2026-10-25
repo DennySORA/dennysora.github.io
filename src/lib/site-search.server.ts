@@ -13,10 +13,15 @@ import type { SiteSearchDocument } from './site-search.ts';
 export function searchableText(html: string): string {
   return decodeEntities(
     sanitizeHtml(
-      html.replace(
-        /<\/(?:p|div|li|h[1-6]|tr|td|th|section|article|pre|summary)>|<br\s*\/?>/gi,
-        ' ',
-      ),
+      html
+        .replace(
+          /<section\b[^>]*data-site-search-ignore[^>]*>[\s\S]*?<\/section>/gi,
+          '',
+        )
+        .replace(
+          /<\/(?:p|div|li|h[1-6]|tr|td|th|section|article|pre|summary)>|<br\s*\/?>/gi,
+          ' ',
+        ),
       { allowedTags: [], allowedAttributes: {} },
     ),
   )

@@ -211,21 +211,22 @@ const en = {
 
   commentsTitle: 'Comments & discussion',
   commentsIntro:
-    'Questions, additions or a different view on this article are welcome. Comments are public, and posting requires a GitHub account.',
-  commentsUnconfigured: 'Comments for this article are not open yet.',
+    'Questions, additions and different views are welcome. All language editions share one thread. Comments are public; posting requires a GitHub account.',
+  commentsUnconfigured: 'Comments for this page are not open yet.',
   commentsUnconfiguredText:
     'The discussion service has not been set up. You can reach me on GitHub or by email in the meantime.',
-  commentsDisabled: 'Comments are closed for this article.',
+  commentsDisabled: 'Comments are closed for this page.',
   commentsLoad: 'Load comments',
   commentsOpenGitHub: 'Open the discussion on GitHub',
+  commentsFindGitHub: 'Find this page’s discussion on GitHub',
   commentsThirdParty:
-    'Loading contacts giscus.app; the comments themselves are stored in GitHub Discussions. Nothing is loaded until you choose to.',
+    'Load only if you want to connect to giscus.app and GitHub. Comments are stored in public GitHub Discussions; signing in may store a giscus session in your browser. A thread is created when the first comment or reaction is posted.',
   commentsLoading: 'Connecting to the comment service…',
   commentsFailed: 'Comments could not be loaded',
   commentsFailedTimeout: 'The comment service did not respond in time.',
   commentsFailedBlocked:
     'The comment service was blocked or could not be reached.',
-  commentsFailedMissing: 'The discussion for this article could not be found.',
+  commentsFailedMissing: 'The discussion for this page could not be found.',
   commentsLocked: 'This discussion is locked; existing comments stay readable.',
   commentsEmpty: 'No comments yet.',
   commentsCount: (count: number) =>
@@ -381,20 +382,21 @@ const zh: Dictionary = {
 
   commentsTitle: '留言與討論',
   commentsIntro:
-    '對這篇文章有疑問、補充或不同觀點，歡迎一起討論。留言公開顯示，發言需要 GitHub 帳號。',
-  commentsUnconfigured: '這篇文章的留言尚未開放。',
+    '歡迎提出疑問、補充或不同觀點，三種語言版本共用同一則討論串。留言公開顯示，發言需要 GitHub 帳號。',
+  commentsUnconfigured: '這個頁面的留言尚未開放。',
   commentsUnconfiguredText:
     '留言服務尚未設定完成。在此之前，歡迎透過 GitHub 或 Email 與我聯絡。',
-  commentsDisabled: '這篇文章已關閉留言。',
+  commentsDisabled: '這個頁面已關閉留言。',
   commentsLoad: '載入留言',
   commentsOpenGitHub: '在 GitHub 開啟討論',
+  commentsFindGitHub: '在 GitHub 尋找本頁討論',
   commentsThirdParty:
-    '載入時會連線到 giscus.app，留言內容存放在 GitHub Discussions；在你選擇之前不會載入任何內容。',
+    '按下載入後才會連線到 giscus.app 與 GitHub。留言存放在公開的 GitHub Discussions；登入後，giscus 可能在瀏覽器儲存登入階段。第一則留言或表情反應送出時才會建立討論串。',
   commentsLoading: '正在連線到留言服務…',
   commentsFailed: '留言載入失敗',
   commentsFailedTimeout: '留言服務沒有在時限內回應。',
   commentsFailedBlocked: '留言服務被封鎖或無法連線。',
-  commentsFailedMissing: '找不到這篇文章對應的討論串。',
+  commentsFailedMissing: '找不到這個頁面對應的討論串。',
   commentsLocked: '這個討論已鎖定，既有留言仍可閱讀。',
   commentsEmpty: '目前還沒有留言。',
   commentsCount: (count: number) => `${count} 則留言`,
@@ -547,21 +549,22 @@ const ja: Dictionary = {
 
   commentsTitle: 'コメントと議論',
   commentsIntro:
-    'この記事への質問、補足、異なる視点を歓迎します。コメントは公開され、投稿には GitHub アカウントが必要です。',
-  commentsUnconfigured: 'この記事のコメントはまだ公開していません。',
+    '質問、補足、異なる視点を歓迎します。各言語版で同じスレッドを共有します。コメントは公開され、投稿には GitHub アカウントが必要です。',
+  commentsUnconfigured: 'このページのコメントはまだ公開していません。',
   commentsUnconfiguredText:
     'コメントサービスの設定がまだ完了していません。それまでは GitHub またはメールでご連絡ください。',
-  commentsDisabled: 'この記事のコメントは受け付けていません。',
+  commentsDisabled: 'このページのコメントは受け付けていません。',
   commentsLoad: 'コメントを読み込む',
   commentsOpenGitHub: 'GitHub でディスカッションを開く',
+  commentsFindGitHub: 'GitHub でこのページの議論を探す',
   commentsThirdParty:
-    '読み込むと giscus.app に接続し、コメントは GitHub Discussions に保存されます。選択するまで何も読み込みません。',
+    '読み込みを選択した場合のみ giscus.app と GitHub に接続します。コメントは公開の GitHub Discussions に保存され、ログイン後はブラウザーに giscus のセッションが保存される場合があります。最初のコメントやリアクションの投稿時にスレッドが作成されます。',
   commentsLoading: 'コメントサービスに接続しています…',
   commentsFailed: 'コメントを読み込めませんでした',
   commentsFailedTimeout: 'コメントサービスが時間内に応答しませんでした。',
   commentsFailedBlocked:
     'コメントサービスがブロックされたか、接続できませんでした。',
-  commentsFailedMissing: 'この記事のディスカッションが見つかりません。',
+  commentsFailedMissing: 'このページのディスカッションが見つかりません。',
   commentsLocked:
     'このディスカッションはロックされています。既存のコメントは読めます。',
   commentsEmpty: 'まだコメントはありません。',

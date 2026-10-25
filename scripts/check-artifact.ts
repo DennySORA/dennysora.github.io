@@ -8,6 +8,7 @@ import { gzipSync } from 'node:zlib';
 import {
   isIndexable,
   listPosts,
+  loadComments,
   loadPosts,
   renderPost,
   publishedPaths,
@@ -19,6 +20,7 @@ import {
   checkPostMediaMarkup,
   loadPostMedia,
 } from '../src/lib/post-media.server.ts';
+import { commentTarget } from '../src/lib/comments.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
 import { articlePath } from '../src/lib/blog-tree.ts';
 import { articleDemoPublication } from '../src/lib/article-demo-publication.ts';
@@ -314,6 +316,32 @@ else {
 // Sitemap and robots directives agree with the route manifest.
 const sitemap = readFileSync(join(root, 'sitemap.xml'), 'utf8');
 for (const route of publishedRoutes()) {
+  const pageHtml = readFileSync(
+    join(root, routePath(route), 'index.html'),
+    'utf8',
+  );
+  const post =
+    route.kind === 'article'
+      ? loadPosts().find((post) => post.slug === route.slug)
+      : undefined;
+  const target = commentTarget(route, post);
+  const commentCount = [...pageHtml.matchAll(/id="comments"/g)].length;
+  if (commentCount !== (target ? 1 : 0))
+    failures.push(`Comment coverage mismatch: ${routePath(route)}`);
+  if (
+    target?.commentsEnabled &&
+    loadComments().mode === 'giscus' &&
+    !pageHtml.includes('data-state="dormant"')
+  )
+    failures.push(
+      `Configured giscus is not ready to load: ${routePath(route)}`,
+    );
+  if (
+    /<(?:script|iframe|link)[^>]*(?:src|href)="https:\/\/giscus\.app/.test(
+      pageHtml,
+    )
+  )
+    failures.push(`Comments load before reader consent: ${routePath(route)}`);
   const listed = sitemap.includes(`<loc>${siteUrl}${routePath(route)}</loc>`);
   const file = join(root, routePath(route), 'index.html');
   const noindex =

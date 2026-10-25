@@ -1,12 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import {
   commentsView,
+  commentTarget,
   giscusAttributes,
   giscusReducer,
   parseGiscusMessage,
   type GiscusState,
 } from '../../src/lib/comments.ts';
-import { loadComments, loadPosts } from '../../src/lib/content.server.ts';
+import {
+  loadComments,
+  loadPosts,
+  publishedRoutes,
+} from '../../src/lib/content.server.ts';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Comments } from '../../src/features/comments/Comments.tsx';
+import { locales } from '../../src/i18n/index.ts';
+import { routePath } from '../../src/lib/route-manifest.ts';
+import { searchableText } from '../../src/lib/site-search.server.ts';
 import { commentsConfigSchema } from '../../src/lib/schema.ts';
 
 const parsed = commentsConfigSchema.parse({
@@ -22,70 +33,128 @@ const parsed = commentsConfigSchema.parse({
 if (parsed.mode !== 'giscus') throw new Error('Fixture must use giscus');
 const giscus = parsed;
 
-describe('comment configuration', () => {
-  it('shares configured native threads and preserves per-article opt-out', () => {
-    expect(loadComments()).toEqual({
+describe('sitewide comment identity and configuration', () => {
+  it('gives every real page one locale-independent, collision-free target', () => {
+    const targets = new Map<string, string>();
+    const paths = new Map<string, string>();
+    const posts = loadPosts();
+    for (const route of publishedRoutes()) {
+      const post =
+        route.kind === 'article'
+          ? posts.find((post) => post.slug === route.slug)
+          : undefined;
+      const target = commentTarget(route, post);
+      if (route.kind === 'root' || route.kind === 'not-found') {
+        expect(target).toBeNull();
+        continue;
+      }
+      if (!target) throw new Error(`Missing comments: ${routePath(route)}`);
+      expect(target.commentsEnabled).toBe(true);
+      const path = routePath(route).replace(/^\/(?:zh-hant|en|ja)\//, '/');
+      if (targets.has(path)) expect(target.id).toBe(targets.get(path));
+      if (paths.has(target.id)) expect(path).toBe(paths.get(target.id));
+      targets.set(path, target.id);
+      paths.set(target.id, path);
+    }
+    expect(targets.get('/')).toBe('page:home');
+    expect(targets.get('/search/')).toBe('page:search');
+    expect(targets.get('/blog/')).toBe('index:blog');
+    for (const locale of locales) {
+      const post = {
+        id: 'stable-id',
+        discussionNumber: null,
+        commentsEnabled: true,
+      };
+      expect(
+        commentTarget(
+          { kind: 'article', locale, slug: `translated-${locale}` },
+          post,
+        )?.id,
+      ).toBe('article:stable-id');
+    }
+  });
+  it('preserves recorded native numbers and uses strict stable terms for new pages', () => {
+    expect(loadComments()).toHaveProperty(
+      'repository',
+      'DennySORA/dennysora.github.io',
+    );
+    const legacy = loadPosts().filter((post) => post.discussionNumber !== null);
+    expect(legacy.map((post) => [post.id, post.discussionNumber])).toEqual([
+      ['engineering-principles', 1],
+      ['production-systems', 2],
+    ]);
+    const native = commentsConfigSchema.parse({
       mode: 'github-native',
       repository: 'DennySORA/dennysora.github.io',
     });
-    const connected = loadPosts().filter((post) => post.commentsEnabled);
-    const numbers = connected.map((post) => post.discussionNumber);
-    expect(new Set(numbers).size).toBe(numbers.length);
-    for (const post of connected)
-      expect(commentsView(loadComments(), post)).toEqual({
+    for (const post of legacy)
+      expect(commentsView(native, post)).toEqual({
         kind: 'native',
         url: `https://github.com/DennySORA/dennysora.github.io/discussions/${post.discussionNumber}`,
       });
-    const tutorial = {
-      commentsEnabled: false,
+    const target = {
+      id: 'page:home',
       discussionNumber: null,
+      commentsEnabled: true,
     };
-    expect(commentsView(loadComments(), tutorial)).toEqual({
-      kind: 'disabled',
-    });
-    expect(
-      commentsView(loadComments(), {
-        discussionNumber: null,
-        commentsEnabled: true,
-      }),
-    ).toEqual({ kind: 'unconfigured' });
-  });
-  it('never turns a missing discussion number into zero comments', () => {
-    expect(
-      commentsView(giscus, { discussionNumber: null, commentsEnabled: true }),
-    ).toEqual({
+    expect(commentsView(native, target)).toEqual({ kind: 'unconfigured' });
+    expect(commentsView({ mode: 'unconfigured' }, target)).toEqual({
       kind: 'unconfigured',
     });
+    expect(commentsView(giscus, { ...target, commentsEnabled: false })).toEqual(
+      { kind: 'disabled' },
+    );
+    const view = commentsView(giscus, target);
+    if (view.kind !== 'giscus') throw new Error('Expected giscus');
+    expect(view.mapping).toEqual({
+      kind: 'specific',
+      term: 'dennysora.me:page:home',
+    });
+    expect(new URL(view.url).searchParams.get('discussions_q')).toBe(
+      '"dennysora.me:page:home" in:title',
+    );
+    for (const [locale, lang] of [
+      ['zh-hant', 'zh-TW'],
+      ['en', 'en'],
+      ['ja', 'ja'],
+    ] as const)
+      expect(giscusAttributes(giscus, view.mapping, locale)).toMatchObject({
+        'data-mapping': 'specific',
+        'data-term': 'dennysora.me:page:home',
+        'data-strict': '1',
+        'data-theme': 'transparent_dark',
+        'data-lang': lang,
+        'data-reactions-enabled': '1',
+        'data-emit-metadata': '1',
+      });
+    const numbered = commentsView(giscus, { ...target, discussionNumber: 12 });
+    if (numbered.kind !== 'giscus') throw new Error('Expected giscus');
+    expect(numbered.mapping).toEqual({ kind: 'number', term: '12' });
     expect(
-      commentsView(giscus, { discussionNumber: 7, commentsEnabled: false }),
-    ).toEqual({ kind: 'disabled' });
+      giscusAttributes(giscus, numbered.mapping, 'en')['data-mapping'],
+    ).toBe('number');
+    expect(numbered.url).toBe(
+      'https://github.com/DennySORA/site-discussions/discussions/12',
+    );
   });
-  it('maps every locale of an article to one native thread or one giscus number', () => {
-    const native = commentsConfigSchema.parse({
-      mode: 'github-native',
-      repository: 'DennySORA/blog-comments',
-    });
-    expect(
-      commentsView(native, { discussionNumber: 3, commentsEnabled: true }),
-    ).toEqual({
-      kind: 'native',
-      url: 'https://github.com/DennySORA/blog-comments/discussions/3',
-    });
+  it('prerenders an accessible fallback without third-party resource loads or searchable boilerplate', () => {
     const view = commentsView(giscus, {
-      discussionNumber: 12,
+      id: 'page:home',
+      discussionNumber: null,
       commentsEnabled: true,
     });
-    expect(view).toMatchObject({ kind: 'giscus', number: 12 });
-    const zh = giscusAttributes(giscus, 12, 'zh-hant');
-    expect(zh).toMatchObject({
-      'data-mapping': 'number',
-      'data-term': '12',
-      'data-theme': 'transparent_dark',
-      'data-lang': 'zh-TW',
-      'data-emit-metadata': '1',
-    });
-    expect(giscusAttributes(giscus, 12, 'ja')['data-lang']).toBe('ja');
-    expect(giscusAttributes(giscus, 12, 'en')['data-lang']).toBe('en');
+    for (const locale of locales) {
+      const html = renderToStaticMarkup(
+        createElement(Comments, { view, locale }),
+      );
+      expect(html).toContain('data-state="dormant"');
+      expect(html).toContain('href="https://github.com/');
+      expect(html).not.toMatch(/<(?:script|iframe|link|img)\b/);
+      expect(html).toContain('aria-labelledby="comments-title"');
+      expect(searchableText(`<p>Keep page text</p>${html}`)).toBe(
+        'Keep page text',
+      );
+    }
   });
   it('accepts only public, owner-scoped configuration', () => {
     for (const value of [
@@ -106,8 +175,14 @@ describe('giscus runtime states', () => {
       giscusReducer(dormant, { type: 'metadata', count: 2, locked: false }),
     ).toBe(dormant);
     expect(giscusReducer(dormant, { type: 'timeout' })).toBe(dormant);
+    expect(giscusReducer(dormant, { type: 'empty' })).toBe(dormant);
     const loading = giscusReducer(dormant, { type: 'load' });
     expect(loading).toEqual({ status: 'loading' });
+    expect(giscusReducer(loading, { type: 'empty' })).toEqual({
+      status: 'ready',
+      count: 0,
+      locked: false,
+    });
     expect(
       giscusReducer(loading, { type: 'metadata', count: 0, locked: false }),
     ).toEqual({
@@ -155,6 +230,20 @@ describe('giscus runtime states', () => {
   });
   it('accepts messages only from the frame it created on the giscus origin', () => {
     const frame = {};
+    const missing = {
+      origin: 'https://giscus.app',
+      source: frame,
+      data: { giscus: { error: 'Discussion not found' } },
+    };
+    expect(
+      parseGiscusMessage(missing, frame, {
+        kind: 'specific',
+        term: 'page:new',
+      }),
+    ).toEqual({ type: 'empty' });
+    expect(
+      parseGiscusMessage(missing, frame, { kind: 'number', term: '1' }),
+    ).toEqual({ type: 'error', message: 'Discussion not found' });
     const message = {
       giscus: { discussion: { totalCommentCount: 3, locked: false } },
     };

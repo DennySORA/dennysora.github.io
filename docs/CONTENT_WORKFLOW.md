@@ -124,24 +124,31 @@ Topic、type、Tag 以 ID 作為篩選值；多個 Tag 使用 Pagefind 的 `any`
 
 ## 留言
 
-留言設定在 `data/comments.json`，是三選一的公開設定：
+2026-10-25 擁有者要求全站加入 giscus。`data/comments.json` 是唯一公開設定來源，目前使用 `giscus`。已從官方 categories API 讀回 `DennySORA/dennysora.github.io` 的 `repositoryId: R_kgDOT4fpCQ` 與 `Announcements` 的 `categoryId: DIC_kwDOT4fpCc4DGcnr`；不可填入 token 或猜測 ID。
 
-- `{ "mode": "unconfigured" }`：文章明示留言尚未開放，不載入任何第三方服務。
-- `{ "mode": "github-native", "repository": "DennySORA/<repo>" }`：顯示「在 GitHub 開啟討論」連結。**目前使用這個模式**，討論串在本 repository 的 Discussions。
-- `{ "mode": "giscus", "repository", "repositoryId", "category", "categoryId", "theme", "inputPosition", "reactionsEnabled" }`：讀者按下「載入留言」後才從 giscus.app 載入元件，並保留 GitHub 原生連結作備援。
+- `unconfigured`：明示尚未設定，不載入第三方。
+- `github-native`：只使用文章已記錄的 GitHub 討論連結，沒有編號時明示尚未設定。
+- `giscus`：需填入已驗證的 `repository`、`repositoryId`、`category`、`categoryId`、`theme: "transparent_dark"`、`inputPosition: "top"`、`reactionsEnabled: true`。只有讀者按下「載入留言」後才執行官方 `https://giscus.app/client.js`，無須增加 npm 套件。
 
-每篇文章的 `discussionNumber` 指向一個已存在的討論串，三種語言共用同一個編號；`mapping=number` 不會自動建立討論，不要填寫猜測的編號。目前三篇文章分別對應 [#1](https://github.com/DennySORA/dennysora.github.io/discussions/1)、[#2](https://github.com/DennySORA/dennysora.github.io/discussions/2)、[#3](https://github.com/DennySORA/dennysora.github.io/discussions/3)，放在 **Announcements** 分類：只有維護者能開新討論串，任何 GitHub 使用者都能留言。
+### 範圍與討論識別
 
-新文章發布前，先建立討論串再填入回傳的 `number`：
+各語言首頁、部落格／文章／分類／標籤、筆記／資料夾、專案／分類／詳情，以及搜尋頁皆有一個留言區。根目錄的語言導向頁、舊網址轉址與 404 不加入留言。站內搜尋與 Pagefind 排除留言介面的共用文字。
 
-```sh
-gh api graphql \
-  -f query='mutation($title: String!, $body: String!) { createDiscussion(input: { repositoryId: "R_kgDOT4fpCQ", categoryId: "DIC_kwDOT4fpCc4DGcnr", title: $title, body: $body }) { discussion { number url } } }' \
-  -f title='〈文章標題〉留言討論' \
-  -f body='三語文章連結與「請勿張貼憑證或私人資訊」提示'
-```
+`src/lib/comments.ts` 依內容 ID 產生固定命名空間：`page:home`、`index:blog`、`article:<post.id>`、`note:<noteId>`、`project:<projectId>`、資料夾及 taxonomy 各自分開。`data-mapping="specific"` 搭配 `data-strict="1"`，完整 term 加上 `dennysora.me:` 前綴。翻譯、標題或路徑調整不改變內容 ID；搜尋固定使用 `page:search`，不把查詢或篩選條件當作討論識別。介面語言分別為 `zh-TW`、`en`、`ja`。
 
-改用 giscus 內嵌時，只剩一個需要在 GitHub 網頁上完成的步驟：只在本 repository 安裝 [giscus App](https://github.com/apps/giscus)。repository 根目錄的 [`giscus.json`](../giscus.json) 已把可嵌入的網站限制為 `https://dennysora.me`。安裝後把設定改為 `mode: "giscus"`，填入 `repositoryId: "R_kgDOT4fpCQ"`、`category: "Announcements"`、`categoryId: "DIC_kwDOT4fpCc4DGcnr"`、`theme: "transparent_dark"`、`inputPosition: "top"`、`reactionsEnabled: true`。既有的討論編號不需要改。這些都是公開 ID，設定中不放任何 token；隱私說明頁會依目前模式自動改寫。
+尚無討論串時不預先大量建立；giscus 在第一則留言或表情反應送出時才建立。此時官方回傳的 `Discussion not found` 是可留言的空狀態，不是服務失敗。舊文章已有 `discussionNumber` 則保留 `mapping=number`，不搬移、刪除或複製討論。未載入、無 JavaScript、服務阻擋或逾時時，均保留 GitHub 討論連結；新內容尚無編號時連到該固定 ID 的討論搜尋，明確標為「尋找本頁討論」，不假裝已有討論串。
+
+目前四篇正式文章依全站要求開放留言，正文與內容 ID 不變。已退役文章不重新發布，其歷史 `discussionNumber` 原樣保留；重新發布前必須讀取實際討論標題與內容重新核對，不可把歷史 metadata 當成已驗證的對應。
+
+### 啟用與隱私邊界
+
+依 [giscus 官方設定](https://giscus.app/)確認 repository 公開、Discussions 已啟用，而且 giscus App 僅獲授權至擁有者選定的 repository。App 安裝／持續權限是獨立核准動作，不由網站程式自動完成。讀取實際設定後才將 `mode` 切換為 `giscus`；未完成時不得宣稱已可用。
+
+根目錄 [`giscus.json`](../giscus.json) 的既有允許來源仍只有 `https://dennysora.me`，不擴大到預覽或其他網域。此網站目前沒有在原始碼設定 CSP；若部署層日後加入 CSP，官方腳本需要 `script-src https://giscus.app`、外層樣式需要 `style-src https://giscus.app`、留言框需要 `frame-src https://giscus.app`，不得用萬用字元放寬整站。這是相容性需求說明，不授權修改安全設定。
+
+按下載入前不請求第三方資源；載入後會連線 giscus.app 與 GitHub，官方腳本會使用當前頁面網址作為嵌入來源。`giscus:backlink` 使用不含查詢字串的 canonical URL，避免把篩選條件寫入新討論的返回連結。留言公開存放於 GitHub Discussions，發言需要 GitHub 帳號及 giscus OAuth 授權；官方腳本可能在登入後以 `giscus-session` 儲存登入階段，因此不能宣稱啟用後永遠沒有瀏覽器儲存。未新增站內帳號、分析或追蹤程式。
+
+官方來源：[嵌入與自動建立規則](https://giscus.app/)、[嚴格比對與 metadata](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md)、[client.ts 的資源及 session 行為](https://github.com/giscus/giscus/blob/main/client.ts)。程式處理正常、空、鎖定、逾時、封鎖與重試狀態；只接受本次 giscus iframe、正確 origin 送出的 metadata。
 
 ## 自介與專案
 

@@ -1,4 +1,10 @@
 {
-  "mode": "github-native",
-  "repository": "DennySORA/dennysora.github.io"
+  "mode": "giscus",
+  "repository": "DennySORA/dennysora.github.io",
+  "repositoryId": "R_kgDOT4fpCQ",
+  "category": "Announcements",
+  "categoryId": "DIC_kwDOT4fpCc4DGcnr",
+  "theme": "transparent_dark",
+  "inputPosition": "top",
+  "reactionsEnabled": true
 }

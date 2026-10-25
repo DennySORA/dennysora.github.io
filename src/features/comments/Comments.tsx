@@ -26,6 +26,8 @@ export function Comments({
       className="comments"
       id={pageIds.comments}
       aria-labelledby={pageIds.commentsTitle}
+      data-pagefind-ignore="all"
+      data-site-search-ignore=""
     >
       <h2 id={pageIds.commentsTitle}>
         <Icon name="mail" size={20} />
@@ -70,7 +72,11 @@ export function Comments({
         </div>
       ) : null}
       {view.kind === 'giscus' ? (
-        <GiscusComments view={view} locale={locale} />
+        <GiscusComments
+          key={`${locale}:${view.mapping.kind}:${view.mapping.term}`}
+          view={view}
+          locale={locale}
+        />
       ) : null}
     </section>
   );
@@ -121,14 +127,18 @@ function GiscusComments({
     script.async = true;
     script.crossOrigin = 'anonymous';
     for (const [name, value] of Object.entries(
-      giscusAttributes(view.config, view.number, locale),
+      giscusAttributes(view.config, view.mapping, locale),
     ))
       script.setAttribute(name, value);
-    script.addEventListener('error', () => dispatch({ type: 'script-error' }));
+    let active = true;
+    const failed = () => {
+      if (active) dispatch({ type: 'script-error' });
+    };
+    script.addEventListener('error', failed);
     function receive(event: MessageEvent) {
       const frame = container?.querySelector('iframe')?.contentWindow;
-      const message = parseGiscusMessage(event, frame);
-      if (message) dispatch(message);
+      const message = parseGiscusMessage(event, frame, view.mapping);
+      if (active && message) dispatch(message);
     }
     window.addEventListener('message', receive);
     const timeout = setTimeout(
@@ -137,11 +147,13 @@ function GiscusComments({
     );
     container.append(script);
     return () => {
+      active = false;
       clearTimeout(timeout);
+      script.removeEventListener('error', failed);
       window.removeEventListener('message', receive);
       container.replaceChildren();
     };
-  }, [attempt, locale, view.config, view.number]);
+  }, [attempt, locale, view.config, view.mapping]);
 
   function load() {
     dispatch({ type: 'load' });
@@ -162,7 +174,11 @@ function GiscusComments({
             </button>
             <NativeLink
               url={view.url}
-              label={t.commentsOpenGitHub}
+              label={
+                view.mapping.kind === 'specific'
+                  ? t.commentsFindGitHub
+                  : t.commentsOpenGitHub
+              }
               hint={t.newTab}
             />
           </div>
@@ -201,11 +217,16 @@ function GiscusComments({
       {state.status !== 'dormant' ? (
         <NativeLink
           url={view.url}
-          label={t.commentsOpenGitHub}
+          label={
+            view.mapping.kind === 'specific'
+              ? t.commentsFindGitHub
+              : t.commentsOpenGitHub
+          }
           hint={t.newTab}
         />
       ) : null}
       <div
+        key={attempt}
         ref={host}
         className="giscus-frame-host"
         hidden={state.status === 'dormant' || state.status === 'failed'}

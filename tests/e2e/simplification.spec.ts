@@ -143,7 +143,7 @@ for (const [width, height] of [
       await expect(page.locator('html')).toHaveAttribute('data-keys', 'ready');
       const metrics = () =>
         page
-          .locator('main > .buffer, main > .container')
+          .locator('main > .buffer, main > .container:not(.site-comments)')
           .evaluate((element) => {
             const content = element.getBoundingClientRect();
             const editor = element.closest('.editor')!.getBoundingClientRect();

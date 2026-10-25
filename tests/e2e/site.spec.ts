@@ -219,7 +219,7 @@ test('migrated AI and video pages have no links or forwarding stubs', async ({
       expect((await request.get(`/${locale}/${path}/`)).status()).toBe(404);
 });
 
-test('no third-party requests, cookies or storage; comments never load on their own', async ({
+test('no third-party requests, cookies or storage before comments are loaded', async ({
   page,
 }) => {
   const external = trackExternalRequests(page);
@@ -242,9 +242,10 @@ test('no third-party requests, cookies or storage; comments never load on their 
   }
   await page.goto('/zh-hant/note/medical/drugs/analgesics/');
   await expect(page.locator('iframe')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Load comments' })).toHaveCount(
-    0,
-  );
+  await expect(page.locator('#comments')).toHaveCount(1);
+  await expect(
+    page.getByRole('button', { name: dictionaries['zh-hant'].commentsLoad }),
+  ).toHaveCount(1);
   expect(external).toEqual([]);
 });
 
