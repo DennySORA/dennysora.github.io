@@ -33,7 +33,6 @@ export function Comments({
         <Icon name="mail" size={20} />
         {t.commentsTitle}
       </h2>
-      <p className="comments-intro">{t.commentsIntro}</p>
       {view.kind === 'unconfigured' ? (
         <div className="comments-panel" data-state="unconfigured">
           <p className="comments-status">
@@ -183,7 +182,6 @@ function GiscusComments({
 
   return (
     <div className="comments-panel" data-state={state.status}>
-      <p className="fine">{t.commentsThirdParty}</p>
       {state.status === 'loading' ? (
         <p className="comments-status requires-js" role="status">
           {t.commentsLoading}
@@ -199,17 +197,6 @@ function GiscusComments({
           </button>
         </div>
       ) : null}
-      {state.status === 'ready' ? (
-        <p className="comments-status" role="status">
-          {state.locked
-            ? t.commentsLocked
-            : state.count === 0
-              ? t.commentsEmpty
-              : state.count !== null
-                ? t.commentsCount(state.count)
-                : null}
-        </p>
-      ) : null}
       {state.status === 'failed' ? (
         <div className="notice" data-status="danger" role="alert">
           <Icon name="alert" size={18} />
@@ -223,15 +210,6 @@ function GiscusComments({
           </button>
         </div>
       ) : null}
-      <NativeLink
-        url={view.url}
-        label={
-          view.mapping.kind === 'specific'
-            ? t.commentsFindGitHub
-            : t.commentsOpenGitHub
-        }
-        hint={t.newTab}
-      />
       <div key={attempt} ref={host} className="giscus-frame-host" />
     </div>
   );

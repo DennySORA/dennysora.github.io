@@ -21,7 +21,10 @@ import {
   loadPostMedia,
 } from '../src/lib/post-media.server.ts';
 import { commentTarget } from '../src/lib/comments.ts';
-import { routePath } from '../src/lib/route-manifest.ts';
+import { routePath, routeLocale } from '../src/lib/route-manifest.ts';
+import { articleCoverForRoute } from '../src/lib/article-covers.server.ts';
+import { readImageSize } from '../src/lib/image-size.server.ts';
+import covers from '../data/article-covers.json' with { type: 'json' };
 import { articlePath } from '../src/lib/blog-tree.ts';
 import { articleDemoPublication } from '../src/lib/article-demo-publication.ts';
 import brand from '../data/brand-assets.json' with { type: 'json' };
@@ -129,6 +132,44 @@ for (const post of loadPosts())
 for (const file of files)
   if (extname(file) === '.vtt' && !expectedSubtitles.has(relative(root, file)))
     failures.push(`Unreferenced subtitle artifact: ${relative(root, file)}`);
+
+// Covers are responsive local rasters with an independently crawlable JPEG for social cards.
+const coverAssets = new Set<string>();
+const publishedCoverIds = new Set(
+  publishedRoutes().flatMap((route) => {
+    const cover = articleCoverForRoute(route, routeLocale(route));
+    return cover ? [cover.id] : [];
+  }),
+);
+for (const cover of covers.covers) {
+  if (!publishedCoverIds.has(cover.id)) {
+    failures.push(`Cover registered for unpublished content: ${cover.id}`);
+    continue;
+  }
+  for (const asset of cover.assets) {
+    coverAssets.add(asset.path);
+    const path = join(root, asset.path);
+    if (!existsSync(path)) {
+      failures.push(`Article cover missing: ${asset.path}`);
+      continue;
+    }
+    const bytes = readFileSync(path);
+    const size = readImageSize(path);
+    if (
+      bytes.length !== asset.bytes ||
+      createHash('sha256').update(bytes).digest('hex') !== asset.sha256 ||
+      size.width !== asset.width ||
+      size.height !== asset.height
+    )
+      failures.push(`Article cover differs from provenance: ${asset.path}`);
+  }
+}
+for (const file of files)
+  if (
+    relative(root, file).startsWith('assets/article-covers/') &&
+    !coverAssets.has(relative(root, file))
+  )
+    failures.push(`Unrecorded article cover: ${relative(root, file)}`);
 
 // Every shipped illustration is recorded with its final bytes (docs/DESIGN.md §7).
 const recorded = new Set<string>();
@@ -320,6 +361,40 @@ for (const route of publishedRoutes()) {
     join(root, routePath(route), 'index.html'),
     'utf8',
   );
+  const cover = articleCoverForRoute(route, routeLocale(route));
+  const expectsCover = [
+    'article',
+    'network-note',
+    'medical-note',
+    'collection-note',
+  ].includes(route.kind);
+  const coverCount = [...pageHtml.matchAll(/class="article-cover"/g)].length;
+  if (coverCount !== (expectsCover ? 1 : 0) || (expectsCover && !cover))
+    failures.push(`Article banner coverage mismatch: ${routePath(route)}`);
+  if (cover) {
+    const head = pageHtml.split('</head>')[0] ?? '';
+    const socialImage = siteUrl + cover.socialSrc;
+    if (
+      [...head.matchAll(/property="og:image"/g)].length !== 1 ||
+      !head.includes(`<meta property="og:image" content="${socialImage}"`) ||
+      !head.includes('<meta property="og:image:type" content="image/jpeg"') ||
+      !head.includes('<meta property="og:image:width" content="1200"') ||
+      !head.includes('<meta property="og:image:height" content="630"') ||
+      !head.includes(
+        '<meta name="twitter:card" content="summary_large_image"',
+      ) ||
+      !head.includes(`<meta name="twitter:image" content="${socialImage}"`)
+    )
+      failures.push(`Incomplete article social metadata: ${routePath(route)}`);
+    if (
+      pageHtml.indexOf('class="article-cover"') > pageHtml.indexOf('<h1') ||
+      !pageHtml.includes(cover.smallSrc + ' 640w') ||
+      !pageHtml.includes(cover.src + ' 1200w')
+    )
+      failures.push(
+        `Article banner placement or responsive source mismatch: ${routePath(route)}`,
+      );
+  }
   const post =
     route.kind === 'article'
       ? loadPosts().find((post) => post.slug === route.slug)

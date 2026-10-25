@@ -137,7 +137,7 @@ describe('sitewide comment identity and configuration', () => {
       'https://github.com/DennySORA/site-discussions/discussions/12',
     );
   });
-  it('prerenders automatic loading and an accessible fallback without a click gate or searchable boilerplate', () => {
+  it('prerenders the automatic widget host without duplicate copy, links or a click gate', () => {
     const view = commentsView(giscus, {
       id: 'page:home',
       discussionNumber: null,
@@ -148,7 +148,12 @@ describe('sitewide comment identity and configuration', () => {
         createElement(Comments, { view, locale }),
       );
       expect(html).toContain('data-state="loading"');
-      expect(html).toContain('href="https://github.com/');
+      expect(html).not.toContain('<a ');
+      expect(html).not.toContain('comments-intro');
+      expect(html).not.toMatch(
+        /Questions, additions|歡迎提出疑問|質問、補足|No comments yet|目前還沒有留言|まだコメントはありません|Find this page|尋找本頁討論|このページの議論を探す/,
+      );
+      expect(html).toContain('class="giscus-frame-host"');
       expect(html).not.toContain('<button');
       expect(html).not.toMatch(/<div[^>]*\shidden(?:=|>)/);
       expect(html).not.toMatch(/<(?:script|iframe|link|img)\b/);

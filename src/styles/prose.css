@@ -568,11 +568,6 @@
 .comments h2 .icon {
   color: var(--color-link);
 }
-.comments-intro {
-  margin-bottom: var(--space-5);
-  color: var(--color-text-secondary);
-  font-size: 16px;
-}
 .comments-panel {
   display: grid;
   gap: var(--space-3);

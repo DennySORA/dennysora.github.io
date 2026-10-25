@@ -1,0 +1,457 @@
+{
+  "checkedAt": "2026-10-25",
+  "style": "Moonlit symbolic article covers: deep navy, graphite, porcelain and restrained blue/teal/gold accents; no text or logos. Opaque covers are a user-requested exception to the transparent feature-icon style.",
+  "commonPrompt": "Use case: stylized-concept. Asset type: a complete original horizontal article-cover illustration and social-preview image for a premium dark technical journal. Wide 1.905:1 composition, target 1200 by 630, full bleed, entirely without text. Sophisticated, precise, quiet moonlit engineering art: deep midnight navy background, sculptural graphite and pale porcelain objects with fine technical etched detail, restrained icy blue and desaturated teal highlights, occasional warm moonlight accent. Main readable silhouette and all important symbols within central 80% width and 70% height so wide responsive crops remain meaningful. Rich but restrained depth, fine material realism, no excessive glow, no stock-photo feel, no busy HUD. Absolutely no letters, words, numbers, labels, symbols that resemble text, logos, watermarks, signatures, human faces, branding, borders, or UI panels. It must be a polished standalone raster illustration, not a diagram or collage.",
+  "covers": [
+    {
+      "id": "password-manager-recommendations",
+      "kind": "article",
+      "alt": {
+        "zh-hant": "層疊保險庫守護中央水晶鑰匙，周圍環繞鑰匙與備份膠囊，象徵密碼加密與安全復原。",
+        "en": "Layered vault shells protect a crystal key, surrounded by keys and backup capsules representing encryption and secure recovery.",
+        "ja": "多層の保管庫が水晶の鍵を守り、周囲の鍵とバックアップ容器が暗号化と安全な復旧を表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/password-manager-recommendations-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 117462,
+          "sha256": "b480f876b9bbb8b9af27067a2b474989fc5210755f9d182b263fa4a23b14dbcc"
+        },
+        {
+          "path": "assets/article-covers/password-manager-recommendations-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 42710,
+          "sha256": "477c570b574679887fb9978191bbd7937e339be316604b968db992212686409e"
+        },
+        {
+          "path": "assets/article-covers/password-manager-recommendations-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 184469,
+          "sha256": "f0e010553239821d88f28d9016397d16cac29b5d8ed290ab5dddcbfc461d980f"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "A finely engineered graphite vault with layered concentric protective shells floating apart just enough to reveal a single luminous crystal key at its core. Several different precise key-shaped objects and small sealed backup capsules orbit outside in balanced order, suggesting encryption, passkeys and recoverable access. An elegant unmistakable password-security metaphor, trust through layered engineering rather than a generic padlock.",
+        "promptSha256": "d9cf07cf1170333901d2e0043302d82b209b71164f9c379ed55c7a4ad72253d6",
+        "originalSha256": "cfe1fbf658e6387b4a86da1dcfd760b8bd7b0d70c3ac7fd88bc85f0f28b1452a"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "p2p-downloader-architecture",
+      "kind": "article",
+      "alt": {
+        "zh-hant": "多個節點沿著獨立路徑傳送資料方塊，在中央組合成完整立方體，象徵 P2P 分片下載。",
+        "en": "Data blocks travel from distributed nodes along separate paths and assemble into a central cube, representing P2P piece downloads.",
+        "ja": "分散ノードから別々の経路を進むデータ片が中央の立方体を組み立て、P2P の分割ダウンロードを表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/p2p-downloader-architecture-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 147266,
+          "sha256": "5d96d514299b804eed5f1b9d70a51d2ea01204aa62ef58e58eda8f031faf4426"
+        },
+        {
+          "path": "assets/article-covers/p2p-downloader-architecture-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 49044,
+          "sha256": "87e5187903552cef06d261f603b0107914a9b98b57a416c1690b7e63b65e0f42"
+        },
+        {
+          "path": "assets/article-covers/p2p-downloader-architecture-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 216572,
+          "sha256": "fbd5f86efcd8b09c6a0fe7b4cc7c02bab9062f691c38b1e2d80cc5f8209027a6"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "Several separate streams of small porcelain data blocks travel along thin blue paths from distributed nodes on left and right, assembling into one precisely interlocking complete crystalline cuboid in the middle. One subtle overhead ring of small search points stays separate from the stronger lower data-transfer pathways, expressing discovery versus transfer, parallel pieces, and coordinated resource flow. Make the assembling pieces tangible and visually legible.",
+        "promptSha256": "889f39268d8982daf89160c23027526ba450dca09787843a6f8b0a39d9c2845e",
+        "originalSha256": "fc05ad6ba882281fcc2009c7babee3be9adbd8fe65b7f75d444d3a05ac0fb0f2"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "p2p-privacy-boundaries",
+      "kind": "article",
+      "alt": {
+        "zh-hant": "規律的光脈衝穿過透明隧道，兩端仍看得見相同節奏，象徵加密通道的隱私界限。",
+        "en": "Regular light pulses pass through a transparent tunnel with matching rhythms visible at both ends, representing privacy limits of encrypted channels.",
+        "ja": "規則的な光のパルスが透明なトンネルを通り、両端に同じリズムが見えることで暗号化通信のプライバシーの限界を表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/p2p-privacy-boundaries-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 84536,
+          "sha256": "2341009674991904baf5827c0604e9dc7e13653098e6b6836b9b5c5a78c0b23d"
+        },
+        {
+          "path": "assets/article-covers/p2p-privacy-boundaries-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 29238,
+          "sha256": "d4bf772c21484637b96a1cbe2500dd317133087c4c61d1ecd662fa1722ba347f"
+        },
+        {
+          "path": "assets/article-covers/p2p-privacy-boundaries-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 152661,
+          "sha256": "43b0582856909127fc89a6a52f2e6a4891c3438f5fa2991e888a6055ba9c4012"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "A bundle of evenly spaced cool-blue light pulses passes through a dark translucent protective tunnel, while the rhythm of the pulses remains visibly matched at both exposed ends. Several paths branch away into a distant quiet network. Show the limits of a protective boundary without implying perfect anonymity: protection of the middle, persistent patterns at the ends. Refined sculptural network metaphor, restrained and beautiful.",
+        "promptSha256": "c56cb34c5966b290c10481ae49f1d3dd4b4f3871f9306d97b4053bec7069c3ef",
+        "originalSha256": "9da9cd387bc0f76a5f4feb327f3f8ed59f16f956cd1ec143c4b1722819a7023b"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "browser-translation-architecture",
+      "kind": "article",
+      "alt": {
+        "zh-hant": "幾何碎片從空白紙張穿過三道稜鏡關卡後重新排列，象徵網頁翻譯的擷取、驗證與回寫。",
+        "en": "Geometric fragments flow from blank sheets through three prism gates and emerge rearranged, representing webpage translation, validation and writeback.",
+        "ja": "白紙から出た幾何学的な断片がプリズム内の三つの関門を通って再配置され、ウェブ翻訳の抽出・検証・書き戻しを表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/browser-translation-architecture-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 107820,
+          "sha256": "f7098c223f587c9f7b7c3b07ba5f8a8154fb643489874ad90ac5b51148808a22"
+        },
+        {
+          "path": "assets/article-covers/browser-translation-architecture-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 40810,
+          "sha256": "0543fb4f45616de1709203fe5a1416b6ef9a5d1c029a73cf709cb9a972694d54"
+        },
+        {
+          "path": "assets/article-covers/browser-translation-architecture-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 175523,
+          "sha256": "9ab4f4c63bc63ae81c64e1ca2dd64a95b9a7291c13cf060c4c6a1dbacfd9d3fc"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "An elegant translucent faceted prism bridges two stacks of blank thin porcelain document sheets. Tiny geometric fragments flow from the left sheets through a precise orderly series of three small gate-like rings inside the prism, emerging as harmoniously rearranged shapes on the right sheets. Suggest extraction, scheduling, validation and safe translation without any writing, glyphs or language symbols. A coherent luminous transformation with a visible controlled pipeline.",
+        "promptSha256": "074c9bd35f24f8c79ec2018cfbad59e2c80f2e29c254c2a521f5337cc3b6589e",
+        "originalSha256": "fa460f7e4f33d0f85fe410752dd7fdac868a0a1ca19787d539b78c79d4b48f41"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "p2p-downloader",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "環形資料池連接中央樞紐與多個對等節點，上方獨立軌道持續探索來源。",
+        "en": "An orbital data pool connects a central hub and peer nodes while a separate upper orbit searches for sources.",
+        "ja": "環状のデータプールが中央ハブと複数のピアを結び、上方の独立した軌道がソースを探索する。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/p2p-downloader-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 141800,
+          "sha256": "e0dafd7fd68cb936dc1963e5853b86f4404d26ba304bf8da978da919353d12f2"
+        },
+        {
+          "path": "assets/article-covers/p2p-downloader-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 49680,
+          "sha256": "85ba3b0cbc48f6fd34642e8fc2b1f4fa1383ce1be46789c245e50215154104ff"
+        },
+        {
+          "path": "assets/article-covers/p2p-downloader-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 215488,
+          "sha256": "7165d2ff881413bfd5a07f80a1d8db724d97cf8e1d5e5c6c93439521c021cbee"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "An orbital instrument with a central circular hub and several carefully spaced peer nodes around it. Between them, parallel thin paths carry small ice-blue crystalline data segments toward a broad segmented reservoir ring, while a second separate upper orbit quietly searches the surrounding space. Mechanical gates regulate each connection, suggesting continuous discovery, elastic download pools and resilient per-connection governance. The center is a sculptural connected system, not a computer or a globe.",
+        "promptSha256": "61e55492d7e3171eef0b0b6802fc78d7e1ebbb934aae6148d307f7687d1984b9",
+        "originalSha256": "a31910a7fc9ae171a668e6e857a9f6003b8e35eacc61668fa959c28472b8ad87"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "p2p-privacy",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "光路穿過多層隔離屏障與交織網格後分散，象徵流量混合、延遲與隱私保護。",
+        "en": "Light paths cross layered barriers and a woven mesh before dispersing, representing traffic mixing, delay and privacy protection.",
+        "ja": "光の経路が多層の隔壁と編み目状の網を通って分散し、通信の混合・遅延・プライバシー保護を表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/p2p-privacy-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 124638,
+          "sha256": "36d0f0cf5ffa9a34170771e81845d38daf80116a5c0f825092c9ccc6e6ee54d2"
+        },
+        {
+          "path": "assets/article-covers/p2p-privacy-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 44646,
+          "sha256": "ffea96fa21912b7a81d20be303a75b5542dc441fae75ccbe474d5da570351c5e"
+        },
+        {
+          "path": "assets/article-covers/p2p-privacy-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 188604,
+          "sha256": "968a747d10d24a89ba353351360f75541d7a77d2379bb48b51b1d6fb1910b74c"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "A field of thin optical paths enters several offset layers of dark frosted-glass protective shells, then emerges through a delicately woven branching lattice with irregularly spaced cool-blue pulses. The center shows routes being mixed and delayed while a faint reflected matching rhythm at the edges reminds us of correlation limits. An elegant original privacy-research metaphor with network isolation and multiple boundaries, never a hacker hood or generic padlock.",
+        "promptSha256": "67573de63e233dd902c831e31cb425082bc8b974efb13ef649f8f994b65b8daa",
+        "originalSha256": "e4602f47521e33d30b8bffbd4b4b0e793f07b83fa9e6a2cce431cd1fb766920f"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "analgesics",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "無標示藥錠與膠囊位於神經纖維前方，光脈衝穿過薄膜後減弱，象徵止痛藥作用的概念。",
+        "en": "Unlabelled tablets and a capsule sit before nerve-like fibers as a light pulse softens across a membrane, a conceptual illustration of pain relief.",
+        "ja": "無印の錠剤とカプセルの背後で、神経を模した繊維の光のパルスが膜を通って弱まる、鎮痛作用の概念図。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/analgesics-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 133298,
+          "sha256": "4c436d086503423e64945c48499f1b2067a7ddb829337e53bc75bbf49694c14a"
+        },
+        {
+          "path": "assets/article-covers/analgesics-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 50998,
+          "sha256": "ffeceab21e47728a7a99091f94edf063d2d2899bb10843bcba5e2b5ba55c6409"
+        },
+        {
+          "path": "assets/article-covers/analgesics-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 200889,
+          "sha256": "d851388cfa10f2ab7a92325152228a3dba426ddcd270c4aa1992a73249d8367e"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "Three abstract unbranded medicine forms — a small porcelain tablet, a smooth capsule and a scored round tablet — arranged around a precise branching nerve-like fiber sculpture, whose sharp jagged pulse smoothly diminishes after a translucent protective membrane. Small molecular bead connections give a pharmacology-study impression without specific chemical structures. A gentle, restrained, non-gory educational still life about pain relief, mechanisms and safety; not a prescription, advertisement, or claim of cure.",
+        "promptSha256": "6f8dc94f3a3bbc5f24abe20553585d197d86d9f57303c9b15f231ab6b72b52bd",
+        "originalSha256": "4b002602eec513caf5ee784d2b4e3d54a77f2e7913a72d60b92ce1a53ac4c08f"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "brain-cns-tumors",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "象徵性插圖：透明腦部模型內外分布不同細胞群與神經連線，代表中樞神經腫瘤分類與研究。",
+        "en": "Symbolic illustration of a translucent brain model with cell clusters and neural connections, representing central nervous system tumor classification and research.",
+        "ja": "象徴的なイラスト。透明な脳の模型に細胞群と神経のつながりを配し、中枢神経系腫瘍の分類と研究を表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/brain-cns-tumors-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 112012,
+          "sha256": "cd4e5051b7efc66feb582b5e66e0ec0ce6e1a99b5eb05a3ab4ee38b999b95ae6"
+        },
+        {
+          "path": "assets/article-covers/brain-cns-tumors-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 41110,
+          "sha256": "2d0c23ab3bc8350b473a6521830432a32683c45667871d1e70338a729fc8a399"
+        },
+        {
+          "path": "assets/article-covers/brain-cns-tumors-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 176357,
+          "sha256": "c43b4ccd40a464e45fe8d32793bab17afc606aab2b148e54e9eef428468d74ba"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "An elegant translucent side silhouette of a human brain rendered as milky crystalline glass, with delicate branching neuron fibers and a small distinct cluster of softly colored cell-like beads within one hemisphere. A few separate cell clusters and interlinked molecular beads float nearby in an orderly study arrangement, symbolizing classification and diagnostic research. Respectful quiet educational imagery, no patient, no wounds, no frightening red glow, no diagnostic labels, no claim of anatomically exact tumor mapping.",
+        "promptSha256": "944dc779f389592f2b594269d2ad7d812445398782cb2a4fb8112d3e6563c625",
+        "originalSha256": "a474bd7536e08152bf38bbaf64fe400e904171d86365cf221deccfeef5390794"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "lumbar-spine-care",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "象徵性插圖：帶有藍色椎間盤的腰椎模型由柔軟緞帶托住，周圍石頭代表支持、活動與休息。",
+        "en": "Symbolic illustration of a lumbar spine model supported by a soft ribbon, with blue discs and orbiting stones representing support, movement and rest.",
+        "ja": "象徴的なイラスト。青い椎間板を持つ腰椎模型を柔らかなリボンが支え、周囲の石が支え・運動・休息を表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/lumbar-spine-care-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 107742,
+          "sha256": "ab0afa141ca2007c4e84db0bd68fbbc12c7986bc01c2863b0c134c6d49c2dd66"
+        },
+        {
+          "path": "assets/article-covers/lumbar-spine-care-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 37400,
+          "sha256": "fd5826a684f275fbc8206b4129e22e5221507c0af1ff09d4b17f82e4be0493ec"
+        },
+        {
+          "path": "assets/article-covers/lumbar-spine-care-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 169781,
+          "sha256": "e982f3fa8f168ddd29522a0d4e416285477c1b08d8663b350ff9ef33bd7b63ad"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "A calm gently curving sculptural lumbar spine segment in pale porcelain with subtle translucent blue disc cushions, suspended in a balanced arc. A wide soft ribbon cradles its lower curve like ergonomic support, while a delicate orbit of smooth stones suggests steady movement and rest. Precise but reassuring abstract educational cover for posture, sleep, exercise and lower-back care. No patient, injury, visible pain, medical claims or diagram labels.",
+        "promptSha256": "a655096473aa230e3ff38727181d76ebf1c42567dd1547497dffec5627491a1f",
+        "originalSha256": "555a89be607267f1284f0367e4e5297669ae772e2330d17d362bd00a00111a71"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "landscape-photography",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "相機鏡頭與分離鏡片框住月光山湖及蜿蜒河道，象徵風景攝影的構圖、光線與景深。",
+        "en": "A camera lens and separated optical elements frame a moonlit mountain lake and winding river, representing composition, light and depth of field.",
+        "ja": "カメラのレンズと分離した光学素子が月明かりの山湖と曲がる川を捉え、風景写真の構図・光・被写界深度を表す。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/landscape-photography-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 91788,
+          "sha256": "a198ce89c0a12a234bbf803c5e0a140c7288b7d38c0ad13021305eeb03fbf7ba"
+        },
+        {
+          "path": "assets/article-covers/landscape-photography-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 36234,
+          "sha256": "2bf70c9e4c906dac12a843f96987dd8a0cfef70b1f0bc862a98421d7dd8b8ad9"
+        },
+        {
+          "path": "assets/article-covers/landscape-photography-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 155824,
+          "sha256": "ba8d77045fb2be76a39f6afc5c7f78b92cbce3d145be6073c39da331e04035a1"
+        }
+      ],
+      "source": {
+        "provider": "OpenAI built-in image_gen",
+        "model": "not exposed",
+        "generatedAt": "2026-10-25",
+        "brief": "A beautifully crafted unbranded camera lens in the foreground reveals a quiet moonlit mountain lake landscape through its crystal optics. A natural winding river leads the eye toward layered dark peaks, a clean reflective horizon and soft dawn-like moonlight. The landscape outside the lens aligns with its inner image; subtle translucent plane-like optical elements suggest framing, exposure and depth of field. Premium atmospheric photography-learning metaphor, no camera-brand lettering, no viewfinder markings, no visible numbers.",
+        "promptSha256": "8e7b285db9cafe56cd778f15bdece4eef4d409abb524143b093ce7d0e857d529",
+        "originalSha256": "9dc820355118104adc09173206d45739871ece66ecd0c7a6302e969961e0cd96"
+      },
+      "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
+      "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    }
+  ]
+}

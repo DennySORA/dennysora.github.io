@@ -1,4 +1,6 @@
 import { articleFolder, blogFolders } from '../lib/blog-tree.ts';
+import { articleCoverForRoute } from '../lib/article-covers.server.ts';
+import type { ArticleCoverData } from '../lib/article-covers.ts';
 import type {
   LoaderFunctionArgs,
   MetaFunction,
@@ -75,12 +77,17 @@ function NotePageChunk(props: {
   kind: 'network-note' | 'collection-note';
   html: string;
   locale: Locale;
+  cover: ArticleCoverData | null;
 }) {
   const { CollectionNote, NetworkNote } = use(loadNotePageModule());
   return props.kind === 'collection-note' ? (
-    <CollectionNote html={props.html} locale={props.locale} />
+    <CollectionNote
+      html={props.html}
+      locale={props.locale}
+      cover={props.cover}
+    />
   ) : (
-    <NetworkNote html={props.html} locale={props.locale} />
+    <NetworkNote html={props.html} locale={props.locale} cover={props.cover} />
   );
 }
 
@@ -458,6 +465,7 @@ export function loader({ params }: LoaderFunctionArgs) {
     title,
     description,
     canonical,
+    cover: articleCoverForRoute(route, locale),
     indexable,
     languageLinks,
     commentId: target?.id ?? null,
@@ -494,6 +502,8 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
       )
     : [];
   const article = view.kind === 'article' ? view.article : null;
+  const cover = data.cover;
+  const socialImage = siteUrl + (cover?.socialSrc ?? '/assets/avatar.png');
   const collection = [
     'library',
     'blog-folder',
@@ -552,8 +562,20 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
       content:
         locale === 'zh-hant' ? 'zh_TW' : locale === 'ja' ? 'ja_JP' : 'en_US',
     },
-    { property: 'og:image', content: siteUrl + '/assets/avatar.png' },
-    { name: 'twitter:card', content: 'summary' },
+    { property: 'og:image', content: socialImage },
+    { property: 'og:image:secure_url', content: socialImage },
+    { property: 'og:image:type', content: cover ? 'image/jpeg' : 'image/png' },
+    { property: 'og:image:width', content: String(cover?.width ?? 256) },
+    { property: 'og:image:height', content: String(cover?.height ?? 256) },
+    { property: 'og:image:alt', content: cover?.alt ?? 'DennySORA' },
+    {
+      name: 'twitter:card',
+      content: cover ? 'summary_large_image' : 'summary',
+    },
+    { name: 'twitter:title', content: data.title },
+    { name: 'twitter:description', content: data.description },
+    { name: 'twitter:image', content: socialImage },
+    { name: 'twitter:image:alt', content: cover?.alt ?? 'DennySORA' },
     ...(data.indexable ? [] : [{ name: 'robots', content: 'noindex, follow' }]),
     {
       'script:ld+json': article
@@ -561,6 +583,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
             '@context': 'https://schema.org',
             '@type': 'BlogPosting',
             headline: article.edition.title,
+            ...(cover ? { image: socialImage } : {}),
             description: article.edition.summary,
             datePublished: article.post.publishedAt,
             dateModified: article.post.updatedAt,
@@ -593,6 +616,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
           : {
               '@context': 'https://schema.org',
               '@type': collection ? 'CollectionPage' : 'WebPage',
+              ...(cover ? { image: socialImage } : {}),
               name: data.title,
               description: data.description,
               url: data.canonical,
@@ -658,7 +682,7 @@ function View({ data }: { data: PageData }) {
     case 'tags':
       return <TagIndex view={view} locale={locale} />;
     case 'article':
-      return <Article view={view} locale={locale} />;
+      return <Article view={view} locale={locale} cover={data.cover} />;
     case 'notes':
     case 'note-folder':
       return (
@@ -672,16 +696,17 @@ function View({ data }: { data: PageData }) {
     case 'collection-note':
       return (
         <Suspense fallback={null}>
-          <NotePageChunk kind={view.kind} html={view.html} locale={locale} />
+          <NotePageChunk
+            kind={view.kind}
+            html={view.html}
+            locale={locale}
+            cover={data.cover}
+          />
         </Suspense>
       );
     case 'medical-note':
       return (
-        <MedicalNote
-          html={view.html}
-          locale={locale}
-          showCover={view.noteId === 'analgesics'}
-        />
+        <MedicalNote html={view.html} locale={locale} cover={data.cover} />
       );
     case 'projects':
       return <Projects locale={locale} />;

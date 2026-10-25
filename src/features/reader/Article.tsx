@@ -6,6 +6,8 @@ import {
 import type { ViewData } from '../../app/page.tsx';
 import { taxonomyMaps } from '../../components/ArticleListItem.tsx';
 import { EndOfBuffer } from '../../components/Buffer.tsx';
+import { ArticleCover } from '../../components/ArticleCover.tsx';
+import type { ArticleCoverData } from '../../lib/article-covers.ts';
 import { CopyButton } from '../../components/CopyButton.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { linkIcon } from '../../components/link-icon.ts';
@@ -33,9 +35,11 @@ type ArticleView = Extract<ViewData, { kind: 'article' }>;
 export function Article({
   view,
   locale,
+  cover,
 }: {
   view: ArticleView;
   locale: Locale;
+  cover: ArticleCoverData | null;
 }) {
   const { article, related, comments, author, aliases } = view;
   const { post, edition, body } = article;
@@ -64,6 +68,7 @@ export function Article({
               data-pagefind-sort={`date:${post.publishedAt}`}
               aria-labelledby={pageIds.articleTitle}
             >
+              <ArticleCover cover={cover} />
               <header className="reader-header">
                 <p className="ln eyebrow entity-kind">
                   {topic ? (

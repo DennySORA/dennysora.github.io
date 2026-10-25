@@ -210,31 +210,21 @@ const en = {
   mathError: 'This formula could not be rendered.',
 
   commentsTitle: 'Comments & discussion',
-  commentsIntro:
-    'Questions, additions and different views are welcome. All language editions share one thread. Comments are public; posting requires a GitHub account.',
   commentsUnconfigured: 'Comments for this page are not open yet.',
   commentsUnconfiguredText:
     'The discussion service has not been set up. You can reach me on GitHub or by email in the meantime.',
   commentsDisabled: 'Comments are closed for this page.',
   commentsOpenGitHub: 'Open the discussion on GitHub',
-  commentsFindGitHub: 'Find this page’s discussion on GitHub',
-  commentsThirdParty:
-    'Comments and the composer load automatically as you approach this section, connecting to giscus.app and GitHub. Reading needs no sign-in; posting uses a GitHub account. Comments are public, and signing in may store a giscus session in your browser.',
   commentsLoading: 'Connecting to the comment service…',
   commentsFailed: 'Comments could not be loaded',
-  commentsSlow:
-    'Comments are taking longer to load. The connection is still open; you can wait, retry or read on GitHub.',
+  commentsSlow: 'Comments are taking longer to load. You can wait or retry.',
   commentsFailedAuthentication:
-    'Comment sign-in could not be restored. Reading needs no sign-in; the widget may reconnect automatically, or you can retry.',
+    'Comment sign-in could not be restored. Please retry.',
   commentsFailedRateLimit:
-    'The comment service is temporarily rate-limited. Please retry later or read on GitHub.',
+    'The comment service is temporarily rate-limited. Please retry later.',
   commentsFailedBlocked:
-    'The comment service could not be reached. Please retry or read on GitHub.',
+    'The comment service could not be reached. Please retry.',
   commentsFailedMissing: 'The discussion for this page could not be found.',
-  commentsLocked: 'This discussion is locked; existing comments stay readable.',
-  commentsEmpty: 'No comments yet.',
-  commentsCount: (count: number) =>
-    count === 1 ? '1 comment' : `${count} comments`,
   commentsNative:
     'Discussion happens on GitHub, and every language version shares the same thread.',
 
@@ -385,29 +375,18 @@ const zh: Dictionary = {
   mathError: '這個公式無法轉換。',
 
   commentsTitle: '留言與討論',
-  commentsIntro:
-    '歡迎提出疑問、補充或不同觀點，三種語言版本共用同一則討論串。留言公開顯示，發言需要 GitHub 帳號。',
   commentsUnconfigured: '這個頁面的留言尚未開放。',
   commentsUnconfiguredText:
     '留言服務尚未設定完成。在此之前，歡迎透過 GitHub 或 Email 與我聯絡。',
   commentsDisabled: '這個頁面已關閉留言。',
   commentsOpenGitHub: '在 GitHub 開啟討論',
-  commentsFindGitHub: '在 GitHub 尋找本頁討論',
-  commentsThirdParty:
-    '接近本區時會自動連線至 giscus.app 與 GitHub，顯示留言和輸入框。閱讀不需登入，發言才需要 GitHub 帳號。留言公開；登入後，giscus 可能在瀏覽器儲存登入階段。',
   commentsLoading: '正在連線到留言服務…',
   commentsFailed: '留言載入失敗',
-  commentsSlow:
-    '留言載入較慢，仍在等待連線。你可以繼續等候、重試，或在 GitHub 閱讀。',
-  commentsFailedAuthentication:
-    '無法恢復留言的登入狀態。閱讀不需登入；留言框可能會自動重新連線，也可以按重試。',
-  commentsFailedRateLimit:
-    '留言服務暫時達到請求上限，請稍後重試，或在 GitHub 閱讀。',
-  commentsFailedBlocked: '目前無法連線到留言服務；請重試，或在 GitHub 閱讀。',
+  commentsSlow: '留言載入較慢，可稍候或重試。',
+  commentsFailedAuthentication: '無法恢復留言登入狀態，請重試。',
+  commentsFailedRateLimit: '留言服務暫時達到請求上限，請稍後重試。',
+  commentsFailedBlocked: '目前無法連線到留言服務，請重試。',
   commentsFailedMissing: '找不到這個頁面對應的討論串。',
-  commentsLocked: '這個討論已鎖定，既有留言仍可閱讀。',
-  commentsEmpty: '目前還沒有留言。',
-  commentsCount: (count: number) => `${count} 則留言`,
   commentsNative: '討論在 GitHub 進行，三種語言版本共用同一則討論串。',
 
   notFoundTitle: '這條路徑沒有對應的頁面。',
@@ -556,31 +535,22 @@ const ja: Dictionary = {
   mathError: 'この数式は変換できませんでした。',
 
   commentsTitle: 'コメントと議論',
-  commentsIntro:
-    '質問、補足、異なる視点を歓迎します。各言語版で同じスレッドを共有します。コメントは公開され、投稿には GitHub アカウントが必要です。',
   commentsUnconfigured: 'このページのコメントはまだ公開していません。',
   commentsUnconfiguredText:
     'コメントサービスの設定がまだ完了していません。それまでは GitHub またはメールでご連絡ください。',
   commentsDisabled: 'このページのコメントは受け付けていません。',
   commentsOpenGitHub: 'GitHub でディスカッションを開く',
-  commentsFindGitHub: 'GitHub でこのページの議論を探す',
-  commentsThirdParty:
-    'この欄に近づくと giscus.app と GitHub に自動接続し、コメントと入力欄を表示します。閲覧にログインは不要で、投稿には GitHub アカウントを使用します。コメントは公開され、ログイン後はブラウザーに giscus のセッションが保存される場合があります。',
   commentsLoading: 'コメントサービスに接続しています…',
   commentsFailed: 'コメントを読み込めませんでした',
   commentsSlow:
-    'コメントの読み込みに時間がかかっています。接続は継続中です。そのまま待つか、再試行するか、GitHub で閲覧できます。',
+    'コメントの読み込みに時間がかかっています。そのまま待つか、再試行してください。',
   commentsFailedAuthentication:
-    'コメントのログイン状態を復元できませんでした。閲覧にログインは不要です。自動で再接続する場合がありますが、再試行もできます。',
+    'コメントのログイン状態を復元できませんでした。再試行してください。',
   commentsFailedRateLimit:
-    'コメントサービスのリクエスト上限に達しています。しばらくしてから再試行するか、GitHub で閲覧してください。',
+    'コメントサービスのリクエスト上限に達しています。しばらくしてから再試行してください。',
   commentsFailedBlocked:
-    'コメントサービスに接続できませんでした。再試行するか、GitHub で閲覧してください。',
+    'コメントサービスに接続できませんでした。再試行してください。',
   commentsFailedMissing: 'このページのディスカッションが見つかりません。',
-  commentsLocked:
-    'このディスカッションはロックされています。既存のコメントは読めます。',
-  commentsEmpty: 'まだコメントはありません。',
-  commentsCount: (count: number) => `${count} 件のコメント`,
   commentsNative: '議論は GitHub で行い、各言語版で同じスレッドを共有します。',
 
   notFoundTitle: 'このパスにページはありません。',

@@ -1,0 +1,21 @@
+/* Owner-requested article artwork, never a page background or navigation banner. */
+.article-cover {
+  margin: 0 0 var(--space-6);
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+}
+
+.article-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+}
+
+@media print {
+  .article-cover {
+    break-inside: avoid;
+  }
+}

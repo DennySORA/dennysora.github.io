@@ -1,34 +1,21 @@
 import { EndOfBuffer } from '../../components/Buffer.tsx';
-import { Icon } from '../../components/Icon.tsx';
+import { ArticleCover } from '../../components/ArticleCover.tsx';
+import type { ArticleCoverData } from '../../lib/article-covers.ts';
 import { htmlLang, type Locale } from '../../i18n/index.ts';
 
 /** A reviewed, build-time HTML fragment; never accepts visitor-supplied HTML. */
 export function MedicalNote({
   html,
   locale,
-  showCover = true,
+  cover,
 }: {
   html: string;
   locale: Locale;
-  showCover?: boolean;
+  cover: ArticleCoverData | null;
 }) {
   return (
     <div className="medical-note buffer">
-      {showCover ? (
-        <div className="medical-cover">
-          <div className="float-title" aria-hidden="true">
-            <Icon name="image" size={14} />
-            <span>medical-notes.webp</span>
-          </div>
-          <img
-            src="/assets/illustrations/medical-notes.webp"
-            width={1200}
-            height={593}
-            alt=""
-            decoding="async"
-          />
-        </div>
-      ) : null}
+      <ArticleCover cover={cover} />
       <article
         lang={htmlLang[locale]}
         aria-labelledby="medical-title"

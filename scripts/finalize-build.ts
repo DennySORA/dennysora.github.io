@@ -31,6 +31,9 @@ import {
 } from '../src/lib/project-pages.ts';
 import migration from '../data/migration/manifest.json' with { type: 'json' };
 import brand from '../data/brand-assets.json' with { type: 'json' };
+import covers from '../data/article-covers.json' with { type: 'json' };
+import { articleCoverForRoute } from '../src/lib/article-covers.server.ts';
+import { routeLocale } from '../src/lib/route-manifest.ts';
 import { legacyDestinations } from '../src/lib/legacy-anchors.ts';
 
 import { buildSiteSearch } from '../src/lib/site-search.server.ts';
@@ -48,6 +51,18 @@ for (const asset of brand.assets.filter((item) => item.published))
 cpSync('assets/illustrations', join(output, 'assets/illustrations'), {
   recursive: true,
 });
+// Article covers ship only for current published routes, never draft or retired pages.
+const publishedCoverIds = new Set(
+  publishedRoutes().flatMap((route) => {
+    const cover = articleCoverForRoute(route, routeLocale(route));
+    return cover ? [cover.id] : [];
+  }),
+);
+for (const cover of covers.covers.filter(({ id }) => publishedCoverIds.has(id)))
+  for (const asset of cover.assets) {
+    mkdirSync(dirname(join(output, asset.path)), { recursive: true });
+    cpSync(asset.path, join(output, asset.path));
+  }
 // Project screenshots ship only when a published project page lists them.
 for (const id of projectPageIds)
   for (const shot of projectPages[id].shots)

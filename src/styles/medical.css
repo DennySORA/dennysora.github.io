@@ -409,30 +409,6 @@
   color: var(--color-entity-file);
 }
 
-/* The cover is an image-preview float; the image itself is never filtered. */
-.medical-cover {
-  margin-bottom: var(--space-6);
-  overflow: hidden;
-  border: 1px solid var(--color-border-decorative);
-  border-radius: var(--radius-card);
-  background: var(--color-chrome);
-}
-.medical-cover img {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: 230px;
-  object-fit: cover;
-}
-@media (max-width: 767px) {
-  .medical-cover {
-    margin-bottom: var(--space-5);
-  }
-  .medical-cover img {
-    max-height: 155px;
-  }
-}
-
 /* Header taxonomy links use the shared tag treatment, not prose list spacing. */
 .medical-note .content-tags {
   margin: 0 0 var(--space-4);
