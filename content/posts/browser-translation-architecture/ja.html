@@ -1,0 +1,3922 @@
+<div class="translation-guide">
+  <div class="tg-intro">
+    <p class="tg-lead">
+      この翻訳システムの設計の核は、絶えず変化するウェブページを、<strong>スケジュール可能で、再利用でき、識別情報を照合してから書き戻せる</strong>作業に整理することです。翻訳サービスは文章を生成し、拡張機能はその結果を正しいタイミングで正しい位置に表示します。
+    </p>
+
+    <div aria-label="読み進め方" class="tg-reading-map">
+      <a href="#tg-architecture">まず全体像を見る</a><span>→</span
+      ><a href="#tg-capture">文章の取り込み方を理解する</a><span>→</span
+      ><a href="#tg-admission">スケジューリングとクォータを読み解く</a
+      ><span>→</span><a href="#tg-render">結果の戻り方を見る</a>
+    </div>
+  </div>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">01</span>
+      <h2 id="tg-architecture">
+        原文をたどり、システム全体のデータの流れを見る
+      </h2>
+    </div>
+    <p>
+      Browser Script Manager は、翻訳とその他の機能をひとつの Manifest V3
+      拡張機能にまとめています。以下では、<strong>通常のウェブページ段落の翻訳フロー</strong>を追います。各矢印は受け渡す内容を示し、ボックスのスイムレーンは実行境界を表します。選択テキストと翻訳センターの入口の違いは、次の節で説明します。
+    </p>
+    <figure class="tg-flow-figure">
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 01A</span
+          >エンドツーエンドのデータフロー：取り込んだ原文の訳文を正しい位置へ戻すまで</span
+        ><span class="tg-fig-type">HTML ノード＋明示的な接続</span>
+      </div>
+      <div class="tg-dfd-read-guide">
+        <div>
+          <b>主経路</b
+          ><span
+            >01 → 02 → 03。利用できる訳文がないことを確認して初めて、04 → 05 →
+            06 へ進みます。</span
+          >
+        </div>
+        <div>
+          <b>ローカルのバイパス</b
+          ><span
+            >ルール／メモリの結果またはブロック状態は、直接 07
+            へ進みます。</span
+          >
+        </div>
+        <div>
+          <b>戻り経路の分岐</b
+          ><span>06 → 07 → 08 → 09 は表示を、06 → 10 は保存を処理します。</span>
+        </div>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="図 01A：ウェブページ翻訳のエンドツーエンドのデータフロー。横長の図は左右にスクロールできます"
+        class="tg-dfd-scroll"
+      >
+        <div class="tg-dfd-canvas tg-geometry-a102c35be9">
+          <div class="tg-dfd-lane tg-geometry-c442fab349">
+            <div class="tg-dfd-lane-title">
+              ウェブページとページ側スクリプト<small
+                >DOM と各ページのライフサイクル</small
+              >
+            </div>
+          </div>
+          <div class="tg-dfd-lane tg-geometry-2f1ef61b17">
+            <div class="tg-dfd-lane-title">
+              拡張機能のバックグラウンド／ローカルデータ<small
+                >ページ間で共有する処理、ポリシー、リソース、ストレージ</small
+              >
+            </div>
+          </div>
+          <div class="tg-dfd-lane tg-geometry-b97a6142d9">
+            <div class="tg-dfd-lane-title">
+              外部サービス<small>翻訳 API と任意の同期</small>
+            </div>
+          </div>
+          <svg
+            viewbox="0 0 960 1552"
+            width="960"
+            height="1552"
+            aria-hidden="true"
+            class="tg-dfd-connectors"
+          >
+            <defs>
+              <marker
+                id="tg-dfd-overview-arrow-main"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-813624a647"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-local"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-18d13f84b7"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-control"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-9bfe535aba"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-wait"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-c7e372af69"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-failure"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-ed391b6071"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-sync"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-9bfe535aba"
+                ></path>
+              </marker>
+            </defs>
+            <path
+              d="M288,190 L360,190"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,270 L492,345"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,420 L360,420"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M156,345 L156,270"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M360,465 L340,465 L340,1170 L360,1170"
+              marker-end="url(#tg-dfd-overview-arrow-local)"
+              class="tg-geometry-f5b4b8a11e"
+            ></path>
+            <path
+              d="M492,495 L492,580"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,670 L360,670"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M624,670 L696,670"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M816,760 L816,925 L624,925"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,1000 L492,1100"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M624,973 L666,973 L666,796 L581.76,796 L581.76,760"
+              marker-end="url(#tg-dfd-overview-arrow-wait)"
+              class="tg-geometry-1231e69cca"
+            ></path>
+            <path
+              d="M360,1170 L288,1170"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M156,1240 L156,1340"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,925 L308,925 L308,1426 L288,1426"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M492,1000 L492,1020 L648,1020 L648,1298 L581.76,1298 L581.76,1340"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,1340 L492,1240"
+              marker-end="url(#tg-dfd-overview-arrow-local)"
+              class="tg-geometry-f5b4b8a11e"
+            ></path>
+            <path
+              d="M624,1396.76 L696,1396.76"
+              marker-end="url(#tg-dfd-overview-arrow-sync)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M696,1472.44 L624,1472.44"
+              marker-end="url(#tg-dfd-overview-arrow-sync)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+          </svg>
+          <div
+            id="tg-dfd-overview-source"
+            class="tg-dfd-node tg-dfd-process tg-geometry-3d5a6a1712"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">01</span
+              ><strong>原文を抽出し、セグメントを宣言</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>テキスト抽出 → 段落登録</span
+              ><span>文に分割し、原文の範囲を保持</span
+              ><span>テキスト、バージョン、位置データを送信</span
+              ><span>DOM ノードはウェブページ側に保持</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-receive"
+            class="tg-dfd-node tg-dfd-process tg-geometry-3d58118e94"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">02</span
+              ><strong>受信して翻訳需要の識別情報を作成</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>バックグラウンドサービスが受信し、スケジューラーへ渡す</span
+              ><span>ブラウザーが提供する送信者情報で送信元を照合</span
+              ><span>ページバインディングを作成し、原文を正規化</span
+              ><span>セグメントのバージョンとライフサイクルを追跡</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-context"
+            class="tg-dfd-node tg-dfd-control tg-geometry-5d259214d7"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">C</span
+              ><strong>文書コンテキストの候補を固定</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>文書の前半から基準原文を読み取る</span
+              ><span
+                >最初の候補群を固定し、コンテキストメッセージを別途送信</span
+              ><span>バックグラウンドでルールを適用してから採用可能</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-local"
+            class="tg-dfd-node tg-dfd-process tg-geometry-01476d3586"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">03</span
+              ><strong>ルール、共有ジョブ、ローカル検索</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>ルール／固定した訳文 → 同一ジョブを共有</span
+              ><span>保存済み翻訳メモリ → 旧版キャッシュ</span
+              ><span>ヒット／ミス／エラーの分岐は 01B を参照</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-viewport"
+            class="tg-dfd-node tg-dfd-control tg-geometry-8ef2e44fff"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">V</span><strong>閲覧位置を更新</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>表示範囲とスクロール方向を監視</span
+              ><span>可視性、位置、前方／後方の情報を報告</span
+              ><span>待機中のジョブの優先順位に反映</span
+              ><span>この更新では原文を再送しない</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-dispatch"
+            class="tg-dfd-node tg-dfd-process tg-geometry-ea6d5b7832"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">04</span
+              ><strong>スケジュール、バッチ化、クォータの事前差し引き</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>優先度の階層 → サービスリソース → 互換性のあるバッチ</span
+              ><span>ディスパッチ承認：同時実行枠とクォータを予約</span
+              ><span>先にクォータの IndexedDB トランザクションをコミット</span
+              ><span>成功して初めて翻訳サービスアダプターを開始</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-provider"
+            class="tg-dfd-node tg-dfd-process tg-geometry-703472d1e3"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">05</span
+              ><strong>翻訳サービスを呼び出す</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>言語モデル：指示＋原文＋コンテキスト</span
+              ><span>Microsoft：原文リスト＋翻訳先の言語</span
+              ><span>サービスアダプター層が実際のリクエストを組み立てる</span
+              ><span>生の応答はまずアダプター層へ返す</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-identity"
+            class="tg-dfd-node tg-dfd-control tg-geometry-c4f7d1455b"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">G</span
+              ><strong>現在の原文の識別情報を保持</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>基準原文と閲覧世代</span
+              ><span>ローカルのリクエスト試行とノードの接続状態</span
+              ><span>DOM への書き戻し時に再照合</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-validate"
+            class="tg-dfd-node tg-dfd-process tg-geometry-6ac205d2a0"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">06</span
+              ><strong>終了確認と結果検証</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>リクエストと世代を照合してから同時実行枠を解放</span
+              ><span>コミット権限／終了理由を再確認</span
+              ><span>応答形式、番号、保持マーカーを検証</span
+              ><span>エラー／修復が必要な項目を再試行ポリシーへ渡す</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-projection"
+            class="tg-dfd-node tg-dfd-process tg-geometry-a4bd0e8d64"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">07</span
+              ><strong>状態と結果を通知</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>バージョン、表示可能な訳文、保存状態</span
+              ><span>原文／ローカル結果／ブロック／完了</span
+              ><span>セグメントの完了は DOM の更新完了を意味しない</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-assemble"
+            class="tg-dfd-node tg-dfd-process tg-geometry-2b676f3f71"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">08</span
+              ><strong>バージョンを照合し、段落全体を組み立てる</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>ページ側で古い通知を拒否</span
+              ><span>表示タイミングに合わせて段落全体の完了を待つ</span
+              ><span>訳文と原文を組み合わせ、失敗は別途報告</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-render"
+            class="tg-dfd-node tg-dfd-process tg-geometry-04b488d9f1"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">09</span
+              ><strong>DOM 更新をスケジュールしてコミット</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>コンテンツフラグメントと表示計画を作成</span
+              ><span>選択範囲を保護＋フレームごとの処理量を制限</span
+              ><span>コミット前に原文とローカルリクエストを照合</span
+              ><span>対訳コンテナーまたは訳文のみの表示を更新</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-save"
+            class="tg-dfd-node tg-dfd-store tg-geometry-2380c9ef3a"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">10</span
+              ><strong>ローカル翻訳メモリと保存状態</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>ローカル結果：保存キュー → トランザクション</span
+              ><span>同期による補充：翻訳メモリへ直接書き込み</span
+              ><span>ローカル保存の成功／失敗を報告</span
+              ><span>同期は保存済みの翻訳メモリのみ読み取る</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-sync"
+            class="tg-dfd-node tg-dfd-optional tg-geometry-b6b2e81f34"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">11</span
+              ><strong>クラウド同期ストレージ</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>翻訳メモリの同期はオプトイン</span
+              ><span>暗号化データオブジェクトを受信／提供</span
+              ><span>ローカルで復号・統合してからメモリに書き込み</span
+              ><span>同期はウェブページの DOM を直接更新しない</span>
+            </div>
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-d603e608d1"
+          >
+            原文セグメント<br />バージョンデータ
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-f14cee2e27"
+          >
+            ページバインディング＋原文
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-d69a1c8193"
+          >
+            コンテキスト<br />候補
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-2490e7a0e6"
+          >
+            固定と接続確認の後に最初のセグメント群を送出
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-a12e1b3fa6"
+          >
+            ローカル結果<br />または原文／<br />ブロック状態
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-eb4edee532"
+          >
+            ローカルで見つからず、外部送信が許可されている
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-41a4da4382"
+          >
+            閲覧位置<br />更新
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-b5e098dc1c"
+          >
+            API リクエスト
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-14cfccc92f"
+          >
+            生の応答／使用量<br />アダプターから戻った後に終了を確認
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-285e95e0df"
+          >
+            有効なセグメント → 訳文を利用可能<br />失敗状態は別途報告
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-8ea81623e2"
+          >
+            失敗した項目／修復が必要な項目<br />ポリシーに適合する場合のみ再キュー投入
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-48102674b1"
+          >
+            バージョン状態<br />訳文の内容
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-c51c52446d"
+          >
+            段落全体のテキスト結果
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-530e96af18"
+          >
+            現在の原文<br />再照合
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-ed98e02a39"
+          >
+            有効かつ現在も適用可能な<br />表示可能な訳文<br />通常モードでは保存キューへ
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-5d27936032"
+          >
+            ローカル保存処理<br />状態更新
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-sync tg-geometry-a33f6e4cd3"
+          >
+            暗号化してアップロード
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-sync tg-geometry-7b4cfefcdd"
+          >
+            復号して統合<br />メモリに書き込み
+          </div>
+        </div>
+      </div>
+      <details class="tg-dfd-text-alternative">
+        <summary>各データフローをテキストで読む</summary>
+        <ol>
+          <li>
+            <b>01 原文を抽出し、セグメントを宣言</b> →
+            <b>02 受信して翻訳需要の識別情報を作成</b
+            >：原文セグメント；バージョンデータ
+          </li>
+          <li>
+            <b>02 受信して翻訳需要の識別情報を作成</b> →
+            <b>03 ルール、共有ジョブ、ローカル検索</b
+            >：ページバインディング＋原文
+          </li>
+          <li>
+            <b>C 文書コンテキストの候補を固定</b> →
+            <b>03 ルール、共有ジョブ、ローカル検索</b>：コンテキスト；候補
+          </li>
+          <li>
+            <b>C 文書コンテキストの候補を固定</b> →
+            <b>01 原文を抽出し、セグメントを宣言</b
+            >：固定と接続確認の後に最初のセグメント群を送出
+          </li>
+          <li>
+            <b>03 ルール、共有ジョブ、ローカル検索</b> →
+            <b>07 状態と結果を通知</b>：ローカル結果；または原文／；ブロック状態
+          </li>
+          <li>
+            <b>03 ルール、共有ジョブ、ローカル検索</b> →
+            <b>04 スケジュール、バッチ化、クォータの事前差し引き</b
+            >：ローカルで見つからず、外部送信が許可されている
+          </li>
+          <li>
+            <b>V 閲覧位置を更新</b> →
+            <b>04 スケジュール、バッチ化、クォータの事前差し引き</b
+            >：閲覧位置；更新
+          </li>
+          <li>
+            <b>04 スケジュール、バッチ化、クォータの事前差し引き</b> →
+            <b>05 翻訳サービスを呼び出す</b>：API リクエスト
+          </li>
+          <li>
+            <b>05 翻訳サービスを呼び出す</b> →
+            <b>06 終了確認と結果検証</b
+            >：生の応答／使用量；アダプターから戻った後に終了を確認
+          </li>
+          <li>
+            <b>06 終了確認と結果検証</b> →
+            <b>07 状態と結果を通知</b>：有効なセグメント →
+            訳文を利用可能；失敗状態は別途報告
+          </li>
+          <li>
+            <b>06 終了確認と結果検証</b> →
+            <b>04 スケジュール、バッチ化、クォータの事前差し引き</b
+            >：失敗した項目／修復が必要な項目；ポリシーに適合する場合のみ再キュー投入
+          </li>
+          <li>
+            <b>07 状態と結果を通知</b> →
+            <b>08 バージョンを照合し、段落全体を組み立てる</b
+            >：バージョン状態；訳文の内容
+          </li>
+          <li>
+            <b>08 バージョンを照合し、段落全体を組み立てる</b> →
+            <b>09 DOM 更新をスケジュールしてコミット</b>：段落全体のテキスト結果
+          </li>
+          <li>
+            <b>G 現在の原文の識別情報を保持</b> →
+            <b>09 DOM 更新をスケジュールしてコミット</b>：現在の原文；再照合
+          </li>
+          <li>
+            <b>06 終了確認と結果検証</b> →
+            <b>10 ローカル翻訳メモリと保存状態</b
+            >：有効かつ現在も適用可能な；表示可能な訳文；通常モードでは保存キューへ
+          </li>
+          <li>
+            <b>10 ローカル翻訳メモリと保存状態</b> →
+            <b>07 状態と結果を通知</b>：ローカル保存処理；状態更新
+          </li>
+          <li>
+            <b>10 ローカル翻訳メモリと保存状態</b> →
+            <b>11 クラウド同期ストレージ</b>：暗号化してアップロード
+          </li>
+          <li>
+            <b>11 クラウド同期ストレージ</b> →
+            <b>10 ローカル翻訳メモリと保存状態</b
+            >：復号して統合；メモリに書き込み
+          </li>
+        </ol>
+      </details>
+      <div class="tg-dfd-legend">
+        <span><i class="tg-legend-line"></i>実線：リクエスト／結果の主経路</span
+        ><span
+          ><i class="tg-legend-line tg-local"></i>ローカル分岐／状態報告</span
+        ><span
+          ><i class="tg-legend-line tg-dashed"></i
+          >破線：補助的な更新／任意の同期</span
+        >
+      </div>
+      <figcaption>
+        <span class="tg-why">図の見方：</span>保存と DOM
+        コミットは有効な結果から分岐し、完了の順序は決まっていません。文書コンテキストは最初の原文の翻訳需要を送信する前に固定します。閲覧位置の更新は可視性と位置のみを送ります。この図はデータの依存関係を示すもので、時間の比率は表しません。交差する線に接続点がない場合、合流を意味しません。
+      </figcaption>
+    </figure>
+    <div class="tg-dfd-takeaway">
+      <strong>重要な 2 つの出口：</strong>07
+      はバージョン付きの状態・結果通知を送ります。セグメント完了後も、段落全体の組み立てと
+      DOM コミットが必要です。10
+      はローカル保存を処理し、失敗の再試行は保存キューにのみ戻ります。11
+      の同期の戻り経路はローカル翻訳メモリに書き込み、その後は通常の検索から利用されます。
+    </div>
+    <details class="tg-deep tg-flow-detail">
+      <summary>
+        図 01B を展開｜ローカル判定、検索失敗、外部送信ゲートを分岐ごとにたどる
+      </summary>
+      <figure class="tg-flow-figure">
+        <div class="tg-figure-head">
+          <span
+            ><span class="tg-fig-no">図 01B</span
+            >バックグラウンドの判断フロー：実際に翻訳サービスを呼び出す需要はどれか？</span
+          ><span class="tg-fig-type">HTML 分岐図</span>
+        </div>
+        <div class="tg-dfd-read-guide">
+          <div>
+            <b>主経路は下へ読む</b
+            ><span>D1 → D2 → D3 → D4 → D5 → D6 → T。</span>
+          </div>
+          <div>
+            <b>出口は右へ読む</b
+            ><span
+              >P は全体図の 07 へ戻り、E は読み取り失敗、W
+              は待機／ブロックです。</span
+            >
+          </div>
+        </div>
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="図 01B：バックグラウンドのローカル判定とディスパッチ分岐。横長の図は左右にスクロールできます"
+          class="tg-dfd-scroll"
+        >
+          <div class="tg-dfd-canvas tg-geometry-4b7f7c41f2">
+            <svg
+              viewbox="0 0 960 1720"
+              width="960"
+              height="1720"
+              aria-hidden="true"
+              class="tg-dfd-connectors"
+            >
+              <defs>
+                <marker
+                  id="tg-dfd-decisions-arrow-main"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-813624a647"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-local"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-18d13f84b7"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-control"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-9bfe535aba"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-wait"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-c7e372af69"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-failure"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-ed391b6071"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-sync"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-9bfe535aba"
+                  ></path>
+                </marker>
+              </defs>
+              <path
+                d="M420,160 L560,160"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,240 L230,315"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,395 L560,395"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,475 L230,550"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,587 L490,587 L490,571 L560,571"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M420,638.8 L510,638.8 L510,710.4 L560,710.4"
+                marker-end="url(#tg-dfd-decisions-arrow-failure)"
+                class="tg-geometry-53aeb4f4dc"
+              ></path>
+              <path
+                d="M560,768 L464,768 L464,674.32 L420,674.32"
+                marker-end="url(#tg-dfd-decisions-arrow-control)"
+                class="tg-geometry-b84e3b56d8"
+              ></path>
+              <path
+                d="M230,698 L230,835"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,907 L560,907"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,979 L230,1065"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,1151 L560,1151"
+                marker-end="url(#tg-dfd-decisions-arrow-wait)"
+                class="tg-geometry-1231e69cca"
+              ></path>
+              <path
+                d="M230,1237 L230,1320"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,1380.2 L560,1380.2"
+                marker-end="url(#tg-dfd-decisions-arrow-wait)"
+                class="tg-geometry-1231e69cca"
+              ></path>
+              <path
+                d="M560,1452.44 L420,1452.44"
+                marker-end="url(#tg-dfd-decisions-arrow-control)"
+                class="tg-geometry-b84e3b56d8"
+              ></path>
+              <path
+                d="M230,1492 L230,1570"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+            </svg>
+            <div
+              id="tg-dfd-decisions-rules"
+              class="tg-dfd-node tg-dfd-process tg-geometry-20150d2055"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D1</span
+                ><strong>まずルールと固定した訳文を適用</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>ページ無効化／原文保持／指定訳文／固定した訳文</span
+                ><span
+                  >翻訳が必要なものには意味上の条件と保持マーカーを設定</span
+                ><span>外部送信を禁止しても保存済み訳文は利用可能</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-local-result"
+              class="tg-dfd-node tg-dfd-local tg-geometry-3277b343d5"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>ローカル状態／結果を返す</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>無効化されたページ → 原文を維持</span
+                ><span>原文保持 → ローカルで決定し、訳文は付けない</span
+                ><span
+                  >指定訳文または固定した訳文 →
+                  ローカルで決定し、訳文を付ける</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >全体図 07 へ：状態と結果の通知</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-work"
+              class="tg-dfd-node tg-dfd-process tg-geometry-382e0a1466"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D2</span
+                ><strong
+                  >同じセマンティックキーの共有ジョブは存在するか？</strong
+                >
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>存在する：結果の購読者を追加</span
+                ><span>存在しない：検索待ちの共有ジョブを先に登録</span
+                ><span>その後、翻訳メモリの非同期検索を開始</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-subscribe"
+              class="tg-dfd-node tg-dfd-local tg-geometry-7e01289ab2"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>既存の共有ジョブを購読</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>検索中、待機中、翻訳中、または完了済みの場合がある</span
+                ><span>その状態／後続の結果を利用</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >全体図 07 へ。同じジョブを別途作成しない</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory"
+              class="tg-dfd-node tg-dfd-store tg-geometry-21f6c08d66"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D3</span
+                ><strong>保存済み翻訳メモリを検索</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>完全なセマンティックキーで厳密に検索</span
+                ><span>ヒット、ミス、読み取り失敗を区別して処理</span
+                ><span>読み取り失敗時は既定で外部送信しない</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory-hit"
+              class="tg-dfd-node tg-dfd-local tg-geometry-9449226155"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>永続保存された訳文が存在</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>表示可能な訳文＋保存済み状態</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >全体図 07 へ。翻訳サービスは呼び出さない</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory-error"
+              class="tg-dfd-node tg-dfd-failure tg-geometry-f106c168c6"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">E</span
+                ><strong>保存済み訳文の読み取りに失敗</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>外部送信を一時停止：保存済み訳文を読み取れない</span
+                ><span>再試行はまずローカル読み取りへ戻る</span
+                ><span
+                  >失敗を無視することを明示的に選択した場合のみ、次の判定へ進む</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-legacy"
+              class="tg-dfd-node tg-dfd-store tg-geometry-5435112f26"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D4</span
+                ><strong>旧版の翻訳キャッシュを検索</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >対応する旧版キーがある場合のみ該当レコードを厳密に検索</span
+                ><span>ミス／読み取り失敗／対応キーなし → 次の判定へ</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-legacy-hit"
+              class="tg-dfd-node tg-dfd-local tg-geometry-7bb0d73b94"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>旧訳文を再利用し、保存形式を更新</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>表示可能な訳文＋保存中状態</span
+                ><span>別途保存キューへ送り、新版の翻訳メモリに更新</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection">全体図 07 へ</a> ＋
+                  <a href="#tg-dfd-overview-save">全体図 10</a></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-policy"
+              class="tg-dfd-node tg-dfd-process tg-geometry-79423e7964"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D5</span
+                ><strong>見つからないことを確認して初めて外部送信を判断</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>外部送信禁止ルールと文書のディスパッチポリシーを確認</span
+                ><span>次に利用条件を満たすサービスリソースがあるか確認</span
+                ><span>許可された需要のみディスパッチ可能キューへ</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-held"
+              class="tg-dfd-node tg-dfd-wait tg-geometry-1eb2c8fabc"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>ディスパッチしない 3 つの出口</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>外部送信禁止 → ブロックし、理由を報告</span
+                ><span>ローカル訳文のみ使用 → 原文を維持し、需要を一時保持</span
+                ><span
+                  >利用可能なサービスリソースなし → ブロックし、設定を案内</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >原文を維持し、対応する状態を報告</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-admission"
+              class="tg-dfd-node tg-dfd-process tg-geometry-a1882ca628"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D6</span
+                ><strong
+                  >優先順位付けとバッチ化の後、リクエスト試行を承認</strong
+                >
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>優先度の階層／サービスリソース／互換性のあるバッチ</span
+                ><span>同時実行枠＋レート枠＋時間窓クォータ</span
+                ><span
+                  >予約に成功したら、まずクォータの事前差し引きを永続化</span
+                ><span>ディスクへの書き込み成功を待ってから API に送信</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-wait"
+              class="tg-dfd-node tg-dfd-wait tg-geometry-226febd91f"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">W</span
+                ><strong>待機／ブロックし、API には送信しない</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>クォータまたは同時実行枠がない：時間／イベントを待つ</span
+                ><span>需要自体が上限超過：外部送信を一時停止</span
+                ><span
+                  >事前差し引きの書き込み失敗：新たなディスパッチを停止</span
+                ><span>条件が回復したら再判定</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-transport"
+              class="tg-dfd-node tg-dfd-process tg-geometry-c7ae16e98f"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">T</span
+                ><strong>翻訳サービスアダプターを開始</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  ><a href="#tg-dfd-overview-provider"
+                    >全体図 05 へ：実際のネットワークリクエスト</a
+                  ></span
+                ><span>応答の検証／修復と表示は、全体図 06–10 へ戻る</span>
+              </div>
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-0114811edf"
+            >
+              ローカル処理
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-25e9a71bf0"
+            >
+              翻訳が必要
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-cea73a5ca4"
+            >
+              既存
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-7a18d5a966"
+            >
+              新しい共有ジョブ：登録してから検索
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-9ef41eff26"
+            >
+              ヒット
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-failure tg-geometry-bd686d48d3"
+            >
+              読み取り失敗
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-7d6dadfb27"
+            >
+              読み取りを再試行
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-9aeb927753"
+            >
+              ミスを確認済み
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-ff0d5b5bb6"
+            >
+              ヒット
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-56610ca96d"
+            >
+              ミス／読み取り失敗／旧版キーなし
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-1ad0f8d4b4"
+            >
+              ディスパッチしない
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-15b1698f10"
+            >
+              外部送信を許可し、ディスパッチキューへ
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-e4e34b71d4"
+            >
+              準備未完了<br />またはディスク書き込み失敗
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-773a6c265c"
+            >
+              条件が回復<br />再判定
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-78c67497b9"
+            >
+              保守的な差し引きをコミット済み
+            </div>
+          </div>
+        </div>
+        <details class="tg-dfd-text-alternative">
+          <summary>各データフローをテキストで読む</summary>
+          <ol>
+            <li>
+              <b>D1 まずルールと固定した訳文を適用</b> →
+              <b>P ローカル状態／結果を返す</b>：ローカル処理
+            </li>
+            <li>
+              <b>D1 まずルールと固定した訳文を適用</b> →
+              <b>D2 同じセマンティックキーの共有ジョブは存在するか？</b
+              >：翻訳が必要
+            </li>
+            <li>
+              <b>D2 同じセマンティックキーの共有ジョブは存在するか？</b> →
+              <b>P 既存の共有ジョブを購読</b>：既存
+            </li>
+            <li>
+              <b>D2 同じセマンティックキーの共有ジョブは存在するか？</b> →
+              <b>D3 保存済み翻訳メモリを検索</b
+              >：新しい共有ジョブ：登録してから検索
+            </li>
+            <li>
+              <b>D3 保存済み翻訳メモリを検索</b> →
+              <b>P 永続保存された訳文が存在</b>：ヒット
+            </li>
+            <li>
+              <b>D3 保存済み翻訳メモリを検索</b> →
+              <b>E 保存済み訳文の読み取りに失敗</b>：読み取り失敗
+            </li>
+            <li>
+              <b>E 保存済み訳文の読み取りに失敗</b> →
+              <b>D3 保存済み翻訳メモリを検索</b>：読み取りを再試行
+            </li>
+            <li>
+              <b>D3 保存済み翻訳メモリを検索</b> →
+              <b>D4 旧版の翻訳キャッシュを検索</b>：ミスを確認済み
+            </li>
+            <li>
+              <b>D4 旧版の翻訳キャッシュを検索</b> →
+              <b>P 旧訳文を再利用し、保存形式を更新</b>：ヒット
+            </li>
+            <li>
+              <b>D4 旧版の翻訳キャッシュを検索</b> →
+              <b>D5 見つからないことを確認して初めて外部送信を判断</b
+              >：ミス／読み取り失敗／旧版キーなし
+            </li>
+            <li>
+              <b>D5 見つからないことを確認して初めて外部送信を判断</b> →
+              <b>P ディスパッチしない 3 つの出口</b>：ディスパッチしない
+            </li>
+            <li>
+              <b>D5 見つからないことを確認して初めて外部送信を判断</b> →
+              <b>D6 優先順位付けとバッチ化の後、リクエスト試行を承認</b
+              >：外部送信を許可し、ディスパッチキューへ
+            </li>
+            <li>
+              <b>D6 優先順位付けとバッチ化の後、リクエスト試行を承認</b> →
+              <b>W 待機／ブロックし、API には送信しない</b
+              >：準備未完了；またはディスク書き込み失敗
+            </li>
+            <li>
+              <b>W 待機／ブロックし、API には送信しない</b> →
+              <b>D6 優先順位付けとバッチ化の後、リクエスト試行を承認</b
+              >：条件が回復；再判定
+            </li>
+            <li>
+              <b>D6 優先順位付けとバッチ化の後、リクエスト試行を承認</b> →
+              <b>T 翻訳サービスアダプターを開始</b
+              >：保守的な差し引きをコミット済み
+            </li>
+          </ol>
+        </details>
+        <figcaption>
+          <span class="tg-why">図の見方：</span
+          >初回の宣言時に同じジョブがあれば共有し、新しいジョブは登録してから検索します。ローカルメモリの読み取り失敗を、レコードなしとは扱いません。シークレットモードや明示的な再翻訳ではメモリ検索を省略できますが、ディスパッチポリシーとリソースの承認は必要です。この主経路は通常の検索ルートを示しています。
+        </figcaption>
+      </figure>
+    </details>
+    <details class="tg-deep">
+      <summary>なぜ service worker の再起動を考慮するのか？</summary>
+      <div class="tg-deep-body">
+        <p>
+          Chrome の extension service worker
+          はイベント駆動で、アイドル時に終了することがあります。通常の
+          JavaScript
+          グローバル変数は自動保存されません。そのため、このプロジェクトでは翻訳メモリとクォータを
+          IndexedDB
+          に保存し、再接続後にページからアクティブな需要を再宣言できるようにしています。これはライフサイクル設計であり、worker
+          が決して中断しないという意味ではありません。
+        </p>
+        <p class="tg-mini">
+          プラットフォームの根拠：<a
+            href="https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle"
+            >Chrome 公式：service worker lifecycle</a
+          >（2026-10-25 参照）。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">02</span>
+      <h2 id="tg-entrypoints">入口によって共有する部分も異なる</h2>
+    </div>
+    <p>
+      各翻訳入口は、バックグラウンドのリソースとディスパッチ承認の仕組みを共有します。ページのバッチ処理、選択テキストのストリーミング、翻訳センターは、それぞれ固有の出力方法を維持します。
+    </p>
+    <div class="tg-table-scroll">
+      <table class="tg-fit">
+        <thead>
+          <tr>
+            <th>入口</th>
+            <th>システムへの入力方法</th>
+            <th>現在の表示方法</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>ウェブページの段落</th>
+            <td>段落 → 文単位 → 共有翻訳フロー</td>
+            <td>
+              <strong>最終結果を待ち</strong
+              >、現在も適用可能なことを確認してから画面を更新。一時プレビューを順次表示しない
+            </td>
+          </tr>
+          <tr>
+            <th>文書タイトル</th>
+            <td>独立したテキスト単位として扱い、表示範囲付近の優先度に分類</td>
+            <td>
+              最上位の文書のみを管理。リクエストのバージョンで、古い結果が新しいタイトルを上書きするのを防止
+            </td>
+          </tr>
+          <tr>
+            <th>字幕</th>
+            <td>
+              独立したテキスト単位として扱い、表示中コンテンツの優先度に分類
+            </td>
+            <td>セグメント完了後、字幕表示フローへ返す</td>
+          </tr>
+          <tr>
+            <th>選択テキスト · LLM</th>
+            <td>
+              バックグラウンドでテキストをストリーミング。リソースとクォータの承認を共有
+            </td>
+            <td>
+              蓄積したプレーンテキストで画面を継続更新できる。ページのバッチ応答解析とは異なる
+            </td>
+          </tr>
+          <tr>
+            <th>翻訳センター</th>
+            <td>翻訳メモリを検索し、必要に応じて翻訳リクエストを送信</td>
+            <td>
+              応答全体の受信後にカードを更新。リクエスト識別情報でキャンセルと古い応答を分離
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tg-boundary">
+      <strong>各入口には固有の再試行戦略があります：</strong
+      >ページ翻訳の自動サービス切り替えは既定で無効です。選択テキストには「LLM
+      が空文字列を返す → 有効な標準翻訳を試す」というフォールバックと、最大 2
+      回の追加再試行（待機時間 800／1600ms）があります。
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">03</span>
+      <h2 id="tg-identity">まず、位置・ジョブ・リクエストを区別する</h2>
+    </div>
+    <p>
+      <strong>ページバインディング</strong
+      >は画面上の需要を記録し、<strong>共有ジョブ</strong>は再利用可能な翻訳タスクを表し、<strong>リクエスト試行</strong>は特定の翻訳リソースに対する
+      1 回の操作です。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 02</span>3 種類の識別情報、3
+          つのライフサイクル</span
+        ><span class="tg-fig-type">SVG アーキテクチャ図</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-identities-svg"
+          viewbox="0 0 900 366"
+          role="img"
+          aria-labelledby="tg-identities-title tg-identities-desc"
+        >
+          <title id="tg-identities-title">
+            ページバインディング、共有ジョブ、リクエスト試行の 3
+            層のライフサイクル
+          </title>
+          <desc id="tg-identities-desc">
+            2 つのページバインディングがジョブ ①
+            を共有します。互換性のあるジョブは同じリクエスト試行にまとめられます。これは概念例であり、バッチ化には文書などの制約を満たす必要があります。
+          </desc>
+          <defs>
+            <marker
+              id="tg-identities-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <text x="28" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            ページの需要
+          </text>
+          <text x="350" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            意味条件が同一のジョブ
+          </text>
+          <text x="650" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            1 回のネットワーク試行
+          </text>
+          <rect
+            x="28"
+            y="62"
+            width="240"
+            height="88"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="44" y="89" class="tg-h tg-geometry-b54f4860ae">
+            ページバインディング A1
+          </text>
+          <text x="44" y="115" class="tg-muted tg-geometry-b54f4860ae">
+            ページ A の原文
+          </text>
+          <text x="44" y="137" class="tg-muted tg-geometry-b54f4860ae">
+            位置、原文バージョン、購読
+          </text>
+          <rect
+            x="28"
+            y="174"
+            width="240"
+            height="88"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="44" y="201" class="tg-h tg-geometry-b54f4860ae">
+            ページバインディング B1
+          </text>
+          <text x="44" y="227" class="tg-muted tg-geometry-b54f4860ae">
+            ページ B の意味条件が同じ需要
+          </text>
+          <text x="44" y="249" class="tg-muted tg-geometry-b54f4860ae">
+            独自の DOM／バージョンを持つ
+          </text>
+          <rect
+            x="350"
+            y="86"
+            width="240"
+            height="96"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="366" y="113" class="tg-h tg-geometry-b54f4860ae">
+            共有ジョブ ①
+          </text>
+          <text x="366" y="139" class="tg-muted tg-geometry-b54f4860ae">
+            同じセマンティックキー
+          </text>
+          <text x="366" y="161" class="tg-muted tg-geometry-b54f4860ae">
+            結果と再試行のライフサイクルを共有
+          </text>
+          <rect
+            x="350"
+            y="218"
+            width="240"
+            height="76"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="366" y="245" class="tg-h tg-geometry-b54f4860ae">
+            共有ジョブ ②
+          </text>
+          <text x="366" y="271" class="tg-muted tg-geometry-b54f4860ae">
+            別の互換性のあるジョブ
+          </text>
+          <rect
+            x="654"
+            y="120"
+            width="218"
+            height="112"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="670" y="147" class="tg-h tg-geometry-b54f4860ae">
+            リクエスト試行 α
+          </text>
+          <text x="670" y="173" class="tg-muted tg-geometry-b54f4860ae">
+            サービスリソース＋クォータ予約
+          </text>
+          <text x="670" y="195" class="tg-muted tg-geometry-b54f4860ae">
+            含まれるジョブ：①、②
+          </text>
+          <text x="670" y="217" class="tg-muted tg-geometry-b54f4860ae">
+            バックグラウンド世代／終了状態
+          </text>
+          <path
+            d="M268,105 L308,105 L308,132 L350,132"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M268,216 L308,216 L308,154 L350,154"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="290" y="286" class="tg-small tg-geometry-35afd8367b">
+            重複排除：意味上の契約が完全に同一の場合のみ共有
+          </text>
+          <path
+            d="M590,134 L620,134 L620,157 L654,157"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M590,256 L620,256 L620,203 L654,203"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="650" y="280" class="tg-small tg-geometry-b54f4860ae">
+            バッチ化：文書、コンテキスト、優先度の階層、
+          </text>
+          <text x="650" y="301" class="tg-small tg-geometry-b54f4860ae">
+            サービスリソースの互換性が必要
+          </text>
+          <text x="28" y="338" class="tg-muted tg-geometry-b54f4860ae">
+            同じ文章の異なるページバインディングが、2 回の API
+            呼び出しになるとは限りません。ひとつの購読を取り消しても、他の購読を取り消す必要はありません。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">
+        横長の図は横方向にスクロールでき、テキストは選択できます。
+      </p>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >重複する需要は結果を共有でき、再試行のために DOM
+        の識別情報を作り直す必要はありません。あるページを離れても、他のページがまだ必要としている同じジョブを取り消す必要はありません。図中のバッチ化は概念例であり、互換性の条件を満たす必要があります。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>同時に届く 2 つの同じ需要の重複送信を、どう防ぐのか？</summary>
+      <div class="tg-deep-body">
+        <p>
+          バックグラウンドスケジューラーは、最初の非同期メモリ検索を始める前に、「検索中」のジョブをインデックスへ登録します。後から届くページの需要は同じジョブを購読し、先の検索がまだ戻っていなくても、同じタスクを別途作りません。そのため、非同期検索中の重複需要も統合できます。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">04</span>
+      <h2 id="tg-capture">
+        抽出するのは識別可能な原文であり、HTML 全体ではない
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 03</span>ひとつの DOM、2
+          つの読み取り責務</span
+        ><span class="tg-fig-type">SVG · 合成例</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-source-shapes-svg"
+          viewbox="0 0 900 501"
+          role="img"
+          aria-labelledby="tg-source-shapes-title tg-source-shapes-desc"
+        >
+          <title id="tg-source-shapes-title">
+            DOM の 2 つの読み取り責務と文分割の位置
+          </title>
+          <desc id="tg-source-shapes-desc">
+            DOM の読み取りは、原文の識別情報の照合と翻訳リクエスト用テキストの 2
+            系統に分かれ、それぞれ必要な原文を読み取ります。Hello と Goodbye
+            の文の UTF-16 範囲は [0,6) と [7,15) です。
+          </desc>
+          <defs>
+            <marker
+              id="tg-source-shapes-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="80"
+            width="268"
+            height="142"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="107" class="tg-h tg-geometry-b54f4860ae">
+            元の DOM · 合成例
+          </text>
+          <text x="40" y="133" class="tg-muted tg-geometry-b54f4860ae">
+            漢（かん）字：読み仮名の注釈を含む
+          </text>
+          <text x="40" y="155" class="tg-muted tg-geometry-b54f4860ae">
+            ＋ ツールが追加した訳文コンテナー
+          </text>
+          <text x="40" y="177" class="tg-muted tg-geometry-b54f4860ae">
+            DOM の識別情報はウェブページ側に保持
+          </text>
+          <rect
+            x="342"
+            y="24"
+            width="534"
+            height="102"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="358" y="51" class="tg-h tg-geometry-b54f4860ae">
+            原文照合／文書コンテキスト
+          </text>
+          <text x="358" y="77" class="tg-muted tg-geometry-b54f4860ae">
+            基準原文を読み取る：漢字（この例）
+          </text>
+          <text x="358" y="99" class="tg-muted tg-geometry-b54f4860ae">
+            読み仮名とツール出力を除外し、OCR／閲覧注釈の原文を採用
+          </text>
+          <rect
+            x="342"
+            y="164"
+            width="534"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="191" class="tg-h tg-geometry-b54f4860ae">
+            翻訳リクエスト用テキスト
+          </text>
+          <text x="358" y="217" class="tg-muted tg-geometry-b54f4860ae">
+            翻訳可能なテキストを抽出 → 文分割
+          </text>
+          <text x="358" y="239" class="tg-muted tg-geometry-b54f4860ae">
+            バックグラウンドで正規化：CRLF → LF、NFC、前後の空白を除去
+          </text>
+          <path
+            d="M292,140 L318,140 L318,75 L342,75"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M292,170 L318,170 L318,215 L342,215"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="24" y="310" class="tg-h tg-geometry-b54f4860ae">
+            別の文分割の例：Hello. Goodbye.
+          </text>
+          <rect
+            x="24"
+            y="330"
+            width="268"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="357" class="tg-h tg-geometry-b54f4860ae">
+            原文ブロック
+          </text>
+          <text x="40" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Hello. Goodbye.
+          </text>
+          <text x="40" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            元の UTF-16 位置で記録
+          </text>
+          <rect
+            x="342"
+            y="330"
+            width="238"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="358" y="357" class="tg-h tg-geometry-b54f4860ae">
+            セグメント 1
+          </text>
+          <text x="358" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Hello.
+          </text>
+          <text x="358" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            範囲：[0, 6)
+          </text>
+          <rect
+            x="630"
+            y="330"
+            width="246"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="646" y="357" class="tg-h tg-geometry-b54f4860ae">
+            セグメント 2
+          </text>
+          <text x="646" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Goodbye.
+          </text>
+          <text x="646" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            範囲：[7, 15)
+          </text>
+          <path
+            d="M292,367 L342,367"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="317.0" y="358.0" class="tg-small tg-geometry-35afd8367b">
+            文分割
+          </text>
+          <path
+            d="M292,390 L316,390 L316,436 L612,436 L612,377 L630,377"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="24" y="471" class="tg-muted tg-geometry-b54f4860ae">
+            2 つの DOM
+            読み取り経路は責務が異なります。文の範囲は元の原文を指し続け、正規化によって原文の位置を書き換えることはありません。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">横長の図は横方向にスクロールできます。</p>
+      <figcaption>
+        一方の経路は翻訳対象の文章を抽出して文に分割し、もう一方は一貫した原文表現を読み取り、識別情報の照合と文書コンテキストの作成に使います。どちらも、システムが生成した訳文を新たな原文として扱わないようにします。
+      </figcaption>
+    </figure>
+    <div class="tg-three">
+      <div class="tg-lane">
+        <p class="tg-subheading">まず段落を識別</p>
+        <p class="tg-mini">
+          DOM、表示タイプ、除外ルールに基づいて走査し、自身の出力、非表示コンテンツ、発音注釈を飛ばします。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">次に文へ分割</p>
+        <p class="tg-mini">
+          ブラウザーのテキスト分割機能を使い、2000 UTF-16
+          単位を超えたら、まず節を区切る句読点、次に書記素の境界を探します。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">最後に識別情報を保持</p>
+        <p class="tg-mini">
+          各セグメントは元の範囲、分割順序、原文バージョンを保持し、原文が変わったらテキスト単位を再構築します。
+        </p>
+      </div>
+    </div>
+    <details class="tg-deep">
+      <summary>UTF-16、字形、token を混同してはいけない理由</summary>
+      <div class="tg-deep-body">
+        <p>
+          UTF-16 コード単位は JavaScript の文字列長に使う単位です。emoji
+          は複数の単位を占める場合があり、複数の Unicode
+          コードポイントが、ユーザーに見えるひとつの字形を構成することもあります。書記素（grapheme）は、このような可視のテキスト単位のまとまりを表し、token
+          はモデルのトークナイザーによって決まります。
+        </p>
+        <p>
+          既定値の 2000
+          は、各テキスト単位の文字列長の上限です。ひとつの書記素だけで上限を超えたら、入力が大きすぎると報告します。ブラウザーがテキスト分割をサポートしない場合、フォールバックはコードポイント単位で処理するだけなので、複合字形を完全にまとめることは保証できません。
+        </p>
+        <p>
+          短いセグメントにはローカルのヒューリスティックもあります。URL
+          などのノイズを除いた後、ラテン文字の単語 1
+          つだけなら省略することがあり、中国語・日本語・韓国語の文字を含む短いセグメントは保持できます。細切れのリクエストを減らす一方、意味のある単語を見落とす可能性もあります。選択テキストの翻訳には、ページ翻訳と同じ短文のしきい値を適用しません。
+        </p>
+        <p class="tg-mini">
+          関連情報：<a
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter"
+            >ブラウザーのテキスト分割機能</a
+          >。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">05</span>
+      <h2 id="tg-viewport">読んでいる場所を優先し、その先をプリロード</h2>
+    </div>
+    <p>
+      ページ側は「原文がどこにあるか」を把握し、バックグラウンドは「今どの文章を翻訳すべきか」を判断します。プリロード範囲は読む方向と速度で変わり、スケジューリングの優先順位はページをまたいで統一的に比較します。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 04</span
+          >閲覧状態を変えて、プリロード範囲の変化を見る</span
+        ><span class="tg-fig-type"
+          >対話型の数式デモ · 性能測定ではありません</span
+        >
+      </div>
+      <div class="tg-figure-body">
+        <section id="tg-lookahead-controls" class="tg-demo-controls"></section>
+        <div class="tg-lookahead-view">
+          <div
+            aria-label="プリロード範囲の位置関係の模式図（縮尺は一定ではありません）"
+            class="tg-viewport-illustration"
+          >
+            <div class="tg-near-band">
+              <span id="tg-look-top-role">上側 · 閲覧方向の後方</span
+              ><strong id="tg-look-top">400 px</strong>
+            </div>
+            <div class="tg-screen-band">
+              <strong>現在の画面｜表示中の文章を優先</strong
+              ><span id="tg-look-height-label">表示画面の高さ H = 800 px</span>
+            </div>
+            <div class="tg-near-band">
+              <span id="tg-look-bottom-role">下側 · 閲覧方向の前方</span
+              ><strong id="tg-look-bottom">2400 px</strong>
+            </div>
+          </div>
+          <div class="tg-math-notes">
+            <p class="tg-sample">
+              範囲の模式図。長さは画面のピクセルに比例して描画していません
+            </p>
+            <div class="tg-metric-line">
+              <span>翻訳の前方範囲</span><span id="tg-look-ahead">2400 px</span>
+            </div>
+            <div class="tg-metric-line">
+              <span>段落登録の前方範囲</span
+              ><span id="tg-look-registration">2800 px</span>
+            </div>
+            <div class="tg-metric-line">
+              <span>後方範囲</span><span id="tg-look-behind">400 px</span>
+            </div>
+            <p id="tg-look-status" aria-live="polite" class="tg-mini">
+              閲覧中：前方 3 画面分。段落登録は翻訳よりさらに 0.5
+              画面分先まで行います。
+            </p>
+          </div>
+        </div>
+        <div class="tg-no-script-note">
+          <p class="tg-mini">
+            JavaScript が無効です。上には「閲覧中、下向き、高さ 800px、余白
+            1000px」の静的な例を残しています。
+          </p>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >間もなく読む段落を先にバックグラウンドへ宣言します。ゆっくり読む場合と速くスクロールする場合では範囲が異なります。プリロード余白を
+        0 にすると、前方・後方の両方でプリロードを無効にします。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>プリロードの数式とスクロールアルゴリズムを展開</summary>
+      <div class="tg-deep-body">
+        <div class="tg-formula">
+          前方範囲 = min(10000, max(設定余白, round((倍率 + 先行量) × H)))
+          後方範囲 = min(設定余白, round(0.5 × H)) 倍率：未スクロール
+          1.5／閲覧中 3／高速スクロール 5 先行量：翻訳範囲 0／段落登録範囲 0.5
+        </div>
+        <p>
+          設定余白が ≤0 の場合、両側とも 0
+          を返します。上向きに読む場合は上下の範囲を入れ替えます。スクロール速度は
+          EMA で平滑化します：<span class="tg-mono">α=1−exp(−dt/200)</span
+          >、新速度＝旧速度＋（瞬間速度−旧速度）×α。dt の単位は
+          ms、瞬間速度の単位は px/s です。間隔が 400ms
+          に達したら、新しいサンプルをそのまま採用します。
+        </p>
+        <p>
+          方向転換には、逆方向への移動が累積で
+          <span class="tg-mono">max(120px, 0.35H)</span>
+          に達する必要があります。前方向の速度が 2.5 viewport/s
+          に達すると、高速スクロール状態に入り、2
+          秒間維持できます。これらのしきい値は、わずかな引き戻しによる監視範囲の再構築を減らすものです。設計上のヒューリスティックであり、読む意図を認識するモデルではありません。
+        </p>
+      </div>
+    </details>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 05</span
+          >スケジューリングの優先順位：画面上の需要からページ間の公平性まで</span
+        ><span class="tg-fig-type">HTML 順序図</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-tier-stack">
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T0</div>
+            <strong>フォーカス中のページ · 表示範囲内</strong
+            ><small>目の前のコンテンツを優先</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T1</div>
+            <strong>他のページ · 表示範囲内</strong
+            ><small>同じ階層ではページごとに順番にディスパッチ</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T2</div>
+            <strong>フォーカス中のページ · 表示範囲付近</strong
+            ><small>読む方向の前方を優先し、次に文書順</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T3</div>
+            <strong>その他のディスパッチ可能な需要</strong
+            ><small
+              >ページごとに順番にディスパッチ。明確に範囲外のコンテンツは送信しない</small
+            >
+          </div>
+        </div>
+        <p class="tg-sample">
+          スケジューリング例：同時実行枠 1、単項目リクエスト。P1
+          がフォーカス中で、3 ページにそれぞれ 3 つの表示中の文章がある
+        </p>
+        <div aria-label="ディスパッチ順序" class="tg-queue-demo">
+          <span>P1.1</span><span>P1.2</span><span>P1.3</span
+          ><span class="tg-p2">P2.1</span><span class="tg-p3">P3.1</span
+          ><span class="tg-p2">P2.2</span><span class="tg-p3">P3.2</span
+          ><span class="tg-p2">P2.3</span><span class="tg-p3">P3.3</span>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >フォーカスの切り替えは未送信のジョブを並べ替えますが、正常に実行中のリクエストは中断しません。ラウンドロビンによって同じ階層内の公平性は改善されますが、低優先度の階層は依然として待つ場合があります。
+      </figcaption>
+    </figure>
+    <div class="tg-boundary">
+      <strong>位置を読み取ってから画面を更新：</strong
+      >ページ側はまず段落の位置をまとめて読み取り、その後プレースホルダー要素を挿入します。後続の翻訳処理は可視性オブザーバーが提供する位置データを再利用し、レイアウトの読み取りと
+      DOM 書き込みの交錯を減らします。
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">06</span>
+      <h2 id="tg-rules">ルールで翻訳可否を決めてから重要語を保護</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 06</span
+          >用語集：一致候補を探してから置換を決める</span
+        ><span class="tg-fig-type">HTML アルゴリズム図</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node">
+            <strong>1 · すべての候補を検索</strong
+            ><span
+              >Aho–Corasick トライ木<br />複数の語句を一度に検索<br />互いに重なる一致も含める</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>2 · 並べ替え</strong
+            ><span
+              >最左 → 最長 → 優先度<br />次にルールの具体性と識別番号を比較<br />安定した選択順序を得る</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>3 · 重ならない語句を選択</strong
+            ><span
+              >カーソルを一方向に進める<br />⟦n⟧ プレースホルダーに変換<br />置換済みの内容は再走査しない</span
+            >
+          </div>
+        </div>
+        <p class="tg-sample">用語保護の例。モデルの応答は模式的な文章です</p>
+        <div class="tg-sentence">The <i>Rust Belt</i> uses <i>Rust</i>.</div>
+        <div class="tg-connector">
+          開始位置が同じなら長い語句を先に採用。短い語句は優先度が高くても Rust
+          Belt を奪わない
+        </div>
+        <div class="tg-two">
+          <div>
+            <p class="tg-subheading">モデルに送信</p>
+            <div class="tg-sentence">The <i>⟦1⟧</i> uses <i>⟦2⟧</i>.</div>
+          </div>
+          <div>
+            <p class="tg-subheading">応答して復元</p>
+            <div class="tg-sentence">
+              <i>⟦1⟧</i>で使われるのは<i>⟦2⟧</i>。<br />→
+              ラストベルトで使われるのは Rust 言語。
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >管理対象の用語を、検証可能な保持マーカーに変えます。各プレースホルダーは必ず
+        1
+        回だけ現れる必要があります。欠落、重複、モデルが捏造した新たなマーカーがある場合、そのまま画面には表示できません。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>ルールの優先順序と Aho–Corasick の厳密な役割分担</summary>
+      <div class="tg-deep-body">
+        <p>
+          まずページ全体の無効化を処理し、次に文全体の原文保持／指定訳文、ユーザーが固定した訳文、外部送信禁止を確認し、最後に語句をプレースホルダーへ置換します。外部送信を禁止しても、ローカルに保存された訳文は表示できます。
+        </p>
+        <p>
+          Aho–Corasick
+          は複数の語句の検索を担当します。「最左・最長」は、その後の並べ替えとカーソルによる選択が共同で決める結果です。走査は
+          UTF-16
+          コード単位で行われ、自然言語の単語境界は理解しません。全体の処理には一致候補の展開と並べ替えも含まれるため、全コストを単純に
+          O(n) とは書けません。
+        </p>
+        <p>
+          照合範囲には任意のテキスト、文全体の厳密一致、リテラルの語句が含まれますが、任意の正規表現には対応していません。コンパイルまたは照合に失敗した場合は、より直接的な参照走査方式にフォールバックできます。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">07</span>
+      <h2 id="tg-context">
+        コンテキストは安定させ、同じ外部送信ルールに従わせる
+      </h2>
+    </div>
+    <p>
+      文書コンテキストを有効にした翻訳設定では、最初のバッチを送る前に候補テキストを固定します。バックグラウンド側が現在のポリシーに従って適格な内容を選び、「翻訳してはいけない段落」が他の文のコンテキストを通じて間接的に送信されるのを防ぎます。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 07</span
+          >文書の候補から、上限のある翻訳コンテキストへ</span
+        ><span class="tg-fig-type">HTML データフロー</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node">
+            <strong>文書の最初の候補群</strong
+            ><span
+              >50ms の静止期間／最大 200ms の取得時間窓<br />本文ブロックは最大
+              16 個<br />候補の合計 ≤6000 UTF-16 単位</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>バックグラウンドでポリシーを適用</strong
+            ><span
+              >外部送信禁止、原文保持、指定訳文、固定した訳文のみ使用、プレースホルダー保護の対象となる候補を除外</span
+            >
+          </div>
+          <div class="tg-node tg-good">
+            <strong>最終的な文書コンテキスト</strong
+            ><span
+              >適格なタイトル＋最初の適格な本文ブロック 8 個<br />全長は最大
+              1500 UTF-16 単位<br />コンテキストのフィンガープリントを計算</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          候補を固定する意義：同じスナップショットが、メッセージの分割、再接続の順序、スクロール開始位置によって変わらない
+        </div>
+        <div class="tg-two">
+          <div class="tg-lane">
+            <p class="tg-subheading">翻訳対象の文とは分離</p>
+            <p class="tg-mini">
+              コンテキストは背景情報だけを提供し、それ自体の訳文を出力する必要はありません。コンテキストが異なれば、セマンティックキーも異なる場合があります。
+            </p>
+          </div>
+          <div class="tg-lane">
+            <p class="tg-subheading">制約は残る</p>
+            <p class="tg-mini">
+              文書の前半の限られた範囲では、全文を網羅できるとは限りません。各翻訳入口で使うコンテキストにも違いがあります。
+            </p>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >安定したスナップショットは、再利用可能な意味上の識別情報に役立ちます。ポリシーの確認は「間接的に外部送信する」背景テキストにも及ぶ必要があります。
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">08</span>
+      <h2 id="tg-memory">
+        まずローカルに問う：この意味上の契約は、すでに翻訳済みか？
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 08</span
+          >ローカル優先。読み取りエラーとレコードなしを区別</span
+        ><span class="tg-fig-type">HTML 判断図</span>
+      </div>
+      <div class="tg-figure-body tg-local-grid">
+        <div>
+          <div class="tg-decision-row">
+            <span class="tg-step">01</span>
+            <div>
+              <strong>ルールと固定した訳文</strong>
+              <div class="tg-result">
+                指定結果／原文保持はローカルで決定可能
+              </div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">02</span>
+            <div>
+              <strong>保存済み翻訳メモリ</strong>
+              <div class="tg-result">
+                ヒット → 直接使用。読み取り失敗 → 既定では外部送信を停止
+              </div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">03</span>
+            <div>
+              <strong>旧版の厳密一致キャッシュ</strong>
+              <div class="tg-result">ヒット → 使用し、保存形式の更新を試す</div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">04</span>
+            <div>
+              <strong
+                >レコードがないことを確認してからディスパッチポリシーを確認</strong
+              >
+              <div class="tg-result">
+                外部送信を許可 → リソース承認。ローカルのみ → 原文保持
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="tg-key-box">
+            <p class="tg-subheading">セマンティックキー：どの翻訳か？</p>
+            <div class="tg-key-fields">
+              <span>正規化済み原文</span><span>翻訳入口</span
+              ><span>原文／翻訳先の言語</span><span>翻訳設定</span
+              ><span>プロンプトのバージョン</span><span>用語集のバージョン</span
+              ><span>コンテキストのフィンガープリント</span
+              ><span>ルールのフィンガープリント</span><span>出力の取り決め</span
+              ><span>プライバシー区分</span>
+            </div>
+            <div class="tg-key-arrow">
+              一貫したデータ表現 → SHA-256 → セマンティックキー
+            </div>
+          </div>
+          <div class="tg-key-box tg-geometry-92c18f6bda">
+            <p class="tg-subheading">
+              ページキー：ページを開き直すときに何を復元するか？
+            </p>
+            <p class="tg-mini">
+              ページキーは復元の意図とページの関連付けを管理し、セマンティックキーは原文の文と訳文の対応を決めます。
+            </p>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >「保存済み訳文を読めない」と「訳文が一度も存在しなかった」は別の状態です。一時的な読み取り失敗が、原文を外部へ再送し、もう一度翻訳コストを支払うことへの同意になるわけではありません。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>データ層</th>
+            <th>保存戦略</th>
+            <th>設計上のトレードオフ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>翻訳メモリ</th>
+            <td>
+              有効期限なし、自動削除なし。既定値は内容の集計で 512 MiB／20
+              万件／1 件あたり 1 MiB
+            </td>
+            <td>
+              容量がいっぱいになったら新たな書き込みを拒否し、既存の記録を保護します。数値には
+              IndexedDB
+              全体のインデックスや追加のストレージコストは含まれません。
+            </td>
+          </tr>
+          <tr>
+            <th>旧版キャッシュ</th>
+            <td>既定値は 30 日／128 MiB。LRU 方式で削除</td>
+            <td>
+              再構築可能なキャッシュであり、保存済み訳文とは異なる保持戦略を採用します。
+            </td>
+          </tr>
+          <tr>
+            <th>ルール／固定した訳文</th>
+            <td>永続化するポリシーデータ</td>
+            <td>
+              ユーザーが指定した動作であり、一般的な LRU
+              キャッシュではありません。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>モデルやページが変わっても再利用できる結果はどれか？</summary>
+      <div class="tg-deep-body">
+        <p>
+          ページ翻訳の意味上の識別情報には、プロバイダーやモデルを直接含めません。他の意味条件が同じなら、モデルを変えても既存の結果にヒットする可能性があります。「強制再翻訳」の場合に初めて翻訳メモリと旧版キャッシュを飛ばし、結果の検証に成功した後、同じセマンティックキーのメモリを置き換えます。
+        </p>
+        <p>
+          選択テキスト翻訳と翻訳センターは、それぞれ固有の入口の取り決めを使い、翻訳設定にもプロバイダー識別子を含めます。そのため、翻訳センターの
+          A プロバイダーのカードが B
+          プロバイダーのカードの結果を使うことはありません。同じプロバイダー設定でモデルを変更した場合は、元の識別情報を維持します。
+        </p>
+        <p>
+          コンテキスト、ルール、バージョンも意味上の契約に含め、ハッシュの厳密一致で訳文を探します。異なるページの同じ文でも、他の意味条件まで一致して初めて共有できます。似ているだけの文章が自動的にヒットすることはありません。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">09</span>
+      <h2 id="tg-admission">
+        バッチ化でリクエストを節約し、ディスパッチ承認でリソースとクォータを守る
+      </h2>
+    </div>
+    <p>
+      候補ジョブをまず閲覧需要に従って並べ、次に利用可能な翻訳リソースを選び、最後にバッチへの統合を試みます。大きなバッチはジョブをまとめられますが、表示中のコンテンツには小さな基準を使い、最初の結果が多くの文を待たずに済むようにします。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 09</span>2
+          種類のバッチ基準、共通の互換性確認</span
+        ><span class="tg-fig-type">HTML 条件図</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-two">
+          <div class="tg-node tg-good">
+            <strong>表示中コンテンツ · T0／T1</strong
+            ><span
+              >バッチ追加の基準：最大 3 項目／900 UTF-16 単位<br />ユーザー設定と表示中コンテンツの基準の小さい方を採用</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>その他のディスパッチ可能なコンテンツ</strong
+            ><span
+              >初期既定値：8 項目／2400 UTF-16 単位<br />翻訳フローのバッチ設定に従って統合</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          候補順に追加し、次の項目に互換性がなければ拡張を停止
+        </div>
+        <div class="tg-key-box">
+          <p class="tg-subheading">同じバッチ内では互換性が必要</p>
+          <div class="tg-key-fields">
+            <span>文書とページ接続</span><span>優先度の階層</span
+            ><span>翻訳設定</span><span>コンテキスト</span
+            ><span>プライバシー区分</span><span>翻訳リソース</span
+            ><span>token クォータ</span>
+          </div>
+        </div>
+        <p class="tg-mini">
+          T1／T3
+          の候補窓に複数のページが現れた場合は、単項目のディスパッチを維持し、あるページのバッチを埋めるために別のページを飛ばさないようにします。個別修復が必要なジョブもバッチ化しません。
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >スループットと最初の結果までの待ち時間にはトレードオフがあり、バッチ化によって公平性を迂回してはいけません。バッチ基準は統合規模を制限しますが、実際の速度とコストはコンテンツとサービスの応答に依存します。
+      </figcaption>
+    </figure>
+    <div class="tg-boundary">
+      <strong>900 は、各リクエストの絶対的な文字数上限ではありません：</strong
+      >最初の項目は先にバッチへ入り、他の項目を追加するときに初めて合計長を確認します。文分割済みの単一翻訳単位でも
+      900
+      を超えることがあります。プロンプトとコンテキストも、この原文長には含まれません。UTF-16
+      コード単位、モデルの
+      token、ネットワークのバイト数は、それぞれ別の尺度です。
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 10</span>同時実行枠とクォータ台帳：2
+          つの異なるライフサイクル</span
+        ><span class="tg-fig-type">SVG ライフサイクル図</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-admission-ledger-svg"
+          viewbox="0 0 900 516"
+          role="img"
+          aria-labelledby="tg-admission-ledger-title tg-admission-ledger-desc"
+        >
+          <title id="tg-admission-ledger-title">
+            同時実行枠とクォータ台帳を分けて管理
+          </title>
+          <desc id="tg-admission-ledger-desc">
+            ディスパッチ承認では、同時実行枠、レート枠、クォータグループを同時に確認し、永続化してから
+            API
+            に送信します。ネットワークリクエストの終了確認後に同時実行枠を解放します。コミット済みの保守的な差し引きは時間窓の期限まで残し、レート枠は別途そのレートに従って補充します。
+          </desc>
+          <defs>
+            <marker
+              id="tg-admission-ledger-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="28"
+            width="240"
+            height="102"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="40" y="55" class="tg-h tg-geometry-b54f4860ae">
+            1 回の API リクエスト試行
+          </text>
+          <text x="40" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            同時実行枠が必要
+          </text>
+          <text x="40" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            リクエスト／token の枠が必要
+          </text>
+          <rect
+            x="330"
+            y="28"
+            width="245"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="346" y="55" class="tg-h tg-geometry-b54f4860ae">
+            同時実行枠
+          </text>
+          <text x="346" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            グローバル／サービスリソース／クォータグループ
+          </text>
+          <text x="346" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            予約済み、または未終了のネットワークリクエスト
+          </text>
+          <rect
+            x="630"
+            y="28"
+            width="246"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="646" y="55" class="tg-h tg-geometry-b54f4860ae">
+            時間窓クォータ台帳
+          </text>
+          <text x="646" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            時間窓ごとのリクエスト／token の計数
+          </text>
+          <text x="646" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            保守的な時間窓の差し引きを記録
+          </text>
+          <path
+            d="M264,75 L330,75"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M575,75 L630,75"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="602.5" y="66.0" class="tg-small tg-geometry-35afd8367b">
+            同時に承認
+          </text>
+          <rect
+            x="330"
+            y="180"
+            width="245"
+            height="106"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="207" class="tg-h tg-geometry-b54f4860ae">
+            先に IndexedDB トランザクションをコミット
+          </text>
+          <text x="346" y="233" class="tg-muted tg-geometry-b54f4860ae">
+            リクエスト記録＋レート・クォータ台帳
+          </text>
+          <text x="346" y="255" class="tg-muted tg-geometry-b54f4860ae">
+            トランザクション成功後にのみ送信を許可
+          </text>
+          <path
+            d="M753,130 L753,154 L452,154 L452,180"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M452,130 L452,180"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="24"
+            y="180"
+            width="240"
+            height="106"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="207" class="tg-h tg-geometry-b54f4860ae">
+            翻訳サービスを呼び出す
+          </text>
+          <text x="40" y="233" class="tg-muted tg-geometry-b54f4860ae">
+            送信前に事前差し引きの記録を残す
+          </text>
+          <text x="40" y="255" class="tg-muted tg-geometry-b54f4860ae">
+            ディスク書き込み失敗：API へ送信しない
+          </text>
+          <path
+            d="M330,230 L264,230"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="297.0" y="221.0" class="tg-small tg-geometry-35afd8367b">
+            トランザクション完了
+          </text>
+          <rect
+            x="24"
+            y="340"
+            width="240"
+            height="86"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="367" class="tg-h tg-geometry-b54f4860ae">
+            ネットワークリクエストの終了を確認済み
+          </text>
+          <text x="40" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            完了／キャンセル確認済み／失敗
+          </text>
+          <path
+            d="M144,286 L144,340"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="330"
+            y="340"
+            width="245"
+            height="86"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="346" y="367" class="tg-h tg-geometry-b54f4860ae">
+            同時実行枠を解放
+          </text>
+          <text x="346" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            後続ジョブが空いた枠を使用可能
+          </text>
+          <rect
+            x="630"
+            y="340"
+            width="246"
+            height="86"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="646" y="367" class="tg-h tg-geometry-b54f4860ae">
+            時間窓の差し引きは維持
+          </text>
+          <text x="646" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            計数区間の期限まで待つ。実使用量が
+          </text>
+          <text x="646" y="415" class="tg-muted tg-geometry-b54f4860ae">
+            少なくても事前差し引きは自動返却しない
+          </text>
+          <path
+            d="M264,382 L330,382"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M575,382 L630,382"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="602.5" y="373.0" class="tg-small tg-geometry-35afd8367b">
+            これとは別に
+          </text>
+          <text x="24" y="464" class="tg-muted tg-geometry-b54f4860ae">
+            同時実行枠は占有状態を追跡し、時間窓クォータは事前差し引きを保持し、リクエストのレート枠は別途レートに従って補充します。
+          </text>
+          <text x="24" y="488" class="tg-muted tg-geometry-b54f4860ae">
+            ネットワークリクエストの終了でレート枠を直接返却することはありません。事前差し引きに成功してからキャンセルした場合、未送信分の差し引きも残ることがあります。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">横長の図は横方向にスクロールできます。</p>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >リクエストの終了は、ネットワーク操作が同時実行枠を占有しなくなったことを意味するだけで、プロバイダーが課金しなかったことを意味しません。保守的な差し引き記録を先に保存すれば、バックグラウンドサービスの再起動後にも既知の使用量を保持できます。送信レートを制御するトークンは別途時間とともに補充され、リクエスト終了によって消費済みトークンを直接返すことはありません。
+      </figcaption>
+    </figure>
+    <div class="tg-three">
+      <div class="tg-lane">
+        <p class="tg-subheading">同時実行数</p>
+        <p class="tg-mini">
+          システム全体、単一の翻訳リソース、関連するすべてのクォータグループを同時に確認します。初期既定の上限は、それぞれ同時実行枠
+          16、12、16 です。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">送信レート</p>
+        <p class="tg-mini">
+          各翻訳リソースのトークンバケットは、既定で毎秒 8
+          リクエスト分の容量を補充し、最大 16
+          回分を蓄積します。これは開始のペースを管理するもので、毎秒 8
+          回の完了を保証するものではありません。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">時間窓クォータ</p>
+        <p class="tg-mini">
+          設定に従って、毎分のリクエスト数、毎分の token 数、1
+          日のリクエスト数を確認します。実使用量が多ければ追加計上しますが、少ない場合や報告されない場合に事前差し引きを自動返却することはありません。
+        </p>
+      </div>
+    </div>
+    <details class="tg-deep">
+      <summary>アルゴリズム：いつ時間を待ち、いつイベントを待つのか？</summary>
+      <div class="tg-deep-body">
+        <div class="tg-formula">
+          D = S + P + a − L S =
+          時間窓台帳にコミット済みで、まだ期限切れになっていない保守的な差し引き
+          P = 送信コミットがまだ完了していない予約量 a = 新しい需要　　L =
+          設定上限
+        </div>
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>条件</th>
+                <th>ディスパッチ判断</th>
+                <th>意味</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>a &gt; L</th>
+                <td>需要をブロック</td>
+                <td>
+                  この需要自体が上限を超えており、設定を変えない限り、待っても収まりません。
+                </td>
+              </tr>
+              <tr>
+                <th>D ≤ 0</th>
+                <td>このクォータ確認を通過</td>
+                <td>
+                  同時実行枠、送信レート、その他のクォータ確認も通過する必要があります。
+                </td>
+              </tr>
+              <tr>
+                <th>0 &lt; D ≤ S</th>
+                <td>指定時刻まで待機</td>
+                <td>
+                  時間バケットを走査し、十分な差し引きが期限切れになる時刻を探します。
+                </td>
+              </tr>
+              <tr>
+                <th>D &gt; S</th>
+                <td>状態変更を待機</td>
+                <td>
+                  コミット済みの差し引きがすべて期限切れになっても、コミット待ちの予約量と新しい需要の合計が上限を超えます。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          同じ翻訳リソースの時間条件には最も遅いしきい値を採用し、枠の解放や書き込み完了も必要なら、対応するイベントを待ちます。異なる候補ジョブの間では、最も早く起動できる可能性のある時刻を探します。固定容量のリング状時間バケットにより、過去のリクエスト数に応じてメモリが無制限に増えるのを防ぎます。分の窓は
+          62 バケットで各 1 秒、日の窓は 1442 バケットで各 60 秒です。
+        </p>
+        <p>
+          差し引きが属する時間バケットの番号は ceil（帰属時刻 ÷
+          各バケットの長さ）、つまり切り上げで求めます。永続化スナップショットの作成時には、コミット待ちの差し引きの帰属時刻を、少なくとも現在時刻＋1000ms
+          に設定します。トランザクション完了後にも現在時刻より前でないことを確保し、保守的に期限を決めます。リクエストのトークンバケットは整数で計数し、1
+          回のリクエストは 1,000,000
+          マイクロ単位に相当します。これはモデルが文章を分割する token
+          とは無関係です。
+        </p>
+      </div>
+    </details>
+    <details class="tg-deep">
+      <summary>アルゴリズム：リソース選択、token 推定、任意の適応制御</summary>
+      <div class="tg-deep-body">
+        <p>
+          複数の翻訳リソースが使える場合、まず「候補窓内の互換性のある需要量 ÷
+          利用可能な同時実行数」を比較し、分母は少なくとも 1
+          とします。次に負荷、ルーティング優先度、安定したリソース識別子順を比較します。これは目の前の候補からリソースを選ぶヒューリスティックであり、グローバルな最適配分を求めるものではありません。
+        </p>
+        <div class="tg-formula">
+          推定基底 = ceil（すべての文字重みの合計）+ 4 文字重み：Unicode
+          コードポイントが 0x2E80 より大きければ 1、それ以外は 0.34
+          対話型の完全なプロンプト：ceil（空でない各フラグメントの基底の合計 ×
+          1.2）+ 256 対話型の出力予約量：リクエストが指定した上限。未指定なら
+          4096
+        </div>
+        <p>
+          これはローカルでディスパッチ可否を決めるための推定です。プロバイダーの実際の
+          token
+          分割とは異なる場合があり、アカウントの残り枠の代わりにもなりません。ページのバッチでは翻訳指示とコンテキストも推定に加えるため、原文の文字数だけを毎分の
+          token 使用量とみなすことはできません。
+        </p>
+        <p>
+          適応的な同時実行数の調整は既定で無効です。有効にすると、同時実行上限はハード上限の半分を切り上げた値から始まります。成功応答が届き、統計窓が
+          20 秒に達していれば、前の窓で成功が少なくとも 10
+          回あり、未処理ジョブが残り、輻輳がなかったかを確認します。すべて満たした場合にのみ枠を
+          1 つ増やします。容量の輻輳時は半減し、同じ調整周期内の減少は最大 1
+          回です。自動フォールバック切り替えも既定で無効であり、明示的に有効にした場合のみ、条件に合えば別のリソースへ切り替えます。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">10</span>
+      <h2 id="tg-protocol">
+        モデルが返すのはデータプロトコル。検証を通過して初めて訳文になる
+      </h2>
+    </div>
+    <p>
+      既定のページバッチ翻訳では、短い識別番号で各結果を対応付けます。出力順は異なっても構いませんが、識別番号、訳文、プレースホルダーのすべてが検証に通る必要があります。これにより、「応答全体が壊れている」と「一部の項目だけ修復が必要」を分けて扱えます。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 11</span
+          >ストリーミングテキストからコミット可能な訳文へ</span
+        ><span class="tg-fig-type">HTML プロトコル・分岐図</span>
+      </div>
+      <div class="tg-figure-body">
+        <p class="tg-sample">
+          合成データの例です。原文の言語は自動判定し、翻訳先は台湾の繁体字中国語で、追加のコンテキストは付けません。応答順を意図的に入れ替えていますが、項目の識別番号で
+          1 対 1 に対応します。
+        </p>
+        <div class="tg-two">
+          <div>
+            <p class="tg-subheading">送信した翻訳項目</p>
+            <div class="tg-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>項目の識別番号</th>
+                    <th>原文</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>1</th>
+                    <td>Hello.</td>
+                  </tr>
+                  <tr>
+                    <th>2</th>
+                    <td>Goodbye.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <p class="tg-subheading">受信した翻訳結果</p>
+            <div class="tg-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>項目の識別番号</th>
+                    <th>訳文</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>2</th>
+                    <td>再見。</td>
+                  </tr>
+                  <tr>
+                    <th>1</th>
+                    <td>你好。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tg-node">
+          <strong
+            >ストリーミング応答パーサー｜状態を保持し、新しい文字を順次走査</strong
+          ><span
+            >外枠 → JSON 構造 → データフィールド → 項目の識別番号 → テキストと
+            Unicode。完全な項目から一時プレビューを生成できます。</span
+          >
+        </div>
+        <div class="tg-connector">
+          ネットワーク操作が正常終了し、モデルが正常に応答を完了してから、応答全体を検証
+        </div>
+        <div class="tg-three">
+          <div class="tg-node tg-good">
+            <strong>有効な項目</strong
+            ><span
+              >結果を受理 → プレースホルダーを復元<br />→ 表示可能な訳文 →
+              最終結果</span
+            >
+          </div>
+          <div class="tg-node tg-optional">
+            <strong>個別項目の修復が必要</strong
+            ><span
+              >既知の識別番号の欠落／重複<br />空の訳文／長すぎる訳文／プレースホルダーの不一致<br />→
+              後で個別に再試行</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>応答全体が無効</strong
+            ><span
+              >未知の識別番号／フィールド、フィールド名の重複<br />バージョン誤り、不正な
+              JSON、余分な文章<br />→ 応答全体を拒否</span
+            >
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >まず「これは誰の完全な結果か」を確認し、その後に採用可否を決めます。プレビューは撤回可能な一時結果であり、永続キャッシュには入りません。ページの段落は最終結果を確認してから更新します。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>翻訳サービス</th>
+            <th>実際のネットワーク動作</th>
+            <th>応答の要件</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>DeepSeek／OpenAI／Google</th>
+            <td>
+              下位層の自動再送は無効で、各操作のネットワークリクエストは最大 1
+              回です。再試行は上位のスケジューラーが管理します。カスタムサービス
+              URL も、対応するサービスの接続ルールに従う必要があります。
+            </td>
+            <td>
+              ストリーミングテキストは応答パーサーへ渡し、構造化データ形式に適合する必要があります。
+            </td>
+          </tr>
+          <tr>
+            <th>Microsoft</th>
+            <td>
+              ひとつの操作内で、まず Edge
+              の認証を取得し、その後翻訳を送信します。各段階のネットワークリクエストは
+              1 回まで、合計で最大 2 回です。
+            </td>
+            <td>
+              返された件数を確認し、元の位置に従って同じ項目識別番号を補い、統一形式へ変換します。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>何を許容するのか？ token の上限ではない数値はどれか？</summary>
+      <div class="tg-deep-body">
+        <p>
+          パーサーは、指定マーカーで囲まれた先頭の思考部分、および応答全体を囲み、言語指定がないか
+          JSON と指定された Markdown
+          フェンスを許容します。正しい空白やデータフィールドの順序変更も受け入れます。任意の文章から
+          JSON を推測して抜き出すことはしません。大きなストリーミング増分は
+          32,768 UTF-16
+          単位のチャンクに分けて処理し、チャンクをまたいでテキスト、エスケープ、Unicode
+          の解析状態を保持します。
+        </p>
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>境界</th>
+                <th>既定値</th>
+                <th>計量方法</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>テキスト応答全体</th>
+                <td>262,144</td>
+                <td>2 × UTF-16 長。外枠のテキストを含む</td>
+              </tr>
+              <tr>
+                <th>モデル応答のネットワークデータ量</th>
+                <td>16 MiB</td>
+                <td>テキスト応答の予算 × 64。SSE と JSON の外枠を含む</td>
+              </tr>
+              <tr>
+                <th>単一項目の訳文</th>
+                <td>24,000</td>
+                <td>UTF-16 コード単位</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          製品の方向性は「原文を自動判定 →
+          台湾の繁体字中国語」です。ページ翻訳と共有設定では異なる繁体字中国語の言語タグを使い、Microsoft
+          ではさらに ISO
+          言語対応表で変換し、対応が見つからなければ繁体字中国語のタグを使います。サービス間の連携では、この言語表現の違いを処理する必要があります。
+        </p>
+        <p>
+          システムプロンプトは、原文とコンテキスト内の指示を無視し、訳文にはプレーンテキストを使うよう求めます。これは期待する動作を表しますが、プロンプトインジェクションや誤訳を完全に排除できる保証はありません。DeepSeek
+          の思考モードは既定で無効で、ユーザーが変更することもできます。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">11</span>
+      <h2 id="tg-render">
+        どれだけ速く結果が戻っても、まずページが同じ状態かを確認
+      </h2>
+    </div>
+    <p>
+      翻訳中に動的なウェブページの文章や段落が変わったり、ページを離れたりすることがあり、ユーザーがテキストを選択中のこともあります。バックグラウンドの完了は候補結果を得たことを意味するだけです。ウェブページのノードを実際に更新する前に、その時点の原文と操作状態を照合する必要があります。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 12</span
+          >遅れて届いた古い結果で、新しい原文を上書きしない</span
+        ><span class="tg-fig-type">SVG シーケンス図 · 合成の模式例</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-stale-race-svg"
+          viewbox="0 0 900 520"
+          role="img"
+          aria-labelledby="tg-stale-race-title tg-stale-race-desc"
+        >
+          <title id="tg-stale-race-title">
+            非同期の訳文が新しい原文を上書きしない仕組み
+          </title>
+          <desc id="tg-stale-race-desc">
+            サイトが原文を変更した後は、古い結果が遅れて届いても新版を上書きしてはいけません。結果の受信時と
+            DOM
+            コミット時のそれぞれで識別情報を照合します。このシーケンスは合成の模式例であり、遅延の測定値ではありません。
+          </desc>
+          <defs>
+            <marker
+              id="tg-stale-race-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <text x="30" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            サイト／原文
+          </text>
+          <text x="335" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            翻訳バックグラウンド
+          </text>
+          <text x="640" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            ページの検証／表示
+          </text>
+          <path d="M150,55 L150,398" class="tg-dash"></path>
+          <path d="M450,55 L450,398" class="tg-dash"></path>
+          <path d="M760,55 L760,398" class="tg-dash"></path>
+          <rect
+            x="26"
+            y="65"
+            width="246"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="42" y="92" class="tg-h tg-geometry-b54f4860ae">
+            原文バージョン 1
+          </text>
+          <text x="42" y="118" class="tg-muted tg-geometry-b54f4860ae">
+            リクエスト A を取得
+          </text>
+          <path
+            d="M272,99 L342,99"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="307.0" y="90.0" class="tg-small tg-geometry-35afd8367b">
+            A を送信
+          </text>
+          <rect
+            x="342"
+            y="65"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="92" class="tg-h tg-geometry-b54f4860ae">
+            リクエスト試行 A
+          </text>
+          <text x="358" y="118" class="tg-muted tg-geometry-b54f4860ae">
+            翻訳サービスを待機
+          </text>
+          <rect
+            x="26"
+            y="166"
+            width="246"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="42" y="193" class="tg-h tg-geometry-b54f4860ae">
+            サイトがバージョン 2 に変更
+          </text>
+          <text x="42" y="219" class="tg-muted tg-geometry-b54f4860ae">
+            新しいセグメント／閲覧世代
+          </text>
+          <path
+            d="M272,197 L342,197"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="307.0" y="188.0" class="tg-small tg-geometry-35afd8367b">
+            B を送信
+          </text>
+          <rect
+            x="342"
+            y="166"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="193" class="tg-h tg-geometry-b54f4860ae">
+            リクエスト試行 B
+          </text>
+          <text x="358" y="219" class="tg-muted tg-geometry-b54f4860ae">
+            新版の意味上の需要
+          </text>
+          <rect
+            x="342"
+            y="268"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="358" y="295" class="tg-h tg-geometry-b54f4860ae">
+            原文更新後に A が応答
+          </text>
+          <text x="358" y="321" class="tg-muted tg-geometry-b54f4860ae">
+            結果は依然として旧原文に属する
+          </text>
+          <path
+            d="M562,300 L652,300"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="607.0" y="291.0" class="tg-small tg-geometry-35afd8367b">
+            バージョンを確認
+          </text>
+          <rect
+            x="652"
+            y="268"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-bad"
+          ></rect>
+          <text x="668" y="295" class="tg-h tg-geometry-b54f4860ae">
+            古い結果を拒否
+          </text>
+          <text x="668" y="321" class="tg-muted tg-geometry-b54f4860ae">
+            DOM を更新しない
+          </text>
+          <rect
+            x="342"
+            y="366"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="393" class="tg-h tg-geometry-b54f4860ae">
+            B が完了
+          </text>
+          <text x="358" y="419" class="tg-muted tg-geometry-b54f4860ae">
+            完全な訳文
+          </text>
+          <path
+            d="M562,398 L652,398"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="607.0" y="389.0" class="tg-small tg-geometry-35afd8367b">
+            原文を再照合
+          </text>
+          <rect
+            x="652"
+            y="366"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="668" y="393" class="tg-h tg-geometry-b54f4860ae">
+            現在の識別情報と一致
+          </text>
+          <text x="668" y="419" class="tg-muted tg-geometry-b54f4860ae">
+            表示計画をキュー投入／コミット
+          </text>
+          <text x="26" y="466" class="tg-muted tg-geometry-b54f4860ae">
+            受信時の照合：バックグラウンド世代 → 文書世代 → 原文バージョン →
+            結果通知バージョン
+          </text>
+          <text x="26" y="491" class="tg-muted tg-geometry-b54f4860ae">
+            DOM
+            コミット前に、ローカルの閲覧世代、リクエスト試行、原文、ノードの接続状態を再照合します。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">横長の図は横方向にスクロールできます。</p>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >バックグラウンドの実行世代、文書バージョン、原文バージョン、結果更新の連番を階層ごとに照合します。表示キューに入ったジョブも、ローカルの翻訳ラウンドとリクエスト識別情報を確認する必要があります。キャンセルとバージョン照合を組み合わせて、非同期の競合を処理します。
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 13</span
+          >同じバッチの結果でも、異なるアニメーションフレームで更新できる</span
+        ><span class="tg-fig-type">HTML 表示スケジュール</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node tg-good">
+            <strong>段落 A · コミット可能</strong
+            ><span
+              >識別情報が一致し、選択なし<br />このフレームの予算に余裕あり<br />→
+              今すぐ更新</span
+            >
+          </div>
+          <div class="tg-node tg-optional">
+            <strong>段落 B · テキスト選択中</strong
+            ><span
+              >ユーザーの選択範囲を保護<br />この段落の最新の更新計画だけを保持<br />→
+              保護条件の解除を待つ</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>段落 C · 次のフレームを待機</strong
+            ><span
+              >このフレームの処理予算に到達<br />更新計画をいったん保持<br />→
+              次のフレームで再確認</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          コミット前に原文を再照合。ユーザーの選択は解除せず、他の段落も停止しない
+        </div>
+        <div class="tg-clock-row">
+          <div>
+            <strong>4 ms</strong
+            ><span>処理を分割して制御を譲るまでの時間予算</span>
+          </div>
+          <div>
+            <strong>8</strong><span>ブロック／監視ルートノード／フレーム</span>
+          </div>
+          <div><strong>256</strong><span>推定ウェブページノード数</span></div>
+          <div>
+            <strong>32 KiB</strong><span>UTF-16 で計算したバイト数</span>
+          </div>
+        </div>
+        <p class="tg-mini">
+          時間はブロックの更新が完了するたびに確認します。予算を超えても一括更新が必要な最初のブロックは、単独でコミットできます。したがって
+          4ms
+          は制御を譲るための予算であり、各ウェブページ更新の厳密な最大時間ではありません。
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >結果が届くタイミングとウェブページに書き込むタイミングを分けることで、翻訳更新と閲覧、選択、IME
+        の変換入力を共存させます。マウスやタッチを離した後も文章が選択されたままなら、保護は続きます。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>表示モード</th>
+            <th>原文の扱い</th>
+            <th>訳文の書き込み方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>対訳</th>
+            <td>
+              原文は元の位置に残します。旧訳文がある場合は、新しい更新計画のコミットを待って置き換えます。
+            </td>
+            <td>訳文を入れるノードを作成し、表示キューへ渡して更新します。</td>
+          </tr>
+          <tr>
+            <th>訳文のみ</th>
+            <td>
+              元のノードオブジェクトを一時保持してからページから外し、復元時には同じノードを戻します。
+            </td>
+            <td>
+              主経路ではテキストノードと改行ノードで訳文を組み立て、モデルの文章を
+              HTML として実行しません。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>より細かな表示戦略：統合、延期、不要な書き換えの回避</summary>
+      <div class="tg-deep-body">
+        <p>
+          表示タイミングの制御器は、順次届く結果を統合し、直近の処理時間でタイミングを調整します。新コスト推定値
+          = 0.6 × 旧コスト推定値 + 0.4 × 今回の所要時間。次の間隔は
+          min（1000ms，2 ×
+          新コスト推定値）です。ブラウザーのアニメーションフレーム通知がまだ届かない場合は、250ms
+          のタイマーが補います。ここで追跡するのは処理時間であり、ブラウザーのレイアウトと描画の全コストを表すものではありません。
+        </p>
+        <p>
+          同じブロックには最新の更新待ち計画だけを保持し、延期する計画は最大 128
+          件です。超えた場合は「再更新が必要」の印に切り替えられ、この印の上限は
+          4096 です。ページ変更後の再照合は、段落ごとに実行中のジョブ 1
+          つと再実行待ちの印 1 つにまとめます。
+        </p>
+        <p>
+          表示用の要約値は「テキスト長＋32 ビット FNV-1a
+          ハッシュ」で書き換えを省略できるかを判断し、バックグラウンドの SHA-256
+          による意味上の識別とは異なります。内容が異なっても同じ要約値になる可能性があります。複数文の訳文は元の翻訳単位の順番で組み合わせ、接合部は中国語・日本語・韓国語の空白規則から推定します。元の空白を一文字ずつ復元するわけではありません。
+        </p>
+        <p>
+          同じ元ノードを保持することは、既存のオブジェクト関係の維持に役立ちます。ただしイベントのバインディング、レイアウト、操作の動作は、サイト自体の構造や更新方法の影響を受けます。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">12</span>
+      <h2 id="tg-durability">訳文が読めることと、保存済みであることは別</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 14</span>ひとつの結果、2
+          つの完了経路</span
+        ><span class="tg-fig-type">SVG 状態図</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-durability-svg"
+          viewbox="0 0 900 378"
+          role="img"
+          aria-labelledby="tg-durability-title tg-durability-desc"
+        >
+          <title id="tg-durability-title">
+            結果を利用できる状態と保存成功は別の状態
+          </title>
+          <desc id="tg-durability-desc">
+            セグメントの訳文は保存中でもページへ渡して組み立てられます。ローカルトランザクションが完了して初めて保存成功となり、保存失敗時はローカル書き込みだけを再試行します。実際の表示は、引き続きページの表示キューを経由します。
+          </desc>
+          <defs>
+            <marker
+              id="tg-durability-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="26"
+            y="28"
+            width="244"
+            height="90"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="42" y="55" class="tg-h tg-geometry-b54f4860ae">
+            結果が検証を通過
+          </text>
+          <text x="42" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            応答形式／保持マーカーを検証済み
+          </text>
+          <text x="42" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            表示可能な訳文を生成
+          </text>
+          <rect
+            x="330"
+            y="28"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="346" y="55" class="tg-h tg-geometry-b54f4860ae">
+            訳文の結果を利用可能
+          </text>
+          <text x="346" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            保存状態：進行中
+          </text>
+          <text x="346" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            ページの組み立て／表示スケジュールを待つ
+          </text>
+          <rect
+            x="632"
+            y="28"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="648" y="55" class="tg-h tg-geometry-b54f4860ae">
+            ローカル保存キュー
+          </text>
+          <text x="648" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            IndexedDB トランザクションを待つ
+          </text>
+          <text x="648" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            キュー自体は永続保存しない
+          </text>
+          <path
+            d="M270,74 L330,74"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M572,74 L632,74"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="328"
+            y="198"
+            width="244"
+            height="96"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="344" y="225" class="tg-h tg-geometry-b54f4860ae">
+            保存失敗
+          </text>
+          <text x="344" y="251" class="tg-muted tg-geometry-b54f4860ae">
+            材料がまだ保持され、再試行可能な場合
+          </text>
+          <text x="344" y="273" class="tg-muted tg-geometry-b54f4860ae">
+            「保存を再試行」はディスク書き込みだけをやり直す
+          </text>
+          <rect
+            x="632"
+            y="198"
+            width="242"
+            height="96"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="648" y="225" class="tg-h tg-geometry-b54f4860ae">
+            トランザクション完了
+          </text>
+          <text x="648" y="251" class="tg-muted tg-geometry-b54f4860ae">
+            保存状態：完了
+          </text>
+          <text x="648" y="273" class="tg-muted tg-geometry-b54f4860ae">
+            その後に初めて、このデバイスに保存済みと表示可能
+          </text>
+          <path
+            d="M754,118 L754,198"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M680,118 L680,154 L450,154 L450,198"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="522" y="146" class="tg-small tg-geometry-b54f4860ae">
+            失敗
+          </text>
+          <text x="770" y="169" class="tg-small tg-geometry-b54f4860ae">
+            成功
+          </text>
+          <path
+            d="M450,198 L450,164 L607,164 L607,75 L632,75"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-dash"
+          ></path>
+          <text x="26" y="348" class="tg-muted tg-geometry-b54f4860ae">
+            保存キューが満杯 →
+            新しい翻訳リクエストを一時停止。送信済みのリクエストは完了できます。バックグラウンドの再起動で未保存の材料は自動復元されません。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">横長の図は横方向にスクロールできます。</p>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >ローカル保存が一時的に失敗しても、検証済みの訳文は画面に残せます。「保存を再試行」はローカル書き込みだけをやり直し、ストレージのエラーを新たなモデルリクエストに変えないようにします。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>保存キューはどうメモリを制限するのか？</summary>
+      <div class="tg-deep-body">
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>領域</th>
+                <th>件数上限</th>
+                <th>推定バイト数の上限</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>主要保存キュー</th>
+                <td>32</td>
+                <td>16 MiB</td>
+              </tr>
+              <tr>
+                <th>追加待機領域</th>
+                <td>64</td>
+                <td>8 MiB</td>
+              </tr>
+              <tr>
+                <th>保存失敗後に保持する内容</th>
+                <td>64</td>
+                <td>8 MiB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          待機中または保存失敗後の内容の保持期間は 10
+          分で、後続のキュー操作や再試行時に確認してクリーンアップします。容量は「原文の
+          UTF-8 バイト数＋訳文の UTF-8 バイト数 ×
+          2＋1024」で推定し、実際のメモリ使用量とは異なる場合があります。キューが満杯になると新たなページ翻訳のディスパッチを一時停止しますが、送信済みのリクエストは完了できます。
+        </p>
+        <p>
+          このキューは実行中のメモリにのみ存在します。バックグラウンドサービスが終了すると、書き込み未完了の内容は再起動しても自動復元されません。図はページ翻訳の保存状態を示しています。対話型の入口は内容を保存ジョブに入れるだけで、同じ完全な画面状態フローを待つことはありません。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">13</span>
+      <h2 id="tg-recovery">
+        キャンセルはコミット権限の撤回。再試行には明確な理由が必要
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 15</span
+          >キャンセル信号の送信は、ネットワーク操作の終了を意味しない</span
+        ><span class="tg-fig-type">SVG ライフサイクル図</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-cancel-restart-svg"
+          viewbox="0 0 900 389"
+          role="img"
+          aria-labelledby="tg-cancel-restart-title tg-cancel-restart-desc"
+        >
+          <title id="tg-cancel-restart-title">
+            キャンセルと再起動の異なるライフサイクル
+          </title>
+          <desc id="tg-cancel-restart-desc">
+            キャンセルはまず結果のコミット権限を撤回し、ネットワークリクエストの終了確認を待ちます。既定では
+            5
+            秒以内に終了を確認できなければサービスリソースを隔離します。バックグラウンドサービスの再起動では世代を切り替え、既知のクォータ消費を保持します。
+          </desc>
+          <defs>
+            <marker
+              id="tg-cancel-restart-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="25"
+            width="248"
+            height="90"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="40" y="52" class="tg-h tg-geometry-b54f4860ae">実行中</text>
+          <text x="40" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            同時実行枠を占有
+          </text>
+          <text x="40" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            結果のコミット権限を保持
+          </text>
+          <rect
+            x="330"
+            y="25"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="52" class="tg-h tg-geometry-b54f4860ae">
+            キャンセルを要求
+          </text>
+          <text x="346" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            結果のコミット権限を撤回
+          </text>
+          <text x="346" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            キャンセル信号を送信
+          </text>
+          <rect
+            x="630"
+            y="25"
+            width="246"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="646" y="52" class="tg-h tg-geometry-b54f4860ae">
+            キャンセル中
+          </text>
+          <text x="646" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            ネットワークリクエストの終了確認を引き続き待つ
+          </text>
+          <text x="646" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            まだ同時実行枠を解放しない
+          </text>
+          <path
+            d="M272,70 L330,70"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M572,70 L630,70"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="630"
+            y="190"
+            width="246"
+            height="92"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="646" y="217" class="tg-h tg-geometry-b54f4860ae">
+            終了確認を受信
+          </text>
+          <text x="646" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            同時実行枠を解放
+          </text>
+          <text x="646" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            遅れて成功しても結果はコミットできない
+          </text>
+          <rect
+            x="330"
+            y="190"
+            width="242"
+            height="92"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="217" class="tg-h tg-geometry-b54f4860ae">
+            既定の 5 秒以内に確認なし
+          </text>
+          <text x="346" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            ネットワークの終了状態は不明
+          </text>
+          <text x="346" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            サービスリソースを隔離し、同時実行枠を保持
+          </text>
+          <path
+            d="M750,115 L750,190"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M665,115 L665,151 L451,151 L451,190"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="604" y="151" class="tg-small tg-geometry-35afd8367b">
+            猶予期間を超過
+          </text>
+          <path
+            d="M572,236 L630,236"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="601.0" y="227.0" class="tg-small tg-geometry-35afd8367b">
+            遅れて終了
+          </text>
+          <rect
+            x="24"
+            y="190"
+            width="248"
+            height="92"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="217" class="tg-h tg-geometry-b54f4860ae">
+            バックグラウンドサービスが再起動
+          </text>
+          <text x="40" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            新しいバックグラウンド世代へ切り替え
+          </text>
+          <text x="40" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            旧枠を解放し、差し引きの計数は保持
+          </text>
+          <text x="24" y="332" class="tg-muted tg-geometry-b54f4860ae">
+            再接続：ページが接続を確認 →
+            コンテキストとアクティブなセグメントのスナップショットを再送 →
+            バックグラウンドが需要を再構築。
+          </text>
+          <text x="24" y="360" class="tg-muted tg-geometry-b54f4860ae">
+            保存途中のテキストは再起動しても自動復活しません。永続性があるのは、コミット済みの翻訳メモリとクォータ台帳です。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">横長の図は横方向にスクロールできます。</p>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >まずキャンセル済みの結果が画面に出るのを防ぎ、その後で実際の終了を示す証拠を待ちます。下位のリクエストがまだ動いているのに同時実行枠を返すと、実際の同時実行数を過小評価してしまいます。
+      </figcaption>
+    </figure>
+    <div class="tg-clock-row">
+      <div><strong>25 s</strong><span>最初の内容を待つ</span></div>
+      <div>
+        <strong>20 s</strong
+        ><span>ストリーミングで新しい内容が来ない場合の期限</span>
+      </div>
+      <div><strong>90 s</strong><span>1 回の試行のタイムアウト基準</span></div>
+      <div>
+        <strong>5 s</strong><span>キャンセル後に終了を待つ猶予期間</span>
+      </div>
+    </div>
+    <p class="tg-mini">
+      以上は調整可能な既定値です。通常のページ再試行ポリシーは、初回を含む実送信
+      4 回を既定の基準とし、累積実行時間の予算は 180
+      秒です。大きすぎる複数項目のバッチには、単項目に分割して再キュー投入する修復経路もあります。一度も試行せず画面外で待っているだけの需要には、通常の
+      30 分の需要期限を適用しません。
+    </p>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>失敗</th>
+            <th>処理方針</th>
+            <th>区別する理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>HTTP 401／通常の 403／404</th>
+            <td>
+              認証、権限、モデル設定の問題として扱い、該当する翻訳リソースをブロックします。
+            </td>
+            <td>むやみに再送しても設定は直りません。</td>
+          </tr>
+          <tr>
+            <th>HTTP 429 · 容量関連</th>
+            <td>
+              制限されたリソースまたはクォータ範囲にクールダウンを設定し、再利用可能になるまでジョブをキューに残します。
+            </td>
+            <td>負荷が下がってから再試行します。</td>
+          </tr>
+          <tr>
+            <th>HTTP 402／429 · 支払いまたは残り枠の不足</th>
+            <td>
+              既定では再試行しません。枠不足に関する 403
+              もこの分類です。フォールバック切り替えを明示的に有効にし、独立したフォールバックの条件を満たす利用可能なリソースがあれば、別のリソースへ転送できます。
+            </td>
+            <td>
+              支払い／アカウントの枠の問題は、一時的な輻輳ではありません。
+            </td>
+          </tr>
+          <tr>
+            <th>HTTP 408／409／425／5xx</th>
+            <td>一時的なサーバー障害として扱い、再試行できます。</td>
+            <td>
+              時間の経過で回復する可能性がありますが、回数と予算の制限は受けます。
+            </td>
+          </tr>
+          <tr>
+            <th>HTTP 413／大きすぎる入力</th>
+            <td>
+              複数項目のバッチを単項目に分けて再試行し、単項目でも大きすぎる場合はそのジョブをブロックします。
+            </td>
+            <td>
+              バッチが大きすぎることは、各項目を個別にも翻訳できないことを意味しません。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>再試行の時刻、起動、時計のジャンプ</summary>
+      <div class="tg-deep-body">
+        <p>
+          通常のジョブの遅延再試行にはフルジッターを使い、毎回ゼロから待機上限までのランダムな遅延を選びます。容量関連の
+          HTTP 429
+          では、制限されたリソースまたはクォータ範囲にクールダウンを設定し、サーバー指定の待機時間を使います。指定がなければ基本遅延を使い、ランダムジッターは適用しません。
+        </p>
+        <div class="tg-formula">
+          待機上限 = min（遅延上限，基本遅延 × 2^(試行済み回数−1)）
+          再試行可能時刻 = max（サーバー指定時刻， 現在 + floor（乱数 ×
+          待機上限）） 乱数は 0（含む）から 1（含まない）まで。floor は切り捨て
+        </div>
+        <p>
+          ジッターは再試行の時刻を分散させます。応答ヘッダー Retry-After
+          が指定する時刻は追加の下限であり、秒数または HTTP
+          日付を受け付け、サーバーとの時刻差も考慮します。サーバーが要求する待機時間は最大
+          7 日まで保持します。
+        </p>
+        <p>
+          起動スケジュールは、最も早い期限のタイマー 1
+          つにまとめます。予想待機時間が 30
+          秒以上なら、ブラウザーのバックグラウンドアラームで起動を補います。時計の確認では、システム時計と単調時計の経過時間を比較します。ずれが
+          5 秒を超える、またはシステム時刻が 5
+          秒を超えて戻った場合、新たなディスパッチを一時停止します。新たな異常がなく安定期間が
+          2 秒に達して初めて、保守的な方針で再開します。
+        </p>
+        <p>
+          キャンセル図が示すのは送信済みのネットワーク試行です。枠を予約済みでも未送信の試行は、先に終了して枠を解放できます。ただし、進行中の差し引きトランザクションがその後コミットに成功した場合、実際にサービスを呼び出していなくても保守的な差し引きは残ります。終了を確認できないネットワーク操作では関連リソースを隔離し、遅れて終了通知を受け取るまで枠を保持します。バックグラウンドサービスの再起動では新しい実行世代を作り、旧リクエストは同時実行枠を占有しなくなりますが、既知のクォータ台帳は保持し続けます。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">14</span>
+      <h2 id="tg-boundaries">「ローカル優先」でもデータの行き先を明確にする</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 16</span
+          >原文、訳文、キーにはそれぞれ異なる境界がある</span
+        ><span class="tg-fig-type">HTML データ境界図</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-zone">
+            <div class="tg-zone-title">ウェブページとコンテンツスクリプト</div>
+            <div class="tg-node">
+              <strong>原文と DOM</strong
+              ><span
+                >DOM ノードはウェブページ側に保持<br />原文単位／文書コンテキストをバックグラウンドへ送信<br />バージョン付きの状態・結果通知を受信</span
+              >
+            </div>
+          </div>
+          <div class="tg-zone">
+            <div class="tg-zone-title">拡張機能のストレージ</div>
+            <div class="tg-node">
+              <strong>翻訳メモリ</strong
+              ><span
+                >正規化済み原文、訳文、生成元<br />同じレコードにページの関連付けを含む<br />ページ復元の意図は別途保存</span
+              >
+            </div>
+            <div class="tg-node">
+              <strong>翻訳サービスの機密設定</strong
+              ><span
+                >API キー／リクエストヘッダー／サービスオプション<br />ページ側から見える設定と分離<br />ローカルでは追加のアプリケーション層暗号化なし</span
+              >
+            </div>
+          </div>
+          <div class="tg-zone">
+            <div class="tg-zone-title">外部ネットワーク</div>
+            <div class="tg-node">
+              <strong>翻訳サービス</strong
+              ><span
+                >翻訳対象の文章を受信<br />LLM は適格なコンテキストも受信可能<br />各サービスのプロトコルに従って返す</span
+              >
+            </div>
+            <div class="tg-node tg-optional">
+              <strong>翻訳メモリの同期はオプトイン</strong
+              ><span
+                >正規化済み原文と訳文を含む<br />共有同期サービスが暗号化してからアップロード<br />同期の戻り経路はローカルメモリに書き込む</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="tg-bridge">
+          <div>
+            <strong>同期に含めないもの：</strong
+            >ページの関連付け、最終使用時刻、ページ復元の意図。
+          </div>
+          <div>
+            <strong>同期に含まれるもの：</strong
+            >翻訳内容そのもの。単に「少量のメタデータの同期」とは呼べません。
+          </div>
+        </div>
+        <p class="tg-mini">
+          ページ側に渡す設定からは、API
+          キー、リクエストヘッダー、プロバイダーオプションを除去します。設定の同期でもこれらのフィールドを除外し、同期を許可した設定のみを送信します。
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計上の意義：</span
+        >設定の分離、通信の暗号化、ローカルでのヒットは、それぞれ異なる問題を解決します。ローカル優先は一部の重複リクエストを避けられますが、リモートの翻訳サービスを実際に呼び出すときには、文章は依然としてデバイスの外へ出ます。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>仕組み</th>
+            <th>実際の動作</th>
+            <th>維持すべき境界</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>外部送信禁止</th>
+            <td>
+              そのジョブの翻訳サービスへの送信を禁止します。ローカルに保存済みの訳文は引き続き検索できます。
+            </td>
+            <td>
+              コンテキスト候補もポリシー確認を通る必要があります。翻訳メモリの同期は、ユーザーが同期に参加したかに従って別途処理します。
+            </td>
+          </tr>
+          <tr>
+            <th>シークレットモード</th>
+            <td>
+              そのシークレットモードのジョブで使う翻訳メモリの検索と、生成した翻訳メモリの保存・同期を行いません。
+            </td>
+            <td>
+              文章内容を含まないディスパッチとクォータのメタデータは保存します。
+            </td>
+          </tr>
+          <tr>
+            <th>翻訳ネットワークリクエスト</th>
+            <td>
+              ブラウザーの認証情報を付けず、リダイレクトを拒否し、宛先オリジンを制限します。リモート接続には
+              HTTPS を使います。
+            </td>
+            <td>
+              明示的に指定したローカル／プライベートネットワークのホストには
+              HTTP を使用できます。
+            </td>
+          </tr>
+          <tr>
+            <th>同期の暗号化</th>
+            <td>
+              HKDF-SHA-256 でキーを導出し、AES-256-GCM
+              で同期データオブジェクトを暗号化します。
+            </td>
+            <td>
+              暗号化は同期内容を保護しますが、ローカル設定の分離は別の責務です。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">15</span>
+      <h2 id="tg-design">設計を、解決すべき問題に立ち返って見る</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">図 17</span
+          >閲覧の需要から、説明可能な設計上のトレードオフへ</span
+        ><span class="tg-fig-type">HTML 設計対照表</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-design-row">
+          <div class="tg-design-problem">同じ文が繰り返し現れる</div>
+          <div>
+            <strong
+              >ページバインディング／共有ジョブの分離＋セマンティックキー</strong
+            ><span
+              >意味条件が同じジョブを共有し、コンテキストやルールが変われば異なる識別情報を保持します。</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            状態を 1 層多く管理する代わりに、再利用の境界を明確にします。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">
+            目の前のコンテンツがなかなか届かない
+          </div>
+          <div>
+            <strong>可視性の階層分け＋小さなバッチでのディスパッチ</strong
+            ><span
+              >フォーカス中の表示範囲を先に処理し、その後で読む方向の前方をプリロードします。</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            低優先度の階層は待つ場合があり、各ページが同時に同じ速度で進む保証はありません。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">不安定なモデル出力</div>
+          <div>
+            <strong>項目識別番号による対応付け＋プレースホルダー検証</strong
+            ><span>応答全体のエラーと個別項目の修復を分けます。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            解析コストが 1 段増え、意味の正しさは引き続き翻訳品質に依存します。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">
+            リクエストがキャンセル／再起動をまたぐ
+          </div>
+          <div>
+            <strong>実行世代＋永続化したクォータの差し引き</strong
+            ><span>コミット権限の撤回と、既知の消費量の保持を分けます。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            保守的な事前差し引きは使用量を過大評価する場合があり、終了不明時はまずディスパッチを停止します。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">ウェブページの更新とユーザー操作</div>
+          <div>
+            <strong>バージョン照合＋選択範囲の保護＋フレームごとの予算</strong
+            ><span
+              >コミット前に原文を再照合し、影響を受けるブロックの書き込みを延期します。</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            翻訳完了から実際の表示まで、さらに待つ場合があります。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">ローカルストレージの一時障害</div>
+          <div>
+            <strong>結果の利用可能性と保存完了を分離</strong
+            ><span
+              >検証済みの訳文は利用でき、保存失敗時はディスク書き込みだけを再試行します。</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            保存未完了の結果は、バックグラウンドプロセスの再起動後に復元できる保証はありません。
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        このアーキテクチャの価値は、「翻訳」を個別に確認できる責務へ分解することにあります。すべての結果に原文の識別情報があり、外部送信のたびに承認を受け、画面更新のたびに現在も適用可能であることを改めて確認します。
+      </figcaption>
+    </figure>
+    <h3 id="tg-design-detail-1">このシステムを理解する 8 つの重要な境界</h3>
+    <div class="tg-claim-grid">
+      <div class="tg-claim">
+        <b>ストリーミング機能とページ表示は別</b
+        ><span
+          >下位層は一時プレビューを提供できますが、ウェブページの段落は最終結果を待ちます。選択テキストの
+          LLM 翻訳はストリーミングテキストで更新します。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>リソースは共有しても、入口ごとの差は残る</b
+        ><span
+          >ディスパッチ承認は共有しますが、応答解析、コンテキスト、入口の再試行、画面状態はそれぞれ異なります。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>厳密一致のメモリと類似検索は別</b
+        ><span
+          >セマンティックキーは完全な翻訳条件の SHA-256
+          であり、類似した文章が自動的にヒットするわけではありません。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>原文の文字列長と token は別</b
+        ><span
+          >2000、900、2400 は異なる箇所の UTF-16 の基準であり、token
+          数に置き換えてはいけません。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>同時実行枠とクォータの差し引きは別</b
+        ><span
+          >終了すれば同時実行枠は解放できますが、送信済みの消費量は時間窓に残ります。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>4ms は協調的な予算</b
+        ><span
+          >分割できない単一の更新は予算を超える場合があり、ページのフレーム落ちも起こり得ます。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>表示済み、保存済み、同期済みは別</b
+        ><span
+          >結果を利用可能、保存済み、同期完了は、別々に進む 3
+          つの状態です。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>保護措置と品質保証は別</b
+        ><span
+          >プレーンテキスト出力とバージョン確認は表示リスクを減らしますが、翻訳品質、コスト、性能は別途測定する必要があります。</span
+        >
+      </div>
+    </div>
+  </section>
+
+  <div class="tg-footer">
+    <p>Browser Script Manager · 翻訳システム図解</p>
+    <p>
+      オフラインで読めます。横長のデータフロー図は横方向にスクロールできます。JavaScript
+      を有効にすると、プリロード範囲の例を操作したり、個々の SVG
+      をダウンロードしたりできます。<a href="#article-title"
+        >記事の先頭へ戻る</a
+      >
+    </p>
+  </div>
+</div>

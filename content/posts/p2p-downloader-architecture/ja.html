@@ -1,0 +1,2963 @@
+<div class="network-guide">
+  <section>
+    <h2 id="overview">
+      <span class="np-section-no">01</span
+      ><span class="np-heading-text">ダウンローダーが本当に解決すべき問題</span>
+    </h2>
+    <p>
+      数百件のダウンロードを一度に追加すると、すぐに始まるものもあれば、ソースが見つからないもの、多数の相手に接続しているのにほとんど進まないものもある。同時ダウンロード数を増やすと改善する場合もあるが、ディスク負荷とメモリ使用量が増えるだけで、正常だったダウンロードまで遅くなる場合もある。
+    </p>
+    <p>
+      これは、ダウンローダーが異なる種類の問題を同時に扱っているためだ。<strong>何を探しているのか、必要な部分を誰が持っているのか、相手は今転送できるのか、ローカル側は受け切れるのか、受け取ったデータは正しいのか。</strong>それぞれにかかる時間とコストは異なり、整然とした順番で一斉に完了するわけではない。
+    </p>
+    <p>
+      本稿では、複数の P2P
+      プロトコルに対応するダウンローダーの設計を例に、全体構成から順に説明する。BitTorrent
+      と eD2k／Kad は実際のプロトコル動作を説明するために用いる。一方、9
+      つのコンポーネント、2
+      つのループ、動的ダウンロードプールは、それらの機能を構成するための一つのアーキテクチャ上の選択である。
+    </p>
+    <h3 id="overview-detail-1">まず、システム内でのデータの形を区別する</h3>
+    <div
+      role="region"
+      aria-label="P2P の基本用語"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">用語</th>
+            <th scope="col">ダウンロード処理での意味</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">タスク（Task）</th>
+            <td>
+              コンテンツ全体または一部を取得したいというユーザーの意図。選択したファイル、保存先、一時停止状態を含む。一つのタスクが時間の経過とともに多数のソースと接触することもある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">ソース／ピア（Peer）</th>
+            <td>
+              データを提供する可能性がある相手。検索結果の候補、接続済みのソース、実際にデータを送っているソースは、それぞれ異なる段階にある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">メタデータ（Metadata）</th>
+            <td>
+              ファイル構造、サイズ、分割方法、検証情報など、コンテンツを説明するデータ。何を要求するか決めるには、まずコンテンツの構造を理解する必要がある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">ピース／パート（Piece／Part）</th>
+            <td>
+              プロトコルが記述や検証に使うデータ単位。転送時には、さらに小さい
+              block
+              に分けることもある。異なるプロトコルの単位をそのまま混用することはできない。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">ファイルデータ（Payload）</th>
+            <td>
+              実際に保存したい内容。ハンドシェイク、ソース一覧、keepalive
+              などの制御メッセージもネットワークを使うが、ファイルの進捗とは異なる。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      BitTorrent
+      では、ピアが保有するピースの情報を交換し、受信側がデータを要求する。受信したピースは、さらにメタデータに基づいて検証する。この仕組みにより複数の相手から同時に取得できるが、「接続がある」「通信量がある」「正しい新規データがある」は別々に観測する必要がある。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <div class="np-takeaway">
+      <strong
+        >このアーキテクチャの中心は、不足データを着実に減らすことにある。</strong
+      >
+      <p>
+        接続数、タスク数、帯域使用率は、判断を助ける指標にすぎない。本当の成果は、必要な内容が少しずつ届き、検証を通過し、中断後も引き続き利用できることである。
+      </p>
+    </div>
+  </section>
+  <section>
+    <h2 id="architecture">
+      <span class="np-section-no">02</span
+      ><span class="np-heading-text">全体構成：9 つのコンポーネントの連携</span>
+    </h2>
+    <p>
+      この構成を理解するには、まず三つの点を見る。<strong>制御上の判断はどこへ流れ、ファイルデータはどこへ流れ、状態はどこに保存されるのか。</strong>ユーザーが一時停止を押したときは、あるタスクの実行意図を変えればよい。ダウンロード中の数
+      GB
+      のデータはプロトコルエンジンが継続して処理し、管理画面やデータベースを経由して転送する必要はない。
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>構成図</span
+        ><strong>制御判断とファイルデータは別の経路を流れる</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="全体構成図。横方向にスクロール可能"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 660"
+          width="880"
+          height="660"
+          role="img"
+          aria-labelledby="arch-title arch-desc"
+        >
+          <title id="arch-title">
+            P2P ダウンローダーの論理構成とデータ経路
+          </title>
+          <desc id="arch-desc">
+            Web View と Manager が操作を受け付ける。Search
+            がソースを探索し、Scheduler がタスク資源を割り当て、Connection
+            Manager が接続を管理する。Component は Downloader と Engine
+            を含む。実際のファイルデータは、リモートピアから Engine
+            を経由してファイルシステムへ書き込まれ、Manager や SQLite
+            は経由しない。Config、Store、Metrics
+            は、それぞれ設定、永続状態、観測を担う。
+          </desc>
+          <defs>
+            <marker
+              id="arch-arrow-control"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="arch-arrow-data"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="660"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="30"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              タスクと接続を管理し、転送はエンジンに任せる
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="40" y="58" width="218" height="64" rx="8"></rect>
+              <rect x="300" y="58" width="280" height="64" rx="8"></rect>
+              <rect x="40" y="192" width="220" height="82" rx="8"></rect>
+              <rect x="320" y="192" width="240" height="82" rx="8"></rect>
+              <rect x="620" y="192" width="220" height="82" rx="8"></rect>
+              <rect
+                x="262"
+                y="326"
+                width="360"
+                height="156"
+                rx="9"
+                class="np-svg-stroke-control-border"
+              ></rect>
+              <rect x="40" y="400" width="176" height="70" rx="8"></rect>
+              <rect x="674" y="400" width="166" height="70" rx="8"></rect>
+              <rect x="40" y="540" width="245" height="72" rx="8"></rect>
+              <rect x="318" y="540" width="245" height="72" rx="8"></rect>
+              <rect x="596" y="540" width="245" height="72" rx="8"></rect>
+            </g>
+            <rect
+              x="286"
+              y="402"
+              width="312"
+              height="58"
+              rx="6"
+              class="np-svg-fill-surface np-svg-stroke-entity-file np-svg-stroke-width-1-2"
+            ></rect>
+            <g
+              marker-end="url(#arch-arrow-control)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-7"
+            >
+              <path d="M258 90H300"></path>
+              <path d="M440 122V192"></path>
+              <path d="M440 154H150V192"></path>
+              <path d="M260 232H320"></path>
+              <path d="M150 274V310H310V326"></path>
+              <path d="M440 274V326"></path>
+              <path d="M730 274V310H574V326"></path>
+              <path d="M162 540V506H308V482"></path>
+              <path
+                d="M440 482V540"
+                marker-start="url(#arch-arrow-control)"
+              ></path>
+              <path
+                d="M594 482V506H718V540"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+            </g>
+            <g
+              marker-end="url(#arch-arrow-data)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-6"
+            >
+              <path d="M216 431H286"></path>
+              <path d="M598 431H674"></path>
+            </g>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="58" y="85">P2P Web View</text>
+              <text x="318" y="85">P2P Manager</text>
+              <text x="58" y="219">P2P Search</text>
+              <text x="338" y="219">P2P Scheduler</text>
+              <text x="638" y="219" class="np-svg-font-size-15">
+                Connection Manager
+              </text>
+              <text x="286" y="352">P2P Component</text>
+              <text x="304" y="425" class="np-svg-fill-entity-file">
+                Engine
+              </text>
+              <text x="58" y="429">リモートピア</text>
+              <text x="692" y="429">ファイルシステム</text>
+              <text x="58" y="567">P2P Config</text>
+              <text x="336" y="567">P2P Store</text>
+              <text x="614" y="567">P2P Metrics</text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="58" y="107">操作と理由の表示</text>
+              <text x="318" y="107">意図の登録・調整の窓口</text>
+              <text x="58" y="244">ソース横断の検索と探索</text>
+              <text x="338" y="244">試行・プール・公平な交代</text>
+              <text x="638" y="244">接続の役割とサービス条件</text>
+              <text x="286" y="378">
+                Downloader：ネイティブエンジンの適合・調整
+              </text>
+              <text x="304" y="447">ピース要求・受信・検証・書込</text>
+              <text x="58" y="452">実ファイルデータの提供</text>
+              <text x="692" y="452">ピースと完成ファイル</text>
+              <text x="58" y="591">有効設定とソースカタログ</text>
+              <text x="336" y="591">SQLite：状態と復旧記録</text>
+              <text x="614" y="591">観測履歴と傾向</text>
+            </g>
+            <g class="np-svg-font-size-12 np-svg-fill-text-secondary">
+              <text x="279" y="77" class="np-svg-text-anchor-middle">操作</text>
+              <text x="232" y="146">ソース照会</text>
+              <text x="450" y="163">タスクの意図</text>
+              <text x="290" y="252" class="np-svg-text-anchor-middle">
+                ソース
+              </text>
+              <text x="169" y="301">照会とプローブ</text>
+              <text x="451" y="302">タスク予算</text>
+              <text x="621" y="301">接続制限</text>
+              <text x="64" y="524">一貫した設定スナップショット</text>
+              <text x="451" y="524">状態同期</text>
+              <text x="618" y="524">観測サンプル</text>
+              <text
+                x="251"
+                y="420"
+                class="np-svg-text-anchor-middle np-svg-fill-entity-file"
+              >
+                データ
+              </text>
+              <text
+                x="636"
+                y="420"
+                class="np-svg-text-anchor-middle np-svg-fill-entity-file"
+              >
+                データ
+              </text>
+              <path
+                d="M626 77H664"
+                marker-end="url(#arch-arrow-control)"
+                class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-7"
+              ></path>
+              <text x="677" y="81">制御と状態</text>
+              <path
+                d="M626 104H664"
+                marker-end="url(#arch-arrow-data)"
+                class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-6"
+              ></path>
+              <text x="677" y="108">実ファイルデータ</text>
+              <text x="40" y="640">
+                9
+                つの論理的役割は同一プロセスに置ける。一部の報告・共通設定の関係は省略。
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        矢印は主要な責務間の関係を表す。重複する設定参照や観測報告は省略している。Component
+        は複数のインスタンスを持て、一つのエンジンが複数のタスクを同時に処理することもできる。
+      </figcaption>
+    </figure>
+    <div
+      role="region"
+      aria-label="9 つの論理コンポーネントの役割分担"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">コンポーネント</th>
+            <th scope="col">扱う問題</th>
+            <th scope="col">他のコンポーネントとの関係</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">P2P Web View</th>
+            <td>
+              進捗、ソース、待機理由を表示し、タスクを操作できるようにする。
+            </td>
+            <td>Manager を通じて意図を伝え、状態を取得する。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Manager</th>
+            <td>
+              操作を受け付け、タスクを識別し、利用可能な Component を管理する。
+            </td>
+            <td>意図と状態を調整し、永続化が必要な変更を Store に渡す。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Config</th>
+            <td>一貫した有効設定とソースカタログを提供する。</td>
+            <td>各コンポーネントを同じポリシーで動かし、更新の理由を残す。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Search</th>
+            <td>コンテンツ検索、識別情報の解決、継続的なソース探索を行う。</td>
+            <td>
+              各プロトコルの Search Provider
+              から手掛かりを取得し、スケジューリングに供する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Scheduler</th>
+            <td>
+              どのタスクを試行・継続転送させ、どれに一時的に資源を譲らせるかを決める。
+            </td>
+            <td>
+              ソース情報とローカル負荷に応じてタスクの資源枠を割り当てる。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Component</th>
+            <td>実際のプロトコルとダウンロードエンジンを接続する。</td>
+            <td>
+              共通の管理意図をエンジンが実行できる操作に変換し、ネイティブ状態を報告する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Store</th>
+            <td>
+              タスク、コンテンツ識別、ソース概要、ポリシー、復旧記録を保存する。
+            </td>
+            <td>
+              復元可能な事実を SQLite
+              に保存する。ファイル内容はエンジンが管理する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Metrics</th>
+            <td>速度、遅延、キュー、資源圧力の時間変化を保存する。</td>
+            <td>
+              処理の分析を助ける。リアルタイム制御には別の直接報告経路がある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Connection Manager</th>
+            <td>各接続の役割、サービス状況、異常の証拠を把握する。</td>
+            <td>
+              範囲を明示した接続制限を提案し、Component
+              内のエージェントが実行する。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="architecture-detail-1">
+      論理的な役割分担とプロセス配置は別々に決められる
+    </h3>
+    <p>
+      9 つの名前は 9 種類の責務を表すのであって、最初から 9
+      つのサービスに分ける必要はない。一つの Rust 常駐プロセスに
+      Manager、Search、Scheduler、Connection Manager、Store
+      の調整ロジックを置ける。各ネイティブエンジンは、組み込み能力、言語、障害分離の要件に応じて、同一プロセスまたは独立した
+      Component host に配置する。
+    </p>
+    <p>
+      同一プロセス内の呼び出しとデータ交換は直接的で、配備も単純になる。独立プロセスなら、エンジンのクラッシュ、ネイティブライブラリ、資源制限を分離できるが、通信、再起動、状態同期は複雑になる。プロセスを分けるかどうかは、構成図の箱の数ではなく、こうしたコストで判断すべきである。
+    </p>
+    <p>
+      一つのダウンロードタスクに一つのエンジンプロセスを対応させる必要もない。複数のタスクは通常、エンジンの実行環境、接続管理、ソース探索設備を共有できる。タスク数の増加で主に増えるのは状態と実際に必要な資源であり、システム全体を何倍にも複製することではない。
+    </p>
+  </section>
+  <section>
+    <h2 id="components">
+      <span class="np-section-no">03</span
+      ><span class="np-heading-text"
+        >Component が異なるプロトコルをつなぐ仕組み</span
+      >
+    </h2>
+    <p>
+      多プロトコルのダウンローダーで陥りやすいのは、すべてのプロトコルを同じ「開始・一時停止・進捗率」に置き換えることだ。操作は統一されたように見えるが、BitTorrent
+      の choke、eD2k
+      のリモートキュー、ソースへの到達性、エンジンが本当に一つの接続だけを閉じられるか、といった重要な情報を失ってしまう。
+    </p>
+    <p>
+      Component
+      はこれらの違いを残しながら、上位層が共通の問いで管理できるようにする。今取得できるデータは何か、転送にどれだけ資源が必要か、止めると何を失うか、観測中の待機はリモート制限かローカル要因か、という問いである。
+    </p>
+    <h3 id="components-detail-1">プロトコルの機能を適切な場所に置く</h3>
+    <div
+      role="region"
+      aria-label="Component 内部の役割分担"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">内部の役割</th>
+            <th scope="col">責務</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Search Provider</th>
+            <td>
+              そのプロトコルの検索・ソース探索方式を取り込み、出所、観測時刻、ネイティブ項目を保持する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Downloader</th>
+            <td>
+              「このタスクを試行する」「資源を減らす」「保存して一時停止する」をエンジン操作へ変換し、実際に反映されたか追跡する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Engine</th>
+            <td>
+              ネットワークプロトコル、メッセージ解析、ピース要求、再試行、検証、ネイティブ再開機能、ファイル
+              I/O を扱う。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Connection Agent</th>
+            <td>
+              エンジンが観測できる接続状態を上位へ報告し、実際に対応している切断や制限を実行する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">資源と観測の報告</th>
+            <td>
+              タスク、接続、ローカル負荷を整理する。即時概要は制御コンポーネントへ、履歴サンプルは
+              Metrics へ送る。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="components-detail-2">三つの判断層が、それぞれ一つの問いに答える</h3>
+    <p>
+      <strong
+        >Scheduler は「どのタスクにどれだけ資源を渡すか」、Connection Manager
+        は「今どのソースや接続を使うのが適切か」、Engine
+        は「今どの相手にどのピースを要求するか」を決める。</strong
+      >この分担なら、外側はホスト全体の負荷を管理し、エンジンはプロトコルの即時状態に応じて個々の要求を処理できる。
+    </p>
+    <p>
+      例えば Scheduler がタスク A の継続を許可しながら、Connection Manager
+      がタイムアウトを繰り返すソースの一つを一時的に避けることができる。Engine
+      は他のソースからピースを要求し続けられる。一方、ユーザーがタスク A
+      を一時停止したなら、どの層も「速いソースが見つかった」という理由で転送を再開してはならない。
+    </p>
+    <h3 id="components-detail-3">
+      情報が見えることと、同じ細かさで操作できることは別
+    </h3>
+    <p>
+      外部エンジンの管理 API は torrent
+      全体の概要しか提供しなくても、下位ライブラリにはピア単位のピースや要求情報がある場合がある。この二つの能力を混同してはならない。同様に、IP
+      の遮断と現在の接続だけを閉じる操作では影響範囲が違うため、アダプター層はその差を残す必要がある。
+    </p>
+    <p>
+      具体例が qBittorrent である。本稿が参照する固定ソース版では、<code
+        >banPeersAction()</code
+      >
+      はエンドポイントを解析した後に
+      <code>banIP()</code>
+      を呼び出す。そのため、この操作を一つの接続だけに作用するボタンとして包み込むことはできない。ここでは当該版の動作を、アダプターの能力差を示す例として引用している。<sup
+        class="np-cite"
+        ><a
+          href="#source-s18"
+          aria-label="参考資料 18：qBittorrent：遮断操作の実際の範囲"
+          >[18]</a
+        ></sup
+      >
+    </p>
+    <p>
+      情報が不足していても、上位層は粗い粒度のタスク割り当てを行える。ただし、観測していない詳細まで推定してはいけない。架空のゼロ通信量や精密な操作を表示するより、「エンジンから提供されていない」と示す方が役に立つ。
+    </p>
+  </section>
+  <section>
+    <h2 id="discovery">
+      <span class="np-section-no">04</span
+      ><span class="np-heading-text"
+        >コンテンツを見つけることと、転送できる相手を見つけること</span
+      >
+    </h2>
+    <p>
+      ソース探索の前に、同じコンテンツを指しているか確認する必要がある。ファイル名は表示情報にすぎず、同名でも内容が違うことや、異なる名前が同じデータを指すことがある。多プロトコル環境では、hash
+      のアルゴリズムや分割方法が違うだけでなく、そもそも別の種類の対象をハッシュ化している可能性もある。
+    </p>
+    <h3 id="discovery-detail-1">
+      infohash は torrent のコンテンツ記述を識別する
+    </h3>
+    <p>
+      BitTorrent v1 の infohash は、<code>info</code> dictionary の元の
+      bencoding に対して SHA-1 を計算した値である。この dictionary
+      は内容構造とピース検証情報を記録する。infohash
+      はその要約であり、ダウンロードするファイル全体を直接 SHA-1
+      にかけたものではない。v2 では infohash に SHA-256 を用い、ファイルごとの
+      Merkle tree でデータ検証を構成する。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s03" aria-label="参考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <p>
+      したがって、ファイルの bytes が完全に同じでも、torrent の記述が違えば別の
+      torrent になり得る。複数ファイルの torrent
+      で「二つのファイルだけを選ぶ」のは別の層の話であり、torrent
+      の識別は変わらないが、そのタスクで不足する範囲が変わる。
+    </p>
+    <p>
+      システムでは、コンテンツの識別、選択範囲、所属するネットワーク範囲を別々に保存する価値がある。BitTorrent、eD2k
+      などの識別子を、文字列が似ているだけで統合してはならない。プロトコルをまたいでデータを再利用するには、内容の対応、分割位置、検証方法も確認する必要がある。
+    </p>
+    <h3 id="discovery-detail-2">
+      magnet が「メタデータ取得中」で止まりやすい理由
+    </h3>
+    <p>
+      magnet
+      にはコンテンツ識別と少数の探索手掛かりだけが含まれ、完全なファイル構造はない場合がある。クライアントはまずピアを見つけ、metadata
+      exchange で <code>info</code> dictionary を取得し、既知の infohash
+      と一致するか検証する。BEP 9 が転送するのはこの部分であり、<code
+        >.torrent</code
+      >
+      全体の最上位項目すべてではない。v2
+      の検証では、対応するハッシュ情報も扱う必要がある。<sup class="np-cite"
+        ><a
+          href="#source-s02"
+          aria-label="参考資料 2：Metadata exchange と magnet｜BEP 9"
+          >[02]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s03" aria-label="参考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <p>
+      この時点でファイル進捗が表示されないのは自然なことだ。システムは後続の要求に必要な情報を構築している。利用可能なピアが一つもなければ、転送予算を増やしてもメタデータは手に入らない。
+    </p>
+    <h3 id="discovery-detail-3">ソース探索方式ごとに、扱う索引が異なる</h3>
+    <div
+      role="region"
+      aria-label="ソース探索方式の比較"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">方式</th>
+            <th scope="col">ソースの見つけ方</th>
+            <th scope="col">混同しやすい点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">BitTorrent Tracker</th>
+            <td>
+              クライアントが tracker に swarm
+              への参加を通知し、ピアの連絡先を取得する。
+            </td>
+            <td>
+              Tracker
+              の応答はソース情報であり、通常、ファイルデータはピアが転送する。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s01"
+                  aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+                  >[01]</a
+                ></sup
+              ><sup class="np-cite"
+                ><a
+                  href="#source-s08"
+                  aria-label="参考資料 8：UDP Tracker｜BEP 15"
+                  >[08]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">BitTorrent DHT</th>
+            <td>
+              既知のノードを起点に、infohash に対応するピア情報を検索する。
+            </td>
+            <td>
+              Mainline DHT
+              は汎用のキーワード検索エンジンではなく、ダウンロード対象ファイルを直接保存するものでもない。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s04"
+                  aria-label="参考資料 4：BitTorrent DHT｜BEP 5"
+                  >[04]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">PEX</th>
+            <td>接続済みのピア同士が、他のピアの連絡先を交換する。</td>
+            <td>
+              最初の接点が必要であり、初めてピアを見つける問題を単独では解決できない。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s05"
+                  aria-label="参考資料 5：Peer Exchange｜BEP 11"
+                  >[05]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">eD2k Server</th>
+            <td>
+              ファイル検索とソース索引を提供し、一部の接続確立も支援する。
+            </td>
+            <td>
+              索引サービスとピア間の実ファイル転送は別の役割である。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s19"
+                  aria-label="参考資料 19：aMule：eD2k Server の役割"
+                  >[19]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Kad</th>
+            <td>
+              分散索引でファイルとソースを探す。参加時には既知の連絡先ノードが必要になる。
+            </td>
+            <td>
+              *Mule 系では Kad と eD2k
+              のソース探索は異なるが、ファイル転送の仕組みは共有できる。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s11"
+                  aria-label="参考資料 11：aMule：Kad ネットワーク"
+                  >[11]</a
+                ></sup
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      したがって上位の Search
+      は、「キーワードでコンテンツを探す」と「識別子を基に利用可能なソースを探す」の両方を扱える。ただし、すべてのプロトコルが同じ検索能力を持つと仮定してはならない。他のネットワークへ拡張するときも、それぞれの索引、待ち行列、識別モデルを保持する必要がある。
+    </p>
+    <h3 id="discovery-detail-4">
+      プライベート torrent には独自のソース境界がある
+    </h3>
+    <p>
+      metainfo に <code>private=1</code> が明示されている場合、BEP 27
+      はプライベート tracker のソース範囲内での動作を要求する。一般の公開
+      torrent と同じように DHT や PEX などでソースを拡散してはならない。<sup
+        class="np-cite"
+        ><a
+          href="#source-s06"
+          aria-label="参考資料 6：プライベート torrent｜BEP 27"
+          >[06]</a
+        ></sup
+      >
+    </p>
+    <p>
+      メタデータ取得前の「プライベートか未確定」という状態も、公開 tracker
+      を自由に追加してよいことを意味しない。この構成では元のソースと探索ポリシーを一緒に保持し、全体的な「ソースを増やしたい」という意図が個々のタスクのプライバシー範囲を越えないようにする。
+    </p>
+  </section>
+  <section>
+    <h2 id="loops">
+      <span class="np-section-no">05</span
+      ><span class="np-heading-text"
+        >大量ダウンロードに二つのループが必要な理由</span
+      >
+    </h2>
+    <p>
+      一度に 1,000
+      件の対象を追加するとする。ダウンロード枠に入ったタスクだけがソースを探せるなら、先頭の数件が長時間応答を得られないだけで後続も停滞する。反対に、1,000
+      件すべてに直ちに大量の接続を作れば、今度はローカル資源が先に尽きてしまう。
+    </p>
+    <p>
+      二つのループは、この二種類の処理を分離する。<strong>探索ループはソース情報を維持し、転送ループは現在の証拠と資源に応じて実際のデータを取得する。</strong>受理した対象はすべて探索スケジュールに参加できるが、実際に同時発行する照会と接続は資源制御を受ける。
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>動作フロー</span
+        ><strong>探索を続けながら、準備できたタスクから転送する</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="探索・転送の二重ループ図。横方向にスクロール可能"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 440"
+          width="880"
+          height="440"
+          role="img"
+          aria-labelledby="loops-title loops-desc"
+        >
+          <title id="loops-title">ソース探索と実際の転送が同時に動く</title>
+          <desc id="loops-desc">
+            待機中の全対象が共有ソース照会に継続参加し、新鮮なソース情報を一件ずつ得る。十分な証拠を先に得た対象は、探索バッチ全体の終了を待たずに試行できる。試行に成果があればダウンロードプールへ入る。一時的に不適切ならデータを保持して観測し、新たなソースやサービス機会が現れたら再評価する。
+          </desc>
+          <defs>
+            <marker
+              id="loops-arrow-blue"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="loops-arrow-green"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="440"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="31"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              ソース情報は逐次戻り、転送は随時開始できる
+            </text>
+            <text
+              x="40"
+              y="74"
+              class="np-svg-font-size-13 np-svg-fill-link np-svg-font-weight-650"
+            >
+              探索ループ
+            </text>
+            <text
+              x="40"
+              y="238"
+              class="np-svg-font-size-13 np-svg-fill-entity-file np-svg-font-weight-650"
+            >
+              転送ループ
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="40" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="330" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="620" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="40" y="254" width="220" height="74" rx="8"></rect>
+              <rect
+                x="330"
+                y="254"
+                width="220"
+                height="74"
+                rx="8"
+                class="np-svg-stroke-entity-file"
+              ></rect>
+              <rect x="620" y="254" width="220" height="74" rx="8"></rect>
+            </g>
+            <g
+              marker-end="url(#loops-arrow-blue)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-8"
+            >
+              <path d="M260 133H330"></path>
+              <path d="M550 133H620"></path>
+              <path d="M730 168V207H150V254"></path>
+              <path
+                d="M730 328V373H150V328"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+              <path d="M200 328V350H680V328"></path>
+            </g>
+            <g
+              marker-end="url(#loops-arrow-green)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2"
+            >
+              <path d="M260 291H330"></path>
+              <path d="M550 291H620"></path>
+            </g>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="58" y="123">すべての待機対象</text>
+              <text x="348" y="123">共有ソース照会</text>
+              <text x="638" y="123">新鮮なソース情報</text>
+              <text x="58" y="283">試行</text>
+              <text x="348" y="283">本稼働ダウンロードプール</text>
+              <text x="638" y="283">観測と待機</text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="58" y="148">探索の対象であり続ける</text>
+              <text x="348" y="148">Tracker／DHT／Server など</text>
+              <text x="638" y="148">ソース・ピース・サービス条件</text>
+              <text x="58" y="308">本当に不足しているデータを取得</text>
+              <text x="348" y="308">成果とローカル圧力を測る</text>
+              <text x="638" y="308">ピースと有効なキュー情報を保持</text>
+              <text x="440" y="198" class="np-svg-text-anchor-middle">
+                新鮮な証拠を先に得た対象から試行を評価する
+              </text>
+              <text x="440" y="395" class="np-svg-text-anchor-middle">
+                新ソース・サービス機会・クールダウン終了後に再評価
+              </text>
+              <text
+                x="440"
+                y="344"
+                class="np-svg-text-anchor-middle np-svg-font-size-12"
+              >
+                試行には追加の証拠が必要
+              </text>
+              <text x="40" y="425">
+                二つのループは同時進行し、一対象のタイムアウトでバッチ全体を待たせない。
+              </text>
+            </g>
+            <g
+              class="np-svg-font-size-12 np-svg-fill-text-secondary np-svg-text-anchor-middle"
+            >
+              <text x="295" y="122">照会を登録</text>
+              <text x="585" y="122">一件ずつ更新</text>
+              <text x="295" y="280">安定した成果</text>
+              <text x="585" y="280">今は不適切</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        二つのループはソースの証拠とタスクイベントでつながる。図の「観測」は転送への投入を一時的に抑えることであり、新しいソース情報は引き続き受け取れる。
+      </figcaption>
+    </figure>
+    <h3 id="loops-detail-1">
+      900 番目が先に結果を得たら、900 番目から処理する
+    </h3>
+    <p>
+      探索はバッチ全体の完了を待つ必要がない。1 番目の tracker
+      がまだ応答していなくても、900
+      番目が不足ピースを持つピアを見つけたなら、先に試行へ進める。各結果を独立して更新し、「全員の応答後に続行する」という条件は設けない。
+    </p>
+    <p>
+      これはすべてのソースを繰り返し照会するという意味ではない。同じ内容でネットワーク範囲とポリシーが互換なら、重複するソース照会を統合し、異なる選択範囲で結果を共有できる。Tracker
+      transport、DHT ルーティングテーブル、eD2k server session
+      にも共有できる部分がある。取得中の metadata
+      に対して、同じ処理をもう一つ作る必要は通常ない。
+    </p>
+    <h3 id="loops-detail-2">手掛かりを保存し、適切な時点で接続を解放する</h3>
+    <p>
+      一回の探索で、ソースアドレス、保有を申告した範囲、現在のサービス状態、観測時刻を残せる。短い接続が終了しても手掛かりは残り、次に必要なときの再試行先を絞れる。
+    </p>
+    <p>
+      ただしソース情報には鮮度がある。5
+      分前に接続できたピアが今はオフラインかもしれず、その時不足していたピースも別の相手から取得済みかもしれない。古い情報は「誰から照会するか」の判断には使えるが、「今必ずダウンロードできる」証拠には向かない。スナップショットの期限切れはソース判断にだけ影響し、ローカルの検証済みデータを無効にはしない。
+    </p>
+    <h3 id="loops-detail-3">探索には独自の周期がある</h3>
+    <p>
+      再照会の頻度はプロトコル自体によって制限される。Tracker 応答の
+      interval、PEX の更新周期、eD2k
+      の再問い合わせ機構は、次の適切な照会時刻に影響する。全体スケジュールで順序を決めたり重複処理を統合したりはできるが、密な再試行で相手の待機ポリシーを消すことはできない。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s05" aria-label="参考資料 5：Peer Exchange｜BEP 11"
+          >[05]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="参考資料 12：aMule：eD2k／Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+    <p>
+      探索と転送を分けると、処理中のシステムでも新しい機会を発見でき、ソースが一時的に少ないタスクが完全な転送資源を長期間占有せずに済む。
+    </p>
+  </section>
+  <section>
+    <h2 id="probing">
+      <span class="np-section-no">06</span
+      ><span class="np-heading-text">短いプローブと、実際の接続コスト</span>
+    </h2>
+    <p>
+      本格的な転送前に短いプローブを行うと、相手への到達性、対象内容への正しい応答、保有ピースの申告、現在のキュー待ちなどを確認できる。次に試す価値のあるソースを選ぶ手掛かりになる。
+    </p>
+    <p>
+      ただし、プローブが答えられる問いには限りがある。TCP
+      接続が速く確立しても、分かるのは今回の接続確立が速かったことだけである。相手のアップロード帯域、サービスの安定性、データ完全性は証明できず、有用なデータを実際に要求する必要がある。
+    </p>
+    <h3 id="probing-detail-1">「プローブ」と half-open は異なる概念</h3>
+    <p>
+      libtorrent の <code>connecting</code> は接続確立中の half-open
+      状態を指し、<code>handshake</code>
+      は接続が開き、プロトコルのハンドシェイクを待っている状態を表す。bitfield
+      などを得る段階では、通常、単なる接続確立はすでに終わっている。<sup
+        class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="参考資料 9：libtorrent のネイティブ観測情報｜Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <p>
+      そのため本稿では、この処理を「短いプローブ session」と呼ぶ。意図的に TCP
+      を未完了状態で止めても、必要なプロトコル情報は得られず、資源消費もなくならない。UDP
+      tracker、DHT、transport を共有する仕組みでは、一回の論理プローブを独立した
+      TCP socket 一つと直接数えることもできない。
+    </p>
+    <h3 id="probing-detail-2">
+      同時に維持する数と、毎秒の追加数を別々に制御する
+    </h3>
+    <p>
+      一方の制限は<strong>同時保有量</strong>を管理する。現在維持しているプローブが使うファイル記述子、メモリ、エンジン状態の量である。もう一方は<strong>追加レート</strong>を管理する。古いプローブがすぐ終わっても、同じサービスへ一秒間に大量の新規接続を作ってよいわけではない。
+    </p>
+    <p>
+      ファイル記述子（FD）は、OS が開いたファイルや socket
+      などの資源を追跡するための番号であり、その余裕は制限の一つにすぎない。Token
+      bucket
+      は毎秒許可する追加回数を消費可能なトークンに変え、瞬間的なバーストも制限できる。両者を組み合わせて初めて、常駐コストと短時間の負荷を同時に抑えられる。
+    </p>
+    <div class="np-example">
+      <h3 id="probing-detail-3">単純化した資源見積もり</h3>
+      <p>
+        この種のプローブが各自独立した socket を一つ使うとする。残りの FD は 300
+        件分、専用メモリの余裕は 24 MiB、1 件当たりの推定コストは 64 KiB
+        なら、メモリは約 384 件を支えられる。同時に存在できる数は、まず FD の
+        300 件という制約を受ける。
+      </p>
+      <div class="np-equation">
+        新規プローブ数 ≤
+        min（残りの並行枠、全体の利用可能トークン、そのソースの利用可能トークン）
+      </div>
+      <p>
+        今回のトークンが 16 個なら、並行枠が 150
+        件空いていても追加できるのは最大 16
+        件である。これは二種類の制限を説明する算例で、推奨設定ではない。socket
+        を共有するプローブでは、実際の資源に合わせて計算し直す必要がある。
+      </p>
+    </div>
+    <p>
+      実コストはプロトコルや応答サイズで変わるため、見積もりに加えて、接続タイムアウト、メモリ増加、イベント処理遅延、資源割り当て失敗も観測する。NAT
+      追跡表や一時ポートの容量は直接見えないこともある。失敗率が上がったら、無制限と仮定するより、追加数を保守的に減らす方が確実である。
+    </p>
+    <h3 id="probing-detail-4">
+      プローブ終了時に解放するのは、解放可能な資源だけ
+    </h3>
+    <p>
+      ソース情報を取得し、維持すべきネイティブ状態がなければ、一時接続は閉じられる。しかし共有
+      server session、DHT
+      の経路状態、価値のある待機資格はプロトコルに従って扱い、プローブのたびにすべて破棄してはならない。
+    </p>
+    <p>
+      特に eD2k では、キュー状態と持続的な TCP
+      接続は一対一ではない。再問い合わせや queue rating などは UDP
+      を使う場合もある。接続維持の要否や再問い合わせ時刻はネイティブエンジンの仕組みに従うべきで、「切断すると必ず列から外れる」「切断には一切コストがない」と一般化してはいけない。<sup
+        class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="参考資料 12：aMule：eD2k／Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="coverage">
+      <span class="np-section-no">07</span
+      ><span class="np-heading-text"
+        >ソースが多いのにダウンロードが完了しない理由</span
+      >
+    </h2>
+    <p>
+      ソース数から分かるのは候補数だけで、全内容を取得できるかは直接分からない。本当に有用な問いは、<strong
+        >ローカルで不足しているピースは何か、現在のソースを合わせればそれらを提供できるか、である。</strong
+      >
+    </p>
+    <p>
+      完全な seed
+      は全ピースを持つため、通常は分かりやすい好材料となる。しかし単独の完全なソースがなくても、相補的な部分を持つ複数のピアで完成できる場合がある。逆に、数百のソースが同じ末尾ピースを欠いていれば、進捗は止まったままである。<sup
+        class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="参考資料 12：aMule：eD2k／Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+    <figure id="coverage-demo" class="np-coverage-demo">
+      <div class="np-figure-head">
+        <span>ピースの例</span
+        ><strong>三つの不完全なソースでも、全体の供給を満たせる</strong>
+      </div>
+      <p class="np-figure-intro">
+        ファイルを同じ大きさの 12 ピースとし、ローカルでは 1～3
+        が検証済みとする。表の「保有」はソースの申告、「検証済」はローカルの証拠を表す。
+      </p>
+
+      <div
+        role="region"
+        aria-label="等しい大きさの 12 ピースの供給行列。横方向にスクロール可能"
+        tabindex="0"
+        class="np-table-scroll"
+      >
+        <table class="np-piece-table">
+          <caption class="np-visually-hidden">
+            ローカルとソース A・B・C
+            のピース被覆。検証済はローカル検証の完了、保有はソースの申告、ダッシュは未保有を表す。
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">データの場所</th>
+              <th scope="col">1</th>
+              <th scope="col">2</th>
+              <th scope="col">3</th>
+              <th scope="col">4</th>
+              <th scope="col">5</th>
+              <th scope="col">6</th>
+              <th scope="col">7</th>
+              <th scope="col">8</th>
+              <th scope="col">9</th>
+              <th scope="col">10</th>
+              <th scope="col">11</th>
+              <th scope="col">12</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                ローカル<span class="np-peer-state">検証済み範囲</span>
+              </th>
+              <td class="np-state-verified">検証済</td>
+              <td class="np-state-verified">検証済</td>
+              <td class="np-state-verified">検証済</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                ソース A<span class="np-peer-state">利用可能・申告範囲</span>
+              </th>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                ソース B<span class="np-peer-state">利用可能・申告範囲</span>
+              </th>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                ソース C<span class="np-peer-state">利用可能・申告範囲</span>
+              </th>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                観測した和集合<span class="np-peer-state"
+                  >ローカル＋利用可能ソース</span
+                >
+              </th>
+              <td class="np-state-verified">検証済</td>
+              <td class="np-state-verified">検証済</td>
+              <td class="np-state-verified">検証済</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+              <td class="np-state-available">保有</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="np-demo-result">
+        <p id="coverage-summary">
+          <strong>観測被覆 12／12（100%）</strong>。不足している 9
+          ピースのすべてに、供給可能というソース申告がある。
+        </p>
+        <p id="coverage-missing">
+          現在、共通の欠落ピースは見つかっていない。10～12 はソース C
+          だけが提供するため、このソースを保持する価値がある。
+        </p>
+      </div>
+      <details class="np-coverage-cases">
+        <summary>全 8 通りのソース構成を見る</summary>
+        <p>
+          元のピース例を静的に比較する。変更するのはソースの利用可否だけで、ローカルの検証済みピース
+          1～3
+          は常に保持する。ソースの申告は、データの受信や検証の完了を意味しない。
+        </p>
+        <div
+          class="np-table-scroll"
+          role="region"
+          aria-label="ソース利用可否の 8 通りとピース被覆の比較"
+          tabindex="0"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">利用可能ソース</th>
+                <th scope="col">観測被覆</th>
+                <th scope="col">不足 9 ピースへの供給</th>
+                <th scope="col">供給のないピース</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">A、B、C</th>
+                <td>12／12（100%）</td>
+                <td>9／9</td>
+                <td>なし</td>
+              </tr>
+              <tr>
+                <th scope="row">A、B</th>
+                <td>9／12（75%）</td>
+                <td>6／9</td>
+                <td>10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">A、C</th>
+                <td>10／12（83.3%）</td>
+                <td>7／9</td>
+                <td>7、8</td>
+              </tr>
+              <tr>
+                <th scope="row">B、C</th>
+                <td>10／12（83.3%）</td>
+                <td>7／9</td>
+                <td>4、5</td>
+              </tr>
+              <tr>
+                <th scope="row">A</th>
+                <td>6／12（50%）</td>
+                <td>3／9</td>
+                <td>7、8、9、10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">B</th>
+                <td>7／12（58.3%）</td>
+                <td>4／9</td>
+                <td>4、5、10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">C</th>
+                <td>7／12（58.3%）</td>
+                <td>4／9</td>
+                <td>4、5、6、7、8</td>
+              </tr>
+              <tr>
+                <th scope="row">なし</th>
+                <td>3／12（25%）</td>
+                <td>0／9</td>
+                <td>4、5、6、7、8、9、10、11、12</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <figcaption>
+        集合演算の学習例。ソース C が利用できないと、10～12
+        の供給がなくなるが、ローカルで検証済みの 1～3
+        は影響を受けない。ソースの申告は受信済みデータを意味せず、相手がオンラインであり続ける保証でもない。
+      </figcaption>
+    </figure>
+    <h3 id="coverage-detail-1">
+      二つの比率で「すでにある」と「まだ取得できる」を区別する
+    </h3>
+    <p>
+      ここでは <code>S</code> をタスクに必要なデータ範囲、<code>V</code>
+      をローカルで検証済みの範囲、<code>Aⱼ</code> を j
+      番目のソースが最近提供可能と申告した範囲とする。これらの集合は互換性のあるネイティブ検証範囲で表す。複数ファイルの内容では、ピース境界も考慮する必要がある。
+    </p>
+    <div role="group" aria-label="ピース被覆の式" class="np-equation">
+      <div>不足範囲 M = S − V</div>
+      <div>観測被覆率 = bytes［(V ∪ ⋃Aⱼ) ∩ S］／bytes(S)</div>
+      <div>不足部分の供給率 = bytes［(⋃Aⱼ) ∩ M］／bytes(M)</div>
+    </div>
+    <p>
+      ここで
+      <code>bytes()</code>
+      は範囲のバイト数を数える。例では各ピースが等しい大きさなのでセル数で計算できるが、実ファイルの末尾は短い場合があり、単純なピース数では誤差が生じる。<code
+        >M</code
+      >
+      が空なら必要なデータは検証済みであり、保存と完成ファイルの確定へ進む。ゼロを分母にする必要はない。
+    </p>
+    <p>
+      第一の比率は、検証済み部分と現在のソース申告を合わせて必要範囲のどれだけを覆うかを示す。第二の比率は不足分だけを見る。どちらもピアの申告を検証済み進捗に格上げしてはならない。ピース一覧を提供しないプロトコルなら、状態は不明のまま残し、実際の転送で判断材料を補う。
+    </p>
+    <h3 id="coverage-detail-2">希少ピースは瞬間的な速度より重要な場合がある</h3>
+    <p>
+      例のソース C は遅くても、他のソースにない 10～12 を持っている。MiB/s
+      だけで順位を付け、4～9
+      しか持たない高速ソースに置き換えると、短期の通信量は増えても、ファイル全体を完成させる可能性は下がることがある。
+    </p>
+    <p>
+      全体スケジュールが希少データを得る機会を残すべき理由はここにある。Engine
+      は一つのダウンロード内でのピース選択を担い、Scheduler
+      はタスク間の資源を調整して、希少ソースを含むタスクが高スループットのタスクに完全に押し出されるのを防ぐ。libtorrent
+      の piece picker
+      は希少度や優先度を考慮するが、全体の公平性は別の層の問題である。<sup
+        class="np-cite"
+        ><a href="#source-s10" aria-label="参考資料 10：libtorrent のピース選択"
+          >[10]</a
+        ></sup
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="payload">
+      <span class="np-section-no">08</span
+      ><span class="np-heading-text"
+        >ピアのデータが利用可能なファイルになるまで</span
+      >
+    </h2>
+    <p>
+      ソースが見つかってから、実際のデータ経路が動き始める。Engine
+      は既知のピース、未完了要求、ネイティブなサービス状態に応じて、次に誰から何を取得するかを決める。外側のダウンロードプールが資源範囲を与え、細かな選択はエンジン内に残す。
+    </p>
+    <h3 id="payload-detail-1">Piece は検証単位、block は要求単位</h3>
+    <p>
+      BitTorrent v1 では metadata に各 piece のハッシュがある。転送時は、一つの
+      piece を複数の小さな block 要求に分割できる。block
+      が届いた段階では、その受信範囲を記録できるだけで、通常は piece
+      全体をそろえてからハッシュと照合する。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <p>
+      これは piece 全体を常にメモリに保持するという意味ではない。エンジンは先に
+      partial
+      ファイルへ書き、後から読み出すか、利用できるデータを再利用して検証できる。<strong
+        >受信・書き込み・検証は交錯して進むため、「受信済み」だけでは安心して再利用できるとは限らない。</strong
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="データ状態の違い"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">状態</th>
+            <th scope="col">分かっていること</th>
+            <th scope="col">まだ仮定できないこと</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">受信済み</th>
+            <td>
+              あるデータ範囲がローカルに届き、明白なメッセージや範囲の誤りは除かれている。
+            </td>
+            <td>
+              内容ハッシュの検証を通過したとは限らず、バッファ内だけに存在する可能性もある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">検証済み</th>
+            <td>
+              プロトコル上で十分な情報が得られ、内容が期待する検証値と一致している。
+            </td>
+            <td>データと再開記録の両方が耐久的に保存されたとは限らない。</td>
+          </tr>
+          <tr>
+            <th scope="row">復元可能な保存済み状態</th>
+            <td>
+              データと対応する状態が保存手順に従って同期され、再起動後に照合・再利用できる。
+            </td>
+            <td>
+              これだけで全ファイルの完成や、内容を安全に実行できることまでは推論できない。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="payload-detail-2">未完了要求を複数同時に保持する理由</h3>
+    <p>
+      要求を一つ送り、受信してから次を送る方式では、ネットワーク往復の待ち時間に空白ができる。Pipelining
+      は複数の要求を飛行中に保ち、前のデータが戻る間に後続を処理させる。BitTorrent
+      の仕様にも、この方法が明記されている。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <div class="np-example">
+      <h3 id="payload-detail-3">要求ウィンドウと RTT の関係</h3>
+      <p>
+        理想化した見積もりでは、10 MiB/s を維持し、要求の往復遅延が約 100 ms
+        なら、応答待ちだけで停止しないためには、約 1 MiB
+        の飛行中データを収容する必要がある。
+      </p>
+      <div class="np-equation">
+        <div>飛行中データ量 ≈ 目標レート × 往復時間</div>
+        <div>10 MiB/s × 0.1 s = 1 MiB</div>
+        <div>1 要求が 16 KiB なら、約 64 件の飛行中要求が必要</div>
+      </div>
+      <p>
+        これは規模感を示す計算にすぎない。リモートキュー、輻輳制御、ネイティブな要求上限、パケット損失、ローカル
+        buffer が実際の結果に影響するため、64
+        を普遍的な最適値と考えてはならない。KiB と MiB は、それぞれ 2¹⁰、2²⁰
+        bytes を表す。
+      </p>
+    </div>
+    <p>
+      要求ウィンドウが小さすぎると待機によって帯域が遊び、大きすぎると buffer
+      が増えてキャンセルや再配分の反応が遅くなる。「ネットワークを使い切れていない」ときは、他のタスクを増やす前に、既存ソースの要求パイプラインを確認できる。
+    </p>
+    <h3 id="payload-detail-4">
+      プロトコルごとの検証粒度は復旧コストにも影響する
+    </h3>
+    <p>
+      BitTorrent v2 はファイルごとのハッシュを SHA-256 Merkle tree
+      で構成し、木の関係を通じてデータを期待する root と対応付ける。*Mule の
+      AICH は、信頼できる root と復旧データが利用可能なとき、破損 part
+      内の小さなブロックを特定して正しい部分を残し、再取得量を減らす。形式と信頼の根拠は異なるため、同じ交換可能な
+      hash tree として扱ってはならない。<sup class="np-cite"
+        ><a href="#source-s03" aria-label="参考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s13" aria-label="参考資料 13：aMule：AICH と破損復旧"
+          >[13]</a
+        ></sup
+      >
+    </p>
+    <p>
+      ハッシュ一致が示すのは、データが期待する識別と一致することだけである。最初に選んだ内容自体が信頼できなければ、正確にダウンロードしても自動的に安全なプログラムやファイルにはならない。
+    </p>
+    <h3 id="payload-detail-5">重複データが完了を早めることもある</h3>
+    <p>
+      ダウンロード終盤で残り block
+      が少なくなると、一つの遅いソースが完了を遅らせ得る。BitTorrent の endgame
+      では、残りデータを複数のソースへ要求し、一つ受信した後で他の要求を取り消せる。取消メッセージと応答が行き違い、遅れて重複
+      block が届くこともある。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s07" aria-label="参考資料 7：Fast Extension｜BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <p>
+      そのため、計測では「ネットワークで受信した
+      bytes」「重複していない必要データ」「検証済み進捗」を分けられる。重複にはコストがあるが、終盤の待機短縮につながる場合もある。重複率だけを見て、ソースが意図的に帯域を浪費していると判断してはならない。
+    </p>
+  </section>
+  <section>
+    <h2 id="trial">
+      <span class="np-section-no">09</span
+      ><span class="np-heading-text"
+        >試行：本当に必要なデータで判断材料を得る</span
+      >
+    </h2>
+    <p>
+      ソース探索で得られるのは手掛かりであり、試行では実際のサービス状況が見える。タスクで本当に不足する範囲を取得するため、内容が正しければ後続のダウンロードでも使える。無関係なデータを別途ダウンロードして速度を測る必要はない。
+    </p>
+    <p>
+      試行の目的は、永久に固定された速度順位を作ることではない。現在のネットワーク、ローカル負荷、プロトコル状態の下で、そのソースの組み合わせが投入に見合う新規データを継続的にもたらすかを判断することにある。
+    </p>
+    <h3 id="trial-detail-1">接続成功・サービス開始・データ受信は別の観測点</h3>
+    <p>
+      ハンドシェイクが速くてもキュー待ちのソースや、開始は遅くても始まれば安定するソースがある。接続確立時から一律に「データを送らない時間」を数えると、ネイティブな待機と実際の要求タイムアウトが混ざってしまう。
+    </p>
+    <figure class="np-service-clock">
+      <div class="np-figure-head">
+        <span>タイムライン</span
+        ><strong>経過時間と、要求を評価できる時間</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="サービス時間の学習用算例"
+        tabindex="0"
+        class="np-table-scroll"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">時間帯</th>
+              <th scope="col">起きていること</th>
+              <th scope="col">読み取り方</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">0～8 秒</th>
+              <td>接続済みだが、リモート側でキュー待ち。</td>
+              <td>
+                待機コストを記録する。データ要求を受理した後の無応答とは扱わない。
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">8～14 秒</th>
+              <td>
+                必要なピースを要求でき、実際に未完了要求があり、ローカル受信も正常。
+              </td>
+              <td>
+                この 6 秒は初回データ遅延と要求の進展を観測するのに適している。
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">14～19 秒</th>
+              <td>ローカルディスクに滞留が生じ、受信を能動的に制限。</td>
+              <td>
+                この 5
+                秒はローカルのボトルネックを反映し、相手の責任にはできない。
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">19～25 秒</th>
+              <td>ローカルが回復し、有効な要求を再開。</td>
+              <td>
+                この区間のサービスを観測する。要求の世代が変われば期限を別々に追跡する。
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>
+        学習用の例では総経過時間は 25
+        秒だが、有効な要求を評価できる二区間の合計は 12
+        秒である。ネイティブ要求の timeout と取消は引き続き Engine が処理する。
+      </figcaption>
+    </figure>
+    <p>
+      「サービス可能」は相手による帯域保証ではなく、その要求を出せる条件がそろっているという意味にすぎない。BitTorrent
+      の通常の choke は転送を制限するが、Fast Extension の交渉後は allowed-fast
+      により choked
+      状態でも特定ピースを要求できる場合があり、明示的に拒否される可能性も残る。したがって資格は、具体的な要求と交渉済みの仕組みに基づいて判断する。<sup
+        class="np-cite"
+        ><a href="#source-s07" aria-label="参考資料 7：Fast Extension｜BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <h3 id="trial-detail-2">サンプルが足りないときは不確実性を残す</h3>
+    <p>
+      試行の資源ウィンドウ内で完全な検証単位を取得できなければ、結果は「検証待ち」であってデータ誤りとは限らない。サービスを始めたばかりの長
+      RTT
+      ソースも、一度の短い観測だけで結論を出すべきではない。新規データ、検証の進展、遅延、重複量、ローカル干渉を一緒に見て、コストに応じて観測を延長するか判断する方が合理的である。
+    </p>
+    <p>
+      小さなファイルが試行中に完成したら、そのまま検証と保存へ進めばよい。低速でも希少ピースを持つソースは、サービス継続に価値がある場合がある。その価値を一定の
+      MiB/s 閾値だけで表すことはできない。
+    </p>
+    <h3 id="trial-detail-3">
+      タスク状態は、何を待っているか説明するためにある
+    </h3>
+    <div
+      role="region"
+      aria-label="タスクの段階と待機理由"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">段階</th>
+            <th scope="col">実際の意味</th>
+            <th scope="col">次の機会</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">ソース収集</th>
+            <td>metadata または新たなソースの証拠を取得中。</td>
+            <td>利用可能な結果が一つ戻れば、独立して次へ進める。</td>
+          </tr>
+          <tr>
+            <th scope="row">準備／試行</th>
+            <td>
+              試す価値のあるソースがあり、有限の資源枠を待つか使用している。
+            </td>
+            <td>実際の進捗とコストから、継続・延長・譲渡を決める。</td>
+          </tr>
+          <tr>
+            <th scope="row">継続転送</th>
+            <td>有用なデータを取得中で、資源にも余裕がある。</td>
+            <td>欠落ピース、ソース、ローカル負荷の変化に応じて調整する。</td>
+          </tr>
+          <tr>
+            <th scope="row">観測待機</th>
+            <td>
+              ソース不在、重要ピースの欠落、リモートキュー、または一時的な低効率。
+            </td>
+            <td>新ソース、待機期限、または公平な交代で再試行の機会を得る。</td>
+          </tr>
+          <tr>
+            <th scope="row">一時停止／ローカル保留</th>
+            <td>
+              ユーザーの一時停止、ローカルエラー、または実行結果が未確認。
+            </td>
+            <td>原因解消後に再開する。ソースのサービス評価は下げない。</td>
+          </tr>
+          <tr>
+            <th scope="row">転送完了</th>
+            <td>要求したデータのネイティブ検証が完了している。</td>
+            <td>保存と完成先を確認し、意図に従って共有を続けるか停止する。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      これらの段階とソース品質は二つの異なる軸である。「不完全なソースだが希少ピースを取得中」も「一時停止中だがローカルの完成ピースは有効」も自然な状態だ。一つの良否スコアに押し込むと、説明力が失われる。
+    </p>
+  </section>
+  <section>
+    <h2 id="adaptive-pool">
+      <span class="np-section-no">10</span
+      ><span class="np-heading-text"
+        >ダウンロードプールの拡大・縮小と公平な交代</span
+      >
+    </h2>
+    <p>
+      動的ダウンロードプールは、観測を続けるフィードバック制御器と考えられる。まず一部のタスクに資源を与え、進捗と圧力を見て、次の動作を決める。転送中のタスク数は、この過程の結果である。
+    </p>
+    <p>
+      Scheduler 内部の処理は三つに分けられる。<code>PoolSupervisor</code>
+      が現状を集約し、容量制御器が全体の投入量をどれだけ増減するか決め、交代機構が候補と資源を譲るタスクを選ぶ。これらは内部責務の名前であり、同じ全体スケジューリング層に属する。
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>フィードバック制御</span
+        ><strong>進捗と圧力を見て、次の投入量を調整する</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="ダウンロードプールのフィードバック制御図。横方向にスクロール可能"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 440"
+          width="880"
+          height="440"
+          role="img"
+          aria-labelledby="feedback-title feedback-desc"
+        >
+          <title id="feedback-title">
+            動的ダウンロードプールのフィードバック制御
+          </title>
+          <desc id="feedback-desc">
+            制御器は有効データの増分、ローカル資源圧力、報告の鮮度を継続的に測り、拡大・維持・縮小を決める。Engine
+            が新規要求と並行量を調整し、ネットワークとディスクの結果を次の判断へ戻す。ディスク混雑時は先に新規要求を減らし、書き込み待ちを排出しながら、そのディスクのタスクを調整する。
+          </desc>
+          <defs>
+            <marker
+              id="feedback-arrow-blue"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="feedback-arrow-green"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="440"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="31"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              有効な進捗とローカル圧力で転送を調整する
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="60" y="78" width="220" height="114" rx="8"></rect>
+              <rect x="350" y="78" width="220" height="114" rx="8"></rect>
+              <rect x="640" y="78" width="200" height="114" rx="8"></rect>
+              <rect
+                x="640"
+                y="262"
+                width="200"
+                height="100"
+                rx="8"
+                class="np-svg-stroke-entity-file"
+              ></rect>
+              <rect
+                x="60"
+                y="252"
+                width="510"
+                height="110"
+                rx="8"
+                class="np-svg-fill-surface np-svg-stroke-entity-kind"
+              ></rect>
+            </g>
+            <g
+              marker-end="url(#feedback-arrow-blue)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-8"
+            >
+              <path d="M280 143H350"></path>
+              <path d="M570 143H640"></path>
+              <path
+                d="M740 362V398H27V135H60"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+            </g>
+            <path
+              d="M740 192V262"
+              marker-end="url(#feedback-arrow-green)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-1"
+            ></path>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="78" y="105">継続計測</text>
+              <text x="368" y="105">容量判断</text>
+              <text x="658" y="105">Engine</text>
+              <text x="658" y="290">ネットワークとディスク</text>
+              <text x="78" y="282" class="np-svg-fill-entity-kind">
+                ディスク混雑時
+              </text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="78" y="130">有効データの増分</text>
+              <text x="78" y="151" class="np-svg-font-size-12">
+                ネットワーク・CPU・メモリ・I/O
+              </text>
+              <text x="78" y="174" class="np-svg-font-size-12">
+                報告の鮮度とソース状態
+              </text>
+              <text x="368" y="130" class="np-svg-font-size-12">
+                余裕と成果がある：拡大
+              </text>
+              <text x="368" y="151" class="np-svg-font-size-12">
+                まだ安定しない：維持
+              </text>
+              <text x="368" y="174" class="np-svg-font-size-12">
+                圧力が上昇：縮小
+              </text>
+              <text x="658" y="135">新規要求と並行量を調整</text>
+              <text x="658" y="158">ネイティブな周期を維持</text>
+              <text x="658" y="315">受信・検証・書き込み</text>
+              <text x="658" y="339" class="np-svg-font-size-12">
+                ディスク・ネットワーク域別に観測
+              </text>
+              <text x="78" y="310">
+                先に新規要求を減らし、書き込み待ちを徐々に解消する。
+              </text>
+              <text x="78" y="336">
+                圧力のあるディスクだけを調整し、健全な他タスクの資源を残す。
+              </text>
+            </g>
+            <g class="np-svg-font-size-12 np-svg-fill-text-secondary">
+              <text x="315" y="131" class="np-svg-text-anchor-middle">
+                判断
+              </text>
+              <text x="605" y="131" class="np-svg-text-anchor-middle">
+                調整
+              </text>
+              <text x="752" y="228" class="np-svg-fill-entity-file">実行</text>
+              <text
+                x="552"
+                y="280"
+                class="np-svg-text-anchor-end np-svg-fill-entity-kind"
+              >
+                局所的な背圧
+              </text>
+              <text x="430" y="389" class="np-svg-text-anchor-middle">
+                有効データ・待ち時間・滞留量を次の判断へ戻す
+              </text>
+              <text x="60" y="424">
+                調整後は影響を観測し、安定する前に拡大や縮小を繰り返さない。
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        タスク追加、タスクごとのピア数変更、要求ウィンドウの変更はいずれも負荷に影響する。主な変数を一つずつ小さく調整すると、結果を理解しやすい。
+      </figcaption>
+    </figure>
+    <h3 id="adaptive-pool-detail-1">
+      資源は複数の制約であり、「あと何件ダウンロードできるか」だけでは表せない
+    </h3>
+    <p>
+      5
+      件のタスクがすべてリモート制限を受け、ネットワークをほとんど使わないこともあれば、別の
+      1
+      件だけでディスク一台のランダム書き込み能力を使い切ることもある。そのため、送受信量、書き込み待ち、メモリ、検証処理、CPU、FD
+      を同時に見て、制御操作用の余裕も残す必要がある。
+    </p>
+    <div class="np-equation">
+      <div>各資源 r について：</div>
+      <div>
+        投入済み使用量(r) ＋ 新規タスクの推定コスト(r) ≤ 利用可能容量(r) −
+        予約余裕(r)
+      </div>
+    </div>
+    <p>
+      これは資源配分の考え方であり、すべてのコストを事前に正確に計算できるという意味ではない。直接制限できる資源もあれば、即時の圧力から調整するしかないものもある。すでに送出し、縮小の反映を確認していない処理は転送を続けている可能性があり、資源が完全に空いたと先取りしてはならない。
+    </p>
+    <h3 id="adaptive-pool-detail-2">
+      ディスクからネットワークへ背圧が伝わる仕組み
+    </h3>
+    <p>
+      到着速度がディスクへの書き込み速度を上回ると、書き込み待ち buffer
+      が増える。増加が続けばメモリを消費し、検証やイベント処理も遅れる可能性がある。そこでピアを増やすと、下流に未処理データをさらに押し付けることになる。
+    </p>
+    <p>
+      背圧は、下流が追い付かないことを上流へ伝える。まず新規データ要求や転送枠を減らし、飛行中データと書き込みキューを徐々に処理させる。有用な接続はコストに応じて保持でき、プール全体を切断してやり直す必要はない。
+    </p>
+    <p>
+      圧力にも範囲がある。遅い HDD へ書くタスクは減速が必要でも、別の空いている
+      SSD へ書くタスクは影響を受けないことがある。Linux PSI は CPU、メモリ、I/O
+      待ちの圧力信号を提供するが、ディスク別スループットの計器でも、利用可能な
+      Internet 帯域の測定器でもない。<sup class="np-cite"
+        ><a
+          href="#source-s16"
+          aria-label="参考資料 16：Linux カーネル：Pressure Stall Information"
+          >[16]</a
+        ></sup
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="ダウンロードプールでよくある状況と調整"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">観測した状況</th>
+            <th scope="col">合理的な次の一手</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">ネットワークに余裕があり、ローカルも健全</th>
+            <td>
+              既存ソースと要求ウィンドウを先に確認し、ソース制約なら見込みのある試行を増やす。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              帯域を使い切っていないが、書き込み待ちが増え続ける
+            </th>
+            <td>
+              対象ディスクへの新規要求を減らし、検証と書き込みを追い付かせる。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">タスク追加後も全体の進捗がほぼ変わらない</th>
+            <td>
+              追加コストと既存タスクへの圧迫を調べ、成果不足なら直近の拡大を戻す。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">スループットが安定し、継続的な滞留がない</th>
+            <td>
+              有効なサービスを維持しつつ、少量の探索と公平な交代の機会を残す。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">資源報告が古い、または途絶えた</th>
+            <td>
+              まず観測を回復する。不明を空きと見なさず、エンジン自身の資源制限を維持する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">これ以上利用可能なソースがない</th>
+            <td>
+              適切な探索周期を維持する。ローカル資源の追加で存在しない供給は作れない。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="adaptive-pool-detail-3">
+      有効スループットは同じデータ層で比較する
+    </h3>
+    <p>
+      ネットワークインターフェースの通信量には、プロトコルのオーバーヘッド、再送、他プログラムの通信も含まれる。ダウンローダーが受信した
+      payload
+      にも、重複や最終的に検証失敗するデータがあり得る。長期的な成果は「新たに検証完了した必要
+      bytes／観測時間」で見て、短期的には重複除去後の受信進捗を補助に使える。
+    </p>
+    <p>
+      両者にはそれぞれ用途がある。検証完了量は確実な成果に近いが、検証単位やスケジュールによって階段状に増える。重複除去後の受信量は反応が速い一方、未検証のリスクが残る。近い負荷の複数ウィンドウで傾向を見る方が、一秒のピーク値で増減を決めるより安定する。
+    </p>
+    <h3 id="adaptive-pool-detail-4">制御器自身が振動を生まないようにする</h3>
+    <p>
+      新しいタスクには接続、キュー待ち、要求パイプラインの立ち上げ時間が必要である。追加直後に成果がないと止め、次の瞬間に空きを見て再開すると、システムは起動コストを払い続ける。
+    </p>
+    <p>
+      観測の平滑化、拡大後の観測時間、拡大と縮小で異なる閾値を使うことで振動を減らせる。この異なる閾値をヒステリシスと呼ぶ。境界付近の小さな変動で毎回逆向きの操作が起きなくなる。通常の調整は傾向が明確になるまで待てるが、ディスク満杯やエンジンエラーなどの保護イベントは直ちに扱う。
+    </p>
+    <h3 id="adaptive-pool-detail-5">
+      公平性のためには、機会を明示的に残す必要がある
+    </h3>
+    <p>
+      現在最速のタスクだけを残すと、未試行タスクは自分の価値を示せず、希少コンテンツが人気コンテンツの後ろに永久に置かれることもある。プールは少量の資源を予約し、未知のソース、長時間待つタスク、希少ピースに機会を与えられる。
+    </p>
+    <p>
+      交代の代価も考える必要がある。既存ソースには安定したパイプラインがあり、新ソースはキューに並び直すかもしれない。まず限定的な試行で候補を比較し、成果が低く資源を譲りやすいタスクと交代するのが合理的である。公平性を実現するために、定期的に全ダウンロードを再起動する必要はない。
+    </p>
+  </section>
+  <section>
+    <h2 id="connections">
+      <span class="np-section-no">11</span
+      ><span class="np-heading-text"
+        >Connection Manager が各接続を理解する方法</span
+      >
+    </h2>
+    <p>
+      ダウンロードプールが見るのは全体資源とタスクの成果であり、Connection
+      Manager
+      は個々の接続に焦点を絞る。両者は情報を交換する。全体スケジュールには価値のある資源の情報が必要で、接続分析にはローカルの速度制限、ディスク、他タスクの影響を受けているかという情報が必要である。
+    </p>
+    <p>
+      このコンポーネントの主な仕事は、断片的な観測を文脈へ戻すことである。通信量ゼロの接続を見るときは、少なくともその役割、要求状態、相手の保有申告、ローカル側の健全性を先に把握する。
+    </p>
+    <h3 id="connections-detail-1">ファイル通信量の前に役割を見る</h3>
+    <p>
+      Tracker、DHT ノード、eD2k server、payload peer
+      はそれぞれ異なる仕事を担う。索引サービスで長時間ファイル payload
+      がないのは正常かもしれず、アップロード専用の接続にも受信データの基準は適用できない。探索と転送が共存する場合、役割の分類は特に重要になる。<sup
+        class="np-cite"
+        ><a href="#source-s04" aria-label="参考資料 4：BitTorrent DHT｜BEP 5"
+          >[04]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s08" aria-label="参考資料 8：UDP Tracker｜BEP 15"
+          >[08]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s19"
+          aria-label="参考資料 19：aMule：eD2k Server の役割"
+          >[19]</a
+        ></sup
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="接続分析の四つの観点"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">観測の観点</th>
+            <th scope="col">先に問うべきこと</th>
+            <th scope="col">判断への影響</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">役割と関連</th>
+            <td>
+              索引、metadata、ファイル受信、アップロードのどの接続か。どのタスクに関係するか。
+            </td>
+            <td>何をすれば役割を果たしたことになるかを決める。</td>
+          </tr>
+          <tr>
+            <th scope="row">サービス条件</th>
+            <td>
+              必要な範囲があるか。プロトコル上要求できるか。実際に未完了要求があるか。
+            </td>
+            <td>今回のデータ応答を期待する根拠があるかを決める。</td>
+          </tr>
+          <tr>
+            <th scope="row">データと進捗</th>
+            <td>
+              新規データはどれだけ届いたか。重複量はどれだけか。検証は未完了か失敗済みか。
+            </td>
+            <td>通信量、成果、完全性の問題を分ける。</td>
+          </tr>
+          <tr>
+            <th scope="row">ローカルと共通の干渉</th>
+            <td>
+              速度制限、書き込み詰まり、古い報告、またはネットワーク全体の障害があるか。
+            </td>
+            <td>システム自身の問題を各ソースの責任にしない。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="connections-detail-2">
+      同じ IP でも、同じ接続や同じ人物とは限らない
+    </h3>
+    <p>
+      接続は再作成され、エンジンは再起動し、一つのエンドポイントが複数のタスクを提供する場合もある。観測がどの実行世代の、どの実接続に属するか追跡する必要がある。そうしないと、遅れて届いた「古い接続を閉じる」操作が、後からできた新しい接続を傷つけかねない。
+    </p>
+    <p>
+      peer ID、eD2k user hash、エンドポイントアドレス、ローカル connection ID
+      は用途が異なる。プロトコル上のやり取りを関連付けられるが、認証された実在人物の身元とは見なせない。共有
+      NAT、動的アドレス、再接続により、一つの IP に対する長期評価も粗くなる。
+    </p>
+    <p>
+      eD2k の High ID／Low ID はさらに別の話で、主に入着接続の到達性と callback
+      支援の必要性を表す。数値が大きいほど信用が高い、または必ず速いわけではなく、Low
+      ID だから全ファイルデータを server
+      が中継するわけでもない。到達性はソースを得る機会に影響するが、実際にサービスできるかを確認する必要は残る。<sup
+        class="np-cite"
+        ><a
+          href="#source-s14"
+          aria-label="参考資料 14：aMule：High ID と Low ID"
+          >[14]</a
+        ></sup
+      >
+    </p>
+    <h3 id="connections-detail-3">分からない項目は「不明」として残す</h3>
+    <p>
+      エンジンによっては、ピア別ピース一覧、書き込み待ち
+      bytes、要求タイムアウト、choke 状態を提供する一方、管理 API
+      では総速度しか見えない場合もある。libtorrent のネイティブな
+      <code>peer_info</code> にはこの種の観測が複数あるが、アダプター API
+      が公開するかは実際のインターフェースによる。<sup class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="参考資料 9：libtorrent のネイティブ観測情報｜Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <p>
+      データの欠如は、未観測、API
+      非対応、報告の期限切れ、検証待ちなどを意味し得る。それぞれの理由を残す必要がある。すべてを
+      0
+      と表示すると、「サービス時間を測れていない」が「サービス時間はゼロ」と誤読され、誤ったスケジューリングや遮断につながりやすい。
+    </p>
+  </section>
+  <section>
+    <h2 id="zero-and-corruption">
+      <span class="np-section-no">12</span
+      ><span class="np-heading-text"
+        >通信量ゼロ・不正データ・遮断がそれぞれ意味すること</span
+      >
+    </h2>
+    <p>
+      接続管理では無駄なコストを減らすと同時に、誤った処罰も避けなければならない。一時的に不要な接続を閉じるのは単なる資源解放かもしれないが、ソースが不正データを送ったと判断するには具体的な証拠が必要である。両者は別の処置にできる。
+    </p>
+    <h3 id="zero-and-corruption-detail-1">
+      同じ 0 B/s でも原因はまったく異なる
+    </h3>
+    <div
+      role="region"
+      aria-label="通信量ゼロの状況と解釈"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">見えている状況</th>
+            <th scope="col">より合理的な解釈</th>
+            <th scope="col">対応の方向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Tracker に payload がない</th>
+            <td>
+              索引情報を提供する役割であり、ファイル bytes
+              で成果を測るものではない。
+            </td>
+            <td>照会結果とソースの増分を見る。</td>
+          </tr>
+          <tr>
+            <th scope="row">リモート側でまだキュー待ち</th>
+            <td>ネイティブなサービス順がまだ来ていない。</td>
+            <td>プロトコルに従って待機・再問い合わせし、保持コストを測る。</td>
+          </tr>
+          <tr>
+            <th scope="row">相手はデータを持つが、すべて取得済み</th>
+            <td>今は必要な新規データをその相手から得られない。</td>
+            <td>
+              アップロードとソース交換の価値も見て、用途がなければ接続を解放する。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">ローカルの速度制限やディスク滞留</th>
+            <td>受信側がデータを継続して処理できない。</td>
+            <td>ローカル負荷を修正し、相手のサービス評価を一時停止する。</td>
+          </tr>
+          <tr>
+            <th scope="row">有効な要求が繰り返しタイムアウト</th>
+            <td>
+              現在、そのソースまたは経路が信頼できるサービスを提供できていない。
+            </td>
+            <td>
+              ネイティブ期限に従って取消・再試行し、必要なら一時的に避ける。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">多数の接続が同時に停止</th>
+            <td>共通のネットワーク、エンジン、報告経路の障害かもしれない。</td>
+            <td>まず共通原因を探し、ソースを一つずつ処罰しない。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      ある無応答を評価するには、具体的な未完了要求、プロトコルに沿ったサービス条件、正常なローカル受信環境が最低限必要である。報告が途絶えて観測できなかった時間を、黙ってゼロ速度で埋めてはならない。
+    </p>
+    <p>
+      ローカル干渉を除外しても、要求タイムアウトが主に示すのは「今回のサービスが達成されなかった」ことである。相手の負荷、経路、プロトコルのスケジュールも結果に影響する。ソース変更や一時回避の根拠にはなるが、それだけで悪意を意味するわけではない。
+    </p>
+    <h3 id="zero-and-corruption-detail-2">
+      Keepalive と遅れて届くデータは意味が異なる
+    </h3>
+    <p>
+      Keepalive
+      は接続上の活動を示せてもファイル進捗を増やさず、データ要求への期待を無期限にリセットする理由にはならない。一方、取消済みの要求にも遅れてデータが届くことがある。特に
+      Fast Extension は、取消と応答が行き違う状況を明示的に扱う。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s07" aria-label="参考資料 7：Fast Extension｜BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <p>
+      したがってエンジンは要求の文脈を保持する必要がある。要求したことがある、取消済み、応答中、一度も要求していない、は同じではない。接続分析はこのネイティブ情報を使い、「現在
+      outstanding request
+      がない」だけで遅着データを一律に誤判定しないようにする。
+    </p>
+    <h3 id="zero-and-corruption-detail-3">
+      Hash failure はまず不一致を示し、その後で責任を絞る
+    </h3>
+    <p>
+      一つの piece の 4 block を A・B・C・D から受け取り、最後の piece hash
+      が一致しなかったとする。結合したデータに問題があることは分かるが、四つのソースが全員故意に誤データを送ったとは証明できない。ローカル書き込み、メモリ、状態対応の誤りも考慮する必要がある。
+    </p>
+    <p>
+      方法の一つは、疑わしいデータを隔離し、原因を帰属しやすいサンプルを取り直すことである。libtorrent
+      の parole 機構は、失敗した piece に関与したピアへ piece
+      全体を要求し、判断の根拠を増やす。「再検証して責任範囲を狭める」ことに実用的な価値がある理由である。<sup
+        class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="参考資料 9：libtorrent のネイティブ観測情報｜Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <h3 id="zero-and-corruption-detail-4">証拠に応じて処置の範囲を決める</h3>
+    <div
+      role="region"
+      aria-label="接続に対する処置の目的の違い"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">処置</th>
+            <th scope="col">目的</th>
+            <th scope="col">注意すべき範囲</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">接続を切断</th>
+            <td>今回の無用または失敗したやり取りを終える。</td>
+            <td>現在の接続だけに作用させ、長期的な悪評を付けなくてもよい。</td>
+          </tr>
+          <tr>
+            <th scope="row">一時的に回避</th>
+            <td>失敗を繰り返すソースを休ませ、資源を別の機会へ回す。</td>
+            <td>
+              内容とソースの組み合わせに限定し、期限後に限定的に再試行できる。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">隔離</th>
+            <td>
+              原因を帰属できる無効データやプロトコル違反を扱い、確認を待つ。
+            </td>
+            <td>証拠が支える識別・ソース・ネットワークの範囲に限定する。</td>
+          </tr>
+          <tr>
+            <th scope="row">手動の永続遮断</th>
+            <td>ユーザーの明示的な長期判断を実行する。</td>
+            <td>
+              影響対象を示す。IP
+              遮断は同じアドレスを共有する別タスクにも影響し得る。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      同じエラー報告の再送を、新しい違反回数として数えてはならない。同じソースが一つの内容で失敗しただけで、分析せずにネットワーク範囲全体の遮断へ広げるべきでもない。解除時は画面のラベルを消すだけでなく、エンジン内の制限が実際に取り消されたか確認する必要がある。
+    </p>
+  </section>
+  <section>
+    <h2 id="source-trust">
+      <span class="np-section-no">13</span
+      ><span class="np-heading-text"
+        >ソース一覧をどう更新し、どこまで信頼できるか</span
+      >
+    </h2>
+    <p>
+      Tracker や eD2k server
+      の一覧は起動時の候補入口を提供し、ダウンローダーが完全なゼロから始めずに済むようにする。ただし一覧が長いほど独立ソースが多い、実際の取得能力が高いとは限らない。複数の一覧に同じエンドポイントが載り、ドメイン別名や共有基盤で数が水増しされる場合もある。
+    </p>
+    <p>
+      ソースカタログは、継続的に修正する手掛かりの集合に近い。出所、取得時刻、どの照会が新ソースをもたらしたか、その後サービスできたかを記録する必要がある。候補、到達実績、有効ソースの提供実績、正しいデータの転送実績は、段階的に蓄積される異なる証拠である。
+    </p>
+    <h3 id="source-trust-detail-1">
+      一覧のダウンロードは候補データの取得にすぎない
+    </h3>
+    <p>
+      外部 feed
+      の更新後は、候補を解析して形式と変更点を確認し、段階的に探索へ取り込める。有用な旧版カタログは保持でき、更新失敗で全ソース集合を空にする必要はない。ユーザーが指定した保持・回避ソースには、feed
+      とは独立した理由もある。
+    </p>
+    <p>
+      ここで Config は一貫した有効ビューを提供し、Component
+      ごとに異なる版の一覧で判断しないようにする。リモート feed
+      はエンドポイントを提供できても、ローカルポリシーの変更権限やコマンド実行能力を得るべきではない。
+    </p>
+    <h3 id="source-trust-detail-2">
+      エンドポイントは接続を引き起こす入力である
+    </h3>
+    <p>
+      ソース情報は最終的に、ダウンローダーからの能動的なネットワーク接続につながり得る。公開ソースがローカル管理画面、内部アドレス、特殊なサービスポートを返すと、クライアントが本来接触すべきでない対象へのアクセスに利用されかねない。これはソース探索における
+      SSRF 型問題に相当する。
+    </p>
+    <p>
+      公開 Internet
+      ソースでは、アドレス方針が名前解決後の実際の宛先を確認する必要がある。URL
+      の見た目が正常でも、DNS
+      が別のアドレスを返す可能性がある。リダイレクト、再試行、代替の名前解決でも同じ宛先制限を保つ。OWASP
+      も、先に DNS
+      を確認しても、接続時に未確認の名前解決をやり直すと回避の余地が残ると注意している。<sup
+        class="np-cite"
+        ><a href="#source-s17" aria-label="参考資料 17：OWASP：SSRF 防止の解説"
+          >[17]</a
+        ></sup
+      >
+    </p>
+    <p>
+      もともと LAN
+      共有を許可するなら、内部ソースは別の明示的な範囲に属し得るのであって、全体ルールで一律に悪意と扱うものではない。公開・プライベート・overlay
+      ネットワークの入口、識別、ソース拡散方式は、それぞれの意味に沿って扱う必要がある。
+    </p>
+    <h3 id="source-trust-detail-3">
+      ソースの価値は新しい機会と実サービスで見る
+    </h3>
+    <p>
+      毎回多数のピアを返す tracker
+      でも、重複や到達不能が大半なら、少数の新ソースを返す tracker
+      より価値が低いかもしれない。適切な頻度の照会一回当たりの独自ソース数、接続可能率、その後必要データを実際に提供したソース数を観測できる。
+    </p>
+    <p>
+      比率の分母も明確にする必要がある。未照会なら不明であり、ローカルネットワーク全体の停止中の失敗で全ソースを一斉に低評価にすべきではない。UDP
+      tracker の connect 応答だけでは、announce で peers
+      を取得できたとは言えない。両者は別のプロトコル手順である。<sup
+        class="np-cite"
+        ><a href="#source-s08" aria-label="参考資料 8：UDP Tracker｜BEP 15"
+          >[08]</a
+        ></sup
+      >
+    </p>
+    <h3 id="source-trust-detail-4">
+      正常な転送が証明するのは、現在見えているやり取りだけ
+    </h3>
+    <p>
+      HTTPS は対応する接続の通信とサーバー認証を保護し、内容 hash
+      は期待値との一致を確認できる。しかし、どちらも運営者がやり取りを記録しているかは教えてくれない。BitTorrent
+      の tracker と peer
+      プロトコルには、もともと内容識別と連絡先の交換が含まれる。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="参考資料 1：BitTorrent 基本プロトコル｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <p>
+      したがって、完全にプロトコルに従い正しいデータを送るエンドポイントでも、それだけで監視や記録を否定することはできない。これは可視情報から導かれる限界である。サービス品質、データ完全性、相手の真意は別の問題であり、国、ASN、peer
+      ID、高速転送ではこの判断を代替できない。
+    </p>
+    <p>
+      クライアントは、不正なメッセージ長、過剰なソース情報の洪水、帰属可能な不正データ、危険な名前やパスなど、見える異常には対処できる。ソース名と
+      metadata
+      も信頼できないテキストとして表示すべきである。見えていない意図については、根拠のない安全確率を示すより、不明と残す方が誠実である。
+    </p>
+  </section>
+  <section>
+    <h2 id="recovery">
+      <span class="np-section-no">14</span
+      ><span class="np-heading-text"
+        >一時停止・再起動・命令喪失から一貫した状態へ戻す</span
+      >
+    </h2>
+    <p>
+      長時間動くダウンローダーでは、管理プロセス、エンジン、データベース、ディスクが常に同時に成功するとは仮定できない。一時停止の意図を管理側が記録しても、エンジンは未受信かもしれない。逆にエンジンは止まったのに、応答だけが失われることもある。
+    </p>
+    <p>
+      そのためシステムは、<strong>何をしてほしいか</strong>と<strong>何をしたと確認できているか</strong>を区別する必要がある。この区別により、一時停止中のタスク、終了中の接続、再起動後の状態にも合理的な復旧経路を用意できる。
+    </p>
+    <h3 id="recovery-detail-1">先に意図を保存し、実際の反映を追跡する</h3>
+    <p>
+      管理側は操作意図と送出待ち処理をまとめて保存してから、エンジンへ渡せる。応答後に実結果を更新する。途中で停止しても、再起動後に未確認操作を把握でき、メモリだけを頼りに推測せずに済む。
+    </p>
+    <div class="np-example">
+      <h3 id="recovery-detail-2">
+        一時停止を送った直後に管理プロセスがクラッシュした場合
+      </h3>
+      <ol>
+        <li>
+          <strong>意図の保存：</strong>タスク A
+          を一時停止したいという操作は永続化済み。
+        </li>
+        <li>
+          <strong>エンジンへ送信：</strong
+          >エンジンは新規要求を止め、飛行中データと書き込みを排出中かもしれない。
+        </li>
+        <li>
+          <strong>応答は未確認：</strong
+          >管理プロセスの再起動後、停止が成功したか失敗したかは直ちに断定できない。
+        </li>
+        <li>
+          <strong>再照合：</strong
+          >同じエンジン実行世代の実タスク状態を照会し、結果を更新するか未完了操作を補う。
+        </li>
+      </ol>
+      <p>
+        解放を確認するまでは、このタスクがネットワーク、メモリ、ディスクを使っている可能性がある。資源台帳から早く削除すると、次のタスクへ実際には空いていない枠を渡してしまう。
+      </p>
+    </div>
+    <p>
+      再送でも同じ操作だと識別できなければならない。そうでなければ、障害後の再試行がタスクの重複追加、同じ証拠への反復処罰、新接続への古い命令の適用になり得る。操作識別、エンジンの起動世代、目標状態は、これらの違いを見分ける助けになる。
+    </p>
+    <h3 id="recovery-detail-3">
+      SQLite は復元可能な事実、Metrics は時間変化を保存する
+    </h3>
+    <p>
+      タスク、内容識別、有効ポリシー、判断に影響する証拠、ファイル操作記録は
+      Store
+      に適している。再起動後も成立し続ける必要があるからだ。毎秒のピア速度、遅延分布、負荷曲線は
+      Metrics に属し、詳細の保持期間と集計要件に応じて保存方式を設計できる。
+    </p>
+    <div
+      role="region"
+      aria-label="三つの保存責務"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">保存先</th>
+            <th scope="col">保存するもの</th>
+            <th scope="col">分離する理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Store／SQLite</th>
+            <td>
+              タスク意図、内容との関連、最近のソース概要、ポリシー、復旧記録。
+            </td>
+            <td>重要状態を一貫したトランザクションと追跡可能な変更で扱う。</td>
+          </tr>
+          <tr>
+            <th scope="row">Metrics</th>
+            <td>速度、遅延、圧力、キューなどの履歴サンプルと集計。</td>
+            <td>
+              高頻度観測の保持量を独立して制御し、タスク状態の書き込みを圧迫しない。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Engine の作業ディレクトリ</th>
+            <td>Payload、partial、ネイティブ再開データ、ファイル範囲情報。</td>
+            <td>
+              実際に I/O
+              を行うエンジンが管理し、二つのコンポーネントが同じデータを同時変更しない。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      SQLite の WAL モードでは読み書きを並行できるが、同時に存在できる writer
+      は一つである。長い読み取りは checkpoint
+      の進行も妨げ得る。この構成では重要状態の書き込みを集中調整し、トランザクションを短く保つことを選ぶ。責務は明確になるが、データベース外のファイルやエンジンとの一貫性を自動的に解決するわけではない。<sup
+        class="np-cite"
+        ><a
+          href="#source-s15"
+          aria-label="参考資料 15：SQLite：Write-Ahead Logging"
+          >[15]</a
+        ></sup
+      >
+    </p>
+    <h3 id="recovery-detail-4">
+      履歴監視の故障で健全な転送まで止める必要はない
+    </h3>
+    <p>
+      Scheduler と Connection Manager が必要とする即時概要は、Component
+      から直接報告できる。Metrics
+      が一時的に履歴保存できなくても、この経路でダウンロードを続けられる。観測サンプルは上限付きバッファと明示的な欠測で扱い、監視故障がメモリを使い尽くさないようにする。
+    </p>
+    <p>
+      Store
+      が新たな重要状態を保存できない場合は影響が異なる。新規割り当てと永続ポリシー変更が信頼できなくなるため、記録が復旧するまでそれらを抑制すべきである。不正メッセージ、失効接続、ローカル資源に対するエンジン自身の即時保護は、独立して存在する必要がある。
+    </p>
+    <p>
+      経過時間は時計合わせに影響されない単調時計で測り、再起動をまたいで残す日時は別に記録する。再起動中に観測できなかったサービス時間をソースのタイムアウトで埋めてはならず、古いスナップショットも新しいエンジン状態に照らして再確認する必要がある。
+    </p>
+  </section>
+  <section>
+    <h2 id="files">
+      <span class="np-section-no">15</span
+      ><span class="np-heading-text"
+        >断片的なピースから、完全で復元可能なファイルへ</span
+      >
+    </h2>
+    <p>
+      タスクがプールへ出入りしても、取得済みデータまで消えるべきではない。観測待機へ移すには通常、実行調整と再開状態の保存だけでよい。ファイルを移動すべきという意味でも、削除してよいという意味でもない。
+    </p>
+    <h3 id="files-detail-1">段階的な割り当てと、ファイルの二種類の大きさ</h3>
+    <p>
+      多数の対象を先に登録し、転送が必要になってからデータ領域を増やすと、最初から全対象の全容量を確保せずに済む。ただし空き容量不足が途中で判明する可能性があり、割り当てと
+      I/O の特性もファイルシステムやエンジンに依存する。
+    </p>
+    <p>
+      論理サイズと割り当て済み空間を区別する必要がある。スパースファイルは論理長が大きくても、未書き込みの穴に同量の物理ブロックを割り当てているとは限らない。また空き容量では、内容だけでなく、再開データ、データベース、一時ファイル、検証、完成時の移動に必要な追加領域も考慮する。
+    </p>
+    <p>
+      段階的な書き込みは柔軟で、事前割り当ては容量不足を早めに検出し、一部のファイルシステムで割り当ての断片化を減らせる可能性がある。装置、ファイル規模、利用状況で選べるトレードオフであり、すべてのタスクに同じ方式を強制する必要はない。
+    </p>
+    <h3 id="files-detail-2">ファイル名は表示用、保存上の識別は安定させる</h3>
+    <p>
+      作業ディレクトリを安定した内容識別でバケット分けすれば、一つのディレクトリへの集中と同名ファイルの上書きを防げる。識別子にはプロトコルの意味も必要で、異なる
+      hash 空間の文字列をそのまま同じオブジェクトと扱ってはならない。
+    </p>
+    <p>
+      magnet は完全な metadata
+      の取得前に、一時的な識別で追跡する場合がある。内容の対応が確定したら、タスクとファイル位置の変更を記録し、再起動後も書き込み済みデータを見つけられるようにする。元のタイトルとパスも安全に処理し、ソースが与える
+      <code>../</code>
+      や絶対パスにローカルの書き込み先を決めさせてはならない。BitTorrent v2
+      の仕様にも、この種のパス処理が明記されている。<sup class="np-cite"
+        ><a href="#source-s03" aria-label="参考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <h3 id="files-detail-3">転送完了後にも、保存と完成ファイルの確定が必要</h3>
+    <p>
+      必要なデータがすべて検証を通過しても、飛行中の書き込み、ネイティブ再開情報、実際のファイル位置を確認する必要がある。100%
+      と表示するだけでデータと復旧記録が不整合なら、再起動後に広範な再検証が必要になり、利用できるデータすら判断できない可能性がある。
+    </p>
+    <figure class="np-lifecycle">
+      <div class="np-figure-head">
+        <span>ファイルのライフサイクル</span
+        ><strong>一時停止と再開で同じ partial を使う</strong>
+      </div>
+      <ol class="np-file-steps">
+        <li>
+          <span class="np-step-index">1</span><strong>ピースを蓄積</strong
+          ><span>受信・重複除去・書込・検証を交錯して進める</span>
+        </li>
+        <li>
+          <span class="np-step-index">2</span
+          ><strong>復元可能な状態を保存</strong
+          ><span>データと再開記録を照合し、一時停止後はここから再開</span>
+        </li>
+        <li>
+          <span class="np-step-index">3</span
+          ><strong>必要範囲の完全性を確認</strong
+          ><span>選択データの検証を終え、エンジンと書き込み状態を調整</span>
+        </li>
+        <li>
+          <span class="np-step-index">4</span><strong>完成ファイルを確定</strong
+          ><span>保存先の利用可否を確認してから、位置と共有状態を更新</span>
+        </li>
+      </ol>
+      <figcaption>
+        これはファイル状態の概念的な流れである。一度のネットワーク待機やプール内の交代で、partial
+        が自動的に削除候補になるわけではない。
+      </figcaption>
+    </figure>
+    <p>
+      対応する意味を持つローカルファイルシステムでは、同じマウント範囲内の
+      rename
+      によって名前の切り替えを原子的に行える。マウント点をまたぐ移動は同じ
+      rename
+      だけでは完了できず、通常は保存先の一時ファイルへコピーし、確認してから完成状態に切り替える必要がある。<sup
+        class="np-cite"
+        ><a
+          href="#source-s20"
+          aria-label="参考資料 20：Linux man-pages：rename(2)"
+          >[20]</a
+        ></sup
+      >
+    </p>
+    <p>
+      名前の切り替えが原子的でも、電源断後に必ず残るとは限らない。Linux
+      では例えば、<code>fsync()</code> がファイルデータと関連 metadata
+      を同期し、ディレクトリエントリの永続化にはディレクトリの同期も必要な場合がある。そのため完全な移動手順では、内容、位置記録、旧コピーを削除する時点を別々に扱う。<sup
+        class="np-cite"
+        ><a
+          href="#source-s21"
+          aria-label="参考資料 21：Linux man-pages：fsync(2)"
+          >[21]</a
+        ></sup
+      >
+    </p>
+    <p>
+      装置間コピーの途中で失敗したら、元ファイルを急いで消すより、旧コピーと未完了記録を保持する方が確実である。共有中のファイルはエンジンとパスを調整する必要もある。使用中ファイルを外部から直接移動すると、その後のアップロードや再開で対応を失う可能性がある。
+    </p>
+    <h3 id="files-detail-4">
+      長期間ソースがない場合に、初めて保持方針を検討する
+    </h3>
+    <p>
+      今日ソースがないタスクでも、明日にはピアがオンラインになるかもしれない。末尾が希少な内容も、再共有で復活する場合がある。部分ファイルを整理するかは、長期観測、ユーザーの保持意図、キュー機会の有無、現在の
+      writer や未確認操作を合わせて判断すべきである。
+    </p>
+    <p>
+      自動整理が必要なら、まず候補を復元可能な隔離段階へ移し、保持期間に基づいて削除を決めると誤判定の代価を減らせる。低速、tracker
+      の一時停止、一つのソースの回避だけでは、全データが価値を失った証拠にはならない。
+    </p>
+  </section>
+  <section>
+    <h2 id="diagnosis">
+      <span class="np-section-no">16</span
+      ><span class="np-heading-text">現象から原因をたどる</span>
+    </h2>
+    <p>
+      責務分担の価値は、最終的に問題を説明できるかに表れる。「ダウンロード中」と速度だけでは、停止時に推測するしかない。内容、ソース、要求、検証、ローカル負荷を順に見れば、問題をより小さな範囲へ絞れる。
+    </p>
+    <div
+      role="region"
+      aria-label="P2P ダウンロードの問題を調べる観点"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table class="np-diagnosis-table">
+        <thead>
+          <tr>
+            <th scope="col">現象</th>
+            <th scope="col">先に確認する証拠</th>
+            <th scope="col">考えられる説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">接続は多いが速度が出ない</th>
+            <td>役割、不足ピースとの積集合、queue／choke、未完了要求。</td>
+            <td>
+              索引サービス、待機中のピア、取得済みピースしかないソースに接続している可能性がある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">99% で停止</th>
+            <td>最後の不足ピース、ソース申告、実際のサービス可否。</td>
+            <td>
+              末尾を持つソースが極少数、または全ソースが共通して欠落している。同じソースを増やしても改善しない。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">帯域が余っているのに追加しない</th>
+            <td>
+              書き込み待ち、ディスク遅延、検証キュー、メモリ、報告の鮮度。
+            </td>
+            <td>
+              下流のボトルネックや観測不足により、一時的に拡大が不適切かもしれない。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">タスク追加後に全体が遅くなる</th>
+            <td>追加前後の有効進捗、I/O 変化、buffer、再試行、接続変化。</td>
+            <td>
+              共有資源の競合が始まり、追加コストが追加成果を上回っている。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">大量の通信に進捗増加が見合わない</th>
+            <td>Payload と制御通信、重複 block、検証待ちと検証失敗。</td>
+            <td>
+              endgame、誤データの再取得、または受信済みだが未検証の可能性がある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">再起動後に再検証が必要</th>
+            <td>データ、ネイティブ再開記録、最後に確認した同期状態。</td>
+            <td>
+              ファイルは残っていても旧進捗を直接信用する根拠が足りず、再検証で利用可能性の証拠を作り直している。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">ソースが復旧してもタスクが始まらない</th>
+            <td>
+              ユーザーの一時停止、ローカル保留理由、クールダウン、利用可能枠、新ソースの照合状況。
+            </td>
+            <td>
+              ソースの存在は条件の一つにすぎず、他の制限が有効な可能性がある。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">画面で遮断解除しても接続できない</th>
+            <td>
+              エンジン内ポリシーの取消、ソースへの到達性、ネイティブ再試行間隔。
+            </td>
+            <td>
+              表示と実行が同期していないか、そもそも失敗理由が遮断だけではなかった。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="diagnosis-detail-1">画面には状態名だけでなく理由を示す</h3>
+    <p>
+      ダウンロード一覧には現在の段階と主な待機理由を表示し、詳細で不足範囲、ソース分布、要求状況、ローカル圧力を補える。接続の詳細には、提供したデータ、観測時刻、制限理由、操作をエンジンが確認したかを残す。
+    </p>
+    <p>
+      これにより、ソース待ちやリモートキューなのか、HDD
+      の書き込みが追い付かずローカル背圧を受けているのかを区別できる。ソース情報が不明な場合も、未観測なのか、エンジンがそもそも提供しない項目なのかを見分けられる。
+    </p>
+    <h3 id="diagnosis-detail-2">一つのダウンロードで全体構成をつなぐ</h3>
+    <p>
+      ユーザーが内容を追加すると、Manager が意図を保存し、Search が対応する
+      Component を通じて metadata
+      とソースを取得する。準備できたタスクは限定試行へ入り、Engine
+      が許可されたソースと資源枠の中でピースを要求する。実進捗とローカル圧力は
+      Scheduler へ、接続のサービス状況は Connection Manager へ戻る。
+    </p>
+    <p>
+      有用なデータは蓄積し、価値のない投入は徐々に減らす。新ソースの発見機会を維持し、長時間待つタスクや希少ピースを持つタスクにも機会を残す。Store
+      は重要状態を復元可能にし、Metrics
+      は過去の変化を分析可能にする。最後に選択した内容の検証が終わり、データと保存状態が一致したら、完成ファイルを確定して位置を更新する。ダウンロード中に検証したピースも、ネイティブプロトコルとユーザーの意図に従って共有し続けられる。
+    </p>
+    <p>
+      これらの責務が明確につながることで、ソース変動、ネットワーク待機、ディスクのボトルネック、プロセス中断の中でも、根拠ある判断を続けられる。次に速度が落ちたときも、どの段階で詰まり、何が変われば進むのかをシステムが示せるべきである。
+    </p>
+  </section>
+  <section>
+    <h2 id="references"><span class="np-heading-text">参考資料</span></h2>
+    <p class="np-references-intro">
+      以下の資料でプロトコル、エンジン動作、保存機構を確認した。参照日：<time
+        datetime="2026-10-25"
+        >2026-10-25</time
+      >。資源の算例とピース行列は原理の説明用であり、動的ダウンロードプールとコンポーネント分担は本稿で示すアーキテクチャ設計である。
+    </p>
+    <ol class="np-reference-list">
+      <li id="source-s01">
+        <span class="np-source-id">S01</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0003.html"
+            class="np-source-title"
+            >BitTorrent 基本プロトコル｜BEP 3</a
+          >
+          <p class="np-source-note">
+            内容識別、ピースハッシュ、Tracker、要求パイプライン、endgame。
+          </p>
+        </div>
+      </li>
+      <li id="source-s02">
+        <span class="np-source-id">S02</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0009.html"
+            class="np-source-title"
+            >Metadata exchange と magnet｜BEP 9</a
+          >
+          <p class="np-source-note">
+            info dictionary の交換と、magnet の位置特定情報。
+          </p>
+        </div>
+      </li>
+      <li id="source-s03">
+        <span class="np-source-id">S03</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0052.html"
+            class="np-source-title"
+            >BitTorrent v2｜BEP 52</a
+          >
+          <p class="np-source-note">
+            SHA-256 infohash、ファイルごとの Merkle
+            tree、ピースの整列、パス処理。
+          </p>
+        </div>
+      </li>
+      <li id="source-s04">
+        <span class="np-source-id">S04</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0005.html"
+            class="np-source-title"
+            >BitTorrent DHT｜BEP 5</a
+          >
+          <p class="np-source-note">
+            infohash によるピア検索、ルーティングテーブル、ノード情報。
+          </p>
+        </div>
+      </li>
+      <li id="source-s05">
+        <span class="np-source-id">S05</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0011.html"
+            class="np-source-title"
+            >Peer Exchange｜BEP 11</a
+          >
+          <p class="np-source-note">
+            既存のピア接続によるソース交換と、更新の制限。
+          </p>
+        </div>
+      </li>
+      <li id="source-s06">
+        <span class="np-source-id">S06</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0027.html"
+            class="np-source-title"
+            >プライベート torrent｜BEP 27</a
+          >
+          <p class="np-source-note">
+            private フラグと、ソース探索・接続範囲の制限。
+          </p>
+        </div>
+      </li>
+      <li id="source-s07">
+        <span class="np-source-id">S07</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0006.html"
+            class="np-source-title"
+            >Fast Extension｜BEP 6</a
+          >
+          <p class="np-source-note">
+            Allowed-fast、明示的拒否、choke・取消・応答の意味。
+          </p>
+        </div>
+      </li>
+      <li id="source-s08">
+        <span class="np-source-id">S08</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0015.html"
+            class="np-source-title"
+            >UDP Tracker｜BEP 15</a
+          >
+          <p class="np-source-note">Connect、announce、scrape の役割の違い。</p>
+        </div>
+      </li>
+      <li id="source-s09">
+        <span class="np-source-id">S09</span>
+        <div>
+          <a
+            href="https://libtorrent.org/reference-Core.html"
+            class="np-source-title"
+            >libtorrent のネイティブ観測情報｜Core API</a
+          >
+          <p class="np-source-note">
+            ピア状態、half-open、ハンドシェイク、書き込み待ち、parole。
+          </p>
+        </div>
+      </li>
+      <li id="source-s10">
+        <span class="np-source-id">S10</span>
+        <div>
+          <a href="https://libtorrent.org/features.html" class="np-source-title"
+            >libtorrent のピース選択</a
+          >
+          <p class="np-source-note">
+            公式機能文書。本稿は希少度や優先度などの原理だけを参照し、この古い文書で現行の内部実装を判断しない。
+          </p>
+        </div>
+      </li>
+      <li id="source-s11">
+        <span class="np-source-id">S11</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/kademlia"
+            class="np-source-title"
+            >aMule：Kad ネットワーク</a
+          >
+          <p class="np-source-note">
+            分散ソース探索、bootstrap、eD2k 転送機構との関係。
+          </p>
+        </div>
+      </li>
+      <li id="source-s12">
+        <span class="np-source-id">S12</span>
+        <div>
+          <a
+            href="https://wiki.amule.org/wiki/FAQ_eD2k-Kademlia"
+            class="np-source-title"
+            >aMule：eD2k／Kademlia FAQ</a
+          >
+          <p class="np-source-note">
+            公式 Wiki の歴史的説明。本稿ではソースの相補性、キュー、UDP
+            のやり取りなどの機構に限って参照する。
+          </p>
+        </div>
+      </li>
+      <li id="source-s13">
+        <span class="np-source-id">S13</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/aich"
+            class="np-source-title"
+            >aMule：AICH と破損復旧</a
+          >
+          <p class="np-source-note">
+            信頼できる root
+            と復旧データがある場合に、破損サブブロックを特定し、正しいデータを残す。
+          </p>
+        </div>
+      </li>
+      <li id="source-s14">
+        <span class="np-source-id">S14</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/high-id"
+            class="np-source-title"
+            >aMule：High ID と Low ID</a
+          >
+          <p class="np-source-note">
+            入着接続の到達性と callback。本稿では ID
+            を信用度や速度順位と見なさない。
+          </p>
+        </div>
+      </li>
+      <li id="source-s15">
+        <span class="np-source-id">S15</span>
+        <div>
+          <a href="https://www.sqlite.org/wal.html" class="np-source-title"
+            >SQLite：Write-Ahead Logging</a
+          >
+          <p class="np-source-note">
+            読み書きの並行性、単一 writer、checkpoint、長い読み取りの影響。
+          </p>
+        </div>
+      </li>
+      <li id="source-s16">
+        <span class="np-source-id">S16</span>
+        <div>
+          <a
+            href="https://docs.kernel.org/accounting/psi.html"
+            class="np-source-title"
+            >Linux カーネル：Pressure Stall Information</a
+          >
+          <p class="np-source-note">
+            CPU、メモリ、I/O 資源の待機による圧力計測。
+          </p>
+        </div>
+      </li>
+      <li id="source-s17">
+        <span class="np-source-id">S17</span>
+        <div>
+          <a
+            href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+            class="np-source-title"
+            >OWASP：SSRF 防止の解説</a
+          >
+          <p class="np-source-note">
+            宛先検証、リダイレクト、DNS rebinding、接続時のアドレス整合性。
+          </p>
+        </div>
+      </li>
+      <li id="source-s18">
+        <span class="np-source-id">S18</span>
+        <div>
+          <a
+            href="https://github.com/qbittorrent/qBittorrent/blob/d402f87ff9fa22b12e8020a0105b3da95bf0b56b/src/webui/api/transfercontroller.cpp"
+            class="np-source-title"
+            >qBittorrent：遮断操作の実際の範囲</a
+          >
+          <p class="np-source-note">
+            固定コミット d402f87 の TransferController。banPeersAction が banIP
+            を呼ぶソースコード例。
+          </p>
+        </div>
+      </li>
+      <li id="source-s19">
+        <span class="np-source-id">S19</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/servers"
+            class="np-source-title"
+            >aMule：eD2k Server の役割</a
+          >
+          <p class="np-source-note">
+            ファイル索引、ソース一覧、接続確立の支援。
+          </p>
+        </div>
+      </li>
+      <li id="source-s20">
+        <span class="np-source-id">S20</span>
+        <div>
+          <a
+            href="https://man7.org/linux/man-pages/man2/rename.2.html"
+            class="np-source-title"
+            >Linux man-pages：rename(2)</a
+          >
+          <p class="np-source-note">
+            名前切り替えの原子性と、マウント点をまたぐ EXDEV 制約。
+          </p>
+        </div>
+      </li>
+      <li id="source-s21">
+        <span class="np-source-id">S21</span>
+        <div>
+          <a
+            href="https://man7.org/linux/man-pages/man2/fsync.2.html"
+            class="np-source-title"
+            >Linux man-pages：fsync(2)</a
+          >
+          <p class="np-source-note">
+            ファイル同期、ディレクトリエントリ、永続性の違い。
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+</div>

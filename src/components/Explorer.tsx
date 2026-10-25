@@ -1,4 +1,10 @@
 import {
+  articleFolder,
+  articlePath,
+  blogFolders,
+  populatedBlogFolders,
+} from '../lib/blog-tree.ts';
+import {
   createContext,
   useContext,
   useId,
@@ -296,19 +302,52 @@ export function Explorer({
               current={areaState(route, 'library')}
               onNavigate={onNavigate}
             >
-              {files.posts.map((post) => (
-                <li key={post.slug}>
-                  <TreeLink
-                    href={`/${locale}/blog/${post.slug}/`}
-                    kind="markdown"
-                    name={post.title}
+              {populatedBlogFolders(files.posts).map((folder) => (
+                <li key={folder}>
+                  <TreeFolder
+                    currentPath={currentPath}
+                    locale={locale}
+                    href={`/${locale}/blog/${folder}/`}
+                    name={blogFolders[folder].title[locale]}
                     current={page(
-                      route.kind === 'article' && route.slug === post.slug,
+                      route.kind === 'blog-folder' && route.folder === folder,
                     )}
                     onNavigate={onNavigate}
-                  />
+                  >
+                    {files.posts
+                      .filter((post) => articleFolder(post.slug) === folder)
+                      .map((post) => (
+                        <li key={post.slug}>
+                          <TreeLink
+                            href={articlePath(post.slug, locale)}
+                            kind="markdown"
+                            name={post.title}
+                            current={page(
+                              route.kind === 'article' &&
+                                route.slug === post.slug,
+                            )}
+                            onNavigate={onNavigate}
+                          />
+                        </li>
+                      ))}
+                  </TreeFolder>
                 </li>
               ))}
+              {files.posts
+                .filter((post) => !articleFolder(post.slug))
+                .map((post) => (
+                  <li key={post.slug}>
+                    <TreeLink
+                      href={articlePath(post.slug, locale)}
+                      kind="markdown"
+                      name={post.title}
+                      current={page(
+                        route.kind === 'article' && route.slug === post.slug,
+                      )}
+                      onNavigate={onNavigate}
+                    />
+                  </li>
+                ))}
             </TreeFolder>
           </li>
         ) : null}

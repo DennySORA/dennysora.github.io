@@ -43,6 +43,28 @@ id 用於跨語系文章身份和 discussion 對照；slug 改名時必須補明
 
 長文分頁由 [`data/post-sections.json`](../data/post-sections.json) 列出每組連續 H2 的 ID 與三語標籤；所有 H2 必須恰好分配一次，原錨點不改。ArticleSections 與筆記共用分頁增強：鍵盤方向鍵／Home／End、網址深連結、切換後暫停隱藏影片；沒有 JavaScript 時顯示全文。正文與目錄仍引用同一組 heading IDs。
 
+### 匯入的靜態圖解文章
+
+經逐項檢查的外部稿件可設定 `bodyFormat: "static-html"`，使用同目錄的
+`zh-hant.html`、`en.html`、`ja.html`。這是獨立的受限 renderer，不放寬一般
+Markdown 的清理規則。只保留靜態語意、表格、原生 `details` 與白名單 SVG
+圖形；不接受 script、事件屬性、style、外部圖片／SVG 資源或任意 HTML。
+來源頁的導覽、頁首與樣式移除，由現有 Article／Prose 與站內 token 統一呈現。
+
+來源可使用 `source.kind: "imported-manuscript"`，保存原始檔名與 SHA-256，
+不虛構 Git commit，也不公開私人 Library 連結。沒有確認署名時 `author` 為
+`null`，不顯示作者簡介或輸出 `BlogPosting.author`；站名不受影響。
+
+圖中文字、無障礙標籤、技術附註與參考說明均須完整翻譯；原錨點、數值、
+公式與來源網址保留。翻譯依上面的 draft → 逐項對照 → 真實 reviewEvidence
+流程，`sourceRevision` 改以原文 HTML 的實際位元組計算。三語公開時皆須符合
+同一個原文 hash，譯文必須為 reviewed，不能沿用舊站繼承用途的 source-published。未審閱的稿件不產生
+公開文章、分類頁、搜尋、RSS 或 sitemap，也不套用舊示範文章的移除告示。
+
+部落格資料夾由 `src/lib/blog-tree.ts` 管理，與 topic／tag 分開。文章 URL、
+Explorer 與麵包屑都引用同一份分類；只有已有公開文章的資料夾才進入導覽。
+目前新增的資安稿件仍是草稿，預定位置為 `/{locale}/blog/security/`。
+
 ### 正文格式
 
 正文在建置時轉成靜態 HTML，不執行 MDX、script、iframe 或任意 HTML。作者 HTML 與產生器輸出（程式碼高亮、公式）分別套用有界的清理規則，見 [renderer](../src/lib/markdown.server.ts)。
@@ -157,3 +179,15 @@ AI／影片內容搬遷後，主站已移除論文日報入口。buffer 分頁�
 [workflow](../.github/workflows/site.yml) 是擁有者「不使用 GitHub CI」原則的個人網站例外，只負責 build 與 deploy。每次 push 到 `release`（包含 merge 到該 branch）都會建置該次 commit，並部署同一次建置通過檢查的 `build/client`。Main push、PR、tag、排程與人工 workflow dispatch 都不觸發。發布前在本機跑 `pnpm verify`；來源先提交到 `main`，獲得發布授權後，再從已驗證 commit 建立或 fast-forward `release`。若 branch 已分歧，先檢視並正常合併，不用 force push 覆寫歷史。建立或更新 `release` 本身就是發布動作。遠端只安裝 lockfile 所定依賴、執行含內容／產物檢查的 build，再部署該產物。Pages 必須使用 GitHub Actions；既有 `github-pages` 環境保護若不允許 `release`，需由擁有者按既有審批流程處理，不能自行放寬。現有 CNAME 保持 `dennysora.me`。
 
 若部署後發現問題，停止後續部署，從擁有者確認的上一個正常 commit 重新驗證並發布；不要 reset 工作目錄、覆寫新內容或啟用第二個研究 writer。本次只提供此回復程序，未對遠端做回滾演練。舊版 profile 的來源 commit 與 checksum 已記在 [migration manifest](../data/migration/manifest.json)，可以透過 Git 歷史查閱；已刪除 blog 的五篇本文不在本機恢復範圍。
+
+## 新增互動型匯入稿（2026-10-25 草稿）
+
+P2P 隱私與翻譯架構新增到 Blog／網路與 Blog／工具；三語完整但均未發布，
+既有兩篇草稿及所有 notes 保留。參見
+[草稿整合紀錄](process/DELIVERY-privacy-tools-blog-2026-10-25.md)。
+
+上傳 HTML 的 script／style／controls 不會進入靜態正文。教學互動由 repo-owned
+`privacy-demos.ts`／`translation-demos.ts` 以安全 DOM API 補上；無 JS 仍能讀完整靜態
+本文與示意。新增或修改互動須同步三語 copy、公式測試、no-JS／motion／cleanup 驗收。
+Vite 依各篇 publication 旗標排除未發布的 demo chunk，避免草稿文字藏在公開 JS。
+私有預覽 script 與 `.draft-preview/` 不可一併發布；發布產物仍只有 `build/client`。

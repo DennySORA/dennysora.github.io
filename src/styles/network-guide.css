@@ -1,0 +1,414 @@
+.network-guide {
+  min-width: 0;
+  color: var(--color-text);
+}
+
+.network-guide section + section {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-decorative);
+}
+
+.network-guide .np-section-no {
+  margin-inline-end: var(--space-3);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  font-weight: 400;
+}
+
+.network-guide .np-table-scroll,
+.network-guide .np-diagram-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) var(--color-background);
+}
+
+.network-guide .np-table-scroll {
+  margin-block: var(--space-5);
+  border-block: 1px solid var(--color-border-decorative);
+}
+
+.network-guide table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: start;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.network-guide th,
+.network-guide td {
+  padding: var(--space-3) var(--space-4);
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border-subtle);
+  overflow-wrap: anywhere;
+}
+
+.network-guide thead th {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.network-guide tbody th {
+  min-width: 8rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.network-guide td {
+  min-width: 10rem;
+  color: var(--color-text-secondary);
+}
+
+.network-guide tr:last-child > * {
+  border-bottom: 0;
+}
+
+.network-guide .np-takeaway,
+.network-guide .np-example {
+  margin-block: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border-inline-start: 2px solid var(--color-link);
+  background: var(--color-surface);
+}
+
+.network-guide .np-takeaway p:last-child,
+.network-guide .np-example > :last-child {
+  margin-bottom: 0;
+}
+
+.network-guide .np-example h3 {
+  margin-top: 0;
+}
+
+.network-guide .np-equation {
+  margin-block: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-control);
+  background: var(--color-chrome);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.network-guide figure {
+  margin: var(--space-6) 0;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+  background: var(--color-background);
+}
+
+.network-guide .np-figure-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+}
+
+.network-guide .np-figure-head > span {
+  color: var(--color-entity-kind);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.network-guide .np-figure-head strong {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.network-guide .np-diagram-scroll > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-width: 880px;
+  font-family: var(--font-sans);
+}
+
+:lang(ja) .network-guide .np-diagram-scroll > svg {
+  font-family: var(--font-sans-ja);
+}
+
+.network-guide figcaption,
+.network-guide .np-figure-intro {
+  padding: var(--space-4);
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+}
+
+.network-guide figcaption {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.network-guide figure .np-table-scroll {
+  margin-block: 0;
+  border-block: 0;
+}
+
+.network-guide .np-piece-table {
+  min-width: 720px;
+  table-layout: fixed;
+  font-size: 0.8125rem;
+}
+
+.network-guide .np-piece-table th,
+.network-guide .np-piece-table td {
+  min-width: 0;
+  padding: var(--space-2) var(--space-1);
+  text-align: center;
+  border-right: 1px solid var(--color-border-subtle);
+}
+
+.network-guide .np-piece-table th:first-child {
+  width: 10rem;
+  padding-inline-start: var(--space-4);
+  text-align: start;
+}
+
+.network-guide .np-state-verified {
+  color: var(--color-status-success);
+  font-weight: 600;
+}
+
+.network-guide .np-state-available {
+  color: var(--color-entity-file);
+  font-weight: 600;
+}
+
+.network-guide .np-state-none,
+.network-guide .np-peer-state {
+  color: var(--color-text-muted);
+}
+
+.network-guide .np-peer-state {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.network-guide .np-demo-result {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.network-guide .np-demo-result > :last-child {
+  margin-bottom: 0;
+}
+
+.network-guide .np-coverage-cases {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+}
+
+.network-guide .np-coverage-cases summary {
+  cursor: pointer;
+  color: var(--color-link);
+  font-weight: 600;
+}
+
+.network-guide .np-coverage-cases[open] summary {
+  margin-bottom: var(--space-4);
+}
+
+.network-guide .np-service-clock table {
+  min-width: 640px;
+}
+
+.network-guide .np-file-steps {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 0 var(--space-5);
+}
+
+.network-guide .np-file-steps li {
+  display: grid;
+  grid-template-columns: var(--space-5) minmax(0, 1fr);
+  gap: 0 var(--space-3);
+  margin: 0;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.network-guide .np-file-steps li > span:last-child {
+  grid-column: 2;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.network-guide .np-step-index {
+  color: var(--color-entity-kind);
+  font-family: var(--font-mono);
+}
+
+.network-guide .np-cite {
+  margin-inline-start: var(--space-1);
+  white-space: nowrap;
+  font-size: 0.7em;
+}
+
+.network-guide .np-cite a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--space-5);
+  min-height: var(--space-5);
+  font-family: var(--font-mono);
+  text-decoration: none;
+}
+
+.network-guide .np-reference-list {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+}
+
+.network-guide .np-reference-list li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+.network-guide .np-reference-list li:target {
+  background: var(--color-surface-selected);
+  outline: 1px solid var(--color-border-strong);
+}
+
+.network-guide .np-source-id {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.network-guide .np-source-title {
+  font-weight: 600;
+}
+
+.network-guide .np-source-note {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.network-guide .np-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.network-guide a:focus-visible,
+.network-guide summary:focus-visible,
+.network-guide [tabindex]:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: var(--space-1);
+}
+.network-guide .np-svg-fill-background {
+  fill: var(--color-background);
+}
+.network-guide .np-svg-fill-entity-file {
+  fill: var(--color-entity-file);
+}
+.network-guide .np-svg-fill-entity-kind {
+  fill: var(--color-entity-kind);
+}
+.network-guide .np-svg-fill-link {
+  fill: var(--color-link);
+}
+.network-guide .np-svg-fill-none {
+  fill: none;
+}
+.network-guide .np-svg-fill-surface {
+  fill: var(--color-surface);
+}
+.network-guide .np-svg-fill-text {
+  fill: var(--color-text);
+}
+.network-guide .np-svg-fill-text-secondary {
+  fill: var(--color-text-secondary);
+}
+.network-guide .np-svg-font-size-12 {
+  font-size: 12px;
+}
+.network-guide .np-svg-font-size-13 {
+  font-size: 13px;
+}
+.network-guide .np-svg-font-size-15 {
+  font-size: 15px;
+}
+.network-guide .np-svg-font-size-16 {
+  font-size: 16px;
+}
+.network-guide .np-svg-font-size-18 {
+  font-size: 18px;
+}
+.network-guide .np-svg-font-weight-650 {
+  font-weight: 650;
+}
+.network-guide .np-svg-stroke-border-strong {
+  stroke: var(--color-border-strong);
+}
+.network-guide .np-svg-stroke-control-border {
+  stroke: var(--color-control-border);
+}
+.network-guide .np-svg-stroke-dasharray-5-4 {
+  stroke-dasharray: 5 4;
+}
+.network-guide .np-svg-stroke-entity-file {
+  stroke: var(--color-entity-file);
+}
+.network-guide .np-svg-stroke-entity-kind {
+  stroke: var(--color-entity-kind);
+}
+.network-guide .np-svg-stroke-link {
+  stroke: var(--color-link);
+}
+.network-guide .np-svg-stroke-width-1-2 {
+  stroke-width: 1.2;
+}
+.network-guide .np-svg-stroke-width-1-7 {
+  stroke-width: 1.7;
+}
+.network-guide .np-svg-stroke-width-1-8 {
+  stroke-width: 1.8;
+}
+.network-guide .np-svg-stroke-width-2 {
+  stroke-width: 2;
+}
+.network-guide .np-svg-stroke-width-2-1 {
+  stroke-width: 2.1;
+}
+.network-guide .np-svg-stroke-width-2-6 {
+  stroke-width: 2.6;
+}
+.network-guide .np-svg-text-anchor-end {
+  text-anchor: end;
+}
+.network-guide .np-svg-text-anchor-middle {
+  text-anchor: middle;
+}

@@ -1,3 +1,9 @@
+import {
+  articleFolder,
+  articlePath,
+  blogFolderIds,
+  type BlogFolderId,
+} from './blog-tree.ts';
 import type { MedicalNoteId } from './medical-notes.ts';
 import type { NetworkNoteId } from './network-notes.ts';
 import type { CollectionNoteId } from './note-collections.ts';
@@ -26,6 +32,7 @@ export type RouteDescriptor =
   | { kind: 'not-found' }
   | { kind: 'home'; locale: Locale }
   | { kind: 'library'; locale: Locale }
+  | { kind: 'blog-folder'; locale: Locale; folder: BlogFolderId }
   | { kind: 'search'; locale: Locale }
   | { kind: 'notes'; locale: Locale }
   | { kind: 'note-folder'; locale: Locale; folder: NoteFolderId }
@@ -43,7 +50,7 @@ export type RouteKind = RouteDescriptor['kind'];
 export type NavSection = 'home' | 'library' | 'notes' | 'projects';
 
 // Slugs that would collide with fixed Library routes.
-export const reservedSlugs = ['tags', 'topics'] as const;
+export const reservedSlugs = ['tags', 'topics', ...blogFolderIds] as const;
 const segment = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function parseRoute(pathname: string): RouteDescriptor | null {
@@ -89,6 +96,13 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
         : null;
     case 'blog':
       if (rest.length === 0) return { kind: 'library', locale };
+      if (blogFolderIds.some((folder) => folder === a)) {
+        if (rest.length === 1)
+          return { kind: 'blog-folder', locale, folder: a as BlogFolderId };
+        return rest.length === 2 && b && articleFolder(b) === a
+          ? { kind: 'article', locale, slug: b }
+          : null;
+      }
       if (a === 'tags')
         return rest.length === 1
           ? { kind: 'tags', locale }
@@ -99,7 +113,7 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
         return rest.length === 2 && b
           ? { kind: 'topic', locale, topicId: b }
           : null;
-      return rest.length === 1 && a
+      return rest.length === 1 && a && !articleFolder(a)
         ? { kind: 'article', locale, slug: a }
         : null;
     default:
@@ -133,8 +147,10 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/`;
     case 'library':
       return `/${route.locale}/blog/`;
+    case 'blog-folder':
+      return `/${route.locale}/blog/${route.folder}/`;
     case 'article':
-      return `/${route.locale}/blog/${route.slug}/`;
+      return articlePath(route.slug, route.locale);
     case 'notes':
       return `/${route.locale}/note/`;
     case 'note-folder':
@@ -181,6 +197,7 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'home':
       return 'home';
     case 'library':
+    case 'blog-folder':
     case 'article':
     case 'topic':
     case 'tags':

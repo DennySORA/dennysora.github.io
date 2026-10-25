@@ -1,3 +1,5 @@
+import { renderStaticArticle } from './static-article.server.ts';
+import { populatedBlogFolders, articleFolder } from './blog-tree.ts';
 import {
   medicalNoteIds,
   medicalNotes,
@@ -113,7 +115,10 @@ export const loadPosts = once((): LoadedPost[] => {
         throw new Error(`Duplicate/mismatched content ID: ${post.id}`);
       ids.add(post.id);
       const source = readFileSync(
-        join(directory, `${post.sourceLocale}.md`),
+        join(
+          directory,
+          `${post.sourceLocale}.${post.bodyFormat === 'static-html' ? 'html' : 'md'}`,
+        ),
         'utf8',
       );
       const revision = createHash('sha256').update(source).digest('hex');
@@ -121,7 +126,14 @@ export const loadPosts = once((): LoadedPost[] => {
         (locale) => editionStatus(post, locale, revision) === 'published',
       );
       for (const locale of editions)
-        if (!existsSync(join(directory, `${locale}.md`)))
+        if (
+          !existsSync(
+            join(
+              directory,
+              `${locale}.${post.bodyFormat === 'static-html' ? 'html' : 'md'}`,
+            ),
+          )
+        )
           throw new Error(`Missing published body: ${post.id}/${locale}`);
       return { ...post, revision, editions };
     })
@@ -151,6 +163,18 @@ export function renderPost(
   const cached = preview ? undefined : renders.get(key);
   if (cached) return cached;
   const directory = join(contentRoot, 'posts', id);
+  const post = loadPosts().find((item) => item.id === id);
+  if (!post) throw new Error('Unknown article');
+  if (post.bodyFormat === 'static-html') {
+    const body = {
+      ...renderStaticArticle(
+        readFileSync(join(directory, `${locale}.html`), 'utf8'),
+      ),
+      sections: null,
+    };
+    if (!preview) renders.set(key, body);
+    return body;
+  }
   const media = loadPostMedia().files.filter((file) =>
     file.path.startsWith(`posts/${id}/`),
   );
@@ -305,6 +329,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'note-folder', locale, folder });
     for (const category of projectCategories)
       routes.push({ kind: 'project-category', locale, category });
+    for (const folder of populatedBlogFolders(listPosts(locale)))
+      routes.push({ kind: 'blog-folder', locale, folder });
     for (const post of listPosts(locale))
       routes.push({ kind: 'article', locale, slug: post.slug });
     for (const topicId of topicsInLocale(locale))
@@ -325,6 +351,10 @@ export function publishedRoutes(): RouteDescriptor[] {
   return routes;
 }
 export function isIndexable(route: RouteDescriptor): boolean {
+  if (route.kind === 'blog-folder')
+    return listPosts(route.locale).some(
+      (post) => articleFolder(post.slug) === route.folder,
+    );
   if (route.kind === 'not-found' || route.kind === 'search') return false;
   if (route.kind === 'library') return listPosts(route.locale).length > 0;
   return true;
@@ -381,6 +411,24 @@ export function validateContent(): void {
       problems.push(`Reserved slug: ${post.slug}`);
     if (post.updatedAt < post.publishedAt)
       problems.push(`Update precedes publication: ${post.id}`);
+    if (
+      post.bodyFormat === 'static-html' &&
+      Object.values(post.locales).some(
+        (edition) => edition?.publication === 'published',
+      ) &&
+      locales.some((locale) => {
+        const edition = post.locales[locale];
+        return (
+          editionStatus(post, locale, post.revision) !== 'published' ||
+          edition?.sourceRevision !== post.revision ||
+          edition?.translationState !==
+            (locale === post.sourceLocale ? 'original' : 'reviewed')
+        );
+      })
+    )
+      problems.push(
+        `Static article requires all three reviewed editions: ${post.id}`,
+      );
     for (const tag of post.tagIds)
       if (!tagIds.has(tag)) problems.push(`Unknown tag ${tag} in ${post.id}`);
     for (const id of post.relatedPostIds)

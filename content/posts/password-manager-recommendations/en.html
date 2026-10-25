@@ -1,0 +1,1512 @@
+<div class="password-guide">
+  <div aria-label="Introduction" class="pm-intro">
+    <p>
+      These days, every website seems to require an account and a password, but
+      I suspect most people reuse the same set of passwords.
+    </p>
+    <p>
+      That is dangerous. The real problem is that once one website suffers a
+      leak, someone can take the leaked credentials and try them on other
+      websites.
+    </p>
+    <p>
+      To help prevent this, there are one-time passwords (OTPs)—although many
+      people find them inconvenient and avoid enabling them—and password
+      managers.
+    </p>
+    <p>
+      For many people, their password manager is the one built into Chrome. But
+      what happens when they need a password in another app, or somewhere
+      outside the browser?
+    </p>
+    <p>That is why I want to introduce password managers.</p>
+  </div>
+  <p class="pm-precision">
+    A clarification: on some mobile systems, Chrome/Google Password Manager can
+    also fill passwords in other apps; it is not limited entirely to websites.
+    My main concern is whether I can keep a consistent workflow across devices
+    and browsers.<a class="pm-cite" href="#src-14">[14]</a>
+  </p>
+
+  <section>
+    <h2 id="reuse">
+      <span class="pm-n">01 /</span>Why you should not keep reusing the same
+      password
+    </h2>
+    <figure
+      aria-label="Illustration: credentials leaked from website A are tried on websites B, C and D. If every site has a different password, a leak at A does not directly expose the passwords for B and C."
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>The problem with password reuse</span
+        ><span class="pm-visual-id">CREDENTIAL STUFFING</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-breach-flow">
+        <div class="pm-host">
+          <div class="pm-host-top">
+            <span class="pm-topline">SOURCE / Website A</span
+            ><svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 3 22 20H2L12 3Z"></path>
+              <path d="M12 9v5M12 17.1v.1"></path>
+            </svg>
+          </div>
+          <div class="pm-host-title">Credentials leaked</div>
+          <div class="pm-host-desc">
+            An attacker obtains an account name and password
+          </div>
+          <span class="pm-credential"
+            >user@example.com<br />password: ●●●●●●</span
+          >
+        </div>
+        <div class="pm-connector">
+          <svg aria-hidden="true" viewBox="0 0 82 33">
+            <path d="M2 16H69"></path>
+            <polyline points="60,8 70,16 60,24"></polyline></svg
+          >Try them elsewhere
+        </div>
+        <div class="pm-targets">
+          <div class="pm-target">
+            <span>Website B</span><span class="pm-risk">May log in</span>
+          </div>
+          <div class="pm-target">
+            <span>Website C</span><span class="pm-risk">May log in</span>
+          </div>
+          <div class="pm-target">
+            <span>Website D</span><span class="pm-risk">May log in</span>
+          </div>
+        </div>
+      </div>
+      <div class="pm-separate-pass">
+        <span class="pm-check">✓</span
+        ><span
+          ><b>Use a different password on every website</b>, so a leak at A does
+          not directly expose the passwords for B and C.</span
+        >
+      </div>
+    </figure>
+    <p>
+      This attack is called <strong>credential stuffing</strong>: attackers do
+      not need to crack every website. They can take a list of credentials
+      leaked from website A and automate attempts against websites B, C and D.
+      If any of those sites uses the same password, a login may succeed.
+    </p>
+    <p>
+      A password manager addresses this problem by
+      <strong>generating a different random password for every website</strong>,
+      such as a random 20-character string. You only need to remember the
+      manager&#x27;s master password, not every site&#x27;s password. Even if
+      website A is compromised, that password cannot directly be used to log in
+      to website B.
+    </p>
+    <div aria-label="How three common attacks differ" class="pm-micro-points">
+      <div>
+        <b>Password reuse</b
+        ><span>A leak in one place may affect other accounts.</span>
+      </div>
+      <div>
+        <b>Phishing websites</b
+        ><span
+          >Trick you into entering a password; unique passwords alone do not
+          guarantee protection.</span
+        >
+      </div>
+      <div>
+        <b>Compromised devices</b
+        ><span
+          >May expose credentials while you use them; endpoint security must
+          address this.</span
+        >
+      </div>
+    </div>
+    <p class="pm-plain-aside">
+      A password manager is therefore not a replacement for OTP or FIDO2. It
+      first addresses the difficulty of managing a large number of website
+      passwords safely.
+    </p>
+  </section>
+  <section>
+    <h2 id="vault">
+      <span class="pm-n">02 /</span>If passwords are in the cloud, why might the
+      provider be unable to read them?
+    </h2>
+    <p>
+      A password manager usually stores your data in a <strong>vault</strong>.
+      It can sync across devices, but the key point is:
+      <strong>encryption and decryption happen on your device</strong>. The
+      server primarily receives encrypted data; it does not open the safe for
+      you every time.
+    </p>
+    <figure
+      aria-label="The master password goes through local key derivation and decryption to unlock the local vault. Websites A, B and C in the vault have different random passwords; the server synchronizes encrypted data."
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>One master password manages many different passwords</span
+        ><span class="pm-visual-id">LOCAL DECRYPTION</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-vault-steps">
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="8" cy="14" r="4.6"></circle>
+            <path
+              d="m11.5 10.7 8-8 1.8 1.8-2.5 2.5 1.9 1.9-2.7 2.7-1.9-1.9-2.3 2.3"
+            ></path></svg
+          ><strong>Master password</strong><span>The one you remember</span>
+        </div>
+        <div class="pm-v-arrow">→</div>
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <rect height="11" rx="2.5" width="15" x="4.5" y="10"></rect>
+            <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"></path>
+            <path d="M12 14v3"></path></svg
+          ><strong>Unlock the vault locally</strong
+          ><span>Keys are used only in an appropriate device environment</span>
+        </div>
+        <div class="pm-v-arrow">↔</div>
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path
+              d="M7 19H6a4 4 0 0 1-1.4-7.75A7.5 7.5 0 0 1 19 12a3.5 3.5 0 0 1-.5 7H7Z"
+            ></path>
+            <path d="m8 15 2.5 2.5L16 12"></path></svg
+          ><strong>Encrypted sync</strong
+          ><span>The server stores ciphertext</span>
+        </div>
+      </div>
+      <div aria-hidden="true" class="pm-password-lines">
+        <div class="pm-pass"><b>Website A</b><span>k8@V!9p...Q</span></div>
+        <div class="pm-pass"><b>Website B</b><span>T3#n2Y...w</span></div>
+        <div class="pm-pass"><b>Website C</b><span>bP7$4x...M</span></div>
+      </div>
+      <p class="pm-figure-note">
+        The strings above are examples only; do not use them as real passwords.
+        This diagram is simplified. The detailed key hierarchy is in the
+        <a href="#appendix">technical notes</a>.
+      </p>
+    </figure>
+    <h3>
+      It is not simply “the master password directly encrypts everything with
+      AES”
+    </h3>
+    <p>
+      Using Bitwarden&#x27;s usual master-password flow as an example, we can
+      split it into three layers: first, a <strong>KDF</strong> turns the master
+      password into key material; that material then unlocks a protected
+      <strong>symmetric vault key</strong>; only then does the vault key unlock
+      the stored website passwords. This design is called a
+      <strong>key hierarchy</strong>.<a class="pm-cite" href="#src-01">[01]</a>
+    </p>
+    <figure
+      aria-label="Simplified Bitwarden key hierarchy. On the left, the user&#x27;s device derives keys from the master password using a KDF and HKDF, unwraps the synchronized protected symmetric key, and decrypts the vault. On the right, the server stores only the encrypted vault and protected key."
+      class="pm-visual"
+    >
+      <figcaption>
+        <span
+          >How the master password, vault key and server divide the work</span
+        ><span class="pm-visual-id">KEY HIERARCHY</span>
+      </figcaption>
+      <div class="pm-boundary-header">
+        <span>User device / LOCAL</span><span>Sync service / SERVER</span>
+      </div>
+      <div class="pm-keymap">
+        <div class="pm-keymap-local">
+          <div class="pm-key-node">
+            <small>01 · You enter</small><strong>Master Password</strong
+            ><span>A human-memorable secret</span>
+          </div>
+          <div class="pm-key-down">
+            ↓ <small>PBKDF2 / Argon2id, HKDF</small>
+          </div>
+          <div class="pm-key-node">
+            <small>02 · Derive</small><strong>Stretched Master Key</strong
+            ><span>Used to unlock the protected key</span>
+          </div>
+          <div class="pm-key-down">↓ <small>Unwrap</small></div>
+          <div class="pm-key-node pm-positive">
+            <small>03 · Obtain</small><strong>symmetric vault key</strong
+            ><span>Decrypt website passwords locally</span>
+          </div>
+        </div>
+        <div class="pm-keymap-network">
+          <span>← Sync ciphertext</span><span>← Protected Symmetric Key</span
+          ><span>The server does not decrypt the plaintext →</span>
+        </div>
+        <div class="pm-keymap-server">
+          <div>
+            <strong>Encrypted Vault</strong
+            ><small>Encrypted account data</small>
+          </div>
+          <div>
+            <strong>Protected Key</strong
+            ><small>Still needs local unwrapping</small>
+          </div>
+          <p>
+            The server also holds data needed for login and operations, but that
+            is not the same as holding vault plaintext.
+          </p>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        Conceptual illustration: the real implementation also includes
+        item-level encryption keys, login hashes and other steps. Not every
+        product uses the same key names.<a href="#src-01">[01]</a>
+      </p>
+    </figure>
+    <h3>What do KDFs, AES and MFA each do?</h3>
+    <div class="pm-mechanism-list">
+      <div>
+        <b>KDF</b
+        ><span
+          >Deliberately make each master-password guess computationally more
+          expensive; they cannot turn a weak password into a strong one.</span
+        >
+      </div>
+      <div>
+        <b>AES + integrity verification</b
+        ><span
+          >Protect stored vault contents against direct reading or undetected
+          modification.</span
+        >
+      </div>
+      <div>
+        <b>MFA / two-step verification</b
+        ><span
+          >Add requirements for logging in to an account;
+          <strong
+            >they do not stop an attacker from guessing offline against
+            ciphertext already stolen</strong
+          >.</span
+        >
+      </div>
+    </div>
+    <p>
+      Do not read “zero knowledge” as “absolutely secure,” either. If your
+      computer is already compromised and you unlock the vault, malware may
+      still obtain data from the screen, memory or filled-in fields.
+      <strong>Stolen cloud storage</strong> and
+      <strong>control of a device in use</strong> are different threats.<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <div
+      aria-label="Attack scenarios and protective measures"
+      class="pm-scroll-table"
+      role="region"
+      tabindex="0"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>What the attacker gets</th>
+            <th>What helps?</th>
+            <th>What does not help?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Credentials leaked from website A</td>
+            <td>Unique passwords per site; MFA</td>
+            <td>Changing only one or two characters of the old password</td>
+          </tr>
+          <tr>
+            <td>A copy of an encrypted cloud vault</td>
+            <td>A strong master password, KDF and key design</td>
+            <td>Login MFA enabled only after the theft</td>
+          </tr>
+          <tr>
+            <td>An unlocked computer</td>
+            <td>System updates, endpoint protection and locking habits</td>
+            <td>Relying only on a cloud zero-knowledge claim</td>
+          </tr>
+          <tr>
+            <td>Loss of the only phone or security key</td>
+            <td>Offline recovery codes, backup keys and verified backups</td>
+            <td>Keeping the only backup on the original phone</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section>
+    <h2 id="recommend">
+      <span class="pm-n">03 /</span>How do Bitwarden and 1Password differ?
+    </h2>
+    <p>
+      These are the two I would look at first. Neither simply stores plaintext
+      passwords in the cloud, but their designs differ somewhat for the scenario
+      in which
+      <strong>cloud backups fall into an attacker&#x27;s hands</strong>.
+    </p>
+    <div class="pm-pick-list">
+      <div class="pm-pick">
+        <div class="pm-pick-name">
+          Bitwarden<small>Open source · Cross-platform</small>
+        </div>
+        <div class="pm-pick-body">
+          <p>
+            This would be my first recommendation. The free plan is sufficient
+            for many people, and it offers browser extensions, desktop and
+            mobile apps, and autofill.
+          </p>
+          <p class="pm-con">
+            It is worth considering first if you value source-code transparency
+            and self-hosting flexibility; self-hosting means taking
+            responsibility for updates and backups.<a
+              class="pm-cite"
+              href="#src-01"
+              >[01]</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="pm-pick">
+        <div class="pm-pick-name">
+          1Password<small>Subscription · Integrated experience</small>
+        </div>
+        <div class="pm-pick-body">
+          <p>
+            If you do not mind paying, I would also recommend it. Its interface
+            is well integrated, and it adds a <strong>Secret Key</strong> to
+            reduce the risk of decryption by guessing only the master password
+            after a server-side data leak.
+          </p>
+          <p class="pm-con">
+            Keep the Secret Key safe along with your recovery materials.<a
+              class="pm-cite"
+              href="#src-04"
+              >[04]</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+    <figure
+      aria-label="Comparison of the key secrets involved when only server-side data is leaked. Bitwarden&#x27;s core protection relies on the master password and KDF; 1Password additionally incorporates a Secret Key that is not stored on the server. Neither protects against control of an unlocked client."
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>Suppose the provider&#x27;s encrypted database is copied</span
+        ><span class="pm-visual-id">OFFLINE ATTACK</span>
+      </figcaption>
+      <div class="pm-breach-compare">
+        <div class="pm-compare-label">Bitwarden</div>
+        <div class="pm-compare-chain">
+          <span>Vault ciphertext</span><i>＋</i
+          ><span>Guess the master password</span><i>→</i
+          ><span class="pm-outcome"
+            >The KDF makes each guess more expensive</span
+          >
+        </div>
+        <div class="pm-compare-label">1Password</div>
+        <div class="pm-compare-chain">
+          <span>Vault ciphertext</span><i>＋</i
+          ><span>Guess the Account Password</span><i>＋</i
+          ><span class="pm-positive-chip">The Secret Key is also needed</span>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        Both still require a strong master password. 1Password&#x27;s Secret Key
+        is not a second password to memorize; it is usually stored on authorized
+        devices and in the Emergency Kit. If a device is also compromised, the
+        threat model changes.<a href="#src-04">[04]</a>
+      </p>
+    </figure>
+    <p>
+      <strong>Bitwarden</strong> offers publicly available source code,
+      cross-platform apps and self-hosting flexibility. It is attractive to
+      people who want to understand the key flow and control their own
+      deployment. But self-hosting is not a magical encryption upgrade: TLS,
+      updates, backups, monitoring and disaster recovery become your
+      responsibility.<a class="pm-cite" href="#src-01">[01]</a>
+    </p>
+    <p>
+      <strong>1Password</strong> protects the vault using a high-entropy,
+      device-generated <strong>Secret Key</strong> together with the Account
+      Password, while SRP handles login authentication. This primarily adds a
+      barrier when server-side data is leaked but the attacker cannot obtain
+      your device secret; it does not guarantee isolation when an authorized
+      device is infected.<a class="pm-cite" href="#src-04">[04]</a
+      ><a class="pm-cite" href="#src-19">[19]</a>
+    </p>
+    <p class="pm-bare-note">
+      As for LastPass, I do not currently put it among my first choices. The
+      reason is the long-term risk left by the 2022 backup breach: attackers may
+      retain vault ciphertext and continue trying weak master passwords in the
+      future. That does not mean every user&#x27;s passwords were leaked in
+      plaintext.<a class="pm-cite" href="#src-15">[15]</a>
+    </p>
+  </section>
+  <section>
+    <h2 id="totp">
+      <span class="pm-n">04 /</span>Where do those six OTP digits actually come
+      from?
+    </h2>
+    <p>
+      Many websites ask you to enable OTP and scan a QR code, after which your
+      phone shows a new six-digit number periodically. A common implementation
+      is <strong>TOTP（Time-based One-Time Password）</strong>. The server does
+      not send a new password to the phone every 30 seconds.<a
+        class="pm-cite"
+        href="#src-11"
+        >[11]</a
+      >
+    </p>
+    <p>
+      During initial setup, the website generates a
+      <strong>secret seed</strong> and passes it to an authenticator such as
+      Authy through a QR code. After that,
+      <strong
+        >the website and phone independently calculate using the same seed and
+        time window</strong
+      >, so their results agree. This also explains why the phone can often
+      generate verification codes without an internet connection.
+    </p>
+    <figure
+      aria-label="How TOTP works: during registration, the website gives Authy a secret seed through a QR code. At login, both sides use that seed and the same 30-second time window to calculate the same six-digit code. The numbers shown are illustrative, not real codes."
+      class="pm-visual"
+    >
+      <figcaption>
+        <span
+          >Not a new password downloaded from the cloud every 30 seconds</span
+        ><span class="pm-visual-id">TOTP / SHARED SECRET</span>
+      </figcaption>
+      <div class="pm-otp-setup">
+        <div>
+          <small>Initial setup</small><b>The website creates secret seed K</b>
+        </div>
+        <span>→ Scan QR code →</span>
+        <div><small>Your phone</small><b>Authy stores the same K</b></div>
+      </div>
+      <div class="pm-otp-divider">
+        Every subsequent login · Each side calculates independently
+      </div>
+      <div class="pm-otp-duo">
+        <div class="pm-otp-unit">
+          <small>WEBSITE</small>
+          <div class="pm-otp-func">HMAC(K, time window T)</div>
+          <div class="pm-otp-result">482 916</div>
+          <div class="pm-otp-caption">
+            The server calculates and compares locally
+          </div>
+        </div>
+        <div class="pm-otp-center">
+          ＝<small>Same K<br />Same T</small>
+        </div>
+        <div class="pm-otp-unit">
+          <small>AUTHENTICATOR / Phone</small>
+          <div class="pm-otp-func">HMAC(K, time window T)</div>
+          <div class="pm-otp-result">482 916</div>
+          <div class="pm-otp-caption">Can generate codes offline</div>
+        </div>
+      </div>
+      <div class="pm-otp-windows">
+        <span>Time window T</span>
+        <div>00–29 seconds</div>
+        <div>30–59 seconds</div>
+        <div>The next 30 seconds</div>
+        <span class="pm-otp-foot"
+          >The time window changes → The code usually changes too</span
+        >
+      </div>
+      <p class="pm-figure-note">
+        The numbers and timeline illustrate the principle; these are not usable
+        codes. The service determines the actual time tolerance, HMAC algorithm
+        and number of digits.<a href="#src-11">[11]</a>
+      </p>
+    </figure>
+    <p>
+      TOTP can stop someone who has stolen only your password, but not your
+      phone or seed, from logging in directly. However, the six digits are
+      <strong>not bound to the real website&#x27;s domain</strong>: if you enter
+      a code on a fake login page, an attacker may immediately relay it to the
+      real website. That is the problem FIDO2 addresses in the next section.<a
+        class="pm-cite"
+        href="#src-12"
+        >[12]</a
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="fido">
+      <span class="pm-n">05 /</span>Why are FIDO2 and passkeys more
+      phishing-resistant than manually entered OTPs?
+    </h2>
+    <p>
+      A six-digit TOTP is an answer that <strong>can be passed along</strong>.
+      FIDO2/WebAuthn works differently: at registration, a security key or
+      device generates a <strong>Private Key / Public Key</strong> pair; the
+      website stores only the Public Key. At login, the website sends a one-time
+      <strong>Challenge</strong>, which the authenticator signs using the
+      Private Key and the website verifies.<a class="pm-cite" href="#src-13"
+        >[13]</a
+      >
+    </p>
+    <figure
+      aria-label="Comparison of real-time phishing relays. A TOTP captured on a fake website can be forwarded to the real one. WebAuthn credentials are constrained by Origin and RP ID, so a fake website cannot produce a valid credential response for the real domain."
+      class="pm-visual"
+    >
+      <figcaption>
+        <span
+          >The difference is not six digits, but whether the answer can be
+          relayed</span
+        ><span class="pm-visual-id">PHISHING RESISTANCE</span>
+      </figcaption>
+      <div class="pm-fido-cases">
+        <div class="pm-fido-case pm-vulnerable">
+          <b>Using TOTP</b>
+          <div class="pm-fido-trail">
+            <span>Fake website</span><i>Capture six-digit code →</i
+            ><span>Real website</span>
+          </div>
+          <p>An attacker may relay the code before it expires.</p>
+        </div>
+        <div class="pm-fido-case pm-resilient">
+          <b>Using FIDO2/WebAuthn</b>
+          <div class="pm-fido-trail">
+            <span>Fake domain</span><i>RP ID mismatch ×</i
+            ><span>Credential for the real domain</span>
+          </div>
+          <p>
+            The browser/authenticator enforces domain constraints; the server
+            must also verify the Origin, Challenge, signature and other
+            conditions.
+          </p>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        This describes standards-compliant, correctly implemented WebAuthn
+        login. It cannot prevent theft of an authenticated session, nor fix weak
+        account-recovery options that a website still offers.<a href="#src-12"
+          >[12]</a
+        ><a href="#src-13">[13]</a>
+      </p>
+    </figure>
+    <p>
+      <strong>Passkey</strong> is a sign-in experience built on FIDO credentials
+      that usually removes the need to enter a traditional website password. A
+      passkey can stay on specific hardware or sync in encrypted form within a
+      supported ecosystem. These approaches have different device-loss and
+      recovery risks.
+    </p>
+    <p>
+      Also, <strong>YubiKey is a hardware product; FIDO2 is a protocol</strong>.
+      A compatible security key may support traditional OTP, TOTP and FIDO2.
+      Plugging in a physical key does not automatically provide WebAuthn&#x27;s
+      phishing resistance.<a class="pm-cite" href="#src-21">[21]</a>
+    </p>
+  </section>
+  <section>
+    <h2 id="separation">
+      <span class="pm-n">06 /</span>I still prefer keeping TOTP separate from
+      the vault
+    </h2>
+    <p>
+      I still recommend Authy, and I would try to keep TOTP separate from the
+      vault—not just in a different system, but preferably on separate hardware.
+    </p>
+    <p>
+      This is not because two apps merely sound safer. The goal is to avoid
+      <strong>a single point of compromise</strong> exposing both the password
+      and second factor. If website passwords and TOTP seeds are in the same
+      unlocked vault, an attacker who can read the entire vault may obtain both
+      secrets together.<a class="pm-cite" href="#src-20">[20]</a>
+    </p>
+    <figure
+      aria-label="On the left, website passwords and TOTP seeds share a vault and a point of compromise. On the right, a password manager on the computer stores passwords, while Authy on another phone stores TOTP; a separate hardware key is used when the website supports FIDO2."
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>Separate apps are a start; separate devices are better</span
+        ><span class="pm-visual-id">SEPARATE TRUST</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-split-graphic">
+        <div class="pm-device-case">
+          <div class="pm-case-kicker">
+            One vault / Convenient but concentrated
+          </div>
+          <div class="pm-device-display">
+            <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <rect height="11" rx="2.5" width="15" x="4.5" y="10"></rect>
+              <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"></path>
+              <path d="M12 14v3"></path>
+            </svg>
+            <strong>Vault</strong>
+            <div class="pm-secrets">
+              <span>Website passwords</span><span>TOTP seeds</span>
+            </div>
+          </div>
+          <div class="pm-case-caption">
+            If the whole vault is read, both sets of secrets may be compromised
+            together.
+          </div>
+        </div>
+        <div class="pm-device-case pm-isolated">
+          <div class="pm-case-kicker">
+            My preferred approach / Separate devices
+          </div>
+          <div class="pm-devices">
+            <div class="pm-minidevice">
+              <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <rect
+                  height="12.3"
+                  rx="1.3"
+                  width="17.2"
+                  x="3.4"
+                  y="4.5"
+                ></rect>
+                <path d="m2.4 20 1-3.2h17.2l1 3.2H2.4Z"></path></svg
+              ><strong>Computer</strong><small>Vault / Passwords</small>
+            </div>
+            <div class="pm-middle-device">Stored<br />separately</div>
+            <div class="pm-minidevice">
+              <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <rect height="20" rx="2.1" width="10.6" x="6.7" y="2"></rect>
+                <path d="M10.4 18.7h3.2"></path></svg
+              ><strong>Phone</strong><small>Authy / TOTP</small>
+            </div>
+          </div>
+          <div class="pm-key-bar">
+            <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <circle cx="8" cy="14" r="4.6"></circle>
+              <path
+                d="m11.5 10.7 8-8 1.8 1.8-2.5 2.5 1.9 1.9-2.7 2.7-1.9-1.9-2.3 2.3"
+              ></path></svg
+            ><span
+              >For important accounts that support FIDO2, I would prefer a
+              separate physical security key.</span
+            >
+          </div>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        Separation does not prevent every phishing attack: TOTP codes can still
+        be relayed in real time. FIDO2/WebAuthn provides domain-specific
+        protection.
+      </p>
+    </figure>
+    <h3>I would divide separation into three levels</h3>
+    <div class="pm-tier-list">
+      <div>
+        <span class="pm-tier-index">01</span
+        ><b>Passwords and TOTP in the same vault</b>
+        <p>
+          The most convenient option, and not necessarily unreasonable for
+          ordinary low-risk sites; but a compromise of the entire vault may
+          expose both secrets.
+        </p>
+      </div>
+      <div>
+        <span class="pm-tier-index">02</span
+        ><b>Different apps, with TOTP on another phone</b>
+        <p>
+          For example, Bitwarden on the computer and Authy on the phone. This
+          can reduce the consequences of a single-vault compromise, although
+          shared backup accounts also matter.
+        </p>
+      </div>
+      <div>
+        <span class="pm-tier-index">03</span
+        ><b>A separate hardware security key, preferably using FIDO2</b>
+        <p>
+          For your primary email, cloud, financial and administrator accounts,
+          prioritize FIDO2 where supported. Prepare a second key so losing one
+          does not leave you unable to recover.
+        </p>
+      </div>
+    </div>
+    <div class="pm-authy-strip">
+      <strong>Authy</strong>
+      <p>
+        Suitable for people who want to manage TOTP separately on a phone.
+        Backups can sync in encrypted form, but
+        <strong>do not keep the backup password only in the same vault</strong
+        >.<a class="pm-cite" href="#src-06">[06]</a>
+      </p>
+      <p class="pm-tiny">
+        Note: Authy&#x27;s Windows, macOS and Linux desktop apps reached end of
+        support in March 2024; it now primarily uses mobile apps. Once you have
+        set up a backup device, the official recommendation is to disable the
+        Multi-Device option that allows new devices to be added.<a
+          class="pm-cite"
+          href="#src-08"
+          >[08]</a
+        >
+        <a class="pm-cite" href="#src-07">[07]</a>
+      </p>
+    </div>
+    <p>
+      Twilio does not keep or recover your Authy backup password for you. If you
+      enable backup sync,
+      <strong>you must be able to find the backup password yourself</strong>; do
+      not lock it in the same place as the vault&#x27;s only recovery method.
+      After disabling the addition of new devices through Multi-Device, make
+      sure you still have a working backup device or recovery route.<a
+        class="pm-cite"
+        href="#src-06"
+        >[06]</a
+      ><a class="pm-cite" href="#src-07">[07]</a>
+    </p>
+    <p class="pm-bare-note">
+      Other options worth comparing include 2FAS, Aegis, Ente Auth and Yubico
+      Authenticator. What matters is not the app&#x27;s popularity, but where it
+      stores seeds, whether it supports encrypted backups, whether you can
+      recover after losing your phone, and whether it is truly isolated from
+      your main vault.
+    </p>
+  </section>
+  <section>
+    <h2 id="autofill">
+      <span class="pm-n">07 /</span>Autofill is convenient, but it has its own
+      security boundaries
+    </h2>
+    <p>
+      Autofill is a useful option, especially since many apps read the
+      clipboard.
+    </p>
+    <p class="pm-precision">
+      Modern Android and iOS versions impose permissions, prompts or background
+      restrictions on clipboard access; not every app can peek at it at any
+      time. Still, putting a password on the clipboard adds an exposure path.
+      System-integrated autofill avoids having to copy and paste it each time.<a
+        class="pm-cite"
+        href="#src-10"
+        >[10]</a
+      ><a class="pm-cite" href="#src-17">[17]</a>
+    </p>
+    <figure
+      aria-label="Copying and pasting sends data through the clipboard; system autofill usually avoids placing the password there. Both approaches still require you to check that the target website or app is trustworthy."
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>Let fewer passwords pass through the clipboard</span
+        ><span class="pm-visual-id">AUTOFILL VS COPY</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-fill-lines">
+        <div class="pm-fill-lane pm-copy">
+          <div class="pm-fill-label">Copy and paste</div>
+          <div class="pm-fill-node">Vault</div>
+          <div class="pm-fill-node">Clipboard</div>
+          <div class="pm-fill-node">Website / App</div>
+        </div>
+        <div class="pm-fill-lane pm-auto">
+          <div class="pm-fill-label">System autofill</div>
+          <div class="pm-fill-node">Vault</div>
+          <div class="pm-fill-node">System autofill service</div>
+          <div class="pm-fill-node">Website / App</div>
+        </div>
+      </div>
+      <div aria-hidden="true" class="pm-fill-summary">
+        <div>
+          <b>Caution</b
+          ><span
+            >Secrets may remain on the clipboard; access restrictions differ by
+            system version.</span
+          >
+        </div>
+        <div>
+          <b>Prefer</b
+          ><span>Use system autofill and check the current app and URL.</span>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        Autofill does not make a malicious app safe: if you actively fill a
+        password into a fake login screen, it may still be captured.<a
+          class="pm-cite"
+          href="#src-09"
+          >[09]</a
+        >
+        <a class="pm-cite" href="#src-10">[10]</a>
+      </p>
+    </figure>
+    <h3>How does the manager know which website you are on?</h3>
+    <p>
+      For a browser extension, a password manager typically compares the current
+      page&#x27;s <strong>URL／URI</strong> with the address saved in the vault.
+      Bitwarden&#x27;s default <strong>Base domain</strong> works for most
+      websites, but you can choose Host or Exact to reduce suggestions on
+      subdomains where you do not want to fill credentials.<a
+        class="pm-cite"
+        href="#src-18"
+        >[18]</a
+      >
+    </p>
+    <div
+      aria-label="Illustration of URL matching methods"
+      class="pm-uri-example"
+    >
+      <div class="pm-uri-header">
+        Suppose the saved address is <code>https://login.example.com/</code>
+      </div>
+      <div>
+        <b>Base domain</b
+        ><span
+          >Different subdomains under <code>example.com</code> may all
+          match.</span
+        >
+      </div>
+      <div>
+        <b>Host</b
+        ><span>Limited to the hostname <code>login.example.com</code>.</span>
+      </div>
+      <div>
+        <b>Exact</b
+        ><span
+          >The entire URL must match exactly; this is stricter, but redirect
+          parameters may cause a mismatch.</span
+        >
+      </div>
+    </div>
+    <p>
+      However,
+      <strong
+        >an autofill suggestion is not a guarantee that a website is
+        trustworthy</strong
+      >. If the site itself is compromised or has malicious fields, it may still
+      read a filled password. Bitwarden warns about or blocks certain untrusted
+      iframes, so I would <strong>turn off autofill on page load</strong> and
+      trigger it with a keyboard shortcut or manually when needed.<a
+        class="pm-cite"
+        href="#src-09"
+        >[09]</a
+      >
+    </p>
+    <p>
+      Mobile autofill typically relies on operating-system services and
+      information such as app identity and associated domains. It may not make
+      the same fine-grained URL-path decisions as a desktop browser. Even secure
+      autofill does not automatically make a malicious app safe.
+    </p>
+  </section>
+  <section>
+    <h2 id="setup">
+      <span class="pm-n">08 /</span>The order I would use to get started
+    </h2>
+    <ol class="pm-checklist">
+      <li>
+        <span class="pm-counter">01</span>
+        <div>
+          <strong>Choose a unique, long, hard-to-guess master password</strong
+          ><span
+            >Do not reuse it on any website. Consider a randomly generated
+            multiword passphrase instead of a birthday plus a predictable
+            pattern.</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">02</span>
+        <div>
+          <strong>Give each frequently used website a unique password</strong
+          ><span
+            >Use the manager to generate long random passwords. Start with
+            email, cloud and financial accounts, and sites where you have reused
+            passwords.</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">03</span>
+        <div>
+          <strong>Add a second factor to the vault login itself</strong
+          ><span
+            >Prefer a FIDO2 security key where supported; otherwise use TOTP on
+            a separate phone. Do not keep the only MFA secret inside the very
+            vault you need it to open.</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">04</span>
+        <div>
+          <strong>Use autofill, but keep the confirmation step</strong
+          ><span
+            >Check the domain or app, disable autofill on page load, and
+            consider Host or Exact URI matching for sensitive services.</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">05</span>
+        <div>
+          <strong>Prepare independent recovery routes for root accounts</strong
+          ><span
+            >Your primary email, password manager and passkey-sync account
+            should not depend on a single circular recovery chain.</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">06</span>
+        <div>
+          <strong>Back up encrypted exports and actually test recovery</strong
+          ><span
+            >For Bitwarden, consider password-protected encrypted JSON. Handle
+            attachments separately; an ordinary ZIP is not an encrypted
+            backup.<a class="pm-cite" href="#src-16">[16]</a></span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">07</span>
+        <div>
+          <strong>Keep the system updated and lock the vault regularly</strong
+          ><span
+            >Remove unnecessary browser extensions, and do not unlock the vault
+            on untrusted shared devices.</span
+          >
+        </div>
+      </li>
+    </ol>
+    <figure
+      aria-label="Illustration of a circular dependency. If you cannot log in to the password manager and the only TOTP secret and recovery codes are inside that vault, you may be permanently locked out. The right side shows independent backup devices, security keys and offline recovery codes breaking that dependency."
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>When setting up backups, imagine your worst day</span
+        ><span class="pm-visual-id">RECOVERY LOOP</span>
+      </figcaption>
+      <div class="pm-recovery-flow">
+        <div class="pm-recovery-problem">
+          <b>Cannot log in to the vault</b
+          ><span>Need TOTP / recovery codes</span
+          ><span>But the only copies are in the vault</span
+          ><strong>A circular dependency</strong>
+        </div>
+        <span aria-hidden="true" class="pm-recovery-arrow">→</span>
+        <div class="pm-recovery-solution">
+          <b>Keep recovery capability separate</b
+          ><span>Offline recovery codes</span
+          ><span>A backup FIDO2 key or separate phone</span
+          ><strong>Actually test recovery</strong>
+        </div>
+      </div>
+    </figure>
+  </section>
+  <section>
+    <h2 id="appendix">
+      <span class="pm-n">09 /</span>Want more technical detail? Expand the
+      algorithms
+    </h2>
+    <p class="pm-appendix-intro">
+      The sections above explained why these practices matter. Below are the key
+      flows, formulas, protocol checks and exceptions; open whichever part you
+      want to explore.
+    </p>
+    <div class="pm-details-group">
+      <details>
+        <summary>
+          01 · Bitwarden&#x27;s key hierarchy: from Master Key to vault
+          plaintext
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            For a typical Bitwarden account using a master password, the client
+            runs a KDF with inputs including the master password and account
+            email to obtain the <strong>Master Key</strong>. HKDF then expands
+            it into the <strong>Stretched Master Key</strong>, which unlocks the
+            <strong>Protected Symmetric Key</strong> retrieved from the server
+            to obtain the <strong>User Symmetric Key</strong>. Data is decrypted
+            on the client. This is a conceptual flow that omits item-level
+            encryption keys and other login methods.<a
+              class="pm-cite"
+              href="#src-01"
+              >[01]</a
+            >
+          </p>
+          <pre>
+Master Password + account salt
+    ↓ KDF (PBKDF2 or Argon2id)
+Master Key
+    ↓ HKDF (expand key material for distinct purposes)
+Stretched Master Key
+    + Protected Symmetric Key stored on the server
+    ↓ Unlock locally
+User Symmetric Key
+    ↓ Unlock vault-item keys and ciphertext
+Vault plaintext (used only when needed on authorized devices)</pre>
+          <p>
+            Distinguish <strong>login authentication</strong> from
+            <strong>vault decryption</strong>: login typically also uses a
+            derived hash that the server can verify, plus MFA; decryption
+            obtains the actual symmetric key. Changing the master password,
+            adjusting KDF parameters and rotating the vault encryption key are
+            different operations. A password change does not instantly
+            invalidate old ciphertext that an attacker has already saved.<a
+              class="pm-cite"
+              href="#src-22"
+              >[22]</a
+            >
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          02 · PBKDF2 and Argon2id: salt, iterations and memory cost
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            <strong>KDF</strong> takes a human-memorable master password that
+            may have insufficient entropy. Salt and expensive computation make
+            the attacker pay again for every guess. Salt
+            <strong>usually does not need to be secret</strong>; its purpose is
+            to make the same password produce different outputs for different
+            accounts and make precomputed tables harder to reuse.
+          </p>
+          <pre>
+PBKDF2-HMAC-SHA256(P, salt, c, dkLen)
+P      = master password
+salt   = non-secret salt
+c      = iteration count
+ dkLen = required derived-key length
+
+Argon2id(P, salt, m, t, p)
+m = memory cost
+ t = time / iteration cost
+ p = parallelism</pre>
+          <p>
+            Reference defaults in Bitwarden&#x27;s documentation:
+            <strong>PBKDF2-HMAC-SHA256: 600,000 iterations</strong>;
+            <strong>Argon2id: 32 MiB, 6 iterations, parallelism 4</strong>.
+            PBKDF2 mainly increases repeated computation; Argon2id also requires
+            memory, making highly parallel guessing more expensive.
+            <strong>600,000 cannot be compared directly with 6</strong>, because
+            the work models are entirely different.<a
+              class="pm-cite"
+              href="#src-02"
+              >[02]</a
+            >
+          </p>
+          <p class="pm-minor">
+            A simplified cost model is: total guessing time ≈ number of guesses
+            × cost per guess ÷ effective parallelism. GPUs, memory bandwidth,
+            KDF parameters and hardware configuration can change the result
+            substantially, so unlock time cannot be converted directly into a
+            reliable cracking-time estimate. A long, unique master password
+            remains the first line of defense.
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          03 · AES-CBC/HMAC and AES-GCM: not a contest of bigger numbers
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            “AES-256” describes the key length, not the security of the entire
+            encryption protocol. Besides encrypting the data, you also need
+            <strong>integrity verification</strong>; otherwise, an attacker may
+            modify ciphertext without reliable detection.
+          </p>
+          <ul>
+            <li>
+              <strong>Bitwarden: AES-256-CBC + HMAC-SHA256</strong>. CBC
+              provides confidentiality; HMAC additionally verifies ciphertext
+              integrity. Security also depends on correct IV handling, key
+              separation and verification order.
+            </li>
+            <li>
+              <strong>1Password: AES-256-GCM</strong>. GCM is an AEAD mode that
+              integrates encryption and authentication. It likewise requires
+              careful nonce/IV management; a nonce must not be reused where
+              uniqueness is required.
+            </li>
+          </ul>
+          <p>
+            The names CBC and GCM alone do not tell you which overall product is
+            safer. Endpoints, key management and incident recovery often matter
+            just as much.<a class="pm-cite" href="#src-03">[03]</a
+            ><a class="pm-cite" href="#src-05">[05]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          04 · The TOTP formula: HMAC, time windows and dynamic truncation
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            TOTP is based on HOTP. The website and authenticator share a random
+            secret seed <code>K</code>, map the current time to a counter
+            <code>T</code>, then turn the HMAC result into a short number.<a
+              class="pm-cite"
+              href="#src-11"
+              >[11]</a
+            >
+          </p>
+          <pre>
+T = floor((UnixTime − T₀) / X)
+H = HMAC(K, encode_8_byte_big_endian(T))
+OTP = DynamicTruncate(H) mod 10^d
+
+K  = shared secret seed
+T₀ = reference time (commonly the Unix epoch)
+X  = seconds per time step (commonly 30)
+d  = number of output digits (commonly 6)</pre>
+          <p>
+            RFC 6238 supports HMAC-SHA-1, SHA-256 and SHA-512 variants. The
+            actual service&#x27;s seed, digit count and time step must be
+            compatible. A six-digit code has only
+            <code>10^6</code> possibilities, so the server needs rate limits for
+            failed attempts, clock-skew handling and replay checks. Unlimited
+            guesses within a 30-second window are not acceptable.
+          </p>
+          <p class="pm-minor">
+            A QR code often contains the secret seed or a configuration URI from
+            which it can be recovered. Do not share it in a group as if it were
+            an ordinary login QR code. Anyone who obtains K can calculate codes
+            for future time windows.
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          05 · Which fields does WebAuthn verification actually check?
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            During registration, the authenticator creates a key pair for a
+            particular RP, and the website stores the Public Key and Credential
+            ID. During authentication, the website sends an unpredictable
+            <strong>Challenge</strong>; the browser/authenticator produces an
+            Assertion, which the server verifies.<a
+              class="pm-cite"
+              href="#src-13"
+              >[13]</a
+            >
+          </p>
+          <pre>
+Registration:
+  Authenticator → (private key, public key)
+  Server        ← public key + credential ID
+
+Authentication:
+  Server → challenge
+  Authenticator → signature over
+    authenticatorData || SHA256(clientDataJSON)
+  Server checks:
+    challenge / type / Origin
+    rpIdHash / UP・UV flags (according to policy)
+    signature / credential binding</pre>
+          <p>
+            <strong>Origin</strong> identifies the website origin invoking the
+            WebAuthn API; <strong>RP ID</strong> defines the relying-party scope
+            in which the credential may be used. A fake site cannot arbitrarily
+            impersonate the real site&#x27;s RP ID or obtain a valid assertion
+            for it. The server must check these conditions correctly, rather
+            than verifying the signature and ignoring the context.
+          </p>
+          <p>
+            “Phishing-resistant” does not mean “prevents every account
+            takeover.” Authenticated session cookies, malicious browser
+            extensions and weak recovery flows can still provide other entry
+            points.<a class="pm-cite" href="#src-12">[12]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          06 · What is a passkey? Synced versus device-bound credentials
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            A passkey is a way to sign in using FIDO credentials. A fingerprint,
+            face scan or device PIN usually unlocks the authenticator locally;
+            it does not send your biometric data to the website.
+          </p>
+          <ul>
+            <li>
+              <strong>Device-bound</strong>: the credential is bound to a
+              specific authenticator or device. Hardware isolation is generally
+              more explicit, but you need a backup key.
+            </li>
+            <li>
+              <strong>Synced Passkey</strong>: the credential can be used across
+              devices through a provider-protected sync system. Recovery is more
+              convenient, but the sync account and devices need particular
+              protection.
+            </li>
+          </ul>
+          <p>
+            You cannot assume that every passkey has a private key that can
+            never be exported. Signing in to a password manager and unlocking
+            its vault may also use different mechanisms. Some designs, for
+            example, need WebAuthn PRF support to derive vault-decryption
+            material from a passkey.<a class="pm-cite" href="#src-01">[01]</a
+            ><a class="pm-cite" href="#src-13">[13]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          07 · 1Password Secret Key, SRP and the key threat model
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            1Password generates a Secret Key on the device with approximately
+            <strong>128 bits of entropy</strong>. Together with the Account
+            Password, it helps protect account encryption keys. It is not an
+            account serial number or a second password to memorize; the Secret
+            Key is kept on authorized devices and in an appropriate Emergency
+            Kit.<a class="pm-cite" href="#src-04">[04]</a>
+          </p>
+          <p>
+            <strong>SRP（Secure Remote Password）</strong> is used for login
+            authentication, not vault data encryption. Its goal is to let the
+            server verify a password proof without receiving the user&#x27;s
+            original Account Password.<a class="pm-cite" href="#src-19">[19]</a>
+          </p>
+          <p>
+            When an attacker obtains only encrypted server-side data, the
+            missing Secret Key is an additional obstacle to offline attack. But
+            if the attacker also controls an authorized device or obtains the
+            Secret Key or recovery materials, the conclusions for a server-only
+            breach no longer apply unchanged.
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          08 · Autofill: URI matching, iframes and endpoint risk
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            Bitwarden&#x27;s <strong>Base domain</strong> uses the effective
+            registrable domain; <strong>Host</strong> restricts the hostname;
+            <strong>Exact</strong> requires the entire URI to match. Host or
+            Exact can be appropriate for sensitive subdomains, but Exact may
+            stop matching when a path or query string changes. OS APIs may also
+            limit the information available for matching on Android and iOS.<a
+              class="pm-cite"
+              href="#src-18"
+              >[18]</a
+            >
+          </p>
+          <p>
+            Bitwarden disables Autofill on page load by default. Its official
+            documentation warns that compromised websites may exploit this
+            convenience. Manual triggering, checking the address and avoiding
+            suspicious iframes are useful, but once credentials are filled into
+            a malicious page&#x27;s fields, URL matching alone cannot prevent
+            the page&#x27;s scripts from reading them.<a
+              class="pm-cite"
+              href="#src-09"
+              >[09]</a
+            >
+          </p>
+          <p>
+            A clipboard-clear timer only reduces how long data remains there; it
+            is not a security sandbox that prevents all clipboard access.
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          09 · Vault backup and recovery: encrypted JSON, attachments and
+          deadlocks
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            Cross-device synchronization mainly keeps current data consistent.
+            It does not necessarily let you retrieve old data after account
+            lockout or loss of every device. In Bitwarden,
+            <strong>Password protected encrypted JSON</strong> uses a separate
+            password and can be imported into another account;
+            <strong>Account restricted</strong> depends on the original
+            account&#x27;s encryption key and should not be your sole
+            cross-account disaster-recovery option.<a
+              class="pm-cite"
+              href="#src-16"
+              >[16]</a
+            >
+          </p>
+          <p>
+            A regular encrypted JSON export
+            <strong>does not include file attachments</strong>. A ZIP export
+            containing attachments should be protected separately with an
+            encrypted container; a ZIP extension does not mean that the file is
+            encrypted. Recovery materials must remain accessible even when you
+            cannot log in to the vault.
+          </p>
+          <p class="pm-minor">
+            A simple practical drill is to confirm that you can find your
+            offline recovery codes, decrypt the backup, import it in a test
+            environment and check attachments separately. Use an isolated
+            environment where appropriate; do not enter your real master
+            password on a shared computer just to run a test.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+  <section aria-label="References" class="pm-sources">
+    <h2 id="references"><span class="pm-n">↗ /</span>References</h2>
+    <p class="pm-appendix-intro">
+      Official documentation, standards and incident reports. Product features
+      and setting names depend on the actual version in use.
+    </p>
+    <p class="pm-src" id="src-01">
+      <b>[01]</b>
+      <a href="https://bitwarden.com/help/bitwarden-security-white-paper/"
+        >Bitwarden · Security Whitepaper</a
+      >
+      — Vault key hierarchy
+    </p>
+    <p class="pm-src" id="src-02">
+      <b>[02]</b>
+      <a href="https://bitwarden.com/help/kdf-algorithms/"
+        >Bitwarden · Encryption Key Derivation</a
+      >
+      — PBKDF2 / Argon2id
+    </p>
+    <p class="pm-src" id="src-03">
+      <b>[03]</b>
+      <a href="https://bitwarden.com/help/what-encryption-is-used/"
+        >Bitwarden · Encryption Protocols</a
+      >
+      — AES-CBC / HMAC
+    </p>
+    <p class="pm-src" id="src-04">
+      <b>[04]</b>
+      <a href="https://support.1password.com/understanding-account-key/"
+        >1Password · About your Secret Key</a
+      >
+    </p>
+    <p class="pm-src" id="src-05">
+      <b>[05]</b>
+      <a href="https://support.1password.com/1password-security/"
+        >1Password · Security model</a
+      >
+    </p>
+    <p class="pm-src" id="src-06">
+      <b>[06]</b>
+      <a
+        href="https://help.twilio.com/articles/19753577267355-Enable-or-Disable-Backups-and-Sync-in-Authy"
+        >Twilio · Authy backups &amp; sync</a
+      >
+    </p>
+    <p class="pm-src" id="src-07">
+      <b>[07]</b>
+      <a href="https://help.twilio.com/articles/19753226891803"
+        >Twilio · Authy Multi-Device</a
+      >
+    </p>
+    <p class="pm-src" id="src-08">
+      <b>[08]</b>
+      <a
+        href="https://help.twilio.com/articles/22771146070299-End-user-guide-End-of-Life-EOL-for-Twilio-Authy-Desktop-app"
+        >Twilio · Authy Desktop EOL</a
+      >
+      — 2024-03-19
+    </p>
+    <p class="pm-src" id="src-09">
+      <b>[09]</b>
+      <a href="https://bitwarden.com/help/auto-fill-browser/"
+        >Bitwarden · Autofill from browser extensions</a
+      >
+    </p>
+    <p class="pm-src" id="src-10">
+      <b>[10]</b>
+      <a
+        href="https://developer.android.com/privacy-and-security/risks/secure-clipboard-handling"
+        >Android Developers · Secure Clipboard Handling</a
+      >
+    </p>
+    <p class="pm-src" id="src-11">
+      <b>[11]</b>
+      <a href="https://datatracker.ietf.org/doc/html/rfc6238"
+        >IETF · RFC 6238 / TOTP</a
+      >
+    </p>
+    <p class="pm-src" id="src-12">
+      <b>[12]</b>
+      <a href="https://pages.nist.gov/800-63-4/sp800-63b.html"
+        >NIST · SP 800-63B-4</a
+      >
+    </p>
+    <p class="pm-src" id="src-13">
+      <b>[13]</b>
+      <a href="https://www.w3.org/TR/webauthn-3/"
+        >W3C · Web Authentication Level 3</a
+      >
+    </p>
+    <p class="pm-src" id="src-14">
+      <b>[14]</b>
+      <a href="https://support.google.com/chrome/answer/10400619"
+        >Google Chrome Help · Use saved passwords in other apps</a
+      >
+    </p>
+    <p class="pm-src" id="src-15">
+      <b>[15]</b>
+      <a
+        href="https://blog.lastpass.com/posts/security-incident-update-recommended-actions"
+        >LastPass · Security incident update</a
+      >
+      — Follow-up on the 2022 incident
+    </p>
+    <p class="pm-src" id="src-16">
+      <b>[16]</b>
+      <a href="https://bitwarden.com/help/export-your-data/"
+        >Bitwarden · Export Vault Data</a
+      >
+    </p>
+    <p class="pm-src" id="src-17">
+      <b>[17]</b>
+      <a href="https://developer.apple.com/documentation/uikit/uipastecontrol"
+        >Apple Developer · UIPasteControl</a
+      >
+      — iOS clipboard-access prompts
+    </p>
+    <p class="pm-src" id="src-18">
+      <b>[18]</b>
+      <a href="https://bitwarden.com/help/uri-match-detection/"
+        >Bitwarden · Form URIs for Autofill</a
+      >
+      — Base domain／Host／Exact
+    </p>
+    <p class="pm-src" id="src-19">
+      <b>[19]</b>
+      <a href="https://support.1password.com/secure-remote-password/"
+        >1Password · Secure Remote Password</a
+      >
+      — SRP login authentication
+    </p>
+    <p class="pm-src" id="src-20">
+      <b>[20]</b>
+      <a href="https://bitwarden.com/help/bitwarden-authenticator/"
+        >Bitwarden · Authenticator</a
+      >
+      — Local TOTP versus vault synchronization
+    </p>
+    <p class="pm-src" id="src-21">
+      <b>[21]</b>
+      <a href="https://www.yubico.com/products/yubico-authenticator/"
+        >Yubico · Authenticator</a
+      >
+      — Hardware TOTP versus FIDO2
+    </p>
+    <p class="pm-src" id="src-22">
+      <b>[22]</b>
+      <a href="https://bitwarden.com/help/account-encryption-key/"
+        >Bitwarden · Encryption Key Rotation</a
+      >
+      — Master-password changes versus key rotation
+    </p>
+    <p class="pm-src">
+      <b>[Further reading]</b>
+      <a href="https://ithelp.ithome.com.tw/users/20130205/ironman/3517"
+        >iThome Ironman · Cryptography series</a
+      >
+    </p>
+  </section>
+  <div class="pm-outro">
+    This article summarizes product selection and principles. Its diagrams are
+    simplified risk models, not evidence of a completed security audit of any
+    product.<a href="#article-title">Back to top ↑</a>
+  </div>
+</div>

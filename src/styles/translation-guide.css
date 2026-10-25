@@ -1,0 +1,1848 @@
+.translation-guide {
+  min-width: 0;
+  color: var(--color-text);
+}
+.translation-guide section + section {
+  margin-top: var(--space-8);
+}
+.translation-guide .tg-eyebrow {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.translation-guide .tg-edition {
+  color: var(--color-entity-kind);
+  padding-left: 10px;
+  border-left: 2px solid var(--color-entity-kind);
+}
+.translation-guide .tg-lead {
+  font-size: 17px;
+  line-height: 1.8;
+  max-width: 850px;
+  margin: 0 0 16px;
+}
+.translation-guide .tg-article-meta {
+  font: 12px/1.6 var(--font-mono);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+.translation-guide .tg-intro {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border-decorative);
+}
+.translation-guide .tg-reading-map {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  margin-top: 20px;
+}
+.translation-guide .tg-reading-map a {
+  text-decoration: none;
+}
+.translation-guide .tg-reading-map span {
+  color: var(--color-text-muted);
+}
+.translation-guide section.tg-chapter {
+  margin: 44px 0 0;
+  scroll-margin-top: 20px;
+}
+.translation-guide section.tg-chapter > header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.translation-guide .tg-section-number {
+  font: 14px/1.6 var(--font-mono);
+  color: var(--color-link);
+  padding-top: 1px;
+}
+.translation-guide small,
+.translation-guide .tg-muted {
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-mini {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.translation-guide .tg-mono,
+.translation-guide code {
+  font-family: var(--font-sans);
+}
+.translation-guide code {
+  font-size: 0.86em;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+.translation-guide pre {
+  padding: 16px;
+  background: var(--color-chrome);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 6px;
+  overflow: auto;
+  font: 13px/1.7 var(--font-mono);
+  tab-size: 2;
+  margin: 12px 0;
+}
+.translation-guide pre code {
+  font-size: inherit;
+  color: var(--color-text);
+  overflow-wrap: normal;
+}
+.translation-guide figure {
+  margin: 20px 0 14px;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-background);
+}
+.translation-guide .tg-figure-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  flex-wrap: wrap;
+}
+.translation-guide .tg-fig-no {
+  font: 12px var(--font-mono);
+  color: var(--color-text-muted);
+  margin-right: 8px;
+}
+.translation-guide .tg-fig-type {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+.translation-guide .tg-figure-body {
+  padding: 20px;
+}
+.translation-guide .tg-svg-scroll {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 8px 0;
+}
+.translation-guide .tg-svg-scroll svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-width: 880px;
+}
+.translation-guide .tg-svg-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 0;
+  padding: 0 16px 8px;
+  display: block;
+}
+.translation-guide figcaption {
+  padding: 12px 16px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  border-top: 1px solid var(--color-border-subtle);
+  line-height: 1.75;
+}
+.translation-guide .tg-why {
+  color: var(--color-entity-file);
+  font-weight: 600;
+}
+.translation-guide .tg-boundary {
+  border-left: 3px solid var(--color-entity-kind);
+  padding: 6px 0 6px 14px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  margin: 16px 0;
+}
+.translation-guide .tg-boundary strong {
+  color: var(--color-entity-kind);
+}
+.translation-guide details.tg-deep {
+  margin: 16px 0;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 6px;
+  background: var(--color-surface);
+}
+.translation-guide details.tg-deep > summary {
+  cursor: pointer;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  min-height: 44px;
+}
+.translation-guide details.tg-deep[open] > summary {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text);
+}
+.translation-guide .tg-deep-body {
+  padding: 4px 16px 12px;
+  font-size: 14px;
+}
+.translation-guide .tg-deep-body p {
+  line-height: 1.8;
+}
+.translation-guide .tg-formula {
+  padding: 12px 16px;
+  background: var(--color-chrome);
+  font: 13px/1.8 var(--font-mono);
+  overflow: auto;
+  border-left: 2px solid var(--color-link);
+  margin: 12px 0;
+  white-space: pre-wrap;
+}
+.translation-guide .tg-table-scroll {
+  overflow-x: auto;
+  margin: 16px 0;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 6px;
+}
+.translation-guide table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.75;
+  text-align: left;
+}
+.translation-guide th,
+.translation-guide td {
+  padding: 12px 14px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.translation-guide thead th {
+  background: var(--color-surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.translation-guide tbody th {
+  font-weight: 600;
+  min-width: 130px;
+}
+.translation-guide tr:last-child td,
+.translation-guide tr:last-child th {
+  border-bottom: 0;
+}
+.translation-guide .tg-fit {
+  min-width: 640px;
+}
+.translation-guide .tg-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.translation-guide .tg-three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.translation-guide .tg-two > *,
+.translation-guide .tg-three > * {
+  min-width: 0;
+}
+.translation-guide .tg-lane {
+  border-left: 2px solid var(--color-border-decorative);
+  padding: 0 0 0 16px;
+}
+.translation-guide .tg-lane h4 {
+  color: var(--color-link);
+}
+.translation-guide .tg-zone {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-decorative);
+  border-radius: 6px;
+  padding: 14px;
+  min-width: 0;
+}
+.translation-guide .tg-zone-title {
+  font-size: 14px;
+  color: var(--color-link);
+  font-weight: 650;
+  margin: 0 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-decorative);
+}
+.translation-guide .tg-node {
+  padding: 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--color-surface-raised);
+  min-width: 0;
+}
+.translation-guide .tg-node strong {
+  display: block;
+  color: var(--color-text);
+}
+.translation-guide .tg-node span {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.translation-guide .tg-node.tg-good {
+  border-color: var(--color-entity-file);
+  background: var(--color-surface);
+}
+.translation-guide .tg-node.tg-optional {
+  border-style: dashed;
+  border-color: var(--color-entity-kind);
+}
+.translation-guide .tg-node + .tg-node {
+  margin-top: 12px;
+}
+.translation-guide .tg-connector {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 8px 0;
+}
+.translation-guide .tg-connector:before {
+  content: '↓ ';
+  font-size: 16px;
+}
+.translation-guide .tg-bridge {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--color-border-decorative);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  display: grid;
+  gap: 6px;
+}
+.translation-guide .tg-local-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.translation-guide .tg-decision-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: 14px;
+}
+.translation-guide .tg-decision-row .tg-step {
+  color: var(--color-link);
+  font: 14px var(--font-mono);
+  padding-top: 3px;
+}
+.translation-guide .tg-decision-row .tg-result {
+  color: var(--color-entity-file);
+  font-size: 13px;
+  margin-top: 3px;
+}
+.translation-guide .tg-decision-row:last-child {
+  border: 0;
+}
+.translation-guide .tg-key-box {
+  border: 1px solid var(--color-border-decorative);
+  padding: 14px;
+  background: var(--color-chrome);
+  border-radius: 6px;
+  line-height: 1.85;
+}
+.translation-guide .tg-key-box h4 {
+  color: var(--color-link);
+}
+.translation-guide .tg-key-fields {
+  font: 13px/2 var(--font-mono);
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+.translation-guide .tg-key-fields span {
+  display: inline-block;
+  margin-right: 10px;
+}
+.translation-guide .tg-key-arrow {
+  padding: 8px;
+  font-size: 13px;
+  color: var(--color-entity-file);
+  text-align: center;
+}
+.translation-guide .tg-sample {
+  font-size: 12px;
+  color: var(--color-entity-kind);
+  margin-bottom: 10px;
+}
+.translation-guide .tg-sentence {
+  padding: 12px 14px;
+  background: var(--color-chrome);
+  border-left: 2px solid var(--color-link);
+  font: 14px/1.8 var(--font-mono);
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.translation-guide .tg-sentence em {
+  font-style: normal;
+  color: var(--color-entity-file);
+  background: var(--color-surface-selected);
+  padding: 2px;
+}
+.translation-guide .tg-tier-stack {
+  display: grid;
+  gap: 0;
+}
+.translation-guide .tg-tier-row {
+  display: grid;
+  grid-template-columns: 52px 1.1fr 1fr;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  align-items: center;
+  font-size: 14px;
+}
+.translation-guide .tg-tier-row:last-child {
+  border-bottom: 0;
+}
+.translation-guide .tg-tier-id {
+  color: var(--color-link);
+  font: 18px/1.4 var(--font-mono);
+}
+.translation-guide .tg-tier-row small {
+  font-size: 13px;
+}
+.translation-guide .tg-queue-demo {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.translation-guide .tg-queue-demo span {
+  font: 13px/1.6 var(--font-mono);
+  padding: 6px 10px;
+  background: var(--color-surface-selected);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+}
+.translation-guide .tg-queue-demo .tg-p2 {
+  background: var(--color-surface);
+  border-color: var(--color-entity-file);
+}
+.translation-guide .tg-queue-demo .tg-p3 {
+  background: var(--color-surface);
+  border-color: var(--color-entity-kind);
+}
+.translation-guide .tg-lookahead-controls {
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.translation-guide .tg-lookahead-controls[hidden] {
+  display: none;
+}
+.translation-guide .tg-lookahead-controls legend {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding: 0 0 10px;
+  width: 100%;
+}
+.translation-guide .tg-lookahead-controls label {
+  display: grid;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  flex: 1;
+  min-width: 120px;
+}
+.translation-guide .tg-lookahead-controls select,
+.translation-guide .tg-lookahead-controls input {
+  width: 100%;
+  background: var(--color-chrome);
+  color: var(--color-text);
+  border: 1px solid var(--color-control-border);
+  padding: 7px 9px;
+  border-radius: 5px;
+  min-height: 42px;
+}
+.translation-guide .tg-lookahead-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+.translation-guide .tg-viewport-illustration {
+  border: 1px solid var(--color-border-strong);
+  min-width: 0;
+}
+.translation-guide .tg-viewport-illustration > div {
+  padding: 14px 18px;
+  font-size: 14px;
+}
+.translation-guide .tg-viewport-illustration .tg-near-band {
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-viewport-illustration .tg-screen-band {
+  background: var(--color-surface-selected);
+  border-block: 2px solid var(--color-link);
+  color: var(--color-text);
+  min-height: 106px;
+  display: grid;
+  align-content: center;
+}
+.translation-guide .tg-viewport-illustration .tg-near-band strong {
+  color: var(--color-entity-file);
+  font: 18px var(--font-mono);
+  display: block;
+  margin-top: 5px;
+}
+.translation-guide .tg-math-notes {
+  font-size: 14px;
+}
+.translation-guide .tg-metric-line {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.translation-guide .tg-metric-line output {
+  font: 16px/1.8 var(--font-mono);
+  color: var(--color-entity-file);
+}
+.translation-guide .tg-metric-line:last-child {
+  border: 0;
+}
+.translation-guide .tg-clock-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--color-border-decorative);
+  margin: 16px 0;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.translation-guide .tg-clock-row > div {
+  background: var(--color-surface);
+  padding: 14px;
+}
+.translation-guide .tg-clock-row strong {
+  display: block;
+  font: 22px/1.5 var(--font-mono);
+  color: var(--color-link);
+}
+.translation-guide .tg-clock-row span {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-claim-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+}
+.translation-guide .tg-claim {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: 14px;
+}
+.translation-guide .tg-claim b {
+  display: block;
+  margin-bottom: 4px;
+}
+.translation-guide .tg-footer {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-decorative);
+}
+.translation-guide .tg-footer p {
+  margin: 6px 0;
+}
+.translation-guide .tg-design-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.translation-guide .tg-design-row:last-child {
+  border: 0;
+}
+.translation-guide .tg-design-problem {
+  color: var(--color-link);
+  font-weight: 600;
+}
+.translation-guide .tg-design-row strong {
+  display: block;
+  font-size: 14px;
+}
+.translation-guide .tg-design-row span {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  margin-top: 4px;
+}
+.translation-guide .tg-design-tradeoff {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  border-left: 2px solid var(--color-border-decorative);
+  padding-left: 14px;
+}
+@media (max-width: 1120px) {
+  .translation-guide .tg-two {
+    gap: 16px;
+  }
+}
+@media (max-width: 850px) {
+  .translation-guide .tg-eyebrow {
+    font-size: 12px;
+  }
+  .translation-guide .tg-svg-hint {
+    display: block;
+  }
+}
+@media (max-width: 620px) {
+  .translation-guide .tg-lead {
+    font-size: 16px;
+  }
+  .translation-guide section.tg-chapter {
+    margin-top: 36px;
+  }
+  .translation-guide .tg-figure-body {
+    padding: 16px;
+  }
+  .translation-guide .tg-two,
+  .translation-guide .tg-three,
+  .translation-guide .tg-local-grid,
+  .translation-guide .tg-lookahead-view,
+  .translation-guide .tg-claim-grid {
+    grid-template-columns: 1fr;
+  }
+  .translation-guide .tg-tier-row {
+    grid-template-columns: 38px 1fr;
+    gap: 10px;
+  }
+  .translation-guide .tg-tier-row small {
+    grid-column: 2;
+  }
+  .translation-guide .tg-clock-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .translation-guide .tg-clock-row > div {
+    padding: 12px;
+  }
+  .translation-guide .tg-deep-body {
+    padding-inline: 12px;
+  }
+  .translation-guide .tg-figure-head {
+    padding: 10px 12px;
+  }
+  .translation-guide figcaption {
+    font-size: 13px;
+    padding: 12px;
+  }
+  .translation-guide .tg-lookahead-controls label {
+    min-width: calc(50% - 14px);
+  }
+  .translation-guide .tg-table-scroll th,
+  .translation-guide .tg-table-scroll td {
+    padding: 10px 12px;
+  }
+  .translation-guide .tg-reading-map {
+    gap: 8px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 620px) {
+  .translation-guide .tg-design-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .translation-guide .tg-design-tradeoff {
+    margin-top: 4px;
+  }
+}
+@media (forced-colors: active) {
+  .translation-guide .tg-node,
+  .translation-guide .tg-zone,
+  .translation-guide figure,
+  .translation-guide details.tg-deep,
+  .translation-guide .tg-table-scroll {
+    border-color: CanvasText;
+  }
+  .translation-guide .tg-muted,
+  .translation-guide small,
+  .translation-guide code {
+    color: CanvasText;
+  }
+}
+.translation-guide .tg-flow-figure {
+  background: var(--color-background);
+}
+.translation-guide .tg-dfd-read-guide {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.translation-guide .tg-dfd-read-guide > div {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 12px;
+}
+.translation-guide .tg-dfd-read-guide b {
+  color: var(--color-link);
+  font-weight: 600;
+}
+.translation-guide .tg-dfd-read-guide span {
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-dfd-scroll {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  max-width: 100%;
+  background: var(--color-background);
+}
+.translation-guide .tg-dfd-scroll:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+.translation-guide .tg-dfd-canvas {
+  position: relative;
+  isolation: isolate;
+  margin: 0 auto;
+  flex: none;
+  background: var(--color-background);
+}
+.translation-guide .tg-dfd-lane {
+  position: absolute;
+  top: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 6px;
+  z-index: 0;
+}
+.translation-guide .tg-dfd-lane:nth-child(2) {
+  background: var(--color-surface);
+}
+.translation-guide .tg-dfd-lane-title {
+  padding: 14px 14px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border-decorative);
+  text-align: center;
+}
+.translation-guide .tg-dfd-lane-title small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+.translation-guide .tg-dfd-connectors {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+.translation-guide .tg-dfd-node {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: var(--color-surface-raised);
+  padding: 12px;
+  overflow: visible;
+  box-sizing: border-box;
+}
+.translation-guide .tg-dfd-node-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+.translation-guide .tg-dfd-node-head strong {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.translation-guide .tg-dfd-step {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 22px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 3px;
+  background: var(--color-surface-selected);
+  color: var(--color-text);
+  font: 12px/1.4 var(--font-mono);
+  padding: 0 4px;
+}
+.translation-guide .tg-dfd-node-body {
+  display: grid;
+  gap: 3px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-dfd-node-body > span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.translation-guide .tg-dfd-node-body code {
+  font-size: 12px;
+}
+.translation-guide .tg-dfd-node-body a {
+  color: var(--color-link);
+  text-underline-offset: 3px;
+}
+.translation-guide .tg-dfd-control {
+  border-style: dashed;
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+}
+.translation-guide .tg-dfd-local {
+  border-color: var(--color-entity-file);
+  background: var(--color-surface);
+}
+.translation-guide .tg-dfd-local .tg-dfd-step {
+  background: var(--color-surface);
+  border-color: var(--color-entity-file);
+  color: var(--color-text);
+}
+.translation-guide .tg-dfd-store {
+  border-color: var(--color-control-border);
+  border-top: 4px double var(--color-control-border);
+  background: var(--color-surface-raised);
+}
+.translation-guide .tg-dfd-failure {
+  border-color: var(--color-status-danger);
+  background: var(--color-surface);
+}
+.translation-guide .tg-dfd-failure .tg-dfd-step {
+  background: var(--color-surface);
+  border-color: var(--color-status-danger);
+  color: var(--color-text);
+}
+.translation-guide .tg-dfd-wait {
+  border-color: var(--color-entity-kind);
+  background: var(--color-surface);
+}
+.translation-guide .tg-dfd-wait .tg-dfd-step {
+  background: var(--color-surface);
+  border-color: var(--color-entity-kind);
+  color: var(--color-text);
+}
+.translation-guide .tg-dfd-optional {
+  border-style: dashed;
+  background: var(--color-surface);
+}
+.translation-guide .tg-dfd-edge-label {
+  position: absolute;
+  z-index: 3;
+  padding: 2px 3px;
+  background: var(--color-background);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+  overflow-wrap: anywhere;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.translation-guide .tg-dfd-label-local {
+  color: var(--color-entity-file);
+}
+.translation-guide .tg-dfd-label-control,
+.translation-guide .tg-dfd-label-sync {
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-dfd-label-wait {
+  color: var(--color-entity-kind);
+}
+.translation-guide .tg-dfd-label-failure {
+  color: var(--color-status-danger);
+}
+.translation-guide .tg-dfd-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border-subtle);
+}
+.translation-guide .tg-dfd-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.translation-guide .tg-legend-line {
+  display: inline-block;
+  width: 27px;
+  border-top: 2px solid var(--color-link);
+  position: relative;
+}
+.translation-guide .tg-legend-line:after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  border-left: 5px solid var(--color-link);
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+}
+.translation-guide .tg-legend-line.tg-local {
+  border-color: var(--color-entity-file);
+}
+.translation-guide .tg-legend-line.tg-local:after {
+  border-left-color: var(--color-entity-file);
+}
+.translation-guide .tg-legend-line.tg-dashed {
+  border-top-style: dashed;
+  border-color: var(--color-text-secondary);
+}
+.translation-guide .tg-legend-line.tg-dashed:after {
+  border-left-color: var(--color-text-secondary);
+}
+.translation-guide .tg-dfd-text-alternative {
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.translation-guide .tg-dfd-text-alternative > summary {
+  padding: 10px 16px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.translation-guide .tg-dfd-text-alternative ol {
+  padding: 0 20px 12px 38px;
+  margin: 0;
+}
+.translation-guide .tg-dfd-text-alternative li {
+  margin: 7px 0;
+  line-height: 1.65;
+}
+.translation-guide .tg-dfd-text-alternative b {
+  font-weight: 500;
+  color: var(--color-text);
+}
+.translation-guide .tg-dfd-takeaway {
+  padding: 12px 16px;
+  border-left: 2px solid var(--color-link);
+  background: var(--color-surface);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+.translation-guide .tg-flow-detail {
+  overflow: hidden;
+}
+.translation-guide .tg-flow-detail > figure {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.translation-guide .tg-flow-figure .tg-figure-head {
+  gap: 8px;
+}
+.translation-guide .tg-flow-figure .tg-fig-type {
+  font-size: 12px;
+}
+@media (max-width: 620px) {
+  .translation-guide .tg-dfd-read-guide {
+    padding: 12px;
+  }
+  .translation-guide .tg-dfd-read-guide > div {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .translation-guide .tg-dfd-legend {
+    padding: 12px;
+  }
+  .translation-guide .tg-dfd-takeaway {
+    font-size: 13px;
+  }
+}
+@media (forced-colors: active) {
+  .translation-guide .tg-dfd-node,
+  .translation-guide .tg-dfd-lane,
+  .translation-guide .tg-dfd-step {
+    border-color: CanvasText;
+  }
+  .translation-guide .tg-dfd-edge-label,
+  .translation-guide .tg-dfd-node-body {
+    color: CanvasText;
+  }
+}
+.translation-guide #tg-identities-svg {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-identities-svg .tg-box {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-identities-svg .tg-accent {
+  fill: var(--color-surface-selected);
+  stroke: var(--color-action-primary);
+  stroke-width: 1.5;
+}
+.translation-guide #tg-identities-svg .tg-good {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-identities-svg .tg-warn {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-identities-svg .tg-bad {
+  fill: var(--color-surface);
+  stroke: var(--color-status-danger);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-identities-svg .tg-zone {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.translation-guide #tg-identities-svg .tg-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.6;
+  fill: none;
+}
+.translation-guide #tg-identities-svg .tg-dash {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+.translation-guide #tg-identities-svg .tg-h {
+  fill: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.translation-guide #tg-identities-svg .tg-muted {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+}
+.translation-guide #tg-identities-svg .tg-small {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.translation-guide #tg-identities-svg .tg-mono {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-identities-svg .tg-blue {
+  fill: var(--color-link);
+  font-size: 14px;
+}
+.translation-guide #tg-source-shapes-svg {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-source-shapes-svg .tg-box {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-source-shapes-svg .tg-accent {
+  fill: var(--color-surface-selected);
+  stroke: var(--color-action-primary);
+  stroke-width: 1.5;
+}
+.translation-guide #tg-source-shapes-svg .tg-good {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-source-shapes-svg .tg-warn {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-source-shapes-svg .tg-bad {
+  fill: var(--color-surface);
+  stroke: var(--color-status-danger);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-source-shapes-svg .tg-zone {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.translation-guide #tg-source-shapes-svg .tg-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.6;
+  fill: none;
+}
+.translation-guide #tg-source-shapes-svg .tg-dash {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+.translation-guide #tg-source-shapes-svg .tg-h {
+  fill: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.translation-guide #tg-source-shapes-svg .tg-muted {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+}
+.translation-guide #tg-source-shapes-svg .tg-small {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.translation-guide #tg-source-shapes-svg .tg-mono {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-source-shapes-svg .tg-blue {
+  fill: var(--color-link);
+  font-size: 14px;
+}
+.translation-guide #tg-admission-ledger-svg {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-admission-ledger-svg .tg-box {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-admission-ledger-svg .tg-accent {
+  fill: var(--color-surface-selected);
+  stroke: var(--color-action-primary);
+  stroke-width: 1.5;
+}
+.translation-guide #tg-admission-ledger-svg .tg-good {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-admission-ledger-svg .tg-warn {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-admission-ledger-svg .tg-bad {
+  fill: var(--color-surface);
+  stroke: var(--color-status-danger);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-admission-ledger-svg .tg-zone {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.translation-guide #tg-admission-ledger-svg .tg-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.6;
+  fill: none;
+}
+.translation-guide #tg-admission-ledger-svg .tg-dash {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+.translation-guide #tg-admission-ledger-svg .tg-h {
+  fill: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.translation-guide #tg-admission-ledger-svg .tg-muted {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+}
+.translation-guide #tg-admission-ledger-svg .tg-small {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.translation-guide #tg-admission-ledger-svg .tg-mono {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-admission-ledger-svg .tg-blue {
+  fill: var(--color-link);
+  font-size: 14px;
+}
+.translation-guide #tg-stale-race-svg {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-stale-race-svg .tg-box {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-stale-race-svg .tg-accent {
+  fill: var(--color-surface-selected);
+  stroke: var(--color-action-primary);
+  stroke-width: 1.5;
+}
+.translation-guide #tg-stale-race-svg .tg-good {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-stale-race-svg .tg-warn {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-stale-race-svg .tg-bad {
+  fill: var(--color-surface);
+  stroke: var(--color-status-danger);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-stale-race-svg .tg-zone {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.translation-guide #tg-stale-race-svg .tg-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.6;
+  fill: none;
+}
+.translation-guide #tg-stale-race-svg .tg-dash {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+.translation-guide #tg-stale-race-svg .tg-h {
+  fill: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.translation-guide #tg-stale-race-svg .tg-muted {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+}
+.translation-guide #tg-stale-race-svg .tg-small {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.translation-guide #tg-stale-race-svg .tg-mono {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-stale-race-svg .tg-blue {
+  fill: var(--color-link);
+  font-size: 14px;
+}
+.translation-guide #tg-durability-svg {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-durability-svg .tg-box {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-durability-svg .tg-accent {
+  fill: var(--color-surface-selected);
+  stroke: var(--color-action-primary);
+  stroke-width: 1.5;
+}
+.translation-guide #tg-durability-svg .tg-good {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-durability-svg .tg-warn {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-durability-svg .tg-bad {
+  fill: var(--color-surface);
+  stroke: var(--color-status-danger);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-durability-svg .tg-zone {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.translation-guide #tg-durability-svg .tg-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.6;
+  fill: none;
+}
+.translation-guide #tg-durability-svg .tg-dash {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+.translation-guide #tg-durability-svg .tg-h {
+  fill: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.translation-guide #tg-durability-svg .tg-muted {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+}
+.translation-guide #tg-durability-svg .tg-small {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.translation-guide #tg-durability-svg .tg-mono {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-durability-svg .tg-blue {
+  fill: var(--color-link);
+  font-size: 14px;
+}
+.translation-guide #tg-cancel-restart-svg {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-cancel-restart-svg .tg-box {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-cancel-restart-svg .tg-accent {
+  fill: var(--color-surface-selected);
+  stroke: var(--color-action-primary);
+  stroke-width: 1.5;
+}
+.translation-guide #tg-cancel-restart-svg .tg-good {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-cancel-restart-svg .tg-warn {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-cancel-restart-svg .tg-bad {
+  fill: var(--color-surface);
+  stroke: var(--color-status-danger);
+  stroke-width: 1.3;
+}
+.translation-guide #tg-cancel-restart-svg .tg-zone {
+  fill: var(--color-surface);
+  stroke: var(--color-border-decorative);
+  stroke-width: 1;
+}
+.translation-guide #tg-cancel-restart-svg .tg-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.6;
+  fill: none;
+}
+.translation-guide #tg-cancel-restart-svg .tg-dash {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+.translation-guide #tg-cancel-restart-svg .tg-h {
+  fill: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.translation-guide #tg-cancel-restart-svg .tg-muted {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+}
+.translation-guide #tg-cancel-restart-svg .tg-small {
+  fill: var(--color-text-secondary);
+  font-size: 13px;
+}
+.translation-guide #tg-cancel-restart-svg .tg-mono {
+  fill: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.translation-guide #tg-cancel-restart-svg .tg-blue {
+  fill: var(--color-link);
+  font-size: 14px;
+}
+.translation-guide .tg-geometry-0114811edf {
+  left: 431px;
+  top: 137px;
+  width: 117px;
+}
+.translation-guide .tg-geometry-01476d3586 {
+  left: 360px;
+  top: 345px;
+  width: 264px;
+  min-height: 150px;
+  height: 150px;
+}
+.translation-guide .tg-geometry-04b488d9f1 {
+  left: 24px;
+  top: 1340px;
+  width: 264px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-1231e69cca {
+  fill: none;
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.translation-guide .tg-geometry-14cfccc92f {
+  left: 660px;
+  top: 864px;
+  width: 150px;
+}
+.translation-guide .tg-geometry-15b1698f10 {
+  left: 66px;
+  top: 1263px;
+  width: 328px;
+}
+.translation-guide .tg-geometry-18d13f84b7 {
+  fill: var(--color-entity-file);
+}
+.translation-guide .tg-geometry-1ad0f8d4b4 {
+  left: 431px;
+  top: 1124px;
+  width: 117px;
+}
+.translation-guide .tg-geometry-1eb2c8fabc {
+  left: 560px;
+  top: 1065px;
+  width: 350px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-20150d2055 {
+  left: 40px;
+  top: 80px;
+  width: 380px;
+  min-height: 160px;
+  height: 160px;
+}
+.translation-guide .tg-geometry-21f6c08d66 {
+  left: 40px;
+  top: 550px;
+  width: 380px;
+  min-height: 148px;
+  height: 148px;
+}
+.translation-guide .tg-geometry-226febd91f {
+  left: 560px;
+  top: 1320px;
+  width: 350px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-2380c9ef3a {
+  left: 360px;
+  top: 1340px;
+  width: 264px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-2490e7a0e6 {
+  left: 35px;
+  top: 291px;
+  width: 242px;
+}
+.translation-guide .tg-geometry-25e9a71bf0 {
+  left: 85px;
+  top: 258px;
+  width: 290px;
+}
+.translation-guide .tg-geometry-26355a186a {
+  fill: none;
+  stroke: var(--color-link);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.translation-guide .tg-geometry-285e95e0df {
+  left: 381px;
+  top: 1041px;
+  width: 220px;
+}
+.translation-guide .tg-geometry-2b676f3f71 {
+  left: 24px;
+  top: 1100px;
+  width: 264px;
+  min-height: 140px;
+  height: 140px;
+}
+.translation-guide .tg-geometry-2f1ef61b17 {
+  left: 332px;
+  width: 324px;
+  height: 1528px;
+}
+.translation-guide .tg-geometry-3277b343d5 {
+  left: 560px;
+  top: 80px;
+  width: 350px;
+  min-height: 160px;
+  height: 160px;
+}
+.translation-guide .tg-geometry-35afd8367b {
+  text-anchor: middle;
+}
+.translation-guide .tg-geometry-382e0a1466 {
+  left: 40px;
+  top: 315px;
+  width: 380px;
+  min-height: 160px;
+  height: 160px;
+}
+.translation-guide .tg-geometry-3d58118e94 {
+  left: 360px;
+  top: 110px;
+  width: 264px;
+  min-height: 160px;
+  height: 160px;
+}
+.translation-guide .tg-geometry-3d5a6a1712 {
+  left: 24px;
+  top: 110px;
+  width: 264px;
+  min-height: 160px;
+  height: 160px;
+}
+.translation-guide .tg-geometry-41a4da4382 {
+  left: 291px;
+  top: 642px;
+  width: 66px;
+}
+.translation-guide .tg-geometry-48102674b1 {
+  left: 289px;
+  top: 1137px;
+  width: 70px;
+}
+.translation-guide .tg-geometry-4b7f7c41f2 {
+  width: 960px;
+  height: 1720px;
+}
+.translation-guide .tg-geometry-530e96af18 {
+  left: 230px;
+  top: 1260px;
+  width: 94px;
+}
+.translation-guide .tg-geometry-53aeb4f4dc {
+  fill: none;
+  stroke: var(--color-status-danger);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.translation-guide .tg-geometry-5435112f26 {
+  left: 40px;
+  top: 835px;
+  width: 380px;
+  min-height: 144px;
+  height: 144px;
+}
+.translation-guide .tg-geometry-56610ca96d {
+  left: 63px;
+  top: 1004px;
+  width: 334px;
+}
+.translation-guide .tg-geometry-5d259214d7 {
+  left: 24px;
+  top: 345px;
+  width: 264px;
+  min-height: 150px;
+  height: 150px;
+}
+.translation-guide .tg-geometry-5d27936032 {
+  left: 370px;
+  top: 1262px;
+  width: 114px;
+}
+.translation-guide .tg-geometry-6ac205d2a0 {
+  left: 360px;
+  top: 850px;
+  width: 264px;
+  min-height: 150px;
+  height: 150px;
+}
+.translation-guide .tg-geometry-703472d1e3 {
+  left: 696px;
+  top: 580px;
+  width: 240px;
+  min-height: 180px;
+  height: 180px;
+}
+.translation-guide .tg-geometry-773a6c265c {
+  left: 431px;
+  top: 1427px;
+  width: 117px;
+}
+.translation-guide .tg-geometry-78c67497b9 {
+  left: 70px;
+  top: 1515px;
+  width: 320px;
+}
+.translation-guide .tg-geometry-79423e7964 {
+  left: 40px;
+  top: 1065px;
+  width: 380px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-7a18d5a966 {
+  left: 69px;
+  top: 496px;
+  width: 322px;
+}
+.translation-guide .tg-geometry-7b4cfefcdd {
+  left: 627px;
+  top: 1444px;
+  width: 66px;
+}
+.translation-guide .tg-geometry-7bb0d73b94 {
+  left: 560px;
+  top: 835px;
+  width: 350px;
+  min-height: 144px;
+  height: 144px;
+}
+.translation-guide .tg-geometry-7d6dadfb27 {
+  left: 429px;
+  top: 788px;
+  width: 120px;
+}
+.translation-guide .tg-geometry-7e01289ab2 {
+  left: 560px;
+  top: 315px;
+  width: 350px;
+  min-height: 160px;
+  height: 160px;
+}
+.translation-guide .tg-geometry-813624a647 {
+  fill: var(--color-link);
+}
+.translation-guide .tg-geometry-8ea81623e2 {
+  left: 674px;
+  top: 967px;
+  width: 168px;
+}
+.translation-guide .tg-geometry-8ef2e44fff {
+  left: 24px;
+  top: 580px;
+  width: 264px;
+  min-height: 180px;
+  height: 180px;
+}
+.translation-guide .tg-geometry-92c18f6bda {
+  margin-top: 16px;
+}
+.translation-guide .tg-geometry-9449226155 {
+  left: 560px;
+  top: 515px;
+  width: 350px;
+  min-height: 112px;
+  height: 112px;
+}
+.translation-guide .tg-geometry-9aeb927753 {
+  left: 85px;
+  top: 756px;
+  width: 290px;
+}
+.translation-guide .tg-geometry-9bfe535aba {
+  fill: var(--color-text-secondary);
+}
+.translation-guide .tg-geometry-9ef41eff26 {
+  left: 434px;
+  top: 535px;
+  width: 108px;
+}
+.translation-guide .tg-geometry-a102c35be9 {
+  width: 960px;
+  height: 1552px;
+}
+.translation-guide .tg-geometry-a12e1b3fa6 {
+  left: 266px;
+  top: 1008px;
+  width: 90px;
+}
+.translation-guide .tg-geometry-a1882ca628 {
+  left: 40px;
+  top: 1320px;
+  width: 380px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-a33f6e4cd3 {
+  left: 627px;
+  top: 1362px;
+  width: 66px;
+}
+.translation-guide .tg-geometry-a4bd0e8d64 {
+  left: 360px;
+  top: 1100px;
+  width: 264px;
+  min-height: 140px;
+  height: 140px;
+}
+.translation-guide .tg-geometry-b54f4860ae {
+  text-anchor: start;
+}
+.translation-guide .tg-geometry-b5e098dc1c {
+  left: 627px;
+  top: 641px;
+  width: 66px;
+}
+.translation-guide .tg-geometry-b6b2e81f34 {
+  left: 696px;
+  top: 1340px;
+  width: 240px;
+  min-height: 172px;
+  height: 172px;
+}
+.translation-guide .tg-geometry-b84e3b56d8 {
+  fill: none;
+  stroke: var(--color-text-secondary);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-dasharray: 6 5;
+}
+.translation-guide .tg-geometry-b97a6142d9 {
+  left: 676px;
+  width: 272px;
+  height: 1528px;
+}
+.translation-guide .tg-geometry-bd686d48d3 {
+  left: 433px;
+  top: 656px;
+  width: 115px;
+}
+.translation-guide .tg-geometry-c442fab349 {
+  left: 12px;
+  width: 300px;
+  height: 1528px;
+}
+.translation-guide .tg-geometry-c4f7d1455b {
+  left: 24px;
+  top: 850px;
+  width: 264px;
+  min-height: 150px;
+  height: 150px;
+}
+.translation-guide .tg-geometry-c51c52446d {
+  left: 30px;
+  top: 1278px;
+  width: 185px;
+}
+.translation-guide .tg-geometry-c7ae16e98f {
+  left: 40px;
+  top: 1570px;
+  width: 380px;
+  min-height: 112px;
+  height: 112px;
+}
+.translation-guide .tg-geometry-c7e372af69 {
+  fill: var(--color-entity-kind);
+}
+.translation-guide .tg-geometry-cea73a5ca4 {
+  left: 431px;
+  top: 369px;
+  width: 117px;
+}
+.translation-guide .tg-geometry-d603e608d1 {
+  left: 291px;
+  top: 165px;
+  width: 66px;
+}
+.translation-guide .tg-geometry-d69a1c8193 {
+  left: 291px;
+  top: 387px;
+  width: 66px;
+}
+.translation-guide .tg-geometry-e4e34b71d4 {
+  left: 431px;
+  top: 1362px;
+  width: 117px;
+}
+.translation-guide .tg-geometry-ea6d5b7832 {
+  left: 360px;
+  top: 580px;
+  width: 264px;
+  min-height: 180px;
+  height: 180px;
+}
+.translation-guide .tg-geometry-eb4edee532 {
+  left: 385px;
+  top: 529px;
+  width: 212px;
+}
+.translation-guide .tg-geometry-ed391b6071 {
+  fill: var(--color-status-danger);
+}
+.translation-guide .tg-geometry-ed98e02a39 {
+  left: 654px;
+  top: 1122px;
+  width: 150px;
+}
+.translation-guide .tg-geometry-f106c168c6 {
+  left: 560px;
+  top: 660px;
+  width: 350px;
+  min-height: 144px;
+  height: 144px;
+}
+.translation-guide .tg-geometry-f14cee2e27 {
+  left: 500px;
+  top: 298px;
+  width: 110px;
+}
+.translation-guide .tg-geometry-f5b4b8a11e {
+  fill: none;
+  stroke: var(--color-entity-file);
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+.translation-guide .tg-geometry-fb87c76b6d {
+  fill: var(--color-text-muted);
+}
+.translation-guide .tg-geometry-ff0d5b5bb6 {
+  left: 431px;
+  top: 883px;
+  width: 117px;
+}

@@ -1,0 +1,1297 @@
+<div class="password-guide">
+  <div aria-label="文章開頭" class="pm-intro">
+    <p>現在各個網站都需要帳號密碼，但我想大多數的人都使用著同一套密碼。</p>
+    <p>
+      這其實很危險，真正的危險點在於，當一個網站出現了洩漏之後，就能拿著洩漏的帳密去每個網站測試。
+    </p>
+    <p>
+      因此，為了防止這種問題，除了
+      OTP（但很多人覺得麻煩又不喜歡開），就是密碼管理器了。
+    </p>
+    <p>
+      很多人的密碼管理器就是 Chrome 內建的，但 Chrome 的問題是，如果其他 app
+      ，或是非網頁的時候怎麼辦？
+    </p>
+    <p>因此我想介紹一下『密碼管理器』。</p>
+  </div>
+  <p class="pm-precision">
+    補充一下：Chrome／Google Password Manager 在部分手機系統其實也能替其他 App
+    填密碼，不是完全只能用於網頁。我比較在意的是跨裝置、跨瀏覽器時，能不能維持同一套管理方式。<a
+      class="pm-cite"
+      href="#src-14"
+      >[14]</a
+    >
+  </p>
+
+  <section>
+    <h2 id="reuse">
+      <span class="pm-n">01 /</span>先說為什麼不能一直用同一組密碼
+    </h2>
+    <figure
+      aria-label="示意：網站 A 外洩的帳號密碼被拿去測試網站 B、C、D；如果每站都用不同密碼，A 外洩不會直接讓 B、C 的密碼跟著暴露。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>重複密碼的問題</span
+        ><span class="pm-visual-id">CREDENTIAL STUFFING</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-breach-flow">
+        <div class="pm-host">
+          <div class="pm-host-top">
+            <span class="pm-topline">SOURCE / 網站 A</span
+            ><svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 3 22 20H2L12 3Z"></path>
+              <path d="M12 9v5M12 17.1v.1"></path>
+            </svg>
+          </div>
+          <div class="pm-host-title">帳密外洩</div>
+          <div class="pm-host-desc">攻擊者拿到一組帳號與密碼</div>
+          <span class="pm-credential"
+            >user@example.com<br />password: ●●●●●●</span
+          >
+        </div>
+        <div class="pm-connector">
+          <svg aria-hidden="true" viewBox="0 0 82 33">
+            <path d="M2 16H69"></path>
+            <polyline points="60,8 70,16 60,24"></polyline></svg
+          >拿去測試
+        </div>
+        <div class="pm-targets">
+          <div class="pm-target">
+            <span>網站 B</span><span class="pm-risk">可能登入</span>
+          </div>
+          <div class="pm-target">
+            <span>網站 C</span><span class="pm-risk">可能登入</span>
+          </div>
+          <div class="pm-target">
+            <span>網站 D</span><span class="pm-risk">可能登入</span>
+          </div>
+        </div>
+      </div>
+      <div class="pm-separate-pass">
+        <span class="pm-check">✓</span
+        ><span
+          ><b>每個網站用不同密碼</b>，A 外洩就不會直接暴露 B、C 的密碼。</span
+        >
+      </div>
+    </figure>
+    <p>
+      這種攻擊叫
+      <strong>Credential Stuffing（憑證填充攻擊）</strong
+      >：攻擊者不用破解每一個網站，只要拿 A 網站外洩的帳密清單，寫程式去 B、C、D
+      網站批量嘗試。只要其中一個網站也用了相同密碼，就可能登入成功。
+    </p>
+    <p>
+      密碼管理器解決的是這個問題：<strong>每個網站產生不同的隨機密碼</strong>，例如
+      20
+      字元的隨機字串。人只需要記住管理器的主密碼，不用背每一個網站的密碼。即使網站
+      A 出事，這組密碼也不能直接拿來登入網站 B。
+    </p>
+    <div aria-label="三種常見攻擊的差異" class="pm-micro-points">
+      <div><b>密碼重複</b><span>一處外洩，可能連帶影響其他帳號。</span></div>
+      <div>
+        <b>釣魚網站</b
+        ><span>誘導你主動輸入密碼；每站不同密碼也不保證能擋。</span>
+      </div>
+      <div>
+        <b>裝置中毒</b
+        ><span>可能讀到你正在使用的帳密，必須靠端點安全處理。</span>
+      </div>
+    </div>
+    <p class="pm-plain-aside">
+      所以「密碼管理器」不是要取代 OTP 或
+      FIDO2，而是先解決大量網站密碼無法安全管理的問題。
+    </p>
+  </section>
+  <section>
+    <h2 id="vault">
+      <span class="pm-n">02 /</span>密碼存在雲端，為什麼服務商不一定看得到？
+    </h2>
+    <p>
+      密碼管理器通常會把資料放在一個
+      <strong>Vault（密碼保險庫）</strong
+      >。它可以跨裝置同步，但關鍵是：<strong>在你的裝置加密、在你的裝置解密</strong>。伺服器主要接收加密後的資料，而不是每次都代替你打開保險箱。
+    </p>
+    <figure
+      aria-label="主密碼在本機經過金鑰衍生與解密流程，打開本機 Vault。Vault 內的網站 A、B、C 使用不同的隨機密碼；服務端同步加密資料。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>一個主密碼，管理很多組不同的密碼</span
+        ><span class="pm-visual-id">LOCAL DECRYPTION</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-vault-steps">
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="8" cy="14" r="4.6"></circle>
+            <path
+              d="m11.5 10.7 8-8 1.8 1.8-2.5 2.5 1.9 1.9-2.7 2.7-1.9-1.9-2.3 2.3"
+            ></path></svg
+          ><strong>主密碼</strong><span>你需要記住的</span>
+        </div>
+        <div class="pm-v-arrow">→</div>
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <rect height="11" rx="2.5" width="15" x="4.5" y="10"></rect>
+            <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"></path>
+            <path d="M12 14v3"></path></svg
+          ><strong>本機解開 Vault</strong
+          ><span>金鑰只在合適的裝置環境使用</span>
+        </div>
+        <div class="pm-v-arrow">↔</div>
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path
+              d="M7 19H6a4 4 0 0 1-1.4-7.75A7.5 7.5 0 0 1 19 12a3.5 3.5 0 0 1-.5 7H7Z"
+            ></path>
+            <path d="m8 15 2.5 2.5L16 12"></path></svg
+          ><strong>加密同步</strong><span>伺服器儲存密文</span>
+        </div>
+      </div>
+      <div aria-hidden="true" class="pm-password-lines">
+        <div class="pm-pass"><b>網站 A</b><span>k8@V!9p...Q</span></div>
+        <div class="pm-pass"><b>網站 B</b><span>T3#n2Y...w</span></div>
+        <div class="pm-pass"><b>網站 C</b><span>bP7$4x...M</span></div>
+      </div>
+      <p class="pm-figure-note">
+        上方字串只是示意，請不要拿來當真實密碼。這是簡化圖，詳細金鑰階層放在<a
+          href="#appendix"
+          >算法附註</a
+        >。
+      </p>
+    </figure>
+    <h3>實際上不是「主密碼直接 AES 加密全部資料」</h3>
+    <p>
+      以 Bitwarden 的一般主密碼流程為例，可以把它拆成三層：先用
+      <strong>KDF</strong> 把主密碼變成金鑰材料；再用這層材料解開一把受保護的
+      <strong>Vault 對稱金鑰</strong>；最後才由 Vault
+      金鑰解開保存的網站密碼。這種設計叫
+      <strong>Key Hierarchy（金鑰階層）</strong>。<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <figure
+      aria-label="Bitwarden 簡化金鑰階層。左側使用者裝置從主密碼經過 KDF、HKDF，解開同步而來的受保護對稱金鑰，再解密 Vault。右側伺服器僅保存加密的 Vault 與受保護金鑰。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>主密碼、Vault 金鑰與伺服器的分工</span
+        ><span class="pm-visual-id">KEY HIERARCHY</span>
+      </figcaption>
+      <div class="pm-boundary-header">
+        <span>使用者裝置 / LOCAL</span><span>同步服務 / SERVER</span>
+      </div>
+      <div class="pm-keymap">
+        <div class="pm-keymap-local">
+          <div class="pm-key-node">
+            <small>01 · 你輸入</small><strong>Master Password</strong
+            ><span>人類可記憶的秘密</span>
+          </div>
+          <div class="pm-key-down">
+            ↓ <small>PBKDF2 / Argon2id、HKDF</small>
+          </div>
+          <div class="pm-key-node">
+            <small>02 · 衍生</small><strong>Stretched Master Key</strong
+            ><span>用來解開受保護的金鑰</span>
+          </div>
+          <div class="pm-key-down">↓ <small>解封裝</small></div>
+          <div class="pm-key-node pm-positive">
+            <small>03 · 取得</small><strong>Vault 對稱金鑰</strong
+            ><span>本機解密網站密碼</span>
+          </div>
+        </div>
+        <div class="pm-keymap-network">
+          <span>← 同步密文</span><span>← Protected Symmetric Key</span
+          ><span>明文不由服務端解密 →</span>
+        </div>
+        <div class="pm-keymap-server">
+          <div>
+            <strong>Encrypted Vault</strong><small>加密的帳號資料</small>
+          </div>
+          <div><strong>Protected Key</strong><small>仍需本機解封裝</small></div>
+          <p>伺服器還有登入／營運所需資料，但不等於握有 Vault 明文。</p>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        概念示意：實際實作還包含每筆資料的加密金鑰，以及登入用雜湊等程序；不代表所有產品採用同樣金鑰名稱。<a
+          href="#src-01"
+          >[01]</a
+        >
+      </p>
+    </figure>
+    <h3>KDF、AES、MFA 各自負責什麼？</h3>
+    <div class="pm-mechanism-list">
+      <div>
+        <b>KDF</b
+        ><span>故意讓每次猜主密碼更花計算成本；不能把弱密碼變成強密碼。</span>
+      </div>
+      <div>
+        <b>AES + 完整性驗證</b
+        ><span>保護已儲存的 Vault 內容不被直接閱讀或任意修改。</span>
+      </div>
+      <div>
+        <b>MFA／二階段驗證</b
+        ><span
+          >增加登入帳號所需條件；<strong>不會阻止攻擊者對已偷到的密文進行離線猜測</strong>。</span
+        >
+      </div>
+    </div>
+    <p>
+      也別把「零知識」理解成絕對安全。如果電腦已經中毒，而你又把 Vault
+      解鎖，惡意程式仍可能從畫面、記憶體或填入結果取得資料。<strong>雲端儲存被偷</strong>，和<strong>使用中裝置被控制</strong>，是兩個不同的威脅。<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <div
+      aria-label="攻擊情境與防線比較"
+      class="pm-scroll-table"
+      role="region"
+      tabindex="0"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>攻擊者取得</th>
+            <th>哪個機制有幫助？</th>
+            <th>哪個機制幫不上忙？</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>網站 A 外洩的帳密</td>
+            <td>每站獨立密碼、MFA</td>
+            <td>只把原密碼改一兩個字</td>
+          </tr>
+          <tr>
+            <td>雲端加密 Vault 副本</td>
+            <td>強主密碼、KDF、金鑰設計</td>
+            <td>事後才開的登入 MFA</td>
+          </tr>
+          <tr>
+            <td>已解鎖的電腦</td>
+            <td>系統更新、端點防護、鎖定習慣</td>
+            <td>僅靠雲端零知識宣稱</td>
+          </tr>
+          <tr>
+            <td>唯一手機或安全金鑰遺失</td>
+            <td>離線復原碼、備用金鑰、可驗證的備份</td>
+            <td>只在原手機裡留備份</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section>
+    <h2 id="recommend">
+      <span class="pm-n">03 /</span>Bitwarden 和 1Password，差在哪裡？
+    </h2>
+    <p>
+      我主要會先看這兩個。它們都不是單純把密碼存到雲端，但處理「<strong>雲端備份落到攻擊者手上</strong>」這種情境時，設計有些不同。
+    </p>
+    <div class="pm-pick-list">
+      <div class="pm-pick">
+        <div class="pm-pick-name">Bitwarden<small>開源 · 跨平台</small></div>
+        <div class="pm-pick-body">
+          <p>
+            我會先推薦它。免費方案就夠很多人用，也有瀏覽器擴充、桌面版、手機 App
+            和自動填入。
+          </p>
+          <p class="pm-con">
+            重視原始碼透明、自架彈性的人可以優先看它；自架要自己負責更新與備份。<a
+              class="pm-cite"
+              href="#src-01"
+              >[01]</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="pm-pick">
+        <div class="pm-pick-name">
+          1Password<small>訂閱制 · 完整體驗</small>
+        </div>
+        <div class="pm-pick-body">
+          <p>
+            如果不介意付費，我也會推薦。介面整合成熟，另外有
+            <strong>Secret Key</strong
+            >，降低伺服端資料外洩時單靠猜主密碼解密的風險。
+          </p>
+          <p class="pm-con">
+            Secret Key 需要跟復原資料一起妥善保管。<a
+              class="pm-cite"
+              href="#src-04"
+              >[04]</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+    <figure
+      aria-label="比較只有伺服器資料外洩時 Bitwarden 與 1Password 的不同關鍵秘密。Bitwarden 核心依賴主密碼與 KDF；1Password 額外結合不在服務端保存的 Secret Key。兩者均不能抵擋已解鎖的客戶端遭控制。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>假設服務商的加密資料庫被複製</span
+        ><span class="pm-visual-id">OFFLINE ATTACK</span>
+      </figcaption>
+      <div class="pm-breach-compare">
+        <div class="pm-compare-label">Bitwarden</div>
+        <div class="pm-compare-chain">
+          <span>Vault 密文</span><i>＋</i><span>猜主密碼</span><i>→</i
+          ><span class="pm-outcome">KDF 讓每次猜測更昂貴</span>
+        </div>
+        <div class="pm-compare-label">1Password</div>
+        <div class="pm-compare-chain">
+          <span>Vault 密文</span><i>＋</i><span>猜 Account Password</span
+          ><i>＋</i><span class="pm-positive-chip">還需要 Secret Key</span>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        兩者都仍然需要強主密碼。1Password 的 Secret Key
+        不是「第二組要背的密碼」，通常保存在授權裝置及 Emergency
+        Kit；裝置也被入侵時，威脅模型就不同了。<a href="#src-04">[04]</a>
+      </p>
+    </figure>
+    <p>
+      <strong>Bitwarden</strong> 提供公開原始碼、跨平台 App
+      與自架彈性；對想看懂金鑰流程、自己控制部署的人很有吸引力。但自架不是神奇的加密升級：TLS、更新、備份、監控和災難復原都要自己負責。<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <p>
+      <strong>1Password</strong> 透過裝置端產生的高熵
+      <strong>Secret Key</strong> 與 Account Password 共同保護 Vault，另以 SRP
+      協定處理登入驗證。這主要是替「服務端資料外洩、攻擊者無法取得你的裝置秘密」增加一道障礙，不代表已授權裝置中毒時還能完全隔離。<a
+        class="pm-cite"
+        href="#src-04"
+        >[04]</a
+      ><a class="pm-cite" href="#src-19">[19]</a>
+    </p>
+    <p class="pm-bare-note">
+      至於 LastPass，我目前不放在首選；原因是 2022
+      年的備份外洩事件留下了長期風險：攻擊者可能保存 Vault
+      密文，未來繼續嘗試弱主密碼，而不是說所有使用者密碼都已經以明文外洩。<a
+        class="pm-cite"
+        href="#src-15"
+        >[15]</a
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="totp">
+      <span class="pm-n">04 /</span>OTP 那六位數字，究竟怎麼來的？
+    </h2>
+    <p>
+      很多網站叫你「開啟 OTP」，掃一個 QR
+      Code，之後手機就每隔一段時間出現新的六位數字。常見的實作叫
+      <strong>TOTP（Time-based One-Time Password）</strong>，它不是伺服器每 30
+      秒傳給手機一個新密碼。<a class="pm-cite" href="#src-11">[11]</a>
+    </p>
+    <p>
+      第一次設定時，網站產生一個<strong>秘密種子（Seed）</strong>，透過 QR Code
+      交給 Authy
+      等驗證器。之後<strong>網站和手機各自用同一份種子、同一個時間窗計算</strong>，結果自然會一致。這也說明為什麼手機沒網路，往往還是能產生驗證碼。
+    </p>
+    <figure
+      aria-label="TOTP 工作示意。註冊時網站透過 QR Code 將秘密種子交給 Authy，登入時兩端以相同秘密種子及同一 30 秒時間窗計算同一組六位驗證碼。以下數字純屬假資料。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>不是每 30 秒從雲端下載新密碼</span
+        ><span class="pm-visual-id">TOTP / SHARED SECRET</span>
+      </figcaption>
+      <div class="pm-otp-setup">
+        <div><small>第一次設定</small><b>網站建立秘密種子 K</b></div>
+        <span>→ 掃 QR Code →</span>
+        <div><small>你的手機</small><b>Authy 保存同一份 K</b></div>
+      </div>
+      <div class="pm-otp-divider">之後每次登入 · 兩端各自計算</div>
+      <div class="pm-otp-duo">
+        <div class="pm-otp-unit">
+          <small>WEBSITE / 網站</small>
+          <div class="pm-otp-func">HMAC(K, 時間窗 T)</div>
+          <div class="pm-otp-result">482 916</div>
+          <div class="pm-otp-caption">伺服器自行計算並比對</div>
+        </div>
+        <div class="pm-otp-center">
+          ＝<small>同一 K<br />同一 T</small>
+        </div>
+        <div class="pm-otp-unit">
+          <small>AUTHENTICATOR / 手機</small>
+          <div class="pm-otp-func">HMAC(K, 時間窗 T)</div>
+          <div class="pm-otp-result">482 916</div>
+          <div class="pm-otp-caption">離線也能產生驗證碼</div>
+        </div>
+      </div>
+      <div class="pm-otp-windows">
+        <span>時間窗 T</span>
+        <div>00–29 秒</div>
+        <div>30–59 秒</div>
+        <div>下一個 30 秒</div>
+        <span class="pm-otp-foot">時間窗改變 → 驗證碼通常隨之改變</span>
+      </div>
+      <p class="pm-figure-note">
+        數字與時間軸純屬原理示意，非可用驗證碼；實際時間容差、HMAC
+        演算法與位數由服務決定。<a href="#src-11">[11]</a>
+      </p>
+    </figure>
+    <p>
+      TOTP
+      能阻止「只偷到密碼，沒有手機或種子」的人直接登入。但六位數字<strong>沒有和真實網站網域綁定</strong>：如果你在假登入頁輸入驗證碼，攻擊者可能立刻轉送給真網站。這是下一節
+      FIDO2 要解決的問題。<a class="pm-cite" href="#src-12">[12]</a>
+    </p>
+  </section>
+  <section>
+    <h2 id="fido">
+      <span class="pm-n">05 /</span>FIDO2、Passkey 為什麼比手輸 OTP 更能防釣魚？
+    </h2>
+    <p>
+      TOTP 的六位數碼是一段<strong>可以被轉交</strong>的答案。FIDO2／WebAuthn
+      不一樣：註冊時，安全金鑰或裝置產生一組
+      <strong>Private Key / Public Key</strong>；網站只保存 Public
+      Key。登入時，網站發出一次性的 <strong>Challenge</strong>，驗證器使用
+      Private Key 簽章，由網站驗證。<a class="pm-cite" href="#src-13">[13]</a>
+    </p>
+    <figure
+      aria-label="即時釣魚中繼比較。TOTP 在假網站被讀取後可能直接轉發給真站；WebAuthn 憑證受到 Origin 與 RP ID 網域約束，假網站不會產生可在真網域驗證的正確憑證回應。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>差別不在是不是六位數，而在能不能轉送</span
+        ><span class="pm-visual-id">PHISHING RESISTANCE</span>
+      </figcaption>
+      <div class="pm-fido-cases">
+        <div class="pm-fido-case pm-vulnerable">
+          <b>使用 TOTP</b>
+          <div class="pm-fido-trail">
+            <span>假網站</span><i>取走 6 位碼 →</i><span>真網站</span>
+          </div>
+          <p>攻擊者可能在有效時間內轉送驗證碼。</p>
+        </div>
+        <div class="pm-fido-case pm-resilient">
+          <b>使用 FIDO2／WebAuthn</b>
+          <div class="pm-fido-trail">
+            <span>假網域</span><i>RP ID 不符合 ×</i><span>真網域的憑證</span>
+          </div>
+          <p>
+            瀏覽器／驗證器有網域約束；服務端也必須驗證
+            Origin、Challenge、簽章等條件。
+          </p>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        這裡講的是符合規格、正確實作的 WebAuthn
+        登入。它不能阻止已登入工作階段遭竊，也無法補救網站仍提供的弱式帳號復原途徑。<a
+          href="#src-12"
+          >[12]</a
+        ><a href="#src-13">[13]</a>
+      </p>
+    </figure>
+    <p>
+      <strong>Passkey</strong> 是建立在 FIDO
+      憑證之上的登入體驗，通常讓你不必輸入傳統網站密碼。Passkey
+      可以留在特定硬體，也可以在支援的生態系中以加密方式同步，這兩種做法的裝置遺失與復原風險不同。
+    </p>
+    <p>
+      另外，<strong>YubiKey 是硬體產品，FIDO2 是協定</strong
+      >。同一把相容安全金鑰可能支援傳統 OTP、TOTP 和
+      FIDO2；不是插了實體金鑰就自動具備 WebAuthn 的釣魚抵抗能力。<a
+        class="pm-cite"
+        href="#src-21"
+        >[21]</a
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="separation">
+      <span class="pm-n">06 /</span>TOTP 我還是會跟 Vault 分開放
+    </h2>
+    <p>
+      Authy 依然推薦，並且盡量希望把 TOTP 跟 Vault
+      分開，分開不只是系統分開，而是最好硬體等級的分開。
+    </p>
+    <p>
+      這不是因為「兩個
+      App」聽起來比較安全，而是要避免<strong>同一個失陷點</strong>同時拿到密碼與第二因素。如果網站密碼和
+      TOTP 種子都存在同一個已解鎖 Vault，攻擊者一旦能讀取整個
+      Vault，就可能兩份秘密一起拿到。<a class="pm-cite" href="#src-20">[20]</a>
+    </p>
+    <figure
+      aria-label="左側為同一 Vault 同時存放網站密碼與 TOTP 種子，共用失陷點；右側為電腦的密碼管理器存密碼，另一台手機的 Authy 存 TOTP，若網站支援 FIDO2 則另外使用硬體金鑰。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>不同 App 是第一步，不同裝置更好</span
+        ><span class="pm-visual-id">SEPARATE TRUST</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-split-graphic">
+        <div class="pm-device-case">
+          <div class="pm-case-kicker">同一個 Vault / 方便但集中</div>
+          <div class="pm-device-display">
+            <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <rect height="11" rx="2.5" width="15" x="4.5" y="10"></rect>
+              <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"></path>
+              <path d="M12 14v3"></path>
+            </svg>
+            <strong>Vault</strong>
+            <div class="pm-secrets">
+              <span>網站密碼</span><span>TOTP 種子</span>
+            </div>
+          </div>
+          <div class="pm-case-caption">
+            整個 Vault 被讀取時，兩組秘密可能一起失守。
+          </div>
+        </div>
+        <div class="pm-device-case pm-isolated">
+          <div class="pm-case-kicker">我比較偏好的方式 / 獨立裝置</div>
+          <div class="pm-devices">
+            <div class="pm-minidevice">
+              <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <rect
+                  height="12.3"
+                  rx="1.3"
+                  width="17.2"
+                  x="3.4"
+                  y="4.5"
+                ></rect>
+                <path d="m2.4 20 1-3.2h17.2l1 3.2H2.4Z"></path></svg
+              ><strong>電腦</strong><small>Vault / 密碼</small>
+            </div>
+            <div class="pm-middle-device">各自<br />保管</div>
+            <div class="pm-minidevice">
+              <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <rect height="20" rx="2.1" width="10.6" x="6.7" y="2"></rect>
+                <path d="M10.4 18.7h3.2"></path></svg
+              ><strong>手機</strong><small>Authy / TOTP</small>
+            </div>
+          </div>
+          <div class="pm-key-bar">
+            <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <circle cx="8" cy="14" r="4.6"></circle>
+              <path
+                d="m11.5 10.7 8-8 1.8 1.8-2.5 2.5 1.9 1.9-2.7 2.7-1.9-1.9-2.3 2.3"
+              ></path></svg
+            ><span
+              >重要帳號若支援 FIDO2，我更希望直接用獨立的實體安全金鑰。</span
+            >
+          </div>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        分離不能防止所有釣魚攻擊；TOTP 驗證碼仍可能被即時轉送。FIDO2／WebAuthn
+        則有針對網域的保護。
+      </p>
+    </figure>
+    <h3>我會把「分離」分成三個等級</h3>
+    <div class="pm-tier-list">
+      <div>
+        <span class="pm-tier-index">01</span><b>同 Vault 儲存密碼與 TOTP</b>
+        <p>
+          最方便，一般低風險網站未必不合理；但整個 Vault
+          外洩時兩份秘密可能同時暴露。
+        </p>
+      </div>
+      <div>
+        <span class="pm-tier-index">02</span
+        ><b>不同 App，且 TOTP 留在另一台手機</b>
+        <p>
+          例如電腦用 Bitwarden、手機用 Authy。能減少單一 Vault
+          失陷的連帶影響，但還要看備份帳號是否共享。
+        </p>
+      </div>
+      <div>
+        <span class="pm-tier-index">03</span><b>獨立硬體安全金鑰，優先 FIDO2</b>
+        <p>
+          主要信箱、雲端、金融或管理帳號，能用 FIDO2
+          就先用；準備第二把金鑰以免遺失後無法復原。
+        </p>
+      </div>
+    </div>
+    <div class="pm-authy-strip">
+      <strong>Authy</strong>
+      <p>
+        適合想用手機獨立管理 TOTP 的人。備份可以加密同步，但<strong
+          >備份密碼不要只放在同一個 Vault</strong
+        >。<a class="pm-cite" href="#src-06">[06]</a>
+      </p>
+      <p class="pm-tiny">
+        要注意：Authy 的 Windows／macOS／Linux 桌面版已在 2024 年 3
+        月停止支援，現在以手機 App
+        為主。若設好備用裝置，官方建議完成新增後關閉允許新裝置加入的
+        Multi-Device 選項。<a class="pm-cite" href="#src-08">[08]</a>
+        <a class="pm-cite" href="#src-07">[07]</a>
+      </p>
+    </div>
+    <p>
+      Authy 的備份密碼不會由 Twilio
+      代你保存或恢復。因此如果開了備份同步，<strong>備份密碼必須自己能找得到</strong>；別把它和
+      Vault 的唯一復原方式鎖在同一個地方。關掉 Multi-Device
+      的新增權限後，也要確認自己已經留有有效的備用裝置或復原途徑。<a
+        class="pm-cite"
+        href="#src-06"
+        >[06]</a
+      ><a class="pm-cite" href="#src-07">[07]</a>
+    </p>
+    <p class="pm-bare-note">
+      其他方案如 2FAS、Aegis、Ente Auth，以及 Yubico Authenticator
+      也值得比較。但選擇時應檢查的不是 App
+      名氣，而是種子存在哪裡、能否加密備份、手機不見後能否恢復，以及是否真的與主
+      Vault 隔離。
+    </p>
+  </section>
+  <section>
+    <h2 id="autofill">
+      <span class="pm-n">07 /</span>自動填入很方便，但它也有自己的安全邊界
+    </h2>
+    <p>自動填入，是一個不錯的方案，目前很多 app 會讀取你的剪貼簿。</p>
+    <p class="pm-precision">
+      現代 Android／iOS 已對剪貼簿讀取加入權限、提示或背景限制，不是每個 App
+      都能隨時偷看。但把密碼放進剪貼簿，仍會增加暴露途徑；若可以使用系統整合的自動填入，就不必每次複製貼上。<a
+        class="pm-cite"
+        href="#src-10"
+        >[10]</a
+      ><a class="pm-cite" href="#src-17">[17]</a>
+    </p>
+    <figure
+      aria-label="複製貼上時資料經過剪貼簿；系統自動填入則通常不用把密碼放進剪貼簿。兩種方式仍需確認目標網站或 App 是否可信。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>少讓密碼經過剪貼簿</span
+        ><span class="pm-visual-id">AUTOFILL VS COPY</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-fill-lines">
+        <div class="pm-fill-lane pm-copy">
+          <div class="pm-fill-label">複製貼上</div>
+          <div class="pm-fill-node">Vault</div>
+          <div class="pm-fill-node">剪貼簿</div>
+          <div class="pm-fill-node">網站 / App</div>
+        </div>
+        <div class="pm-fill-lane pm-auto">
+          <div class="pm-fill-label">系統自動填入</div>
+          <div class="pm-fill-node">Vault</div>
+          <div class="pm-fill-node">系統填入服務</div>
+          <div class="pm-fill-node">網站 / App</div>
+        </div>
+      </div>
+      <div aria-hidden="true" class="pm-fill-summary">
+        <div>
+          <b>注意</b
+          ><span>剪貼簿可能留下秘密；系統版本不同，讀取限制也不同。</span>
+        </div>
+        <div>
+          <b>比較好</b><span>使用系統自動填入，並確認目前的 App 與網址。</span>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        自動填入不會讓惡意 App
+        變安全：如果你主動把密碼填進假的登入畫面，密碼仍可能被取得。<a
+          class="pm-cite"
+          href="#src-09"
+          >[09]</a
+        >
+        <a class="pm-cite" href="#src-10">[10]</a>
+      </p>
+    </figure>
+    <h3>管理器怎麼知道「現在是哪一個網站」？</h3>
+    <p>
+      以瀏覽器擴充功能為例，密碼管理器通常會拿目前頁面的
+      <strong>URL／URI</strong>，和 Vault 中保存的網址做比對。Bitwarden 預設的
+      <strong>Base domain</strong> 適合大多數網站，但也能指定 Host 或
+      Exact，減少在不想填入的子網域顯示登入資料。<a
+        class="pm-cite"
+        href="#src-18"
+        >[18]</a
+      >
+    </p>
+    <div aria-label="比對方式與網址的示意" class="pm-uri-example">
+      <div class="pm-uri-header">
+        假設存的是 <code>https://login.example.com/</code>
+      </div>
+      <div>
+        <b>Base domain</b
+        ><span>同屬 <code>example.com</code> 的不同子網域可能一起匹配。</span>
+      </div>
+      <div>
+        <b>Host</b
+        ><span>限制在 <code>login.example.com</code> 這個主機名稱。</span>
+      </div>
+      <div>
+        <b>Exact</b
+        ><span
+          >整個 URL 必須完全相同；較嚴格，但跳轉參數也可能造成無法匹配。</span
+        >
+      </div>
+    </div>
+    <p>
+      不過，<strong>「有出現自動填入建議」不等於保證網站可信</strong>。網站本身如果遭入侵、存在惡意欄位，仍可能讀取已填入的密碼。Bitwarden
+      會對某些不可信 iframe
+      提醒或阻擋，因此我會<strong>關閉「網頁載入時就自動填入」</strong>，需要時再由快捷鍵或手動操作觸發。<a
+        class="pm-cite"
+        href="#src-09"
+        >[09]</a
+      >
+    </p>
+    <p>
+      手機上的自動填入通常會透過作業系統提供的服務，以及 App
+      身分／關聯網域等資訊協作；它不一定具有桌面瀏覽器同樣精細的 URL
+      路徑判斷。再安全的自動填入也不會讓惡意 App 自動變安全。
+    </p>
+  </section>
+  <section>
+    <h2 id="setup">
+      <span class="pm-n">08 /</span>真的要開始用，我會照這個順序設定
+    </h2>
+    <ol class="pm-checklist">
+      <li>
+        <span class="pm-counter">01</span>
+        <div>
+          <strong>設定一組獨立、長且難猜的主密碼</strong
+          ><span
+            >與任何網站都不重複；可以用隨機產生的多詞密碼短語，而非生日＋固定規則。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">02</span>
+        <div>
+          <strong>把常用網站改成每站唯一密碼</strong
+          ><span
+            >使用管理器產生長的隨機密碼；先處理信箱、雲端、金融與曾重複使用密碼的網站。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">03</span>
+        <div>
+          <strong>登入 Vault 本身也加第二因素</strong
+          ><span
+            >支援時優先用 FIDO2 安全金鑰；否則使用獨立手機上的 TOTP，別把唯一
+            MFA 秘密只放在待登入的同一 Vault。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">04</span>
+        <div>
+          <strong>使用自動填入，但保留確認動作</strong
+          ><span
+            >檢查網站網域／App；關閉一載入即自動填入；敏感服務可把 URI 比對改成
+            Host 或 Exact。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">05</span>
+        <div>
+          <strong>替根帳號準備獨立復原途徑</strong
+          ><span
+            >主要信箱、密碼管理器、Passkey
+            同步帳號，都不要只有一條會互相依賴的復原鏈。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">06</span>
+        <div>
+          <strong>備份加密匯出檔，並實際測試恢復</strong
+          ><span
+            >Bitwarden 可考慮密碼保護的 encrypted JSON；附件另處理，不能把普通
+            ZIP 當成加密備份。<a class="pm-cite" href="#src-16">[16]</a></span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">07</span>
+        <div>
+          <strong>保持系統更新、定時鎖定 Vault</strong
+          ><span
+            >減少不必要的瀏覽器擴充套件；不要在不可信共用裝置上解鎖
+            Vault。</span
+          >
+        </div>
+      </li>
+    </ol>
+    <figure
+      aria-label="循環依賴示意。當密碼管理器登不進去，而登入所需的唯一 TOTP 與復原碼也都在該 Vault 裡，使用者可能被永久鎖在門外。右側建議以獨立備用裝置、安全金鑰、離線復原碼解除依賴。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>設定備份時，先想像「最壞的那天」</span
+        ><span class="pm-visual-id">RECOVERY LOOP</span>
+      </figcaption>
+      <div class="pm-recovery-flow">
+        <div class="pm-recovery-problem">
+          <b>無法登入 Vault</b><span>需要 TOTP / 復原碼</span
+          ><span>但唯一副本都在 Vault 裡</span><strong>形成循環依賴</strong>
+        </div>
+        <span aria-hidden="true" class="pm-recovery-arrow">→</span>
+        <div class="pm-recovery-solution">
+          <b>分開保存復原能力</b><span>離線復原碼</span
+          ><span>備用 FIDO2 金鑰或獨立手機</span
+          ><strong>真的做一次恢復測試</strong>
+        </div>
+      </div>
+    </figure>
+  </section>
+  <section>
+    <h2 id="appendix">
+      <span class="pm-n">09 /</span>想繼續看技術的話：把算法展開
+    </h2>
+    <p class="pm-appendix-intro">
+      上面先說「為什麼要這樣做」。以下是實際金鑰流程、公式、協定驗證與例外條件；想研究哪一段，再打開就好。
+    </p>
+    <div class="pm-details-group">
+      <details>
+        <summary>01 · Bitwarden 金鑰階層：Master Key 到 Vault 明文</summary>
+        <div class="pm-detail-body">
+          <p>
+            一般使用主密碼登入的 Bitwarden
+            帳號，客戶端以主密碼和帳號信箱等輸入進行 KDF，取得
+            <strong>Master Key</strong>。再經 HKDF 展開得到
+            <strong>Stretched Master Key</strong>，用它解開從伺服器取回的
+            <strong>Protected Symmetric Key</strong>，得到
+            <strong>User Symmetric Key</strong
+            >。資料解密在客戶端執行。這裡展示的是概念流程，省略個別項目加密金鑰與其他登入方式。<a
+              class="pm-cite"
+              href="#src-01"
+              >[01]</a
+            >
+          </p>
+          <pre>
+Master Password + account salt
+    ↓ KDF (PBKDF2 或 Argon2id)
+Master Key
+    ↓ HKDF（展開不同用途的金鑰材料）
+Stretched Master Key
+    + 伺服器保存的 Protected Symmetric Key
+    ↓ 在本機解開
+User Symmetric Key
+    ↓ 解開 Vault 項目相關金鑰與密文
+Vault 明文（只在授權裝置需要時使用）</pre>
+          <p>
+            注意區分<strong>「驗證登入」</strong>與<strong
+              >「解密 Vault」</strong
+            >：登入通常還會使用可供服務端驗證的衍生雜湊及
+            MFA；解密則是拿到真正的對稱金鑰。改主密碼、調 KDF 參數、輪替 Vault
+            加密金鑰是不同作業，不能認為改了密碼就讓攻擊者已保存的舊密文瞬間失效。<a
+              class="pm-cite"
+              href="#src-22"
+              >[22]</a
+            >
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>02 · PBKDF2 與 Argon2id：鹽值、迭代、記憶體成本</summary>
+        <div class="pm-detail-body">
+          <p>
+            <strong>KDF</strong>
+            的輸入是人類容易記憶、熵可能不足的主密碼；用鹽值（salt）與昂貴的計算，讓攻擊者對每個猜測都必須重新付費。Salt
+            <strong>通常不需要保密</strong
+            >，目的是讓相同密碼在不同帳號上得到不同的輸出，並提高預先計算表的重複利用難度。
+          </p>
+          <pre>
+PBKDF2-HMAC-SHA256(P, salt, c, dkLen)
+P      = 主密碼
+salt   = 非秘密的鹽值
+c      = 迭代次數
+ dkLen = 需要輸出的金鑰長度
+
+Argon2id(P, salt, m, t, p)
+m = 記憶體成本
+ t = 時間／迭代成本
+ p = 平行度</pre>
+          <p>
+            Bitwarden 文件中的預設參考：<strong
+              >PBKDF2-HMAC-SHA256：600,000 iterations</strong
+            >；<strong>Argon2id：32 MiB、6 iterations、parallelism 4</strong
+            >。PBKDF2 主要增加重複計算；Argon2id
+            同時要求記憶體，讓高平行猜測不那麼便宜。<strong
+              >600,000 不能直接和 6 比較</strong
+            >，因為工作模型完全不同。<a class="pm-cite" href="#src-02">[02]</a>
+          </p>
+          <p class="pm-minor">
+            簡化成本模型：總猜測時間 ≈ 猜測次數 × 單次猜測成本 ÷ 有效並行量。但
+            GPU、記憶體頻寬、KDF
+            參數與硬體配置會大幅改變結果，不能直接用解鎖秒數換算出可靠破解時間。長且獨立的主密碼仍是第一條防線。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>03 · AES-CBC／HMAC 與 AES-GCM，差別不是數字大小</summary>
+        <div class="pm-detail-body">
+          <p>
+            「AES-256」表示金鑰長度，不表示整套加密協定的安全性。除了加密資料本身，還需要<strong>完整性驗證</strong>，否則攻擊者可能修改密文而無法被可靠察覺。
+          </p>
+          <ul>
+            <li>
+              <strong>Bitwarden：AES-256-CBC + HMAC-SHA256</strong>。CBC
+              負責機密性，HMAC 額外驗證密文完整性；安全性也依賴正確的
+              IV、金鑰分離與驗證順序。
+            </li>
+            <li>
+              <strong>1Password：AES-256-GCM</strong>。GCM 是 AEAD
+              模式，將加密與驗證整合；同樣需要妥善管理
+              nonce／IV，不能重複使用不該重複的 nonce。
+            </li>
+          </ul>
+          <p>
+            不能單憑 CBC 或 GCM
+            的名字判斷整個產品哪個比較安全；端點、金鑰管理與事故復原往往同樣重要。<a
+              class="pm-cite"
+              href="#src-03"
+              >[03]</a
+            ><a class="pm-cite" href="#src-05">[05]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>04 · TOTP 的公式：HMAC、時間窗與動態截斷</summary>
+        <div class="pm-detail-body">
+          <p>
+            TOTP 基於 HOTP。網站和驗證器共享一個隨機秘密種子
+            <code>K</code>，把目前時間映射成計數器 <code>T</code>，再以 HMAC
+            的結果轉成短數字。<a class="pm-cite" href="#src-11">[11]</a>
+          </p>
+          <pre>
+T = floor((UnixTime − T₀) / X)
+H = HMAC(K, encode_8_byte_big_endian(T))
+OTP = DynamicTruncate(H) mod 10^d
+
+K  = 共享秘密種子
+T₀ = 基準時間（常見 Unix epoch）
+X  = 每個時間窗的秒數（常見 30）
+d  = 輸出位數（常見 6）</pre>
+          <p>
+            RFC 6238 支援 HMAC-SHA-1／256／512 方案，實際服務的
+            seed、位數和時間窗必須相容。六位碼總共只有
+            <code>10^6</code>
+            種可能，因此服務端需要登入失敗速率限制，並處理時間誤差與重放檢查；不是把
+            30 秒內任何無限次猜測都視為合理。
+          </p>
+          <p class="pm-minor">
+            QR Code 內往往包含秘密種子或可還原種子的設定 URI；不要把它當一般登入
+            QR Code 分享到群組。拿到 K 的人可以在後續時間窗自行算出驗證碼。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>05 · WebAuthn 驗證到底檢查哪些欄位？</summary>
+        <div class="pm-detail-body">
+          <p>
+            註冊（registration）時，驗證器為特定 RP 建立公私鑰對，網站保存
+            Public Key 與 Credential
+            ID。登入（authentication）時，網站下發不可預測的
+            <strong>Challenge</strong>；瀏覽器／驗證器產生
+            Assertion，伺服端驗證。<a class="pm-cite" href="#src-13">[13]</a>
+          </p>
+          <pre>
+註冊：
+  Authenticator → (private key, public key)
+  Server        ← public key + credential ID
+
+登入：
+  Server → challenge
+  Authenticator → signature over
+    authenticatorData || SHA256(clientDataJSON)
+  Server checks:
+    challenge / type / Origin
+    rpIdHash / UP・UV flags（依政策）
+    signature / credential binding</pre>
+          <p>
+            <strong>Origin</strong> 表示呼叫 WebAuthn API 的網站來源；<strong
+              >RP ID</strong
+            >
+            是憑證被允許使用的依賴方範圍。假站不能隨意冒用真站的 RP ID
+            或替真站取得有效斷言；服務端也必須確實檢查，不可只驗簽章後忽略上下文。
+          </p>
+          <p>
+            「防釣魚」不等於「防所有帳號接管」：已登入的 Session
+            Cookie、惡意瀏覽器擴充套件或弱式復原流程仍可能成為其他入口。<a
+              class="pm-cite"
+              href="#src-12"
+              >[12]</a
+            >
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>06 · Passkey 是什麼？同步型與硬體綁定型的差異</summary>
+        <div class="pm-detail-body">
+          <p>
+            Passkey 是運用 FIDO 憑證完成登入的一種方式。使用指紋、臉部辨識或裝置
+            PIN 時，通常是在本機解鎖驗證器，不是把生物辨識資料送給網站。
+          </p>
+          <ul>
+            <li>
+              <strong>Device-bound</strong
+              >：憑證綁定於特定驗證器／裝置，硬體隔離通常較明確，但要準備備用金鑰。
+            </li>
+            <li>
+              <strong>Synced Passkey</strong
+              >：可透過提供者保護的同步體系在多裝置使用，恢復較方便，應特別保護同步帳號與裝置。
+            </li>
+          </ul>
+          <p>
+            不能把「私鑰永遠不可匯出」套到所有
+            Passkeys。實際能否登入與解鎖密碼管理器的
+            Vault，也可能是不同機制；例如某些設計還需要 WebAuthn PRF 支援才能從
+            Passkey 衍生 Vault 解密材料。<a class="pm-cite" href="#src-01"
+              >[01]</a
+            ><a class="pm-cite" href="#src-13">[13]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>07 · 1Password Secret Key、SRP 與金鑰威脅模型</summary>
+        <div class="pm-detail-body">
+          <p>
+            1Password 在裝置上產生具有約 <strong>128 bits 熵</strong>的 Secret
+            Key，與 Account Password
+            一起參與帳號加密金鑰的保護。它不是帳號序號，也不是第二個要背的密碼；Secret
+            Key 會保存在授權裝置及適當的 Emergency Kit。<a
+              class="pm-cite"
+              href="#src-04"
+              >[04]</a
+            >
+          </p>
+          <p>
+            <strong>SRP（Secure Remote Password）</strong>
+            用於登入身分驗證，不等於 Vault
+            的資料加密；其設計目標是讓服務端能進行密碼證明，而不必接收使用者輸入的原始
+            Account Password。<a class="pm-cite" href="#src-19">[19]</a>
+          </p>
+          <p>
+            攻擊者只拿到伺服器加密資料時，缺乏 Secret Key
+            是額外的離線攻擊障礙；但如果他同時控制已授權裝置、取得 Secret Key
+            或復原資料，就不能照搬「純伺服器外洩」的安全推論。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>08 · Autofill：URI 比對、iframe 和端點風險</summary>
+        <div class="pm-detail-body">
+          <p>
+            Bitwarden 的
+            <strong>Base domain</strong> 會參考有效註冊網域；<strong
+              >Host</strong
+            >
+            約束主機名稱；<strong>Exact</strong> 要求整個 URI
+            完全相符。敏感子網域有時應改用 Host／Exact，但 Exact 可能因路徑或
+            query string 變動而失效。Android、iOS 的可比對資訊還可能受到 OS API
+            限制。<a class="pm-cite" href="#src-18">[18]</a>
+          </p>
+          <p>
+            Bitwarden 的「Autofill on page
+            load」預設關閉；官方也提醒受攻擊的網站可能利用這個便利性。使用者手動觸發、檢查網址、避免可疑
+            iframe 都有意義；但一旦憑證真的填進惡意的頁面欄位，光靠 URL
+            配對無法阻止網頁腳本讀取當前欄位。<a class="pm-cite" href="#src-09"
+              >[09]</a
+            >
+          </p>
+          <p>
+            剪貼簿清除計時只能降低殘留時間，不應被視為防止所有剪貼簿讀取的安全沙箱。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>09 · Vault 備份與復原：encrypted JSON、附件與死結</summary>
+        <div class="pm-detail-body">
+          <p>
+            跨裝置同步主要維持目前資料一致，不等於你能在帳號被鎖、設備都遺失時取回舊資料。以
+            Bitwarden 為例，<strong>Password protected encrypted JSON</strong>
+            用另設密碼保護且可匯入別的帳號；<strong>Account restricted</strong>
+            則依賴原帳號的加密金鑰，不宜當作唯一的跨帳號災難備援。<a
+              class="pm-cite"
+              href="#src-16"
+              >[16]</a
+            >
+          </p>
+          <p>
+            一般的加密 JSON 匯出<strong>不含檔案附件</strong>。含附件的 ZIP
+            匯出還應另外使用加密容器保護，不能因為副檔名是 ZIP
+            就以為已加密。復原資料必須在 Vault 無法登入時也拿得到。
+          </p>
+          <p class="pm-minor">
+            最簡單的實際演練：確認離線保存的復原碼能找到、備份檔能解密、測試環境能匯入、附件另行檢查。必要時先在隔離環境操作，不要為測試而在共用電腦輸入真的主密碼。
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+  <section aria-label="參考來源" class="pm-sources">
+    <h2 id="references"><span class="pm-n">↗ /</span>參考來源</h2>
+    <p class="pm-appendix-intro">
+      官方文件、標準規格與事件說明。產品功能與設定名稱以實際版本為準。
+    </p>
+    <p class="pm-src" id="src-01">
+      <b>[01]</b>
+      <a href="https://bitwarden.com/help/bitwarden-security-white-paper/"
+        >Bitwarden · Security Whitepaper</a
+      >
+      — Vault 金鑰階層
+    </p>
+    <p class="pm-src" id="src-02">
+      <b>[02]</b>
+      <a href="https://bitwarden.com/help/kdf-algorithms/"
+        >Bitwarden · Encryption Key Derivation</a
+      >
+      — PBKDF2 / Argon2id
+    </p>
+    <p class="pm-src" id="src-03">
+      <b>[03]</b>
+      <a href="https://bitwarden.com/help/what-encryption-is-used/"
+        >Bitwarden · Encryption Protocols</a
+      >
+      — AES-CBC / HMAC
+    </p>
+    <p class="pm-src" id="src-04">
+      <b>[04]</b>
+      <a href="https://support.1password.com/understanding-account-key/"
+        >1Password · About your Secret Key</a
+      >
+    </p>
+    <p class="pm-src" id="src-05">
+      <b>[05]</b>
+      <a href="https://support.1password.com/1password-security/"
+        >1Password · Security model</a
+      >
+    </p>
+    <p class="pm-src" id="src-06">
+      <b>[06]</b>
+      <a
+        href="https://help.twilio.com/articles/19753577267355-Enable-or-Disable-Backups-and-Sync-in-Authy"
+        >Twilio · Authy backups &amp; sync</a
+      >
+    </p>
+    <p class="pm-src" id="src-07">
+      <b>[07]</b>
+      <a href="https://help.twilio.com/articles/19753226891803"
+        >Twilio · Authy Multi-Device</a
+      >
+    </p>
+    <p class="pm-src" id="src-08">
+      <b>[08]</b>
+      <a
+        href="https://help.twilio.com/articles/22771146070299-End-user-guide-End-of-Life-EOL-for-Twilio-Authy-Desktop-app"
+        >Twilio · Authy Desktop EOL</a
+      >
+      — 2024-03-19
+    </p>
+    <p class="pm-src" id="src-09">
+      <b>[09]</b>
+      <a href="https://bitwarden.com/help/auto-fill-browser/"
+        >Bitwarden · Autofill from browser extensions</a
+      >
+    </p>
+    <p class="pm-src" id="src-10">
+      <b>[10]</b>
+      <a
+        href="https://developer.android.com/privacy-and-security/risks/secure-clipboard-handling"
+        >Android Developers · Secure Clipboard Handling</a
+      >
+    </p>
+    <p class="pm-src" id="src-11">
+      <b>[11]</b>
+      <a href="https://datatracker.ietf.org/doc/html/rfc6238"
+        >IETF · RFC 6238 / TOTP</a
+      >
+    </p>
+    <p class="pm-src" id="src-12">
+      <b>[12]</b>
+      <a href="https://pages.nist.gov/800-63-4/sp800-63b.html"
+        >NIST · SP 800-63B-4</a
+      >
+    </p>
+    <p class="pm-src" id="src-13">
+      <b>[13]</b>
+      <a href="https://www.w3.org/TR/webauthn-3/"
+        >W3C · Web Authentication Level 3</a
+      >
+    </p>
+    <p class="pm-src" id="src-14">
+      <b>[14]</b>
+      <a href="https://support.google.com/chrome/answer/10400619"
+        >Google Chrome Help · Use saved passwords in other apps</a
+      >
+    </p>
+    <p class="pm-src" id="src-15">
+      <b>[15]</b>
+      <a
+        href="https://blog.lastpass.com/posts/security-incident-update-recommended-actions"
+        >LastPass · Security incident update</a
+      >
+      — 2022 年事件後續說明
+    </p>
+    <p class="pm-src" id="src-16">
+      <b>[16]</b>
+      <a href="https://bitwarden.com/help/export-your-data/"
+        >Bitwarden · Export Vault Data</a
+      >
+    </p>
+    <p class="pm-src" id="src-17">
+      <b>[17]</b>
+      <a href="https://developer.apple.com/documentation/uikit/uipastecontrol"
+        >Apple Developer · UIPasteControl</a
+      >
+      — iOS 剪貼簿存取提示
+    </p>
+    <p class="pm-src" id="src-18">
+      <b>[18]</b>
+      <a href="https://bitwarden.com/help/uri-match-detection/"
+        >Bitwarden · Form URIs for Autofill</a
+      >
+      — Base domain／Host／Exact
+    </p>
+    <p class="pm-src" id="src-19">
+      <b>[19]</b>
+      <a href="https://support.1password.com/secure-remote-password/"
+        >1Password · Secure Remote Password</a
+      >
+      — SRP 登入驗證
+    </p>
+    <p class="pm-src" id="src-20">
+      <b>[20]</b>
+      <a href="https://bitwarden.com/help/bitwarden-authenticator/"
+        >Bitwarden · Authenticator</a
+      >
+      — 本機 TOTP 與 Vault 同步的差異
+    </p>
+    <p class="pm-src" id="src-21">
+      <b>[21]</b>
+      <a href="https://www.yubico.com/products/yubico-authenticator/"
+        >Yubico · Authenticator</a
+      >
+      — 硬體 TOTP 與 FIDO2 的區別
+    </p>
+    <p class="pm-src" id="src-22">
+      <b>[22]</b>
+      <a href="https://bitwarden.com/help/account-encryption-key/"
+        >Bitwarden · Encryption Key Rotation</a
+      >
+      — 主密碼變更與金鑰輪替
+    </p>
+    <p class="pm-src">
+      <b>[延伸]</b>
+      <a href="https://ithelp.ithome.com.tw/users/20130205/ironman/3517"
+        >iThome 鐵人賽 · 密碼學系列</a
+      >
+    </p>
+  </section>
+  <div class="pm-outro">
+    這篇是選型與原理整理，圖示為簡化的風險模型，不代表對單一產品完成安全稽核。<a
+      href="#article-title"
+      >回到頂端 ↑</a
+    >
+  </div>
+</div>

@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+declare const __PRIVACY_DEMOS__: boolean;
+declare const __TRANSLATION_DEMOS__: boolean;
 import { dictionaries, type Locale } from '../i18n/index.ts';
 
 /**
@@ -57,6 +59,32 @@ export function Prose({ html, locale }: { html: string; locale: Locale }) {
     }
     return () => {
       for (const cleanup of cleanups) cleanup();
+    };
+  }, [html, locale]);
+  useEffect(() => {
+    const root = ref.current;
+    if (!root?.querySelector('.privacy-guide,.translation-guide')) return;
+    let active = true;
+    let cleanup: (() => void) | undefined;
+    if (__PRIVACY_DEMOS__ && root.querySelector('.privacy-guide')) {
+      void import('../lib/privacy-demos.ts')
+        .then((module) => {
+          if (active) cleanup = module.enhancePrivacyDemos(root, locale);
+        })
+        .catch(() => undefined); // Full static content remains available on load failure.
+    } else if (
+      __TRANSLATION_DEMOS__ &&
+      root.querySelector('.translation-guide')
+    ) {
+      void import('../lib/translation-demos.ts')
+        .then((module) => {
+          if (active) cleanup = module.enhanceTranslationDemos(root, locale);
+        })
+        .catch(() => undefined);
+    }
+    return () => {
+      active = false;
+      cleanup?.();
     };
   }, [html, locale]);
   return (

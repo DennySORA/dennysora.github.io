@@ -1,0 +1,2374 @@
+<div class="privacy-guide">
+  <p class="pg-opening">
+    Imagine downloading a Linux ISO with BitTorrent. The file itself is entirely
+    public, but you may still not want just anyone to compile a record of which
+    downloads this network endpoint joined, and when. This example separates the
+    legality of the content from the privacy of the communication, bringing the
+    question back to the network itself.
+  </p>
+  <div class="pg-takeaway">
+    Understanding P2P privacy means following three questions:<strong
+      >Who can read the content, who can see the endpoints, and who can link
+      different activities together?</strong
+    >
+  </div>
+  <p>
+    This article primarily uses BitTorrent on the public internet as its
+    example. When discussing Tor, I2P, and mix networks, it explains their
+    communication models separately. The time series and calculations in the
+    diagrams use synthetic data to illustrate causal relationships; they do not
+    represent measured results for any product.
+  </p>
+
+  <div class="pg-no-script-note">
+    <p class="pg-noscript">
+      JavaScript is currently disabled. The full article, diagrams, and default
+      calculations remain readable; interactive controls are hidden.
+    </p>
+  </div>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">01 · Visibility</div>
+    <h2 id="pg-start">
+      Start With One Download: What Can Others Actually See?
+    </h2>
+    <p>
+      BitTorrent splits a file into pieces that can be obtained separately,
+      allowing participants to supply data to one another. The set of nodes
+      participating in the same torrent is called a <strong>swarm</strong>,
+      while a node that connects to exchange data is called a
+      <strong>peer</strong>. Clients must first find each other's contact
+      information before establishing connections. This is the basis for
+      efficiently distributing the transfer load, and it also explains why
+      network endpoints become observable information.<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a></sup
+      >
+    </p>
+    <p>
+      First, place each observer correctly. A peer exchanging pieces with you
+      sees the IP and port at the other end of its connection; your access ISP
+      sees packets sent over your access line; the VPN operator sits at the end
+      of the encrypted tunnel. Each position has access to different
+      information.
+      <strong
+        >Information hidden from one position may simply have moved to
+        another.</strong
+      >。
+    </p>
+    <figure id="pg-route-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Change the Path, and the Observation Points Change Too</span
+        ><span class="pg-figure-tag">Architecture illustration</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-route-controls" class="pg-demo-controls"></section>
+        <div id="pg-route-path" class="pg-route-path">
+          <div class="pg-route-node">
+            <strong>Your device</strong
+            ><small
+              >Your home network connects to the VPN first.<br />Inner packets
+              are wrapped in the tunnel.</small
+            ><span class="pg-mono">Source: residential IP</span>
+          </div>
+          <div class="pg-route-node">
+            <strong>VPN server</strong
+            ><small
+              >Terminates the VPN tunnel.<br />Connects to peers on the client's
+              behalf.</small
+            ><span class="pg-mono">Entry ↔ Exit</span>
+          </div>
+          <div class="pg-route-node">
+            <strong>BitTorrent peer</strong
+            ><small
+              >Actually exchanges pieces.<br />Sees the VPN's outward-facing
+              endpoint.</small
+            ><span class="pg-mono">Source: VPN exit IP</span>
+          </div>
+        </div>
+        <div id="pg-route-observation" class="pg-observation">
+          <p class="pg-subheading">Access ISP</p>
+          <p class="pg-subheading">
+            Can see that you connect to a VPN, along with packet timing,
+            direction, and size; the inner destination is protected by tunnel
+            encryption.
+          </p>
+          <p class="pg-subheading">VPN side</p>
+          <p class="pg-subheading">
+            Has entry and exit observation points while forwarding traffic. If
+            the application also uses encryption, removing the VPN's outer layer
+            does not decrypt the application's ciphertext.
+          </p>
+          <p class="pg-subheading">Tracker / Peer</p>
+          <p class="pg-subheading">
+            Sees the VPN exit when all relevant traffic passes through the
+            tunnel; a peer still knows which torrent it is exchanging.
+          </p>
+        </div>
+        <p id="pg-route-summary" aria-live="polite" class="pg-status-line">
+          This diagram assumes that all relevant P2P traffic uses the specified
+          path.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 01</span>VPN encryption covers the
+        path from the device to the VPN endpoint. Whether traffic from the exit
+        to the destination has additional encryption depends on the inner
+        protocol. Multiple hops distribute network positions, but do not
+        automatically separate administrative authority within the same
+        provider.<a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-09" class="pg-ref">[9]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-start-detail-1">
+      Content Confidentiality, IP Separation, and Activity Unlinkability
+    </h3>
+    <p>
+      Encryption protects the readability of content. A VPN can change the
+      source visible within a swarm to the VPN exit. Going a step further,
+      <strong>activity unlinkability</strong> asks whether someone observing two
+      activities can determine that they came from the same source. Even without
+      knowing a real name, an observer may be able to group multiple activities
+      together.
+    </p>
+    <p>
+      Moreover, a peer is itself a recipient of the data. If you send it a
+      piece, you cannot simultaneously expect encryption on that connection to
+      hide the piece from it. The real questions are which endpoint information
+      to protect from which intermediate observers, and whether that information
+      can be linked to other data. Only by separating these questions do the
+      purposes of VPNs, protocol encryption, and anonymity networks become
+      clear.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">02 · Protocol</div>
+    <h2 id="pg-discovery">Finding Peers Also Publishes Contact Information</h2>
+    <p>
+      A download typically spans three roles: an
+      <strong>index site</strong> helps you find a torrent file or magnet link;
+      a <strong>discovery mechanism</strong> helps the client obtain peers; and
+      <strong>data connections</strong> actually carry file pieces. The index,
+      tracker, and peers need not be controlled by the same entity, so observing
+      who visited a website and observing who participated in a swarm are
+      inherently different things.<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a
+        ><a href="#pg-ref-02" class="pg-ref">[2]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Discovering Peers and Exchanging Data Use Different Connections</span
+        ><span class="pg-figure-tag">Dashed: discovery　Solid: data</span>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="BitTorrent discovery mechanism diagram, horizontally scrollable"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <svg
+          viewbox="0 0 760 370"
+          role="img"
+          aria-labelledby="pg-discovery-title pg-discovery-desc"
+          class="pg-diagram"
+        >
+          <title id="pg-discovery-title">
+            BitTorrent Discovery Paths and Data Exchange
+          </title>
+          <desc id="pg-discovery-desc">
+            An index supplies the torrent description; the client finds
+            endpoints through a tracker or DHT. Already-connected peers can also
+            supply new endpoints through PEX. File pieces travel directly
+            between the client and peers.
+          </desc>
+          <defs>
+            <marker
+              id="pg-arrow-disc"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M1 1 7 4 1 7" class="pg-geometry-a311b83b06"></path>
+            </marker>
+          </defs>
+          <rect
+            x="20"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="113" y="48" class="pg-geometry-35afd8367b">
+            Index site / publication page
+          </text>
+          <text x="113" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            Torrent file, magnet link
+          </text>
+          <rect
+            x="288"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="381" y="48" class="pg-geometry-35afd8367b">Tracker</text>
+          <text x="381" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            Receives announces and returns endpoints
+          </text>
+          <rect
+            x="554"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="647" y="48" class="pg-geometry-35afd8367b">DHT nodes</text>
+          <text x="647" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            Distribute queries and store announces
+          </text>
+          <rect
+            x="20"
+            y="176"
+            width="230"
+            height="118"
+            rx="8"
+            class="pg-frame"
+          ></rect>
+          <text x="135" y="209" class="pg-geometry-35afd8367b">
+            Your BitTorrent client
+          </text>
+          <text x="135" y="235" class="pg-secondary pg-geometry-35afd8367b">
+            Identifies the torrent and selects pieces
+          </text>
+          <text x="135" y="258" class="pg-secondary pg-geometry-35afd8367b">
+            Obtains connectable IP : port endpoints
+          </text>
+          <rect
+            x="494"
+            y="170"
+            width="246"
+            height="76"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="617" y="201" class="pg-geometry-35afd8367b">
+            Connected Peer A
+          </text>
+          <text x="617" y="225" class="pg-secondary pg-geometry-35afd8367b">
+            Transfers pieces and can exchange endpoints through PEX
+          </text>
+          <rect
+            x="494"
+            y="292"
+            width="246"
+            height="56"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="617" y="326" class="pg-geometry-35afd8367b">
+            Newly discovered Peer B and Peer C
+          </text>
+          <path
+            d="M113 88V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <text x="125" y="112" class="pg-tiny">
+            Description and identification information
+          </text>
+          <path
+            d="M381 88V130H205V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path
+            d="M647 88V145H230V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path
+            d="M260 207H484"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M484 237H260"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+          <text x="372" y="195" class="pg-secondary pg-geometry-35afd8367b">
+            Request and exchange pieces
+          </text>
+          <path
+            d="M494 264H268"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path d="M617 246V264H494" class="pg-wire pg-dash"></path>
+          <text x="382" y="284" class="pg-tiny pg-geometry-35afd8367b">
+            PEX: contact information for other peers
+          </text>
+          <path
+            d="M135 294V320H484"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 02</span>Disabling one discovery
+        branch does not necessarily remove other connections. The diagram shows
+        conceptual relationships; not every download uses all mechanisms at
+        once. The wide diagram scrolls horizontally.<a
+          href="#pg-ref-02"
+          class="pg-ref"
+          >[2]</a
+        ><a href="#pg-ref-03" class="pg-ref">[3]</a
+        ><a href="#pg-ref-04" class="pg-ref">[4]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-discovery-detail-1">
+      The Infohash Brings Everyone to the Same Torrent
+    </h3>
+    <p>
+      <code>infohash</code> is the hash of a torrent's encoded
+      <code>info</code> dictionary, used to identify the torrent description. v1
+      uses SHA-1 and v2 uses SHA-256; v2 uses a truncated 20 bytes in some
+      protocol fields. It is neither a user account nor a universal name
+      obtained by simply hashing the entire file once. Because descriptions can
+      differ, the same content can correspond to different torrents.<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a></sup
+      >
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="Comparison of Peer Discovery Mechanisms"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          Three common discovery methods and the observations they produce
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Mechanism</th>
+            <th scope="col">How peers are found</th>
+            <th scope="col">What the data can establish</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Tracker</th>
+            <td>
+              The client announces its participation in a torrent, and the
+              tracker returns a set of contact endpoints.
+            </td>
+            <td>
+              The tracker can see the source endpoint and announce fields;
+              uploaded amount, remaining amount, and similar values are usually
+              self-reported by the client.<a href="#pg-ref-02" class="pg-ref"
+                >[2]</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">DHT</th>
+            <td>
+              <code>get_peers</code> queries endpoints;
+              <code>announce_peer</code> registers the client's participation.
+            </td>
+            <td>
+              It is a distributed address book. Tokens help restrict
+              registration on behalf of other IPs, but do not prove what was
+              actually transferred.<a href="#pg-ref-03" class="pg-ref">[3]</a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">PEX</th>
+            <td>
+              Connected peers exchange contact information for other peers.
+            </td>
+            <td>
+              The information comes from another node. Even if the protocol
+              requires it to reflect connection state, stale or malicious data
+              must still be considered.<a href="#pg-ref-04" class="pg-ref"
+                >[4]</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Endpoint information has another easily overlooked detail:
+      <strong
+        >the announced listening port, the actual source port of a packet, and
+        the port exposed by the NAT mapping may not be the same number.</strong
+      >
+      Keeping only an <code>IP:port</code> without recording what it means can
+      cause information from different stages to be joined incorrectly
+      later.<sup><a href="#pg-ref-02" class="pg-ref">[2]</a></sup>
+    </p>
+    <h3 id="pg-discovery-detail-2">
+      Reducing Broadcast Information Versus Constraining Connection Paths
+    </h3>
+    <p>
+      Disabling DHT or PEX reduces the corresponding discovery paths. As long as
+      you still connect directly to a peer, it can still see the endpoint of
+      that connection. A private torrent's <code>private</code> setting
+      restricts discovery to the designated tracker, primarily to maintain its
+      access controls; communication within the swarm still requires endpoint
+      information. Local Service Discovery on a LAN may announce the infohash
+      and listening port through multicast, creating another locally visible
+      surface.<sup><a href="#pg-ref-05" class="pg-ref">[5]</a></sup>
+    </p>
+    <p>
+      qBittorrent's <strong>Anonymous Mode</strong> primarily reduces
+      self-reported information such as the user-agent, version, and additional
+      IP fields. Its actual behavior depends on the libtorrent version and
+      torrent type; the older behavior documented on the official page, which
+      disabled DHT / LSD / UPnP, cannot be assumed for all versions. The
+      endpoint actually used to send packets is still determined by sockets,
+      routing, and isolation arrangements.<sup
+        ><a href="#pg-ref-07" class="pg-ref">[7]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">03 · Trust</div>
+    <h2 id="pg-trust">A VPN Moves the Trust Boundary</h2>
+    <p>
+      On a VPN path, your device first wraps inner IP packets in an encrypted
+      tunnel. The VPN server removes that layer and sends the inner traffic
+      toward its destination. To a peer, the destination for replies is usually
+      the VPN exit; to the access ISP, the directly visible counterpart is the
+      VPN server.<sup><a href="#pg-ref-06" class="pg-ref">[6]</a></sup>
+    </p>
+    <p>
+      This separation is valuable, but it puts the VPN operator in a new
+      position of trust. Forwarding packets requires maintaining live state; if
+      the same administrator controls the entry and exit, the architecture gives
+      it the ability to observe both sides. That fact must be separated from
+      another question:
+      <strong
+        >Does it preserve these relationships in records that can be queried
+        later?</strong
+      >
+    </p>
+    <h3 id="pg-trust-detail-1">
+      No-Log Addresses Historical Data; RAM-Only Addresses Where Residue Remains
+    </h3>
+    <p>
+      Mullvad's public policy, for example, states that it does not retain user
+      activity logs, while also explaining its handling of accounts, WireGuard
+      configuration, payments, and other necessary data. Randomly numbered
+      accounts reduce the identifying information requested at registration;
+      some payment methods may still create a relationship between a payer and
+      an account. That relationship alone, however, is not enough to establish
+      that this account produced a particular item of exit traffic at a
+      particular time.<sup><a href="#pg-ref-08" class="pg-ref">[8]</a></sup>
+    </p>
+    <p>
+      RAM-only servers focus on persistent disk residue: a reboot does not
+      retain the operational state ordinarily stored on disk, helping reduce one
+      category of retrospective forensic risk. Live memory, network observation,
+      and data retained in other systems are separate issues. Mullvad announced
+      the completion of its RAM-only migration in 2023. This article cites the
+      provider's public statement, not an independent audit of its operating
+      environment.<sup><a href="#pg-ref-08" class="pg-ref">[8]</a></sup>
+    </p>
+    <h3 id="pg-trust-detail-2">
+      Multiple Hops Separate Locations; You Still Need to Ask Who Controls Them
+    </h3>
+    <p>
+      Multiple hops place the entry node near the user and the exit node near
+      the destination. Someone able to observe only one location may find it
+      harder to link the two sides. If the same observer already has traffic
+      from both ends, simply adding relays may still preserve timing and volume
+      correlations. Multiple servers belonging to one provider do not
+      automatically become independent administrators.<sup
+        ><a href="#pg-ref-09" class="pg-ref">[9]</a
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a></sup
+      >
+    </p>
+    <p>
+      A VPN also does not remove application-layer logins, accounts, or device
+      information. If an activity directly uses a known account, the website
+      does not need to infer your identity again from network rhythms. From this
+      perspective, network anonymity and application identity are two layers
+      that can affect each other but must each be understood separately.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">04 · Paths</div>
+    <h2 id="pg-isolation">Where Do Packets Go After the Tunnel Fails?</h2>
+    <p>
+      Being connected to a VPN describes a current state. To understand whether
+      your residential IP could appear in a swarm, you also need to examine what
+      happens after the tunnel fails: does the application stop and wait, or
+      continue sending through another available path?
+      <strong>Fail-closed</strong> means that when the protected path fails,
+      protected communication stops as well, until a safe path is restored.
+    </p>
+    <p>
+      The routing table selects the next hop; interface binding limits the
+      network interface an application uses; and a firewall can reject packets
+      taking the wrong exit. A Linux <strong>network namespace</strong> goes a
+      step further, giving a process a separate network environment in which it
+      can see only specific interfaces and routes. These mechanisms act at
+      different control points, and their actual effect depends on which traffic
+      they cover.<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <figure id="pg-isolation-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >The Application Sees Only wg0; Outer UDP Stays in the Host
+          Namespace</span
+        ><span class="pg-figure-tag">WireGuard / Linux architecture</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-tunnel-controls" class="pg-demo-controls"></section>
+        <div id="pg-transport" class="pg-transport">
+          <div class="pg-transport-box">
+            <p class="pg-subheading">Application network namespace B</p>
+            <div class="pg-step-node">
+              BitTorrent client<br /><span class="pg-small"
+                >Sends inner IP packets</span
+              >
+            </div>
+            <div aria-hidden="true" class="pg-step-arrow pg-app-arrow">↓</div>
+            <div class="pg-step-node pg-wg-node">
+              <strong>wg0</strong><br /><span
+                id="pg-wg-state"
+                class="pg-small pg-wg-state"
+                >Tunnel available: send through the designated interface</span
+              >
+            </div>
+            <p class="pg-small pg-geometry-76b14685f3">
+              This namespace has no eth0 / wlan0 and no ordinary WAN fallback
+              path.
+            </p>
+          </div>
+          <div class="pg-transport-box">
+            <p class="pg-subheading">Host network namespace A</p>
+            <div class="pg-step-node">
+              WireGuard UDP socket<br /><span class="pg-small"
+                >Remains in the namespace where the interface was created</span
+              >
+            </div>
+            <div aria-hidden="true" class="pg-step-arrow">↓</div>
+            <div class="pg-step-node">
+              eth0 / wlan0 → VPN server<br /><span class="pg-small"
+                >Sends encrypted outer packets</span
+              >
+            </div>
+            <div id="pg-tunnel-explain" class="pg-tunnel-strip">
+              The inner traffic of wg0 is encrypted and carried through this UDP
+              socket.
+            </div>
+          </div>
+        </div>
+        <p id="pg-tunnel-status" aria-live="polite" class="pg-status-line">
+          When the tunnel is available, application data is encapsulated through
+          wg0 and then carried by the physical network interface.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 03</span>Redrawn from WireGuard's
+        official namespace model. When the tunnel is unreachable, the
+        application may wait or fail; the point of the diagram is that there is
+        no alternative direct exit. The physical interface may still send
+        handshake or retry packets; traffic does not have to fall to absolutely
+        zero.<a href="#pg-ref-06" class="pg-ref">[6]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-isolation-detail-1">
+      Why Can Changing Only the Default Route Still Leave Gaps?
+    </h3>
+    <p>
+      The system may also have more-specific routes, local-network exceptions,
+      or new choices after an interface is recreated. Research on
+      <i>Bypassing Tunnels</i> and TunnelVision has demonstrated VPN bypasses
+      caused by routing exceptions and DHCP route information, respectively.
+      These show the difference between routing preference and traffic
+      isolation; the current status of any product still depends on its version
+      and fixes.<sup><a href="#pg-ref-12" class="pg-ref">[12]</a></sup>
+    </p>
+    <p>
+      Interface binding also has subtleties. Binding to a local IP and
+      restricting a socket to a specific network device do not have exactly the
+      same effect on every system. TCP peers, UDP trackers, and DHT may also use
+      different sockets. When one class of traffic behaves differently from
+      others, first confirm which exit is actually controlled, rather than
+      relying only on the connection icon shown by the application.<sup
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <h3 id="pg-isolation-detail-2">
+      Why Examine IPv6, DNS, and Management Interfaces Separately?
+    </h3>
+    <p>
+      If IPv4 is routed into the VPN but IPv6 can still connect directly to
+      peers, a peer may see your endpoint through another address family. DNS
+      queries made outside the tunnel may reveal which service domains were
+      queried, but an ordinary domain query does not automatically contain a
+      torrent's infohash. These expose different information and should not be
+      lumped together under a single IP-leak label.
+    </p>
+    <p>
+      A Web UI, search extension, or DNS proxy on the host may also be handled
+      by a different process. Restricting the download engine does not
+      automatically restrict those processes' paths. Port forwarding, meanwhile,
+      determines whether external peers can initiate inbound connections;
+      opening a port at the VPN exit and opening one on a residential router
+      involve different network positions. These differences follow from
+      components and connection paths; they are not a claim that every client
+      has the same problems.<sup
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <p>
+      Namespace isolation assumes that the host kernel and the privileges
+      capable of modifying networking remain trustworthy. It can reduce the
+      chance of an application accidentally using another exit, but cannot fully
+      protect a host already controlled with high privileges. So far, we have
+      addressed where packets go. The next question is what shape they retain
+      after entering the correct path.
+    </p>
+  </section>
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">05 · Timing</div>
+    <h2 id="pg-rhythm">
+      Encryption Hides the Content, but Communication Still Has a Rhythm
+    </h2>
+    <p>
+      You send a batch of requests in succession, and the remote endpoint starts
+      returning data. A busy receiver pauses; another wave arrives when buffer
+      space becomes available. Encryption changes the bytes inside packets, but
+      these timing variations, produced jointly by the application and network,
+      may still appear in the outer layer.
+    </p>
+    <p>
+      <strong>End-to-end traffic correlation</strong> asks whether traffic
+      collected at two observation points belongs to the same communication. An
+      adversary needs to see the corresponding data on both sides; knowing a VPN
+      exit IP alone does not provide the user's side of the traffic. Tor's
+      official documentation likewise explicitly lists simultaneous observation
+      of both ends of a communication as a threat model it does not defend
+      against.<sup><a href="#pg-ref-11" class="pg-ref">[11]</a></sup>
+    </p>
+    <figure id="pg-trace-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Align Two Timelines to See How Much Their Shapes Still Resemble Each
+          Other</span
+        ><span class="pg-figure-tag"
+          >Synthetic teaching data · No network capture</span
+        >
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-trace-controls" class="pg-demo-controls"></section>
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="Line charts of traffic per second at two observation points, horizontally scrollable"
+          class="pg-figure-viewport"
+        >
+          <svg
+            viewbox="0 0 760 395"
+            role="img"
+            aria-labelledby="pg-trace-svg-title pg-trace-svg-desc"
+            class="pg-diagram pg-geometry-b27c9a47f2"
+          >
+            <title id="pg-trace-svg-title">
+              Synthetic Entry and Exit Traffic Time Series
+            </title>
+            <desc id="pg-trace-svg-desc">
+              Both charts use the same scale, from zero to three hundred twenty
+              KiB per second. There are forty time windows of half a second
+              each, totaling twenty seconds. The entry is a solid line; the exit
+              is a dashed line. The exit can be shifted earlier to align; values
+              outside the observation interval are excluded from calculation.
+            </desc>
+            <text x="62" y="25" class="pg-geometry-9eb8107a7b">Entry X</text>
+            <text x="736" y="25" class="pg-geometry-79d2b00c97">
+              KiB/s · User → Destination
+            </text>
+            <path d="M62 150L736 150" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="154" class="pg-geometry-79d2b00c97">0</text>
+            <path
+              d="M62 123.75L736 123.75"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="127.75" class="pg-geometry-79d2b00c97">80</text>
+            <path d="M62 97.5L736 97.5" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="101.5" class="pg-geometry-79d2b00c97">160</text>
+            <path d="M62 71.25L736 71.25" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="75.25" class="pg-geometry-79d2b00c97">240</text>
+            <path d="M62 45L736 45" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="49" class="pg-geometry-79d2b00c97">320</text>
+            <path
+              id="pg-trace-x"
+              d="M70.42 147.38 L87.28 146.72 L104.13 146.06 L120.98 146.72 L137.82 130.31 L154.68 110.63 L171.53 120.47 L188.38 140.16 L205.23 146.06 L222.08 147.05 L238.93 146.06 L255.78 145.41 L272.63 120.47 L289.48 100.78 L306.33 108.98 L323.18 138.52 L340.03 146.06 L356.88 146.72 L373.73 147.38 L390.58 145.41 L407.43 131.95 L424.28 113.91 L441.13 120.47 L457.98 136.88 L474.83 146.06 L491.68 147.05 L508.53 146.72 L525.38 146.06 L542.23 117.19 L559.08 104.06 L575.93 123.75 L592.78 145.08 L609.63 150.00 L626.48 150.00 L643.33 150.00 L660.18 150.00 L677.03 150.00 L693.88 150.00 L710.73 150.00 L727.58 150.00"
+              class="pg-geometry-071d7d91b8"
+            ></path>
+            <text x="62" y="173" class="pg-geometry-04e7741d74">0</text>
+            <text x="196.8" y="173" class="pg-geometry-04e7741d74">4</text>
+            <text x="331.6" y="173" class="pg-geometry-04e7741d74">8</text>
+            <text x="466.4" y="173" class="pg-geometry-04e7741d74">12</text>
+            <text x="601.2" y="173" class="pg-geometry-04e7741d74">16</text>
+            <text x="736" y="173" class="pg-geometry-04e7741d74">20</text>
+            <text x="62" y="207" class="pg-geometry-9eb8107a7b">Exit Y</text>
+            <text x="736" y="207" class="pg-geometry-79d2b00c97">
+              Same direction · Same vertical axis
+            </text>
+            <path d="M62 330L736 330" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="334" class="pg-geometry-79d2b00c97">0</text>
+            <path
+              d="M62 303.75L736 303.75"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="307.75" class="pg-geometry-79d2b00c97">80</text>
+            <path d="M62 277.5L736 277.5" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="281.5" class="pg-geometry-79d2b00c97">160</text>
+            <path
+              d="M62 251.25L736 251.25"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="255.25" class="pg-geometry-79d2b00c97">240</text>
+            <path d="M62 225L736 225" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="229" class="pg-geometry-79d2b00c97">320</text>
+            <path
+              id="pg-trace-y"
+              d="M70.42 330.00 L87.28 330.00 L104.13 330.00 L120.98 326.27 L137.82 327.64 L154.68 325.72 L171.53 326.98 L188.38 313.20 L205.23 292.79 L222.08 302.50 L238.93 321.27 L255.78 325.72 L272.63 328.27 L289.48 325.06 L306.33 326.43 L323.18 302.50 L340.03 284.06 L356.88 293.25 L373.73 319.11 L390.58 325.06 L407.43 327.64 L424.28 326.93 L441.13 325.77 L457.98 314.71 L474.83 295.81 L491.68 302.50 L508.53 318.25 L525.38 325.72 L542.23 328.27 L559.08 325.67 L575.93 327.03 L592.78 299.48 L609.63 287.08 L626.48 306.83 L643.33 325.14 L660.18 330.00 L677.03 330.00 L693.88 330.00 L710.73 330.00 L727.58 330.00"
+              class="pg-geometry-465c34fd09"
+            ></path>
+            <text x="62" y="353" class="pg-geometry-04e7741d74">0</text>
+            <text x="196.8" y="353" class="pg-geometry-04e7741d74">4</text>
+            <text x="331.6" y="353" class="pg-geometry-04e7741d74">8</text>
+            <text x="466.4" y="353" class="pg-geometry-04e7741d74">12</text>
+            <text x="601.2" y="353" class="pg-geometry-04e7741d74">16</text>
+            <text x="736" y="353" class="pg-geometry-04e7741d74">20</text>
+            <text x="399" y="384" class="pg-geometry-04e7741d74">
+              Time (seconds); a shared time origin is used after alignment
+            </text>
+            <g id="pg-trace-cursor" class="pg-geometry-23fe0971da">
+              <path
+                id="pg-trace-cursor-line"
+                d="M62 40L62 335"
+                class="pg-geometry-b26d2719f4"
+              ></path>
+            </g>
+          </svg>
+        </div>
+        <div class="pg-legend">
+          <span><i></i>Entry X: traffic in the selected direction</span
+          ><span
+            ><i class="pg-amber"></i>Exit Y: candidate traffic in the same
+            direction</span
+          >
+        </div>
+        <div class="pg-trace-meta">
+          <span
+            >Correlation coefficient r:
+            <span id="pg-trace-correlation"
+              >-0.315 (not a match probability)</span
+            ></span
+          ><span id="pg-trace-clock">Time scan: not playing</span>
+        </div>
+        <p id="pg-trace-limit" class="pg-model-caveat">
+          Fixed 0.5-second windows, with KiB/s on the vertical axis. This
+          same-communication dataset deliberately includes a 1.5-second delay;
+          shift the timeline to observe the change. r is only the similarity of
+          this feature set, not a match probability. Tail values shifted outside
+          the range for alignment are excluded from calculation.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 04</span>Both charts keep the same
+        coordinate scales. Adding other traffic demonstrates how aggregation can
+        change the shape; high or low scores in any mode are not performance
+        results for real attacks or defenses. Even if a different communication
+        happens to look similar, that does not establish a shared source.
+      </figcaption>
+    </figure>
+    <h3 id="pg-rhythm-detail-1">
+      The Simplest Approach: Sum by Time Window, Then Allow a Small Shift
+    </h3>
+    <p>
+      Divide packets in one direction into fixed time windows, summing the
+      observed bytes in each window. If the window width is Δ seconds,
+      <code>xₖ</code> and <code>yₖ</code> are the traffic volumes in the kth
+      window on the two sides. To allow for forwarding delay, shift the second
+      series a few bins forward or backward before comparing their changes.
+    </p>
+    <div class="pg-equation">
+      xₖ = Σ sᵢ, where kΔ ≤ tᵢ &lt; (k + 1)Δ<br />C(ℓ) = corr(xₖ, yₖ₊ℓ)<small
+        >tᵢ: packet time; sᵢ: the number of bytes counted at the specified
+        observation layer. ℓ is an integer number of bins, corresponding to ℓΔ
+        seconds. Compare upstream and downstream separately; the diagram divides
+        by Δ to display the result in KiB/s.</small
+      >
+    </div>
+    <p>
+      This simple model only explains where the signal comes from. Research also
+      uses learned representations, windows of different lengths, and multiple
+      features. More complex models still require observation data and remain
+      affected by how data is collected, real-world network variation, and the
+      tolerated false-positive rate. The ESPRESSO manuscript released by its
+      authors in 2026 specifically investigates the gap between artificial data
+      and real Tor traffic.<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <h3 id="pg-rhythm-detail-2">
+      One VPN Tunnel Often Contains Many Connections
+    </h3>
+    <p>
+      The chart above deliberately starts from comparable counting layers. On a
+      real network, the physical interface sees outer VPN packets, while the
+      exit may expose a particular peer connection. The entry tunnel also
+      carries other peers, DNS, web traffic, or background synchronization.
+      Treating the entire tunnel's volume as a single peer flow already changes
+      what is being compared.
+    </p>
+    <p>
+      Encapsulation headers, retransmissions, ACKs, MTU, packet segmentation,
+      congestion, and padding also change counts and lengths. A reasonable
+      intuition is that data must be forwarded to arrive, and low-latency
+      forwarding often preserves some causal rhythms. It does not follow that
+      every entry packet has an exit-side copy of equal length and equal
+      spacing.<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <div class="pg-two-col">
+      <div>
+        <h3 id="pg-rhythm-detail-3">Traffic Fingerprinting</h3>
+        <p>
+          Examines encrypted traffic on one side and asks which known website,
+          video, or activity it resembles. It requires classes to learn or
+          compare against.
+        </p>
+      </div>
+      <div>
+        <h3 id="pg-rhythm-detail-4">Two-Sided Traffic Correlation</h3>
+        <p>
+          Examines traffic at two locations and asks whether they belong to the
+          same communication. It requires candidate pairs and the ability to
+          observe both sides.
+        </p>
+      </div>
+    </div>
+    <p class="pg-geometry-2bdf8e45fd">
+      These two questions can use similar features, but their evaluation results
+      are not directly interchangeable. A passive adversary only observes
+      existing traffic; an active adversary able to affect delay, packet loss,
+      or rate may also induce a recognizable response on the other side.
+      Defending against one observation model does not automatically cover
+      another.<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">06 · Inference</div>
+    <h2 id="pg-inference">
+      How Far Is Looking Similar From Being the Same Person?
+    </h2>
+    <p>
+      A correlation coefficient of <code>r = 0.91</code> says that two sets of
+      numbers are very similar under this comparison method. It does not
+      directly provide a calibrated 91% probability that they are the same
+      communication, much less bridge the gap between a device, an account, and
+      a natural person. Searching many candidates, time shifts, and windows and
+      then choosing the highest score also increases the chance of accidental
+      similarity.
+    </p>
+    <p>
+      Likewise, a tracker list and an actual data exchange provide different
+      levels of observation. Linking a network event to an operator's identity
+      generally requires evidence from other sources and must account for shared
+      IPs, clock errors, and gaps in records. Shared IPv4 particularly requires
+      source ports, precise times, and relevant transport information. Even a
+      match to a subscriber does not automatically identify the person who
+      operated the device.<sup
+        ><a href="#pg-ref-21" class="pg-ref">[21]</a
+        ><a href="#pg-ref-23" class="pg-ref">[23]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Every Further Step Requires New Evidence</span
+        ><span class="pg-figure-tag">Levels of claims</span>
+      </div>
+      <div class="pg-figure-body">
+        <ol class="pg-chain">
+          <li>
+            <strong>An endpoint appears in a list</strong
+            ><small>Contact information reported by a tracker / PEX.</small>
+          </li>
+          <li>
+            <strong>A connection is actually established</strong
+            ><small
+              >A responsive counterpart exists at a particular time.</small
+            >
+          </li>
+          <li>
+            <strong>Verifiable pieces are exchanged</strong
+            ><small>The connection supplies data that can be checked.</small>
+          </li>
+          <li>
+            <strong>The operator's identity is confirmed</strong
+            ><small
+              >Combined device, account, and other independent
+              information.</small
+            >
+          </li>
+        </ol>
+        <p class="pg-evidence-gap">
+          Arrows mean that further support is needed, not that the protocol
+          automatically derives an identity.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 05</span>Hashes can verify piece
+        integrity, but a hash by itself does not prove a natural person's
+        identity, copyright ownership, or the original publisher. Different
+        claims require their own corresponding evidence.
+      </figcaption>
+    </figure>
+    <h3 id="pg-inference-detail-1">
+      A Very Low False-Positive Rate Can Still Produce Many Wrong Candidates
+    </h3>
+    <p>
+      Suppose an analysis has 1,000,001 candidates, exactly one of which is the
+      true match. The model has a 90% probability of detecting the true match,
+      and each wrong candidate has only a one-in-one-hundred-thousand
+      probability of being falsely flagged. That false-positive rate sounds low,
+      but across one million wrong candidates, it still produces an average of
+      10 false positives.
+    </p>
+    <figure id="pg-base-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Put the Candidate Pool Size Back Into the Calculation</span
+        ><span class="pg-figure-tag"
+          >Calculated from assumptions · Not case data</span
+        >
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-base-controls" class="pg-demo-controls"></section>
+        <div aria-live="polite" aria-atomic="true" class="pg-stats">
+          <div>
+            <span class="pg-stat-label"
+              >Average true matches found per round</span
+            ><span id="pg-base-tp" class="pg-stat-number">0.90</span>
+          </div>
+          <div>
+            <span class="pg-stat-label">Average false positives per round</span
+            ><span id="pg-base-fp" class="pg-stat-number pg-amber">10.00</span>
+          </div>
+          <div>
+            <span class="pg-stat-label"
+              >Model positive predictive value PPV</span
+            ><span id="pg-base-ppv" class="pg-stat-number">8.26%</span>
+          </div>
+        </div>
+        <div
+          role="img"
+          id="pg-base-bar"
+          aria-label="Among flagged candidates, the modeled proportion of true matches is approximately 8.26%, and wrong candidates approximately 91.74%"
+          class="pg-share-bar"
+        >
+          <div id="pg-base-share" class="pg-share-true"></div>
+          <div class="pg-share-false"></div>
+        </div>
+        <div class="pg-share-legend">
+          <span><b>■</b> True match</span><span><b>▨</b> Wrong candidates</span>
+        </div>
+        <p class="pg-model-caveat">
+          These values are modeled proportions accumulated over many analysis
+          rounds with the same distribution. A single analysis does not
+          literally contain 0.9 of a person, and PPV cannot be treated as the
+          probability of a particular person's identity or responsibility.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 06</span>Assumes exactly one true
+        match per round, with all candidates using the same threshold and the
+        same TPR / FPR. Changing the candidate count reveals the effect of the
+        base rate. The proportion chart spans 0% to 100%, without a truncated
+        scale.
+      </figcaption>
+    </figure>
+    <div class="pg-equation">
+      E[TP] = TPR<br />E[FP] = (N − 1) × FPR<br />PPV = TPR / [TPR + (N − 1) ×
+      FPR]<small
+        >This is the positive predictive value derived from the
+        single-true-match model above. TP denotes detected true matches; FP
+        denotes false flags. Calculating expected counts does not require all
+        candidates to be mutually independent; sample dependence still matters
+        when estimating confidence bounds for the false-positive rate.</small
+      >
+    </div>
+    <p>
+      If the true match is not in the candidate pool at all, forcing a system to
+      choose the most similar candidate can mistake the highest-scoring wrong
+      candidate for the answer. This is also why research distinguishes
+      closed-world from open-world settings: the former often assumes the answer
+      lies within the known set, while the latter must allow for none of the
+      above.<sup><a href="#pg-ref-13" class="pg-ref">[13]</a></sup>
+    </p>
+    <h3 id="pg-inference-detail-2">
+      More Evidence Must Really Mean More Information
+    </h3>
+    <p>
+      Three reports exported from the same tracker record may still represent
+      only one observation. Multiplying them as if they were three independent
+      corroborations overstates the certainty of the conclusion. Timelines also
+      need alignment: time zones, clock offsets, changes in NAT mappings, and
+      whether a log records event time or write time can all affect matching
+      results.
+    </p>
+    <p>
+      Long-term observation may gradually narrow the candidate set. For example,
+      if repeated activities require the source to be online, fewer people may
+      fit every observed period. But mistaken offline assessments, missed
+      captures, background programs, or different devices can undermine that
+      inference's assumptions. I2P's threat model also discusses intersection
+      attacks of this kind. A downward-sloping curve of candidate counts alone
+      does not justify assuming that exactly one operator will ultimately
+      remain.<sup><a href="#pg-ref-19" class="pg-ref">[19]</a></sup>
+    </p>
+    <details class="pg-math-note">
+      <summary>
+        Why Don't 100 Candidates Necessarily Mean the Same Level of Anonymity?
+      </summary>
+      <p>
+        If everyone is equally likely, the observer retains considerable
+        uncertainty. If one person already holds 99% of the model probability
+        and the other 99 form only a small tail, saying there are 100 candidates
+        is no longer informative. Information theory expresses this difference
+        through entropy:
+      </p>
+      <div class="pg-equation">
+        H(U | O = o) = −Σᵢ pᵢ log₂ pᵢ<small
+          >U is the source to be hidden, o is the observation obtained, and pᵢ
+          is each candidate's probability under that observation. Entropy is
+          measured in bits; it depends on the chosen candidate and probability
+          models. It is not an anonymity score read directly from a traffic
+          plot.</small
+        >
+      </div>
+      <p>
+        If the secret a study aims to hide is the entry–exit pairing M, it can
+        also examine how much information observation O provides about M. The
+        point is to define the secret to protect first, rather than calculating
+        a number from two arbitrary traffic curves and declaring anonymity
+        proven.
+      </p>
+    </details>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">07 · Appearance</div>
+    <h2 id="pg-padding">
+      Padding Changes Packet Appearance; DAITA Varies Strategies Across
+      Connections
+    </h2>
+    <p>
+      If packet sizes and intervals leave clues, a natural idea is to make
+      packets look more alike. <strong>Padding</strong> can fill shorter packets
+      to a specified size; <strong>dummy traffic</strong> adds dummy data that
+      the other endpoint can recognize and discard when there is no
+      corresponding amount of real data. The former changes size; the latter can
+      also change the shape of some gaps and bursts.
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Equal-Sized Packets Can Still Have Different Rhythms</span
+        ><span class="pg-figure-tag"
+          >Conceptual timing · Not a packet capture</span
+        >
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="Three-row comparison of original packets, fixed size, and fixed rate, horizontally scrollable"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <div class="pg-packet-comparison">
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              Original traffic<br />Both sizes and intervals vary
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-2069f90061"></i
+              ><i class="pg-packet pg-geometry-9a99ab2da7"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-4515267cdf"></i
+              ><i class="pg-packet pg-geometry-ffb2e49749"></i
+              ><i class="pg-packet pg-geometry-7b2c1b0f26"></i
+              ><i class="pg-packet pg-geometry-b3fcf0824d"></i>
+            </div>
+          </div>
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              Fixed packet size<br />Burst timing remains
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-d5b815c143"></i
+              ><i class="pg-packet pg-geometry-e37327da60"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-e24598056c"></i
+              ><i class="pg-packet pg-geometry-96b59ee503"></i
+              ><i class="pg-packet pg-geometry-db8cd4399c"></i
+              ><i class="pg-packet pg-geometry-97c9b714f9"></i>
+            </div>
+          </div>
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              Fixed-rate scheduling<br />Waiting + filling empty slots
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-d5b815c143"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-16b1624071"></i
+              ><i class="pg-packet pg-dummy pg-geometry-20de4764a4"></i
+              ><i class="pg-packet pg-dummy pg-geometry-3fbb676c2f"></i
+              ><i class="pg-packet pg-geometry-a541a1e575"></i
+              ><i class="pg-packet pg-geometry-f4235a132d"></i
+              ><i class="pg-packet pg-dummy pg-geometry-15eaa369da"></i
+              ><i class="pg-packet pg-geometry-db8cd4399c"></i
+              ><i class="pg-packet pg-geometry-51ae4cb3c9"></i>
+            </div>
+          </div>
+        </div>
+        <p class="pg-packet-note">
+          Horizontal position shows time moving to the right; rectangle height
+          shows packet size. Solid-filled blocks contain real data; hatched
+          blocks represent dummy data. In the final row, data that misses the
+          current time slot must wait for the next slot.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 07</span>Fixed packet sizes reduce
+        size differences; a fixed rate requires controlling transmission times
+        and filling empty slots with dummy data. Their costs and the signals
+        they can obscure differ.
+      </figcaption>
+    </figure>
+    <h3 id="pg-padding-detail-1">
+      DAITA Focuses on Shape, Not on Replacing the Encryption Algorithm
+    </h3>
+    <p>
+      Mullvad's published DAITA design combines fixed packet sizes, background
+      dummy traffic, and pattern perturbation. DAITA v2, announced in 2025,
+      additionally assigns dynamic configurations when a VPN connection is
+      established, giving different connections different dummy-insertion
+      strategies; re-establishing a connection also changes its configuration.
+      The unit of operation is a VPN connection, which cannot be equated with an
+      independent strategy for every BitTorrent peer flow.<sup
+        ><a href="#pg-ref-15" class="pg-ref">[15]</a></sup
+      >
+    </p>
+    <p>
+      The v2 announcement says dummy packet usage is roughly halved. This
+      describes a change to that category of additional packets, not a universal
+      halving of total traffic overhead across all workloads. Likewise, fixed
+      packet sizes do not directly promise a fixed transmission rate. The effect
+      depends on the original traffic, padding strategy, bottleneck bandwidth,
+      and the adversary's observation point.
+    </p>
+    <h3 id="pg-padding-detail-2">
+      Defenses Can Change, and Observers Can Learn Again
+    </h3>
+    <p>
+      <i>Ephemeral Network-Layer Fingerprinting Defenses</i> (PoPETs 2026)
+      studies strategies that use different defenses for each connection, and
+      reports on integration with WireGuard and deployment experience at
+      Mullvad. Its main evaluations cover circuit, website, and video
+      fingerprinting; those results cannot be directly converted into success or
+      failure rates for two-sided BitTorrent correlation.<sup
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      The same paper also provides necessary counterpoints: in the specified
+      closed-world simulations, several tested padding-only defenses became
+      substantially less effective when attackers had more opportunities for
+      training and data augmentation. Defenses incorporating blocking / delay
+      still helped, but remained constrained by the models and costs. Random
+      configurations can make fixed templates harder to apply, but cannot
+      prevent an adversary from learning the overall distribution of
+      configurations.
+    </p>
+    <h3 id="pg-padding-detail-3">
+      DeTorrent: Searching for Padding Strategies Through Adversarial Training
+    </h3>
+    <p>
+      <i>DeTorrent</i> (PoPETs 2024) pits a defense-generating model against a
+      traffic-recognition model to search for dummy-insertion strategies. It
+      studies anonymous communication environments such as Tor and evaluates
+      website fingerprinting and traffic correlation separately.
+      <strong
+        >Having Torrent in its name does not establish that it applies to all
+        BitTorrent transfers</strong
+      >. Under its specified FC setting, the paper reports that TPR can fall to
+      approximately 0.12 at an FPR of 10⁻⁵. That is an operating point in the
+      experiment, not a statement that a user's risk is only 12%.<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a></sup
+      >
+    </p>
+    <p>
+      Padding-only means that the strategy does not deliberately hold real
+      packets back, but the additional data still consumes bandwidth, CPU, and
+      queue capacity. When a link is nearly saturated, the absence of scheduling
+      delay can still accompany greater actual latency. Separating what an
+      algorithm does from what happens across the network is essential to
+      understanding the value and limitations of this research.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">08 · Cost</div>
+    <h2 id="pg-cost">Flattening the Rhythm Costs Bandwidth or Waiting Time</h2>
+    <p>
+      A fixed rate makes for a clear thought experiment: whether or not the
+      application has data, the connection sends a fixed amount every second.
+      Dummy data fills the gap when real data is insufficient; data is queued
+      when a sudden burst exceeds the allowance. The observer sees a steadier
+      short-term rate, and the costs move into places where they can be seen.
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="Fixed-Rate Queue Example"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          Example: a fixed 2 MiB per second; each slot lasts 1 second; headers
+          and retransmissions are ignored
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Time slot</th>
+            <th scope="col">New data<br />MiB</th>
+            <th scope="col">Real data sent<br />MiB</th>
+            <th scope="col">Dummy data sent<br />MiB</th>
+            <th scope="col">Queued at slot end<br />MiB</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Second 1</th>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <th scope="row">Second 2</th>
+            <td>5</td>
+            <td>2</td>
+            <td>0</td>
+            <td><strong>3</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">Second 3</th>
+            <td>1</td>
+            <td>2</td>
+            <td>0</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <th scope="row">Second 4</th>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <th scope="row">Second 5</th>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      A total of 10 MiB is sent over these five seconds, but only 7 MiB is real
+      data; the extra 3 MiB is the cost of maintaining a steady appearance. The
+      second-second burst is not immediately reflected in full at the output
+      because 3 MiB of it remains in the queue. The data has not disappeared; it
+      simply arrives later.
+    </p>
+    <div class="pg-equation">
+      qₖ₊₁ = max(0, qₖ + aₖ − RΔ)<small
+        >qₖ: data waiting at the start of the slot; aₖ: data added during this
+        slot; R: fixed service rate; Δ: slot duration. RΔ, q, and a use the same
+        units of data volume. The example assumes data is added at the start of
+        each slot and uses a fluid approximation.</small
+      >
+    </div>
+    <p>
+      If the long-term arrival rate exceeds R, the queue will keep growing. Even
+      if the average arrival rate is below R, large bursts may still cause
+      long-tail waiting times. Limiting memory requires propagating pressure
+      back to the application, rejecting further input, or changing the
+      strategy. Temporarily increasing the output rate may expose load changes
+      again.
+    </p>
+    <h3 id="pg-cost-detail-1">Idle Time Is Often the Expensive Part</h3>
+    <p>
+      Suppose a continuous rate of <strong>20 Mbit/s</strong> is maintained in
+      one direction. Over 24 hours, it sends approximately
+      <strong>216 GB</strong>: 20,000,000 × 86,400 ÷ 8. This uses decimal GB and
+      ignores other encapsulation and retransmissions. If only 10 GB of real
+      data needs to be sent that day, the remaining approximately 206 GB is the
+      capacity cost of maintaining the schedule; the additional volume is about
+      2,060% of the real data. This is an arithmetic example, not the default
+      setting of any product.
+    </p>
+    <p>
+      When evaluating a defense, therefore, you also need to consider
+      <strong>goodput</strong>—the amount of useful data actually delivered. A
+      high byte rate on the link may simply mean there is a lot of dummy
+      traffic. When the real data volume is zero, the ratio of additional to
+      real data is undefined; reporting cover traffic per second is then clearer
+      than giving a percentage.
+    </p>
+    <h3 id="pg-cost-detail-2">
+      Why Does Anonymous Communication Keep Encountering This Trade-Off?
+    </h3>
+    <p>
+      To hide who suddenly has data and when, common approaches are to transmit
+      even when there is no data, or temporarily hold data until it can be mixed
+      with other messages. The former costs bandwidth; the latter costs time.
+      <i>Comprehensive Anonymity Trilemma</i> places these constraints in a
+      formal model and includes user coordination in its analysis. Its
+      conclusions depend on specific anonymity definitions, observation
+      capabilities, and protocol models.<sup
+        ><a href="#pg-ref-18" class="pg-ref">[18]</a></sup
+      >
+    </p>
+    <p>
+      None of this prevents improved defenses against limited adversaries within
+      practical budgets. Meaningful progress means removing more exploitable
+      signals with less bandwidth or waiting under the same conditions.
+      Fixed-rate transmission also has boundaries: start and stop times,
+      strategy changes, overload when the schedule is insufficient, and other
+      unprotected paths can all continue to reveal information.
+    </p>
+  </section>
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">09 · Mixing</div>
+    <h2 id="pg-mixing">Multiple Hops, Shared Use, and Actual Mixing</h2>
+    <p>
+      Adding relays can distribute observation points, while sharing an exit
+      among many people can make one outward-facing IP correspond to multiple
+      users. But if every input is immediately sent out the other end, its
+      timing correspondence may remain very clear.
+      <strong>Aggregation</strong> simply puts traffic together;
+      <strong>mixing</strong> goes further, trying to make it difficult for an
+      observer to match inputs to outputs one by one.
+    </p>
+    <p>
+      A mix node can hold messages first, then change the order in which
+      different messages are sent. Cryptographic encapsulation must also prevent
+      inputs and outputs from retaining a directly comparable appearance;
+      otherwise, even a changed order may still let an observer match identical
+      bytes. Real anonymity networks must additionally address packet formats,
+      paths, replay, dropping, malicious nodes, and other conditions.<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <figure id="pg-mix-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >Turn an Input Order Into Multiple Possible Output Mappings</span
+        ><span class="pg-figure-tag"
+          >Conceptual animation · Not a Loopix implementation</span
+        >
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-mix-controls" class="pg-demo-controls"></section>
+        <div id="pg-mix-grid" class="pg-mix-grid">
+          <div class="pg-mix-lane">
+            <div class="pg-mix-label">Arrival order · Three sources</div>
+            <div class="pg-mix-packets">
+              <span class="pg-mix-token">A₁</span
+              ><span class="pg-mix-token">B₁</span
+              ><span class="pg-mix-token">A₂</span
+              ><span class="pg-mix-token">C₁</span>
+            </div>
+          </div>
+          <div class="pg-mix-center">
+            <span id="pg-mix-center-label">Wait and reorder</span
+            ><span aria-hidden="true" class="pg-arrow">→</span>
+          </div>
+          <div class="pg-mix-lane">
+            <div id="pg-mix-output-label" class="pg-mix-label">
+              One possible sending order
+            </div>
+            <div id="pg-mix-output" class="pg-mix-packets">
+              <span class="pg-mix-token">C₁</span
+              ><span class="pg-mix-token">A₁</span
+              ><span class="pg-mix-token">D</span
+              ><span class="pg-mix-token">B₁</span
+              ><span class="pg-mix-token">A₂</span>
+            </div>
+          </div>
+        </div>
+        <p id="pg-mix-status" aria-live="polite" class="pg-status-line">
+          After waiting, reordering, and adding D (dummy), the output no longer
+          follows the arrival order directly.
+        </p>
+        <p class="pg-model-caveat">
+          A / B / C, colors, and borders are teaching markers only; actual
+          transmitted ciphertext does not carry these source labels. This small
+          animation illustrates only the mechanism, without calculating an
+          anonymity set or proving security.
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 08</span>Reordering alone is not
+        enough. Mixing requires confusable messages from different sources, an
+        appropriate encrypted appearance, and waiting and cover traffic
+        consistent with the model. If every other message is controlled by the
+        observer, it can exclude its own data, changing the protection that
+        remains.
+      </figcaption>
+    </figure>
+    <h3 id="pg-mixing-detail-1">
+      Why Is Loopix Willing to Wait Several Seconds?
+    </h3>
+    <p>
+      <i>Loopix</i> (USENIX Security 2017) is a message-oriented anonymous
+      communication system that combines multiple layers of mixes, cover
+      traffic, and loop messages. Its <strong>Poisson mixing</strong> makes
+      messages wait individually for random intervals, without requiring all
+      nodes to wait for the same synchronized round. The paper uses independent
+      exponentially distributed delays and analyzes a global network observer
+      and active attacks within its model.<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <p>
+      Loopix's overall message latency is on the order of seconds. Relatively
+      low latency is used in the context of mix systems; it differs from the
+      responsiveness goals of an interactive VPN. Extending its mechanisms to
+      communications that can tolerate waiting is instructive, but a
+      message-system analysis cannot be treated as an existing guarantee for
+      fast, continuous, bidirectional BitTorrent traffic.
+    </p>
+    <h3 id="pg-mixing-detail-2">
+      Many Users Must Actually Contribute Confusable Traffic
+    </h3>
+    <p>
+      Ten thousand registered accounts do not mean ten thousand effective
+      candidates in a given time window. Most may be offline, their traffic
+      shapes may be easy to distinguish, or many messages may come from nodes
+      controlled by the adversary itself. Cover comes from traffic that remains
+      difficult to distinguish under the relevant timing, paths, and observation
+      conditions, not from the total node count alone.<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a
+        ><a href="#pg-ref-18" class="pg-ref">[18]</a></sup
+      >
+    </p>
+    <p>
+      Multipath designs have similar conditions. Splitting data may reduce the
+      information available to an observer who sees only some paths; if the same
+      adversary can aggregate all paths again, splitting alone cannot eliminate
+      correlation. Drawing three logical lines also requires checking whether
+      they actually cross different observation and control domains.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">10 · Architecture Choices</div>
+    <h2 id="pg-architectures">
+      Put the Mechanisms Back Into VPNs, Seedboxes, Tor, and I2P
+    </h2>
+    <p>
+      Once visibility, isolation, and mixing are understood, different
+      architectures can be compared. The key questions are which part of the
+      communication changes and where trust moves. Compressing every approach
+      into a single anonymity score overlooks the fact that they answer
+      different questions.
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="Architecture Comparison: VPN, Seedbox, Tor, I2P, and Mix Networks"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          The same questions, different paths; a comparison of mechanisms, not a
+          unified performance ranking
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Architecture</th>
+            <th scope="col">What changes</th>
+            <th scope="col">What to ask next</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">VPN + path isolation</th>
+            <td>
+              Routes ordinary internet P2P through a VPN exit and restricts
+              accidental direct connections.
+            </td>
+            <td>
+              Which traffic is covered? Who controls the VPN? What exits remain
+              when it fails?
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Seedbox</th>
+            <td>
+              Moves downloading and seeding processes to a remote host; the home
+              endpoint uses it through management or retrieval channels.
+            </td>
+            <td>
+              Who handles the remote disk, accounts, hosting provider, and file
+              retrieval records?
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Tor</th>
+            <td>
+              Distributes path information across different relays, so a single
+              relay usually knows only local relationships.
+            </td>
+            <td>
+              Does the application use Tor correctly? Can the adversary observe
+              both ends?
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">I2P-native P2P</th>
+            <td>
+              Uses overlay Destinations and tunnels for application
+              communication, with peer discovery also adapted to I2P.
+            </td>
+            <td>
+              Does communication remain entirely within the overlay? What
+              signals remain in the underlying network and long-term activity?
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Mixnet</th>
+            <td>
+              Changes the correspondence between inputs and outputs through
+              message encapsulation, waiting, and mixing.
+            </td>
+            <td>
+              Which nodes must be honest? How much delay is tolerable? What are
+              the cover-traffic and load conditions?
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="pg-architectures-detail-1">
+      A Seedbox Moves the Execution Location
+    </h3>
+    <p>
+      The client on a seedbox participates directly in the swarm; your home
+      device only manages it or retrieves files. Architecturally, this can
+      separate the residential network from the swarm endpoint, at the cost of
+      keeping files, application state, and accounts on another host. This
+      conclusion follows from the communication path; actual records and trust
+      conditions depend on the service or self-management arrangement.
+    </p>
+    <h3 id="pg-architectures-detail-2">
+      Tor Distributes Information to Reduce Single-Point Visibility
+    </h3>
+    <p>
+      Tor's path design gives different relays only part of the relationships,
+      but low-latency forwarding may still preserve comparable rhythms. Nor is
+      it a general-purpose wrapper for ordinary BitTorrent clients: Tor's
+      official guidance advises against using torrent clients over Tor, citing
+      client leaks and exit-node load, among other issues. That usage
+      restriction and Tor's value in anonymous-communication research are
+      separate matters that both need to be made clear.<sup
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a
+        ><a href="#pg-ref-25" class="pg-ref">[25]</a></sup
+      >
+    </p>
+    <h3 id="pg-architectures-detail-3">
+      I2P Changes How Applications Find One Another
+    </h3>
+    <p>
+      I2P applications use cryptographic endpoint identifiers such as
+      <strong>Destination</strong> and deliver messages through outbound and
+      inbound tunnels. Tracker and peer representations in BitTorrent over I2P
+      must also fit this model; it does not simply connect an unchanged ordinary
+      public swarm to another VPN exit.<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+    <p>
+      An application endpoint not being directly equivalent to a residential IP
+      does not mean there is no IP visibility between underlying routers. I2P's
+      threat analysis covers timing, intersection, Sybil, and traffic-analysis
+      issues. Comparing those observation capabilities is more useful than
+      estimating anonymity by the number of added hops. Its old threat-model
+      page is marked as applying to version 0.8.1, so the threat categories are
+      used here, not a security rating for the current version.<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">11 · A Closer Look at the Mechanisms</div>
+    <h2 id="pg-bulk">
+      What Must Change to Bring Mixing to Bulk File Transfers?
+    </h2>
+    <p>
+      The preceding mechanisms naturally suggest an idea: collect real traffic
+      from multiple people, change the shaping strategy for each connection, mix
+      within an acceptable delay, and send it along different paths. Other
+      people's real data may provide cover, so dummy traffic need not do all the
+      work.
+    </p>
+    <p>
+      The difficulty is that application transport has its own semantics. TCP
+      provides a reliable, ordered byte stream, with sequence numbers,
+      acknowledgments, and connection state. You cannot arbitrarily split one
+      peer TCP connection into three outbound connections and assume an
+      unmodified peer will treat them as the same stream.<sup
+        ><a href="#pg-ref-20" class="pg-ref">[20]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >You Can Reshape Traffic Within Your Own Overlay; the Exit Must Still
+          Reconstruct the Streams</span
+        ><span class="pg-figure-tag"
+          >Hypothetical architecture · Explaining the mechanism</span
+        >
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="Multi-flow overlay and exit reassembly diagram, horizontally scrollable"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <svg
+          viewbox="0 0 800 350"
+          role="img"
+          aria-labelledby="pg-overlay-title pg-overlay-desc"
+          class="pg-diagram pg-geometry-1c0dc43552"
+        >
+          <title id="pg-overlay-title">
+            Semantic Boundaries of a Multi-Flow Mixing Overlay
+          </title>
+          <desc id="pg-overlay-desc">
+            Two application streams are handed to an entry proxy, split, shaped,
+            and delayed between cooperating proxies, then sent along different
+            paths to an exit proxy. The exit first reassembles each stream, then
+            connects separately to its original counterpart. Splitting happens
+            within the overlay and does not automatically eliminate exit
+            connections.
+          </desc>
+          <defs>
+            <marker
+              id="pg-arrow-overlay"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M1 1 7 4 1 7" class="pg-geometry-a311b83b06"></path>
+            </marker>
+          </defs>
+          <rect
+            x="167"
+            y="18"
+            width="468"
+            height="286"
+            rx="10"
+            class="pg-geometry-54265e0d6e"
+          ></rect>
+          <text x="401" y="45" class="pg-secondary pg-geometry-35afd8367b">
+            Overlay between cooperating proxies: encapsulation, shaping,
+            waiting, reassembly
+          </text>
+          <rect
+            x="12"
+            y="128"
+            width="126"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="75" y="159" class="pg-geometry-35afd8367b">
+            Application streams
+          </text>
+          <text x="75" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            A, B …
+          </text>
+          <text x="75" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            Original data order
+          </text>
+          <rect
+            x="186"
+            y="128"
+            width="120"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="246" y="160" class="pg-geometry-35afd8367b">
+            Entry proxy
+          </text>
+          <text x="246" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            Split into internal messages
+          </text>
+          <text x="246" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            Schedule multiple sources together
+          </text>
+          <rect
+            x="353"
+            y="76"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="105" class="pg-secondary pg-geometry-35afd8367b">
+            Path 1
+          </text>
+          <rect
+            x="353"
+            y="150"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="179" class="pg-secondary pg-geometry-35afd8367b">
+            Path 2
+          </text>
+          <rect
+            x="353"
+            y="224"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="253" class="pg-secondary pg-geometry-35afd8367b">
+            Path 3
+          </text>
+          <rect
+            x="502"
+            y="128"
+            width="114"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="559" y="160" class="pg-geometry-35afd8367b">Exit proxy</text>
+          <text x="559" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            Remove dummy data
+          </text>
+          <text x="559" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            Reassemble by stream
+          </text>
+          <rect
+            x="668"
+            y="94"
+            width="120"
+            height="66"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="728" y="121" class="pg-geometry-35afd8367b">Peer A</text>
+          <text x="728" y="144" class="pg-tiny pg-geometry-35afd8367b">
+            A's connection semantics
+          </text>
+          <rect
+            x="668"
+            y="188"
+            width="120"
+            height="66"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="728" y="215" class="pg-geometry-35afd8367b">Peer B</text>
+          <text x="728" y="238" class="pg-tiny pg-geometry-35afd8367b">
+            B's connection semantics
+          </text>
+          <path
+            d="M138 174H179"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M306 174H327V100H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M306 174H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M327 174V248H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M455 100H478V174H495"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M455 174H495"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path d="M455 248H478V174" class="pg-wire"></path>
+          <path
+            d="M616 174H646V127H661"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M646 174V221H661"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <text x="400" y="333" class="pg-secondary pg-geometry-35afd8367b">
+            Changing the transport arrangement in the middle does not
+            automatically eliminate exit-side connection and timing information.
+          </text>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">Figure 09</span>This diagram illustrates one
+        possible engineering approach. It does not claim that a new protocol
+        already has a proof of anonymity. Control relationships between entry
+        and exit, path visibility, and effective mixing sources still determine
+        the scope of protection.
+      </figcaption>
+    </figure>
+    <h3 id="pg-bulk-detail-1">
+      Split Within the Overlay, Preserve the Original Communication Outside It
+    </h3>
+    <p>
+      An easier approach to understand is to let cooperating entry and exit
+      proxies take over the transport first. Between the proxies, each stream
+      can be split into internal messages and undergo shaping, waiting, and
+      multipath forwarding. At the exit, each stream is reconstructed in logical
+      order to maintain communication with the original peer.
+    </p>
+    <p>
+      This can change the shape visible to the intermediate network, but the
+      exit still has to send data to the original counterpart. Further combining
+      different outbound connections, moving connection identity, or changing a
+      peer's protocol behavior requires cooperation from the receiver or
+      additional proxies. Drawing arrows labeled split / merge is easy;
+      preserving transport semantics is the real difficulty. These engineering
+      constraints follow from TCP and the proxy model.<sup
+        ><a href="#pg-ref-20" class="pg-ref">[20]</a></sup
+      >
+    </p>
+    <h3 id="pg-bulk-detail-2">
+      What Becomes Harder When Delay Has an Upper Bound?
+    </h3>
+    <p>
+      If each message can wait at most 50 milliseconds, under low load it may
+      have to leave before traffic from another source arrives. A delay bound
+      narrows the time available for mixing; more dummy traffic can compensate
+      for some aspects of the appearance, but still costs bandwidth. Under high
+      load, buffering, backpressure, and tail latency may instead become
+      problems.
+    </p>
+    <p>
+      This also explains why Loopix's security conclusions cannot simply be
+      carried over: an exponential delay distribution has no fixed finite upper
+      bound. Truncating it, adding a deadline, or changing strategy during
+      congestion alters the departure distribution and observable behavior. The
+      50-millisecond value is only a number in the thought experiment above, not
+      a validated security threshold.<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <h3 id="pg-bulk-detail-3">
+      Machine Learning Can Search for Strategies, but Must Still Face Unknown
+      Environments
+    </h3>
+    <p>
+      A learned controller can try to trade off bandwidth, latency, and
+      performance against a particular attack model. But making the current
+      model guess incorrectly remains different from preventing all future
+      observers from distinguishing traffic. Adversaries may retrain, use
+      different features, or collect data over longer periods and on other
+      paths.<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      The research value of multi-flow mixing therefore lies in understanding
+      which visible signals are genuinely weakened and how much waiting and
+      traffic that requires. Only by bringing few-user and many-user cases,
+      background traffic, resource exhaustion, and long-term observation into
+      the same picture can we know under what conditions an attractive-looking
+      traffic shape remains meaningful.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">12 · Evidence</div>
+    <h2 id="pg-evidence">What Can Research and Reported Cases Tell Us?</h2>
+    <p>
+      The observability of public P2P has been studied for many years, but the
+      ability to observe and the ability to attribute correctly every time must
+      be considered together. Reading positive results alongside failure cases
+      helps avoid overestimating either anonymity tools or monitoring
+      capabilities.
+    </p>
+    <h3 id="pg-evidence-detail-1">
+      One Computer Can Accumulate Many Records—and Still Misinterpret an
+      Endpoint
+    </h3>
+    <p>
+      Published in 2010, <i>Spying the World from your Laptop</i> reports
+      observations relating approximately 148 million IP addresses to
+      approximately 2 billion content copies, based on 103 days of observation
+      from May 13 to August 23, 2009. It demonstrates the feasibility, at that
+      time, of using public infrastructure to build large numbers of IP–content
+      associations. It did not confirm that all those IPs represented distinct
+      natural persons, nor did it verify an equivalent number of complete
+      downloads. The authors also discuss confounding factors such as NAT,
+      proxies, and VPNs.<sup><a href="#pg-ref-22" class="pg-ref">[22]</a></sup>
+    </p>
+    <p>
+      The 2008 paper <i>Why My Printer Received a DMCA Takedown Notice</i> shows
+      the other side: printers and wireless access points controlled by the
+      researchers received erroneous notices despite not participating in the
+      relevant file exchanges. It reminds us that indirect lists and actual
+      content exchanges are different forms of evidence. This was an
+      experimental result for the methods of that era, not a basis for claiming
+      that all monitoring services today follow the same process.<sup
+        ><a href="#pg-ref-23" class="pg-ref">[23]</a></sup
+      >
+    </p>
+    <h3 id="pg-evidence-detail-2">
+      The Nyaa / CODA / JHA Case: An Outcome Cannot Substitute for an
+      Undisclosed Method
+    </h3>
+    <p>
+      On July 28, 2026, CODA announced an investigation involving an initial
+      distributor on Nyaa. The announcement states that the Japan Hacker
+      Association developed an analysis tool through a collaboration program,
+      helping obtain information related to the suspect, and that the Kyoto
+      Prefectural Police then completed the identification through
+      investigation. Public information supports the existence of the tool and
+      investigative cooperation, but does not disclose enough about the data
+      sources or algorithm to reconstruct the tool.<sup
+        ><a href="#pg-ref-24" class="pg-ref">[24]</a></sup
+      >
+    </p>
+    <p>
+      The announcement alone therefore cannot establish which form of traffic
+      correlation was used, whether any particular logs were obtained, or
+      whether the person used a VPN. Nor can identifying a suspect be used to
+      infer that an encryption protocol was broken. The initial uploader
+      described in the case must also be distinguished from an ordinary
+      BitTorrent seed: a seed usually means a node holding the complete data,
+      not necessarily the original publisher.<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a
+        ><a href="#pg-ref-24" class="pg-ref">[24]</a></sup
+      >
+    </p>
+    <h3 id="pg-evidence-detail-3">
+      When a Success Rate Looks Impressive, Find the Denominator First
+    </h3>
+    <p>
+      A model finding many true matches in a particular dataset may represent
+      genuine progress. But if the data guarantees an answer for every sample,
+      training and test sets share similar segments, or only the most favorable
+      threshold is reported, readers still do not know how it performs on
+      unknown traffic among many wrong candidates. The 2026 Ephemeral and
+      ESPRESSO studies illustrate how conditions alter results through,
+      respectively, sufficiently trained attackers and evaluation closer to real
+      Tor traffic.<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      Seeing no false positives also requires a sample size. Suppose there are m
+      approximately independent, identically distributed negative examples. With
+      zero false positives, the one-sided 95% upper bound under a binomial model
+      is approximately <code>3/m</code>. Even after testing 300,000 such
+      negative examples, the upper bound is still approximately 10⁻⁵. If many
+      pairs share the same traffic samples, they may be dependent; the total
+      number of pairs cannot simply be treated as an equivalent amount of
+      independent evidence. This is a statistical-model derivation, not a
+      measured result from any particular study.
+    </p>
+    <p>
+      Similarly, one observation of no direct connection supports only a
+      conclusion for that version, state, and observation scope. It remains a
+      different question from whether long-term activities are hard to
+      correlate. Describing the observation scope carefully allows technical
+      results to accumulate into usable knowledge.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">13 · Back to the Big Picture</div>
+    <h2 id="pg-ending">
+      Privacy Boundaries Lie in Every Piece of Observable Information
+    </h2>
+    <p>
+      Following a download this far makes the questions more concrete.
+      BitTorrent needs to exchange contact information to find peers; a VPN
+      moves the outward-facing endpoint elsewhere; interface binding, firewalls,
+      and namespaces limit the paths data can take. These mechanisms can
+      effectively address different exposure surfaces, but do not automatically
+      erase the relationships left by timing, size, accounts, and long-term
+      activity.
+    </p>
+    <p>
+      If an observer can obtain traffic from both ends of a communication,
+      defenses must address traffic shape itself. Padding adds available cover,
+      shaping rearranges the sending rhythm, and mixing places different sources
+      into a shared timing and path context. Every change has conditions and
+      shifts costs into bandwidth, waiting, buffering, or application protocols.
+    </p>
+    <div class="pg-takeaway">
+      The most useful starting point for evaluating a privacy technology is
+      this:
+      <strong
+        >What could the observer see before, what can they still see after it is
+        used, and which relationships have become harder to establish?</strong
+      >
+    </div>
+    <p>
+      Asking this way lets us recognize the practical value of VPN isolation
+      while understanding why anonymous-communication research continues to
+      explore mixing, dynamic shaping, and cover from multiple sources. Security
+      need not be compressed into an attractive score. Clearly stating where
+      protection applies, what evidence is available, and what it costs is
+      itself a more reliable technical judgment.
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">Further Reading</div>
+    <h2 id="pg-sources">Sources</h2>
+    <p class="pg-small">
+      Sources accessed: 2026-10-25. Protocol behavior is governed by the
+      original documentation; provider policies and announcements represent
+      their public statements; research results should be interpreted within
+      their respective data, adversary models, and experimental conditions. The
+      diagrams in this article are redrawn educational illustrations.
+    </p>
+    <ol class="pg-source-list">
+      <li id="pg-ref-01">
+        <span class="pg-source-id"
+          >[1] BitTorrent Basics and Content Identification</span
+        ><a href="https://www.bittorrent.org/beps/bep_0003.html"
+          >BEP 3 · The BitTorrent Protocol</a
+        >；<a href="https://www.bittorrent.org/beps/bep_0052.html"
+          >BEP 52 · BitTorrent Protocol v2</a
+        >；<a href="https://libtorrent.org/manual-ref.html#glossary"
+          >libtorrent manual · Definition of a seed</a
+        ><small
+          >Original protocol and implementation documentation; info dictionary,
+          v1 / v2 infohashes, and data pieces.</small
+        >
+      </li>
+      <li id="pg-ref-02">
+        <span class="pg-source-id">[2] Tracker</span
+        ><a href="https://www.bittorrent.org/beps/bep_0015.html"
+          >BEP 15 · UDP Tracker Protocol</a
+        ><small>Announce fields, endpoints, ports, and IPv6 formats.</small>
+      </li>
+      <li id="pg-ref-03">
+        <span class="pg-source-id">[3] Distributed Discovery</span
+        ><a href="https://www.bittorrent.org/beps/bep_0005.html"
+          >BEP 5 · DHT Protocol</a
+        ><small>get_peers, announce_peer, tokens, and source IPs.</small>
+      </li>
+      <li id="pg-ref-04">
+        <span class="pg-source-id">[4] Peer Exchange</span
+        ><a href="https://www.bittorrent.org/beps/bep_0011.html"
+          >BEP 11 · Peer Exchange</a
+        ><small>PEX add / remove semantics and untrusted input.</small>
+      </li>
+      <li id="pg-ref-05">
+        <span class="pg-source-id"
+          >[5] Private Torrents and Local Discovery</span
+        ><a href="https://www.bittorrent.org/beps/bep_0027.html"
+          >BEP 27 · Private Torrents</a
+        >；<a href="https://www.bittorrent.org/beps/bep_0014.html"
+          >BEP 14 · Local Service Discovery</a
+        ><small
+          >Access control, discovery scope, and multicast announcements.</small
+        >
+      </li>
+      <li id="pg-ref-06">
+        <span class="pg-source-id">[6] WireGuard and Linux Isolation</span
+        ><a href="https://www.wireguard.com/netns/"
+          >Routing &amp; Network Namespace Integration</a
+        ><small
+          >The interface and the namespace containing the UDP socket created
+          with it.</small
+        >
+      </li>
+      <li id="pg-ref-07">
+        <span class="pg-source-id"
+          >[7] qBittorrent Identification Information</span
+        ><a
+          href="https://github.com/qbittorrent/qBittorrent/wiki/Anonymous-Mode"
+          >Anonymous Mode</a
+        ><small
+          >Official Wiki; page updated 2026-09-03, explicitly describing version
+          and private-torrent differences.</small
+        >
+      </li>
+      <li id="pg-ref-08">
+        <span class="pg-source-id"
+          >[8] Mullvad Data and Infrastructure Policies</span
+        ><a href="https://mullvad.net/en/help/no-logging-data-policy"
+          >No-logging of user activity policy</a
+        >；<a
+          href="https://mullvad.net/en/blog/we-have-successfully-completed-our-migration-to-ram-only-vpn-infrastructure"
+          >RAM-only VPN infrastructure</a
+        ><small
+          >Provider statements; activity-data policy updated 2026-06-17, with
+          the RAM-only migration announced in 2023.</small
+        >
+      </li>
+      <li id="pg-ref-09">
+        <span class="pg-source-id">[9] Multi-Hop VPN</span
+        ><a href="https://mullvad.net/en/help/multihop-wireguard"
+          >Multihop with WireGuard</a
+        ><small>Separation of entry and exit network positions.</small>
+      </li>
+      <li id="pg-ref-10">
+        <span class="pg-source-id">[10] Interface and Socket Behavior</span
+        ><a
+          href="https://github.com/qbittorrent/qBittorrent/wiki/How-to-bind-your-vpn-to-prevent-ip-leaks"
+          >qBittorrent · VPN interface binding</a
+        >；<a href="https://libtorrent.org/reference-Settings.html"
+          >libtorrent · Settings</a
+        ><small
+          >Official documentation; the libtorrent online reference consulted is
+          marked 2.1.0, which does not establish the version installed on a
+          reader's machine.</small
+        >
+      </li>
+      <li id="pg-ref-11">
+        <span class="pg-source-id"
+          >[11] Tor's Limits Against Two-Sided Observation</span
+        ><a
+          href="https://support.torproject.org/about-tor/security/attacks-on-onion-routing/"
+          >Limitations and remaining attacks against Tor’s anonymity</a
+        ><small
+          >Tor's official explanation; the threat model for timing correlation
+          at both ends.</small
+        >
+      </li>
+      <li id="pg-ref-12">
+        <span class="pg-source-id">[12] Research on Routing Bypasses</span
+        ><a
+          href="https://www.usenix.org/conference/usenixsecurity23/presentation/xue"
+          >Xue et al. · Bypassing Tunnels</a
+        >；<a href="https://www.leviathansecurity.com/blog/tunnelvision"
+          >Leviathan · TunnelVision</a
+        ><small
+          >USENIX Security 2023 / 2024 researcher announcement; does not imply
+          that all current clients retain the same flaws.</small
+        >
+      </li>
+      <li id="pg-ref-13">
+        <span class="pg-source-id"
+          >[13] Traffic Correlation Under More Realistic Conditions</span
+        ><a href="https://www.robgjansen.com/publications/espresso-ccs2026.pdf"
+          >Jeon et al. · Brewing Under Pressure: More Realistic Tor Flow
+          Correlation Considering Low FPRs</a
+        ><small
+          >Authors' publicly released CCS 2026 manuscript; the PDF gives the
+          conference dates as 2026-11-15–19, which are still in the future as of
+          this article's date.</small
+        >
+      </li>
+      <li id="pg-ref-14">
+        <span class="pg-source-id">[14] Adversarial Padding</span
+        ><a href="https://petsymposium.org/popets/2024/popets-2024-0007.php"
+          >Holland et al. · DeTorrent</a
+        ><small
+          >PoPETs 2024(1), 98–115; website fingerprinting and traffic
+          correlation evaluated separately.</small
+        >
+      </li>
+      <li id="pg-ref-15">
+        <span class="pg-source-id">[15] DAITA's Published Design</span
+        ><a
+          href="https://mullvad.net/en/blog/daita-defense-against-ai-guided-traffic-analysis"
+          >DAITA · Defense Against AI-guided Traffic Analysis</a
+        >；<a
+          href="https://mullvad.net/en/blog/daita-version-2-now-available-on-all-platforms"
+          >DAITA version 2</a
+        ><small
+          >Mullvad's official introduction and v2 announcement dated 2025-03-28;
+          fixed sizes, dummy traffic, and dynamic configurations.</small
+        >
+      </li>
+      <li id="pg-ref-16">
+        <span class="pg-source-id"
+          >[16] A Different Defense for Each Connection</span
+        ><a href="https://petsymposium.org/popets/2026/popets-2026-0022.pdf"
+          >Pulls et al. · Ephemeral Network-Layer Fingerprinting Defenses</a
+        ><small
+          >PoPETs 2026(1), 426–449; deployment and experimental scope, and §5.3
+          on limitations under sufficient training.</small
+        >
+      </li>
+      <li id="pg-ref-17">
+        <span class="pg-source-id">[17] Mixing and Cover Traffic</span
+        ><a
+          href="https://www.usenix.org/conference/usenixsecurity17/technical-sessions/presentation/piotrowska"
+          >Piotrowska et al. · The Loopix Anonymity System</a
+        >；<a
+          href="https://www.usenix.org/system/files/conference/usenixsecurity17/sec17-piotrowska.pdf"
+          >Original paper PDF</a
+        ><small
+          >USENIX Security 2017; Poisson mixing, loop traffic, and message
+          latency on the order of seconds.</small
+        >
+      </li>
+      <li id="pg-ref-18">
+        <span class="pg-source-id"
+          >[18] Formal Limits on Anonymity and Cost</span
+        ><a href="https://petsymposium.org/popets/2020/popets-2020-0056.pdf"
+          >Das et al. · Comprehensive Anonymity Trilemma: User Coordination is
+          not enough</a
+        ><small
+          >PoPETs 2020(3), 356–383; conclusions hold under the specified
+          anonymity definition and adversary model.</small
+        >
+      </li>
+      <li id="pg-ref-19">
+        <span class="pg-source-id"
+          >[19] I2P Communication and Threat Models</span
+        ><a href="https://i2p.net/en/docs/overview/intro/">I2P overview</a>；<a
+          href="https://i2p.net/en/docs/applications/bittorrent/"
+          >BitTorrent over I2P</a
+        >；<a href="https://i2p.net/en/docs/overview/threat-model/"
+          >I2P’s Threat Model</a
+        ><small
+          >Official documentation; the threat-model page is marked as updated in
+          2010-11 and applicable to 0.8.1. It is used to understand the
+          categories, not as a measurement of the current version.</small
+        >
+      </li>
+      <li id="pg-ref-20">
+        <span class="pg-source-id">[20] Stream Semantics</span
+        ><a href="https://www.rfc-editor.org/rfc/rfc9293.html"
+          >RFC 9293 · Transmission Control Protocol</a
+        ><small
+          >IETF, 2022; reliable, ordered byte streams and connection
+          state.</small
+        >
+      </li>
+      <li id="pg-ref-21">
+        <span class="pg-source-id">[21] Shared IPs and Endpoint Records</span
+        ><a href="https://www.rfc-editor.org/rfc/rfc6302.html"
+          >RFC 6302 · Logging Recommendations for Internet-Facing Servers</a
+        ><small
+          >IETF, 2011; source ports, accurate time, and attribution issues with
+          shared IPv4.</small
+        >
+      </li>
+      <li id="pg-ref-22">
+        <span class="pg-source-id">[22] Large-Scale P2P Observation</span
+        ><a
+          href="https://www.usenix.org/legacy/event/leet10/tech/full_papers/LeBlond.pdf"
+          >Le Blond et al. · Spying the World from your Laptop</a
+        ><small
+          >USENIX LEET 2010; observations took place in 2009 over 103
+          days.</small
+        >
+      </li>
+      <li id="pg-ref-23">
+        <span class="pg-source-id">[23] Monitoring Misattribution</span
+        ><a
+          href="https://www.usenix.org/legacy/event/hotsec08/tech/full_papers/piatek/piatek_html/"
+          >Piatek et al. · Why My Printer Received a DMCA Takedown Notice</a
+        ><small
+          >HotSec 2008; limits of indirect monitoring and the experiment in
+          which printers received erroneous notices.</small
+        >
+      </li>
+      <li id="pg-ref-24">
+        <span class="pg-source-id"
+          >[24] Primary Announcement of the Nyaa Case</span
+        ><a href="https://coda-cj.jp/news/2850/"
+          >CODA · Announcement of the Arrest of an Initial Nyaa Uploader
+          (Japanese)</a
+        ><small
+          >2026-07-28; the announcement describes the collaboration and
+          investigation results without disclosing a reconstructable analysis
+          algorithm.</small
+        >
+      </li>
+      <li id="pg-ref-25">
+        <span class="pg-source-id">[25] Usage Limits for Tor and Torrents</span
+        ><a
+          href="https://support.torproject.org/about-tor/using-and-sharing/torrent/"
+          >Tor Project · Can I use Tor with Torrent?</a
+        ><small
+          >Tor's official guidance advises against using torrent clients over
+          Tor.</small
+        >
+      </li>
+    </ol>
+  </section>
+  <div class="pg-footer">
+    <span
+      >The numbers and animations in the diagrams are educational models
+      explicitly described in the article.</span
+    ><a href="#article-title">Back to the top ↑</a>
+  </div>
+</div>

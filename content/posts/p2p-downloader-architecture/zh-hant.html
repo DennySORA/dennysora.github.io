@@ -1,0 +1,2718 @@
+<div class="network-guide">
+  <section>
+    <h2 id="overview">
+      <span class="np-section-no">01</span
+      ><span class="np-heading-text">下載器真正要解決的問題</span>
+    </h2>
+    <p>
+      一次加入幾百個下載，有的很快開始，有的等不到來源，也有的顯示連上很多人，進度卻幾乎不動。把「同時下載數」往上調，有時有效，有時只會讓硬碟更忙、記憶體更多，甚至讓原本正常的下載一起變慢。
+    </p>
+    <p>
+      原因是下載器同時在處理幾種不同的問題：<strong>我要找什麼內容、誰有我要的部分、對方現在能不能傳、本機接不接得住，以及收到的資料是否正確。</strong>這幾件事的速度與成本不同，也不會按照整齊的順序一起完成。
+    </p>
+    <p>
+      本文以一個支援多種 P2P
+      協定的下載器設計為例，從整體架構往下說明。BitTorrent 與 eD2k／Kad
+      用來解釋實際的協定行為；九個元件、雙迴路與動態下載池，則是組織這些能力的一種架構選擇。
+    </p>
+    <h3 id="overview-detail-1">先認識資料在系統裡的幾種樣子</h3>
+    <div
+      role="region"
+      aria-label="P2P 基本名詞"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">名詞</th>
+            <th scope="col">在下載流程裡的意思</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">工作（Task）</th>
+            <td>
+              使用者想取得某份內容或其中一部分的意圖，包含選取的檔案、目的地與暫停狀態。一個工作可能先後接觸很多來源。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">來源／對等節點（Peer）</th>
+            <td>
+              可能提供資料的另一端。搜尋結果裡的候選來源、已連線的來源與正在傳資料的來源，是不同階段。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">中繼資料（Metadata）</th>
+            <td>
+              描述內容的資料，例如檔案結構、大小、分段方式與驗證資訊。先理解內容的結構，才能知道要請求什麼。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">片段（Piece／Part）</th>
+            <td>
+              協定用來描述或驗證的資料單位。傳輸時還可能切成更小的
+              block；各協定的單位不能直接混用。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">檔案資料（Payload）</th>
+            <td>
+              真正要保存的內容。握手、來源清單、keepalive
+              與其他控制訊息都會用到網路，但不等於檔案進度。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      以 BitTorrent 為例，peer
+      會交換自己持有哪些片段的資訊，接收端再提出資料請求；收到的片段還要依中繼資料驗證。這讓下載器能同時向多個人取資料，也讓「有連線」「有流量」「有正確的新資料」成為三件需要分開觀察的事。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <div class="np-takeaway">
+      <strong>整個架構的中心，是讓缺少的資料持續變少。</strong>
+      <p>
+        連線數、工作數與頻寬使用率，都只是幫助判斷的訊號。真正的結果是：需要的內容逐步收到、通過驗證，並且能在中斷後繼續使用。
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="architecture">
+      <span class="np-section-no">02</span
+      ><span class="np-heading-text">整體架構：九個元件如何合作</span>
+    </h2>
+    <p>
+      理解這套架構，先看三件事：<strong>控制決策走哪裡、檔案資料走哪裡，以及狀態保存在哪裡。</strong>使用者按下暫停，只需要改變某個工作的執行意圖；下載中的數
+      GB 資料，則由協定引擎持續處理，不需要經過管理介面或資料庫轉送。
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>架構圖</span><strong>控制決策與檔案資料分開流動</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="整體架構圖，可水平捲動"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 660"
+          width="880"
+          height="660"
+          role="img"
+          aria-labelledby="arch-title arch-desc"
+        >
+          <title id="arch-title">P2P 下載器的邏輯架構與資料路徑</title>
+          <desc id="arch-desc">
+            Web View 與 Manager 接受操作；Search 尋找來源，Scheduler
+            分配工作資源，Connection Manager 管理連線。Component 包含 Downloader
+            與 Engine。實際檔案資料從遠端 peer 經 Engine 寫入檔案系統，不經過
+            Manager 或 SQLite。Config、Store 與 Metrics
+            分別提供設定、持久狀態與觀測。
+          </desc>
+          <defs>
+            <marker
+              id="arch-arrow-control"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="arch-arrow-data"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="660"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="30"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              管理工作、理解連線，交給引擎傳輸
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="40" y="58" width="218" height="64" rx="8"></rect>
+              <rect x="300" y="58" width="280" height="64" rx="8"></rect>
+              <rect x="40" y="192" width="220" height="82" rx="8"></rect>
+              <rect x="320" y="192" width="240" height="82" rx="8"></rect>
+              <rect x="620" y="192" width="220" height="82" rx="8"></rect>
+              <rect
+                x="262"
+                y="326"
+                width="360"
+                height="156"
+                rx="9"
+                class="np-svg-stroke-control-border"
+              ></rect>
+              <rect x="40" y="400" width="176" height="70" rx="8"></rect>
+              <rect x="674" y="400" width="166" height="70" rx="8"></rect>
+              <rect x="40" y="540" width="245" height="72" rx="8"></rect>
+              <rect x="318" y="540" width="245" height="72" rx="8"></rect>
+              <rect x="596" y="540" width="245" height="72" rx="8"></rect>
+            </g>
+            <rect
+              x="286"
+              y="402"
+              width="312"
+              height="58"
+              rx="6"
+              class="np-svg-fill-surface np-svg-stroke-entity-file np-svg-stroke-width-1-2"
+            ></rect>
+            <g
+              marker-end="url(#arch-arrow-control)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-7"
+            >
+              <path d="M258 90H300"></path>
+              <path d="M440 122V192"></path>
+              <path d="M440 154H150V192"></path>
+              <path d="M260 232H320"></path>
+              <path d="M150 274V310H310V326"></path>
+              <path d="M440 274V326"></path>
+              <path d="M730 274V310H574V326"></path>
+              <path d="M162 540V506H308V482"></path>
+              <path
+                d="M440 482V540"
+                marker-start="url(#arch-arrow-control)"
+              ></path>
+              <path
+                d="M594 482V506H718V540"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+            </g>
+            <g
+              marker-end="url(#arch-arrow-data)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-6"
+            >
+              <path d="M216 431H286"></path>
+              <path d="M598 431H674"></path>
+            </g>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="58" y="85">P2P Web View</text>
+              <text x="318" y="85">P2P Manager</text>
+              <text x="58" y="219">P2P Search</text>
+              <text x="338" y="219">P2P Scheduler</text>
+              <text x="638" y="219" class="np-svg-font-size-15">
+                Connection Manager
+              </text>
+              <text x="286" y="352">P2P Component</text>
+              <text x="304" y="425" class="np-svg-fill-entity-file">
+                Engine
+              </text>
+              <text x="58" y="429">遠端 peer</text>
+              <text x="692" y="429">檔案系統</text>
+              <text x="58" y="567">P2P Config</text>
+              <text x="336" y="567">P2P Store</text>
+              <text x="614" y="567">P2P Metrics</text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="58" y="107">操作與原因呈現</text>
+              <text x="318" y="107">登記下載意圖・協調入口</text>
+              <text x="58" y="244">跨來源查詢與發現</text>
+              <text x="338" y="244">試跑、下載池與公平輪替</text>
+              <text x="638" y="244">理解連線角色與服務條件</text>
+              <text x="286" y="378">Downloader：適配與協調原生引擎</text>
+              <text x="304" y="447">請求片段・接收・校驗・寫入</text>
+              <text x="58" y="452">提供實際檔案資料</text>
+              <text x="692" y="452">片段與完成檔案</text>
+              <text x="58" y="591">有效設定與來源目錄</text>
+              <text x="336" y="591">SQLite：狀態與恢復紀錄</text>
+              <text x="614" y="591">觀測歷史與趨勢</text>
+            </g>
+            <g class="np-svg-font-size-12 np-svg-fill-text-secondary">
+              <text x="279" y="77" class="np-svg-text-anchor-middle">操作</text>
+              <text x="232" y="146">來源查詢</text>
+              <text x="450" y="163">工作意圖</text>
+              <text x="290" y="252" class="np-svg-text-anchor-middle">
+                來源
+              </text>
+              <text x="169" y="301">查詢與探測</text>
+              <text x="451" y="302">工作預算</text>
+              <text x="621" y="301">連線限制</text>
+              <text x="64" y="524">一致的設定快照</text>
+              <text x="451" y="524">狀態同步</text>
+              <text x="618" y="524">觀測樣本</text>
+              <text
+                x="251"
+                y="420"
+                class="np-svg-text-anchor-middle np-svg-fill-entity-file"
+              >
+                資料
+              </text>
+              <text
+                x="636"
+                y="420"
+                class="np-svg-text-anchor-middle np-svg-fill-entity-file"
+              >
+                資料
+              </text>
+              <path
+                d="M626 77H664"
+                marker-end="url(#arch-arrow-control)"
+                class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-7"
+              ></path>
+              <text x="677" y="81">控制與狀態</text>
+              <path
+                d="M626 104H664"
+                marker-end="url(#arch-arrow-data)"
+                class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-6"
+              ></path>
+              <text x="677" y="108">實際檔案資料</text>
+              <text x="40" y="640">
+                九個邏輯職責可位於同一程序；圖中省略部分回報與共用設定關係。
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        箭頭標示主要責任之間的關係；重複的設定讀取與觀測回報省略。Component
+        可以有多個實例，一個引擎也可以同時處理多個工作。
+      </figcaption>
+    </figure>
+    <div
+      role="region"
+      aria-label="九個邏輯元件分工"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">元件</th>
+            <th scope="col">處理的問題</th>
+            <th scope="col">與其他元件的關係</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">P2P Web View</th>
+            <td>讓人看見進度、來源與等待原因，並操作工作。</td>
+            <td>透過 Manager 表達意圖與取得狀態。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Manager</th>
+            <td>接收操作、辨識工作、管理可用的 Component。</td>
+            <td>協調意圖與狀態，將需要持久化的變更交給 Store。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Config</th>
+            <td>提供一致的有效設定與來源目錄。</td>
+            <td>讓各元件在同一套政策下運作，保留更新的來由。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Search</th>
+            <td>搜尋內容、解析識別資訊、持續尋找來源。</td>
+            <td>透過各協定的 Search Provider 取得線索，供排程使用。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Scheduler</th>
+            <td>決定哪些工作可以試跑、繼續傳輸或暫時讓出資源。</td>
+            <td>根據來源資訊與本機壓力分配工作額度。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Component</th>
+            <td>接上實際協定與下載引擎。</td>
+            <td>把共同的管理意圖轉成引擎能執行的操作，回報原生狀態。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Store</th>
+            <td>保存任務、內容識別、來源摘要、政策與恢復紀錄。</td>
+            <td>使用 SQLite 保存可恢復的事實；檔案內容由引擎管理。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Metrics</th>
+            <td>保存速度、延遲、佇列與資源壓力的時間變化。</td>
+            <td>協助分析過程；即時控制另有直接回報路徑。</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Connection Manager</th>
+            <td>理解每條連線的角色、服務情況與異常證據。</td>
+            <td>提出範圍明確的連線限制，由 Component 內的代理執行。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="architecture-detail-1">邏輯分工與程序配置，可以分開決定</h3>
+    <p>
+      九個名字代表九種責任，不需要一開始就變成九個服務。一個 Rust
+      常駐程序可以容納 Manager、Search、Scheduler、Connection Manager 與 Store
+      的協調邏輯；不同原生引擎再依其嵌入能力、語言與故障隔離需求，放在同程序或獨立的
+      Component host。
+    </p>
+    <p>
+      同程序的呼叫與資料交換比較直接，部署也較單純；獨立程序則能隔開引擎崩潰、原生函式庫與資源限制，代價是通訊、重啟與狀態同步更複雜。是否拆程序，應由這些成本決定，不能單憑架構圖有幾個方框。
+    </p>
+    <p>
+      一個下載工作也不需要對應一個引擎程序。多個工作通常可以共享引擎的執行環境、連線管理與來源探索設施；工作數增加，主要增加的是狀態與實際需要的資源，而不是成倍複製整套系統。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="components">
+      <span class="np-section-no">03</span
+      ><span class="np-heading-text">Component 如何接上不同協定</span>
+    </h2>
+    <p>
+      多協定下載器最容易走偏的地方，是把所有協定都翻譯成同一個「開始、暫停、進度百分比」。表面上操作統一了，實際上卻失去最需要的資訊：BitTorrent
+      的 choke、eD2k
+      的遠端排隊、來源是否可達，以及引擎到底能不能只關閉某一條連線。
+    </p>
+    <p>
+      Component
+      的用途，是保留這些差異，同時讓上層用共同的問題來管理它們：現在能取得哪些資料？傳輸需要多少資源？停下來會失去什麼？目前看見的等待，是遠端限制還是本機造成？
+    </p>
+    <h3 id="components-detail-1">把協定能力放在適合的位置</h3>
+    <div
+      role="region"
+      aria-label="Component 內部分工"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">內部角色</th>
+            <th scope="col">責任</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Search Provider</th>
+            <td>
+              接入該協定的搜尋與來源發現方式，保留來源出處、觀測時間與原生欄位。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Downloader</th>
+            <td>
+              把「試跑這個工作」「調低這個工作的資源」「保存後暫停」轉成引擎操作，追蹤是否真的生效。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Engine</th>
+            <td>
+              處理網路協定、訊息解析、片段請求、重試、校驗、原生續傳與檔案 I/O。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Connection Agent</th>
+            <td>
+              把引擎看得到的連線狀態往上回報，並執行它確實支援的斷線或限制。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">資源與觀測回報</th>
+            <td>
+              整理工作、連線與本機負荷；即時摘要送給控制元件，歷史樣本送給
+              Metrics。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="components-detail-2">三層決策，各自回答一個問題</h3>
+    <p>
+      <strong
+        >Scheduler 決定「哪個工作拿多少資源」；Connection Manager
+        決定「哪些來源或連線目前適合使用」；Engine
+        決定「現在向誰要哪個片段」。</strong
+      >這樣，外層可以照顧整台主機的負荷，引擎仍能依協定的即時狀態處理每個請求。
+    </p>
+    <p>
+      例如，Scheduler 允許工作 A 繼續下載，但 Connection Manager
+      暫時避開其中一個反覆逾時的來源。Engine
+      仍可從其他來源請求片段。若使用者已暫停工作
+      A，任何一層都不應因為「找到更快的來源」而重新開始傳輸。
+    </p>
+    <h3 id="components-detail-3">看得到資訊，不代表做得到同樣精細的操作</h3>
+    <p>
+      外部引擎的管理 API 可能只提供整個 torrent 的摘要，底層函式庫卻有逐 peer
+      的片段與請求資訊。這兩種能力不能混為一談。同樣地，「封鎖某個
+      IP」和「只關掉目前這條連線」的影響範圍不同，轉接層需要把差異留下來。
+    </p>
+    <p>
+      一個具體例子是 qBittorrent：在本文引用的固定原始碼版本中，<code
+        >banPeersAction()</code
+      >
+      解析端點後呼叫的是
+      <code>banIP()</code
+      >。因此，那個動作不能被包裝成只影響單一連線的按鈕。這裡引用的是該版本的行為，用來說明轉接能力的差異。<sup
+        class="np-cite"
+        ><a
+          href="#source-s18"
+          aria-label="參考資料 18：qBittorrent：封鎖動作的實際範圍"
+          >[18]</a
+        ></sup
+      >
+    </p>
+    <p>
+      資訊不足時，上層仍然能做較粗的工作排程，只是不能推論沒有觀察到的細節。介面顯示「引擎未提供」會比顯示假的零流量或假的精準控制更有用。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="discovery">
+      <span class="np-section-no">04</span
+      ><span class="np-heading-text">找到內容，與找到能傳資料的人</span>
+    </h2>
+    <p>
+      來源探索之前，要先確定大家談的是同一份內容。檔名只是顯示資訊：同名檔案可能不同，不同名字也可能指向相同資料。多協定系統還會遇到另一層問題：不同協定的
+      hash，可能使用不同演算法、不同分段方法，甚至根本不是在雜湊同一種東西。
+    </p>
+    <h3 id="discovery-detail-1">infohash 識別的是 torrent 的內容描述</h3>
+    <p>
+      BitTorrent v1 的 infohash，是對 <code>info</code> dictionary 的原始
+      bencoding 計算 SHA-1。這個 dictionary 記錄內容結構與分段驗證資訊；infohash
+      是它的摘要，不是把整份下載檔案直接丟進 SHA-1。v2 改用 SHA-256 計算
+      infohash，並用每個檔案的 Merkle tree 組織資料驗證。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s03" aria-label="參考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <p>
+      因此，同一份檔案即使 bytes 完全相同，若 torrent
+      的內容描述不同，也可能屬於不同的 torrent。多檔案 torrent
+      中「只選其中兩個檔案」，則是另一個層次：torrent
+      身分沒有因此改變，但這個工作實際缺少的範圍變了。
+    </p>
+    <p>
+      對系統來說，內容身分、選取範圍與所屬網路範圍值得分別保存。BitTorrent、eD2k
+      與其他協定的識別不能只因字串相似就合併；跨協定重用資料，還需要確認內容對應、分段位置與驗證方式。
+    </p>
+    <h3 id="discovery-detail-2">magnet 為什麼常常先停在「取得中繼資料」？</h3>
+    <p>
+      magnet 可以只有內容識別與少量定位線索，還沒有完整的檔案結構。客戶端先找到
+      peer，再利用 metadata exchange 取得
+      <code>info</code> dictionary，並檢查是否符合已知的 infohash。BEP 9
+      傳的是這個部分，不是整份 <code>.torrent</code> 的全部頂層欄位；v2
+      的驗證還要處理其對應的雜湊資訊。<sup class="np-cite"
+        ><a
+          href="#source-s02"
+          aria-label="參考資料 2：Metadata exchange 與 magnet｜BEP 9"
+          >[02]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s03" aria-label="參考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <p>
+      這時畫面上還沒有檔案進度是合理的：系統正在建立後續請求所需的資訊。若根本沒有可用
+      peer，增加傳輸預算也無法憑空取得 metadata。
+    </p>
+    <h3 id="discovery-detail-3">幾種來源發現方式，在處理不同的索引</h3>
+    <div
+      role="region"
+      aria-label="來源發現機制比較"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">機制</th>
+            <th scope="col">如何找到來源</th>
+            <th scope="col">容易混淆的地方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">BitTorrent Tracker</th>
+            <td>客戶端向 tracker 宣告參與某個 swarm，取得 peer 聯絡資訊。</td>
+            <td>
+              Tracker 的回應是來源資訊；檔案資料通常由 peers 傳送。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s01"
+                  aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+                  >[01]</a
+                ></sup
+              ><sup class="np-cite"
+                ><a
+                  href="#source-s08"
+                  aria-label="參考資料 8：UDP Tracker｜BEP 15"
+                  >[08]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">BitTorrent DHT</th>
+            <td>從已知節點開始，依 infohash 查找對應的 peer 資訊。</td>
+            <td>
+              Mainline DHT 不是通用的關鍵字搜尋引擎，也不直接保存下載檔案。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s04"
+                  aria-label="參考資料 4：BitTorrent DHT｜BEP 5"
+                  >[04]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">PEX</th>
+            <td>已連上的 peers 交換其他 peer 的聯絡資訊。</td>
+            <td>
+              需要先有起點，不能獨自解決第一次找到 peer 的問題。<sup
+                class="np-cite"
+                ><a
+                  href="#source-s05"
+                  aria-label="參考資料 5：Peer Exchange｜BEP 11"
+                  >[05]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">eD2k Server</th>
+            <td>提供檔案搜尋與來源索引，也協助部分連線的建立。</td>
+            <td>
+              索引服務與 peer 的實際檔案傳輸是不同角色。<sup class="np-cite"
+                ><a
+                  href="#source-s19"
+                  aria-label="參考資料 19：aMule：eD2k Server 的角色"
+                  >[19]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Kad</th>
+            <td>以分散式索引尋找檔案與來源，加入時仍需要已知聯絡節點。</td>
+            <td>
+              在 *Mule 系統裡，Kad 與 eD2k
+              的來源發現不同，但可共用其檔案傳輸機制。<sup class="np-cite"
+                ><a href="#source-s11" aria-label="參考資料 11：aMule：Kad 網路"
+                  >[11]</a
+                ></sup
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      上層 Search
+      因而可以同時支援「用關鍵字找內容」與「已知識別，找可用來源」，但不應假設每種協定都有同樣的搜尋能力。擴充到其他網路時，也要保留它們自己的索引、排隊與身分模型。
+    </p>
+    <h3 id="discovery-detail-4">私有 torrent 有自己的來源邊界</h3>
+    <p>
+      當 metainfo 明確標記 <code>private=1</code>，BEP 27 要求依私有 tracker
+      的來源範圍運作，不能照一般公開 torrent 的方式使用 DHT、PEX
+      等機制擴散來源。<sup class="np-cite"
+        ><a href="#source-s06" aria-label="參考資料 6：私有 torrent｜BEP 27"
+          >[06]</a
+        ></sup
+      >
+    </p>
+    <p>
+      metadata 尚未取得時，「還不知道是否私有」也不等於可以任意追加公開
+      tracker。這套架構會把原始來源與探索政策一起保留下來，避免全域的「多找一些來源」意圖越過個別工作的隱私範圍。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="loops">
+      <span class="np-section-no">05</span
+      ><span class="np-heading-text">大量下載，為什麼需要兩條迴路</span>
+    </h2>
+    <p>
+      假設一次加入 1,000
+      個目標。若只有進入下載槽的工作才能找來源，前面幾個長時間沒回應的工作就會拖住其他人。另一個極端是替
+      1,000 個目標立即建立大量連線，這又會先耗盡本機資源。
+    </p>
+    <p>
+      雙迴路把這兩種工作拆開：<strong>探索迴路維持來源資訊；傳輸迴路依目前的證據與資源實際取資料。</strong>所有已接受的目標都能參與探索排程，但真正同時發出的查詢與連線仍受資源控制。
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>運作流程</span><strong>探索持續進行，準備好的工作先傳輸</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="探索與傳輸雙迴路圖，可水平捲動"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 440"
+          width="880"
+          height="440"
+          role="img"
+          aria-labelledby="loops-title loops-desc"
+        >
+          <title id="loops-title">來源探索與實際傳輸同時運作</title>
+          <desc id="loops-desc">
+            所有待處理目標持續參與共用來源查詢，逐筆產生新鮮來源資訊。任何先取得足夠證據的目標都能開始試跑，不必等整批探索結束。試跑有收益時進入下載池；暫時不適合時保留資料並觀察，等新來源或服務機會出現後重新評估。
+          </desc>
+          <defs>
+            <marker
+              id="loops-arrow-blue"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="loops-arrow-green"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="440"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="31"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              來源資訊逐筆回流，傳輸隨時可以開始
+            </text>
+            <text
+              x="40"
+              y="74"
+              class="np-svg-font-size-13 np-svg-fill-link np-svg-font-weight-650"
+            >
+              探索迴路
+            </text>
+            <text
+              x="40"
+              y="238"
+              class="np-svg-font-size-13 np-svg-fill-entity-file np-svg-font-weight-650"
+            >
+              傳輸迴路
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="40" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="330" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="620" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="40" y="254" width="220" height="74" rx="8"></rect>
+              <rect
+                x="330"
+                y="254"
+                width="220"
+                height="74"
+                rx="8"
+                class="np-svg-stroke-entity-file"
+              ></rect>
+              <rect x="620" y="254" width="220" height="74" rx="8"></rect>
+            </g>
+            <g
+              marker-end="url(#loops-arrow-blue)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-8"
+            >
+              <path d="M260 133H330"></path>
+              <path d="M550 133H620"></path>
+              <path d="M730 168V207H150V254"></path>
+              <path
+                d="M730 328V373H150V328"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+              <path d="M200 328V350H680V328"></path>
+            </g>
+            <g
+              marker-end="url(#loops-arrow-green)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2"
+            >
+              <path d="M260 291H330"></path>
+              <path d="M550 291H620"></path>
+            </g>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="58" y="123">所有待處理目標</text>
+              <text x="348" y="123">共用來源查詢</text>
+              <text x="638" y="123">新鮮來源資訊</text>
+              <text x="58" y="283">試跑</text>
+              <text x="348" y="283">正式下載池</text>
+              <text x="638" y="283">觀察與等待</text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="58" y="148">持續保留探索資格</text>
+              <text x="348" y="148">Tracker／DHT／Server 等</text>
+              <text x="638" y="148">來源、片段與服務條件</text>
+              <text x="58" y="308">取回真正缺少的資料</text>
+              <text x="348" y="308">量測收益與本機壓力</text>
+              <text x="638" y="308">保留片段與有效排隊資訊</text>
+              <text x="440" y="198" class="np-svg-text-anchor-middle">
+                哪個目標先取得新鮮證據，就先評估試跑
+              </text>
+              <text x="440" y="395" class="np-svg-text-anchor-middle">
+                新來源、服務機會或冷卻結束後，再次評估
+              </text>
+              <text
+                x="440"
+                y="344"
+                class="np-svg-text-anchor-middle np-svg-font-size-12"
+              >
+                試跑仍待更多證據
+              </text>
+              <text x="40" y="425">
+                兩條迴路同時進行；單一目標的逾時，不會形成全批次等待。
+              </text>
+            </g>
+            <g
+              class="np-svg-font-size-12 np-svg-fill-text-secondary np-svg-text-anchor-middle"
+            >
+              <text x="295" y="122">排入查詢</text>
+              <text x="585" y="122">逐筆更新</text>
+              <text x="295" y="280">穩定收益</text>
+              <text x="585" y="280">暫不適合</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        兩條迴路以來源證據與工作事件連結。圖中的「觀察」表示暫時降低傳輸投入，仍可接收新的來源資訊。
+      </figcaption>
+    </figure>
+    <h3 id="loops-detail-1">第 900 個先有結果，就先處理第 900 個</h3>
+    <p>
+      探索不需要等整批完成。第 1 個目標的 tracker 還沒回應，第 900
+      個已經找到能提供缺少片段的
+      peer，就可以先進入試跑。每筆結果各自更新，不設一個「所有人都回覆後才繼續」的門檻。
+    </p>
+    <p>
+      這也不代表要反覆查詢所有來源。相同內容、相容的網路範圍與政策下，可以合併重複的來源查詢，讓不同選取範圍共用結果。Tracker
+      transport、DHT 路由表與 eD2k server session
+      也有可共享的部分；已經在取得中的 metadata，通常沒有必要再開一份相同工作。
+    </p>
+    <h3 id="loops-detail-2">保存線索，讓連線可以適時釋放</h3>
+    <p>
+      一次探索可以留下來源位址、宣告持有的範圍、目前的服務狀態與觀測時間。短暫連線結束後，這些線索仍然存在，下次需要時可以有方向地重試。
+    </p>
+    <p>
+      不過，來源資訊有時效。五分鐘前能連上的 peer
+      現在可能離線；當時缺少的片段也可能已從別處取得。過期資訊可以用來決定「先查誰」，卻不適合直接當作「現在一定能下載」的證據。快照過期也只影響來源判斷，不會讓本機已驗證的資料變成無效。
+    </p>
+    <h3 id="loops-detail-3">探索有自己的節奏</h3>
+    <p>
+      協定本身會限制重新查詢的頻率。Tracker 回應中的 interval、PEX
+      更新節奏，以及 eD2k
+      的重新詢問機制，都影響下一次合理的查詢時間。全域排程可以安排誰先查、合併重複工作，卻不能靠密集重試消除遠端的等待政策。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s05" aria-label="參考資料 5：Peer Exchange｜BEP 11"
+          >[05]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="參考資料 12：aMule：eD2k／Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+    <p>
+      把探索與傳輸分開的好處，是忙碌中的系統仍能發現新機會；來源暫時稀少的工作，也不必長期占著完整的傳輸資源。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="probing">
+      <span class="np-section-no">06</span
+      ><span class="np-heading-text">短暫探測，與真正的連線成本</span>
+    </h2>
+    <p>
+      在正式投入傳輸前，先做一次短暫探測，可以知道對方是否可達、是否回應正確的內容、宣告持有哪些片段，以及目前是否需要排隊。這些資訊有助於選擇下一個值得嘗試的來源。
+    </p>
+    <p>
+      但探測能回答的問題有限。TCP
+      很快建立，只能說明這次建立連線的過程很快；它還不能證明對方的上傳頻寬、服務穩定性或資料完整性。要知道這些，仍需要實際請求有用的資料。
+    </p>
+    <h3 id="probing-detail-1">「探測」與 half-open 是不同概念</h3>
+    <p>
+      libtorrent 的 <code>connecting</code> 指的是仍在建立連線的 half-open
+      狀態；<code>handshake</code> 則表示連線已開啟，正在等協定握手。要取得
+      bitfield 等資訊，通常已經走過單純的連線建立階段。<sup class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="參考資料 9：libtorrent 原生觀測資料｜Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <p>
+      因此，這裡使用「短暫探測 session」描述這段工作。刻意停在 TCP
+      未完成狀態，既拿不到所需的協定資訊，也不會讓資源消耗消失。對 UDP
+      tracker、DHT 或可共用 transport
+      的機制，更不能把一次邏輯探測直接算成一條獨立 TCP socket。
+    </p>
+    <h3 id="probing-detail-2">同時維持多少，與每秒新增多少，要分別控制</h3>
+    <p>
+      一個限制管理<strong>存量</strong>：現在同時維持的探測，會占多少檔案描述元、記憶體與引擎狀態。另一個限制管理<strong>新增速率</strong>：即使舊探測很快結束，也不能因此在一秒內對同一服務建立大量新連線。
+    </p>
+    <p>
+      檔案描述元（FD）是作業系統追蹤開啟檔案、socket
+      等資源的代號；它的餘裕只是其中一項限制。Token bucket
+      則可以把「每秒允許多少次新增」轉成可消耗的令牌，並限制瞬間突發量。兩者一起運作，才能同時限制常駐成本與短時間衝擊。
+    </p>
+    <div class="np-example">
+      <h3 id="probing-detail-3">一個簡化的資源估算</h3>
+      <p>
+        假設這一類探測各使用一個獨立 socket：剩餘 FD 可支援 300
+        個，探測專用記憶體餘裕為 24 MiB，每個探測的成本估計為 64
+        KiB，則記憶體約可支援 384 個。同時存活的上限先受到 300 個 FD 的限制。
+      </p>
+      <div class="np-equation">
+        新增探測數 ≤ min（剩餘並行額度，全域可用令牌，該來源可用令牌）
+      </div>
+      <p>
+        若這次只有 16 個令牌，即使並行額度還有 150 個，也只能新增最多 16
+        個。這些數字是用來說明兩種限制的算例，不是建議設定；共用 socket
+        的探測還要按實際資源重新計算。
+      </p>
+    </div>
+    <p>
+      實際成本會隨協定與回覆大小改變，因此估算之外，還需要看連線逾時、記憶體成長、事件處理延遲與資源配置失敗。NAT
+      追蹤表或暫時連接埠的容量未必可直接觀察；失敗率上升時，保守減少新增，比假設它們沒有上限可靠。
+    </p>
+    <h3 id="probing-detail-4">探測結束後，釋放的是可釋放的資源</h3>
+    <p>
+      如果已取得來源資訊，且沒有需要維持的原生狀態，可以關閉臨時連線。可是共用的
+      server session、DHT
+      路由狀態與仍有價值的排隊資格，需要按協定處理，不能在每次探測結束時全部拆掉。
+    </p>
+    <p>
+      尤其在 eD2k 中，排隊狀態與一條持續存在的 TCP
+      連線不是一對一關係；重新詢問、queue rating 等互動也可能使用
+      UDP。是否需要保持某條連線、何時要再次詢問，都應由原生引擎保留的機制決定，不能概括成「一斷線就丟掉隊伍」或「斷線完全沒有成本」。<sup
+        class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="參考資料 12：aMule：eD2k／Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+  </section>
+
+  <section>
+    <h2 id="coverage">
+      <span class="np-section-no">07</span
+      ><span class="np-heading-text">來源很多，為什麼還是下載不完？</span>
+    </h2>
+    <p>
+      來源數只能告訴我們有多少候選人，無法直接回答能否取得完整內容。真正有用的問題是：<strong
+        >本機還缺哪些片段？目前的來源合起來，能不能提供這些片段？</strong
+      >
+    </p>
+    <p>
+      一個完整 seed
+      持有全部片段，通常是很直觀的好消息。但沒有單一完整來源，也可能靠多個持有互補部分的
+      peer 完成。反過來，數百個來源若全都缺同一個尾段，進度仍會停住。<sup
+        class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="參考資料 12：aMule：eD2k／Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+    <figure id="coverage-demo" class="np-coverage-demo">
+      <div class="np-figure-head">
+        <span>片段示例</span><strong>三個不完整來源，也能拼出完整供給</strong>
+      </div>
+      <p class="np-figure-intro">
+        假設檔案由 12 個等大的片段組成，本機已驗證片段
+        1–3。表中的「有」是來源宣告；「已驗」是本機證據。
+      </p>
+
+      <div
+        role="region"
+        aria-label="十二個等大片段的供給矩陣，可水平捲動"
+        tabindex="0"
+        class="np-table-scroll"
+      >
+        <table class="np-piece-table">
+          <caption class="np-visually-hidden">
+            本機與來源 A、B、C
+            的片段覆蓋。已驗代表本機驗證通過；有代表來源宣告；破折號代表未持有。
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">資料位置</th>
+              <th scope="col">1</th>
+              <th scope="col">2</th>
+              <th scope="col">3</th>
+              <th scope="col">4</th>
+              <th scope="col">5</th>
+              <th scope="col">6</th>
+              <th scope="col">7</th>
+              <th scope="col">8</th>
+              <th scope="col">9</th>
+              <th scope="col">10</th>
+              <th scope="col">11</th>
+              <th scope="col">12</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                本機<span class="np-peer-state">已驗證範圍</span>
+              </th>
+              <td class="np-state-verified">已驗</td>
+              <td class="np-state-verified">已驗</td>
+              <td class="np-state-verified">已驗</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                來源 A<span class="np-peer-state">可用・宣告範圍</span>
+              </th>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                來源 B<span class="np-peer-state">可用・宣告範圍</span>
+              </th>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                來源 C<span class="np-peer-state">可用・宣告範圍</span>
+              </th>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                觀測聯集<span class="np-peer-state">本機＋可用來源</span>
+              </th>
+              <td class="np-state-verified">已驗</td>
+              <td class="np-state-verified">已驗</td>
+              <td class="np-state-verified">已驗</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+              <td class="np-state-available">有</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="np-demo-result">
+        <p id="coverage-summary">
+          <strong>觀測覆蓋 12／12（100%）</strong>；尚缺的 9 片中，9
+          片有來源宣告可供給。
+        </p>
+        <p id="coverage-missing">
+          目前未發現共同缺段。片段 10–12 只由來源 C 提供，值得保留這個來源。
+        </p>
+      </div>
+      <details class="np-coverage-cases">
+        <summary>查看全部 8 種來源組合</summary>
+        <p>
+          以下是原片段示例的靜態比較：只切換來源可用狀態，本機已驗證的片段 1–3
+          始終保留。來源宣告不等於已收到或驗證的資料。
+        </p>
+        <div
+          class="np-table-scroll"
+          role="region"
+          aria-label="八種來源可用組合的片段覆蓋比較"
+          tabindex="0"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">可用來源</th>
+                <th scope="col">觀測覆蓋</th>
+                <th scope="col">尚缺 9 片中的供給</th>
+                <th scope="col">缺少供給的片段</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">A、B、C</th>
+                <td>12／12（100%）</td>
+                <td>9／9</td>
+                <td>無</td>
+              </tr>
+              <tr>
+                <th scope="row">A、B</th>
+                <td>9／12（75%）</td>
+                <td>6／9</td>
+                <td>10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">A、C</th>
+                <td>10／12（83.3%）</td>
+                <td>7／9</td>
+                <td>7、8</td>
+              </tr>
+              <tr>
+                <th scope="row">B、C</th>
+                <td>10／12（83.3%）</td>
+                <td>7／9</td>
+                <td>4、5</td>
+              </tr>
+              <tr>
+                <th scope="row">A</th>
+                <td>6／12（50%）</td>
+                <td>3／9</td>
+                <td>7、8、9、10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">B</th>
+                <td>7／12（58.3%）</td>
+                <td>4／9</td>
+                <td>4、5、10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">C</th>
+                <td>7／12（58.3%）</td>
+                <td>4／9</td>
+                <td>4、5、6、7、8</td>
+              </tr>
+              <tr>
+                <th scope="row">無</th>
+                <td>3／12（25%）</td>
+                <td>0／9</td>
+                <td>4、5、6、7、8、9、10、11、12</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <figcaption>
+        教學用的集合運算。當來源 C 不可用時，片段 10–12
+        的供給會消失；本機已驗證的片段 1–3
+        不受影響。來源宣告不代表已收到資料，也不保證對方會持續在線。
+      </figcaption>
+    </figure>
+    <h3 id="coverage-detail-1">
+      用兩個比例，分清楚「已經有」與「還拿不拿得到」
+    </h3>
+    <p>
+      令 <code>S</code> 代表這個工作需要的資料範圍，<code>V</code>
+      代表本機已驗證的範圍，<code>Aⱼ</code> 代表第 j
+      個來源近期宣告可提供的範圍。這些集合以相容的原生驗證範圍表示；多檔案內容還要考慮片段邊界。
+    </p>
+    <div role="group" aria-label="片段覆蓋公式" class="np-equation">
+      <div>尚缺範圍 M = S − V</div>
+      <div>觀測覆蓋率 = bytes［(V ∪ ⋃Aⱼ) ∩ S］／bytes(S)</div>
+      <div>缺少部分的供給率 = bytes［(⋃Aⱼ) ∩ M］／bytes(M)</div>
+    </div>
+    <p>
+      這裡的
+      <code>bytes()</code>
+      計算範圍的位元組數。示例片段等大，所以可以直接數格子；真實檔案的尾段可能比較短，直接數片段會失真。當
+      <code>M</code>
+      已空，表示所需資料已通過驗證，接著處理保存與完成發布；沒有必要再把零當成分母。
+    </p>
+    <p>
+      第一個比例回答「已驗證的部分，加上來源目前宣告的部分，涵蓋多少需求」。第二個比例只看還缺的資料。兩者都不能把
+      peer
+      的宣告升格為已驗證進度；如果某協定沒有提供片段清單，狀態應保留未知，再用實際傳輸補足判斷。
+    </p>
+    <h3 id="coverage-detail-2">稀缺片段有時比即時速度重要</h3>
+    <p>
+      示例中的來源 C 即使比較慢，也持有其他來源沒有的 10–12。若只按 MiB/s
+      排名，把它換成另一個只持有 4–9
+      的快速來源，短期流量可能變好，完成整份檔案的機會卻變差。
+    </p>
+    <p>
+      這也是全域排程需要保留稀缺資料機會的原因。Engine
+      可以處理單一下載內的片段選擇；Scheduler
+      則照顧跨工作資源，避免包含稀缺來源的工作被其他高吞吐工作完全擠掉。libtorrent
+      的 piece picker 會考慮片段稀有度與優先序，但全域公平性仍是另一層問題。<sup
+        class="np-cite"
+        ><a href="#source-s10" aria-label="參考資料 10：libtorrent 的片段選擇"
+          >[10]</a
+        ></sup
+      >
+    </p>
+  </section>
+
+  <section>
+    <h2 id="payload">
+      <span class="np-section-no">08</span
+      ><span class="np-heading-text">資料如何從 peer 變成可用的檔案</span>
+    </h2>
+    <p>
+      有來源之後，真正的資料路徑才開始。Engine
+      會根據已知片段、尚未完成的請求與原生服務狀態，決定下一批要向誰取得什麼資料。外層的下載池提供資源範圍，這些細部選擇則留在引擎裡。
+    </p>
+    <h3 id="payload-detail-1">Piece 是驗證單位，block 是請求單位</h3>
+    <p>
+      以 BitTorrent v1 為例，metadata 內有各個 piece 的雜湊；傳輸時，一個 piece
+      可以拆成多個較小的 block 請求。某個 block
+      已到達，只能先記錄它的範圍，通常還要湊齊整個 piece，才能對照該 piece 的
+      hash。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <p>
+      這不表示整個 piece 必須一直留在記憶體。引擎可以先寫入 partial
+      檔案，再讀取或沿用可用的資料做驗證。<strong
+        >接收、寫入、校驗可能交錯進行；只有「已收到」的狀態，還不足以代表資料可放心重用。</strong
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="資料狀態的差異"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">狀態</th>
+            <th scope="col">已經知道什麼</th>
+            <th scope="col">還不能假設什麼</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">已接收</th>
+            <td>某個資料範圍到達本機，已排除明顯的訊息與範圍錯誤。</td>
+            <td>不能假設它通過內容雜湊，也可能仍只在緩衝區。</td>
+          </tr>
+          <tr>
+            <th scope="row">已驗證</th>
+            <td>依該協定取得足夠資訊，內容符合預期的驗證值。</td>
+            <td>不能假設資料與續傳紀錄都已耐久保存。</td>
+          </tr>
+          <tr>
+            <th scope="row">已可恢復保存</th>
+            <td>資料與對應狀態已按儲存流程同步，重啟後能核對與重用。</td>
+            <td>不能僅憑這點推論全部檔案完成，或內容本身安全可執行。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="payload-detail-2">為什麼要同時保留多個未完成請求？</h3>
+    <p>
+      如果每次只送一個請求，等收到後才送下一個，網路來回等待會造成空檔。Pipelining
+      讓多個請求保持在途，當前一批資料回來時，後一批已經在處理。BitTorrent
+      文件也明確描述這種做法。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <div class="np-example">
+      <h3 id="payload-detail-3">請求窗口與 RTT 的關係</h3>
+      <p>
+        在理想化估算中，若想維持 10 MiB/s，而一次請求的往返延遲約 100
+        ms，至少要容納約 1 MiB 的在途資料，才不會只因等待回應而停住。
+      </p>
+      <div class="np-equation">
+        <div>在途資料量 ≈ 目標速率 × 往返時間</div>
+        <div>10 MiB/s × 0.1 s = 1 MiB</div>
+        <div>若每次請求 16 KiB：約需 64 個在途請求</div>
+      </div>
+      <p>
+        這只是量級推導。遠端佇列、擁塞控制、原生請求上限、丟包與本機 buffer
+        都會影響實際結果，不能把 64 當成通用的最佳值。此處 KiB、MiB 分別是
+        2¹⁰、2²⁰ bytes。
+      </p>
+    </div>
+    <p>
+      請求窗口太小，頻寬可能因等待而閒置；窗口太大，會累積更多
+      buffer，也讓取消與重新分配的反應變慢。所以「網路沒滿」時，可以先檢查現有來源的請求管線，再決定是否增加其他工作。
+    </p>
+    <h3 id="payload-detail-4">不同協定的驗證粒度，也會影響恢復成本</h3>
+    <p>
+      BitTorrent v2 以 SHA-256 Merkle tree
+      組織每個檔案的雜湊，讓資料能透過樹上的關係對應到預期 root。*Mule 的 AICH
+      則在可信 root 與恢復資料可用時，進一步找出受損 part
+      內的較小區塊，保留正確部分，減少重抓量。兩者的格式與信任來源不同，不能當成同一種可直接互換的
+      hash tree。<sup class="np-cite"
+        ><a href="#source-s03" aria-label="參考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s13" aria-label="參考資料 13：aMule：AICH 與毀損恢復"
+          >[13]</a
+        ></sup
+      >
+    </p>
+    <p>
+      雜湊匹配證明的是資料與預期識別相符。若一開始選到的內容就不可信，正確下載它，也不會自動使它變成安全的程式或檔案。
+    </p>
+    <h3 id="payload-detail-5">有時候重複資料是為了更快完成</h3>
+    <p>
+      下載接近尾端時，只剩少數
+      block，任何一個慢來源都可能拖住完成時間。BitTorrent 的 endgame
+      可以向多個來源請求剩餘資料，先收到一份後再取消其他請求。取消訊息與資料回覆交錯，可能產生晚到的重複
+      block。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s07" aria-label="參考資料 7：Fast Extension｜BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <p>
+      因此，量測上可以把「網路收到的
+      bytes」「尚未重複的需求資料」與「已驗證的進度」分開。重複資料有成本，但在尾段可能換得更短的等待；單看到重複比例，還不能判定來源故意浪費頻寬。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="trial">
+      <span class="np-section-no">09</span
+      ><span class="np-heading-text">試跑：用真正需要的資料建立判斷</span>
+    </h2>
+    <p>
+      來源探索提供的是線索，試跑則讓系統看見實際服務情況。它會從工作真的缺少的範圍取資料；只要內容正確，這些資料就能留在後續下載中使用，不需要另外下載一段與工作無關的內容測速。
+    </p>
+    <p>
+      試跑的目的不是找到一個永遠固定的速度排名，而是回答：這個來源組合在目前的網路、本機負荷與協定狀態下，是否能持續帶來值得投入的新資料？
+    </p>
+    <h3 id="trial-detail-1">連線成功、得到服務、收到資料，是不同的觀察點</h3>
+    <p>
+      有些來源握手很快，但還在排隊；有些來源很慢才開始，開始後卻能穩定傳輸。若一律從連線建立就開始計算「多久沒送資料」，會把原生等待與真正的請求逾時混在一起。
+    </p>
+    <figure class="np-service-clock">
+      <div class="np-figure-head">
+        <span>時間線</span><strong>經過的時間，與能評估請求的時間</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="服務時間線教學算例"
+        tabindex="0"
+        class="np-table-scroll"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">時間區間</th>
+              <th scope="col">當時發生什麼</th>
+              <th scope="col">如何解讀</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">0–8 秒</th>
+              <td>已連線，遠端仍在排隊。</td>
+              <td>記錄等待成本；不能當成已接受資料請求後的無回應。</td>
+            </tr>
+            <tr>
+              <th scope="row">8–14 秒</th>
+              <td>可請求所需片段，實際有未完成請求，本機接收正常。</td>
+              <td>這 6 秒適合觀察首筆資料延遲與請求進展。</td>
+            </tr>
+            <tr>
+              <th scope="row">14–19 秒</th>
+              <td>本機磁碟積壓，主動限制接收。</td>
+              <td>這 5 秒反映本機瓶頸，不能歸咎遠端。</td>
+            </tr>
+            <tr>
+              <th scope="row">19–25 秒</th>
+              <td>本機恢復，繼續發出有效請求。</td>
+              <td>觀察這一段服務；請求換代後分別追蹤期限。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>
+        以上為教學算例，總經過時間是 25 秒；可用來評估有效請求的兩個區間合計 12
+        秒。原生請求的 timeout 與取消仍由 Engine 處理。
+      </figcaption>
+    </figure>
+    <p>
+      「可服務」也不是遠端保證頻寬。它只表示目前具備提出這個請求的條件。BitTorrent
+      一般 choke 會限制傳輸，但協商 Fast Extension 後，allowed-fast
+      可能允許特定片段在 choked
+      時被請求，並仍可能明確拒絕。因此，資格要根據具體請求與已協商機制判斷。<sup
+        class="np-cite"
+        ><a href="#source-s07" aria-label="參考資料 7：Fast Extension｜BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <h3 id="trial-detail-2">樣本不足時，保留不確定性</h3>
+    <p>
+      試跑的資源窗口若不足以取得一個完整驗證單位，結果可以是「尚待驗證」，而不是資料錯誤。剛開始服務的長
+      RTT
+      來源，也不適合用一次短窗口就定生死。比較合理的做法，是同時看新資料、驗證進展、延遲、重複量與本機干擾，並視成本決定是否延長觀察。
+    </p>
+    <p>
+      小檔案可能在試跑期間就完成，那就直接處理驗證與保存。低速來源若握有稀缺片段，也可能值得繼續服務；它的價值無法只用固定的
+      MiB/s 門檻表達。
+    </p>
+    <h3 id="trial-detail-3">工作狀態，是為了說清楚目前在等什麼</h3>
+    <div
+      role="region"
+      aria-label="工作階段與等待原因"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">階段</th>
+            <th scope="col">實際含意</th>
+            <th scope="col">接下來的機會</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">收集來源</th>
+            <td>還在取得 metadata 或新的來源證據。</td>
+            <td>任何可用結果回來，都能獨立進入下一步。</td>
+          </tr>
+          <tr>
+            <th scope="row">準備／試跑</th>
+            <td>有值得嘗試的來源，等待或使用一段有限資源。</td>
+            <td>依實際進度與成本決定持續、延長或讓出。</td>
+          </tr>
+          <tr>
+            <th scope="row">持續傳輸</th>
+            <td>正在得到有用資料，資源仍允許。</td>
+            <td>隨缺段、來源與本機負荷變化調整。</td>
+          </tr>
+          <tr>
+            <th scope="row">觀察等待</th>
+            <td>目前無來源、缺少關鍵片段、遠端排隊，或暫時效益不高。</td>
+            <td>新來源、等待到期或公平輪替帶來再次試跑機會。</td>
+          </tr>
+          <tr>
+            <th scope="row">暫停／本機保留</th>
+            <td>使用者暫停，或本機錯誤、執行結果未確認。</td>
+            <td>對應原因解決後再恢復，不扣來源的服務評價。</td>
+          </tr>
+          <tr>
+            <th scope="row">傳輸完成</th>
+            <td>要求的資料已完成原生驗證。</td>
+            <td>確認保存與發布位置，按意圖繼續分享或停止。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      這些階段與來源品質是兩個維度。「來源不完整，但正在取得稀缺片段」完全合理；「下載暫停，但本機已完成的片段仍有效」也一樣。把它們塞成單一好壞分數，反而會失去解釋能力。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="adaptive-pool">
+      <span class="np-section-no">10</span
+      ><span class="np-heading-text">下載池如何擴張、收縮與公平輪替</span>
+    </h2>
+    <p>
+      動態下載池可以理解成一個持續觀察的回饋控制器：先給一部分工作資源，看它們帶來多少進度、造成多少壓力，再決定下一步。正在傳輸的工作數，是這個過程的結果。
+    </p>
+    <p>
+      Scheduler 內可以把工作拆成三部分：<code>PoolSupervisor</code>
+      彙整現況，容量控制器決定整體增加或減少多少投入，輪替器再挑選適合的候選與讓出者。這些名字描述內部責任，實際上仍屬於同一層全域調度。
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>回饋控制</span><strong>看進度與壓力，再調整下一批投入</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="下載池回饋控制圖，可水平捲動"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 440"
+          width="880"
+          height="440"
+          role="img"
+          aria-labelledby="feedback-title feedback-desc"
+        >
+          <title id="feedback-title">動態下載池的回饋控制</title>
+          <desc id="feedback-desc">
+            控制器持續量測有效資料增量、本機資源壓力與回報新鮮度，決定擴張、維持或收縮，交由
+            Engine
+            調整新請求與並行量。網路及磁碟執行的結果回到下一輪判斷。磁碟塞車時先減少新請求，讓待寫入資料清空，並針對該磁碟的工作調整。
+          </desc>
+          <defs>
+            <marker
+              id="feedback-arrow-blue"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="feedback-arrow-green"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="440"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="31"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              以有效進度和本機壓力調整傳輸
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="60" y="78" width="220" height="114" rx="8"></rect>
+              <rect x="350" y="78" width="220" height="114" rx="8"></rect>
+              <rect x="640" y="78" width="200" height="114" rx="8"></rect>
+              <rect
+                x="640"
+                y="262"
+                width="200"
+                height="100"
+                rx="8"
+                class="np-svg-stroke-entity-file"
+              ></rect>
+              <rect
+                x="60"
+                y="252"
+                width="510"
+                height="110"
+                rx="8"
+                class="np-svg-fill-surface np-svg-stroke-entity-kind"
+              ></rect>
+            </g>
+            <g
+              marker-end="url(#feedback-arrow-blue)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-8"
+            >
+              <path d="M280 143H350"></path>
+              <path d="M570 143H640"></path>
+              <path
+                d="M740 362V398H27V135H60"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+            </g>
+            <path
+              d="M740 192V262"
+              marker-end="url(#feedback-arrow-green)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-1"
+            ></path>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="78" y="105">持續量測</text>
+              <text x="368" y="105">容量判斷</text>
+              <text x="658" y="105">Engine</text>
+              <text x="658" y="290">網路與磁碟</text>
+              <text x="78" y="282" class="np-svg-fill-entity-kind">
+                磁碟塞車時
+              </text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="78" y="130">有效資料增量</text>
+              <text x="78" y="151" class="np-svg-font-size-12">
+                網路、CPU、記憶體、I/O
+              </text>
+              <text x="78" y="174" class="np-svg-font-size-12">
+                回報新鮮度與來源狀態
+              </text>
+              <text x="368" y="130" class="np-svg-font-size-12">
+                有餘裕、有收益：擴張
+              </text>
+              <text x="368" y="151" class="np-svg-font-size-12">
+                尚未穩定：維持
+              </text>
+              <text x="368" y="174" class="np-svg-font-size-12">
+                壓力升高：收縮
+              </text>
+              <text x="658" y="135">調整新請求與並行量</text>
+              <text x="658" y="158">保留原生協定節奏</text>
+              <text x="658" y="315">接收、校驗、寫入</text>
+              <text x="658" y="339" class="np-svg-font-size-12">
+                依磁碟與網路域分別觀察
+              </text>
+              <text x="78" y="310">先減少新請求，讓待寫入資料逐步清空。</text>
+              <text x="78" y="336">
+                針對有壓力的磁碟調整，保留其他健康工作的資源。
+              </text>
+            </g>
+            <g class="np-svg-font-size-12 np-svg-fill-text-secondary">
+              <text x="315" y="131" class="np-svg-text-anchor-middle">
+                判斷
+              </text>
+              <text x="605" y="131" class="np-svg-text-anchor-middle">
+                調整
+              </text>
+              <text x="752" y="228" class="np-svg-fill-entity-file">
+                實際執行
+              </text>
+              <text
+                x="552"
+                y="280"
+                class="np-svg-text-anchor-end np-svg-fill-entity-kind"
+              >
+                局部背壓
+              </text>
+              <text x="430" y="389" class="np-svg-text-anchor-middle">
+                有效資料、等待時間與積壓回到下一輪判斷
+              </text>
+              <text x="60" y="424">
+                每次調整後先觀察影響，避免尚未穩定就連續增開或收縮。
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        增加工作、調整每個工作的 peer
+        數、改變請求窗口，都會影響負載。一次以一個主要變因做小幅調整，較容易理解結果。
+      </figcaption>
+    </figure>
+    <h3 id="adaptive-pool-detail-1">
+      資源是一組限制，無法濃縮成「還能下載幾個」
+    </h3>
+    <p>
+      五個工作可能全部受限於遠端，幾乎沒吃到網路；另一個工作可能已經用滿單顆硬碟的隨機寫入能力。所以排程需要同時看網路收送、待寫入資料、記憶體、驗證工作、CPU
+      與 FD，並保留控制操作的餘裕。
+    </p>
+    <div class="np-equation">
+      <div>對每個資源 r：</div>
+      <div>
+        已投入用量(r) ＋ 新增工作成本估計(r) ≤ 可用容量(r) − 保留餘裕(r)
+      </div>
+    </div>
+    <p>
+      這是資源分配的思考方式，不表示每種成本都能預先算準。有些資源能直接限制，有些只能依即時壓力調整；已送出、還沒確認縮減的工作，也仍可能繼續傳輸，不能先把它們的資源當作完全空出來。
+    </p>
+    <h3 id="adaptive-pool-detail-2">背壓如何從磁碟一路傳回網路</h3>
+    <p>
+      假如資料進來的速度比磁碟寫出的速度快，待寫入 buffer 就會增加。buffer
+      持續成長會吃掉記憶體，校驗與事件處理也可能延遲。這時再增加
+      peer，會讓下游承受更多尚未處理的資料。
+    </p>
+    <p>
+      背壓的作用，是讓上游知道下游跟不上：先減少新的資料請求或傳輸額度，讓在途資料與寫入佇列逐步消化。已經有價值的連線可以視成本保留，不一定要把整池全部斷掉重來。
+    </p>
+    <p>
+      壓力也有範圍。寫往慢 HDD 的工作需要降速，寫往另一顆空閒 SSD
+      的工作不一定受影響。Linux PSI 能提供 CPU、記憶體與 I/O
+      等待造成的壓力訊號，但它本身不是每顆磁碟的吞吐儀表，也不能測出可用
+      Internet 頻寬。<sup class="np-cite"
+        ><a
+          href="#source-s16"
+          aria-label="參考資料 16：Linux 核心：Pressure Stall Information"
+          >[16]</a
+        ></sup
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="下載池常見情境與調整"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">觀察到的情況</th>
+            <th scope="col">合理的下一步</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">網路仍有餘裕，本機健康</th>
+            <td>
+              先檢查現有來源與請求窗口；若受來源限制，再增加有機會的試跑。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">網路沒滿，但待寫入資料持續增加</th>
+            <td>先減少相關磁碟上的新增請求，讓驗證與寫入追上。</td>
+          </tr>
+          <tr>
+            <th scope="row">增加工作後，總進度幾乎不變</th>
+            <td>
+              觀察新增成本與原有工作是否被擠壓；收益不足時縮回最近的擴張。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">吞吐穩定，沒有持續積壓</th>
+            <td>保留現有有效服務，同時留少量探索與公平輪替的機會。</td>
+          </tr>
+          <tr>
+            <th scope="row">資源回報過期或中斷</th>
+            <td>先恢復觀測，避免把未知當空閒，持續保留引擎本身的資源限制。</td>
+          </tr>
+          <tr>
+            <th scope="row">已沒有更多可用來源</th>
+            <td>維持合理的探索節奏；新增本機資源無法解決不存在的供給。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="adaptive-pool-detail-3">有效吞吐要看同一層資料</h3>
+    <p>
+      網路介面的流量包含協定開銷、重傳與其他程式的流量；下載器收到的 payload
+      還可能包含重複或最後驗證失敗的資料。為了評估長期收益，可以看「新驗證完成的需求
+      bytes／觀察時間」，短期則輔以去重後的接收進度。
+    </p>
+    <p>
+      兩種量測各有用途：驗證完成量較接近可靠成果，卻會因驗證單位與排程而階梯式增加；去重後的接收量反應較快，仍有待驗證風險。用多個相近負荷的窗口看趨勢，會比拿一秒的峰值做升降判斷穩定。
+    </p>
+    <h3 id="adaptive-pool-detail-4">避免控制器自己製造震盪</h3>
+    <p>
+      新工作開始後，連線、排隊與請求管線都需要時間。如果剛增開就立刻判斷沒有效益，緊接著停掉；下一刻看到空閒又增開，系統會一直花成本重新啟動。
+    </p>
+    <p>
+      可以用平滑觀測、擴張後的觀察時間，以及不同的擴張／收縮門檻降低這種震盪。這種不同門檻稱為遲滯：接近邊界的小波動，不會每次都觸發反方向操作。一般調整可以等趨勢明確，磁碟滿或引擎錯誤等保護事件則立即處理。
+    </p>
+    <h3 id="adaptive-pool-detail-5">公平性需要明確留下機會</h3>
+    <p>
+      只保留當下最快的工作，尚未試跑的工作就沒有機會證明自己；稀有內容也可能永遠排在熱門內容後面。下載池可以保留一小部分資源，照顧未知來源、等待太久的工作與稀缺片段。
+    </p>
+    <p>
+      輪替時也要計入代價：現有來源已經建立穩定管線，新來源可能得重新排隊。合理做法是先用有限試跑比較候選，再替換收益較低且容易讓出的工作。公平性不需要靠每隔一段時間把所有下載重啟來達成。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="connections">
+      <span class="np-section-no">11</span
+      ><span class="np-heading-text">Connection Manager 如何理解每條連線</span>
+    </h2>
+    <p>
+      下載池看到的是整體資源與工作收益，Connection Manager
+      則把焦點縮到單一連線。兩者互相提供資訊：全域調度需要知道哪些資源有價值；連線分析需要知道目前是否受到本機限速、磁碟或其他工作影響。
+    </p>
+    <p>
+      這個元件的主要工作，是把零散的觀測放回上下文。當畫面上出現一條零流量連線時，至少要先知道它的角色、請求狀態、對方宣告的資料，以及本機是否正常。
+    </p>
+    <h3 id="connections-detail-1">先看角色，再看有沒有檔案流量</h3>
+    <p>
+      Tracker、DHT 節點、eD2k server 與 payload peer
+      承擔不同任務。索引服務很久沒有檔案
+      payload，可能正是正常狀態；只上傳、不下載的連線，也不能套用接收資料的判斷。來源探索與傳輸共存時，角色分類尤其重要。<sup
+        class="np-cite"
+        ><a href="#source-s04" aria-label="參考資料 4：BitTorrent DHT｜BEP 5"
+          >[04]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s08" aria-label="參考資料 8：UDP Tracker｜BEP 15"
+          >[08]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s19"
+          aria-label="參考資料 19：aMule：eD2k Server 的角色"
+          >[19]</a
+        ></sup
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="連線分析的四個面向"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">觀察面向</th>
+            <th scope="col">要先問的問題</th>
+            <th scope="col">對判斷的影響</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">角色與關聯</th>
+            <td>這是索引、metadata、檔案接收，還是上傳連線？影響哪個工作？</td>
+            <td>決定何種活動才算完成它的任務。</td>
+          </tr>
+          <tr>
+            <th scope="row">服務條件</th>
+            <td>有需要的範圍嗎？協定允許請求嗎？實際有未完成請求嗎？</td>
+            <td>決定是否有理由期待這次資料回覆。</td>
+          </tr>
+          <tr>
+            <th scope="row">資料與進度</th>
+            <td>收到多少新資料？有多少重複？驗證是未完成還是已失敗？</td>
+            <td>區分流量、效益與完整性問題。</td>
+          </tr>
+          <tr>
+            <th scope="row">本機與共同干擾</th>
+            <td>是否限速、寫入阻塞、回報過期，或整個網路都在失效？</td>
+            <td>避免把系統自己的問題算到每個來源身上。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="connections-detail-2">同一個 IP，不等於同一條連線或同一個人</h3>
+    <p>
+      連線會重建，引擎會重啟，一個端點也可能服務多個工作。追蹤時需要知道這次觀測屬於哪一輪執行、哪一個實際連線。否則，一個延遲到達的「關閉舊連線」操作，就可能傷到後來才建立的新連線。
+    </p>
+    <p>
+      peer ID、eD2k user hash、端點位址與本機的 connection
+      ID，各有不同用途。它們可以用來關聯協定互動，但不能直接當成經過認證的真實人物身分。共享
+      NAT、動態位址與重新連線，也會讓單一 IP 的長期評價變得粗糙。
+    </p>
+    <p>
+      eD2k 的 High ID／Low ID 更是另一回事：它主要反映入站可達性與是否需要
+      callback 協助建立連線。數值較大不代表更有信用或一定比較快；Low ID
+      也不表示所有檔案資料都由 server
+      中繼。實際可達性會影響取得來源的機會，但仍要看是否真正能服務。<sup
+        class="np-cite"
+        ><a
+          href="#source-s14"
+          aria-label="參考資料 14：aMule：High ID 與 Low ID"
+          >[14]</a
+        ></sup
+      >
+    </p>
+    <h3 id="connections-detail-3">不知道的欄位，值得留下「不知道」</h3>
+    <p>
+      有些引擎能提供逐 peer 的片段清單、待寫入 bytes、請求逾時與 choke
+      狀態；有些管理 API 只能看到總速度。libtorrent 的原生
+      <code>peer_info</code> 就有多種這類觀測，但轉接 API
+      是否暴露它們，要看實際介面。<sup class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="參考資料 9：libtorrent 原生觀測資料｜Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <p>
+      缺少資料可能表示尚未觀察、API
+      不支援、回報已過期，或還在等待驗證。這些情況需要保留各自的原因。如果全部顯示成
+      0，就很容易把「沒有量到服務時間」誤讀成「服務時間為零」，再做出錯誤的排程或封鎖。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="zero-and-corruption">
+      <span class="np-section-no">12</span
+      ><span class="np-heading-text">零流量、壞資料與封鎖，分別代表什麼</span>
+    </h2>
+    <p>
+      連線治理需要處理無效成本，也需要避免誤傷。關掉一條暫時用不到的連線，可能只是釋放資源；把一個來源判定為傳送壞資料，則需要更具體的證據。兩者可以有不同的處理方式。
+    </p>
+    <h3 id="zero-and-corruption-detail-1">
+      相同的 0 B/s，可以來自完全不同的原因
+    </h3>
+    <div
+      role="region"
+      aria-label="零流量情境與判讀"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">看到的情況</th>
+            <th scope="col">較合理的解讀</th>
+            <th scope="col">處理方向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Tracker 沒有 payload</th>
+            <td>它在提供索引資訊，本來就不以檔案 bytes 衡量效益。</td>
+            <td>看查詢結果與來源增量。</td>
+          </tr>
+          <tr>
+            <th scope="row">遠端仍在排隊</th>
+            <td>還沒輪到原生服務機會。</td>
+            <td>按協定等待與重新詢問，衡量保留成本。</td>
+          </tr>
+          <tr>
+            <th scope="row">對方有資料，但都已下載</th>
+            <td>本機目前無法從它取得新的需求資料。</td>
+            <td>再看上傳與來源交換價值；若也無用途，可釋放連線。</td>
+          </tr>
+          <tr>
+            <th scope="row">本機主動限速或磁碟積壓</th>
+            <td>接收端無法持續消化資料。</td>
+            <td>修正本機負荷，暫停遠端服務評價。</td>
+          </tr>
+          <tr>
+            <th scope="row">有效請求反覆逾時</th>
+            <td>目前這個來源或路徑不能提供可靠服務。</td>
+            <td>依原生期限取消／重試，必要時暫時避開。</td>
+          </tr>
+          <tr>
+            <th scope="row">大量連線同時停住</th>
+            <td>可能是共同網路、引擎或回報路徑失效。</td>
+            <td>先找共同原因，避免逐一處罰來源。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      要評估某次無回應，至少需要具體的未完成請求、符合協定的服務條件與正常的本機接收環境。當資料回報中斷，無法觀察的那段時間，也不能被悄悄填成零速度。
+    </p>
+    <p>
+      即使已排除本機干擾，請求逾時仍主要證明「這次服務沒有達成」。遠端負載、網路路徑與協定排程都可能影響結果。它足以支持換來源或暫時避讓，卻不自然等於惡意意圖。
+    </p>
+    <h3 id="zero-and-corruption-detail-2">
+      Keepalive 與晚到資料，各有不同意義
+    </h3>
+    <p>
+      Keepalive
+      能表示某種連線活動，但不增加檔案進度，不能永遠用它重設一個資料請求的期待。另一方面，取消過的請求仍可能有晚到資料；尤其
+      Fast Extension 明確處理了取消與回覆交錯的情況。<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s07" aria-label="參考資料 7：Fast Extension｜BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <p>
+      因此，引擎需要保留請求的前後關係：曾經請求、已取消、正在回覆，與完全沒有請求過的資料，不是同一件事。連線分析應使用這些原生資訊，避免光憑「現在沒有
+      outstanding request」就誤判所有晚到資料。
+    </p>
+    <h3 id="zero-and-corruption-detail-3">
+      Hash failure 先證明資料不符，再處理責任歸屬
+    </h3>
+    <p>
+      假設一個 piece 的四個 block 分別來自 A、B、C、D，最後 piece hash
+      不匹配。這能說明合起來的資料有問題，還不能證明四個來源都故意送錯。也要考慮本機寫入、記憶體或狀態對應出了問題。
+    </p>
+    <p>
+      一種做法是隔離可疑資料，再取得較容易歸因的樣本。libtorrent 的 parole
+      機制會針對參與過失敗 piece 的 peer，改為向它請求完整
+      piece，藉此增加判斷依據。這說明為什麼「重驗與縮小責任範圍」有實際價值。<sup
+        class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="參考資料 9：libtorrent 原生觀測資料｜Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <h3 id="zero-and-corruption-detail-4">讓處置範圍跟著證據走</h3>
+    <div
+      role="region"
+      aria-label="連線處置的不同目的"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">處置</th>
+            <th scope="col">目的</th>
+            <th scope="col">需要注意的範圍</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">斷開連線</th>
+            <td>結束這次無用或失敗的互動。</td>
+            <td>可以只影響當前連線，不必附帶長期負面評價。</td>
+          </tr>
+          <tr>
+            <th scope="row">暫時避開</th>
+            <td>讓反覆失敗的來源冷卻，將資源轉給其他機會。</td>
+            <td>可針對內容與來源的組合，到期後有限度重試。</td>
+          </tr>
+          <tr>
+            <th scope="row">隔離</th>
+            <td>處理可歸因的無效資料或協定破壞，等待核對。</td>
+            <td>限制在證據能支持的身分、來源與網路範圍。</td>
+          </tr>
+          <tr>
+            <th scope="row">人工持久封鎖</th>
+            <td>執行使用者明確的長期決定。</td>
+            <td>顯示影響對象；封 IP 可能同時影響共用位址的其他工作。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      同一份錯誤回報重送，不能變成新的犯規次數；相同來源在一個內容上的失敗，也不應不經分析就擴張成封鎖整個網段。解除限制時，還要確認引擎內的限制真的被撤銷，不能只讓畫面上的標籤消失。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="source-trust">
+      <span class="np-section-no">13</span
+      ><span class="np-heading-text">來源清單如何更新，又能相信到什麼程度</span>
+    </h2>
+    <p>
+      Tracker 或 eD2k server
+      清單，可以提供啟動時的候選入口，讓下載器不必完全從零開始。但清單越長，不代表獨立來源越多，更不代表實際下載能力越好。不同清單可能收錄相同端點，網域別名與共用基礎設施也可能讓數量被高估。
+    </p>
+    <p>
+      來源目錄比較像會持續修正的線索集合。系統要記得它從哪裡來、何時取得、哪一次真的提供了新來源，以及後續是否成功服務。候選、曾經可達、提供有效來源、實際傳過正確資料，是逐步累積的不同證據。
+    </p>
+    <h3 id="source-trust-detail-1">下載清單，只是取得候選資料</h3>
+    <p>
+      外部 feed
+      更新後，可以先解析候選、檢查格式與變更，再逐步納入探索。舊版本仍有用的目錄可以保留；更新失敗不需要把整個來源集合清空。人工指定保留或避開的來源，也有獨立於
+      feed 的理由。
+    </p>
+    <p>
+      Config 在這裡的角色，是發布一份一致的有效視圖，讓各 Component
+      不會各自拿不同版本的清單做不同決定。遠端 feed
+      可以提供端點，但不該取得修改本機政策或執行命令的能力。
+    </p>
+    <h3 id="source-trust-detail-2">端點是一個會觸發連線的輸入</h3>
+    <p>
+      一條來源資訊最後可能讓下載器主動建立網路連線。如果公開來源回傳本機管理介面、內網位址或特殊服務埠，客戶端就可能被借用去接觸原本不該接觸的目標。這也是
+      SSRF 類型問題在來源探索中的對應情境。
+    </p>
+    <p>
+      以公開 Internet 來源為例，地址政策需要檢查解析後的實際目的地；URL
+      字串看起來正常，DNS
+      仍可能換成另一個位址。遇到重新導向、重試或備援解析，也要保持同樣的目的地限制。OWASP
+      特別提醒，先檢查一次
+      DNS、實際連線時卻再做一次未檢查的解析，會留下繞過空間。<sup
+        class="np-cite"
+        ><a href="#source-s17" aria-label="參考資料 17：OWASP：SSRF 防護說明"
+          >[17]</a
+        ></sup
+      >
+    </p>
+    <p>
+      若本來就允許區域網路分享，內網來源可以屬於另一個明確範圍，而不是被全域規則一概當作惡意。公開、私有與
+      overlay 網路的入口、身分與來源擴散方式，都需要按各自語意處理。
+    </p>
+    <h3 id="source-trust-detail-3">來源效益，看新增的機會與真正的服務</h3>
+    <p>
+      一個 tracker 每次回覆很多
+      peer，但大多重複或不可達，未必比只回覆幾個新來源的 tracker
+      有價值。可以觀察每次合理查詢帶來的獨特來源、可連線比例，以及後來實際提供需要資料的來源數。
+    </p>
+    <p>
+      這些比率的分母同樣要清楚。沒有查詢過，表示未知；整個本機網路中斷時的失敗，也不適合拿來一次降低所有來源的評價。單純的
+      UDP tracker connect 回覆，還不能代表 announce 已成功取得
+      peers；它們是不同的協定步驟。<sup class="np-cite"
+        ><a href="#source-s08" aria-label="參考資料 8：UDP Tracker｜BEP 15"
+          >[08]</a
+        ></sup
+      >
+    </p>
+    <h3 id="source-trust-detail-4">正常傳輸，能證明的是目前的互動</h3>
+    <p>
+      HTTPS 能保護對應連線的傳輸與伺服器身分驗證，內容 hash
+      能檢查資料是否符合預期；它們都不會告訴我們遠端營運者是否記錄互動。BitTorrent
+      的 tracker 與 peer 協定本來就包含內容識別與聯絡資訊的交換。<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="參考資料 1：BitTorrent 基本協定｜BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <p>
+      因此，即使一個端點完全遵守協定、提供正確資料，也無法僅憑這些觀測排除監測或記錄行為。這是從可見資訊推得的限制：服務品質、資料完整性與對方的真實意圖，是不同問題。國家、ASN、peer
+      ID 或高速傳輸，都不足以替代這個判斷。
+    </p>
+    <p>
+      客戶端可以處理看得見的異常，例如錯誤訊息長度、不合理來源洪水、可歸因壞資料、危險檔名或路徑。來源名稱與
+      metadata
+      也應當作不可信文字呈現。至於對方沒有暴露出來的意圖，保留未知會比給出沒有依據的安全百分比更誠實。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="recovery">
+      <span class="np-section-no">14</span
+      ><span class="np-heading-text"
+        >暫停、重啟與命令遺失時，如何回到一致狀態</span
+      >
+    </h2>
+    <p>
+      一個長時間運作的下載器，不能假設管理程序、引擎、資料庫與磁碟永遠同時成功。使用者按下暫停，管理端可能已記下意圖，引擎卻還沒收到；引擎可能已經停下來，回覆又在途中遺失。
+    </p>
+    <p>
+      因此，系統需要分清楚<strong>希望它做什麼</strong>與<strong>目前確定它做了什麼</strong>。這個區分讓暫停中的工作、正在退出的連線與重啟後的狀態，都能有合理的恢復路徑。
+    </p>
+    <h3 id="recovery-detail-1">先保存意圖，再追蹤它是否生效</h3>
+    <p>
+      管理端可以先把操作意圖與待送出的工作一起保存，再交給引擎。回覆到達後更新實際結果；程序若在中間停止，重啟後就知道有哪些操作還沒確認，而不是只能靠記憶體猜測。
+    </p>
+    <div class="np-example">
+      <h3 id="recovery-detail-2">暫停送出後，管理程序剛好崩潰</h3>
+      <ol>
+        <li><strong>保存意圖：</strong>工作 A 希望暫停，操作已被持久化。</li>
+        <li>
+          <strong>交給引擎：</strong
+          >引擎可能已停止新增請求，還在排空在途資料與寫入。
+        </li>
+        <li>
+          <strong>回覆未確認：</strong
+          >管理程序重啟，無法直接判定這次暫停完成或失敗。
+        </li>
+        <li>
+          <strong>重新核對：</strong
+          >查詢同一輪引擎執行中的實際工作狀態，再決定更新結果或補做尚未完成的操作。
+        </li>
+      </ol>
+      <p>
+        在確認釋放之前，這個工作仍可能使用網路、記憶體與磁碟。資源帳本若提早把它刪掉，下一個工作就會拿到一份實際上還沒空出來的額度。
+      </p>
+    </div>
+    <p>
+      重送也需要辨識是同一件操作。否則，網路或程序故障後的重試，可能變成重複新增工作、反覆處罰同一份證據，或對新建立的連線執行舊命令。操作身分、引擎啟動世代與目標狀態，能幫助系統辨識這些差異。
+    </p>
+    <h3 id="recovery-detail-3">
+      SQLite 保存可恢復的事實，Metrics 保存時間變化
+    </h3>
+    <p>
+      任務、內容身分、有效政策、影響決策的證據與檔案操作紀錄，適合放進
+      Store。這些資料需要在重啟後繼續成立。每秒的 peer
+      速度、延遲分布與負荷曲線則屬於
+      Metrics，保存方式可以依細節保留時間與聚合需求設計。
+    </p>
+    <div
+      role="region"
+      aria-label="三種儲存責任"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">儲存位置</th>
+            <th scope="col">保存什麼</th>
+            <th scope="col">為什麼分開</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Store／SQLite</th>
+            <td>工作意圖、內容關聯、近期來源摘要、政策與恢復紀錄。</td>
+            <td>讓重要狀態有一致的交易與可追查的變更。</td>
+          </tr>
+          <tr>
+            <th scope="row">Metrics</th>
+            <td>速度、延遲、壓力、佇列等歷史樣本與彙整。</td>
+            <td>高頻觀測可獨立控制保留量，不必擠壓任務狀態寫入。</td>
+          </tr>
+          <tr>
+            <th scope="row">Engine 工作目錄</th>
+            <td>Payload、partial、原生續傳與檔案範圍資訊。</td>
+            <td>由實際執行 I/O 的引擎維護，避免兩個元件同時改同一份資料。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      SQLite 的 WAL 模式讓讀取與寫入可以並行，但同一時間仍只有一個
+      writer；長時間讀取也可能阻礙 checkpoint
+      推進。集中協調重要狀態的寫入、保持交易簡短，是這個架構的選擇。它能讓資料責任清楚，但不會自動解決資料庫以外的檔案與引擎一致性。<sup
+        class="np-cite"
+        ><a
+          href="#source-s15"
+          aria-label="參考資料 15：SQLite：Write-Ahead Logging"
+          >[15]</a
+        ></sup
+      >
+    </p>
+    <h3 id="recovery-detail-4">歷史監控故障，不必拖垮健康傳輸</h3>
+    <p>
+      Scheduler 與 Connection Manager 需要的即時摘要，可以由 Component
+      直接回報。Metrics
+      暫時不能保存歷史時，下載仍可依這條路徑運作；觀測樣本用有界的緩衝與明確缺口處理，避免監控故障把記憶體吃光。
+    </p>
+    <p>
+      Store
+      無法保存新的重要狀態，影響則不同：新的派工與持久政策變更會變得不可靠，系統要收斂這些操作，直到能再次記錄。引擎本身對錯誤訊息、失效連線與本機資源的即時保護，仍有獨立存在的必要。
+    </p>
+    <p>
+      持續時間宜依不受系統校時影響的單調時鐘計算；要跨重啟保存的日期則另行記錄。重啟期間沒有被觀察到的服務時間，不應被補成來源逾時；舊快照也需要按新一輪引擎狀態重新核對。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="files">
+      <span class="np-section-no">15</span
+      ><span class="np-heading-text">從零散片段，到完整而可恢復的檔案</span>
+    </h2>
+    <p>
+      下載池裡的工作可以進出，但已取得的資料不應跟著消失。把一個工作轉去觀察等待，通常只需要調整執行與保存續傳狀態；它不代表檔案應搬家，更不代表可以刪除。
+    </p>
+    <h3 id="files-detail-1">增量配置，與檔案的兩種大小</h3>
+    <p>
+      大量目標先登記、確定有傳輸需求時再增加資料配置，可以避免一開始就為所有目標占用整檔容量。代價是空間不足可能在下載途中才出現，檔案配置與
+      I/O 的特性也取決於檔案系統與引擎。
+    </p>
+    <p>
+      這裡要區分邏輯大小與已配置空間。稀疏檔案的邏輯長度可以很大，但尚未寫入的洞不一定配置了等量實體區塊。另一方面，磁碟可用空間也不能只扣下載內容，還要考慮續傳資料、資料庫、暫存、驗證與完成搬移時的額外需求。
+    </p>
+    <p>
+      增量寫入有彈性；預配置則可能較早發現容量問題，並減少部分檔案系統上的配置碎片。這是一個可依儲存裝置、檔案規模與使用情境選擇的取捨，沒有必要把所有工作一律套成同一種配置策略。
+    </p>
+    <h3 id="files-detail-2">檔名是顯示，儲存身分要穩定</h3>
+    <p>
+      工作目錄可以按穩定的內容識別分桶，避免單一目錄集中太多項目，也避免同名檔案互相覆蓋。識別還要帶有協定語意，不能把不同
+      hash 空間的字串直接當成同一個物件。
+    </p>
+    <p>
+      magnet 在取得完整 metadata
+      前，可能先以暫時身分追蹤。後續確定內容對應後，工作與檔案位置的變更需要留下紀錄，讓重啟後仍找得回已寫入的資料。原始標題與路徑也要經過安全處理，不能讓來源提供的
+      <code>../</code> 或絕對路徑決定本機寫入位置；BitTorrent v2
+      文件也明確談到這類路徑處理。<sup class="np-cite"
+        ><a href="#source-s03" aria-label="參考資料 3：BitTorrent v2｜BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <h3 id="files-detail-3">完成傳輸後，還有保存與發布</h3>
+    <p>
+      當要求的資料都通過驗證，還要確認在途寫入、原生續傳與實際檔案位置。若只是把進度顯示成
+      100%，卻讓資料與恢復紀錄不同步，下一次重啟仍可能需要大範圍重驗，甚至無法確定哪些資料可用。
+    </p>
+    <figure class="np-lifecycle">
+      <div class="np-figure-head">
+        <span>檔案生命週期</span><strong>暫停與恢復沿用同一份 partial</strong>
+      </div>
+      <ol class="np-file-steps">
+        <li>
+          <span class="np-step-index">1</span><strong>累積片段</strong
+          ><span>接收、去重、寫入與校驗交錯進行</span>
+        </li>
+        <li>
+          <span class="np-step-index">2</span><strong>保存可恢復狀態</strong
+          ><span>核對資料與續傳紀錄；暫停後由此恢復</span>
+        </li>
+        <li>
+          <span class="np-step-index">3</span><strong>確認需求完整</strong
+          ><span>所選資料完成驗證，協調引擎與寫入狀態</span>
+        </li>
+        <li>
+          <span class="np-step-index">4</span><strong>發布完成檔案</strong
+          ><span>確認目的地可用，再更新位置與分享狀態</span>
+        </li>
+      </ol>
+      <figcaption>
+        這是檔案狀態的概念流程。單次網路等待或下載池輪替，不會把 partial
+        自動變成可清理資料。
+      </figcaption>
+    </figure>
+    <p>
+      在支援相應語意的本機檔案系統中，同一個掛載範圍內的
+      rename，可以提供名稱切換的原子性；跨掛載點則不能直接靠同一個 rename
+      完成，通常需要複製到目的地的暫存檔，再確認與發布。<sup class="np-cite"
+        ><a
+          href="#source-s20"
+          aria-label="參考資料 20：Linux man-pages：rename(2)"
+          >[20]</a
+        ></sup
+      >
+    </p>
+    <p>
+      名稱切換原子，也不等於斷電後一定保留。以 Linux 為例，<code>fsync()</code>
+      同步檔案資料與相關
+      metadata，目錄項目的持久化還可能需要同步目錄。完整的搬移流程因而會分別處理內容、位置紀錄與刪除舊副本的時機。<sup
+        class="np-cite"
+        ><a
+          href="#source-s21"
+          aria-label="參考資料 21：Linux man-pages：fsync(2)"
+          >[21]</a
+        ></sup
+      >
+    </p>
+    <p>
+      跨裝置複製途中若失敗，保留舊副本與未完成紀錄，比急著刪掉原檔可靠。仍在分享的檔案還要與引擎協調路徑；外部直接搬走一個引擎仍在使用的檔案，可能讓後續上傳與續傳失去對應。
+    </p>
+    <h3 id="files-detail-4">長期沒有來源，才開始討論保留策略</h3>
+    <p>
+      一個工作今天沒來源，明天可能就有 peer
+      上線；尾段稀少的內容，也可能因使用者重新分享而恢復。是否清理部分檔案，應綜合長期觀測、使用者保留意圖、是否仍有排隊機會，以及目前是否還有
+      writer 或未確認操作。
+    </p>
+    <p>
+      若需要自動清理，先把候選資料移入可恢復的隔離階段，再依保留時間決定是否刪除，可以降低誤判的代價。下載速度慢、某個
+      tracker 暫時離線，或單一來源被避開，都不足以單獨證明整份資料不再有價值。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="diagnosis">
+      <span class="np-section-no">16</span
+      ><span class="np-heading-text">從現象追到原因</span>
+    </h2>
+    <p>
+      元件分工的價值，最後會反映在問題是否能被解釋。如果只看到「下載中」與一個速度，遇到卡住時只能猜；如果能沿著內容、來源、請求、驗證與本機負荷往下看，就能把問題縮到比較小的範圍。
+    </p>
+    <div
+      role="region"
+      aria-label="P2P 下載問題的排查方向"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table class="np-diagnosis-table">
+        <thead>
+          <tr>
+            <th scope="col">現象</th>
+            <th scope="col">先看哪些證據</th>
+            <th scope="col">可能的解釋</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">很多連線，卻沒有速度</th>
+            <td>角色、缺段交集、queue／choke、未完成請求。</td>
+            <td>
+              連上的可能是索引服務、仍在等待的 peer，或只有已下載片段的來源。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">卡在 99%</th>
+            <td>最後缺少的片段、來源宣告與實際可服務性。</td>
+            <td>
+              尾段只有極少數來源，或所有目前來源共同缺段；增加相同來源沒有幫助。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">網路沒滿，系統卻不再增開</th>
+            <td>待寫入資料、磁碟延遲、驗證佇列、記憶體與回報新鮮度。</td>
+            <td>瓶頸可能在下游，也可能觀測不足，暫時不適合擴張。</td>
+          </tr>
+          <tr>
+            <th scope="row">新增工作後，反而一起變慢</th>
+            <td>新增前後的有效進度、I/O 變化、buffer、重試與連線變動。</td>
+            <td>共享資源開始競爭，新增成本大於它帶來的額外收益。</td>
+          </tr>
+          <tr>
+            <th scope="row">有大量流量，進度卻沒等量增加</th>
+            <td>Payload 與控制流量、重複 block、驗證等待與失敗。</td>
+            <td>可能在 endgame、重抓錯誤資料，或資料已到但尚未完成驗證。</td>
+          </tr>
+          <tr>
+            <th scope="row">重啟後需要重新驗證</th>
+            <td>資料、原生續傳紀錄與最後確認的同步狀態。</td>
+            <td>
+              檔案可能仍在，但引擎不足以直接相信舊進度；重驗是在重新建立可用性證據。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">來源恢復，工作卻還沒開始</th>
+            <td>
+              使用者暫停、本機保留原因、冷卻狀態、可用額度與新來源是否已核對。
+            </td>
+            <td>有來源只是其中一個條件，其他限制仍可能有效。</td>
+          </tr>
+          <tr>
+            <th scope="row">畫面解除封鎖後仍連不上</th>
+            <td>引擎內政策是否撤銷、來源是否可達、是否還在原生重試間隔。</td>
+            <td>顯示狀態與實際執行不同步，或失敗原因原本就不只有封鎖。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="diagnosis-detail-1">介面需要呈現原因，而不只是狀態名稱</h3>
+    <p>
+      下載清單可以顯示目前階段與最重要的等待原因；工作詳情再補上缺少範圍、來源分布、請求情況與本機壓力。連線詳情則保留它提供過哪些資料、何時被觀察、限制來自哪個原因，以及操作目前是否已被引擎確認。
+    </p>
+    <p>
+      這樣使用者就能分辨：工作是在等來源或遠端排隊，還是因為 HDD
+      寫入追不上而受本機背壓限制。來源資訊未知時，也能分辨是尚未觀測，還是引擎根本沒有提供那個欄位。
+    </p>
+    <h3 id="diagnosis-detail-2">用一筆下載，把整個架構接起來</h3>
+    <p>
+      使用者加入內容後，Manager 保存意圖，Search 透過對應 Component 取得
+      metadata 與來源。準備好的工作進入有限試跑，Engine
+      在允許的來源與額度內提出片段請求。實際進度與本機壓力回到
+      Scheduler，連線的服務情況回到 Connection Manager。
+    </p>
+    <p>
+      有用的資料持續累積，沒有價值的投入逐步縮減；新的來源仍有機會被發現，等待太久與握有稀缺片段的工作也保有機會。Store
+      讓重要狀態可以恢復，Metrics
+      讓過去的變化能被分析。最後，所選內容完成驗證，資料與儲存狀態一致，系統再發布完成檔案並更新位置；下載期間已驗證的片段，也可依原生協定與使用者意圖持續分享。
+    </p>
+    <p>
+      當這些責任接得清楚，下載器才能在來源變動、網路等待、磁碟瓶頸與程序中斷之間，持續做出有根據的選擇。下一次看到速度掉下來，系統也應該能指出：現在卡在哪一步，以及什麼改變會讓它繼續前進。
+    </p>
+  </section>
+
+  <section>
+    <h2 id="references"><span class="np-heading-text">參考資料</span></h2>
+    <p class="np-references-intro">
+      下列來源用於核對協定、引擎行為與儲存機制，查閱日期為
+      <time datetime="2026-10-25">2026-10-25</time
+      >。文中的資源算例與片段矩陣用來說明原理；動態下載池與元件分工是本文的架構設計。
+    </p>
+    <ol class="np-reference-list">
+      <li id="source-s01">
+        <span class="np-source-id">S01</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0003.html"
+            class="np-source-title"
+            >BitTorrent 基本協定｜BEP 3</a
+          >
+          <p class="np-source-note">
+            內容識別、片段雜湊、Tracker、請求管線與 endgame。
+          </p>
+        </div>
+      </li>
+      <li id="source-s02">
+        <span class="np-source-id">S02</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0009.html"
+            class="np-source-title"
+            >Metadata exchange 與 magnet｜BEP 9</a
+          >
+          <p class="np-source-note">
+            說明 info dictionary 的交換，以及 magnet 的定位資訊。
+          </p>
+        </div>
+      </li>
+      <li id="source-s03">
+        <span class="np-source-id">S03</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0052.html"
+            class="np-source-title"
+            >BitTorrent v2｜BEP 52</a
+          >
+          <p class="np-source-note">
+            SHA-256 infohash、每檔案 Merkle tree、片段對齊與路徑處理。
+          </p>
+        </div>
+      </li>
+      <li id="source-s04">
+        <span class="np-source-id">S04</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0005.html"
+            class="np-source-title"
+            >BitTorrent DHT｜BEP 5</a
+          >
+          <p class="np-source-note">
+            以 infohash 進行 peer 查找、路由表與節點資訊。
+          </p>
+        </div>
+      </li>
+      <li id="source-s05">
+        <span class="np-source-id">S05</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0011.html"
+            class="np-source-title"
+            >Peer Exchange｜BEP 11</a
+          >
+          <p class="np-source-note">
+            從既有 peer 連線交換其他來源，以及更新限制。
+          </p>
+        </div>
+      </li>
+      <li id="source-s06">
+        <span class="np-source-id">S06</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0027.html"
+            class="np-source-title"
+            >私有 torrent｜BEP 27</a
+          >
+          <p class="np-source-note">private 標記與來源發現、連線範圍的限制。</p>
+        </div>
+      </li>
+      <li id="source-s07">
+        <span class="np-source-id">S07</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0006.html"
+            class="np-source-title"
+            >Fast Extension｜BEP 6</a
+          >
+          <p class="np-source-note">
+            Allowed-fast、明確拒絕，以及 choke、取消與回覆的語意。
+          </p>
+        </div>
+      </li>
+      <li id="source-s08">
+        <span class="np-source-id">S08</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0015.html"
+            class="np-source-title"
+            >UDP Tracker｜BEP 15</a
+          >
+          <p class="np-source-note">Connect、announce 與 scrape 的不同角色。</p>
+        </div>
+      </li>
+      <li id="source-s09">
+        <span class="np-source-id">S09</span>
+        <div>
+          <a
+            href="https://libtorrent.org/reference-Core.html"
+            class="np-source-title"
+            >libtorrent 原生觀測資料｜Core API</a
+          >
+          <p class="np-source-note">
+            Peer 狀態、half-open、握手、待寫入資料與 parole。
+          </p>
+        </div>
+      </li>
+      <li id="source-s10">
+        <span class="np-source-id">S10</span>
+        <div>
+          <a href="https://libtorrent.org/features.html" class="np-source-title"
+            >libtorrent 的片段選擇</a
+          >
+          <p class="np-source-note">
+            官方功能文件；本文只引用稀有度與優先序等原理，不以此較舊文件判斷現行內部實作。
+          </p>
+        </div>
+      </li>
+      <li id="source-s11">
+        <span class="np-source-id">S11</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/kademlia"
+            class="np-source-title"
+            >aMule：Kad 網路</a
+          >
+          <p class="np-source-note">
+            分散式來源發現、bootstrap，以及與 eD2k 傳輸機制的關係。
+          </p>
+        </div>
+      </li>
+      <li id="source-s12">
+        <span class="np-source-id">S12</span>
+        <div>
+          <a
+            href="https://wiki.amule.org/wiki/FAQ_eD2k-Kademlia"
+            class="np-source-title"
+            >aMule：eD2k／Kademlia FAQ</a
+          >
+          <p class="np-source-note">
+            官方 Wiki 的歷史說明；本文限用於來源互補、排隊與 UDP 互動等機制。
+          </p>
+        </div>
+      </li>
+      <li id="source-s13">
+        <span class="np-source-id">S13</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/aich"
+            class="np-source-title"
+            >aMule：AICH 與毀損恢復</a
+          >
+          <p class="np-source-note">
+            在可信 root 與恢復資料可用時，定位受損子區塊並保留正確資料。
+          </p>
+        </div>
+      </li>
+      <li id="source-s14">
+        <span class="np-source-id">S14</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/high-id"
+            class="np-source-title"
+            >aMule：High ID 與 Low ID</a
+          >
+          <p class="np-source-note">
+            入站可達性與 callback；本文不將 ID 視為信譽或速度排名。
+          </p>
+        </div>
+      </li>
+      <li id="source-s15">
+        <span class="np-source-id">S15</span>
+        <div>
+          <a href="https://www.sqlite.org/wal.html" class="np-source-title"
+            >SQLite：Write-Ahead Logging</a
+          >
+          <p class="np-source-note">
+            讀寫並行、單 writer、checkpoint 與長讀取的影響。
+          </p>
+        </div>
+      </li>
+      <li id="source-s16">
+        <span class="np-source-id">S16</span>
+        <div>
+          <a
+            href="https://docs.kernel.org/accounting/psi.html"
+            class="np-source-title"
+            >Linux 核心：Pressure Stall Information</a
+          >
+          <p class="np-source-note">CPU、記憶體與 I/O 資源等待的壓力量測。</p>
+        </div>
+      </li>
+      <li id="source-s17">
+        <span class="np-source-id">S17</span>
+        <div>
+          <a
+            href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+            class="np-source-title"
+            >OWASP：SSRF 防護說明</a
+          >
+          <p class="np-source-note">
+            目的地驗證、重新導向、DNS rebinding 與連線時的位址一致性。
+          </p>
+        </div>
+      </li>
+      <li id="source-s18">
+        <span class="np-source-id">S18</span>
+        <div>
+          <a
+            href="https://github.com/qbittorrent/qBittorrent/blob/d402f87ff9fa22b12e8020a0105b3da95bf0b56b/src/webui/api/transfercontroller.cpp"
+            class="np-source-title"
+            >qBittorrent：封鎖動作的實際範圍</a
+          >
+          <p class="np-source-note">
+            固定提交 d402f87 的 TransferController；banPeersAction 呼叫 banIP
+            的原始碼例子。
+          </p>
+        </div>
+      </li>
+      <li id="source-s19">
+        <span class="np-source-id">S19</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/servers"
+            class="np-source-title"
+            >aMule：eD2k Server 的角色</a
+          >
+          <p class="np-source-note">檔案索引、來源清單與連線建立的協助。</p>
+        </div>
+      </li>
+      <li id="source-s20">
+        <span class="np-source-id">S20</span>
+        <div>
+          <a
+            href="https://man7.org/linux/man-pages/man2/rename.2.html"
+            class="np-source-title"
+            >Linux man-pages：rename(2)</a
+          >
+          <p class="np-source-note">
+            名稱切換的原子性與跨掛載點的 EXDEV 限制。
+          </p>
+        </div>
+      </li>
+      <li id="source-s21">
+        <span class="np-source-id">S21</span>
+        <div>
+          <a
+            href="https://man7.org/linux/man-pages/man2/fsync.2.html"
+            class="np-source-title"
+            >Linux man-pages：fsync(2)</a
+          >
+          <p class="np-source-note">檔案同步、目錄項目與持久化的差別。</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+</div>

@@ -1,0 +1,4318 @@
+<div class="translation-guide">
+  <div class="tg-intro">
+    <p class="tg-lead">
+      The engineering core of this translation system turns a constantly
+      changing webpage into work that is
+      <strong
+        >schedulable, reusable, and writable back after identity checks</strong
+      >. The translation service produces the text; the extension makes sure the
+      result appears in the right place at the right time.
+    </p>
+
+    <div aria-label="Reading paths" class="tg-reading-map">
+      <a href="#tg-architecture">Start with the big picture</a><span>→</span
+      ><a href="#tg-capture">Understand how text enters</a><span>→</span
+      ><a href="#tg-admission">Unpack scheduling and quotas</a><span>→</span
+      ><a href="#tg-render">See how results return</a>
+    </div>
+  </div>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">01</span>
+      <h2 id="tg-architecture">
+        Follow a source passage through the entire system
+      </h2>
+    </div>
+    <p>
+      Browser Script Manager combines translation and other features in a single
+      Manifest V3 extension. The following traces
+      <strong>the default translation flow for webpage paragraphs</strong>: each
+      arrow identifies the data it carries, and each box's swimlane indicates
+      its execution boundary. The next section covers how the selected-text and
+      Translation Center entry points differ.
+    </p>
+    <figure class="tg-flow-figure">
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 01A</span>End-to-end data flow: how
+          incoming source text returns as a translation in the right place</span
+        ><span class="tg-fig-type">HTML nodes + explicit connections</span>
+      </div>
+      <div class="tg-dfd-read-guide">
+        <div>
+          <b>Main path</b
+          ><span
+            >01 → 02 → 03; take 04 → 05 → 06 only after confirming that no
+            usable translation exists.</span
+          >
+        </div>
+        <div>
+          <b>Local bypass</b
+          ><span>Rule/memory results or blocked status go directly to 07.</span>
+        </div>
+        <div>
+          <b>Return-path split</b
+          ><span
+            >06 → 07 → 08 → 09 handles presentation; 06 → 10 handles
+            persistence.</span
+          >
+        </div>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="Figure 01A: end-to-end webpage translation data flow; scroll horizontally to view the wide diagram"
+        class="tg-dfd-scroll"
+      >
+        <div class="tg-dfd-canvas tg-geometry-a102c35be9">
+          <div class="tg-dfd-lane tg-geometry-c442fab349">
+            <div class="tg-dfd-lane-title">
+              Webpage and page-side scripts<small
+                >DOM and each page's lifecycle</small
+              >
+            </div>
+          </div>
+          <div class="tg-dfd-lane tg-geometry-2f1ef61b17">
+            <div class="tg-dfd-lane-title">
+              Extension background / local data<small
+                >Cross-page work, policies, resources, and storage</small
+              >
+            </div>
+          </div>
+          <div class="tg-dfd-lane tg-geometry-b97a6142d9">
+            <div class="tg-dfd-lane-title">
+              External services<small
+                >Translation APIs and optional synchronization</small
+              >
+            </div>
+          </div>
+          <svg
+            viewbox="0 0 960 1552"
+            width="960"
+            height="1552"
+            aria-hidden="true"
+            class="tg-dfd-connectors"
+          >
+            <defs>
+              <marker
+                id="tg-dfd-overview-arrow-main"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-813624a647"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-local"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-18d13f84b7"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-control"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-9bfe535aba"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-wait"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-c7e372af69"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-failure"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-ed391b6071"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-sync"
+                markerwidth="8"
+                markerheight="8"
+                refx="7"
+                refy="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-9bfe535aba"
+                ></path>
+              </marker>
+            </defs>
+            <path
+              d="M288,190 L360,190"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,270 L492,345"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,420 L360,420"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M156,345 L156,270"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M360,465 L340,465 L340,1170 L360,1170"
+              marker-end="url(#tg-dfd-overview-arrow-local)"
+              class="tg-geometry-f5b4b8a11e"
+            ></path>
+            <path
+              d="M492,495 L492,580"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,670 L360,670"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M624,670 L696,670"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M816,760 L816,925 L624,925"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,1000 L492,1100"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M624,973 L666,973 L666,796 L581.76,796 L581.76,760"
+              marker-end="url(#tg-dfd-overview-arrow-wait)"
+              class="tg-geometry-1231e69cca"
+            ></path>
+            <path
+              d="M360,1170 L288,1170"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M156,1240 L156,1340"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,925 L308,925 L308,1426 L288,1426"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M492,1000 L492,1020 L648,1020 L648,1298 L581.76,1298 L581.76,1340"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,1340 L492,1240"
+              marker-end="url(#tg-dfd-overview-arrow-local)"
+              class="tg-geometry-f5b4b8a11e"
+            ></path>
+            <path
+              d="M624,1396.76 L696,1396.76"
+              marker-end="url(#tg-dfd-overview-arrow-sync)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M696,1472.44 L624,1472.44"
+              marker-end="url(#tg-dfd-overview-arrow-sync)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+          </svg>
+          <div
+            id="tg-dfd-overview-source"
+            class="tg-dfd-node tg-dfd-process tg-geometry-3d5a6a1712"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">01</span
+              ><strong>Extract source text and declare segments</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Extract text → register paragraphs</span
+              ><span>Split sentences while retaining source ranges</span
+              ><span>Send text, version, and position data</span
+              ><span>DOM nodes remain on the webpage side</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-receive"
+            class="tg-dfd-node tg-dfd-process tg-geometry-3d58118e94"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">02</span
+              ><strong>Receive and establish demand identity</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span
+                >The background service receives and passes it to the
+                scheduler</span
+              ><span>Verify the source using the browser-provided sender</span
+              ><span>Create page bindings and normalize source text</span
+              ><span>Track segment versions and lifecycles</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-context"
+            class="tg-dfd-node tg-dfd-control tg-geometry-5d259214d7"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">C</span
+              ><strong>Freeze document-context candidates</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span
+                >Read baseline source text from the beginning of the
+                document</span
+              ><span
+                >Freeze the first set of candidates; send a separate context
+                message</span
+              ><span>Usable only after background rules are applied</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-local"
+            class="tg-dfd-node tg-dfd-process tg-geometry-01476d3586"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">03</span
+              ><strong>Rules, shared work, and local lookups</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Rules / pinned translations → share identical work</span
+              ><span>Saved translation memory → legacy cache</span
+              ><span>See 01B for hit / miss / error branches</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-viewport"
+            class="tg-dfd-node tg-dfd-control tg-geometry-8ef2e44fff"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">V</span
+              ><strong>Update reading position</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Observe the visible area and scroll direction</span
+              ><span
+                >Report visibility, position, and ahead/behind information</span
+              ><span>Affect the priority of queued work</span
+              ><span>This update does not resend source text</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-dispatch"
+            class="tg-dfd-node tg-dfd-process tg-geometry-ea6d5b7832"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">04</span
+              ><strong>Schedule, batch, and reserve quota</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Priority tier → service resource → compatible batch</span
+              ><span
+                >Dispatch approval: reserve concurrency slots and quota</span
+              ><span>Commit the quota's IndexedDB transaction first</span
+              ><span
+                >Start the translation-service adapter only after success</span
+              >
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-provider"
+            class="tg-dfd-node tg-dfd-process tg-geometry-703472d1e3"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">05</span
+              ><strong>Call the translation service</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Language model: instructions + source text + context</span
+              ><span>Microsoft: source-text list + target language</span
+              ><span>The service adapter assembles the actual request</span
+              ><span>Return the raw response to the adapter first</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-identity"
+            class="tg-dfd-node tg-dfd-control tg-geometry-c4f7d1455b"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">G</span
+              ><strong>Retain the current source identity</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Baseline source text and reading generation</span
+              ><span>Local request attempt and node connectivity</span
+              ><span>Recheck when writing back to the DOM</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-validate"
+            class="tg-dfd-node tg-dfd-process tg-geometry-6ac205d2a0"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">06</span
+              ><strong>Termination checks and result validation</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span
+                >Check the request and generation, then release the concurrency
+                slot</span
+              ><span>Recheck commit authority / termination reason</span
+              ><span
+                >Validate response format, numbering, and preservation
+                markers</span
+              ><span
+                >Pass errors / items needing repair to the retry policy</span
+              >
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-projection"
+            class="tg-dfd-node tg-dfd-process tg-geometry-a4bd0e8d64"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">07</span
+              ><strong>Send status and result notifications</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span
+                >Version, renderable translation, and persistence status</span
+              ><span>Source text / local result / blocked / complete</span
+              ><span
+                >A completed segment does not mean the DOM has updated</span
+              >
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-assemble"
+            class="tg-dfd-node tg-dfd-process tg-geometry-2b676f3f71"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">08</span
+              ><strong>Check versions and assemble the whole paragraph</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>The page rejects stale notifications</span
+              ><span
+                >Wait for the whole paragraph according to rendering
+                cadence</span
+              ><span
+                >Combine translation and source text; report failures
+                separately</span
+              >
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-render"
+            class="tg-dfd-node tg-dfd-process tg-geometry-04b488d9f1"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">09</span
+              ><strong>Schedule and commit the DOM</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Build content fragments and a rendering plan</span
+              ><span>Protect selections + limit work per frame</span
+              ><span
+                >Check the source text and local request before committing</span
+              ><span>Update bilingual containers or translation-only text</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-save"
+            class="tg-dfd-node tg-dfd-store tg-geometry-2380c9ef3a"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">10</span
+              ><strong>Local translation memory and persistence status</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Local results: persistence queue → transaction</span
+              ><span>Sync backfill: write directly to translation memory</span
+              ><span>Report local persistence success / failure</span
+              ><span>Sync reads only persisted translation memory</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-sync"
+            class="tg-dfd-node tg-dfd-optional tg-geometry-b6b2e81f34"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">11</span
+              ><strong>Cloud synchronization storage</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>Opt in to translation-memory sync</span
+              ><span>Receive / provide encrypted data objects</span
+              ><span>Decrypt locally, merge, then write to memory</span
+              ><span>Sync does not directly update the webpage DOM</span>
+            </div>
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-d603e608d1"
+          >
+            Source segments<br />Version data
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-f14cee2e27"
+          >
+            Page binding + source text
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-d69a1c8193"
+          >
+            Context<br />Candidates
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-2490e7a0e6"
+          >
+            Release the first segments after freezing and confirming the
+            connection
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-a12e1b3fa6"
+          >
+            Local result<br />or source text /<br />blocked status
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-eb4edee532"
+          >
+            Local miss, with external sending permitted
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-41a4da4382"
+          >
+            Reading position<br />update
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-b5e098dc1c"
+          >
+            API request
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-14cfccc92f"
+          >
+            Raw response / usage<br />Confirm termination after the adapter
+            returns
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-285e95e0df"
+          >
+            Valid segments → translation available<br />Report failure status
+            separately
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-8ea81623e2"
+          >
+            Failed items / items needing repair<br />Requeue only when policy
+            permits
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-48102674b1"
+          >
+            Version status<br />Translation content
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-c51c52446d"
+          >
+            Whole-paragraph text result
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-530e96af18"
+          >
+            Current source<br />recheck
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-ed98e02a39"
+          >
+            Valid and still applicable<br />renderable translation<br />Enter
+            the persistence queue in normal mode
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-5d27936032"
+          >
+            Local persistence operation<br />status update
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-sync tg-geometry-a33f6e4cd3"
+          >
+            Encrypted upload
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-sync tg-geometry-7b4cfefcdd"
+          >
+            Decrypt and merge<br />write to memory
+          </div>
+        </div>
+      </div>
+      <details class="tg-dfd-text-alternative">
+        <summary>Read each data flow as text</summary>
+        <ol>
+          <li>
+            <b>01 Extract source text and declare segments</b> →
+            <b>02 Receive and establish demand identity</b>: source segments;
+            version data
+          </li>
+          <li>
+            <b>02 Receive and establish demand identity</b> →
+            <b>03 Rules, shared work, and local lookups</b>: page binding +
+            source text
+          </li>
+          <li>
+            <b>C Freeze document-context candidates</b> →
+            <b>03 Rules, shared work, and local lookups</b>: context; candidates
+          </li>
+          <li>
+            <b>C Freeze document-context candidates</b> →
+            <b>01 Extract source text and declare segments</b>: release the
+            first segments after freezing and confirming the connection
+          </li>
+          <li>
+            <b>03 Rules, shared work, and local lookups</b> →
+            <b>07 Send status and result notifications</b>: local result; or
+            source text /; blocked status
+          </li>
+          <li>
+            <b>03 Rules, shared work, and local lookups</b> →
+            <b>04 Schedule, batch, and reserve quota</b>: local miss, with
+            external sending permitted
+          </li>
+          <li>
+            <b>V Update reading position</b> →
+            <b>04 Schedule, batch, and reserve quota</b>: reading position;
+            update
+          </li>
+          <li>
+            <b>04 Schedule, batch, and reserve quota</b> →
+            <b>05 Call the translation service</b>: API request
+          </li>
+          <li>
+            <b>05 Call the translation service</b> →
+            <b>06 Termination checks and result validation</b>: raw response /
+            usage; confirm termination after the adapter returns
+          </li>
+          <li>
+            <b>06 Termination checks and result validation</b> →
+            <b>07 Send status and result notifications</b>: valid segments →
+            translation available; report failure status separately
+          </li>
+          <li>
+            <b>06 Termination checks and result validation</b> →
+            <b>04 Schedule, batch, and reserve quota</b>: failed items / items
+            needing repair; requeue only when policy permits
+          </li>
+          <li>
+            <b>07 Send status and result notifications</b> →
+            <b>08 Check versions and assemble the whole paragraph</b>: version
+            status; translation content
+          </li>
+          <li>
+            <b>08 Check versions and assemble the whole paragraph</b> →
+            <b>09 Schedule and commit the DOM</b>: whole-paragraph text result
+          </li>
+          <li>
+            <b>G Retain the current source identity</b> →
+            <b>09 Schedule and commit the DOM</b>: current source; recheck
+          </li>
+          <li>
+            <b>06 Termination checks and result validation</b> →
+            <b>10 Local translation memory and persistence status</b>: valid and
+            still applicable; renderable translation; enter the persistence
+            queue in normal mode
+          </li>
+          <li>
+            <b>10 Local translation memory and persistence status</b> →
+            <b>07 Send status and result notifications</b>: local persistence
+            operation; status update
+          </li>
+          <li>
+            <b>10 Local translation memory and persistence status</b> →
+            <b>11 Cloud synchronization storage</b>: encrypted upload
+          </li>
+          <li>
+            <b>11 Cloud synchronization storage</b> →
+            <b>10 Local translation memory and persistence status</b>: decrypt
+            and merge; write to memory
+          </li>
+        </ol>
+      </details>
+      <div class="tg-dfd-legend">
+        <span
+          ><i class="tg-legend-line"></i>Solid lines: main request / result
+          path</span
+        ><span
+          ><i class="tg-legend-line tg-local"></i>Local branches / status
+          reports</span
+        ><span
+          ><i class="tg-legend-line tg-dashed"></i>Dashed lines: auxiliary
+          updates / optional sync</span
+        >
+      </div>
+      <figcaption>
+        <span class="tg-why">How to read the diagram: </span>Persistence and DOM
+        commit branch from valid results, with no fixed completion order.
+        Document context is frozen before the first source-text demands are
+        sent; reading-position updates carry only visibility and position. The
+        diagram shows data dependencies, not a time scale; crossing lines
+        without a junction do not indicate a merge.
+      </figcaption>
+    </figure>
+    <div class="tg-dfd-takeaway">
+      <strong>Two key exits: </strong>07 emits versioned status and result
+      notifications; after segments finish, whole-paragraph assembly and DOM
+      commit are still required. 10 handles local persistence, and failed writes
+      retry only through the persistence queue. The sync return path at 11
+      writes to local translation memory, which later becomes available through
+      normal lookups.
+    </div>
+    <details class="tg-deep tg-flow-detail">
+      <summary>
+        Expand Figure 01B — Local decisions, lookup failures, and the
+        external-send gate, branch by branch
+      </summary>
+      <figure class="tg-flow-figure">
+        <div class="tg-figure-head">
+          <span
+            ><span class="tg-fig-no">Figure 01B</span>Background decision flow:
+            which demands actually call the translation service?</span
+          ><span class="tg-fig-type">HTML branching diagram</span>
+        </div>
+        <div class="tg-dfd-read-guide">
+          <div>
+            <b>Read the main path downward</b
+            ><span>D1 → D2 → D3 → D4 → D5 → D6 → T.</span>
+          </div>
+          <div>
+            <b>Read exits to the right</b
+            ><span
+              >P returns to overview 07; E is a read failure; W is waiting /
+              blocked.</span
+            >
+          </div>
+        </div>
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="Figure 01B: background local decisions and dispatch branches; scroll horizontally to view the wide diagram"
+          class="tg-dfd-scroll"
+        >
+          <div class="tg-dfd-canvas tg-geometry-4b7f7c41f2">
+            <svg
+              viewbox="0 0 960 1720"
+              width="960"
+              height="1720"
+              aria-hidden="true"
+              class="tg-dfd-connectors"
+            >
+              <defs>
+                <marker
+                  id="tg-dfd-decisions-arrow-main"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-813624a647"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-local"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-18d13f84b7"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-control"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-9bfe535aba"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-wait"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-c7e372af69"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-failure"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-ed391b6071"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-sync"
+                  markerwidth="8"
+                  markerheight="8"
+                  refx="7"
+                  refy="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-9bfe535aba"
+                  ></path>
+                </marker>
+              </defs>
+              <path
+                d="M420,160 L560,160"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,240 L230,315"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,395 L560,395"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,475 L230,550"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,587 L490,587 L490,571 L560,571"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M420,638.8 L510,638.8 L510,710.4 L560,710.4"
+                marker-end="url(#tg-dfd-decisions-arrow-failure)"
+                class="tg-geometry-53aeb4f4dc"
+              ></path>
+              <path
+                d="M560,768 L464,768 L464,674.32 L420,674.32"
+                marker-end="url(#tg-dfd-decisions-arrow-control)"
+                class="tg-geometry-b84e3b56d8"
+              ></path>
+              <path
+                d="M230,698 L230,835"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,907 L560,907"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,979 L230,1065"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,1151 L560,1151"
+                marker-end="url(#tg-dfd-decisions-arrow-wait)"
+                class="tg-geometry-1231e69cca"
+              ></path>
+              <path
+                d="M230,1237 L230,1320"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,1380.2 L560,1380.2"
+                marker-end="url(#tg-dfd-decisions-arrow-wait)"
+                class="tg-geometry-1231e69cca"
+              ></path>
+              <path
+                d="M560,1452.44 L420,1452.44"
+                marker-end="url(#tg-dfd-decisions-arrow-control)"
+                class="tg-geometry-b84e3b56d8"
+              ></path>
+              <path
+                d="M230,1492 L230,1570"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+            </svg>
+            <div
+              id="tg-dfd-decisions-rules"
+              class="tg-dfd-node tg-dfd-process tg-geometry-20150d2055"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D1</span
+                ><strong>Apply rules and pinned translations first</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >Disable page / keep source / fixed translation / pinned
+                  translation</span
+                ><span
+                  >For text needing translation, establish semantic conditions
+                  and preservation markers</span
+                ><span
+                  >A ban on external sending still permits saved
+                  translations</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-local-result"
+              class="tg-dfd-node tg-dfd-local tg-geometry-3277b343d5"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>Return local status / result</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>Disabled page → keep source text</span
+                ><span>Keep source → local decision, without a translation</span
+                ><span
+                  >Fixed or pinned translation → local decision with a
+                  translation</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >Connect to overview 07: status and result notifications</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-work"
+              class="tg-dfd-node tg-dfd-process tg-geometry-382e0a1466"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D2</span
+                ><strong
+                  >Does shared work with the same semantic key exist?</strong
+                >
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>Yes: add a result subscriber</span
+                ><span>No: register shared work awaiting lookup first</span
+                ><span
+                  >Then begin the asynchronous translation-memory lookup</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-subscribe"
+              class="tg-dfd-node tg-dfd-local tg-geometry-7e01289ab2"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>Subscribe to existing shared work</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >It may be looking up, queued, translating, or complete</span
+                ><span>Reuse its status / subsequent results</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >Connect to overview 07; do not create duplicate work</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory"
+              class="tg-dfd-node tg-dfd-store tg-geometry-21f6c08d66"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D3</span
+                ><strong>Look up persisted translation memory</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>Exact lookup by the full semantic key</span
+                ><span>Handle hits, misses, and read failures separately</span
+                ><span
+                  >Read failures do not trigger external sending by
+                  default</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory-hit"
+              class="tg-dfd-node tg-dfd-local tg-geometry-9449226155"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>A persisted translation already exists</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>Renderable translation + persisted status</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >Connect to overview 07; do not call the translation
+                    service</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory-error"
+              class="tg-dfd-node tg-dfd-failure tg-geometry-f106c168c6"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">E</span
+                ><strong>Failed to read a saved translation</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >Pause external sending: saved translations cannot be
+                  read</span
+                ><span>Retry local reading first</span
+                ><span
+                  >Continue only after explicitly choosing to bypass the
+                  failure</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-legacy"
+              class="tg-dfd-node tg-dfd-store tg-geometry-5435112f26"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D4</span
+                ><strong>Look up the legacy translation cache</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >Look up an exact record only if a corresponding legacy key
+                  exists</span
+                ><span>Miss / read failure / no matching key → next gate</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-legacy-hit"
+              class="tg-dfd-node tg-dfd-local tg-geometry-7bb0d73b94"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong
+                  >Reuse the old translation and upgrade its storage</strong
+                >
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>Renderable translation + saving status</span
+                ><span
+                  >Send separately to the persistence queue to upgrade to the
+                  new translation memory</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >Connect to overview 07</a
+                  >
+                  ＋ <a href="#tg-dfd-overview-save">Overview 10</a></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-policy"
+              class="tg-dfd-node tg-dfd-process tg-geometry-79423e7964"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D5</span
+                ><strong
+                  >Decide whether to send externally only after a confirmed
+                  miss</strong
+                >
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >Check no-external-send rules and document dispatch
+                  policy</span
+                ><span>Then check whether eligible service resources exist</span
+                ><span
+                  >Only permitted demands enter the dispatchable queue</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-held"
+              class="tg-dfd-node tg-dfd-wait tg-geometry-1eb2c8fabc"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>Three no-dispatch exits</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >External sending forbidden → block and report the
+                  reason</span
+                ><span
+                  >Local translations only → keep source and retain the
+                  demand</span
+                ><span
+                  >No available service resource → block and prompt
+                  configuration</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >Keep source text and report the corresponding status</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-admission"
+              class="tg-dfd-node tg-dfd-process tg-geometry-a1882ca628"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D6</span
+                ><strong
+                  >Prioritize and batch, then approve a request attempt</strong
+                >
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>Priority tier / service resource / compatible batch</span
+                ><span
+                  >Concurrency slots + rate allowance + time-window quota</span
+                ><span
+                  >After successful reservation, persist the quota debit
+                  first</span
+                ><span
+                  >The API request must wait until the disk write succeeds</span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-wait"
+              class="tg-dfd-node tg-dfd-wait tg-geometry-226febd91f"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">W</span
+                ><strong>Wait / block; do not send an API request</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  >Quota or concurrency unavailable: wait for time /
+                  events</span
+                ><span
+                  >The demand itself exceeds limits: pause external
+                  sending</span
+                ><span>Failed to persist the debit: stop new dispatches</span
+                ><span>Reevaluate when conditions recover</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-transport"
+              class="tg-dfd-node tg-dfd-process tg-geometry-c7ae16e98f"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">T</span
+                ><strong>Start the translation-service adapter</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  ><a href="#tg-dfd-overview-provider"
+                    >Connect to overview 05: actual network request</a
+                  ></span
+                ><span
+                  >Response validation / repair and presentation return to
+                  overview 06–10</span
+                >
+              </div>
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-0114811edf"
+            >
+              Local handling
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-25e9a71bf0"
+            >
+              Translation needed
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-cea73a5ca4"
+            >
+              Already exists
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-7a18d5a966"
+            >
+              New shared work: register before lookup
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-9ef41eff26"
+            >
+              Hit
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-failure tg-geometry-bd686d48d3"
+            >
+              Read failure
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-7d6dadfb27"
+            >
+              Retry reading
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-9aeb927753"
+            >
+              Confirmed miss
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-ff0d5b5bb6"
+            >
+              Hit
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-56610ca96d"
+            >
+              Miss / read failure / no legacy key
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-1ad0f8d4b4"
+            >
+              No dispatch
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-15b1698f10"
+            >
+              External sending permitted; enter the dispatch queue
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-e4e34b71d4"
+            >
+              Not yet ready<br />or disk write failed
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-773a6c265c"
+            >
+              Conditions recover<br />reevaluate
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-78c67497b9"
+            >
+              Conservative debit committed
+            </div>
+          </div>
+        </div>
+        <details class="tg-dfd-text-alternative">
+          <summary>Read each data flow as text</summary>
+          <ol>
+            <li>
+              <b>D1 Apply rules and pinned translations first</b> →
+              <b>P Return local status / result</b>: local handling
+            </li>
+            <li>
+              <b>D1 Apply rules and pinned translations first</b> →
+              <b>D2 Does shared work with the same semantic key exist?</b>:
+              translation needed
+            </li>
+            <li>
+              <b>D2 Does shared work with the same semantic key exist?</b> →
+              <b>P Subscribe to existing shared work</b>: already exists
+            </li>
+            <li>
+              <b>D2 Does shared work with the same semantic key exist?</b> →
+              <b>D3 Look up persisted translation memory</b>: new shared work:
+              register before lookup
+            </li>
+            <li>
+              <b>D3 Look up persisted translation memory</b> →
+              <b>P A persisted translation already exists</b>: hit
+            </li>
+            <li>
+              <b>D3 Look up persisted translation memory</b> →
+              <b>E Failed to read a saved translation</b>: read failure
+            </li>
+            <li>
+              <b>E Failed to read a saved translation</b> →
+              <b>D3 Look up persisted translation memory</b>: retry reading
+            </li>
+            <li>
+              <b>D3 Look up persisted translation memory</b> →
+              <b>D4 Look up the legacy translation cache</b>: confirmed miss
+            </li>
+            <li>
+              <b>D4 Look up the legacy translation cache</b> →
+              <b>P Reuse the old translation and upgrade its storage</b>: hit
+            </li>
+            <li>
+              <b>D4 Look up the legacy translation cache</b> →
+              <b
+                >D5 Decide whether to send externally only after a confirmed
+                miss</b
+              >: miss / read failure / no legacy key
+            </li>
+            <li>
+              <b
+                >D5 Decide whether to send externally only after a confirmed
+                miss</b
+              >
+              → <b>P Three no-dispatch exits</b>: no dispatch
+            </li>
+            <li>
+              <b
+                >D5 Decide whether to send externally only after a confirmed
+                miss</b
+              >
+              → <b>D6 Prioritize and batch, then approve a request attempt</b>:
+              external sending permitted; enter the dispatch queue
+            </li>
+            <li>
+              <b>D6 Prioritize and batch, then approve a request attempt</b> →
+              <b>W Wait / block; do not send an API request</b>: not yet ready;
+              or disk write failed
+            </li>
+            <li>
+              <b>W Wait / block; do not send an API request</b> →
+              <b>D6 Prioritize and batch, then approve a request attempt</b>:
+              conditions recover; reevaluate
+            </li>
+            <li>
+              <b>D6 Prioritize and batch, then approve a request attempt</b> →
+              <b>T Start the translation-service adapter</b>: conservative debit
+              committed
+            </li>
+          </ol>
+        </details>
+        <figcaption>
+          <span class="tg-why">How to read the diagram: </span>On initial
+          declaration, identical existing work is shared; new work is registered
+          before lookup. A local-memory read failure is not treated as a missing
+          record. Incognito mode or explicit retranslation may skip the memory
+          lookup, but still require dispatch-policy and resource approval; this
+          main path depicts the normal lookup route.
+        </figcaption>
+      </figure>
+    </details>
+    <details class="tg-deep">
+      <summary>Why account for service worker restarts?</summary>
+      <div class="tg-deep-body">
+        <p>
+          Chrome's extension service worker is event-driven and may terminate
+          while idle; ordinary JavaScript globals are not automatically saved.
+          This project therefore writes translation memory and quotas to
+          IndexedDB and lets pages redeclare active demands after reconnecting.
+          This is lifecycle design, not a claim that the worker never stops.
+        </p>
+        <p class="tg-mini">
+          Platform reference:
+          <a
+            href="https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle"
+            >Official Chrome documentation: service worker lifecycle</a
+          >
+          (accessed 2026-10-25).
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">02</span>
+      <h2 id="tg-entrypoints">Different entry points share different parts</h2>
+    </div>
+    <p>
+      Translation entry points share background resources and dispatch-approval
+      mechanisms. Page batches, selected-text streams, and the Translation
+      Center still retain their own output behavior.
+    </p>
+    <div class="tg-table-scroll">
+      <table class="tg-fit">
+        <thead>
+          <tr>
+            <th>Entry point</th>
+            <th>How it enters the system</th>
+            <th>Current presentation behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Webpage paragraphs</th>
+            <td>Paragraph → sentence units → shared translation flow</td>
+            <td>
+              <strong>Wait for the final result</strong>, then update the screen
+              only after confirming it still applies; no incremental temporary
+              previews
+            </td>
+          </tr>
+          <tr>
+            <th>Document title</th>
+            <td>
+              Independent text unit, assigned the priority of content near the
+              visible area
+            </td>
+            <td>
+              Manage only the top-level document; use request versions to
+              prevent stale results from overwriting new titles
+            </td>
+          </tr>
+          <tr>
+            <th>Subtitles</th>
+            <td>
+              Independent text unit, assigned the priority of visible content
+            </td>
+            <td>Return completed segments to the subtitle-rendering flow</td>
+          </tr>
+          <tr>
+            <th>Selected text · LLM</th>
+            <td>
+              Background text streaming; shared resource and quota approval
+            </td>
+            <td>
+              Accumulated plain text can update the screen continuously, unlike
+              page-batch response parsing
+            </td>
+          </tr>
+          <tr>
+            <th>Translation Center</th>
+            <td>
+              Look up translation memory, then issue translation requests as
+              needed
+            </td>
+            <td>
+              Update cards after receiving the full response; use request
+              identity to isolate cancellations and stale responses
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tg-boundary">
+      <strong>Each entry point has its own retry strategy: </strong>Automatic
+      service switching for page translation is off by default; selected-text
+      translation also has an “LLM returns an empty string → try an enabled
+      standard translator” fallback, plus up to 2 additional retries (waiting
+      800 / 1600ms).
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">03</span>
+      <h2 id="tg-identity">First distinguish position, work, and requests</h2>
+    </div>
+    <p>
+      <strong>A page binding</strong> records a demand on the screen;
+      <strong>shared work</strong> represents a reusable translation task;
+      <strong>a request attempt</strong> is one operation against a particular
+      translation resource.
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 02</span>Three identities, three
+          lifecycles</span
+        ><span class="tg-fig-type">SVG architecture diagram</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-identities-svg"
+          viewbox="0 0 900 366"
+          role="img"
+          aria-labelledby="tg-identities-title tg-identities-desc"
+        >
+          <title id="tg-identities-title">
+            Three lifecycle layers: page bindings, shared work, and request
+            attempts
+          </title>
+          <desc id="tg-identities-desc">
+            Two page bindings share work ①; compatible work can be included in a
+            single request attempt. This is a conceptual example; batching must
+            still satisfy document and other constraints.
+          </desc>
+          <defs>
+            <marker
+              id="tg-identities-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <text x="28" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            Page demands
+          </text>
+          <text x="350" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            Semantically identical work
+          </text>
+          <text x="650" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            One network attempt
+          </text>
+          <rect
+            x="28"
+            y="62"
+            width="240"
+            height="88"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="44" y="89" class="tg-h tg-geometry-b54f4860ae">
+            Page binding A1
+          </text>
+          <text x="44" y="115" class="tg-muted tg-geometry-b54f4860ae">
+            A source passage on page A
+          </text>
+          <text x="44" y="137" class="tg-muted tg-geometry-b54f4860ae">
+            Position, source version, subscription
+          </text>
+          <rect
+            x="28"
+            y="174"
+            width="240"
+            height="88"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="44" y="201" class="tg-h tg-geometry-b54f4860ae">
+            Page binding B1
+          </text>
+          <text x="44" y="227" class="tg-muted tg-geometry-b54f4860ae">
+            The same semantic demand on page B
+          </text>
+          <text x="44" y="249" class="tg-muted tg-geometry-b54f4860ae">
+            With its own DOM / version
+          </text>
+          <rect
+            x="350"
+            y="86"
+            width="240"
+            height="96"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="366" y="113" class="tg-h tg-geometry-b54f4860ae">
+            Shared work ①
+          </text>
+          <text x="366" y="139" class="tg-muted tg-geometry-b54f4860ae">
+            The same semantic key
+          </text>
+          <text x="366" y="161" class="tg-muted tg-geometry-b54f4860ae">
+            Shared result and retry lifecycle
+          </text>
+          <rect
+            x="350"
+            y="218"
+            width="240"
+            height="76"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="366" y="245" class="tg-h tg-geometry-b54f4860ae">
+            Shared work ②
+          </text>
+          <text x="366" y="271" class="tg-muted tg-geometry-b54f4860ae">
+            Another compatible work item
+          </text>
+          <rect
+            x="654"
+            y="120"
+            width="218"
+            height="112"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="670" y="147" class="tg-h tg-geometry-b54f4860ae">
+            Request attempt α
+          </text>
+          <text x="670" y="173" class="tg-muted tg-geometry-b54f4860ae">
+            Service resource + quota reservation
+          </text>
+          <text x="670" y="195" class="tg-muted tg-geometry-b54f4860ae">
+            Included work: ①, ②
+          </text>
+          <text x="670" y="217" class="tg-muted tg-geometry-b54f4860ae">
+            Background generation / termination state
+          </text>
+          <path
+            d="M268,105 L308,105 L308,132 L350,132"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M268,216 L308,216 L308,154 L350,154"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="290" y="286" class="tg-small tg-geometry-35afd8367b">
+            Deduplication: share only identical semantic contracts
+          </text>
+          <path
+            d="M590,134 L620,134 L620,157 L654,157"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M590,256 L620,256 L620,203 L654,203"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="650" y="280" class="tg-small tg-geometry-b54f4860ae">
+            Batching: document, context, priority tier,
+          </text>
+          <text x="650" y="301" class="tg-small tg-geometry-b54f4860ae">
+            and service resource must be compatible
+          </text>
+          <text x="28" y="338" class="tg-muted tg-geometry-b54f4860ae">
+            Different page bindings for the same text do not imply two API
+            calls. Canceling one subscription need not cancel the others.
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">
+        Scroll wide diagrams horizontally; text is selectable.
+      </p>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Duplicate demands can
+        share results, and retries need not recreate DOM identity. Leaving one
+        page need not cancel work that another page still needs. The batching
+        shown is only conceptual and still requires compatibility checks.
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>
+        How do two identical demands arriving together avoid duplicate sends?
+      </summary>
+      <div class="tg-deep-body">
+        <p>
+          The background scheduler indexes the “lookup in progress” work before
+          the first asynchronous memory lookup. Later page demands subscribe to
+          the same work; even if the earlier lookup has not returned, no
+          identical task is created. This allows duplicate demands to merge even
+          during asynchronous lookups.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">04</span>
+      <h2 id="tg-capture">
+        Extract identifiable source text, not a bundle of HTML
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 03</span>One DOM, two reading
+          responsibilities</span
+        ><span class="tg-fig-type">SVG · synthetic example</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-source-shapes-svg"
+          viewbox="0 0 900 501"
+          role="img"
+          aria-labelledby="tg-source-shapes-title tg-source-shapes-desc"
+        >
+          <title id="tg-source-shapes-title">
+            Two DOM-reading responsibilities and sentence-split positions
+          </title>
+          <desc id="tg-source-shapes-desc">
+            DOM reading branches into source-identity checking and
+            translation-request text, each reading the source text it needs. The
+            UTF-16 ranges of the Hello and Goodbye sentences are [0,6) and
+            [7,15).
+          </desc>
+          <defs>
+            <marker
+              id="tg-source-shapes-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="80"
+            width="268"
+            height="142"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="107" class="tg-h tg-geometry-b54f4860ae">
+            Original DOM · synthetic example
+          </text>
+          <text x="40" y="133" class="tg-muted tg-geometry-b54f4860ae">
+            漢（かん）字: includes a reading annotation
+          </text>
+          <text x="40" y="155" class="tg-muted tg-geometry-b54f4860ae">
+            + translation container added by the tool
+          </text>
+          <text x="40" y="177" class="tg-muted tg-geometry-b54f4860ae">
+            DOM identity remains on the webpage side
+          </text>
+          <rect
+            x="342"
+            y="24"
+            width="534"
+            height="102"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="358" y="51" class="tg-h tg-geometry-b54f4860ae">
+            Source checking / document context
+          </text>
+          <text x="358" y="77" class="tg-muted tg-geometry-b54f4860ae">
+            Read baseline source text: 漢字 (in this example)
+          </text>
+          <text x="358" y="99" class="tg-muted tg-geometry-b54f4860ae">
+            Exclude readings and tool output; use source text from OCR / reading
+            annotations
+          </text>
+          <rect
+            x="342"
+            y="164"
+            width="534"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="191" class="tg-h tg-geometry-b54f4860ae">
+            Translation-request text
+          </text>
+          <text x="358" y="217" class="tg-muted tg-geometry-b54f4860ae">
+            Extract translatable text → split sentences
+          </text>
+          <text x="358" y="239" class="tg-muted tg-geometry-b54f4860ae">
+            Background normalization: CRLF → LF, NFC, trim whitespace
+          </text>
+          <path
+            d="M292,140 L318,140 L318,75 L342,75"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M292,170 L318,170 L318,215 L342,215"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="24" y="310" class="tg-h tg-geometry-b54f4860ae">
+            Another sentence-splitting example: Hello. Goodbye.
+          </text>
+          <rect
+            x="24"
+            y="330"
+            width="268"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="357" class="tg-h tg-geometry-b54f4860ae">
+            Source block
+          </text>
+          <text x="40" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Hello. Goodbye.
+          </text>
+          <text x="40" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            Record original UTF-16 positions
+          </text>
+          <rect
+            x="342"
+            y="330"
+            width="238"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="358" y="357" class="tg-h tg-geometry-b54f4860ae">
+            Segment 1
+          </text>
+          <text x="358" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Hello.
+          </text>
+          <text x="358" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            Range: [0, 6)
+          </text>
+          <rect
+            x="630"
+            y="330"
+            width="246"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="646" y="357" class="tg-h tg-geometry-b54f4860ae">
+            Segment 2
+          </text>
+          <text x="646" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Goodbye.
+          </text>
+          <text x="646" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            Range: [7, 15)
+          </text>
+          <path
+            d="M292,367 L342,367"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="317.0" y="358.0" class="tg-small tg-geometry-35afd8367b">
+            Split sentences
+          </text>
+          <path
+            d="M292,390 L316,390 L316,436 L612,436 L612,377 L630,377"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="24" y="471" class="tg-muted tg-geometry-b54f4860ae">
+            The two DOM-reading paths have different responsibilities; sentence
+            ranges still refer to the original source, and normalization does
+            not rewrite source positions.
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">Scroll wide diagrams horizontally.</p>
+      <figcaption>
+        One path extracts text to translate and splits it into sentences; the
+        other reads a consistent representation of the source to check identity
+        and establish document context. Both paths avoid treating
+        system-generated translations as new source text.
+      </figcaption>
+    </figure>
+    <div class="tg-three">
+      <div class="tg-lane">
+        <p class="tg-subheading">Identify paragraphs first</p>
+        <p class="tg-mini">
+          Traverse using the DOM, display types, and exclusion rules, skipping
+          the tool's own output, hidden content, and pronunciation annotations.
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">Then split into sentences</p>
+        <p class="tg-mini">
+          Use the browser's text-segmentation capability; above 2000 UTF-16
+          units, look for clause punctuation first, then grapheme boundaries.
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">Finally, retain identity</p>
+        <p class="tg-mini">
+          Each segment retains its original range, segment order, and source
+          version; rebuild text units after the source changes.
+        </p>
+      </div>
+    </div>
+    <details class="tg-deep">
+      <summary>
+        Why must UTF-16, visible characters, and tokens stay distinct?
+      </summary>
+      <div class="tg-deep-body">
+        <p>
+          UTF-16 code units are the units used for JavaScript string length; an
+          emoji may occupy several units, and multiple Unicode code points may
+          form one visible character. A grapheme describes a grouping of these
+          visible text units; tokens are determined by a model's tokenizer.
+        </p>
+        <p>
+          The default 2000 is the string-length limit per text unit. If a single
+          grapheme exceeds it, the input is reported as too large. Without
+          browser text-segmentation support, the fallback processes code points
+          individually and cannot guarantee complete grouping of compound
+          visible characters.
+        </p>
+        <p>
+          Short segments also use a local heuristic: after removing noise such
+          as URLs, a single Latin-alphabet word may be skipped, while short
+          segments containing Chinese, Japanese, or Korean text can be retained.
+          This reduces fragmented requests but may miss meaningful words.
+          Selected-text translation does not use the same short-text threshold
+          as page translation.
+        </p>
+        <p class="tg-mini">
+          Further reading:
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter"
+            >Browser text segmentation</a
+          >.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">05</span>
+      <h2 id="tg-viewport">
+        Serve the current reading position first, then preload ahead
+      </h2>
+    </div>
+    <p>
+      The page knows “where the source text is”; the background decides “which
+      passage is worth translating now.” The preload region changes with reading
+      direction and speed, while scheduling priorities are compared across
+      pages.
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 04</span>Change the reading state to
+          see how the preload region changes</span
+        ><span class="tg-fig-type"
+          >Interactive formula illustration · not a performance
+          measurement</span
+        >
+      </div>
+      <div class="tg-figure-body">
+        <section id="tg-lookahead-controls" class="tg-demo-controls"></section>
+        <div class="tg-lookahead-view">
+          <div
+            aria-label="Spatial relationship of preload regions, not to scale"
+            class="tg-viewport-illustration"
+          >
+            <div class="tg-near-band">
+              <span id="tg-look-top-role"
+                >Above · behind the reading direction</span
+              ><strong id="tg-look-top">400 px</strong>
+            </div>
+            <div class="tg-screen-band">
+              <strong>Current viewport — visible text first</strong
+              ><span id="tg-look-height-label">Viewport height H = 800 px</span>
+            </div>
+            <div class="tg-near-band">
+              <span id="tg-look-bottom-role"
+                >Below · ahead in the reading direction</span
+              ><strong id="tg-look-bottom">2400 px</strong>
+            </div>
+          </div>
+          <div class="tg-math-notes">
+            <p class="tg-sample">
+              Region illustration; lengths are not drawn to scale in screen
+              pixels
+            </p>
+            <div class="tg-metric-line">
+              <span>Translation range ahead</span
+              ><span id="tg-look-ahead">2400 px</span>
+            </div>
+            <div class="tg-metric-line">
+              <span>Paragraph-registration range ahead</span
+              ><span id="tg-look-registration">2800 px</span>
+            </div>
+            <div class="tg-metric-line">
+              <span>Range behind</span><span id="tg-look-behind">400 px</span>
+            </div>
+            <p id="tg-look-status" aria-live="polite" class="tg-mini">
+              Reading: 3 viewport heights ahead; paragraph registration extends
+              0.5 viewport heights beyond translation.
+            </p>
+          </div>
+        </div>
+        <div class="tg-no-script-note">
+          <p class="tg-mini">
+            JavaScript disabled: the static example above uses Reading, Down,
+            height 800px, and margin 1000px.
+          </p>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Declare soon-to-be-read
+        paragraphs to the background first; slow reading and fast scrolling use
+        different ranges. Setting the preload margin to 0 disables preloading
+        both ahead and behind.
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>Expand preload formulas and scrolling algorithm</summary>
+      <div class="tg-deep-body">
+        <div class="tg-formula">
+          Ahead range = min(10000, max(configured margin, round((multiplier +
+          lead) × H))) Behind range = min(configured margin, round(0.5 × H))
+          Multiplier: not yet scrolled 1.5 / reading 3 / fast scanning 5 Lead:
+          translation region 0 / paragraph-registration region 0.5
+        </div>
+        <p>
+          When the configured margin is ≤0, both sides return 0. Swap the upper
+          and lower ranges when reading upward. Scroll speed is smoothed with an
+          EMA: <span class="tg-mono">α=1−exp(−dt/200)</span>, new speed = old
+          speed + (instantaneous speed − old speed) × α. dt is in ms, and
+          instantaneous speed is in px/s; at intervals of 400ms or more, use the
+          new sample directly.
+        </p>
+        <p>
+          A direction change requires accumulated reverse movement of
+          <span class="tg-mono">max(120px, 0.35H)</span>. Forward speed of 2.5
+          viewport/s can trigger fast-scanning mode for 2 seconds. These
+          thresholds reduce observation-region rebuilds caused by small backward
+          movements; they are engineering heuristics, not a model of reading
+          intent.
+        </p>
+      </div>
+    </details>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 05</span>Scheduling priority: from
+          on-screen demand to cross-page fairness</span
+        ><span class="tg-fig-type">HTML ordering diagram</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-tier-stack">
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T0</div>
+            <strong>Focused page · visible</strong
+            ><small>Prioritize the content in front of the user</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T1</div>
+            <strong>Other pages · visible</strong
+            ><small
+              >Dispatch round-robin across pages within the same tier</small
+            >
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T2</div>
+            <strong>Focused page · near the visible area</strong
+            ><small
+              >Ahead in the reading direction first, then document order</small
+            >
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T3</div>
+            <strong>Other dispatchable demands</strong
+            ><small
+              >Dispatch round-robin across pages; do not dispatch content
+              explicitly outside the range</small
+            >
+          </div>
+        </div>
+        <p class="tg-sample">
+          Scheduling example: 1 concurrency slot, single-item requests; P1 is
+          focused, and each of three pages has 3 visible passages
+        </p>
+        <div aria-label="Dispatch order" class="tg-queue-demo">
+          <span>P1.1</span><span>P1.2</span><span>P1.3</span
+          ><span class="tg-p2">P2.1</span><span class="tg-p3">P3.1</span
+          ><span class="tg-p2">P2.2</span><span class="tg-p3">P3.2</span
+          ><span class="tg-p2">P2.3</span><span class="tg-p3">P3.3</span>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Changing focus reorders
+        work not yet sent; normally running requests are not preempted.
+        Round-robin dispatch improves fairness within a tier, but lower-priority
+        tiers may still wait.
+      </figcaption>
+    </figure>
+    <div class="tg-boundary">
+      <strong>Read positions before updating the screen: </strong>The page first
+      reads paragraph positions in a batch, then inserts placeholders. Later
+      translation processing reuses position data supplied by the visibility
+      observer, reducing interleaved layout reads and DOM writes.
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">06</span>
+      <h2 id="tg-rules">
+        Rules first decide what may be translated, then protect key terms
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 06</span>Glossary: find matches first,
+          then choose replacements</span
+        ><span class="tg-fig-type">HTML algorithm diagram</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node">
+            <strong>1 · Find all candidates</strong
+            ><span
+              >Aho–Corasick trie<br />Search for multiple phrases in one pass<br />Include
+              overlapping matches</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>2 · Sort</strong
+            ><span
+              >Leftmost → longest → priority<br />Then compare rule specificity
+              and identifier<br />Obtain a stable selection order</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>3 · Select non-overlapping phrases</strong
+            ><span
+              >Advance the cursor in one direction<br />Convert to ⟦n⟧
+              placeholders<br />Do not scan replaced content again</span
+            >
+          </div>
+        </div>
+        <p class="tg-sample">
+          Term-protection example; model reply is illustrative
+        </p>
+        <div class="tg-sentence">The <i>Rust Belt</i> uses <i>Rust</i>.</div>
+        <div class="tg-connector">
+          At the same start position, choose the longer phrase first; a shorter
+          term cannot displace Rust Belt even with higher priority
+        </div>
+        <div class="tg-two">
+          <div>
+            <p class="tg-subheading">Sent to the model</p>
+            <div class="tg-sentence">The <i>⟦1⟧</i> uses <i>⟦2⟧</i>.</div>
+          </div>
+          <div>
+            <p class="tg-subheading">Reply and restore</p>
+            <div class="tg-sentence">
+              <i>⟦1⟧</i> uses <i>⟦2⟧</i>.<br />→ The Rust Belt uses the Rust
+              language.
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Turn controlled terms into
+        verifiable preservation markers. Each placeholder must appear exactly
+        once; missing, duplicate, or model-invented markers cannot go straight
+        to the screen.
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>Rule precedence and Aho–Corasick's precise role</summary>
+      <div class="tg-deep-body">
+        <p>
+          Handle whole-page disabling first, followed by whole-sentence
+          keep-source / fixed translations, user-pinned translations, and
+          no-external-send rules; only then replace phrases with placeholders.
+          Banning external sending still permits locally saved translations to
+          appear.
+        </p>
+        <p>
+          Aho–Corasick finds multiple phrases; “leftmost, longest” emerges from
+          the subsequent sort and cursor-based selection together. Scanning uses
+          UTF-16 code units and does not understand natural-language word
+          boundaries. The full process also includes match expansion and
+          sorting, so its total cost cannot simply be written as O(n).
+        </p>
+        <p>
+          Matching supports arbitrary text, exact whole sentences, and literal
+          phrases, but not arbitrary regular expressions. If compilation or
+          matching fails, the system can fall back to a more direct reference
+          scanner.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">07</span>
+      <h2 id="tg-context">
+        Context must stay stable and obey the same external-send rules
+      </h2>
+    </div>
+    <p>
+      Translation configurations with document context enabled freeze candidate
+      text before the first batch is sent. The background then selects eligible
+      content under the current policy, preventing “paragraphs forbidden from
+      translation” from being sent indirectly as context for other sentences.
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 07</span>From document candidates to
+          bounded translation context</span
+        ><span class="tg-fig-type">HTML data flow</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node">
+            <strong>First document candidates</strong
+            ><span
+              >50ms quiet period / maximum 200ms capture window<br />At most 16
+              body-text blocks<br />Candidates total ≤6000 UTF-16 units</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>Apply policy in the background</strong
+            ><span
+              >Exclude candidates marked no-external-send, keep-source,
+              fixed-translation, pinned-translation-only, or protected by
+              placeholders</span
+            >
+          </div>
+          <div class="tg-node tg-good">
+            <strong>Final document context</strong
+            ><span
+              >Eligible title + first 8 eligible body-text blocks<br />Total
+              length at most 1500 UTF-16 units<br />Compute context
+              fingerprint</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          Why freeze candidates: the same snapshot does not change with message
+          batching, reconnection order, or where scrolling starts
+        </div>
+        <div class="tg-two">
+          <div class="tg-lane">
+            <p class="tg-subheading">
+              Separate from the sentences to translate
+            </p>
+            <p class="tg-mini">
+              Context provides background only and does not need its own
+              translation output. Different contexts can produce different
+              semantic keys.
+            </p>
+          </div>
+          <div class="tg-lane">
+            <p class="tg-subheading">Limitations remain</p>
+            <p class="tg-mini">
+              A bounded window at the beginning of a document does not guarantee
+              coverage of the whole text; translation entry points also use
+              different contexts.
+            </p>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>A stable snapshot supports
+        reusable semantic identity; policy checks must also cover background
+        text that is “sent indirectly.”
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">08</span>
+      <h2 id="tg-memory">
+        Ask locally first: has this semantic contract already been translated?
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 08</span>Local first, with read errors
+          distinguished from missing records</span
+        ><span class="tg-fig-type">HTML decision diagram</span>
+      </div>
+      <div class="tg-figure-body tg-local-grid">
+        <div>
+          <div class="tg-decision-row">
+            <span class="tg-step">01</span>
+            <div>
+              <strong>Rules and pinned translations</strong>
+              <div class="tg-result">
+                Fixed results / keeping source text can be decided locally
+              </div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">02</span>
+            <div>
+              <strong>Persisted translation memory</strong>
+              <div class="tg-result">
+                Hit → use directly; read failure → stop external sending by
+                default
+              </div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">03</span>
+            <div>
+              <strong>Legacy exact-match cache</strong>
+              <div class="tg-result">
+                Hit → use it and try upgrading its storage
+              </div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">04</span>
+            <div>
+              <strong
+                >Confirm no record exists before checking dispatch
+                policy</strong
+              >
+              <div class="tg-result">
+                External sending permitted → resource approval; local only →
+                keep source
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="tg-key-box">
+            <p class="tg-subheading">
+              Semantic key: which translation is this?
+            </p>
+            <div class="tg-key-fields">
+              <span>Normalized source text</span
+              ><span>Translation entry point</span
+              ><span>Source / target language</span
+              ><span>Translation configuration</span><span>Prompt version</span
+              ><span>Glossary version</span><span>Context fingerprint</span
+              ><span>Rule fingerprint</span><span>Output contract</span
+              ><span>Privacy partition</span>
+            </div>
+            <div class="tg-key-arrow">
+              Consistent data representation → SHA-256 → semantic key
+            </div>
+          </div>
+          <div class="tg-key-box tg-geometry-92c18f6bda">
+            <p class="tg-subheading">
+              Page key: what should reopening a page restore?
+            </p>
+            <p class="tg-mini">
+              Page keys manage restoration intent and page associations;
+              semantic keys determine which translation corresponds to a source
+              sentence.
+            </p>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>“Cannot read a saved
+        translation” and “no translation ever existed” are different states. A
+        temporary read failure does not automatically mean consent to resend the
+        source externally and pay for another translation.
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data layer</th>
+            <th>Persistence strategy</th>
+            <th>Design trade-offs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Translation memory</th>
+            <td>
+              No expiry or automatic eviction; defaults: 512 MiB counted content
+              / 200,000 entries / 1 MiB per entry
+            </td>
+            <td>
+              Reject new writes when full to protect existing records. These
+              figures exclude total IndexedDB index and additional storage
+              overhead.
+            </td>
+          </tr>
+          <tr>
+            <th>Legacy cache</th>
+            <td>Defaults: 30 days / 128 MiB; LRU eviction</td>
+            <td>
+              A reconstructible cache with a retention strategy different from
+              saved translations.
+            </td>
+          </tr>
+          <tr>
+            <th>Rules / pinned translations</th>
+            <td>Persistent policy data</td>
+            <td>User-specified behavior, not an ordinary LRU cache.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>
+        Which results can be reused after changing models or pages?
+      </summary>
+      <div class="tg-deep-body">
+        <p>
+          Page translation's semantic identity does not directly include the
+          provider or model. With other semantic conditions unchanged, switching
+          models can still hit an old result. Only “force retranslation” skips
+          translation memory and the legacy cache, replacing memory under the
+          same semantic key after successful result validation.
+        </p>
+        <p>
+          Selected-text translation and the Translation Center use their own
+          entry-point contracts, and their translation configurations include
+          the provider identifier. Thus, a provider A card in the Translation
+          Center does not use a provider B card's results; changing the model
+          within the same provider configuration preserves the existing
+          identity.
+        </p>
+        <p>
+          Context, rules, and versions are also part of the semantic contract,
+          with translations found by exact hash matching. Identical sentences on
+          different pages can share results only when their other semantic
+          conditions also match; merely similar text does not automatically hit.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">09</span>
+      <h2 id="tg-admission">
+        Batching saves requests; dispatch approval protects resources and quotas
+      </h2>
+    </div>
+    <p>
+      Candidate work is ordered by reading demand first, then an available
+      translation resource is selected, and finally the system tries to form a
+      batch. Larger batches combine more work; visible content uses smaller
+      thresholds so the first results need not wait for too many sentences.
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 09</span>Two batch thresholds, the
+          same compatibility checks</span
+        ><span class="tg-fig-type">HTML condition diagram</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-two">
+          <div class="tg-node tg-good">
+            <strong>Visible content · T0 / T1</strong
+            ><span
+              >Batch-extension threshold: at most 3 items / 900 UTF-16 units<br />Use
+              the smaller of the user setting and the visible-content
+              threshold</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>Other dispatchable content</strong
+            ><span
+              >Initial defaults: 8 items / 2400 UTF-16 units<br />Combine
+              according to the translation flow's batch settings</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          Append in candidate order; stop expanding when the next item is
+          incompatible
+        </div>
+        <div class="tg-key-box">
+          <p class="tg-subheading">Items in a batch must be compatible</p>
+          <div class="tg-key-fields">
+            <span>Document and page connection</span><span>Priority tier</span
+            ><span>Translation configuration</span><span>Context</span
+            ><span>Privacy partition</span><span>Translation resource</span
+            ><span>token quota</span>
+          </div>
+        </div>
+        <p class="tg-mini">
+          If multiple pages appear within the T1 / T3 candidate window, keep
+          dispatches single-item to avoid skipping another page just to fill one
+          page's batch. Work requiring individual repair is not batched either.
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Throughput must be
+        balanced against time to first result, and batching must not bypass
+        fairness. Batch thresholds limit aggregation size; actual speed and cost
+        still depend on content and service responses.
+      </figcaption>
+    </figure>
+    <div class="tg-boundary">
+      <strong>900 is not an absolute character limit per request: </strong>The
+      first item enters the batch before total length is checked when appending
+      others. A single sentence-split translation unit may exceed 900; prompts
+      and context are not included in this source-text length either. UTF-16
+      code units, model tokens, and network bytes are three different measures.
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 10</span>Concurrency slots and quota
+          ledgers: two distinct lifecycles</span
+        ><span class="tg-fig-type">SVG lifecycle diagram</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-admission-ledger-svg"
+          viewbox="0 0 900 516"
+          role="img"
+          aria-labelledby="tg-admission-ledger-title tg-admission-ledger-desc"
+        >
+          <title id="tg-admission-ledger-title">
+            Manage concurrency slots separately from quota ledgers
+          </title>
+          <desc id="tg-admission-ledger-desc">
+            Dispatch approval checks concurrency slots, rate allowance, and
+            quota groups together, persisting before the API call. Release the
+            concurrency slot after confirming network-request termination;
+            committed conservative debits remain until the time window expires,
+            while rate allowance replenishes at its own rate.
+          </desc>
+          <defs>
+            <marker
+              id="tg-admission-ledger-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="28"
+            width="240"
+            height="102"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="40" y="55" class="tg-h tg-geometry-b54f4860ae">
+            One API request attempt
+          </text>
+          <text x="40" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            Requires a concurrency slot
+          </text>
+          <text x="40" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            Requires request / token allowance
+          </text>
+          <rect
+            x="330"
+            y="28"
+            width="245"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="346" y="55" class="tg-h tg-geometry-b54f4860ae">
+            Concurrency slots
+          </text>
+          <text x="346" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            Global / service resource / quota group
+          </text>
+          <text x="346" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            Reservations or network requests not yet terminated
+          </text>
+          <rect
+            x="630"
+            y="28"
+            width="246"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="646" y="55" class="tg-h tg-geometry-b54f4860ae">
+            Time-window quota ledger
+          </text>
+          <text x="646" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            Windowed request / token counts
+          </text>
+          <text x="646" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            Record conservative time-window debits
+          </text>
+          <path
+            d="M264,75 L330,75"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M575,75 L630,75"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="602.5" y="66.0" class="tg-small tg-geometry-35afd8367b">
+            Approve together
+          </text>
+          <rect
+            x="330"
+            y="180"
+            width="245"
+            height="106"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="207" class="tg-h tg-geometry-b54f4860ae">
+            Commit the IndexedDB transaction first
+          </text>
+          <text x="346" y="233" class="tg-muted tg-geometry-b54f4860ae">
+            Request record + rate and quota ledgers
+          </text>
+          <text x="346" y="255" class="tg-muted tg-geometry-b54f4860ae">
+            Sending is allowed only after transaction success
+          </text>
+          <path
+            d="M753,130 L753,154 L452,154 L452,180"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M452,130 L452,180"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="24"
+            y="180"
+            width="240"
+            height="106"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="207" class="tg-h tg-geometry-b54f4860ae">
+            Call the translation service
+          </text>
+          <text x="40" y="233" class="tg-muted tg-geometry-b54f4860ae">
+            Leave evidence of the debit before sending
+          </text>
+          <text x="40" y="255" class="tg-muted tg-geometry-b54f4860ae">
+            Disk write failure: do not send an API request
+          </text>
+          <path
+            d="M330,230 L264,230"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="297.0" y="221.0" class="tg-small tg-geometry-35afd8367b">
+            Transaction complete
+          </text>
+          <rect
+            x="24"
+            y="340"
+            width="240"
+            height="86"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="367" class="tg-h tg-geometry-b54f4860ae">
+            Network request confirmed terminated
+          </text>
+          <text x="40" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            Completed / cancellation confirmed / failed
+          </text>
+          <path
+            d="M144,286 L144,340"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="330"
+            y="340"
+            width="245"
+            height="86"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="346" y="367" class="tg-h tg-geometry-b54f4860ae">
+            Release the concurrency slot
+          </text>
+          <text x="346" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            Subsequent work can use the freed slot
+          </text>
+          <rect
+            x="630"
+            y="340"
+            width="246"
+            height="86"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="646" y="367" class="tg-h tg-geometry-b54f4860ae">
+            Time-window debit remains
+          </text>
+          <text x="646" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            Wait for the counting interval to expire; lower actual usage
+          </text>
+          <text x="646" y="415" class="tg-muted tg-geometry-b54f4860ae">
+            does not automatically refund the reservation
+          </text>
+          <path
+            d="M264,382 L330,382"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M575,382 L630,382"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="602.5" y="373.0" class="tg-small tg-geometry-35afd8367b">
+            Separately
+          </text>
+          <text x="24" y="464" class="tg-muted tg-geometry-b54f4860ae">
+            Concurrency slots track occupancy; time-window quotas retain debits;
+            request-rate allowance replenishes at its own rate.
+          </text>
+          <text x="24" y="488" class="tg-muted tg-geometry-b54f4860ae">
+            A network request ending does not directly refund rate allowance;
+            cancellation after a successful debit may also retain debits for
+            unsent requests.
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">Scroll wide diagrams horizontally.</p>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>A request ending only
+        means the network operation no longer occupies a concurrency slot; it
+        does not mean the provider did not bill it. Persisting conservative
+        debits first also retains known usage across background-service
+        restarts. Tokens controlling the send rate replenish over time
+        separately; ending a request does not directly return consumed tokens.
+      </figcaption>
+    </figure>
+    <div class="tg-three">
+      <div class="tg-lane">
+        <p class="tg-subheading">Concurrency</p>
+        <p class="tg-mini">
+          Check the whole system, an individual translation resource, and all
+          relevant quota groups together. Their initial default limits are 16,
+          12, and 16 concurrent slots, respectively.
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">Send rate</p>
+        <p class="tg-mini">
+          Each translation resource's token bucket replenishes capacity for 8
+          requests per second by default, accumulating at most 16. It controls
+          the start cadence, not a guarantee of 8 completions per second.
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">Time-window quotas</p>
+        <p class="tg-mini">
+          Check requests per minute, tokens per minute, and requests per day
+          according to configuration. Record additional usage when actual usage
+          is higher; do not automatically refund reservations when it is lower
+          or unreported.
+        </p>
+      </div>
+    </div>
+    <details class="tg-deep">
+      <summary>
+        Algorithm: when to wait for time, and when to wait for events?
+      </summary>
+      <div class="tg-deep-body">
+        <div class="tg-formula">
+          D = S + P + a − L S = conservative debits committed to the time-window
+          ledger that have not expired P = reservations whose send commit has
+          not completed a = new demand L = configured limit
+        </div>
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Condition</th>
+                <th>Dispatch decision</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>a &gt; L</th>
+                <td>Block the demand</td>
+                <td>
+                  This demand itself exceeds the limit; waiting cannot make it
+                  fit unless the configuration changes.
+                </td>
+              </tr>
+              <tr>
+                <th>D ≤ 0</th>
+                <td>Pass this quota check</td>
+                <td>
+                  Concurrency, send-rate, and other quota checks must still
+                  pass.
+                </td>
+              </tr>
+              <tr>
+                <th>0 &lt; D ≤ S</th>
+                <td>Wait until a specified time</td>
+                <td>
+                  Scan time buckets to find when enough debits will expire.
+                </td>
+              </tr>
+              <tr>
+                <th>D &gt; S</th>
+                <td>Wait for a state change</td>
+                <td>
+                  Even if all committed debits expire, pending reservations plus
+                  the new demand still exceed the limit.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          For one translation resource, use the latest time threshold; if slots
+          must also be released or writes completed, wait for those events.
+          Across candidate work items, find the earliest possible wakeup time.
+          Fixed-capacity circular time buckets prevent memory from growing
+          without bound with historical requests: 62 buckets of 1 second for the
+          minute window; 1442 buckets of 60 seconds for the daily window.
+        </p>
+        <p>
+          A debit's time-bucket index is ceil(attribution time ÷ bucket
+          duration), rounded upward. When creating a persistence snapshot, the
+          attribution time of pending debits is set at least 1000ms beyond now;
+          after the transaction completes, ensure it is not before the current
+          time, using conservative expiry. The request token bucket uses integer
+          counts: one request equals 1,000,000 microunits. This is unrelated to
+          the tokens into which models split text.
+        </p>
+      </div>
+    </details>
+    <details class="tg-deep">
+      <summary>
+        Algorithm: resource selection, token estimation, and optional adaptation
+      </summary>
+      <div class="tg-deep-body">
+        <p>
+          When multiple translation resources are available, first compare
+          “compatible demand within the candidate window ÷ available
+          concurrency,” using a denominator of at least 1. Then compare load,
+          routing priority, and stable resource-identifier order. This heuristic
+          selects among resources for the current candidates; it does not solve
+          for a globally optimal allocation.
+        </p>
+        <div class="tg-formula">
+          Estimate base = ceil(sum of all character weights) + 4 Character
+          weight: 1 if the Unicode code point is greater than 0x2E80, otherwise
+          0.34 Full interactive prompt: ceil(sum of bases for all nonempty
+          fragments × 1.2) + 256 Interactive output reservation: the request's
+          specified limit, or 4096 if unspecified
+        </div>
+        <p>
+          This local estimate determines whether dispatch is allowed; it may
+          differ from the provider's actual tokenization and cannot replace the
+          account's remaining allowance. Page batches also include translation
+          instructions and context in the estimate, so source character count
+          alone cannot stand in for tokens-per-minute usage.
+        </p>
+        <p>
+          Adaptive concurrency is off by default. When enabled, the concurrency
+          limit starts at half the hard limit, rounded up. When a successful
+          response arrives and the statistics window has reached 20 seconds,
+          check whether the previous window had at least 10 successes, pending
+          work, and no congestion; only then add 1 slot. Capacity congestion
+          halves the limit, at most once per adjustment cycle. Automatic
+          fallback switching is also off by default and switches to other
+          resources under eligible conditions only when explicitly enabled.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">10</span>
+      <h2 id="tg-protocol">
+        The model returns a data protocol; only validated output becomes a
+        translation
+      </h2>
+    </div>
+    <p>
+      Default page-batch translation maps each result using short identifiers.
+      Output order may differ, but identifiers, translations, and placeholders
+      must all pass validation. This separates “the entire response is invalid”
+      from “only a few items need repair.”
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 11</span>From streamed text to a
+          committable translation</span
+        ><span class="tg-fig-type">HTML protocol and branching diagram</span>
+      </div>
+      <div class="tg-figure-body">
+        <p class="tg-sample">
+          Synthetic data example. The source language is auto-detected, the
+          target is Traditional Chinese for Taiwan, and no extra context is
+          supplied. Response order is deliberately reversed, but items still map
+          one-to-one by identifier.
+        </p>
+        <div class="tg-two">
+          <div>
+            <p class="tg-subheading">Translation items sent</p>
+            <div class="tg-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item identifier</th>
+                    <th>Source text</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>1</th>
+                    <td>Hello.</td>
+                  </tr>
+                  <tr>
+                    <th>2</th>
+                    <td>Goodbye.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <p class="tg-subheading">Translation results received</p>
+            <div class="tg-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item identifier</th>
+                    <th>Translation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>2</th>
+                    <td>再見。</td>
+                  </tr>
+                  <tr>
+                    <th>1</th>
+                    <td>你好。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tg-node">
+          <strong
+            >Streaming response parser — retain state and scan new characters
+            incrementally</strong
+          ><span
+            >Envelope → JSON structure → data fields → item identifiers → text
+            and Unicode; complete items may produce temporary previews.</span
+          >
+        </div>
+        <div class="tg-connector">
+          Validate the whole response after the network operation succeeds and
+          the model finishes normally
+        </div>
+        <div class="tg-three">
+          <div class="tg-node tg-good">
+            <strong>Valid items</strong
+            ><span
+              >Accept result → restore placeholders<br />→ renderable
+              translation → final result</span
+            >
+          </div>
+          <div class="tg-node tg-optional">
+            <strong>Individual items need repair</strong
+            ><span
+              >Missing / duplicate known identifiers<br />Blank / overly long
+              translation / placeholder mismatch<br />→ retry individually
+              later</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>Entire response invalid</strong
+            ><span
+              >Unknown identifiers / fields, duplicate field names<br />Wrong
+              version, invalid JSON, extra prose<br />→ reject the entire
+              response</span
+            >
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>First establish “whose
+        complete result this is,” then decide whether to use it. Previews are
+        revocable temporary results and never become persistent cache entries;
+        page paragraphs update only after the final result is confirmed.
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Translation service</th>
+            <th>Actual network behavior</th>
+            <th>Response requirements</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>DeepSeek / OpenAI / Google</th>
+            <td>
+              Low-level automatic resending is disabled: each operation issues
+              at most 1 network request, with retries managed by the upper-level
+              scheduler. Custom service URLs must still satisfy the
+              corresponding service's connection rules.
+            </td>
+            <td>
+              Streamed text goes to the response parser and must conform to the
+              structured data format.
+            </td>
+          </tr>
+          <tr>
+            <th>Microsoft</th>
+            <td>
+              Within one operation, obtain Edge authentication first, then send
+              the translation request; each phase is limited to 1 network
+              request, for at most 2 total.
+            </td>
+            <td>
+              Check the returned item count, restore the same item identifiers
+              by original position, and convert to the unified format.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>
+        Which tolerances are allowed? Which numbers are not token limits?
+      </summary>
+      <div class="tg-deep-body">
+        <p>
+          The parser permits a leading reasoning section enclosed in designated
+          markers, and Markdown fences that enclose the entire response and are
+          unlabeled or labeled JSON. Valid whitespace and reordered data fields
+          are accepted too. It does not guess and extract JSON from arbitrary
+          prose. Large streaming increments are processed in chunks of 32,768
+          UTF-16 units, preserving text, escape, and Unicode parsing state
+          across chunks.
+        </p>
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Boundary</th>
+                <th>Default value</th>
+                <th>Measurement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Entire text response</th>
+                <td>262,144</td>
+                <td>2 × UTF-16 length, including envelope text</td>
+              </tr>
+              <tr>
+                <th>Network data volume of the model response</th>
+                <td>16 MiB</td>
+                <td>
+                  Text-response budget × 64, including SSE and JSON envelopes
+                </td>
+              </tr>
+              <tr>
+                <th>Per-item translation</th>
+                <td>24,000</td>
+                <td>UTF-16 code units</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The product direction is “auto-detect source → Traditional Chinese for
+          Taiwan.” Page translation and shared settings use different
+          Traditional Chinese language tags; Microsoft additionally converts via
+          an ISO language mapping table, falling back to a Traditional Chinese
+          tag when no mapping is found. Integrations across services must handle
+          these differences in language representation.
+        </p>
+        <p>
+          The system prompt asks the model to ignore instructions in the source
+          and context, and to use plain text for translation content. This
+          expresses the intended behavior but cannot guarantee elimination of
+          prompt injection or translation errors. DeepSeek's thinking mode is
+          off by default, and users may adjust it.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">11</span>
+      <h2 id="tg-render">
+        However quickly a result returns, first verify that the page is still
+        the same
+      </h2>
+    </div>
+    <p>
+      While translation runs, a dynamic webpage may change text, replace
+      paragraphs, or navigate away, and the user may be selecting text.
+      Background completion only means a candidate result is available; before
+      actually updating webpage nodes, check the current source and interaction
+      state.
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 12</span>Late old results must not
+          overwrite newer source text</span
+        ><span class="tg-fig-type"
+          >SVG sequence diagram · synthetic illustration</span
+        >
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-stale-race-svg"
+          viewbox="0 0 900 520"
+          role="img"
+          aria-labelledby="tg-stale-race-title tg-stale-race-desc"
+        >
+          <title id="tg-stale-race-title">
+            How asynchronous translations avoid overwriting new source text
+          </title>
+          <desc id="tg-stale-race-desc">
+            After the website changes the source, an old result must not
+            overwrite the new version even if it arrives later; identity is
+            checked both upon receiving results and when committing the DOM.
+            This synthetic sequence includes no latency measurements.
+          </desc>
+          <defs>
+            <marker
+              id="tg-stale-race-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <text x="30" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            Website / source
+          </text>
+          <text x="335" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            Translation background
+          </text>
+          <text x="640" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            Page validation / presentation
+          </text>
+          <path d="M150,55 L150,398" class="tg-dash"></path>
+          <path d="M450,55 L450,398" class="tg-dash"></path>
+          <path d="M760,55 L760,398" class="tg-dash"></path>
+          <rect
+            x="26"
+            y="65"
+            width="246"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="42" y="92" class="tg-h tg-geometry-b54f4860ae">
+            Source version 1
+          </text>
+          <text x="42" y="118" class="tg-muted tg-geometry-b54f4860ae">
+            Capture request A
+          </text>
+          <path
+            d="M272,99 L342,99"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="307.0" y="90.0" class="tg-small tg-geometry-35afd8367b">
+            Send A
+          </text>
+          <rect
+            x="342"
+            y="65"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="92" class="tg-h tg-geometry-b54f4860ae">
+            Request attempt A
+          </text>
+          <text x="358" y="118" class="tg-muted tg-geometry-b54f4860ae">
+            Wait for translation service
+          </text>
+          <rect
+            x="26"
+            y="166"
+            width="246"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="42" y="193" class="tg-h tg-geometry-b54f4860ae">
+            Website changes to version 2
+          </text>
+          <text x="42" y="219" class="tg-muted tg-geometry-b54f4860ae">
+            New segments / reading generation
+          </text>
+          <path
+            d="M272,197 L342,197"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="307.0" y="188.0" class="tg-small tg-geometry-35afd8367b">
+            Send B
+          </text>
+          <rect
+            x="342"
+            y="166"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="193" class="tg-h tg-geometry-b54f4860ae">
+            Request attempt B
+          </text>
+          <text x="358" y="219" class="tg-muted tg-geometry-b54f4860ae">
+            New-version semantic demand
+          </text>
+          <rect
+            x="342"
+            y="268"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="358" y="295" class="tg-h tg-geometry-b54f4860ae">
+            A responds after the source changes
+          </text>
+          <text x="358" y="321" class="tg-muted tg-geometry-b54f4860ae">
+            The result still belongs to the old source
+          </text>
+          <path
+            d="M562,300 L652,300"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="607.0" y="291.0" class="tg-small tg-geometry-35afd8367b">
+            Check version
+          </text>
+          <rect
+            x="652"
+            y="268"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-bad"
+          ></rect>
+          <text x="668" y="295" class="tg-h tg-geometry-b54f4860ae">
+            Reject stale result
+          </text>
+          <text x="668" y="321" class="tg-muted tg-geometry-b54f4860ae">
+            Do not update DOM
+          </text>
+          <rect
+            x="342"
+            y="366"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="393" class="tg-h tg-geometry-b54f4860ae">
+            B completes
+          </text>
+          <text x="358" y="419" class="tg-muted tg-geometry-b54f4860ae">
+            Complete translation
+          </text>
+          <path
+            d="M562,398 L652,398"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="607.0" y="389.0" class="tg-small tg-geometry-35afd8367b">
+            Recheck source text
+          </text>
+          <rect
+            x="652"
+            y="366"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="668" y="393" class="tg-h tg-geometry-b54f4860ae">
+            Matches current identity
+          </text>
+          <text x="668" y="419" class="tg-muted tg-geometry-b54f4860ae">
+            Queue / commit rendering plan
+          </text>
+          <text x="26" y="466" class="tg-muted tg-geometry-b54f4860ae">
+            Check upon receipt: background generation → document generation →
+            source version → result-notification version
+          </text>
+          <text x="26" y="491" class="tg-muted tg-geometry-b54f4860ae">
+            Before committing the DOM, recheck the local reading generation,
+            request attempt, source text, and node connectivity.
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">Scroll wide diagrams horizontally.</p>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Background execution
+        generation, document version, source version, and result-update sequence
+        are checked in layers; work already in the rendering queue must also
+        verify the local translation round and request identity. Cancellation
+        and version checking work together to handle asynchronous races.
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 13</span>One batch of results can
+          update across different animation frames</span
+        ><span class="tg-fig-type">HTML rendering schedule</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node tg-good">
+            <strong>Paragraph A · ready to commit</strong
+            ><span
+              >Identity matches; no selection<br />Enough budget in this
+              frame<br />→ update now</span
+            >
+          </div>
+          <div class="tg-node tg-optional">
+            <strong>Paragraph B · text being selected</strong
+            ><span
+              >Protect the user's selection<br />Retain only this paragraph's
+              latest update plan<br />→ wait until protection no longer
+              applies</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>Paragraph C · wait for next frame</strong
+            ><span
+              >This frame has reached its work budget<br />Retain the update
+              plan for now<br />→ recheck next frame</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          Recheck source text before committing; do not clear the user's
+          selection or freeze other paragraphs
+        </div>
+        <div class="tg-clock-row">
+          <div>
+            <strong>4 ms</strong><span>Time budget before yielding work</span>
+          </div>
+          <div>
+            <strong>8</strong><span>Blocks / observation root / frame</span>
+          </div>
+          <div><strong>256</strong><span>Estimated webpage nodes</span></div>
+          <div>
+            <strong>32 KiB</strong><span>Bytes calculated from UTF-16</span>
+          </div>
+        </div>
+        <p class="tg-mini">
+          Time is checked only after each block update. The first block that
+          exceeds budget but must update atomically may still commit alone.
+          Thus, 4ms is a yield budget, not a hard maximum duration for every
+          webpage update.
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Separating result-arrival
+        cadence from webpage-write cadence lets translation updates coexist with
+        reading, selection, and IME composition. If text remains selected after
+        releasing the mouse or touch, protection still applies.
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Display mode</th>
+            <th>How source text is handled</th>
+            <th>How translations are written</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Bilingual</th>
+            <td>
+              Keep source text in place; if an old translation exists, replace
+              it only when the new update plan commits.
+            </td>
+            <td>
+              Create nodes for the translation, then hand them to the rendering
+              queue for updates.
+            </td>
+          </tr>
+          <tr>
+            <th>Translation only</th>
+            <td>
+              Temporarily retain the original node objects, then remove them
+              from the page; restore by reinserting those same nodes.
+            </td>
+            <td>
+              The main path builds translations from text and line-break nodes;
+              model text is not executed as HTML.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>
+        Finer rendering strategies: coalescing, deferral, and avoiding
+        unnecessary rewrites
+      </summary>
+      <div class="tg-deep-body">
+        <p>
+          The rendering-cadence controller coalesces arriving results and
+          adjusts cadence using recent work duration: new cost estimate = 0.6 ×
+          old cost estimate + 0.4 × current duration; next interval =
+          min(1000ms, 2 × new cost estimate). A 250ms timer provides a fallback
+          when the browser's animation-frame callback has not arrived. This
+          tracks work duration, not the full cost of browser layout and
+          painting.
+        </p>
+        <p>
+          Retain only the latest pending update plan per block, with at most 128
+          deferred plans. Beyond that, the system can record “refresh needed”
+          markers, capped at 4096. Reconciliation after page changes coalesces
+          into one in-progress job per paragraph plus one rerun-pending marker.
+        </p>
+        <p>
+          Rendering summaries use “text length + 32-bit FNV-1a hash” to decide
+          whether rewriting can be skipped, unlike the background's SHA-256
+          semantic identity; different content can still have identical
+          summaries. Multi-sentence translations are combined in original
+          translation-unit order, with joins estimated from Chinese, Japanese,
+          and Korean spacing rules rather than reproducing the original
+          whitespace character for character.
+        </p>
+        <p>
+          Retaining the same original nodes helps preserve object relationships;
+          event bindings, layout, and interaction behavior still depend on the
+          website's own structure and update approach.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">12</span>
+      <h2 id="tg-durability">
+        Being able to read a translation does not mean it is saved
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 14</span>One result, two completion
+          paths</span
+        ><span class="tg-fig-type">SVG state diagram</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-durability-svg"
+          viewbox="0 0 900 378"
+          role="img"
+          aria-labelledby="tg-durability-title tg-durability-desc"
+        >
+          <title id="tg-durability-title">
+            Result availability and persistence success are separate states
+          </title>
+          <desc id="tg-durability-desc">
+            Segment translations can be passed to the page for assembly while
+            saving; persistence succeeds only when the local transaction
+            completes, and failed persistence retries only the local write.
+            Actual display still passes through the page's rendering queue.
+          </desc>
+          <defs>
+            <marker
+              id="tg-durability-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="26"
+            y="28"
+            width="244"
+            height="90"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="42" y="55" class="tg-h tg-geometry-b54f4860ae">
+            Result passes validation
+          </text>
+          <text x="42" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            Response format / preservation markers validated
+          </text>
+          <text x="42" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            Produce a renderable translation
+          </text>
+          <rect
+            x="330"
+            y="28"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="346" y="55" class="tg-h tg-geometry-b54f4860ae">
+            Translation result available
+          </text>
+          <text x="346" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            Persistence status: in progress
+          </text>
+          <text x="346" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            Wait for page assembly / scheduled rendering
+          </text>
+          <rect
+            x="632"
+            y="28"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="648" y="55" class="tg-h tg-geometry-b54f4860ae">
+            Local persistence queue
+          </text>
+          <text x="648" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            Wait for IndexedDB transaction
+          </text>
+          <text x="648" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            The queue itself is not persisted
+          </text>
+          <path
+            d="M270,74 L330,74"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M572,74 L632,74"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="328"
+            y="198"
+            width="244"
+            height="96"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="344" y="225" class="tg-h tg-geometry-b54f4860ae">
+            Persistence failed
+          </text>
+          <text x="344" y="251" class="tg-muted tg-geometry-b54f4860ae">
+            When material is still retained and retryable
+          </text>
+          <text x="344" y="273" class="tg-muted tg-geometry-b54f4860ae">
+            “Retry save” repeats only the disk write
+          </text>
+          <rect
+            x="632"
+            y="198"
+            width="242"
+            height="96"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="648" y="225" class="tg-h tg-geometry-b54f4860ae">
+            Transaction complete
+          </text>
+          <text x="648" y="251" class="tg-muted tg-geometry-b54f4860ae">
+            Persistence status: complete
+          </text>
+          <text x="648" y="273" class="tg-muted tg-geometry-b54f4860ae">
+            Only then may it be marked saved on this device
+          </text>
+          <path
+            d="M754,118 L754,198"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M680,118 L680,154 L450,154 L450,198"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="522" y="146" class="tg-small tg-geometry-b54f4860ae">
+            Failure
+          </text>
+          <text x="770" y="169" class="tg-small tg-geometry-b54f4860ae">
+            Success
+          </text>
+          <path
+            d="M450,198 L450,164 L607,164 L607,75 L632,75"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-dash"
+          ></path>
+          <text x="26" y="348" class="tg-muted tg-geometry-b54f4860ae">
+            Persistence queue full → pause new translation requests; in-flight
+            requests may finish. Background restarts do not automatically
+            restore unsaved material.
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">Scroll wide diagrams horizontally.</p>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>If local persistence
+        temporarily fails, validated translations may remain on screen; “retry
+        save” repeats only local writing, avoiding turning a storage error into
+        another model request.
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>How does the persistence queue bound memory?</summary>
+      <div class="tg-deep-body">
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Entry limit</th>
+                <th>Estimated byte limit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Main persistence queue</th>
+                <td>32</td>
+                <td>16 MiB</td>
+              </tr>
+              <tr>
+                <th>Additional waiting area</th>
+                <td>64</td>
+                <td>8 MiB</td>
+              </tr>
+              <tr>
+                <th>Content retained after persistence failure</th>
+                <td>64</td>
+                <td>8 MiB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Waiting content and content retained after persistence failure have a
+          10-minute retention period, checked and cleaned up during later queue
+          operations or retries. Capacity is estimated as “source UTF-8 bytes +
+          translation UTF-8 bytes × 2 + 1024,” which may differ from actual
+          memory use. When full, the queue pauses new page-translation
+          dispatches; requests already sent may finish.
+        </p>
+        <p>
+          This queue exists only in runtime memory. When the background service
+          ends, content whose write has not completed is not automatically
+          restored on restart. The diagram depicts page-translation persistence
+          states; interactive entry points only enqueue persistence work and do
+          not wait for the same complete on-screen state flow.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">13</span>
+      <h2 id="tg-recovery">
+        Cancellation revokes commit authority; retries need a clear reason
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 15</span>Sending a cancellation signal
+          does not mean the network operation has ended</span
+        ><span class="tg-fig-type">SVG lifecycle diagram</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-cancel-restart-svg"
+          viewbox="0 0 900 389"
+          role="img"
+          aria-labelledby="tg-cancel-restart-title tg-cancel-restart-desc"
+        >
+          <title id="tg-cancel-restart-title">
+            Different lifecycles for cancellation and restart
+          </title>
+          <desc id="tg-cancel-restart-desc">
+            Cancellation first revokes result-commit authority, then waits for
+            confirmed network-request termination. By default, failure to
+            confirm termination within 5 seconds quarantines the service
+            resource; restarting the background service switches generation and
+            retains known quota consumption.
+          </desc>
+          <defs>
+            <marker
+              id="tg-cancel-restart-arrow"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="25"
+            width="248"
+            height="90"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="40" y="52" class="tg-h tg-geometry-b54f4860ae">Running</text>
+          <text x="40" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            Concurrency slot occupied
+          </text>
+          <text x="40" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            Retains result-commit authority
+          </text>
+          <rect
+            x="330"
+            y="25"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="52" class="tg-h tg-geometry-b54f4860ae">
+            Cancellation requested
+          </text>
+          <text x="346" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            Revoke result-commit authority
+          </text>
+          <text x="346" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            Send cancellation signal
+          </text>
+          <rect
+            x="630"
+            y="25"
+            width="246"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="646" y="52" class="tg-h tg-geometry-b54f4860ae">
+            Canceling
+          </text>
+          <text x="646" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            Still waiting for network-request termination confirmation
+          </text>
+          <text x="646" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            Do not release the concurrency slot yet
+          </text>
+          <path
+            d="M272,70 L330,70"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M572,70 L630,70"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="630"
+            y="190"
+            width="246"
+            height="92"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="646" y="217" class="tg-h tg-geometry-b54f4860ae">
+            Termination confirmation received
+          </text>
+          <text x="646" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            Release the concurrency slot
+          </text>
+          <text x="646" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            Even a late success cannot commit a result
+          </text>
+          <rect
+            x="330"
+            y="190"
+            width="242"
+            height="92"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="217" class="tg-h tg-geometry-b54f4860ae">
+            No confirmation within the default 5 seconds
+          </text>
+          <text x="346" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            Network termination state unknown
+          </text>
+          <text x="346" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            Quarantine the service resource; retain the concurrency slot
+          </text>
+          <path
+            d="M750,115 L750,190"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M665,115 L665,151 L451,151 L451,190"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="604" y="151" class="tg-small tg-geometry-35afd8367b">
+            Grace period exceeded
+          </text>
+          <path
+            d="M572,236 L630,236"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="601.0" y="227.0" class="tg-small tg-geometry-35afd8367b">
+            Late termination
+          </text>
+          <rect
+            x="24"
+            y="190"
+            width="248"
+            height="92"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="217" class="tg-h tg-geometry-b54f4860ae">
+            Background service restarts
+          </text>
+          <text x="40" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            Switch to a new background generation
+          </text>
+          <text x="40" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            Release old slots; retain debit counts
+          </text>
+          <text x="24" y="332" class="tg-muted tg-geometry-b54f4860ae">
+            Reconnect: page confirms connection → resends context and
+            active-segment snapshot → background rebuilds demands.
+          </text>
+          <text x="24" y="360" class="tg-muted tg-geometry-b54f4860ae">
+            Text being saved does not automatically revive after restart; only
+            committed translation memory and quota ledgers are persistent.
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">Scroll wide diagrams horizontally.</p>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>First prevent canceled
+        results from reaching the screen, then wait for evidence of actual
+        termination. Returning a concurrency slot while the underlying request
+        still runs would underestimate real concurrency.
+      </figcaption>
+    </figure>
+    <div class="tg-clock-row">
+      <div><strong>25 s</strong><span>Wait for first content</span></div>
+      <div>
+        <strong>20 s</strong><span>No-new-content streaming deadline</span>
+      </div>
+      <div><strong>90 s</strong><span>Timeout threshold per attempt</span></div>
+      <div>
+        <strong>5 s</strong
+        ><span>Grace period to await termination after cancellation</span>
+      </div>
+    </div>
+    <p class="tg-mini">
+      These are adjustable defaults. The normal page-retry policy defaults to 4
+      actual sends, including the first, with a cumulative execution-time budget
+      of 180 seconds. Oversized multi-item batches also have a repair path that
+      splits them into individually requeued items. Demands never attempted and
+      only waiting off-screen are exempt from the normal 30-minute demand
+      expiry.
+    </p>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Failure</th>
+            <th>Handling</th>
+            <th>Why distinguish it?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>HTTP 401 / ordinary 403 / 404</th>
+            <td>
+              Treat as authentication, permission, or model-configuration
+              problems; block the relevant translation resource.
+            </td>
+            <td>Blind retries will not fix configuration.</td>
+          </tr>
+          <tr>
+            <th>HTTP 429 · capacity-related</th>
+            <td>
+              Set a cooldown for the limited resource or quota scope; keep work
+              queued until the resource becomes available again.
+            </td>
+            <td>Retry only after load drops.</td>
+          </tr>
+          <tr>
+            <th>HTTP 402 / 429 · billing or insufficient allowance</th>
+            <td>
+              No further retries by default; allowance-related 403 responses
+              belong here too. Forwarding to another resource remains possible
+              if fallback switching is explicitly enabled and an available
+              resource satisfies the independent-fallback conditions.
+            </td>
+            <td>
+              Billing / account-allowance problems are not transient congestion.
+            </td>
+          </tr>
+          <tr>
+            <th>HTTP 408 / 409 / 425 / 5xx</th>
+            <td>Treat as temporary server failures that may be retried.</td>
+            <td>
+              May recover over time, still subject to attempt and budget limits.
+            </td>
+          </tr>
+          <tr>
+            <th>HTTP 413 / oversized input</th>
+            <td>
+              Split multi-item batches into individual retries; block the work
+              if a single item remains too large.
+            </td>
+            <td>
+              An oversized batch does not mean every item is untranslatable
+              individually.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>Retry timing, wakeups, and clock jumps</summary>
+      <div class="tg-deep-body">
+        <p>
+          Delayed retries for ordinary work use full jitter: choose a random
+          delay between zero and the upper wait bound each time.
+          Capacity-related HTTP 429 instead sets a cooldown for the limited
+          resource or quota scope, using the server-specified wait time, or the
+          base delay if none is provided, without random jitter.
+        </p>
+        <div class="tg-formula">
+          Wait upper bound = min(delay cap, base delay × 2^(attempt count−1))
+          Retry-eligible time = max(server-specified time, now + floor(random
+          value × wait upper bound)) Random value is in [0, 1); floor means
+          round down
+        </div>
+        <p>
+          Jitter spreads out retries; the response header Retry-After adds a
+          lower time bound, accepting seconds or an HTTP date and accounting for
+          server clock differences. Server-requested waits are retained for at
+          most 7 days.
+        </p>
+        <p>
+          Wakeup scheduling is coalesced into one timer for the earliest
+          deadline; when the expected wait is at least 30 seconds, a browser
+          background alarm supplements it. Clock checks compare elapsed system
+          time with elapsed monotonic time: a difference over 5 seconds, or a
+          system-clock rollback over 5 seconds, pauses new dispatches.
+          Conservative recovery occurs only after 2 stable seconds without
+          another anomaly.
+        </p>
+        <p>
+          The cancellation diagram describes network attempts already sent.
+          Attempts with reserved slots but not yet sent may end and release
+          their slots first; if an ongoing debit transaction later commits
+          successfully, that conservative debit remains even if the service was
+          never called. Network operations whose termination cannot be confirmed
+          quarantine the relevant resources and retain their slots until a late
+          termination notice arrives. Restarting the background service
+          establishes a new execution generation: old requests no longer occupy
+          concurrency slots, but the known quota ledger is retained.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">14</span>
+      <h2 id="tg-boundaries">
+        “Local first” must still explain where data goes
+      </h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 16</span>Source text, translations,
+          and keys have different boundaries</span
+        ><span class="tg-fig-type">HTML data-boundary diagram</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-zone">
+            <div class="tg-zone-title">Webpage and content scripts</div>
+            <div class="tg-node">
+              <strong>Source text and DOM</strong
+              ><span
+                >DOM nodes remain on the webpage side<br />Source units /
+                document context sent to the background<br />Receive versioned
+                status and result notifications</span
+              >
+            </div>
+          </div>
+          <div class="tg-zone">
+            <div class="tg-zone-title">Extension storage</div>
+            <div class="tg-node">
+              <strong>Translation memory</strong
+              ><span
+                >Normalized source text, translation, producer<br />The same
+                record includes page associations<br />Page-restoration intent
+                is saved separately</span
+              >
+            </div>
+            <div class="tg-node">
+              <strong>Sensitive translation-service settings</strong
+              ><span
+                >API keys / request headers / service options<br />Separate from
+                page-visible settings<br />No additional local application-layer
+                encryption</span
+              >
+            </div>
+          </div>
+          <div class="tg-zone">
+            <div class="tg-zone-title">External network</div>
+            <div class="tg-node">
+              <strong>Translation service</strong
+              ><span
+                >Receive text to translate<br />LLMs may also receive eligible
+                context<br />Return according to each service's protocol</span
+              >
+            </div>
+            <div class="tg-node tg-optional">
+              <strong>Opt in to translation-memory sync</strong
+              ><span
+                >Includes normalized source text and translation<br />Encrypted
+                by the shared sync service before upload<br />Sync return path
+                writes to local memory</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="tg-bridge">
+          <div>
+            <strong>Sync excludes: </strong>page associations, last-used times,
+            and page-restoration intent.
+          </div>
+          <div>
+            <strong>Sync still includes: </strong>translation content itself; it
+            cannot be described merely as “syncing a little metadata.”
+          </div>
+        </div>
+        <p class="tg-mini">
+          Settings exposed to the page remove API keys, request headers, and
+          provider options; settings sync also excludes those fields,
+          transmitting only settings allowed for synchronization.
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">Why this matters: </span>Settings isolation,
+        transport encryption, and local hits solve different problems.
+        Local-first behavior can avoid some duplicate requests; text still
+        leaves the device whenever a remote translation service is actually
+        called.
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Mechanism</th>
+            <th>Actual behavior</th>
+            <th>Boundaries to retain</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>No external sending</th>
+            <td>
+              Prohibit sending that work to translation services; locally saved
+              translations may still be looked up.
+            </td>
+            <td>
+              Context candidates must also pass policy checks;
+              translation-memory sync is handled separately according to the
+              user's opt-in.
+            </td>
+          </tr>
+          <tr>
+            <th>Incognito</th>
+            <td>
+              Do not look up, save, or sync translation memory for that
+              incognito work.
+            </td>
+            <td>
+              Dispatch and quota metadata without text content is still saved.
+            </td>
+          </tr>
+          <tr>
+            <th>Translation network requests</th>
+            <td>
+              Omit browser credentials, reject redirects, and restrict
+              destination origins; remote connections use HTTPS.
+            </td>
+            <td>
+              Explicitly specified local / private-network hosts may use HTTP.
+            </td>
+          </tr>
+          <tr>
+            <th>Sync encryption</th>
+            <td>
+              Derive keys with HKDF-SHA-256 and encrypt sync data objects with
+              AES-256-GCM.
+            </td>
+            <td>
+              Encryption protects sync content; local settings isolation remains
+              a separate responsibility.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">15</span>
+      <h2 id="tg-design">Reconnect the design to the problems it solves</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">Figure 17</span>From reading needs to
+          explainable engineering trade-offs</span
+        ><span class="tg-fig-type">HTML design comparison</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-design-row">
+          <div class="tg-design-problem">
+            The same sentence appears repeatedly
+          </div>
+          <div>
+            <strong>Separate page bindings / shared work + semantic keys</strong
+            ><span
+              >Share semantically identical work; retain distinct identities
+              when context or rules change.</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            Manage one extra state layer in exchange for explicit reuse
+            boundaries.
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">Visible content keeps waiting</div>
+          <div>
+            <strong>Visibility tiers + small-batch dispatch</strong
+            ><span
+              >Serve the focused visible area first, then preload ahead of
+              reading.</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            Lower-priority tiers may wait; equal simultaneous progress across
+            pages is not guaranteed.
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">Unstable model output</div>
+          <div>
+            <strong>Item-identifier mapping + placeholder validation</strong
+            ><span
+              >Separate whole-response errors from individual-item repair.</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            An extra parsing cost; semantic correctness still depends on
+            translation quality.
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">
+            Requests span cancellation / restart
+          </div>
+          <div>
+            <strong>Execution generations + persisted quota debits</strong
+            ><span
+              >Separate revoking commit authority from retaining known
+              consumption.</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            Conservative reservations may overestimate usage; unknown
+            termination pauses dispatch first.
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">
+            Webpage updates and user interactions
+          </div>
+          <div>
+            <strong
+              >Version checks + selection protection + per-frame budgets</strong
+            ><span
+              >Recheck source text before commit and defer writes for affected
+              blocks.</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            There may still be a wait between translation completion and actual
+            display.
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">Temporary local-storage failure</div>
+          <div>
+            <strong
+              >Separate result availability from completed persistence</strong
+            ><span
+              >Validated translations remain usable; persistence failures retry
+              only the disk write.</span
+            >
+          </div>
+          <div class="tg-design-tradeoff">
+            Results not fully saved are not guaranteed recoverable after the
+            background process restarts.
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        This architecture's value lies in splitting “translation” into
+        separately inspectable responsibilities. Every result has a source
+        identity, every external send is approved, and every screen update must
+        prove again that it still applies.
+      </figcaption>
+    </figure>
+    <h3 id="tg-design-detail-1">
+      Eight key boundaries for understanding this system
+    </h3>
+    <div class="tg-claim-grid">
+      <div class="tg-claim">
+        <b>Streaming capability is separate from page display</b
+        ><span
+          >The lower layer can provide temporary previews; webpage paragraphs
+          wait for final results. LLM translation of selected text updates using
+          streamed text.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>Resources are shared, but entry points still differ</b
+        ><span
+          >Dispatch approval is shared; response parsing, context, entry-point
+          retries, and on-screen states differ.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>Exact memory is separate from similarity search</b
+        ><span
+          >A semantic key is the SHA-256 of the full translation conditions;
+          similar text does not automatically hit.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>Source-string length is separate from tokens</b
+        ><span
+          >2000, 900, and 2400 are UTF-16 thresholds at different stages; they
+          must not be restated as token counts.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>Concurrency slots are separate from quota debits</b
+        ><span
+          >Termination can release a concurrency slot; consumption from sent
+          requests remains in the time window.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>4ms is a cooperative budget</b
+        ><span
+          >One indivisible update can exceed the budget, and the page can still
+          drop frames.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>Visible, saved, and synced are separate</b
+        ><span
+          >Result available, persisted, and sync complete are three
+          independently advancing states.</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>Safeguards are separate from quality guarantees</b
+        ><span
+          >Plain-text output and version checks reduce rendering risks;
+          translation quality, cost, and performance still require separate
+          measurement.</span
+        >
+      </div>
+    </div>
+  </section>
+
+  <div class="tg-footer">
+    <p>Browser Script Manager · Translation System Illustrated</p>
+    <p>
+      Readable offline; wide data-flow diagrams scroll horizontally. Enable
+      JavaScript to interact with the preload-region example and download
+      individual SVGs. <a href="#article-title">Back to article top</a>
+    </p>
+  </div>
+</div>

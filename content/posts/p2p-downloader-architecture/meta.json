@@ -1,0 +1,48 @@
+{
+  "id": "p2p-downloader-architecture",
+  "slug": "p2p-downloader-architecture",
+  "author": "DennySORA",
+  "bodyFormat": "static-html",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-10-25",
+  "updatedAt": "2026-10-25",
+  "topics": ["engineering", "systems"],
+  "contentType": "research-note",
+  "tagIds": ["p2p", "networking"],
+  "featured": false,
+  "discussionNumber": null,
+  "commentsEnabled": false,
+  "relatedPostIds": [],
+  "relatedProjectIds": [],
+  "source": {
+    "kind": "imported-manuscript",
+    "filename": "p2p-downloader-architecture(1).html",
+    "sha256": "6bf2d307959da366267b171e624da65cfc162e54dce56fafb9f55c7e8e3c6b92"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "P2P 下載器的架構與機制",
+      "summary": "把來源探索與實際傳輸分開，讓大量下載持續前進。從整體分工開始，理解片段、連線、資源與檔案狀態如何彼此配合。",
+      "publication": "draft",
+      "translationState": "original",
+      "sourceRevision": "0a8984d77b1e8afcfb6e08ce43b428ecfa57bcde320a43c8a5266603c9d0ec51",
+      "reviewEvidence": null
+    },
+    "en": {
+      "title": "P2P downloader architecture and mechanisms",
+      "summary": "Separate source discovery from data transfer to keep large download workloads moving. Explore how components, pieces, connections, resources and file states fit together.",
+      "publication": "draft",
+      "translationState": "machine-draft",
+      "sourceRevision": "0a8984d77b1e8afcfb6e08ce43b428ecfa57bcde320a43c8a5266603c9d0ec51",
+      "reviewEvidence": null
+    },
+    "ja": {
+      "title": "P2P ダウンローダーのアーキテクチャと仕組み",
+      "summary": "ソース探索と実際の転送を分離し、大量のダウンロードを前へ進める。全体の役割分担から、ピース、接続、リソース、ファイル状態の連携を理解する。",
+      "publication": "draft",
+      "translationState": "machine-draft",
+      "sourceRevision": "0a8984d77b1e8afcfb6e08ce43b428ecfa57bcde320a43c8a5266603c9d0ec51",
+      "reviewEvidence": null
+    }
+  }
+}

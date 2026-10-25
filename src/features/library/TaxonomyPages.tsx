@@ -8,7 +8,7 @@ import { Icon } from '../../components/Icon.tsx';
 import { PageHead } from '../../components/PageHead.tsx';
 import { dictionaries, type Locale } from '../../i18n/index.ts';
 
-type TermView = Extract<ViewData, { kind: 'topic' | 'tag' }>;
+type TermView = Extract<ViewData, { kind: 'topic' | 'tag' | 'blog-folder' }>;
 type TagsView = Extract<ViewData, { kind: 'tags' }>;
 
 /** Static, crawlable Topic and Tag pages that work without JavaScript. */
@@ -28,9 +28,15 @@ export function TaxonomyPage({
         {t.backToLibrary}
       </a>
       <PageHead
-        eyebrow={view.kind === 'topic' ? t.topicEyebrow : t.tagEyebrow}
+        eyebrow={
+          view.kind === 'blog-folder'
+            ? t.navLibrary
+            : view.kind === 'topic'
+              ? t.topicEyebrow
+              : t.tagEyebrow
+        }
         title={view.term.label}
-        icon={view.kind === 'topic' ? 'folder-open' : 'tag'}
+        icon={view.kind === 'tag' ? 'tag' : 'folder-open'}
       >
         {view.term.description ? (
           <p className="ln page-intro">{view.term.description}</p>

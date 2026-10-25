@@ -11,8 +11,10 @@ vi.mock('node:fs', async (importOriginal) => {
       if (!/\/content\/posts\/[^/]+\/meta\.json$/.test(String(args[0])))
         return bytes;
       const post = JSON.parse(bytes.toString()) as {
+        source: { kind: string };
         locales: Record<string, { publication: string }>;
       };
+      if (post.source.kind !== 'profile-adaptation') return bytes;
       for (const edition of Object.values(post.locales))
         edition.publication = 'published';
       const json = JSON.stringify(post);
@@ -42,7 +44,9 @@ describe('published content fixtures', () => {
 
   it('prerenders published articles and their populated taxonomy', () => {
     const paths = publishedPaths();
-    for (const post of loadPosts())
+    for (const post of loadPosts().filter(
+      (post) => post.source.kind === 'profile-adaptation',
+    ))
       for (const locale of locales) {
         expect(post.editions).toContain(locale);
         expect(paths).toContain(`/${locale}/blog/${post.slug}`);

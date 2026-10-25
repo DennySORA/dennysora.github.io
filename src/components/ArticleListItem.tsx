@@ -1,3 +1,4 @@
+import { articlePath } from '../lib/blog-tree.ts';
 import type { ReactNode } from 'react';
 import type { TaxonomyLabels } from '../app/page.tsx';
 import { dictionaries, formatCompactDate, type Locale } from '../i18n/index.ts';
@@ -56,7 +57,7 @@ export function ArticleListItem({
         </time>
       </p>
       <Heading className="article-row-title">
-        <a href={`/${locale}/blog/${post.slug}/`}>{post.title}</a>
+        <a href={articlePath(post.slug, locale)}>{post.title}</a>
       </Heading>
       <p className="article-row-summary">{excerpt ?? post.summary}</p>
       {extra}

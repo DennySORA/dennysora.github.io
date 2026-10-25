@@ -43,7 +43,8 @@ export const postSchema = z
   .object({
     id: safeId,
     slug: safeId,
-    author: z.string().min(1),
+    author: z.string().min(1).nullable(),
+    bodyFormat: z.enum(['markdown', 'static-html']).optional(),
     sourceLocale: localeSchema,
     publishedAt: z.iso.date(),
     updatedAt: z.iso.date(),
@@ -56,15 +57,24 @@ export const postSchema = z
     commentsEnabled: z.boolean(),
     relatedPostIds: z.array(safeId),
     relatedProjectIds: z.array(safeId),
-    source: z
-      .object({
-        repo: z.string().min(1),
-        commit,
-        path: z.string().min(1),
-        url: https,
-        kind: z.enum(['profile-adaptation', 'legacy-blog', 'original']),
-      })
-      .strict(),
+    source: z.union([
+      z
+        .object({
+          repo: z.string().min(1),
+          commit,
+          path: z.string().min(1),
+          url: https,
+          kind: z.enum(['profile-adaptation', 'legacy-blog', 'original']),
+        })
+        .strict(),
+      z
+        .object({
+          kind: z.literal('imported-manuscript'),
+          filename: z.string().min(1),
+          sha256: hash,
+        })
+        .strict(),
+    ]),
     locales: z.partialRecord(localeSchema, editionSchema),
   })
   .strict();

@@ -1,3 +1,4 @@
+import { articlePath } from '../../lib/blog-tree.ts';
 import type { AboutProfile, ViewData } from '../../app/page.tsx';
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
 import { Icon, type IconName } from '../../components/Icon.tsx';
@@ -141,7 +142,7 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
           <ul className="file-list">
             {recent.map((post) => (
               <li className="ln" key={post.id}>
-                <a href={`/${locale}/blog/${post.slug}/`}>
+                <a href={articlePath(post.slug, locale)}>
                   <Icon name="markdown" size={16} />
                   <span className="file-list-name">{post.slug}.md</span>
                   <span className="file-list-title">{post.title}</span>

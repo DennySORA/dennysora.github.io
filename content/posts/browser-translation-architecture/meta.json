@@ -1,0 +1,48 @@
+{
+  "id": "browser-translation-architecture",
+  "slug": "browser-translation-architecture",
+  "author": null,
+  "bodyFormat": "static-html",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-10-25",
+  "updatedAt": "2026-10-25",
+  "topics": ["engineering", "systems"],
+  "contentType": "research-note",
+  "tagIds": ["architecture", "privacy", "security"],
+  "featured": false,
+  "discussionNumber": null,
+  "commentsEnabled": false,
+  "relatedPostIds": [],
+  "relatedProjectIds": [],
+  "source": {
+    "kind": "imported-manuscript",
+    "filename": "browser-script-manager-translation-v1(1).html",
+    "sha256": "05f216991fa9d35b2897f034d95f1d834fb9b643f974d7ce95fa6d121b8ec945"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "一段文字，如何成為可靠的網頁譯文？",
+      "summary": "從 DOM 擷取、共用排程，到輸出驗證與安全回寫，透過 18 張圖解理解 Browser Script Manager 翻譯系統的架構、資料流與設計取捨。",
+      "publication": "draft",
+      "translationState": "original",
+      "sourceRevision": "3fe6609e5c23387564220239f2bc024b3a87a2fd7092698fb6bc804cc4328594",
+      "reviewEvidence": null
+    },
+    "en": {
+      "title": "How does a piece of text become a reliable webpage translation?",
+      "summary": "From DOM extraction and shared scheduling to output validation and safe writeback: 18 diagrams explain the architecture, data flows and design trade-offs of the Browser Script Manager translation system.",
+      "publication": "draft",
+      "translationState": "machine-draft",
+      "sourceRevision": "3fe6609e5c23387564220239f2bc024b3a87a2fd7092698fb6bc804cc4328594",
+      "reviewEvidence": null
+    },
+    "ja": {
+      "title": "一つのテキストは、どのように信頼できるウェブページの訳文になるのか？",
+      "summary": "DOM の抽出、共通スケジューリング、出力検証、安全な書き戻しまで。18 点の図解で Browser Script Manager 翻訳システムのアーキテクチャ、データフロー、設計上の選択を理解する。",
+      "publication": "draft",
+      "translationState": "machine-draft",
+      "sourceRevision": "3fe6609e5c23387564220239f2bc024b3a87a2fd7092698fb6bc804cc4328594",
+      "reviewEvidence": null
+    }
+  }
+}

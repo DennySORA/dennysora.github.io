@@ -1,0 +1,3529 @@
+<div class="network-guide">
+  <section>
+    <h2 id="overview">
+      <span class="np-section-no">01</span
+      ><span class="np-heading-text"
+        >The problems a downloader really needs to solve</span
+      >
+    </h2>
+    <p>
+      Add hundreds of downloads at once: some start quickly, some never find a
+      source, and others show many connected peers but barely make progress.
+      Raising the concurrent-download limit sometimes helps; at other times it
+      only increases disk activity and memory use, or even slows downloads that
+      were working normally.
+    </p>
+    <p>
+      The reason is that a downloader handles several distinct questions at
+      once:
+      <strong
+        >What content am I looking for? Who has the parts I need? Can they
+        transfer them now? Can the local machine keep up? Is the received data
+        correct?</strong
+      >
+      These activities differ in speed and cost, and do not all finish in a neat
+      sequence.
+    </p>
+    <p>
+      This article works down from the overall architecture of a proposed
+      downloader supporting multiple P2P protocols. BitTorrent and eD2k/Kad
+      illustrate actual protocol behavior; the nine components, dual loops and
+      dynamic download pool are one architectural choice for organizing those
+      capabilities.
+    </p>
+    <h3 id="overview-detail-1">
+      First, distinguish the forms data takes in the system
+    </h3>
+    <div
+      role="region"
+      aria-label="Basic P2P terminology"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Term</th>
+            <th scope="col">Meaning in the download process</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Task</th>
+            <td>
+              The user's intent to obtain content or part of it, including
+              selected files, destination and paused state. A task may contact
+              many sources over time.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Source / peer</th>
+            <td>
+              A remote party that may provide data. A candidate in search
+              results, a connected source and a source actively sending data
+              represent different stages.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Metadata</th>
+            <td>
+              Data describing the content, such as its file structure, size,
+              segmentation and verification information. The content's structure
+              must be understood before deciding what to request.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Piece / part</th>
+            <td>
+              A data unit used by a protocol for description or verification.
+              Transfers may divide it into smaller blocks; units from different
+              protocols are not directly interchangeable.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Payload</th>
+            <td>
+              The actual content to be saved. Handshakes, source lists,
+              keepalives and other control messages also use the network, but do
+              not count as file progress.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      In BitTorrent, for example, peers exchange information about the pieces
+      they hold, and the receiver then requests data. Received pieces still need
+      verification against the metadata. This lets a downloader obtain data from
+      multiple peers at once, while making connectivity, traffic and correct new
+      data three separate things to observe.<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <div class="np-takeaway">
+      <strong
+        >The architecture revolves around steadily reducing the data still
+        missing.</strong
+      >
+      <p>
+        Connection counts, task counts and bandwidth utilization are only
+        signals that inform decisions. The actual outcome is that required
+        content arrives progressively, passes verification and remains usable
+        after interruptions.
+      </p>
+    </div>
+  </section>
+  <section>
+    <h2 id="architecture">
+      <span class="np-section-no">02</span
+      ><span class="np-heading-text"
+        >Overall architecture: how nine components work together</span
+      >
+    </h2>
+    <p>
+      Start with three questions to understand this architecture:
+      <strong
+        >Where do control decisions go, where does payload go, and where is
+        state stored?</strong
+      >
+      Pressing pause only needs to change a task's execution intent. The
+      protocol engine continues to handle the gigabytes being downloaded; those
+      bytes do not need to pass through the management interface or database.
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>Architecture</span
+        ><strong>Control decisions and payload follow separate paths</strong>
+      </div>
+      <div
+        role="region"
+        aria-label="Overall architecture diagram; scroll horizontally"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 660"
+          width="880"
+          height="660"
+          role="img"
+          aria-labelledby="arch-title arch-desc"
+        >
+          <title id="arch-title">
+            Logical architecture and data paths of a P2P downloader
+          </title>
+          <desc id="arch-desc">
+            Web View and Manager accept operations; Search discovers sources,
+            Scheduler allocates task resources, and Connection Manager manages
+            connections. Component contains Downloader and Engine. Payload flows
+            from remote peers through Engine to the filesystem, not through
+            Manager or SQLite. Config, Store and Metrics provide configuration,
+            persistent state and observations respectively.
+          </desc>
+          <defs>
+            <marker
+              id="arch-arrow-control"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="arch-arrow-data"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="660"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="30"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              Manage tasks and connections; let engines transfer data
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="40" y="58" width="218" height="64" rx="8"></rect>
+              <rect x="300" y="58" width="280" height="64" rx="8"></rect>
+              <rect x="40" y="192" width="220" height="82" rx="8"></rect>
+              <rect x="320" y="192" width="240" height="82" rx="8"></rect>
+              <rect x="620" y="192" width="220" height="82" rx="8"></rect>
+              <rect
+                x="262"
+                y="326"
+                width="360"
+                height="156"
+                rx="9"
+                class="np-svg-stroke-control-border"
+              ></rect>
+              <rect x="40" y="400" width="176" height="70" rx="8"></rect>
+              <rect x="674" y="400" width="166" height="70" rx="8"></rect>
+              <rect x="40" y="540" width="245" height="72" rx="8"></rect>
+              <rect x="318" y="540" width="245" height="72" rx="8"></rect>
+              <rect x="596" y="540" width="245" height="72" rx="8"></rect>
+            </g>
+            <rect
+              x="286"
+              y="402"
+              width="312"
+              height="58"
+              rx="6"
+              class="np-svg-fill-surface np-svg-stroke-entity-file np-svg-stroke-width-1-2"
+            ></rect>
+            <g
+              marker-end="url(#arch-arrow-control)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-7"
+            >
+              <path d="M258 90H300"></path>
+              <path d="M440 122V192"></path>
+              <path d="M440 154H150V192"></path>
+              <path d="M260 232H320"></path>
+              <path d="M150 274V310H310V326"></path>
+              <path d="M440 274V326"></path>
+              <path d="M730 274V310H574V326"></path>
+              <path d="M162 540V506H308V482"></path>
+              <path
+                d="M440 482V540"
+                marker-start="url(#arch-arrow-control)"
+              ></path>
+              <path
+                d="M594 482V506H718V540"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+            </g>
+            <g
+              marker-end="url(#arch-arrow-data)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-6"
+            >
+              <path d="M216 431H286"></path>
+              <path d="M598 431H674"></path>
+            </g>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="58" y="85">P2P Web View</text>
+              <text x="318" y="85">P2P Manager</text>
+              <text x="58" y="219">P2P Search</text>
+              <text x="338" y="219">P2P Scheduler</text>
+              <text x="638" y="219" class="np-svg-font-size-15">
+                Connection Manager
+              </text>
+              <text x="286" y="352">P2P Component</text>
+              <text x="304" y="425" class="np-svg-fill-entity-file">
+                Engine
+              </text>
+              <text x="58" y="429">Remote peer</text>
+              <text x="692" y="429">Filesystem</text>
+              <text x="58" y="567">P2P Config</text>
+              <text x="336" y="567">P2P Store</text>
+              <text x="614" y="567">P2P Metrics</text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="58" y="107">Actions and explanations</text>
+              <text x="318" y="107">Record intent; coordinate requests</text>
+              <text x="58" y="244">Cross-source discovery</text>
+              <text x="338" y="244">Trials, pools and fair rotation</text>
+              <text x="638" y="244">Connection roles and service</text>
+              <text x="286" y="378">
+                Downloader: adapt and coordinate native engines
+              </text>
+              <text x="304" y="447">Request · receive · verify · write</text>
+              <text x="58" y="452">Provide payload</text>
+              <text x="692" y="452">Pieces and final files</text>
+              <text x="58" y="591">Settings and source catalogs</text>
+              <text x="336" y="591">SQLite: state and recovery records</text>
+              <text x="614" y="591">History and trends</text>
+            </g>
+            <g class="np-svg-font-size-12 np-svg-fill-text-secondary">
+              <text x="279" y="77" class="np-svg-text-anchor-middle">
+                Actions
+              </text>
+              <text x="232" y="146">Source queries</text>
+              <text x="450" y="163">Task intent</text>
+              <text x="290" y="252" class="np-svg-text-anchor-middle">
+                Sources
+              </text>
+              <text x="169" y="301">Queries and probes</text>
+              <text x="451" y="302">Task budget</text>
+              <text x="621" y="301">Connection limits</text>
+              <text x="64" y="524">Consistent settings snapshot</text>
+              <text x="451" y="524">State sync</text>
+              <text x="618" y="524">Samples</text>
+              <text
+                x="251"
+                y="420"
+                class="np-svg-text-anchor-middle np-svg-fill-entity-file"
+              >
+                Data
+              </text>
+              <text
+                x="636"
+                y="420"
+                class="np-svg-text-anchor-middle np-svg-fill-entity-file"
+              >
+                Data
+              </text>
+              <path
+                d="M626 77H664"
+                marker-end="url(#arch-arrow-control)"
+                class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-7"
+              ></path>
+              <text x="677" y="81">Control and state</text>
+              <path
+                d="M626 104H664"
+                marker-end="url(#arch-arrow-data)"
+                class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-6"
+              ></path>
+              <text x="677" y="108">Payload</text>
+              <text x="40" y="640">
+                The nine logical roles may share one process; some reporting and
+                shared-setting links are omitted.
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        Arrows show relationships between the main responsibilities; repeated
+        configuration reads and observation reports are omitted. Multiple
+        Component instances may exist, and one engine may handle several tasks
+        at once.
+      </figcaption>
+    </figure>
+    <div
+      role="region"
+      aria-label="Responsibilities of the nine logical components"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Component</th>
+            <th scope="col">Problem it handles</th>
+            <th scope="col">Relationship to other components</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">P2P Web View</th>
+            <td>
+              Shows progress, sources and reasons for waiting, and lets the user
+              operate tasks.
+            </td>
+            <td>Expresses intent and retrieves state through Manager.</td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Manager</th>
+            <td>
+              Accepts operations, identifies tasks and manages available
+              Components.
+            </td>
+            <td>
+              Coordinates intent and state, passing changes requiring
+              persistence to Store.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Config</th>
+            <td>Provides consistent effective settings and source catalogs.</td>
+            <td>
+              Keeps components operating under the same policies and retains the
+              reasons for updates.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Search</th>
+            <td>
+              Searches for content, resolves identifiers and continually
+              discovers sources.
+            </td>
+            <td>
+              Obtains leads through each protocol's Search Provider for use in
+              scheduling.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Scheduler</th>
+            <td>
+              Decides which tasks may run trials, continue transferring or
+              temporarily yield resources.
+            </td>
+            <td>
+              Allocates task budgets according to source information and local
+              resource pressure.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Component</th>
+            <td>Connects to actual protocols and download engines.</td>
+            <td>
+              Translates shared management intent into operations the engine can
+              perform and reports native state.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Store</th>
+            <td>
+              Saves tasks, content identifiers, source summaries, policies and
+              recovery records.
+            </td>
+            <td>
+              Uses SQLite for recoverable facts; the engine manages file
+              contents.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Metrics</th>
+            <td>
+              Records changes in speed, latency, queues and resource pressure
+              over time.
+            </td>
+            <td>
+              Supports analysis of the process; real-time control has a separate
+              direct reporting path.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">P2P Connection Manager</th>
+            <td>
+              Understands each connection's role, service history and evidence
+              of anomalies.
+            </td>
+            <td>
+              Proposes explicitly scoped connection limits, enforced by the
+              agent inside Component.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="architecture-detail-1">
+      Logical responsibilities and process placement are separate decisions
+    </h3>
+    <p>
+      The nine names represent nine responsibilities, not necessarily nine
+      services from day one. One Rust daemon can host the coordinating logic of
+      Manager, Search, Scheduler, Connection Manager and Store. Native engines
+      can then live in the same process or in separate Component hosts according
+      to their embedding capabilities, implementation languages and
+      fault-isolation needs.
+    </p>
+    <p>
+      In-process calls and data exchange are more direct, and deployment is
+      simpler. Separate processes isolate engine crashes, native libraries and
+      resource limits, at the cost of more complex communication, restarts and
+      state synchronization. Those costs—not the number of boxes in an
+      architecture diagram—should determine whether processes are separated.
+    </p>
+    <p>
+      A download task does not need its own engine process either. Multiple
+      tasks can usually share an engine runtime, connection management and
+      source-discovery facilities. More tasks primarily add state and the
+      resources actually needed, rather than multiplying the entire system.
+    </p>
+  </section>
+  <section>
+    <h2 id="components">
+      <span class="np-section-no">03</span
+      ><span class="np-heading-text"
+        >How Component connects different protocols</span
+      >
+    </h2>
+    <p>
+      A common mistake in a multi-protocol downloader is reducing every protocol
+      to the same start, pause and progress-percentage interface. Operations
+      appear unified, but crucial information disappears: BitTorrent choking,
+      remote eD2k queues, source reachability, and whether an engine can
+      actually close just one connection.
+    </p>
+    <p>
+      Component preserves these differences while letting upper layers manage
+      them through common questions: What data is available now? What resources
+      will transfer require? What would be lost by stopping? Is the observed
+      wait caused remotely or locally?
+    </p>
+    <h3 id="components-detail-1">
+      Put each protocol capability in the right place
+    </h3>
+    <div
+      role="region"
+      aria-label="Responsibilities inside Component"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Internal role</th>
+            <th scope="col">Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Search Provider</th>
+            <td>
+              Integrates the protocol's search and source-discovery mechanisms,
+              preserving provenance, observation times and native fields.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Downloader</th>
+            <td>
+              Turns requests to trial a task, reduce its resources, or save and
+              pause it into engine operations, then tracks whether they actually
+              take effect.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Engine</th>
+            <td>
+              Handles network protocols, message parsing, piece requests,
+              retries, verification, native resume support and file I/O.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Connection Agent</th>
+            <td>
+              Reports connection states visible to the engine and performs only
+              the disconnections or limits that the engine actually supports.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Resource and observation reporting</th>
+            <td>
+              Summarizes tasks, connections and local load; sends live summaries
+              to control components and historical samples to Metrics.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="components-detail-2">
+      Three decision layers, each answering a different question
+    </h3>
+    <p>
+      <strong
+        >Scheduler decides which tasks receive how many resources; Connection
+        Manager decides which sources or connections are suitable now; Engine
+        decides which piece to request from which peer next.</strong
+      >
+      This lets the outer layer manage the whole host's load while the engine
+      handles individual requests according to live protocol state.
+    </p>
+    <p>
+      For example, Scheduler may allow task A to keep downloading while
+      Connection Manager temporarily avoids one source that repeatedly times
+      out. Engine can still request pieces from other sources. If the user has
+      paused task A, no layer should resume transfer merely because a faster
+      source was found.
+    </p>
+    <h3 id="components-detail-3">
+      Visibility does not imply equally precise control
+    </h3>
+    <p>
+      An external engine's management API may expose only torrent-level
+      summaries, while its underlying library provides per-peer piece and
+      request information. These capabilities must not be conflated. Likewise,
+      banning an IP and closing only the current connection have different
+      scopes; the adapter must preserve that distinction.
+    </p>
+    <p>
+      qBittorrent provides a concrete example: in the pinned source revision
+      cited here, <code>banPeersAction()</code> parses endpoints and then calls
+      <code>banIP()</code>. That action therefore cannot be presented as a
+      control affecting only one connection. This example concerns the cited
+      revision and illustrates differences in adapter capabilities.<sup
+        class="np-cite"
+        ><a
+          href="#source-s18"
+          aria-label="Reference 18: qBittorrent: the actual scope of a ban operation"
+          >[18]</a
+        ></sup
+      >
+    </p>
+    <p>
+      With incomplete information, an upper layer can still perform coarser task
+      scheduling, but it cannot infer unobserved details. Showing 'not provided
+      by the engine' is more useful than displaying fictitious zero traffic or
+      falsely precise controls.
+    </p>
+  </section>
+  <section>
+    <h2 id="discovery">
+      <span class="np-section-no">04</span
+      ><span class="np-heading-text"
+        >Finding content and finding someone who can send it</span
+      >
+    </h2>
+    <p>
+      Before discovering sources, establish that everyone means the same
+      content. A filename is only display information: identical names may
+      denote different files, and different names may denote identical data.
+      Multi-protocol systems face another issue: hashes in different protocols
+      may use different algorithms, segmentation schemes, or even hash different
+      kinds of objects.
+    </p>
+    <h3 id="discovery-detail-1">
+      An infohash identifies a torrent's content description
+    </h3>
+    <p>
+      A BitTorrent v1 infohash is the SHA-1 hash of the original bencoding of
+      the <code>info</code> dictionary. This dictionary records the content
+      structure and piece-verification information; the infohash is its digest,
+      not a SHA-1 hash of the entire downloaded file. In v2, the infohash uses
+      SHA-256, and a per-file Merkle tree organizes data verification.<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s03" aria-label="Reference 3: BitTorrent v2 | BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <p>
+      Consequently, byte-identical files may belong to different torrents if
+      their torrent descriptions differ. Selecting only two files in a
+      multi-file torrent is another matter: the torrent's identity remains
+      unchanged, but the ranges still needed by that task change.
+    </p>
+    <p>
+      The system should store content identity, selection scope and network
+      scope separately. BitTorrent, eD2k and other identifiers must not be
+      merged just because their strings look similar. Cross-protocol data reuse
+      also requires verification of content correspondence, piece boundaries and
+      verification methods.
+    </p>
+    <h3 id="discovery-detail-2">
+      Why do magnet links often wait at 'fetching metadata'?
+    </h3>
+    <p>
+      A magnet link may contain only a content identifier and a few location
+      hints, without a complete file structure. The client first finds peers,
+      then uses metadata exchange to obtain the <code>info</code> dictionary and
+      check it against the known infohash. BEP 9 transfers this part, not all
+      top-level fields of the complete <code>.torrent</code> file; v2
+      verification also needs its corresponding hash information.<sup
+        class="np-cite"
+        ><a
+          href="#source-s02"
+          aria-label="Reference 2: Metadata exchange and magnet links | BEP 9"
+          >[02]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s03" aria-label="Reference 3: BitTorrent v2 | BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <p>
+      It is reasonable for the interface to show no file progress yet: the
+      system is obtaining information needed for subsequent requests. If no
+      usable peer exists, increasing the transfer budget cannot conjure up
+      metadata.
+    </p>
+    <h3 id="discovery-detail-3">
+      Different discovery mechanisms operate on different indexes
+    </h3>
+    <div
+      role="region"
+      aria-label="Comparison of source-discovery mechanisms"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Mechanism</th>
+            <th scope="col">How sources are found</th>
+            <th scope="col">Common points of confusion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">BitTorrent Tracker</th>
+            <td>
+              The client announces participation in a swarm to a tracker and
+              obtains peer contact information.
+            </td>
+            <td>
+              Tracker responses contain source information; peers normally send
+              the payload.<sup class="np-cite"
+                ><a
+                  href="#source-s01"
+                  aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+                  >[01]</a
+                ></sup
+              ><sup class="np-cite"
+                ><a
+                  href="#source-s08"
+                  aria-label="Reference 8: UDP Tracker | BEP 15"
+                  >[08]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">BitTorrent DHT</th>
+            <td>
+              Starting with known nodes, looks up peer information associated
+              with an infohash.
+            </td>
+            <td>
+              Mainline DHT is not a general-purpose keyword search engine and
+              does not store downloaded files directly.<sup class="np-cite"
+                ><a
+                  href="#source-s04"
+                  aria-label="Reference 4: BitTorrent DHT | BEP 5"
+                  >[04]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">PEX</th>
+            <td>
+              Connected peers exchange contact information for other peers.
+            </td>
+            <td>
+              Requires an initial connection; it cannot independently solve the
+              problem of finding the first peer.<sup class="np-cite"
+                ><a
+                  href="#source-s05"
+                  aria-label="Reference 5: Peer Exchange | BEP 11"
+                  >[05]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">eD2k Server</th>
+            <td>
+              Provides file search and source indexes, and assists in
+              establishing some connections.
+            </td>
+            <td>
+              Index services and actual peer-to-peer payload transfer have
+              different roles.<sup class="np-cite"
+                ><a
+                  href="#source-s19"
+                  aria-label="Reference 19: aMule: the role of eD2k servers"
+                  >[19]</a
+                ></sup
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Kad</th>
+            <td>
+              Uses a distributed index to find files and sources; joining still
+              requires known contact nodes.
+            </td>
+            <td>
+              In *Mule systems, Kad and eD2k discover sources differently but
+              can share their file-transfer mechanism.<sup class="np-cite"
+                ><a
+                  href="#source-s11"
+                  aria-label="Reference 11: aMule: the Kad network"
+                  >[11]</a
+                ></sup
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      The upper-level Search component can therefore support both finding
+      content by keyword and finding sources for a known identifier, without
+      assuming every protocol has the same search capabilities. Extensions to
+      other networks must likewise preserve their own indexing, queuing and
+      identity models.
+    </p>
+    <h3 id="discovery-detail-4">
+      Private torrents have their own source boundaries
+    </h3>
+    <p>
+      When metainfo explicitly sets <code>private=1</code>, BEP 27 requires
+      operation within the private tracker's source scope. DHT, PEX and similar
+      mechanisms must not spread sources as they would for an ordinary public
+      torrent.<sup class="np-cite"
+        ><a
+          href="#source-s06"
+          aria-label="Reference 6: Private torrents | BEP 27"
+          >[06]</a
+        ></sup
+      >
+    </p>
+    <p>
+      Before metadata is available, not yet knowing whether a torrent is private
+      does not justify arbitrarily adding public trackers. This architecture
+      retains original sources together with discovery policies, preventing a
+      global desire for more sources from crossing an individual task's privacy
+      boundary.
+    </p>
+  </section>
+  <section>
+    <h2 id="loops">
+      <span class="np-section-no">05</span
+      ><span class="np-heading-text"
+        >Why large download workloads need two loops</span
+      >
+    </h2>
+    <p>
+      Suppose 1,000 targets are added at once. If only tasks occupying download
+      slots can discover sources, a few unresponsive tasks at the front can hold
+      back the rest. The opposite extreme—immediately creating many connections
+      for all 1,000 targets—can exhaust local resources first.
+    </p>
+    <p>
+      The dual-loop design separates these activities:
+      <strong
+        >the discovery loop maintains source information; the transfer loop
+        fetches actual data according to current evidence and resources.</strong
+      >
+      Every accepted target remains eligible for discovery scheduling, while the
+      queries and connections actually issued concurrently remain
+      resource-limited.
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>Workflow</span
+        ><strong
+          >Discovery continues while ready tasks start transferring</strong
+        >
+      </div>
+      <div
+        role="region"
+        aria-label="Dual discovery-and-transfer loop diagram; scroll horizontally"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 440"
+          width="880"
+          height="440"
+          role="img"
+          aria-labelledby="loops-title loops-desc"
+        >
+          <title id="loops-title">
+            Source discovery and data transfer run concurrently
+          </title>
+          <desc id="loops-desc">
+            All pending targets continually participate in shared source
+            queries, producing fresh source information one result at a time.
+            Any target with sufficient evidence can start a trial without
+            waiting for the whole discovery batch. Productive trials enter the
+            download pool; unsuitable tasks retain their data and enter
+            observation, to be reassessed when new sources or service
+            opportunities appear.
+          </desc>
+          <defs>
+            <marker
+              id="loops-arrow-blue"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="loops-arrow-green"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="440"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="31"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              Results arrive individually; transfers can start at any time
+            </text>
+            <text
+              x="40"
+              y="74"
+              class="np-svg-font-size-13 np-svg-fill-link np-svg-font-weight-650"
+            >
+              Discovery loop
+            </text>
+            <text
+              x="40"
+              y="238"
+              class="np-svg-font-size-13 np-svg-fill-entity-file np-svg-font-weight-650"
+            >
+              Transfer loop
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="40" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="330" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="620" y="94" width="220" height="74" rx="8"></rect>
+              <rect x="40" y="254" width="220" height="74" rx="8"></rect>
+              <rect
+                x="330"
+                y="254"
+                width="220"
+                height="74"
+                rx="8"
+                class="np-svg-stroke-entity-file"
+              ></rect>
+              <rect x="620" y="254" width="220" height="74" rx="8"></rect>
+            </g>
+            <g
+              marker-end="url(#loops-arrow-blue)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-8"
+            >
+              <path d="M260 133H330"></path>
+              <path d="M550 133H620"></path>
+              <path d="M730 168V207H150V254"></path>
+              <path
+                d="M730 328V373H150V328"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+              <path d="M200 328V350H680V328"></path>
+            </g>
+            <g
+              marker-end="url(#loops-arrow-green)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2"
+            >
+              <path d="M260 291H330"></path>
+              <path d="M550 291H620"></path>
+            </g>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="58" y="123">All pending targets</text>
+              <text x="348" y="123">Shared source queries</text>
+              <text x="638" y="123">Fresh source information</text>
+              <text x="58" y="283">Trial</text>
+              <text x="348" y="283">Active download pool</text>
+              <text x="638" y="283">Observe and wait</text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="58" y="148">Remain eligible for discovery</text>
+              <text x="348" y="148">Tracker / DHT / Server, etc.</text>
+              <text x="638" y="148">Sources, pieces and service</text>
+              <text x="58" y="308">Fetch genuinely missing data</text>
+              <text x="348" y="308">Measure yield and local pressure</text>
+              <text x="638" y="308">Retain pieces and useful queue state</text>
+              <text x="440" y="198" class="np-svg-text-anchor-middle">
+                Assess a trial as soon as a target has fresh evidence
+              </text>
+              <text x="440" y="395" class="np-svg-text-anchor-middle">
+                Reassess after new sources, service opportunities or cooldown
+              </text>
+              <text
+                x="440"
+                y="344"
+                class="np-svg-text-anchor-middle np-svg-font-size-12"
+              >
+                Trial needs more evidence
+              </text>
+              <text x="40" y="425">
+                Both loops run concurrently; one target's timeout does not stall
+                the whole batch.
+              </text>
+            </g>
+            <g
+              class="np-svg-font-size-12 np-svg-fill-text-secondary np-svg-text-anchor-middle"
+            >
+              <text x="295" y="122">Queue query</text>
+              <text x="585" y="122">Update each result</text>
+              <text x="295" y="280">Steady yield</text>
+              <text x="585" y="280">Unsuitable now</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        Source evidence and task events link the two loops. 'Observe' means
+        temporarily reducing transfer investment while continuing to receive new
+        source information.
+      </figcaption>
+    </figure>
+    <h3 id="loops-detail-1">
+      If target 900 returns first, handle target 900 first
+    </h3>
+    <p>
+      Discovery need not wait for an entire batch. While target 1's tracker is
+      still unresponsive, target 900 may already have found a peer holding
+      missing pieces and can begin a trial. Each result updates independently;
+      there is no requirement to wait until everyone responds.
+    </p>
+    <p>
+      This does not mean repeatedly querying every source. For identical content
+      under compatible network scopes and policies, duplicate source queries can
+      be combined so that different file selections share results. Tracker
+      transports, DHT routing tables and eD2k server sessions also have
+      shareable parts; metadata already being fetched usually does not need a
+      duplicate job.
+    </p>
+    <h3 id="loops-detail-2">
+      Retain leads so connections can be released when appropriate
+    </h3>
+    <p>
+      Discovery can retain source addresses, advertised ranges, current service
+      states and observation times. These leads survive the end of a brief
+      connection and guide later retries.
+    </p>
+    <p>
+      Source information ages, however. A peer reachable five minutes ago may
+      now be offline, and previously missing pieces may already have arrived
+      elsewhere. Stale information can guide whom to query first, but is not
+      proof of immediate download availability. An expired snapshot affects
+      source assessment only; it does not invalidate locally verified data.
+    </p>
+    <h3 id="loops-detail-3">Discovery has its own cadence</h3>
+    <p>
+      Protocols themselves constrain requery frequency. Tracker response
+      intervals, PEX update cadence and eD2k reasking mechanisms all affect the
+      next reasonable query time. Global scheduling can prioritize queries and
+      merge duplicate work, but rapid retries cannot eliminate a remote waiting
+      policy.<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s05" aria-label="Reference 5: Peer Exchange | BEP 11"
+          >[05]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="Reference 12: aMule: eD2k/Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+    <p>
+      Separating discovery from transfer lets a busy system keep finding new
+      opportunities, while tasks with temporarily scarce sources need not occupy
+      full transfer resources indefinitely.
+    </p>
+  </section>
+  <section>
+    <h2 id="probing">
+      <span class="np-section-no">06</span
+      ><span class="np-heading-text"
+        >Brief probes and the real cost of connections</span
+      >
+    </h2>
+    <p>
+      A brief probe before committing to transfer can reveal whether a peer is
+      reachable, responds for the correct content, advertises particular pieces,
+      or currently requires queuing. This helps choose the next source worth
+      trying.
+    </p>
+    <p>
+      A probe answers only limited questions. A quickly established TCP
+      connection proves only that this connection establishment was quick—not
+      the peer's upload bandwidth, service stability or data integrity. Those
+      require actual requests for useful data.
+    </p>
+    <h3 id="probing-detail-1">
+      A probe is not the same as a half-open connection
+    </h3>
+    <p>
+      In libtorrent, <code>connecting</code> denotes the half-open state while a
+      connection is still being established; <code>handshake</code> indicates an
+      open connection waiting for the protocol handshake. Obtaining a bitfield
+      normally goes beyond connection establishment alone.<sup class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="Reference 9: libtorrent native observations | Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <p>
+      This article therefore calls the activity a brief probe session.
+      Deliberately leaving TCP incomplete neither obtains the required protocol
+      information nor eliminates resource use. For UDP trackers, DHT and
+      mechanisms with shared transports, one logical probe must not be counted
+      automatically as one independent TCP socket.
+    </p>
+    <h3 id="probing-detail-2">
+      Limit concurrent population and creation rate separately
+    </h3>
+    <p>
+      One limit governs the <strong>concurrent population</strong>: how many
+      file descriptors, how much memory and how much engine state the currently
+      live probes occupy. Another governs the <strong>creation rate</strong>:
+      even if old probes finish quickly, that does not justify creating many new
+      connections to one service within a second.
+    </p>
+    <p>
+      A file descriptor (FD) is an operating-system handle for resources such as
+      open files and sockets; available FDs are only one constraint. A token
+      bucket converts a permitted creation rate into consumable tokens and
+      limits bursts. Used together, these controls constrain both ongoing cost
+      and short-term impact.
+    </p>
+    <div class="np-example">
+      <h3 id="probing-detail-3">A simplified resource estimate</h3>
+      <p>
+        Assume each probe of this type uses an independent socket. Remaining FDs
+        support 300 probes; 24 MiB of probe-specific memory headroom at an
+        estimated 64 KiB per probe supports about 384. The live-probe ceiling is
+        therefore constrained first by the 300 FDs.
+      </p>
+      <div class="np-equation">
+        New probes ≤ min(remaining concurrency budget, available global tokens,
+        available source-specific tokens)
+      </div>
+      <p>
+        If only 16 tokens are available now, at most 16 probes may be added even
+        with room for 150 concurrent probes. These numbers illustrate the two
+        constraints; they are not recommended settings. Shared-socket probes
+        require recalculation using their actual resources.
+      </p>
+    </div>
+    <p>
+      Actual costs vary with protocol and response size. Beyond estimates,
+      monitor connection timeouts, memory growth, event-processing delay and
+      allocation failures. NAT tracking-table and ephemeral-port capacity may
+      not be directly observable; if failure rates rise, conservatively reducing
+      creation is more reliable than assuming unlimited capacity.
+    </p>
+    <h3 id="probing-detail-4">
+      When a probe ends, release only resources that can be released
+    </h3>
+    <p>
+      A temporary connection may be closed once source information is obtained
+      and no native state requires it to remain open. Shared server sessions,
+      DHT routing state and valuable queue eligibility must be handled according
+      to the protocol, not torn down after every probe.
+    </p>
+    <p>
+      In eD2k in particular, queue state does not correspond one-to-one with a
+      persistent TCP connection; reasks, queue ratings and related interactions
+      may also use UDP. Whether a connection must remain open and when to reask
+      should follow the native engine's mechanisms, not blanket claims that
+      disconnection always loses one's place or has no cost at all.<sup
+        class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="Reference 12: aMule: eD2k/Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="coverage">
+      <span class="np-section-no">07</span
+      ><span class="np-heading-text"
+        >Why can a download remain incomplete despite many sources?</span
+      >
+    </h2>
+    <p>
+      A source count tells us only how many candidates exist, not whether the
+      complete content can be obtained. The useful questions are:
+      <strong
+        >Which pieces are still missing locally? Can the current sources
+        collectively provide them?</strong
+      >
+    </p>
+    <p>
+      A complete seed holds every piece, usually an obvious positive sign.
+      Without one complete source, several peers holding complementary portions
+      may still suffice. Conversely, hundreds of sources all missing the same
+      final piece can leave progress stalled.<sup class="np-cite"
+        ><a
+          href="#source-s12"
+          aria-label="Reference 12: aMule: eD2k/Kademlia FAQ"
+          >[12]</a
+        ></sup
+      >
+    </p>
+    <figure id="coverage-demo" class="np-coverage-demo">
+      <div class="np-figure-head">
+        <span>Piece example</span
+        ><strong>Three incomplete sources can jointly cover all content</strong>
+      </div>
+      <p class="np-figure-intro">
+        Assume a file has 12 equal-sized pieces, with pieces 1–3 verified
+        locally. 'Has' denotes a source's advertisement; 'Verified' denotes
+        local evidence.
+      </p>
+
+      <div
+        role="region"
+        aria-label="Availability matrix for twelve equal-sized pieces; scroll horizontally"
+        tabindex="0"
+        class="np-table-scroll"
+      >
+        <table class="np-piece-table">
+          <caption class="np-visually-hidden">
+            Piece coverage of the local machine and sources A, B and C. Verified
+            means locally verified; Has means advertised by a source; a dash
+            means not held.
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Data location</th>
+              <th scope="col">1</th>
+              <th scope="col">2</th>
+              <th scope="col">3</th>
+              <th scope="col">4</th>
+              <th scope="col">5</th>
+              <th scope="col">6</th>
+              <th scope="col">7</th>
+              <th scope="col">8</th>
+              <th scope="col">9</th>
+              <th scope="col">10</th>
+              <th scope="col">11</th>
+              <th scope="col">12</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                Local<span class="np-peer-state">Verified range</span>
+              </th>
+              <td class="np-state-verified">Verified</td>
+              <td class="np-state-verified">Verified</td>
+              <td class="np-state-verified">Verified</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                Source A<span class="np-peer-state"
+                  >Available · advertised range</span
+                >
+              </th>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                Source B<span class="np-peer-state"
+                  >Available · advertised range</span
+                >
+              </th>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                Source C<span class="np-peer-state"
+                  >Available · advertised range</span
+                >
+              </th>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-none">—</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                Observed union<span class="np-peer-state"
+                  >Local + available sources</span
+                >
+              </th>
+              <td class="np-state-verified">Verified</td>
+              <td class="np-state-verified">Verified</td>
+              <td class="np-state-verified">Verified</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+              <td class="np-state-available">Has</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="np-demo-result">
+        <p id="coverage-summary">
+          <strong>Observed coverage: 12/12 (100%)</strong>; sources advertise
+          availability for all 9 pieces still missing locally.
+        </p>
+        <p id="coverage-missing">
+          No common gap is currently observed. Pieces 10–12 are supplied only by
+          source C, making that source worth retaining.
+        </p>
+      </div>
+      <details class="np-coverage-cases">
+        <summary>View all 8 source combinations</summary>
+        <p>
+          This static comparison uses the original piece example. Only source
+          availability changes; locally verified pieces 1–3 are always retained.
+          A source advertisement does not mean data has been received or
+          verified.
+        </p>
+        <div
+          class="np-table-scroll"
+          role="region"
+          aria-label="Piece coverage across eight source-availability combinations"
+          tabindex="0"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Available sources</th>
+                <th scope="col">Observed coverage</th>
+                <th scope="col">Availability among 9 missing pieces</th>
+                <th scope="col">Pieces without supply</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">A、B、C</th>
+                <td>12／12（100%）</td>
+                <td>9／9</td>
+                <td>None</td>
+              </tr>
+              <tr>
+                <th scope="row">A、B</th>
+                <td>9／12（75%）</td>
+                <td>6／9</td>
+                <td>10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">A、C</th>
+                <td>10／12（83.3%）</td>
+                <td>7／9</td>
+                <td>7、8</td>
+              </tr>
+              <tr>
+                <th scope="row">B、C</th>
+                <td>10／12（83.3%）</td>
+                <td>7／9</td>
+                <td>4、5</td>
+              </tr>
+              <tr>
+                <th scope="row">A</th>
+                <td>6／12（50%）</td>
+                <td>3／9</td>
+                <td>7、8、9、10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">B</th>
+                <td>7／12（58.3%）</td>
+                <td>4／9</td>
+                <td>4、5、10、11、12</td>
+              </tr>
+              <tr>
+                <th scope="row">C</th>
+                <td>7／12（58.3%）</td>
+                <td>4／9</td>
+                <td>4、5、6、7、8</td>
+              </tr>
+              <tr>
+                <th scope="row">None</th>
+                <td>3／12（25%）</td>
+                <td>0／9</td>
+                <td>4、5、6、7、8、9、10、11、12</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <figcaption>
+        A teaching example of set operations. When source C is unavailable,
+        supply for pieces 10–12 disappears; locally verified pieces 1–3 are
+        unaffected. Advertised availability does not mean data has arrived, nor
+        guarantee that a peer will stay online.
+      </figcaption>
+    </figure>
+    <h3 id="coverage-detail-1">
+      Two ratios distinguish what is present from what is still obtainable
+    </h3>
+    <p>
+      Let <code>S</code> denote the data ranges required by this task,
+      <code>V</code> the locally verified ranges, and <code>Aⱼ</code> the ranges
+      source j recently advertised as available. These sets use compatible
+      native verification ranges; multi-file content also requires attention to
+      piece boundaries.
+    </p>
+    <div role="group" aria-label="Piece-coverage formulas" class="np-equation">
+      <div>Missing range M = S − V</div>
+      <div>Observed coverage = bytes[(V ∪ ⋃Aⱼ) ∩ S] / bytes(S)</div>
+      <div>Availability of missing data = bytes[(⋃Aⱼ) ∩ M] / bytes(M)</div>
+    </div>
+    <p>
+      Here, <code>bytes()</code> counts bytes in a range. The example uses
+      equal-sized pieces, so counting cells works directly; a real file's final
+      piece may be shorter, making simple piece counts misleading. When
+      <code>M</code> is empty, all required data has passed verification and can
+      proceed to persistence and final publication; there is no need to divide
+      by zero.
+    </p>
+    <p>
+      The first ratio asks how much of the requirement is covered by locally
+      verified data together with sources' current advertisements. The second
+      considers only data still missing. Neither turns a peer's advertisement
+      into verified progress. If a protocol does not expose a piece list, leave
+      that state unknown and use actual transfer to inform the assessment.
+    </p>
+    <h3 id="coverage-detail-2">
+      Rare pieces sometimes matter more than current speed
+    </h3>
+    <p>
+      Even if source C in the example is slower, it holds pieces 10–12 that the
+      others lack. Ranking only by MiB/s and replacing it with a fast source
+      holding only pieces 4–9 may improve short-term traffic while reducing the
+      chance of completing the file.
+    </p>
+    <p>
+      That is why global scheduling must preserve opportunities to obtain rare
+      data. Engine handles piece selection within a download; Scheduler manages
+      resources across tasks, preventing tasks with rare sources from being
+      completely crowded out by higher-throughput tasks. libtorrent's piece
+      picker considers rarity and priority, but global fairness is a separate
+      concern.<sup class="np-cite"
+        ><a
+          href="#source-s10"
+          aria-label="Reference 10: libtorrent piece selection"
+          >[10]</a
+        ></sup
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="payload">
+      <span class="np-section-no">08</span
+      ><span class="np-heading-text">How peer data becomes a usable file</span>
+    </h2>
+    <p>
+      The actual data path begins once sources are available. Engine uses known
+      pieces, outstanding requests and native service state to decide what to
+      request from whom next. The outer download pool sets resource bounds;
+      these detailed choices stay inside the engine.
+    </p>
+    <h3 id="payload-detail-1">
+      A piece is a verification unit; a block is a request unit
+    </h3>
+    <p>
+      In BitTorrent v1, metadata contains hashes for individual pieces. During
+      transfer, a piece may be divided into multiple smaller block requests. A
+      received block initially establishes only its received range; normally the
+      whole piece must be assembled before its hash can be checked.<sup
+        class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <p>
+      This does not mean the entire piece must remain in memory. The engine can
+      write to a partial file first, then read it or reuse available data for
+      verification.
+      <strong
+        >Receiving, writing and verification may interleave; 'received' alone
+        does not mean data is safe to reuse.</strong
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="Differences between data states"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">State</th>
+            <th scope="col">What is known</th>
+            <th scope="col">What cannot yet be assumed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Received</th>
+            <td>
+              A data range has arrived locally, with obvious message and range
+              errors excluded.
+            </td>
+            <td>
+              It has not necessarily passed content-hash verification and may
+              still exist only in a buffer.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Verified</th>
+            <td>
+              The protocol has provided enough information to confirm that the
+              content matches the expected verification value.
+            </td>
+            <td>
+              The data and resume records are not necessarily durably stored
+              yet.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Persisted for recovery</th>
+            <td>
+              Data and corresponding state have been synchronized through the
+              storage workflow and can be checked and reused after restart.
+            </td>
+            <td>
+              This alone does not imply every file is complete or that the
+              content is safe to execute.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="payload-detail-2">Why keep multiple requests outstanding?</h3>
+    <p>
+      Sending one request and waiting for its response before sending the next
+      creates idle gaps from network round trips. Pipelining keeps multiple
+      requests in flight, so later requests are already being processed while
+      earlier data returns. The BitTorrent specification explicitly describes
+      this approach.<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <div class="np-example">
+      <h3 id="payload-detail-3">
+        The relationship between request window and RTT
+      </h3>
+      <p>
+        In an idealized estimate, sustaining 10 MiB/s with an approximately 100
+        ms request round-trip time requires room for about 1 MiB of in-flight
+        data to avoid stalling merely while waiting for responses.
+      </p>
+      <div class="np-equation">
+        <div>In-flight data ≈ target rate × round-trip time</div>
+        <div>10 MiB/s × 0.1 s = 1 MiB</div>
+        <div>At 16 KiB per request: about 64 in-flight requests</div>
+      </div>
+      <p>
+        This is only an order-of-magnitude estimate. Remote queues, congestion
+        control, native request limits, packet loss and local buffers affect the
+        result; 64 is not a universally optimal value. Here, KiB and MiB mean
+        2¹⁰ and 2²⁰ bytes respectively.
+      </p>
+    </div>
+    <p>
+      Too small a request window may leave bandwidth idle while waiting; too
+      large a window accumulates buffers and slows cancellation or reallocation.
+      When the network is not saturated, inspect existing sources' request
+      pipelines before deciding to add more tasks.
+    </p>
+    <h3 id="payload-detail-4">
+      Verification granularity also affects recovery costs
+    </h3>
+    <p>
+      BitTorrent v2 organizes each file's hashes with a SHA-256 Merkle tree,
+      relating data to an expected root through the tree. When a trusted root
+      and recovery data are available, *Mule's AICH can locate smaller damaged
+      blocks within a part, preserve correct data and reduce redownloading.
+      Their formats and trust sources differ; they are not directly
+      interchangeable hash trees.<sup class="np-cite"
+        ><a href="#source-s03" aria-label="Reference 3: BitTorrent v2 | BEP 52"
+          >[03]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s13"
+          aria-label="Reference 13: aMule: AICH and corruption recovery"
+          >[13]</a
+        ></sup
+      >
+    </p>
+    <p>
+      A matching hash proves correspondence with the expected identifier. If the
+      selected content was untrustworthy in the first place, downloading it
+      correctly does not automatically make it a safe program or file.
+    </p>
+    <h3 id="payload-detail-5">
+      Sometimes duplicate data helps a download finish sooner
+    </h3>
+    <p>
+      Near the end of a download, only a few blocks remain, so any slow source
+      can delay completion. BitTorrent endgame mode may request remaining data
+      from multiple sources and cancel the other requests after one copy
+      arrives. Cancellations and data responses can cross in transit, producing
+      late duplicate blocks.<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s07" aria-label="Reference 7: Fast Extension | BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <p>
+      Measurements can therefore distinguish network-received bytes,
+      nonduplicate required data and verified progress. Duplicates have a cost
+      but may shorten the final wait. The duplication ratio alone does not
+      establish that a source is deliberately wasting bandwidth.
+    </p>
+  </section>
+  <section>
+    <h2 id="trial">
+      <span class="np-section-no">09</span
+      ><span class="np-heading-text"
+        >Trials: judge service using data the task actually needs</span
+      >
+    </h2>
+    <p>
+      Discovery supplies leads; a trial reveals actual service. It fetches
+      ranges genuinely missing from the task. Correct data remains useful for
+      the subsequent download, avoiding a separate speed test that fetches
+      unrelated content.
+    </p>
+    <p>
+      A trial is not intended to produce an eternal speed ranking. It asks
+      whether this combination of sources, under current network conditions,
+      local load and protocol state, can keep providing new data worth the
+      resources invested.
+    </p>
+    <h3 id="trial-detail-1">
+      Connecting, receiving service and receiving data are distinct observations
+    </h3>
+    <p>
+      Some sources handshake quickly but remain queued; others take longer to
+      start yet transfer steadily afterward. Measuring every no-data interval
+      from connection establishment conflates native waiting with genuine
+      request timeouts.
+    </p>
+    <figure class="np-service-clock">
+      <div class="np-figure-head">
+        <span>Timeline</span
+        ><strong
+          >Elapsed time versus time suitable for assessing requests</strong
+        >
+      </div>
+      <div
+        role="region"
+        aria-label="Illustrative service timeline"
+        tabindex="0"
+        class="np-table-scroll"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Time interval</th>
+              <th scope="col">What happens</th>
+              <th scope="col">Interpretation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">0–8 s</th>
+              <td>Connected, but still queued remotely.</td>
+              <td>
+                Record the waiting cost; this is not nonresponse after an
+                accepted data request.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">8–14 s</th>
+              <td>
+                Required pieces can be requested, requests are outstanding, and
+                local receiving is healthy.
+              </td>
+              <td>
+                These 6 seconds are suitable for observing first-data latency
+                and request progress.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">14–19 s</th>
+              <td>
+                Local disk backlog causes the receiver to throttle intake.
+              </td>
+              <td>
+                These 5 seconds reflect a local bottleneck and must not be
+                blamed on the remote peer.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">19–25 s</th>
+              <td>The local machine recovers and resumes valid requests.</td>
+              <td>
+                Observe service during this interval; track deadlines separately
+                when request generations change.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption>
+        This teaching example spans 25 seconds in total. The two intervals
+        suitable for evaluating valid requests total 12 seconds. Engine still
+        handles native request timeouts and cancellations.
+      </figcaption>
+    </figure>
+    <p>
+      Service eligibility is not a remote bandwidth guarantee; it only means the
+      conditions for making a particular request are currently met. Ordinary
+      BitTorrent choking restricts transfers, but after Fast Extension
+      negotiation, allowed-fast may permit requests for particular pieces while
+      choked, and those requests may still be explicitly rejected. Eligibility
+      therefore depends on the specific request and negotiated mechanisms.<sup
+        class="np-cite"
+        ><a href="#source-s07" aria-label="Reference 7: Fast Extension | BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <h3 id="trial-detail-2">
+      Retain uncertainty when samples are insufficient
+    </h3>
+    <p>
+      If a trial's resource window cannot obtain a complete verification unit,
+      its outcome may be 'awaiting verification', not corrupt data. A high-RTT
+      source that has only just begun service should not be judged conclusively
+      from one short window either. Consider new data, verification progress,
+      latency, duplication and local interference together, then decide whether
+      further observation is worth its cost.
+    </p>
+    <p>
+      A small file may finish during the trial; proceed directly to verification
+      and persistence. A slow source holding rare pieces may also deserve
+      continued service. Its value cannot be reduced to a fixed MiB/s threshold.
+    </p>
+    <h3 id="trial-detail-3">Task states explain what is being waited for</h3>
+    <div
+      role="region"
+      aria-label="Task phases and reasons for waiting"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Phase</th>
+            <th scope="col">Actual meaning</th>
+            <th scope="col">Next opportunity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Gathering sources</th>
+            <td>Still obtaining metadata or fresh source evidence.</td>
+            <td>
+              Each usable result can independently advance to the next step.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Preparing / trialing</th>
+            <td>
+              Promising sources exist; the task is waiting for or using a
+              limited resource window.
+            </td>
+            <td>
+              Continue, extend or yield according to actual progress and cost.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Transferring</th>
+            <td>Useful data is arriving and resources still permit it.</td>
+            <td>Adjust as missing pieces, sources and local load change.</td>
+          </tr>
+          <tr>
+            <th scope="row">Observing / waiting</th>
+            <td>
+              No sources, missing critical pieces, remote queuing or temporarily
+              low benefit.
+            </td>
+            <td>
+              New sources, expiry of a waiting period or fair rotation provide
+              another trial opportunity.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Paused / locally held</th>
+            <td>
+              The user paused the task, a local error occurred, or an
+              operation's result is unconfirmed.
+            </td>
+            <td>
+              Resume when the cause is resolved; do not penalize the source's
+              service assessment.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Transfer complete</th>
+            <td>Required data has passed native verification.</td>
+            <td>
+              Confirm persistence and final location; continue sharing or stop
+              according to intent.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      These phases and source quality are separate dimensions. An incomplete
+      source actively providing rare pieces is perfectly reasonable, as is a
+      paused download whose completed local pieces remain valid. Compressing
+      them into one good-or-bad score loses explanatory power.
+    </p>
+  </section>
+  <section>
+    <h2 id="adaptive-pool">
+      <span class="np-section-no">10</span
+      ><span class="np-heading-text"
+        >How the download pool expands, contracts and rotates fairly</span
+      >
+    </h2>
+    <p>
+      A dynamic download pool is a continuously observing feedback controller:
+      allocate resources to some tasks, measure their progress and pressure,
+      then decide what to do next. The number of active transfers is an outcome
+      of that process.
+    </p>
+    <p>
+      Inside Scheduler, responsibilities can be divided into three parts:
+      <code>PoolSupervisor</code> summarizes the current situation, a capacity
+      controller decides how much to increase or reduce overall investment, and
+      a rotation mechanism selects suitable candidates and tasks to yield. These
+      names describe internal responsibilities within the same global scheduling
+      layer.
+    </p>
+    <figure class="np-diagram">
+      <div class="np-figure-head">
+        <span>Feedback control</span
+        ><strong
+          >Measure progress and pressure, then adjust the next
+          allocation</strong
+        >
+      </div>
+      <div
+        role="region"
+        aria-label="Download-pool feedback control diagram; scroll horizontally"
+        tabindex="0"
+        class="np-diagram-scroll"
+      >
+        <svg
+          viewBox="0 0 880 440"
+          width="880"
+          height="440"
+          role="img"
+          aria-labelledby="feedback-title feedback-desc"
+        >
+          <title id="feedback-title">
+            Feedback control of a dynamic download pool
+          </title>
+          <desc id="feedback-desc">
+            The controller continuously measures useful-data growth, local
+            resource pressure and report freshness, then decides to expand, hold
+            or contract. Engine adjusts new requests and concurrency. Network
+            and disk results feed the next decision cycle. During disk
+            congestion, reduce new requests first, drain pending writes and
+            adjust tasks using that disk.
+          </desc>
+          <defs>
+            <marker
+              id="feedback-arrow-blue"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-link"></path>
+            </marker>
+            <marker
+              id="feedback-arrow-green"
+              viewBox="0 0 10 10"
+              refX="8.5"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="np-svg-fill-entity-file"></path>
+            </marker>
+          </defs>
+          <rect
+            width="880"
+            height="440"
+            rx="12"
+            class="np-svg-fill-background"
+          ></rect>
+          <g class="np-svg-fill-text">
+            <text
+              x="40"
+              y="31"
+              class="np-svg-font-size-18 np-svg-font-weight-650"
+            >
+              Adjust transfers using useful progress and local pressure
+            </text>
+            <g
+              class="np-svg-fill-surface np-svg-stroke-border-strong np-svg-stroke-width-1-2"
+            >
+              <rect x="60" y="78" width="220" height="114" rx="8"></rect>
+              <rect x="350" y="78" width="220" height="114" rx="8"></rect>
+              <rect x="640" y="78" width="200" height="114" rx="8"></rect>
+              <rect
+                x="640"
+                y="262"
+                width="200"
+                height="100"
+                rx="8"
+                class="np-svg-stroke-entity-file"
+              ></rect>
+              <rect
+                x="60"
+                y="252"
+                width="510"
+                height="110"
+                rx="8"
+                class="np-svg-fill-surface np-svg-stroke-entity-kind"
+              ></rect>
+            </g>
+            <g
+              marker-end="url(#feedback-arrow-blue)"
+              class="np-svg-fill-none np-svg-stroke-link np-svg-stroke-width-1-8"
+            >
+              <path d="M280 143H350"></path>
+              <path d="M570 143H640"></path>
+              <path
+                d="M740 362V398H27V135H60"
+                class="np-svg-stroke-dasharray-5-4"
+              ></path>
+            </g>
+            <path
+              d="M740 192V262"
+              marker-end="url(#feedback-arrow-green)"
+              class="np-svg-fill-none np-svg-stroke-entity-file np-svg-stroke-width-2-1"
+            ></path>
+            <g class="np-svg-font-size-16 np-svg-font-weight-650">
+              <text x="78" y="105">Measure continuously</text>
+              <text x="368" y="105">Assess capacity</text>
+              <text x="658" y="105">Engine</text>
+              <text x="658" y="290">Network and disk</text>
+              <text x="78" y="282" class="np-svg-fill-entity-kind">
+                When disk is congested
+              </text>
+            </g>
+            <g class="np-svg-font-size-13 np-svg-fill-text-secondary">
+              <text x="78" y="130">Useful-data growth</text>
+              <text x="78" y="151" class="np-svg-font-size-12">
+                Network, CPU, memory, I/O
+              </text>
+              <text x="78" y="174" class="np-svg-font-size-12">
+                Report freshness; source state
+              </text>
+              <text x="368" y="130" class="np-svg-font-size-12">
+                Headroom + benefit: expand
+              </text>
+              <text x="368" y="151" class="np-svg-font-size-12">
+                Not yet stable: hold
+              </text>
+              <text x="368" y="174" class="np-svg-font-size-12">
+                Rising pressure: contract
+              </text>
+              <text x="658" y="135">Adjust requests and concurrency</text>
+              <text x="658" y="158">Preserve native protocol cadence</text>
+              <text x="658" y="315">Receive, verify, write</text>
+              <text x="658" y="339" class="np-svg-font-size-12">
+                Observe each disk / network domain
+              </text>
+              <text x="78" y="310">
+                Reduce new requests first; let pending writes drain.
+              </text>
+              <text x="78" y="336">
+                Adjust tasks on the pressured disk; retain resources for healthy
+                tasks.
+              </text>
+            </g>
+            <g class="np-svg-font-size-12 np-svg-fill-text-secondary">
+              <text x="315" y="131" class="np-svg-text-anchor-middle">
+                Decide
+              </text>
+              <text x="605" y="131" class="np-svg-text-anchor-middle">
+                Adjust
+              </text>
+              <text x="752" y="228" class="np-svg-fill-entity-file">
+                Execute
+              </text>
+              <text
+                x="552"
+                y="280"
+                class="np-svg-text-anchor-end np-svg-fill-entity-kind"
+              >
+                Local backpressure
+              </text>
+              <text x="430" y="389" class="np-svg-text-anchor-middle">
+                Useful data, waiting time and backlog feed the next decision
+              </text>
+              <text x="60" y="424">
+                Observe each adjustment before expanding or contracting again,
+                so the system has time to settle.
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        Adding tasks, changing peer counts per task and changing request windows
+        all affect load. Small changes to one primary variable at a time make
+        the results easier to understand.
+      </figcaption>
+    </figure>
+    <h3 id="adaptive-pool-detail-1">
+      Resources form a set of constraints, not one remaining-download count
+    </h3>
+    <p>
+      Five tasks may all be remotely limited and use almost no bandwidth;
+      another may already saturate one disk's random-write capacity. Scheduling
+      must therefore consider network input and output, pending writes, memory,
+      verification work, CPU and FDs together, while preserving headroom for
+      control operations.
+    </p>
+    <div class="np-equation">
+      <div>For each resource r:</div>
+      <div>
+        Committed usage(r) + estimated new-task cost(r) ≤ available capacity(r)
+        − reserved headroom(r)
+      </div>
+    </div>
+    <p>
+      This is a framework for resource allocation, not a claim that every cost
+      can be accurately predicted. Some resources can be limited directly;
+      others require adjustment based on live pressure. Work already dispatched
+      whose reduction is unconfirmed may still be transferring, so its resources
+      cannot yet be treated as fully available.
+    </p>
+    <h3 id="adaptive-pool-detail-2">
+      How backpressure propagates from disk to network
+    </h3>
+    <p>
+      When data arrives faster than the disk can write it, pending-write buffers
+      grow. Continued growth consumes memory and may delay verification and
+      event handling. Adding peers then imposes more unprocessed data on the
+      downstream path.
+    </p>
+    <p>
+      Backpressure tells the upstream side that the downstream side cannot keep
+      up: reduce new data requests or transfer budgets first, allowing in-flight
+      data and write queues to drain. Useful connections may be retained
+      according to cost; there is no need to disconnect and restart the entire
+      pool.
+    </p>
+    <p>
+      Pressure also has a scope. Tasks writing to a slow HDD need throttling,
+      while those writing to a separate idle SSD may be unaffected. Linux PSI
+      supplies signals of pressure from CPU, memory and I/O stalls, but is not a
+      per-disk throughput gauge or a measurement of available Internet
+      bandwidth.<sup class="np-cite"
+        ><a
+          href="#source-s16"
+          aria-label="Reference 16: Linux kernel: Pressure Stall Information"
+          >[16]</a
+        ></sup
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="Common download-pool situations and adjustments"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Observed situation</th>
+            <th scope="col">Reasonable next step</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">
+              Network headroom remains; the local machine is healthy
+            </th>
+            <td>
+              Inspect existing sources and request windows first; if
+              source-limited, add promising trials.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              Network is not saturated, but pending writes keep growing
+            </th>
+            <td>
+              Reduce new requests targeting the affected disk so verification
+              and writing can catch up.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Adding tasks barely changes aggregate progress</th>
+            <td>
+              Examine added costs and displacement of existing tasks; reverse
+              the latest expansion if its benefit is insufficient.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Throughput is stable without persistent backlog</th>
+            <td>
+              Preserve productive service while retaining a small allowance for
+              discovery and fair rotation.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Resource reports are stale or interrupted</th>
+            <td>
+              Restore observations first; do not treat unknown capacity as idle.
+              Keep the engine's own resource limits active.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">No more usable sources are available</th>
+            <td>
+              Maintain a reasonable discovery cadence; more local resources
+              cannot create nonexistent supply.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="adaptive-pool-detail-3">
+      Compare useful throughput at the same data layer
+    </h3>
+    <p>
+      Network-interface traffic includes protocol overhead, retransmissions and
+      traffic from other programs. Payload received by the downloader may still
+      include duplicates or data that eventually fails verification. For
+      long-term benefit, measure newly verified required bytes per observation
+      interval; use deduplicated received progress as a short-term supplement.
+    </p>
+    <p>
+      Both measurements serve a purpose. Verified volume is closer to reliable
+      progress, but grows in steps because of verification units and scheduling.
+      Deduplicated received volume responds faster but remains unverified.
+      Trends across several windows with comparable load are more stable than
+      decisions based on a one-second peak.
+    </p>
+    <h3 id="adaptive-pool-detail-4">
+      Avoid oscillations caused by the controller itself
+    </h3>
+    <p>
+      New tasks need time to establish connections, queue and fill request
+      pipelines. If they are stopped immediately for showing no benefit, then
+      restarted as soon as capacity looks idle, the system continually pays
+      startup costs.
+    </p>
+    <p>
+      Smoothed observations, a settling period after expansion and different
+      expansion/contraction thresholds can reduce this oscillation. Different
+      thresholds create hysteresis: small fluctuations near a boundary do not
+      trigger a reversal every time. Ordinary adjustments can wait for a clear
+      trend; protective events such as a full disk or engine error should be
+      handled immediately.
+    </p>
+    <h3 id="adaptive-pool-detail-5">
+      Fairness requires explicit opportunities
+    </h3>
+    <p>
+      Keeping only today's fastest tasks gives untried tasks no chance to prove
+      themselves; rare content may remain permanently behind popular content.
+      The pool can reserve a small share of resources for unknown sources,
+      long-waiting tasks and rare pieces.
+    </p>
+    <p>
+      Rotation also has costs: existing sources have established stable
+      pipelines, while new ones may need to queue again. A reasonable approach
+      is to compare candidates through limited trials, then replace lower-yield
+      tasks that can yield cheaply. Fairness does not require restarting every
+      download periodically.
+    </p>
+  </section>
+  <section>
+    <h2 id="connections">
+      <span class="np-section-no">11</span
+      ><span class="np-heading-text"
+        >How Connection Manager understands each connection</span
+      >
+    </h2>
+    <p>
+      The download pool sees aggregate resources and task benefit; Connection
+      Manager focuses on individual connections. They inform each other: global
+      scheduling needs to know which resources are valuable, while connection
+      analysis needs to know whether local throttling, disk behavior or other
+      tasks are interfering.
+    </p>
+    <p>
+      This component primarily puts scattered observations back into context.
+      Before interpreting a zero-traffic connection, establish at least its
+      role, request state, advertised data and whether the local machine is
+      healthy.
+    </p>
+    <h3 id="connections-detail-1">
+      Identify the role before judging payload traffic
+    </h3>
+    <p>
+      Trackers, DHT nodes, eD2k servers and payload peers perform different
+      jobs. An index service with no payload for a long time may be entirely
+      normal; an upload-only connection cannot be judged by receive-side
+      criteria either. Role classification is especially important when
+      discovery and transfer coexist.<sup class="np-cite"
+        ><a href="#source-s04" aria-label="Reference 4: BitTorrent DHT | BEP 5"
+          >[04]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s08" aria-label="Reference 8: UDP Tracker | BEP 15"
+          >[08]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a
+          href="#source-s19"
+          aria-label="Reference 19: aMule: the role of eD2k servers"
+          >[19]</a
+        ></sup
+      >
+    </p>
+    <div
+      role="region"
+      aria-label="Four dimensions of connection analysis"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Dimension</th>
+            <th scope="col">Questions to ask first</th>
+            <th scope="col">Effect on the assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Role and association</th>
+            <td>
+              Is this an index, metadata, download or upload connection? Which
+              task does it affect?
+            </td>
+            <td>Determines what activity counts as fulfilling its purpose.</td>
+          </tr>
+          <tr>
+            <th scope="row">Service conditions</th>
+            <td>
+              Does it have needed ranges? Does the protocol permit requests? Are
+              any requests actually outstanding?
+            </td>
+            <td>
+              Determines whether a data response is reasonably expected now.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Data and progress</th>
+            <td>
+              How much new data arrived? How much is duplicated? Is verification
+              pending or failed?
+            </td>
+            <td>Distinguishes traffic, benefit and integrity problems.</td>
+          </tr>
+          <tr>
+            <th scope="row">Local and shared interference</th>
+            <td>
+              Is there throttling, blocked writing, stale reporting or a
+              network-wide failure?
+            </td>
+            <td>
+              Avoids attributing the system's own problems to every source.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="connections-detail-2">
+      The same IP does not mean the same connection or person
+    </h3>
+    <p>
+      Connections are recreated, engines restart, and one endpoint may serve
+      multiple tasks. Tracking must identify the execution generation and actual
+      connection to which an observation belongs. Otherwise, a delayed request
+      to close an old connection could affect a newly established one.
+    </p>
+    <p>
+      Peer IDs, eD2k user hashes, endpoint addresses and local connection IDs
+      serve different purposes. They can correlate protocol interactions, but
+      are not authenticated real-person identities. Shared NAT, dynamic
+      addresses and reconnection also make long-term ratings attached to a
+      single IP imprecise.
+    </p>
+    <p>
+      eD2k High ID and Low ID are another distinction: they mainly reflect
+      inbound reachability and whether callbacks are needed to establish
+      connections. A higher number does not imply greater trust or speed, and
+      Low ID does not mean servers relay all payload. Reachability affects
+      source opportunities, but actual service must still be observed.<sup
+        class="np-cite"
+        ><a
+          href="#source-s14"
+          aria-label="Reference 14: aMule: High ID and Low ID"
+          >[14]</a
+        ></sup
+      >
+    </p>
+    <h3 id="connections-detail-3">
+      Unknown fields should remain explicitly unknown
+    </h3>
+    <p>
+      Some engines expose per-peer piece lists, pending-write bytes, request
+      timeouts and choke state; some management APIs show only aggregate speed.
+      libtorrent's native <code>peer_info</code> contains several such
+      observations, but whether an adapter exposes them depends on its actual
+      interface.<sup class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="Reference 9: libtorrent native observations | Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <p>
+      Missing data may mean not yet observed, unsupported by the API, stale
+      reporting or verification still pending. Preserve each reason. Displaying
+      all of them as zero invites confusion between 'service time not measured'
+      and 'service time is zero', leading to incorrect scheduling or bans.
+    </p>
+  </section>
+  <section>
+    <h2 id="zero-and-corruption">
+      <span class="np-section-no">12</span
+      ><span class="np-heading-text"
+        >What zero traffic, bad data and bans each mean</span
+      >
+    </h2>
+    <p>
+      Connection management must reduce unproductive costs without unfairly
+      penalizing sources. Closing a temporarily unnecessary connection may
+      simply release resources; concluding that a source sends corrupt data
+      requires more specific evidence. The two situations can warrant different
+      treatment.
+    </p>
+    <h3 id="zero-and-corruption-detail-1">
+      The same 0 B/s can have completely different causes
+    </h3>
+    <div
+      role="region"
+      aria-label="Interpreting zero-traffic situations"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Observation</th>
+            <th scope="col">More reasonable interpretation</th>
+            <th scope="col">Response</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Tracker has no payload</th>
+            <td>
+              It supplies index information; file bytes are not its measure of
+              usefulness.
+            </td>
+            <td>Evaluate query results and additional sources.</td>
+          </tr>
+          <tr>
+            <th scope="row">Still queued remotely</th>
+            <td>The native service opportunity has not arrived.</td>
+            <td>
+              Wait and reask according to the protocol; assess retention cost.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Peer has data, but it has all been downloaded</th>
+            <td>It cannot currently provide new required data locally.</td>
+            <td>
+              Consider upload and source-exchange value; release the connection
+              if neither is useful.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Local throttling or disk backlog</th>
+            <td>The receiver cannot keep consuming data.</td>
+            <td>Correct local load and suspend remote-service assessment.</td>
+          </tr>
+          <tr>
+            <th scope="row">Valid requests repeatedly time out</th>
+            <td>
+              This source or path is not currently providing reliable service.
+            </td>
+            <td>
+              Cancel or retry according to native deadlines; temporarily avoid
+              it if necessary.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Many connections stall together</th>
+            <td>
+              A shared network, engine or reporting-path failure may be
+              responsible.
+            </td>
+            <td>
+              Find the common cause first instead of penalizing sources one by
+              one.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Evaluating a nonresponse requires at least a specific outstanding request,
+      protocol-appropriate service conditions and a healthy local receiving
+      environment. An interval lost to interrupted reporting must not silently
+      be filled in as zero speed.
+    </p>
+    <p>
+      Even after excluding local interference, a timeout mainly proves that this
+      service attempt did not succeed. Remote load, the network path and
+      protocol scheduling may all contribute. That can justify switching sources
+      or temporary avoidance, but does not inherently establish malicious
+      intent.
+    </p>
+    <h3 id="zero-and-corruption-detail-2">
+      Keepalives and late data have different meanings
+    </h3>
+    <p>
+      A keepalive indicates some connection activity but adds no file progress;
+      it must not indefinitely reset expectations for a data request.
+      Conversely, cancelled requests may still produce late data, particularly
+      because Fast Extension explicitly addresses cancellations crossing with
+      responses.<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      ><sup class="np-cite"
+        ><a href="#source-s07" aria-label="Reference 7: Fast Extension | BEP 6"
+          >[07]</a
+        ></sup
+      >
+    </p>
+    <p>
+      The engine must therefore retain request context: previously requested,
+      cancelled, being answered and never requested are different cases.
+      Connection analysis should use this native information rather than
+      treating all late data as suspect merely because no request is outstanding
+      now.
+    </p>
+    <h3 id="zero-and-corruption-detail-3">
+      A hash failure proves a mismatch before it assigns responsibility
+    </h3>
+    <p>
+      Suppose four blocks of a piece came from A, B, C and D, and the final
+      piece hash fails. That shows a problem in the assembled data, not that all
+      four sources intentionally sent bad data. Local writing, memory or state
+      association may also be at fault.
+    </p>
+    <p>
+      One approach is to isolate suspect data and obtain samples with clearer
+      attribution. libtorrent's parole mechanism requests a whole piece from a
+      peer involved in a failed piece, providing stronger evidence for
+      assessment. This illustrates the practical value of rechecking and
+      narrowing responsibility.<sup class="np-cite"
+        ><a
+          href="#source-s09"
+          aria-label="Reference 9: libtorrent native observations | Core API"
+          >[09]</a
+        ></sup
+      >
+    </p>
+    <h3 id="zero-and-corruption-detail-4">
+      Let the evidence determine the scope of action
+    </h3>
+    <div
+      role="region"
+      aria-label="Different purposes of connection actions"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Action</th>
+            <th scope="col">Purpose</th>
+            <th scope="col">Scope considerations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Disconnect</th>
+            <td>End the current unhelpful or failed interaction.</td>
+            <td>
+              May affect only this connection, without implying a long-term
+              negative rating.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Temporarily avoid</th>
+            <td>
+              Give a repeatedly failing source a cooldown and redirect resources
+              to other opportunities.
+            </td>
+            <td>
+              May target a content/source pair, with limited retries after
+              expiry.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Quarantine</th>
+            <td>
+              Contain attributable invalid data or protocol violations pending
+              verification.
+            </td>
+            <td>
+              Limit the action to the identity, source and network scope
+              supported by evidence.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Manual persistent ban</th>
+            <td>Enforce the user's explicit long-term decision.</td>
+            <td>
+              Show what is affected; an IP ban may also affect other tasks
+              sharing that address.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Retransmission of the same error report must not count as another
+      violation. Nor should a source's failure on one content item expand
+      automatically into a whole-subnet ban. When lifting a restriction, confirm
+      that the engine actually removed it, rather than merely clearing its label
+      in the interface.
+    </p>
+  </section>
+  <section>
+    <h2 id="source-trust">
+      <span class="np-section-no">13</span
+      ><span class="np-heading-text"
+        >How source lists are updated—and how far they can be trusted</span
+      >
+    </h2>
+    <p>
+      Tracker or eD2k server lists provide candidate bootstrap entry points so a
+      downloader need not start entirely from scratch. Longer lists do not
+      necessarily mean more independent sources or better download capability.
+      Lists may overlap, and domain aliases or shared infrastructure can inflate
+      counts.
+    </p>
+    <p>
+      A source catalog is better understood as a continually revised collection
+      of leads. Record its provenance, acquisition time, which queries actually
+      yielded new sources, and whether those sources later provided service.
+      Being a candidate, previously reachable, a provider of useful sources, and
+      a sender of correct data are distinct levels of accumulated evidence.
+    </p>
+    <h3 id="source-trust-detail-1">
+      Downloading a list only obtains candidates
+    </h3>
+    <p>
+      After an external feed changes, parse candidates and check formats and
+      differences before gradually admitting them into discovery. Useful older
+      catalog versions can remain available; a failed update need not empty the
+      entire source collection. User-pinned or avoided sources also have reasons
+      independent of the feed.
+    </p>
+    <p>
+      Config publishes one consistent effective view so Components do not make
+      decisions from different list versions. A remote feed may supply
+      endpoints, but must not gain authority to change local policies or execute
+      commands.
+    </p>
+    <h3 id="source-trust-detail-2">
+      An endpoint is input that can trigger a connection
+    </h3>
+    <p>
+      A source record may ultimately cause the downloader to initiate a network
+      connection. If a public source returns a local administration interface,
+      private address or special service port, the client could be used to reach
+      unintended targets. This is the source-discovery equivalent of an
+      SSRF-type problem.
+    </p>
+    <p>
+      For public Internet sources, address policy must check the actual resolved
+      destination: an ordinary-looking URL may resolve to another address. The
+      same destination restrictions must apply to redirects, retries and
+      fallback resolution. OWASP specifically warns that checking DNS once, then
+      performing an unchecked resolution when connecting, leaves room for
+      bypass.<sup class="np-cite"
+        ><a href="#source-s17" aria-label="Reference 17: OWASP: SSRF prevention"
+          >[17]</a
+        ></sup
+      >
+    </p>
+    <p>
+      If LAN sharing is intended, private-network sources can belong to a
+      separate explicit scope rather than being labeled malicious by a blanket
+      global rule. Public, private and overlay networks require treatment
+      consistent with their own entry points, identities and source-propagation
+      semantics.
+    </p>
+    <h3 id="source-trust-detail-3">
+      Measure source value by new opportunities and actual service
+    </h3>
+    <p>
+      A tracker returning many mostly duplicate or unreachable peers may be less
+      valuable than one returning a few new sources. Observe unique sources per
+      appropriately timed query, reachability ratios and how many sources later
+      provide required data.
+    </p>
+    <p>
+      The denominators must be explicit too. Never queried means unknown;
+      failures during a local network outage should not lower every source's
+      rating at once. A UDP tracker connect response alone does not mean an
+      announce successfully returned peers: these are separate protocol
+      steps.<sup class="np-cite"
+        ><a href="#source-s08" aria-label="Reference 8: UDP Tracker | BEP 15"
+          >[08]</a
+        ></sup
+      >
+    </p>
+    <h3 id="source-trust-detail-4">
+      Normal transfer proves only the observed interaction
+    </h3>
+    <p>
+      HTTPS protects the corresponding connection's transport and authenticates
+      the server; a content hash checks data against an expected value. Neither
+      tells us whether the remote operator logs interactions. BitTorrent tracker
+      and peer protocols inherently exchange content identifiers and contact
+      information.<sup class="np-cite"
+        ><a
+          href="#source-s01"
+          aria-label="Reference 1: BitTorrent base protocol | BEP 3"
+          >[01]</a
+        ></sup
+      >
+    </p>
+    <p>
+      Thus, even an endpoint that follows the protocol perfectly and sends
+      correct data cannot be ruled out as monitoring or logging on those
+      observations alone. This is a limitation inferred from what is observable:
+      service quality, data integrity and true intent are different questions.
+      Country, ASN, peer ID and high-speed transfer cannot substitute for that
+      distinction.
+    </p>
+    <p>
+      A client can address visible anomalies such as invalid message lengths,
+      excessive source floods, attributable corrupt data, and dangerous
+      filenames or paths. Source names and metadata should also be rendered as
+      untrusted text. For intentions a peer has not revealed, keeping the answer
+      unknown is more honest than inventing a safety percentage.
+    </p>
+  </section>
+  <section>
+    <h2 id="recovery">
+      <span class="np-section-no">14</span
+      ><span class="np-heading-text"
+        >Restoring consistency after pauses, restarts and lost commands</span
+      >
+    </h2>
+    <p>
+      A long-running downloader cannot assume that its management process,
+      engine, database and disk always succeed together. After a pause action,
+      the manager may have recorded the intent before the engine receives it;
+      alternatively, the engine may already have stopped but its reply was lost.
+    </p>
+    <p>
+      The system must therefore distinguish
+      <strong>what it is intended to do</strong> from
+      <strong>what it is confirmed to have done</strong>. This distinction gives
+      pausing tasks, closing connections and post-restart state a coherent
+      recovery path.
+    </p>
+    <h3 id="recovery-detail-1">
+      Persist intent first, then track whether it takes effect
+    </h3>
+    <p>
+      The manager can persist an operation's intent together with pending work
+      before sending it to the engine. When a reply arrives, update the actual
+      result. If the process stops in between, a restart reveals which
+      operations remain unconfirmed instead of relying on memory-based guesses.
+    </p>
+    <div class="np-example">
+      <h3 id="recovery-detail-2">
+        The management process crashes just after sending pause
+      </h3>
+      <ol>
+        <li>
+          <strong>Persist intent: </strong>Task A should pause, and the
+          operation is durably recorded.
+        </li>
+        <li>
+          <strong>Send to engine: </strong>The engine may have stopped new
+          requests while still draining in-flight data and writes.
+        </li>
+        <li>
+          <strong>Reply unconfirmed: </strong>After restarting, the manager
+          cannot immediately conclude that the pause succeeded or failed.
+        </li>
+        <li>
+          <strong>Reconcile: </strong>Query the actual task state in the same
+          engine execution generation, then update the result or complete
+          outstanding operations.
+        </li>
+      </ol>
+      <p>
+        Until release is confirmed, the task may still consume network, memory
+        and disk resources. Removing it prematurely from resource accounting
+        gives the next task a budget that has not actually become available.
+      </p>
+    </div>
+    <p>
+      Retries must also identify the same operation. Otherwise, retrying after a
+      network or process failure may duplicate tasks, repeatedly penalize the
+      same evidence, or apply an old command to a new connection. Operation
+      identity, engine startup generation and target state help distinguish
+      these cases.
+    </p>
+    <h3 id="recovery-detail-3">
+      SQLite stores recoverable facts; Metrics stores changes over time
+    </h3>
+    <p>
+      Tasks, content identities, effective policies, decision-relevant evidence
+      and file-operation records belong in Store because they must remain
+      meaningful after restart. Per-second peer speeds, latency distributions
+      and load curves belong in Metrics, whose storage can follow
+      detailed-retention and aggregation requirements.
+    </p>
+    <div
+      role="region"
+      aria-label="Three storage responsibilities"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Storage location</th>
+            <th scope="col">What it stores</th>
+            <th scope="col">Why keep it separate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Store／SQLite</th>
+            <td>
+              Task intent, content associations, recent source summaries,
+              policies and recovery records.
+            </td>
+            <td>
+              Gives important state consistent transactions and traceable
+              changes.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Metrics</th>
+            <td>
+              Historical samples and aggregates of speed, latency, pressure and
+              queues.
+            </td>
+            <td>
+              High-frequency observations can have independently bounded
+              retention without crowding out task-state writes.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Engine working directory</th>
+            <td>
+              Payload, partial files, native resume data and file-range
+              information.
+            </td>
+            <td>
+              Maintained by the engine performing I/O, avoiding two components
+              editing the same data concurrently.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      SQLite WAL mode allows readers and a writer to proceed concurrently, but
+      still permits only one writer at a time; long-running readers can also
+      impede checkpoint progress. This architecture chooses to coordinate
+      important state writes centrally and keep transactions short. That
+      clarifies data ownership, but does not automatically solve consistency
+      with files and engines outside the database.<sup class="np-cite"
+        ><a
+          href="#source-s15"
+          aria-label="Reference 15: SQLite: Write-Ahead Logging"
+          >[15]</a
+        ></sup
+      >
+    </p>
+    <h3 id="recovery-detail-4">
+      Historical-monitoring failures need not disrupt healthy transfers
+    </h3>
+    <p>
+      Component can report the live summaries needed by Scheduler and Connection
+      Manager directly. Downloads can continue through this path while Metrics
+      temporarily cannot store history. Use bounded buffers and explicit gaps
+      for observation samples so a monitoring failure cannot exhaust memory.
+    </p>
+    <p>
+      A Store failure to persist important new state has different consequences:
+      new dispatches and persistent policy changes become unreliable. The system
+      should constrain those operations until recording works again. The engine
+      still needs independent real-time protections against malformed messages,
+      failed connections and local resource problems.
+    </p>
+    <p>
+      Measure durations with a monotonic clock unaffected by wall-clock
+      adjustments; record dates needed across restarts separately. Unobserved
+      service time during restart must not be filled in as source timeouts, and
+      old snapshots must be reconciled against the new engine generation.
+    </p>
+  </section>
+  <section>
+    <h2 id="files">
+      <span class="np-section-no">15</span
+      ><span class="np-heading-text"
+        >From scattered pieces to complete, recoverable files</span
+      >
+    </h2>
+    <p>
+      Tasks may enter and leave the pool, but acquired data should not disappear
+      with them. Moving a task into observation usually requires only execution
+      changes and saved resume state—not moving its files, much less deleting
+      them.
+    </p>
+    <h3 id="files-detail-1">Incremental allocation and a file's two sizes</h3>
+    <p>
+      Registering many targets first and allocating data only when transfer is
+      needed avoids reserving full-file capacity for every target upfront. The
+      trade-off is that insufficient space may appear mid-download, while
+      allocation and I/O behavior depend on the filesystem and engine.
+    </p>
+    <p>
+      Distinguish logical size from allocated space. A sparse file can have a
+      large logical length without allocating an equivalent number of physical
+      blocks for unwritten holes. Available disk space also needs to cover more
+      than payload: resume data, the database, temporary files, verification and
+      additional space during final moves.
+    </p>
+    <p>
+      Incremental writing is flexible; preallocation can reveal capacity
+      problems earlier and reduce allocation fragmentation on some filesystems.
+      This trade-off can be chosen according to the storage device, file scale
+      and usage scenario; one allocation strategy need not be imposed on every
+      task.
+    </p>
+    <h3 id="files-detail-2">
+      Filenames are for display; storage identity must be stable
+    </h3>
+    <p>
+      Working directories can be bucketed by stable content identifiers to avoid
+      overcrowded directories and same-name overwrites. Identifiers must retain
+      protocol semantics; strings from different hash namespaces must not be
+      treated automatically as the same object.
+    </p>
+    <p>
+      Before full metadata arrives, a magnet task may use a temporary identity.
+      Once content correspondence is established, record changes to task
+      identity and file location so written data remains discoverable after
+      restart. Sanitize original titles and paths as well: source-supplied
+      <code>../</code> or absolute paths must not determine local write
+      destinations. The BitTorrent v2 specification explicitly addresses this
+      path handling.<sup class="np-cite"
+        ><a href="#source-s03" aria-label="Reference 3: BitTorrent v2 | BEP 52"
+          >[03]</a
+        ></sup
+      >
+    </p>
+    <h3 id="files-detail-3">
+      Transfer completion still requires persistence and final publication
+    </h3>
+    <p>
+      After all required data passes verification, confirm pending writes,
+      native resume state and actual file locations. Showing 100% while data and
+      recovery records are inconsistent may require extensive rechecking after
+      restart, or leave it unclear which data is usable.
+    </p>
+    <figure class="np-lifecycle">
+      <div class="np-figure-head">
+        <span>File lifecycle</span
+        ><strong>Pause and resume reuse the same partial file</strong>
+      </div>
+      <ol class="np-file-steps">
+        <li>
+          <span class="np-step-index">1</span><strong>Accumulate pieces</strong
+          ><span
+            >Receiving, deduplication, writing and verification interleave</span
+          >
+        </li>
+        <li>
+          <span class="np-step-index">2</span
+          ><strong>Save recoverable state</strong
+          ><span
+            >Reconcile data and resume records; resume here after pausing</span
+          >
+        </li>
+        <li>
+          <span class="np-step-index">3</span
+          ><strong>Confirm completeness</strong
+          ><span
+            >Verify all selected data; coordinate engine and write state</span
+          >
+        </li>
+        <li>
+          <span class="np-step-index">4</span
+          ><strong>Publish the completed file</strong
+          ><span
+            >Confirm destination availability, then update location and sharing
+            state</span
+          >
+        </li>
+      </ol>
+      <figcaption>
+        This is a conceptual file-state workflow. A single network wait or pool
+        rotation does not automatically make partial data eligible for cleanup.
+      </figcaption>
+    </figure>
+    <p>
+      On a local filesystem supporting the relevant semantics, rename within one
+      mount can provide an atomic name switch. A move across mount points cannot
+      be completed with the same rename operation alone; it usually requires
+      copying to a temporary destination file, then confirming and publishing
+      it.<sup class="np-cite"
+        ><a
+          href="#source-s20"
+          aria-label="Reference 20: Linux man-pages: rename(2)"
+          >[20]</a
+        ></sup
+      >
+    </p>
+    <p>
+      An atomic name switch does not guarantee survival after power loss. On
+      Linux, for example, <code>fsync()</code> synchronizes file data and
+      related metadata, while persisting directory entries may also require
+      syncing the directory. A complete move workflow therefore handles content,
+      location records and the timing of old-copy deletion separately.<sup
+        class="np-cite"
+        ><a
+          href="#source-s21"
+          aria-label="Reference 21: Linux man-pages: fsync(2)"
+          >[21]</a
+        ></sup
+      >
+    </p>
+    <p>
+      If a cross-device copy fails midway, retaining the old copy and an
+      unfinished-operation record is more reliable than hastily deleting the
+      original. Files still being shared require path coordination with the
+      engine; externally moving a file the engine still uses may break
+      subsequent uploading and resuming.
+    </p>
+    <h3 id="files-detail-4">
+      Consider retention policies only after prolonged source absence
+    </h3>
+    <p>
+      A task with no sources today may gain an online peer tomorrow; content
+      with rare final pieces may recover when someone shares it again.
+      Partial-file cleanup should consider long-term observations, user
+      retention intent, remaining queue opportunities, and any active writer or
+      unconfirmed operation.
+    </p>
+    <p>
+      If automatic cleanup is needed, first moving candidates into a recoverable
+      quarantine stage, then deciding deletion according to retention time,
+      reduces the cost of mistakes. Slow downloads, a temporarily offline
+      tracker or avoidance of one source do not individually prove that the
+      entire data set has lost its value.
+    </p>
+  </section>
+  <section>
+    <h2 id="diagnosis">
+      <span class="np-section-no">16</span
+      ><span class="np-heading-text">Trace symptoms back to causes</span>
+    </h2>
+    <p>
+      The value of component boundaries ultimately appears in whether problems
+      can be explained. A 'downloading' label and one speed leave a stalled task
+      open to guesswork. Following content, sources, requests, verification and
+      local load narrows the cause.
+    </p>
+    <div
+      role="region"
+      aria-label="Troubleshooting P2P download problems"
+      tabindex="0"
+      class="np-table-scroll"
+    >
+      <table class="np-diagnosis-table">
+        <thead>
+          <tr>
+            <th scope="col">Symptom</th>
+            <th scope="col">Evidence to inspect first</th>
+            <th scope="col">Possible explanation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Many connections, no speed</th>
+            <td>
+              Roles, intersection with missing pieces, queue/choke state and
+              outstanding requests.
+            </td>
+            <td>
+              Connections may be index services, waiting peers or sources
+              holding only pieces already downloaded.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Stuck at 99%</th>
+            <td>
+              Final missing pieces, source advertisements and actual service
+              eligibility.
+            </td>
+            <td>
+              Very few sources hold the final pieces, or all current sources
+              share a gap; adding the same sources will not help.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              Network is not saturated, but no more tasks start
+            </th>
+            <td>
+              Pending writes, disk latency, verification queues, memory and
+              report freshness.
+            </td>
+            <td>
+              A downstream bottleneck or insufficient observations may make
+              expansion unsuitable for now.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Adding tasks slows everything down</th>
+            <td>
+              Useful progress before and after addition, I/O changes, buffers,
+              retries and connection changes.
+            </td>
+            <td>
+              Shared resources are contended; the added cost exceeds the extra
+              benefit.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">High traffic without equivalent progress</th>
+            <td>
+              Payload versus control traffic, duplicate blocks, pending and
+              failed verification.
+            </td>
+            <td>
+              The task may be in endgame, redownloading bad data, or holding
+              received data not yet verified.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Reverification required after restart</th>
+            <td>
+              Data, native resume records and the last confirmed synchronization
+              state.
+            </td>
+            <td>
+              Files may remain present, but the engine lacks evidence to trust
+              old progress directly; rechecking reestablishes usability
+              evidence.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Sources recover, but the task does not start</th>
+            <td>
+              User pause, local hold reasons, cooldown, available budgets and
+              whether fresh sources were reconciled.
+            </td>
+            <td>
+              Source availability is only one condition; other constraints may
+              still apply.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              Still unable to connect after the interface shows an unban
+            </th>
+            <td>
+              Whether the engine removed the policy, source reachability and
+              native retry intervals.
+            </td>
+            <td>
+              Displayed state may differ from actual execution, or the ban was
+              not the only cause of failure.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="diagnosis-detail-1">
+      The interface should show reasons, not just state names
+    </h3>
+    <p>
+      The download list can show the current phase and main reason for waiting.
+      Task details can add missing ranges, source distribution, request state
+      and local pressure. Connection details should retain what data it
+      provided, when it was observed, why a limit exists and whether the engine
+      has confirmed the operation.
+    </p>
+    <p>
+      Users can then distinguish waiting for sources or remote queues from local
+      backpressure caused by an HDD that cannot keep up. When source information
+      is unknown, they can also distinguish not yet observed from a field the
+      engine never exposes.
+    </p>
+    <h3 id="diagnosis-detail-2">
+      Follow one download through the whole architecture
+    </h3>
+    <p>
+      After the user adds content, Manager saves intent and Search obtains
+      metadata and sources through the corresponding Component. Ready tasks
+      enter limited trials; Engine requests pieces within permitted sources and
+      budgets. Actual progress and local pressure return to Scheduler, while
+      connection service observations return to Connection Manager.
+    </p>
+    <p>
+      Useful data keeps accumulating while unproductive investment is reduced.
+      New sources can still be discovered, and long-waiting tasks or tasks with
+      rare pieces retain opportunities. Store makes important state recoverable;
+      Metrics enables analysis of past changes. Finally, the selected content
+      passes verification, data and storage state become consistent, and the
+      system publishes the completed files and updates their locations. Pieces
+      verified during the download may also continue to be shared according to
+      the native protocol and user intent.
+    </p>
+    <p>
+      Clear connections between these responsibilities let a downloader keep
+      making evidence-based choices through changing sources, network waits,
+      disk bottlenecks and process interruptions. The next time speed drops, the
+      system should be able to explain where progress is blocked and what change
+      would let it continue.
+    </p>
+  </section>
+  <section>
+    <h2 id="references"><span class="np-heading-text">References</span></h2>
+    <p class="np-references-intro">
+      The following sources were used to check protocols, engine behavior and
+      storage mechanisms; access date:
+      <time datetime="2026-10-25">2026-10-25</time>. Resource calculations and
+      piece matrices illustrate principles; the dynamic download pool and
+      component responsibilities are the architectural design presented in this
+      article.
+    </p>
+    <ol class="np-reference-list">
+      <li id="source-s01">
+        <span class="np-source-id">S01</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0003.html"
+            class="np-source-title"
+            >BitTorrent base protocol | BEP 3</a
+          >
+          <p class="np-source-note">
+            Content identity, piece hashes, trackers, request pipelining and
+            endgame.
+          </p>
+        </div>
+      </li>
+      <li id="source-s02">
+        <span class="np-source-id">S02</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0009.html"
+            class="np-source-title"
+            >Metadata exchange and magnet links | BEP 9</a
+          >
+          <p class="np-source-note">
+            Exchange of the info dictionary and location information in magnet
+            links.
+          </p>
+        </div>
+      </li>
+      <li id="source-s03">
+        <span class="np-source-id">S03</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0052.html"
+            class="np-source-title"
+            >BitTorrent v2｜BEP 52</a
+          >
+          <p class="np-source-note">
+            SHA-256 infohashes, per-file Merkle trees, piece alignment and path
+            handling.
+          </p>
+        </div>
+      </li>
+      <li id="source-s04">
+        <span class="np-source-id">S04</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0005.html"
+            class="np-source-title"
+            >BitTorrent DHT｜BEP 5</a
+          >
+          <p class="np-source-note">
+            Peer lookup by infohash, routing tables and node information.
+          </p>
+        </div>
+      </li>
+      <li id="source-s05">
+        <span class="np-source-id">S05</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0011.html"
+            class="np-source-title"
+            >Peer Exchange｜BEP 11</a
+          >
+          <p class="np-source-note">
+            Exchange of other sources through existing peer connections and
+            update limits.
+          </p>
+        </div>
+      </li>
+      <li id="source-s06">
+        <span class="np-source-id">S06</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0027.html"
+            class="np-source-title"
+            >Private torrents | BEP 27</a
+          >
+          <p class="np-source-note">
+            The private flag and limits on discovery and connection scope.
+          </p>
+        </div>
+      </li>
+      <li id="source-s07">
+        <span class="np-source-id">S07</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0006.html"
+            class="np-source-title"
+            >Fast Extension｜BEP 6</a
+          >
+          <p class="np-source-note">
+            Allowed-fast, explicit rejection, and the semantics of choking,
+            cancellation and responses.
+          </p>
+        </div>
+      </li>
+      <li id="source-s08">
+        <span class="np-source-id">S08</span>
+        <div>
+          <a
+            href="https://www.bittorrent.org/beps/bep_0015.html"
+            class="np-source-title"
+            >UDP Tracker｜BEP 15</a
+          >
+          <p class="np-source-note">
+            Distinct roles of connect, announce and scrape.
+          </p>
+        </div>
+      </li>
+      <li id="source-s09">
+        <span class="np-source-id">S09</span>
+        <div>
+          <a
+            href="https://libtorrent.org/reference-Core.html"
+            class="np-source-title"
+            >libtorrent native observations | Core API</a
+          >
+          <p class="np-source-note">
+            Peer states, half-open connections, handshakes, pending writes and
+            parole.
+          </p>
+        </div>
+      </li>
+      <li id="source-s10">
+        <span class="np-source-id">S10</span>
+        <div>
+          <a href="https://libtorrent.org/features.html" class="np-source-title"
+            >libtorrent piece selection</a
+          >
+          <p class="np-source-note">
+            Official feature documentation. This article cites principles such
+            as rarity and priority only; this older document is not used to
+            establish current internal implementation details.
+          </p>
+        </div>
+      </li>
+      <li id="source-s11">
+        <span class="np-source-id">S11</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/kademlia"
+            class="np-source-title"
+            >aMule: the Kad network</a
+          >
+          <p class="np-source-note">
+            Distributed source discovery, bootstrapping and its relationship to
+            eD2k file transfer.
+          </p>
+        </div>
+      </li>
+      <li id="source-s12">
+        <span class="np-source-id">S12</span>
+        <div>
+          <a
+            href="https://wiki.amule.org/wiki/FAQ_eD2k-Kademlia"
+            class="np-source-title"
+            >aMule：eD2k／Kademlia FAQ</a
+          >
+          <p class="np-source-note">
+            Historical explanations from the official wiki, used here only for
+            mechanisms such as complementary sources, queuing and UDP
+            interactions.
+          </p>
+        </div>
+      </li>
+      <li id="source-s13">
+        <span class="np-source-id">S13</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/aich"
+            class="np-source-title"
+            >aMule: AICH and corruption recovery</a
+          >
+          <p class="np-source-note">
+            Locating damaged sub-blocks and preserving correct data when a
+            trusted root and recovery data are available.
+          </p>
+        </div>
+      </li>
+      <li id="source-s14">
+        <span class="np-source-id">S14</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/high-id"
+            class="np-source-title"
+            >aMule: High ID and Low ID</a
+          >
+          <p class="np-source-note">
+            Inbound reachability and callbacks; this article does not treat IDs
+            as reputation or speed rankings.
+          </p>
+        </div>
+      </li>
+      <li id="source-s15">
+        <span class="np-source-id">S15</span>
+        <div>
+          <a href="https://www.sqlite.org/wal.html" class="np-source-title"
+            >SQLite：Write-Ahead Logging</a
+          >
+          <p class="np-source-note">
+            Concurrent reading and writing, the single writer, checkpoints and
+            the effects of long readers.
+          </p>
+        </div>
+      </li>
+      <li id="source-s16">
+        <span class="np-source-id">S16</span>
+        <div>
+          <a
+            href="https://docs.kernel.org/accounting/psi.html"
+            class="np-source-title"
+            >Linux kernel: Pressure Stall Information</a
+          >
+          <p class="np-source-note">
+            Measuring pressure caused by waits for CPU, memory and I/O
+            resources.
+          </p>
+        </div>
+      </li>
+      <li id="source-s17">
+        <span class="np-source-id">S17</span>
+        <div>
+          <a
+            href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+            class="np-source-title"
+            >OWASP: SSRF prevention</a
+          >
+          <p class="np-source-note">
+            Destination validation, redirects, DNS rebinding and address
+            consistency at connection time.
+          </p>
+        </div>
+      </li>
+      <li id="source-s18">
+        <span class="np-source-id">S18</span>
+        <div>
+          <a
+            href="https://github.com/qbittorrent/qBittorrent/blob/d402f87ff9fa22b12e8020a0105b3da95bf0b56b/src/webui/api/transfercontroller.cpp"
+            class="np-source-title"
+            >qBittorrent: the actual scope of a ban operation</a
+          >
+          <p class="np-source-note">
+            TransferController at pinned commit d402f87: a source-code example
+            in which banPeersAction calls banIP.
+          </p>
+        </div>
+      </li>
+      <li id="source-s19">
+        <span class="np-source-id">S19</span>
+        <div>
+          <a
+            href="https://amule-org.github.io/docs/p2p-networks/ed2k/servers"
+            class="np-source-title"
+            >aMule: the role of eD2k servers</a
+          >
+          <p class="np-source-note">
+            File indexes, source lists and assistance with connection
+            establishment.
+          </p>
+        </div>
+      </li>
+      <li id="source-s20">
+        <span class="np-source-id">S20</span>
+        <div>
+          <a
+            href="https://man7.org/linux/man-pages/man2/rename.2.html"
+            class="np-source-title"
+            >Linux man-pages：rename(2)</a
+          >
+          <p class="np-source-note">
+            Atomic name replacement and the EXDEV limitation across mount
+            points.
+          </p>
+        </div>
+      </li>
+      <li id="source-s21">
+        <span class="np-source-id">S21</span>
+        <div>
+          <a
+            href="https://man7.org/linux/man-pages/man2/fsync.2.html"
+            class="np-source-title"
+            >Linux man-pages：fsync(2)</a
+          >
+          <p class="np-source-note">
+            The distinction between file synchronization, directory entries and
+            durability.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+</div>

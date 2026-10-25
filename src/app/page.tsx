@@ -1,3 +1,4 @@
+import { articleFolder, blogFolders } from '../lib/blog-tree.ts';
 import type {
   LoaderFunctionArgs,
   MetaFunction,
@@ -179,6 +180,22 @@ function loadView(route: RouteDescriptor) {
           tags: tagsInLocale(locale),
         },
       };
+    case 'blog-folder': {
+      const posts = listPosts(locale).filter(
+        (post) => articleFolder(post.slug) === route.folder,
+      );
+      if (!posts.length) notFound();
+      return {
+        kind: 'blog-folder' as const,
+        term: {
+          id: route.folder,
+          label: blogFolders[route.folder].title[locale],
+          description: blogFolders[route.folder].description[locale],
+        },
+        posts,
+        taxonomy: taxonomyLabels(locale),
+      };
+    }
     case 'topic': {
       if (!topicsInLocale(locale).some((id) => id === route.topicId))
         notFound();
@@ -327,6 +344,7 @@ function describe(view: ViewData, locale: Locale) {
       };
     case 'library':
       return { title: withSite(t.libraryTitle), description: t.libraryIntro };
+    case 'blog-folder':
     case 'topic':
       return {
         title: withSite(`${view.term.label} · ${t.libraryTitle}`),
@@ -468,6 +486,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
   const article = view.kind === 'article' ? view.article : null;
   const collection = [
     'library',
+    'blog-folder',
     'notes',
     'note-folder',
     'projects',
@@ -533,11 +552,15 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
             datePublished: article.post.publishedAt,
             dateModified: article.post.updatedAt,
             inLanguage: htmlLang[locale],
-            author: {
-              '@type': 'Person',
-              name: article.post.author,
-              url: `${siteUrl}/${locale}/`,
-            },
+            ...(article.post.author
+              ? {
+                  author: {
+                    '@type': 'Person',
+                    name: article.post.author,
+                    url: `${siteUrl}/${locale}/`,
+                  },
+                }
+              : {}),
             mainEntityOfPage: data.canonical,
           }
         : view.kind === 'home'
@@ -606,6 +629,7 @@ function View({ data }: { data: PageData }) {
       return <SiteSearch locale={locale} />;
     case 'library':
       return <Library view={view} locale={locale} />;
+    case 'blog-folder':
     case 'topic':
     case 'tag':
       return <TaxonomyPage view={view} locale={locale} />;

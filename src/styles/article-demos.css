@@ -1,0 +1,119 @@
+/* Owned progressive enhancement; no uploaded controls or scripts are admitted. */
+.pg-demo-controls,
+.tg-demo-controls {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: end;
+  margin-block: var(--space-4);
+}
+.pg-demo-controls:empty,
+.tg-demo-controls:empty {
+  display: none;
+}
+.pg-demo-controls label,
+.tg-demo-controls label {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  flex: 1;
+  min-width: min(100%, 12rem);
+}
+.pg-demo-controls button,
+.tg-demo-controls button,
+.pg-demo-controls select,
+.tg-demo-controls select,
+.pg-demo-controls input,
+.tg-demo-controls input {
+  color: var(--color-text);
+  background: var(--color-chrome);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  max-width: 100%;
+}
+.pg-demo-controls button,
+.tg-demo-controls button {
+  cursor: pointer;
+}
+.pg-demo-controls button:hover,
+.tg-demo-controls button:hover {
+  background: var(--color-surface-raised);
+}
+.pg-demo-controls button[aria-pressed='true'] {
+  background: var(--color-surface-selected);
+  border-color: var(--color-action-primary);
+}
+.pg-demo-controls :focus-visible,
+.tg-demo-controls :focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.privacy-guide [hidden],
+.translation-guide [hidden] {
+  display: none !important;
+}
+.privacy-guide .pg-no-script-note,
+.translation-guide .tg-no-script-note {
+  color: var(--color-text-muted);
+  border-left: 2px solid var(--color-border-strong);
+  padding-left: var(--space-4);
+}
+.privacy-guide .pg-route-node,
+.translation-guide .tg-node {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.privacy-guide .pg-subheading,
+.translation-guide .tg-subheading {
+  font-weight: 600;
+}
+.privacy-guide .pg-figure-viewport:focus-visible,
+.translation-guide .tg-svg-scroll:focus-visible,
+.translation-guide .tg-dfd-scroll:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -3px;
+}
+.privacy-guide .pg-route-path {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+.privacy-guide .pg-observation {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) minmax(0, 4fr);
+}
+.privacy-guide .pg-observation p {
+  margin: 0;
+  padding: var(--space-3);
+}
+.privacy-guide .pg-observation p:nth-child(odd) {
+  font-weight: 600;
+}
+.privacy-guide .pg-demo-alternatives {
+  margin-block: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+}
+.translation-guide .tg-dfd-canvas {
+  min-width: 960px;
+}
+:lang(ja) .privacy-guide,
+:lang(ja) .translation-guide {
+  font-family: var(--font-sans-ja);
+}
+.privacy-guide .pg-tunnel-down .pg-wg-node {
+  border-color: var(--color-status-warning);
+}
+.privacy-guide .pg-tunnel-down .pg-app-arrow {
+  color: var(--color-status-warning);
+}
+@media (forced-colors: active) {
+  .privacy-guide .pg-packet.pg-dummy {
+    border: 2px dashed CanvasText;
+  }
+  .privacy-guide .pg-share-false {
+    border-block: 2px dashed CanvasText;
+  }
+}

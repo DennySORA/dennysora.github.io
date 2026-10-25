@@ -48,6 +48,9 @@ if (rendered.some(({ body }) => body.sections)) {
     await compiler.close();
   }
 }
+const hasDemos = rendered.some(({ body }) =>
+  /class="(?:privacy|translation)-guide"/.test(body.html),
+);
 const compiled = resolve('build/client/assets');
 const styles = readdirSync(compiled).filter((file) => file.endsWith('.css'));
 if (styles.length === 0) throw new Error('Run pnpm build before previewing');
@@ -78,6 +81,30 @@ if (articleSections) {
     throw new Error('Preview tabs must compile into one local script');
   writeFileSync(join(output, 'preview-tabs.js'), chunk.code);
 }
+if (hasDemos) {
+  const bundled = await build({
+    configFile: false,
+    publicDir: false,
+    logLevel: 'error',
+    build: {
+      write: false,
+      emptyOutDir: false,
+      minify: false,
+      lib: {
+        entry: resolve('scripts/preview-post-demos.ts'),
+        name: 'PostPreviewDemos',
+        formats: ['iife'],
+      },
+    },
+  });
+  const chunks = (Array.isArray(bundled) ? bundled : [bundled])
+    .flatMap((result) => ('output' in result ? result.output : []))
+    .filter((file) => file.type === 'chunk');
+  const chunk = chunks[0];
+  if (chunks.length !== 1 || !chunk)
+    throw new Error('Preview demos must compile into one local script');
+  writeFileSync(join(output, 'preview-demos.js'), chunk.code);
+}
 const copy = (source: string, destination: string) => {
   if (!lstatSync(source).isFile())
     throw new Error(`Not a regular file: ${source}`);
@@ -100,17 +127,22 @@ writeFileSync(join(output, 'site.css'), css);
 const labels = {
   'zh-hant': {
     draft: '文章草稿 · 本機預覽',
-    note: '尚未發布。影片是本機審閱素材；正式發布前須依網站規則遷移到媒體託管。',
+    note: '尚未發布。此頁供稿件與翻譯審閱，不代表正式網站導覽已驗收。',
+    video: '影片是本機審閱素材；正式發布前須依網站規則遷移到媒體託管。',
     nav: '文章語言',
   },
   en: {
     draft: 'Article draft · Local preview',
-    note: 'Not published. Videos are local review assets and must move to the approved media host before publication.',
+    note: 'Not published. This page is for manuscript and translation review, not acceptance of the live website navigation.',
+    video:
+      'Videos are local review assets and must move to the approved media host before publication.',
     nav: 'Article language',
   },
   ja: {
     draft: '記事の下書き · ローカルプレビュー',
-    note: '未公開です。動画はローカル確認用です。公開前にサイトの規則に従ってメディア配信先へ移行してください。',
+    note: '未公開です。原稿と翻訳を確認するためのページであり、本番サイトのナビゲーション検証ではありません。',
+    video:
+      '動画はローカル確認用です。公開前にサイトの規則に従ってメディア配信先へ移行してください。',
     nav: '記事の言語',
   },
 };
@@ -140,10 +172,11 @@ for (const { locale, body } of rendered) {
 <link rel="stylesheet" href="./site.css">
 <style>:root{--header-height:0px}body{margin:0;display:block}main{position:relative;width:100%;min-width:0;max-width:1080px;margin:auto;padding:32px 24px 80px;padding-left:calc(var(--line-gutter) + var(--gutter))}header{margin-bottom:36px}h1{font-size:clamp(28px,4vw,44px);line-height:1.3;margin:20px 0;overflow-wrap:anywhere}.preview-languages{display:flex;gap:20px;flex-wrap:wrap}aside{padding:16px;border:1px solid var(--color-border-subtle);margin:24px 0}.prose figure video{max-width:100%;height:auto}img{max-width:100%}</style>
 ${articleSections ? '<script src="./preview-tabs.js" defer></script>' : ''}
+${hasDemos ? '<script src="./preview-demos.js" defer></script>' : ''}
 <main><header><p>${escapeHtml(t.draft)}</p>
 <nav class="preview-languages" aria-label="${escapeHtml(t.nav)}"><a href="./zh-hant.html" lang="zh-Hant">繁體中文</a><a href="./en.html" lang="en">English</a><a href="./ja.html" lang="ja">日本語</a></nav>
-<h1>${escapeHtml(edition.title)}</h1><p>${escapeHtml(edition.summary)}</p>
-<aside>${escapeHtml(t.note)}</aside></header>
+<h1 id="article-title">${escapeHtml(edition.title)}</h1><p>${escapeHtml(edition.summary)}</p>
+<aside>${escapeHtml(t.note)}${body.previewVideos.length ? ` ${escapeHtml(t.video)}` : ''}</aside></header>
 <article>${content.replaceAll('="/content-assets/', '="./content-assets/')}</article></main></html>`;
   writeFileSync(join(output, `${locale}.html`), html);
 }

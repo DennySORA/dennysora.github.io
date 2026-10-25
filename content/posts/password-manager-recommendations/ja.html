@@ -1,0 +1,1433 @@
+<div class="password-guide">
+  <div aria-label="はじめに" class="pm-intro">
+    <p>
+      今ではどのウェブサイトでもアカウントとパスワードが必要ですが、多くの人は同じパスワードを使い回しているのではないでしょうか。
+    </p>
+    <p>
+      これは危険です。問題は、一つのサイトから情報が漏れると、その認証情報をほかのサイトでも試せてしまうことにあります。
+    </p>
+    <p>
+      こうした問題への対策として、OTP（面倒だと感じて有効にしない人も少なくありません）に加え、パスワードマネージャーがあります。
+    </p>
+    <p>
+      Chrome
+      内蔵の機能をパスワードマネージャーとして使う人も多いでしょう。ただ、別のアプリや、ウェブページ以外でパスワードが必要になったらどうするのでしょうか。
+    </p>
+    <p>そこで、パスワードマネージャーを紹介したいと思います。</p>
+  </div>
+  <p class="pm-precision">
+    補足すると、Chrome／Google パスワード マネージャーは、一部のモバイル OS
+    ではほかのアプリにもパスワードを入力できます。ウェブ専用というわけではありません。私が重視するのは、デバイスやブラウザーが変わっても一貫した管理方法を使えるかどうかです。<a
+      class="pm-cite"
+      href="#src-14"
+      >[14]</a
+    >
+  </p>
+
+  <section>
+    <h2 id="reuse">
+      <span class="pm-n">01 /</span>同じパスワードを使い続けてはいけない理由
+    </h2>
+    <figure
+      aria-label="概念図：サイト A から漏れた認証情報がサイト B・C・D でも試されます。サイトごとに異なるパスワードを使えば、A の漏えいが B・C のパスワードの直接的な流出にはつながりません。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>パスワードの使い回しの問題</span
+        ><span class="pm-visual-id">CREDENTIAL STUFFING</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-breach-flow">
+        <div class="pm-host">
+          <div class="pm-host-top">
+            <span class="pm-topline">SOURCE / サイト A</span
+            ><svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 3 22 20H2L12 3Z"></path>
+              <path d="M12 9v5M12 17.1v.1"></path>
+            </svg>
+          </div>
+          <div class="pm-host-title">認証情報が漏えい</div>
+          <div class="pm-host-desc">攻撃者がアカウント名とパスワードを入手</div>
+          <span class="pm-credential"
+            >user@example.com<br />password: ●●●●●●</span
+          >
+        </div>
+        <div class="pm-connector">
+          <svg aria-hidden="true" viewBox="0 0 82 33">
+            <path d="M2 16H69"></path>
+            <polyline points="60,8 70,16 60,24"></polyline></svg
+          >ほかでも試す
+        </div>
+        <div class="pm-targets">
+          <div class="pm-target">
+            <span>サイト B</span><span class="pm-risk">ログインの可能性</span>
+          </div>
+          <div class="pm-target">
+            <span>サイト C</span><span class="pm-risk">ログインの可能性</span>
+          </div>
+          <div class="pm-target">
+            <span>サイト D</span><span class="pm-risk">ログインの可能性</span>
+          </div>
+        </div>
+      </div>
+      <div class="pm-separate-pass">
+        <span class="pm-check">✓</span
+        ><span
+          ><b>サイトごとに異なるパスワードを使えば</b>、A の漏えいが B・C
+          のパスワードを直接さらすことにはなりません。</span
+        >
+      </div>
+    </figure>
+    <p>
+      この攻撃は
+      <strong>Credential Stuffing（クレデンシャルスタッフィング）</strong>
+      と呼ばれます。攻撃者は各サイトを個別に突破する必要がありません。サイト A
+      から漏れた認証情報の一覧を使い、プログラムで B・C・D
+      に大量のログインを試せます。どこかで同じパスワードを使っていれば、ログインに成功する可能性があります。
+    </p>
+    <p>
+      パスワードマネージャーは、<strong>サイトごとに異なるランダムなパスワードを生成する</strong>ことで、この問題に対処します。例えばランダムな
+      20
+      文字の文字列です。人が覚えるのはマネージャーのマスターパスワードだけで、各サイトのパスワードを暗記する必要はありません。サイト
+      A に問題が起きても、そのパスワードをそのままサイト B
+      のログインには使えません。
+    </p>
+    <div aria-label="代表的な三つの攻撃の違い" class="pm-micro-points">
+      <div>
+        <b>パスワードの使い回し</b
+        ><span
+          >一か所の漏えいが、ほかのアカウントにも波及する可能性があります。</span
+        >
+      </div>
+      <div>
+        <b>フィッシングサイト</b
+        ><span
+          >自分でパスワードを入力するよう誘導します。サイトごとに異なるパスワードでも防げるとは限りません。</span
+        >
+      </div>
+      <div>
+        <b>端末のマルウェア感染</b
+        ><span
+          >使用中の認証情報を読み取られる可能性があり、エンドポイント側の対策が必要です。</span
+        >
+      </div>
+    </div>
+    <p class="pm-plain-aside">
+      つまり、パスワードマネージャーは OTP や FIDO2
+      の代わりではありません。まず、多数のサイトのパスワードを安全に管理しにくいという問題を解決するものです。
+    </p>
+  </section>
+  <section>
+    <h2 id="vault">
+      <span class="pm-n">02 /</span
+      >クラウドに保存したパスワードを、なぜ事業者が読めないことがあるのか？
+    </h2>
+    <p>
+      パスワードマネージャーは通常、データを
+      <strong>Vault（保管庫）</strong>
+      に保存します。デバイス間で同期できますが、重要なのは、<strong>自分のデバイスで暗号化し、自分のデバイスで復号する</strong>ことです。サーバーが主に受け取るのは暗号化済みのデータであり、毎回あなたの代わりに金庫を開けるわけではありません。
+    </p>
+    <figure
+      aria-label="マスターパスワードから端末内で鍵を導出し、復号処理によってローカルの Vault を開きます。Vault 内のサイト A・B・C にはそれぞれ異なるランダムなパスワードを使い、サーバーは暗号化されたデータを同期します。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>一つのマスターパスワードで、多数の異なるパスワードを管理</span
+        ><span class="pm-visual-id">LOCAL DECRYPTION</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-vault-steps">
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="8" cy="14" r="4.6"></circle>
+            <path
+              d="m11.5 10.7 8-8 1.8 1.8-2.5 2.5 1.9 1.9-2.7 2.7-1.9-1.9-2.3 2.3"
+            ></path></svg
+          ><strong>マスターパスワード</strong><span>自分で覚えるもの</span>
+        </div>
+        <div class="pm-v-arrow">→</div>
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <rect height="11" rx="2.5" width="15" x="4.5" y="10"></rect>
+            <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"></path>
+            <path d="M12 14v3"></path></svg
+          ><strong>端末内で Vault を開く</strong
+          ><span>適切な端末環境でのみ鍵を使う</span>
+        </div>
+        <div class="pm-v-arrow">↔</div>
+        <div class="pm-vnode">
+          <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path
+              d="M7 19H6a4 4 0 0 1-1.4-7.75A7.5 7.5 0 0 1 19 12a3.5 3.5 0 0 1-.5 7H7Z"
+            ></path>
+            <path d="m8 15 2.5 2.5L16 12"></path></svg
+          ><strong>暗号化して同期</strong><span>サーバーは暗号文を保存</span>
+        </div>
+      </div>
+      <div aria-hidden="true" class="pm-password-lines">
+        <div class="pm-pass"><b>サイト A</b><span>k8@V!9p...Q</span></div>
+        <div class="pm-pass"><b>サイト B</b><span>T3#n2Y...w</span></div>
+        <div class="pm-pass"><b>サイト C</b><span>bP7$4x...M</span></div>
+      </div>
+      <p class="pm-figure-note">
+        上の文字列は説明用です。実際のパスワードには使わないでください。図は簡略化しており、詳しい鍵階層は<a
+          href="#appendix"
+          >技術補足</a
+        >にあります。
+      </p>
+    </figure>
+    <h3>
+      実際には「マスターパスワードで全データを直接 AES 暗号化」するわけではない
+    </h3>
+    <p>
+      Bitwarden
+      の通常のマスターパスワード方式を例にすると、三つの層に分けられます。まず
+      <strong>KDF</strong>
+      でマスターパスワードを鍵素材に変換し、その素材で保護された
+      <strong>Vault の対称鍵</strong>を開きます。最後に Vault
+      の鍵で、保存したサイトのパスワードを復号します。この設計は
+      <strong>Key Hierarchy（鍵階層）と呼ばれます</strong>。<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <figure
+      aria-label="Bitwarden の鍵階層の簡略図。左側の利用者端末はマスターパスワードから KDF・HKDF を経て鍵を導出し、同期された保護済み対称鍵を取り出して Vault を復号します。右側のサーバーは暗号化された Vault と保護済み鍵だけを保存します。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>マスターパスワード、Vault の鍵、サーバーの役割分担</span
+        ><span class="pm-visual-id">KEY HIERARCHY</span>
+      </figcaption>
+      <div class="pm-boundary-header">
+        <span>利用者端末 / LOCAL</span><span>同期サービス / SERVER</span>
+      </div>
+      <div class="pm-keymap">
+        <div class="pm-keymap-local">
+          <div class="pm-key-node">
+            <small>01 · 自分で入力</small><strong>Master Password</strong
+            ><span>人が覚えられる秘密</span>
+          </div>
+          <div class="pm-key-down">
+            ↓ <small>PBKDF2 / Argon2id、HKDF</small>
+          </div>
+          <div class="pm-key-node">
+            <small>02 · 導出</small><strong>Stretched Master Key</strong
+            ><span>保護済みの鍵を開くために使う</span>
+          </div>
+          <div class="pm-key-down">↓ <small>鍵を取り出す</small></div>
+          <div class="pm-key-node pm-positive">
+            <small>03 · 取得</small><strong>Vault の対称鍵</strong
+            ><span>サイトのパスワードを端末内で復号</span>
+          </div>
+        </div>
+        <div class="pm-keymap-network">
+          <span>← 暗号文を同期</span><span>← Protected Symmetric Key</span
+          ><span>サーバー側で平文を復号しない →</span>
+        </div>
+        <div class="pm-keymap-server">
+          <div>
+            <strong>Encrypted Vault</strong
+            ><small>暗号化されたアカウントデータ</small>
+          </div>
+          <div>
+            <strong>Protected Key</strong
+            ><small>端末内で鍵を取り出す必要がある</small>
+          </div>
+          <p>
+            サーバーにはログインや運用に必要なデータもありますが、Vault
+            の平文を持つこととは別です。
+          </p>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        概念図です。実装には各項目の暗号鍵やログイン用ハッシュなども含まれます。すべての製品で同じ鍵名を使うという意味ではありません。<a
+          href="#src-01"
+          >[01]</a
+        >
+      </p>
+    </figure>
+    <h3>KDF、AES、MFA はそれぞれ何を担当するのか？</h3>
+    <div class="pm-mechanism-list">
+      <div>
+        <b>KDF</b
+        ><span
+          >マスターパスワードを推測する一回ごとの計算コストを意図的に高めます。弱いパスワード自体を強いものにはできません。</span
+        >
+      </div>
+      <div>
+        <b>AES + 完全性検証</b
+        ><span
+          >保存済み Vault
+          の内容が直接読まれたり、検知されずに改変されたりすることを防ぎます。</span
+        >
+      </div>
+      <div>
+        <b>MFA／二段階認証</b
+        ><span
+          >アカウントへのログイン条件を増やしますが、<strong>すでに盗まれた暗号文へのオフライン推測は防げません</strong>。</span
+        >
+      </div>
+    </div>
+    <p>
+      「ゼロ知識」を絶対的な安全と理解してはいけません。コンピューターがすでに感染しており、Vault
+      を解除すると、マルウェアは画面、メモリー、入力結果などから情報を取得する可能性があります。<strong>クラウド保存データの窃取</strong>と、<strong>使用中の端末の乗っ取り</strong>は異なる脅威です。<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <div
+      aria-label="攻撃シナリオと防御策の比較"
+      class="pm-scroll-table"
+      role="region"
+      tabindex="0"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>攻撃者が入手するもの</th>
+            <th>役立つ仕組みは？</th>
+            <th>役立たない仕組みは？</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>サイト A から漏れた認証情報</td>
+            <td>サイトごとの固有パスワード、MFA</td>
+            <td>元のパスワードを一、二文字変えるだけ</td>
+          </tr>
+          <tr>
+            <td>クラウド上の暗号化 Vault のコピー</td>
+            <td>強いマスターパスワード、KDF、鍵の設計</td>
+            <td>窃取後に有効にしたログイン MFA</td>
+          </tr>
+          <tr>
+            <td>ロック解除済みのコンピューター</td>
+            <td>OS 更新、エンドポイント保護、ロックの習慣</td>
+            <td>クラウドのゼロ知識という説明だけに頼ること</td>
+          </tr>
+          <tr>
+            <td>唯一のスマートフォンやセキュリティキーの紛失</td>
+            <td>オフライン復旧コード、予備キー、検証できるバックアップ</td>
+            <td>元のスマートフォンだけにバックアップを置くこと</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section>
+    <h2 id="recommend">
+      <span class="pm-n">03 /</span>Bitwarden と 1Password は何が違うのか？
+    </h2>
+    <p>
+      私はまず、この二つを検討します。どちらも単にパスワードをクラウドへ保存するだけの製品ではありませんが、「<strong>クラウドのバックアップが攻撃者の手に渡る</strong>」場面への設計には違いがあります。
+    </p>
+    <div class="pm-pick-list">
+      <div class="pm-pick">
+        <div class="pm-pick-name">
+          Bitwarden<small>オープンソース · クロスプラットフォーム</small>
+        </div>
+        <div class="pm-pick-body">
+          <p>
+            まずはこちらをおすすめします。無料プランで十分な人も多く、ブラウザー拡張、デスクトップ版、モバイルアプリ、自動入力がそろっています。
+          </p>
+          <p class="pm-con">
+            ソースの透明性やセルフホストの柔軟性を重視する人は、優先して検討できます。ただしセルフホストでは更新とバックアップを自分で担います。<a
+              class="pm-cite"
+              href="#src-01"
+              >[01]</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="pm-pick">
+        <div class="pm-pick-name">
+          1Password<small>サブスクリプション · 統合された使い勝手</small>
+        </div>
+        <div class="pm-pick-body">
+          <p>
+            有料でもよければ、こちらもおすすめです。インターフェースの統合が進んでおり、さらに
+            <strong>Secret Key</strong>
+            によって、サーバー側の漏えい後にマスターパスワードの推測だけで復号されるリスクを下げます。
+          </p>
+          <p class="pm-con">
+            Secret Key は復旧資料とともに適切に保管する必要があります。<a
+              class="pm-cite"
+              href="#src-04"
+              >[04]</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+    <figure
+      aria-label="サーバー側のデータだけが漏れた場合に必要となる秘密の比較。Bitwarden は主にマスターパスワードと KDF に依存し、1Password はサーバーに保存しない Secret Key を追加で組み合わせます。どちらもロック解除済みクライアントの乗っ取りは防げません。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>事業者の暗号化データベースがコピーされたと仮定</span
+        ><span class="pm-visual-id">OFFLINE ATTACK</span>
+      </figcaption>
+      <div class="pm-breach-compare">
+        <div class="pm-compare-label">Bitwarden</div>
+        <div class="pm-compare-chain">
+          <span>Vault の暗号文</span><i>＋</i
+          ><span>マスターパスワードを推測</span><i>→</i
+          ><span class="pm-outcome">KDF が一回ごとの推測コストを高める</span>
+        </div>
+        <div class="pm-compare-label">1Password</div>
+        <div class="pm-compare-chain">
+          <span>Vault の暗号文</span><i>＋</i
+          ><span>Account Password を推測</span><i>＋</i
+          ><span class="pm-positive-chip">さらに Secret Key が必要</span>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        どちらにも強いマスターパスワードは必要です。1Password の Secret Key
+        は「もう一つ暗記するパスワード」ではなく、通常は認証済みデバイスや
+        Emergency Kit
+        に保存します。デバイスも侵害された場合は、脅威モデルが変わります。<a
+          href="#src-04"
+          >[04]</a
+        >
+      </p>
+    </figure>
+    <p>
+      <strong>Bitwarden</strong>
+      は公開ソース、クロスプラットフォームのアプリ、セルフホストの柔軟性を提供します。鍵の流れを理解したい人や、自分で運用を管理したい人には魅力的です。ただし、セルフホストは魔法のような暗号化強化ではありません。TLS、更新、バックアップ、監視、災害復旧は自分の責任になります。<a
+        class="pm-cite"
+        href="#src-01"
+        >[01]</a
+      >
+    </p>
+    <p>
+      <strong>1Password</strong> はデバイス上で生成した高エントロピーの
+      <strong>Secret Key</strong> と Account Password を組み合わせて Vault
+      を保護し、ログイン認証には別途 SRP
+      を使います。主に「サーバー側の情報は漏れたが、攻撃者はデバイス側の秘密を入手できていない」場合に障壁を加えるものです。認証済み端末が感染しても完全に隔離できるという意味ではありません。<a
+        class="pm-cite"
+        href="#src-04"
+        >[04]</a
+      ><a class="pm-cite" href="#src-19">[19]</a>
+    </p>
+    <p class="pm-bare-note">
+      LastPass は、今のところ最優先の候補にはしません。理由は、2022
+      年のバックアップ漏えいが長期的なリスクを残しているためです。攻撃者は Vault
+      の暗号文を保存し、将来も弱いマスターパスワードを試し続けられます。全利用者のパスワードが平文で漏れたという意味ではありません。<a
+        class="pm-cite"
+        href="#src-15"
+        >[15]</a
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="totp">
+      <span class="pm-n">04 /</span>OTP の 6
+      桁の数字は、どのように生まれるのか？
+    </h2>
+    <p>
+      多くのサイトでは「OTP を有効にする」として QR
+      コードを読み取り、その後はスマートフォンに一定間隔で新しい 6
+      桁の数字が表示されます。一般的な方式は
+      <strong>TOTP（Time-based One-Time Password）</strong> です。サーバーが 30
+      秒ごとに新しいパスワードをスマートフォンへ送っているわけではありません。<a
+        class="pm-cite"
+        href="#src-11"
+        >[11]</a
+      >
+    </p>
+    <p>
+      初回設定時にサイトが生成するのは、<strong>秘密のシード（Seed）</strong>です。QR
+      コードで Authy
+      などの認証アプリに渡した後は、<strong>サイトとスマートフォンが同じシードと時間窓を使って、それぞれ計算する</strong>ため、結果が一致します。ネット接続がなくてもコードを生成できることが多いのは、このためです。
+    </p>
+    <figure
+      aria-label="TOTP の仕組み。登録時にサイトが QR コードで Authy へ秘密のシードを渡し、ログイン時は同じシードと同じ 30 秒の時間窓から両者が同じ 6 桁のコードを計算します。表示した数値は説明用の架空データです。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span
+          >30 秒ごとに新しいパスワードをクラウドから取得するわけではない</span
+        ><span class="pm-visual-id">TOTP / SHARED SECRET</span>
+      </figcaption>
+      <div class="pm-otp-setup">
+        <div><small>初回設定</small><b>サイトが秘密のシード K を生成</b></div>
+        <span>→ QR コードを読み取る →</span>
+        <div>
+          <small>自分のスマートフォン</small><b>Authy が同じ K を保存</b>
+        </div>
+      </div>
+      <div class="pm-otp-divider">以後のログイン · 両者が別々に計算</div>
+      <div class="pm-otp-duo">
+        <div class="pm-otp-unit">
+          <small>WEBSITE / サイト</small>
+          <div class="pm-otp-func">HMAC(K, 時間窓 T)</div>
+          <div class="pm-otp-result">482 916</div>
+          <div class="pm-otp-caption">サーバーが独立に計算して照合</div>
+        </div>
+        <div class="pm-otp-center">
+          ＝<small>同じ K<br />同じ T</small>
+        </div>
+        <div class="pm-otp-unit">
+          <small>AUTHENTICATOR / スマートフォン</small>
+          <div class="pm-otp-func">HMAC(K, 時間窓 T)</div>
+          <div class="pm-otp-result">482 916</div>
+          <div class="pm-otp-caption">オフラインでもコードを生成</div>
+        </div>
+      </div>
+      <div class="pm-otp-windows">
+        <span>時間窓 T</span>
+        <div>00–29 秒</div>
+        <div>30–59 秒</div>
+        <div>次の 30 秒</div>
+        <span class="pm-otp-foot">時間窓が変わる → 通常はコードも変わる</span>
+      </div>
+      <p class="pm-figure-note">
+        数値と時間軸は仕組みを説明するためのもので、有効な認証コードではありません。許容する時刻のずれ、HMAC
+        の方式、桁数はサービスによって異なります。<a href="#src-11">[11]</a>
+      </p>
+    </figure>
+    <p>
+      TOTP
+      は「パスワードだけを盗み、スマートフォンやシードは持っていない人」の直接的なログインを防げます。しかし、6
+      桁の数字は<strong>本物のサイトのドメインに結び付いていません</strong>。偽のログイン画面にコードを入力すると、攻撃者はすぐに本物のサイトへ転送できる可能性があります。これが、次の節で扱う
+      FIDO2 が対処する問題です。<a class="pm-cite" href="#src-12">[12]</a>
+    </p>
+  </section>
+  <section>
+    <h2 id="fido">
+      <span class="pm-n">05 /</span>FIDO2 やパスキーは、なぜ手入力の OTP
+      よりフィッシングに強いのか？
+    </h2>
+    <p>
+      TOTP の 6
+      桁のコードは、<strong>転送できる</strong>答えです。FIDO2／WebAuthn
+      は異なります。登録時にセキュリティキーやデバイスが
+      <strong>Private Key / Public Key</strong> を生成し、サイトは Public Key
+      だけを保存します。ログイン時にはサイトが一回限りの
+      <strong>Challenge</strong> を発行し、認証器が Private Key
+      で署名して、サイトがそれを検証します。<a class="pm-cite" href="#src-13"
+        >[13]</a
+      >
+    </p>
+    <figure
+      aria-label="リアルタイムのフィッシング中継の比較。偽サイトに入力した TOTP は、そのまま本物のサイトへ転送される可能性があります。WebAuthn の資格情報は Origin と RP ID のドメインに制約されるため、偽サイトでは本物のドメインで検証を通る正しい資格情報の応答を生成できません。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>違いは 6 桁かどうかではなく、転送できるかどうか</span
+        ><span class="pm-visual-id">PHISHING RESISTANCE</span>
+      </figcaption>
+      <div class="pm-fido-cases">
+        <div class="pm-fido-case pm-vulnerable">
+          <b>TOTP を使用</b>
+          <div class="pm-fido-trail">
+            <span>偽サイト</span><i>6 桁のコードを取得 →</i
+            ><span>本物のサイト</span>
+          </div>
+          <p>攻撃者は有効期間内にコードを転送できる可能性があります。</p>
+        </div>
+        <div class="pm-fido-case pm-resilient">
+          <b>FIDO2／WebAuthn を使用</b>
+          <div class="pm-fido-trail">
+            <span>偽のドメイン</span><i>RP ID が不一致 ×</i
+            ><span>本物のドメインの資格情報</span>
+          </div>
+          <p>
+            ブラウザーと認証器にはドメインの制約があります。サーバー側でも
+            Origin、Challenge、署名などを検証する必要があります。
+          </p>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        ここで説明しているのは、仕様に準拠して正しく実装された WebAuthn
+        ログインです。ログイン済みセッションの窃取は防げず、サイトに残っている弱いアカウント復旧手段も補えません。<a
+          href="#src-12"
+          >[12]</a
+        ><a href="#src-13">[13]</a>
+      </p>
+    </figure>
+    <p>
+      <strong>Passkey</strong> は FIDO
+      資格情報を利用するログイン体験で、通常は従来のサイトのパスワードを入力する必要がありません。パスキーは特定のハードウェアに保持することも、対応するエコシステム内で暗号化して同期することもできます。デバイス紛失時のリスクや復旧方法は、この二つで異なります。
+    </p>
+    <p>
+      また、<strong>YubiKey はハードウェア製品、FIDO2 はプロトコルです</strong
+      >。同じ対応セキュリティキーが従来型の OTP、TOTP、FIDO2
+      をサポートする場合もあります。物理キーを挿しただけで、自動的に WebAuthn
+      のフィッシング耐性を得られるわけではありません。<a
+        class="pm-cite"
+        href="#src-21"
+        >[21]</a
+      >
+    </p>
+  </section>
+  <section>
+    <h2 id="separation">
+      <span class="pm-n">06 /</span>TOTP は Vault と分けて保管したい
+    </h2>
+    <p>
+      Authy は引き続きおすすめです。また、TOTP と Vault
+      はできるだけ分けたいと考えています。システムだけでなく、可能ならハードウェアのレベルで分離するのが理想です。
+    </p>
+    <p>
+      これは「アプリが二つなら安全そう」という話ではなく、<strong>一つの侵害箇所</strong>からパスワードと第二要素の両方を取得されないためです。サイトのパスワードと
+      TOTP のシードを同じ解除済み Vault に保存すると、攻撃者が Vault
+      全体を読めるようになった時に、両方の秘密を一度に取得する可能性があります。<a
+        class="pm-cite"
+        href="#src-20"
+        >[20]</a
+      >
+    </p>
+    <figure
+      aria-label="左側はサイトのパスワードと TOTP のシードを同じ Vault に保存し、侵害箇所が共通になっている例です。右側はコンピューターのパスワードマネージャーにパスワードを、別のスマートフォンの Authy に TOTP を保存する例です。サイトが FIDO2 に対応していれば、さらにハードウェアキーを使います。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>別のアプリが第一歩、別のデバイスならさらによい</span
+        ><span class="pm-visual-id">SEPARATE TRUST</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-split-graphic">
+        <div class="pm-device-case">
+          <div class="pm-case-kicker">同じ Vault / 便利だが一か所に集中</div>
+          <div class="pm-device-display">
+            <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <rect height="11" rx="2.5" width="15" x="4.5" y="10"></rect>
+              <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"></path>
+              <path d="M12 14v3"></path>
+            </svg>
+            <strong>Vault</strong>
+            <div class="pm-secrets">
+              <span>サイトのパスワード</span><span>TOTP のシード</span>
+            </div>
+          </div>
+          <div class="pm-case-caption">
+            Vault 全体を読まれると、二つの秘密が同時に漏れる可能性があります。
+          </div>
+        </div>
+        <div class="pm-device-case pm-isolated">
+          <div class="pm-case-kicker">私が好む方法 / 独立したデバイス</div>
+          <div class="pm-devices">
+            <div class="pm-minidevice">
+              <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <rect
+                  height="12.3"
+                  rx="1.3"
+                  width="17.2"
+                  x="3.4"
+                  y="4.5"
+                ></rect>
+                <path d="m2.4 20 1-3.2h17.2l1 3.2H2.4Z"></path></svg
+              ><strong>コンピューター</strong><small>Vault / パスワード</small>
+            </div>
+            <div class="pm-middle-device">それぞれ<br />保管</div>
+            <div class="pm-minidevice">
+              <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <rect height="20" rx="2.1" width="10.6" x="6.7" y="2"></rect>
+                <path d="M10.4 18.7h3.2"></path></svg
+              ><strong>スマートフォン</strong><small>Authy / TOTP</small>
+            </div>
+          </div>
+          <div class="pm-key-bar">
+            <svg class="pm-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <circle cx="8" cy="14" r="4.6"></circle>
+              <path
+                d="m11.5 10.7 8-8 1.8 1.8-2.5 2.5 1.9 1.9-2.7 2.7-1.9-1.9-2.3 2.3"
+              ></path></svg
+            ><span
+              >重要なアカウントが FIDO2
+              に対応しているなら、独立した物理セキュリティキーを使いたいと考えています。</span
+            >
+          </div>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        分離しても、すべてのフィッシングを防げるわけではありません。TOTP
+        のコードはリアルタイムで転送される可能性があります。FIDO2／WebAuthn
+        にはドメインに基づく保護があります。
+      </p>
+    </figure>
+    <h3>「分離」を三つの段階に分けて考える</h3>
+    <div class="pm-tier-list">
+      <div>
+        <span class="pm-tier-index">01</span
+        ><b>パスワードと TOTP を同じ Vault に保存</b>
+        <p>
+          最も便利で、一般的な低リスクのサイトなら必ずしも不合理ではありません。ただし
+          Vault 全体の漏えい時には、両方の秘密が同時に露出する可能性があります。
+        </p>
+      </div>
+      <div>
+        <span class="pm-tier-index">02</span
+        ><b>別のアプリを使い、TOTP は別のスマートフォンに保存</b>
+        <p>
+          例えばコンピューターでは Bitwarden、スマートフォンでは Authy
+          を使います。単一の Vault
+          の侵害による波及を減らせますが、バックアップ用アカウントが共通かどうかも確認が必要です。
+        </p>
+      </div>
+      <div>
+        <span class="pm-tier-index">03</span
+        ><b>独立したハードウェアセキュリティキーを使い、FIDO2 を優先</b>
+        <p>
+          主要メール、クラウド、金融、管理者アカウントでは、利用できるなら FIDO2
+          を優先します。紛失時にも復旧できるよう、予備のキーを用意します。
+        </p>
+      </div>
+    </div>
+    <div class="pm-authy-strip">
+      <strong>Authy</strong>
+      <p>
+        スマートフォンで TOTP
+        を独立して管理したい人に向いています。バックアップは暗号化して同期できますが、<strong
+          >バックアップのパスワードを同じ Vault
+          だけに保存しないでください</strong
+        >。<a class="pm-cite" href="#src-06">[06]</a>
+      </p>
+      <p class="pm-tiny">
+        注意点として、Authy の Windows／macOS／Linux デスクトップ版は 2024 年 3
+        月にサポートを終了しており、現在はモバイルアプリが中心です。予備デバイスを設定した後は、新しいデバイスの追加を許可する
+        Multi-Device を無効にすることが公式に推奨されています。<a
+          class="pm-cite"
+          href="#src-08"
+          >[08]</a
+        >
+        <a class="pm-cite" href="#src-07">[07]</a>
+      </p>
+    </div>
+    <p>
+      Authy のバックアップパスワードを Twilio
+      が代わりに保存したり復旧したりすることはありません。バックアップ同期を有効にしたら、<strong>バックアップのパスワードを自分で見つけられるようにしておく必要があります</strong>。Vault
+      の唯一の復旧手段と同じ場所だけに閉じ込めないでください。Multi-Device
+      による追加を無効にした後も、有効な予備デバイスや復旧経路が残っていることを確認しましょう。<a
+        class="pm-cite"
+        href="#src-06"
+        >[06]</a
+      ><a class="pm-cite" href="#src-07">[07]</a>
+    </p>
+    <p class="pm-bare-note">
+      2FAS、Aegis、Ente Auth、Yubico Authenticator
+      なども比較する価値があります。ただし選ぶ際に確認したいのは知名度ではなく、シードの保存場所、暗号化バックアップの可否、スマートフォン紛失後の復旧方法、そしてメインの
+      Vault と本当に分離されているかです。
+    </p>
+  </section>
+  <section>
+    <h2 id="autofill">
+      <span class="pm-n">07 /</span>自動入力は便利だが、安全性には境界がある
+    </h2>
+    <p>
+      自動入力は便利な方法です。現状、クリップボードを読み取るアプリも多くあります。
+    </p>
+    <p class="pm-precision">
+      現在の Android／iOS
+      では、クリップボードの読み取りに権限、通知、バックグラウンド制限などが設けられており、すべてのアプリがいつでも盗み見できるわけではありません。それでもパスワードをクリップボードに置くと、露出経路は増えます。OS
+      と統合された自動入力を使えるなら、毎回コピー＆ペーストする必要はありません。<a
+        class="pm-cite"
+        href="#src-10"
+        >[10]</a
+      ><a class="pm-cite" href="#src-17">[17]</a>
+    </p>
+    <figure
+      aria-label="コピー＆ペーストではデータがクリップボードを通ります。OS の自動入力では、通常パスワードをクリップボードに置く必要がありません。どちらの場合も、入力先のサイトやアプリが信頼できるか確認する必要があります。"
+      class="pm-visual"
+      role="img"
+    >
+      <figcaption>
+        <span>パスワードがクリップボードを通る機会を減らす</span
+        ><span class="pm-visual-id">AUTOFILL VS COPY</span>
+      </figcaption>
+      <div aria-hidden="true" class="pm-fill-lines">
+        <div class="pm-fill-lane pm-copy">
+          <div class="pm-fill-label">コピー＆ペースト</div>
+          <div class="pm-fill-node">Vault</div>
+          <div class="pm-fill-node">クリップボード</div>
+          <div class="pm-fill-node">サイト / アプリ</div>
+        </div>
+        <div class="pm-fill-lane pm-auto">
+          <div class="pm-fill-label">OS の自動入力</div>
+          <div class="pm-fill-node">Vault</div>
+          <div class="pm-fill-node">OS の自動入力サービス</div>
+          <div class="pm-fill-node">サイト / アプリ</div>
+        </div>
+      </div>
+      <div aria-hidden="true" class="pm-fill-summary">
+        <div>
+          <b>注意</b
+          ><span
+            >クリップボードに秘密が残る可能性があります。読み取り制限は OS
+            のバージョンによっても異なります。</span
+          >
+        </div>
+        <div>
+          <b>よりよい方法</b
+          ><span>OS の自動入力を使い、現在のアプリと URL を確認します。</span>
+        </div>
+      </div>
+      <p class="pm-figure-note">
+        自動入力で悪意あるアプリが安全になるわけではありません。自分で偽のログイン画面にパスワードを入力すれば、取得される可能性は残ります。<a
+          class="pm-cite"
+          href="#src-09"
+          >[09]</a
+        >
+        <a class="pm-cite" href="#src-10">[10]</a>
+      </p>
+    </figure>
+    <h3>マネージャーは「今どのサイトを開いているか」をどう判断するのか？</h3>
+    <p>
+      ブラウザー拡張を例にすると、パスワードマネージャーは通常、現在のページの
+      <strong>URL／URI</strong> を Vault に保存した URL と照合します。Bitwarden
+      の既定の <strong>Base domain</strong> は多くのサイトに適していますが、Host
+      や Exact
+      を指定して、入力したくないサブドメインにログイン情報が表示されるのを減らすこともできます。<a
+        class="pm-cite"
+        href="#src-18"
+        >[18]</a
+      >
+    </p>
+    <div aria-label="照合方式と URL の例" class="pm-uri-example">
+      <div class="pm-uri-header">
+        保存した URL の例：<code>https://login.example.com/</code>
+      </div>
+      <div>
+        <b>Base domain</b
+        ><span
+          >同じ
+          <code>example.com</code>
+          に属する異なるサブドメインが、まとめて一致する場合があります。</span
+        >
+      </div>
+      <div>
+        <b>Host</b
+        ><span>ホスト名を <code>login.example.com</code> に限定します。</span>
+      </div>
+      <div>
+        <b>Exact</b
+        ><span
+          >URL
+          全体の完全一致が必要です。厳密な一方、リダイレクト用パラメーターなどによって一致しない場合もあります。</span
+        >
+      </div>
+    </div>
+    <p>
+      ただし、<strong>「自動入力の候補が表示された」ことは、サイトが信頼できる保証ではありません</strong>。サイト自体が侵害されていたり、悪意ある入力欄が存在したりすれば、入力済みのパスワードを読まれる可能性があります。Bitwarden
+      は一部の信頼できない iframe
+      に警告やブロックを行います。そのため私は、<strong>「ページの読み込み時に自動入力」を無効にし</strong>、必要な時にショートカットキーや手動操作で入力します。<a
+        class="pm-cite"
+        href="#src-09"
+        >[09]</a
+      >
+    </p>
+    <p>
+      スマートフォンの自動入力は、通常 OS
+      のサービスと、アプリの識別情報や関連ドメインなどを連携させます。デスクトップブラウザーと同じ細かさで
+      URL
+      のパスを判定できるとは限りません。どれほど安全な自動入力でも、悪意あるアプリそのものが安全になるわけではありません。
+    </p>
+  </section>
+  <section>
+    <h2 id="setup">
+      <span class="pm-n">08 /</span>実際に使い始めるなら、この順番で設定する
+    </h2>
+    <ol class="pm-checklist">
+      <li>
+        <span class="pm-counter">01</span>
+        <div>
+          <strong>独立した、長く推測しにくいマスターパスワードを設定する</strong
+          ><span
+            >ほかのサイトと使い回さず、誕生日と固定ルールの組み合わせではなく、ランダムに生成した複数単語のパスフレーズなどを使います。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">02</span>
+        <div>
+          <strong>よく使うサイトを、一サイト一パスワードにする</strong
+          ><span
+            >マネージャーで長いランダムなパスワードを生成します。まずメール、クラウド、金融、パスワードを使い回していたサイトから変更します。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">03</span>
+        <div>
+          <strong>Vault 自体のログインにも第二要素を追加する</strong
+          ><span
+            >対応していれば FIDO2
+            セキュリティキーを優先し、そうでなければ独立したスマートフォンの
+            TOTP を使います。ログイン対象の Vault の中だけに、唯一の MFA
+            の秘密を保存しないでください。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">04</span>
+        <div>
+          <strong>自動入力を使いつつ、確認の手順を残す</strong
+          ><span
+            >サイトのドメインやアプリを確認し、読み込み直後の自動入力は無効にします。機密性の高いサービスでは、URI
+            の照合を Host または Exact に変更することも検討します。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">05</span>
+        <div>
+          <strong>基幹となるアカウントに、独立した復旧経路を用意する</strong
+          ><span
+            >主要メール、パスワードマネージャー、パスキーの同期アカウントを、相互依存した一つの復旧経路だけに頼らせないようにします。</span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">06</span>
+        <div>
+          <strong>暗号化エクスポートをバックアップし、実際に復元を試す</strong
+          ><span
+            >Bitwarden なら、パスワードで保護した encrypted JSON
+            が選択肢です。添付ファイルは別に扱い、通常の ZIP
+            を暗号化バックアップだと思わないでください。<a
+              class="pm-cite"
+              href="#src-16"
+              >[16]</a
+            ></span
+          >
+        </div>
+      </li>
+      <li>
+        <span class="pm-counter">07</span>
+        <div>
+          <strong>OS を更新し、Vault を定期的にロックする</strong
+          ><span
+            >不要なブラウザー拡張を減らし、信頼できない共有デバイスでは Vault
+            を解除しないでください。</span
+          >
+        </div>
+      </li>
+    </ol>
+    <figure
+      aria-label="循環依存の例。パスワードマネージャーにログインできず、ログインに必要な唯一の TOTP と復旧コードもその Vault 内にあると、恒久的に締め出される可能性があります。右側では、独立した予備デバイス、セキュリティキー、オフライン復旧コードで依存を解消することを提案しています。"
+      class="pm-visual"
+    >
+      <figcaption>
+        <span>バックアップを設定する時は「最悪の日」を想像する</span
+        ><span class="pm-visual-id">RECOVERY LOOP</span>
+      </figcaption>
+      <div class="pm-recovery-flow">
+        <div class="pm-recovery-problem">
+          <b>Vault にログインできない</b><span>TOTP / 復旧コードが必要</span
+          ><span>しかし唯一のコピーは Vault の中</span
+          ><strong>循環依存が発生</strong>
+        </div>
+        <span aria-hidden="true" class="pm-recovery-arrow">→</span>
+        <div class="pm-recovery-solution">
+          <b>復旧手段を分けて保管</b><span>オフライン復旧コード</span
+          ><span>予備の FIDO2 キーや独立したスマートフォン</span
+          ><strong>実際に一度、復旧をテストする</strong>
+        </div>
+      </div>
+    </figure>
+  </section>
+  <section>
+    <h2 id="appendix">
+      <span class="pm-n">09 /</span
+      >さらに技術を知りたい人へ：アルゴリズムを詳しく見る
+    </h2>
+    <p class="pm-appendix-intro">
+      ここまでは「なぜそうするのか」を説明しました。以下では、実際の鍵の流れ、式、プロトコルの検証、例外条件を扱います。気になる項目を開いて読んでください。
+    </p>
+    <div class="pm-details-group">
+      <details>
+        <summary>
+          01 · Bitwarden の鍵階層：Master Key から Vault の平文まで
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            通常のマスターパスワードでログインする Bitwarden
+            アカウントでは、クライアントがマスターパスワードやアカウントのメールアドレスなどを入力に
+            KDF を実行し、<strong>Master Key</strong> を得ます。さらに HKDF
+            で展開して
+            <strong>Stretched Master Key</strong> を導出し、サーバーから取得した
+            <strong>Protected Symmetric Key</strong> を開いて、<strong
+              >User Symmetric Key</strong
+            >
+            を得ます。データの復号はクライアント側で実行します。これは概念的な流れであり、個々の項目の暗号鍵や別のログイン方式は省略しています。<a
+              class="pm-cite"
+              href="#src-01"
+              >[01]</a
+            >
+          </p>
+          <pre>
+Master Password + account salt
+    ↓ KDF（PBKDF2 または Argon2id）
+Master Key
+    ↓ HKDF（用途ごとの鍵素材へ展開）
+Stretched Master Key
+    + サーバーが保存する Protected Symmetric Key
+    ↓ 端末内で開く
+User Symmetric Key
+    ↓ Vault 項目に関連する鍵と暗号文を復号
+Vault の平文（認証済みデバイスで必要な時だけ使用）</pre>
+          <p>
+            区別しておきたいのは、<strong>「ログインの認証」</strong>と<strong
+              >「Vault の復号」</strong
+            >です。ログインでは通常、サーバーで検証できる派生ハッシュや MFA
+            も使います。復号には、実際の対称鍵が必要です。マスターパスワードの変更、KDF
+            パラメーターの調整、Vault
+            の暗号鍵のローテーションは別の操作です。パスワードを変えれば、攻撃者が保存済みの古い暗号文が即座に無効になるとは考えないでください。<a
+              class="pm-cite"
+              href="#src-22"
+              >[22]</a
+            >
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>02 · PBKDF2 と Argon2id：ソルト、反復、メモリーコスト</summary>
+        <div class="pm-detail-body">
+          <p>
+            <strong>KDF</strong>
+            の入力は、人が覚えやすい一方でエントロピーが不足しがちなマスターパスワードです。ソルト（salt）と高コストの計算によって、攻撃者が推測のたびにコストを払う必要があるようにします。ソルトは<strong>通常、秘密にする必要がありません</strong>。目的は、同じパスワードでもアカウントごとに異なる出力を得ることと、事前計算した表を使い回しにくくすることです。
+          </p>
+          <pre>
+PBKDF2-HMAC-SHA256(P, salt, c, dkLen)
+P      = マスターパスワード
+salt   = 秘密ではないソルト
+c      = 反復回数
+ dkLen = 出力する鍵の長さ
+
+Argon2id(P, salt, m, t, p)
+m = メモリーコスト
+ t = 時間／反復コスト
+ p = 並列度</pre>
+          <p>
+            Bitwarden の文書に記載された既定値の参考：<strong
+              >PBKDF2-HMAC-SHA256：600,000 iterations</strong
+            >；<strong>Argon2id：32 MiB、6 iterations、parallelism 4</strong
+            >。PBKDF2 は主に反復計算を増やし、Argon2id
+            はメモリーも要求することで、大規模な並列推測を安価に行いにくくします。<strong
+              >600,000 と 6 を直接比較することはできません</strong
+            >。処理のモデルがまったく異なるためです。<a
+              class="pm-cite"
+              href="#src-02"
+              >[02]</a
+            >
+          </p>
+          <p class="pm-minor">
+            単純化したコストモデルでは、総推測時間 ≈ 推測回数 × 一回の推測コスト
+            ÷ 有効な並列数となります。ただし GPU、メモリー帯域、KDF
+            のパラメーター、ハードウェア構成によって結果は大きく変わります。ロック解除にかかった秒数から、信頼できる解析所要時間を直接算出することはできません。長く独立したマスターパスワードが、依然として第一の防御線です。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          03 · AES-CBC／HMAC と AES-GCM：違いは数字の大小ではない
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            「AES-256」は鍵の長さを表すもので、暗号化プロトコル全体の安全性を示すものではありません。データそのものの暗号化に加え、<strong>完全性の検証</strong>も必要です。そうでなければ、攻撃者による暗号文の改変を確実に検知できない可能性があります。
+          </p>
+          <ul>
+            <li>
+              <strong>Bitwarden：AES-256-CBC + HMAC-SHA256</strong>。CBC
+              が機密性を担い、HMAC
+              が暗号文の完全性を追加で検証します。安全性は、適切な
+              IV、鍵の分離、検証の順序にも依存します。
+            </li>
+            <li>
+              <strong>1Password：AES-256-GCM</strong>。GCM
+              は暗号化と認証を統合した AEAD モードです。同様に nonce／IV
+              の適切な管理が必要で、再利用してはならない nonce
+              を再利用してはいけません。
+            </li>
+          </ul>
+          <p>
+            CBC や GCM
+            という名称だけで、製品全体のどちらが安全かは判断できません。エンドポイント、鍵管理、事故からの復旧も同じくらい重要なことが多いからです。<a
+              class="pm-cite"
+              href="#src-03"
+              >[03]</a
+            ><a class="pm-cite" href="#src-05">[05]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>04 · TOTP の式：HMAC、時間窓、動的切り詰め</summary>
+        <div class="pm-detail-body">
+          <p>
+            TOTP は HOTP
+            を基にしています。サイトと認証器はランダムな秘密のシード
+            <code>K</code> を共有し、現在時刻をカウンター
+            <code>T</code> に変換してから、HMAC の結果を短い数字へ変換します。<a
+              class="pm-cite"
+              href="#src-11"
+              >[11]</a
+            >
+          </p>
+          <pre>
+T = floor((UnixTime − T₀) / X)
+H = HMAC(K, encode_8_byte_big_endian(T))
+OTP = DynamicTruncate(H) mod 10^d
+
+K  = 共有された秘密のシード
+T₀ = 基準時刻（通常は Unix epoch）
+X  = 時間窓の秒数（通常は 30）
+d  = 出力桁数（通常は 6）</pre>
+          <p>
+            RFC 6238 は HMAC-SHA-1／256／512
+            をサポートします。実際のサービスではシード、桁数、時間窓が一致していなければなりません。6
+            桁のコードの候補は全部で
+            <code>10^6</code>
+            通りしかないため、サーバー側にはログイン失敗のレート制限、時刻のずれへの対応、リプレイの確認が必要です。30
+            秒以内なら無制限に推測してよいわけではありません。
+          </p>
+          <p class="pm-minor">
+            QR コードには、秘密のシードや、シードを復元できる設定 URI
+            が含まれることがよくあります。通常のログイン用 QR
+            コードだと思ってグループに共有しないでください。K
+            を入手した人は、以後の時間窓のコードを自分で計算できます。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          05 · WebAuthn の検証では、どのフィールドを確認するのか？
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            登録（registration）時には、認証器が特定の RP
+            向けの公開鍵・秘密鍵のペアを生成し、サイトが Public Key と
+            Credential ID
+            を保存します。ログイン（authentication）時には、サイトが予測できない
+            <strong>Challenge</strong> を発行し、ブラウザーと認証器が Assertion
+            を生成して、サーバーが検証します。<a class="pm-cite" href="#src-13"
+              >[13]</a
+            >
+          </p>
+          <pre>
+登録：
+  Authenticator → (private key, public key)
+  Server        ← public key + credential ID
+
+ログイン：
+  Server → challenge
+  Authenticator → signature over
+    authenticatorData || SHA256(clientDataJSON)
+  Server checks:
+    challenge / type / Origin
+    rpIdHash / UP・UV flags（ポリシーによる）
+    signature / credential binding</pre>
+          <p>
+            <strong>Origin</strong> は WebAuthn API
+            を呼び出すサイトのオリジンを表し、<strong>RP ID</strong>
+            は資格情報を使用できる依拠当事者の範囲です。偽サイトが自由に本物のサイトの
+            RP ID
+            を名乗ったり、本物のサイト向けの有効なアサーションを取得したりすることはできません。サーバー側も確実に確認する必要があり、署名だけを検証して文脈を無視してはいけません。
+          </p>
+          <p>
+            「フィッシング耐性」は「すべてのアカウント乗っ取りへの耐性」ではありません。ログイン済みのセッション
+            Cookie、悪意あるブラウザー拡張、弱い復旧フローなどは、別の侵入口になり得ます。<a
+              class="pm-cite"
+              href="#src-12"
+              >[12]</a
+            >
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>06 · パスキーとは？ 同期型とデバイス固定型の違い</summary>
+        <div class="pm-detail-body">
+          <p>
+            パスキーは FIDO
+            資格情報を利用してログインする方法です。指紋、顔認証、デバイスの PIN
+            を使う時は、通常は端末内で認証器を解除しているのであって、生体情報をサイトへ送っているわけではありません。
+          </p>
+          <ul>
+            <li>
+              <strong>Device-bound</strong
+              >：資格情報が特定の認証器やデバイスに結び付いています。通常はハードウェアによる分離がより明確ですが、予備のキーが必要です。
+            </li>
+            <li>
+              <strong>Synced Passkey</strong
+              >：提供者が保護する同期の仕組みによって、複数のデバイスで利用できます。復旧は容易になりますが、同期アカウントとデバイスを特に慎重に保護する必要があります。
+            </li>
+          </ul>
+          <p>
+            「秘密鍵は絶対にエクスポートできない」を、すべてのパスキーに当てはめることはできません。ログインできる仕組みと、パスワードマネージャーの
+            Vault を解除する仕組みも、異なる場合があります。例えば、パスキーから
+            Vault の復号用素材を導出するために、WebAuthn PRF
+            のサポートが必要な設計もあります。<a class="pm-cite" href="#src-01"
+              >[01]</a
+            ><a class="pm-cite" href="#src-13">[13]</a>
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>07 · 1Password の Secret Key、SRP、鍵の脅威モデル</summary>
+        <div class="pm-detail-body">
+          <p>
+            1Password はデバイス上で約
+            <strong>128 bits のエントロピー</strong>を持つ Secret Key
+            を生成し、Account Password
+            とともにアカウントの暗号鍵を保護します。これはアカウントの通し番号でも、もう一つ暗記するパスワードでもありません。Secret
+            Key は認証済みデバイスや適切な Emergency Kit に保存します。<a
+              class="pm-cite"
+              href="#src-04"
+              >[04]</a
+            >
+          </p>
+          <p>
+            <strong>SRP（Secure Remote Password）</strong>
+            はログイン時の本人認証に使うもので、Vault
+            のデータ暗号化とは別です。設計上の目的は、利用者が入力した元の
+            Account Password
+            を受け取ることなく、サーバー側でパスワードの証明を検証できるようにすることです。<a
+              class="pm-cite"
+              href="#src-19"
+              >[19]</a
+            >
+          </p>
+          <p>
+            攻撃者がサーバーの暗号化データだけを入手した場合、Secret Key
+            がないことはオフライン攻撃への追加の障壁になります。しかし、認証済みデバイスも支配している、Secret
+            Key
+            を入手した、復旧資料を得た、といった場合には、「サーバー側だけの漏えい」という安全性の推論をそのまま適用できません。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          08 · Autofill：URI の照合、iframe、エンドポイントのリスク
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            Bitwarden の
+            <strong>Base domain</strong>
+            は実効的な登録可能ドメインを参照し、<strong>Host</strong>
+            はホスト名を制約し、<strong>Exact</strong> は URI
+            全体の完全一致を要求します。機密性の高いサブドメインでは Host／Exact
+            に変更した方がよい場合もありますが、Exact
+            はパスやクエリー文字列の変更で一致しなくなる可能性があります。Android
+            や iOS では、照合できる情報が OS の API
+            に制限される場合もあります。<a class="pm-cite" href="#src-18"
+              >[18]</a
+            >
+          </p>
+          <p>
+            Bitwarden の「Autofill on page
+            load」は既定で無効です。公式にも、侵害されたサイトがこの利便性を悪用できることが説明されています。手動で入力を開始する、URL
+            を確認する、不審な iframe
+            を避けるといった行動には意味があります。ただし、認証情報を実際に悪意あるページの入力欄へ渡してしまったら、URL
+            の照合だけで、その欄をページ内のスクリプトが読み取ることを防ぐことはできません。<a
+              class="pm-cite"
+              href="#src-09"
+              >[09]</a
+            >
+          </p>
+          <p>
+            クリップボードの自動消去タイマーは、情報が残る時間を短くするだけです。あらゆるクリップボードの読み取りを防ぐセキュリティサンドボックスと考えてはいけません。
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>
+          09 · Vault のバックアップと復旧：encrypted
+          JSON、添付ファイル、行き詰まり
+        </summary>
+        <div class="pm-detail-body">
+          <p>
+            デバイス間の同期は主に現在のデータを一致させるもので、アカウントがロックされたり、すべての端末を失ったりした時に過去のデータを取り戻せる保証ではありません。Bitwarden
+            では、<strong>Password protected encrypted JSON</strong>
+            は別途設定したパスワードで保護され、別のアカウントにもインポートできます。一方、<strong
+              >Account restricted</strong
+            >
+            は元のアカウントの暗号鍵に依存するため、別アカウントへの災害復旧の唯一の備えには適していません。<a
+              class="pm-cite"
+              href="#src-16"
+              >[16]</a
+            >
+          </p>
+          <p>
+            通常の暗号化 JSON
+            エクスポートには、<strong>添付ファイルが含まれません</strong>。添付ファイルを含む
+            ZIP
+            エクスポートも、別途暗号化コンテナーで保護する必要があります。拡張子が
+            ZIP だから暗号化されているとは考えないでください。Vault
+            にログインできない時でも、復旧資料にアクセスできる必要があります。
+          </p>
+          <p class="pm-minor">
+            最も簡単な実地確認は、オフラインで保管した復旧コードが見つかること、バックアップを復号できること、テスト環境にインポートできることを確認し、添付ファイルを別途チェックすることです。必要なら隔離環境で行い、テストのために共有コンピューターへ本物のマスターパスワードを入力しないでください。
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+  <section aria-label="参考資料" class="pm-sources">
+    <h2 id="references"><span class="pm-n">↗ /</span>参考資料</h2>
+    <p class="pm-appendix-intro">
+      公式文書、標準仕様、インシデントの説明です。製品機能や設定名は、実際のバージョンを確認してください。
+    </p>
+    <p class="pm-src" id="src-01">
+      <b>[01]</b>
+      <a href="https://bitwarden.com/help/bitwarden-security-white-paper/"
+        >Bitwarden · Security Whitepaper</a
+      >
+      — Vault の鍵階層
+    </p>
+    <p class="pm-src" id="src-02">
+      <b>[02]</b>
+      <a href="https://bitwarden.com/help/kdf-algorithms/"
+        >Bitwarden · Encryption Key Derivation</a
+      >
+      — PBKDF2 / Argon2id
+    </p>
+    <p class="pm-src" id="src-03">
+      <b>[03]</b>
+      <a href="https://bitwarden.com/help/what-encryption-is-used/"
+        >Bitwarden · Encryption Protocols</a
+      >
+      — AES-CBC / HMAC
+    </p>
+    <p class="pm-src" id="src-04">
+      <b>[04]</b>
+      <a href="https://support.1password.com/understanding-account-key/"
+        >1Password · About your Secret Key</a
+      >
+    </p>
+    <p class="pm-src" id="src-05">
+      <b>[05]</b>
+      <a href="https://support.1password.com/1password-security/"
+        >1Password · Security model</a
+      >
+    </p>
+    <p class="pm-src" id="src-06">
+      <b>[06]</b>
+      <a
+        href="https://help.twilio.com/articles/19753577267355-Enable-or-Disable-Backups-and-Sync-in-Authy"
+        >Twilio · Authy backups &amp; sync</a
+      >
+    </p>
+    <p class="pm-src" id="src-07">
+      <b>[07]</b>
+      <a href="https://help.twilio.com/articles/19753226891803"
+        >Twilio · Authy Multi-Device</a
+      >
+    </p>
+    <p class="pm-src" id="src-08">
+      <b>[08]</b>
+      <a
+        href="https://help.twilio.com/articles/22771146070299-End-user-guide-End-of-Life-EOL-for-Twilio-Authy-Desktop-app"
+        >Twilio · Authy Desktop EOL</a
+      >
+      — 2024-03-19
+    </p>
+    <p class="pm-src" id="src-09">
+      <b>[09]</b>
+      <a href="https://bitwarden.com/help/auto-fill-browser/"
+        >Bitwarden · Autofill from browser extensions</a
+      >
+    </p>
+    <p class="pm-src" id="src-10">
+      <b>[10]</b>
+      <a
+        href="https://developer.android.com/privacy-and-security/risks/secure-clipboard-handling"
+        >Android Developers · Secure Clipboard Handling</a
+      >
+    </p>
+    <p class="pm-src" id="src-11">
+      <b>[11]</b>
+      <a href="https://datatracker.ietf.org/doc/html/rfc6238"
+        >IETF · RFC 6238 / TOTP</a
+      >
+    </p>
+    <p class="pm-src" id="src-12">
+      <b>[12]</b>
+      <a href="https://pages.nist.gov/800-63-4/sp800-63b.html"
+        >NIST · SP 800-63B-4</a
+      >
+    </p>
+    <p class="pm-src" id="src-13">
+      <b>[13]</b>
+      <a href="https://www.w3.org/TR/webauthn-3/"
+        >W3C · Web Authentication Level 3</a
+      >
+    </p>
+    <p class="pm-src" id="src-14">
+      <b>[14]</b>
+      <a href="https://support.google.com/chrome/answer/10400619"
+        >Google Chrome Help · Use saved passwords in other apps</a
+      >
+    </p>
+    <p class="pm-src" id="src-15">
+      <b>[15]</b>
+      <a
+        href="https://blog.lastpass.com/posts/security-incident-update-recommended-actions"
+        >LastPass · Security incident update</a
+      >
+      — 2022 年のインシデントの続報
+    </p>
+    <p class="pm-src" id="src-16">
+      <b>[16]</b>
+      <a href="https://bitwarden.com/help/export-your-data/"
+        >Bitwarden · Export Vault Data</a
+      >
+    </p>
+    <p class="pm-src" id="src-17">
+      <b>[17]</b>
+      <a href="https://developer.apple.com/documentation/uikit/uipastecontrol"
+        >Apple Developer · UIPasteControl</a
+      >
+      — iOS のクリップボードアクセス通知
+    </p>
+    <p class="pm-src" id="src-18">
+      <b>[18]</b>
+      <a href="https://bitwarden.com/help/uri-match-detection/"
+        >Bitwarden · Form URIs for Autofill</a
+      >
+      — Base domain／Host／Exact
+    </p>
+    <p class="pm-src" id="src-19">
+      <b>[19]</b>
+      <a href="https://support.1password.com/secure-remote-password/"
+        >1Password · Secure Remote Password</a
+      >
+      — SRP によるログイン認証
+    </p>
+    <p class="pm-src" id="src-20">
+      <b>[20]</b>
+      <a href="https://bitwarden.com/help/bitwarden-authenticator/"
+        >Bitwarden · Authenticator</a
+      >
+      — ローカル TOTP と Vault 同期の違い
+    </p>
+    <p class="pm-src" id="src-21">
+      <b>[21]</b>
+      <a href="https://www.yubico.com/products/yubico-authenticator/"
+        >Yubico · Authenticator</a
+      >
+      — ハードウェア TOTP と FIDO2 の違い
+    </p>
+    <p class="pm-src" id="src-22">
+      <b>[22]</b>
+      <a href="https://bitwarden.com/help/account-encryption-key/"
+        >Bitwarden · Encryption Key Rotation</a
+      >
+      — マスターパスワードの変更と鍵のローテーション
+    </p>
+    <p class="pm-src">
+      <b>[関連資料]</b>
+      <a href="https://ithelp.ithome.com.tw/users/20130205/ironman/3517"
+        >iThome 鉄人賽 · 暗号学シリーズ</a
+      >
+    </p>
+  </section>
+  <div class="pm-outro">
+    この記事は製品選びと仕組みを整理したもので、図はリスクモデルを簡略化したものです。個別の製品についてセキュリティ監査を完了したことを意味するものではありません。<a
+      href="#article-title"
+      >先頭へ戻る ↑</a
+    >
+  </div>
+</div>

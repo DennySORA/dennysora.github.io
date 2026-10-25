@@ -1,0 +1,3655 @@
+<div class="translation-guide">
+  <div class="tg-intro">
+    <p class="tg-lead">
+      這套翻譯的工程核心，是把持續變動的網頁，整理成<strong>可排程、可重用、能核對身分後回寫</strong>的工作。翻譯服務負責產生文字；擴充套件負責讓結果在正確的時間、正確的位置出現。
+    </p>
+
+    <div aria-label="閱讀層次" class="tg-reading-map">
+      <a href="#tg-architecture">先看全貌</a><span>→</span
+      ><a href="#tg-capture">理解文字怎麼進來</a><span>→</span
+      ><a href="#tg-admission">拆解排程與配額</a><span>→</span
+      ><a href="#tg-render">看結果怎麼回去</a>
+    </div>
+  </div>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">01</span>
+      <h2 id="tg-architecture">沿著一段原文，看資料如何流過整個系統</h2>
+    </div>
+    <p>
+      Browser Script Manager 將翻譯與其他功能組裝成同一個 Manifest V3
+      擴充套件。下面追蹤<strong>預設網頁段落的翻譯流程</strong>：每條箭頭都標示傳遞內容；方塊所在泳道表示執行邊界。選取文字與翻譯中心的入口差異接在下一節。
+    </p>
+    <figure class="tg-flow-figure">
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 01A</span
+          >端到端資料流：原文進來，譯文如何回到正確位置</span
+        ><span class="tg-fig-type">HTML 節點＋明確連線</span>
+      </div>
+      <div class="tg-dfd-read-guide">
+        <div>
+          <b>主線</b
+          ><span>01 → 02 → 03；確認沒有可用譯文，才走 04 → 05 → 06。</span>
+        </div>
+        <div>
+          <b>本機旁路</b><span>規則／記憶的結果或阻擋狀態，直接接到 07。</span>
+        </div>
+        <div>
+          <b>回程分岔</b
+          ><span>06 → 07 → 08 → 09 處理呈現；06 → 10 處理保存。</span>
+        </div>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="圖 01A：網頁翻譯端到端資料流；寬圖可左右捲動"
+        class="tg-dfd-scroll"
+      >
+        <div class="tg-dfd-canvas tg-geometry-a102c35be9">
+          <div class="tg-dfd-lane tg-geometry-c442fab349">
+            <div class="tg-dfd-lane-title">
+              網頁與頁面端腳本<small>DOM 與每個頁面的生命週期</small>
+            </div>
+          </div>
+          <div class="tg-dfd-lane tg-geometry-2f1ef61b17">
+            <div class="tg-dfd-lane-title">
+              擴充套件背景／本機資料<small>跨頁工作、政策、資源與儲存</small>
+            </div>
+          </div>
+          <div class="tg-dfd-lane tg-geometry-b97a6142d9">
+            <div class="tg-dfd-lane-title">
+              外部服務<small>翻譯 API 與可選同步</small>
+            </div>
+          </div>
+          <svg
+            viewBox="0 0 960 1552"
+            width="960"
+            height="1552"
+            aria-hidden="true"
+            class="tg-dfd-connectors"
+          >
+            <defs>
+              <marker
+                id="tg-dfd-overview-arrow-main"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-813624a647"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-local"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-18d13f84b7"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-control"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-9bfe535aba"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-wait"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-c7e372af69"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-failure"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-ed391b6071"
+                ></path>
+              </marker>
+              <marker
+                id="tg-dfd-overview-arrow-sync"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path
+                  d="M0 0 L8 4 L0 8 Z"
+                  class="tg-geometry-9bfe535aba"
+                ></path>
+              </marker>
+            </defs>
+            <path
+              d="M288,190 L360,190"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,270 L492,345"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,420 L360,420"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M156,345 L156,270"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M360,465 L340,465 L340,1170 L360,1170"
+              marker-end="url(#tg-dfd-overview-arrow-local)"
+              class="tg-geometry-f5b4b8a11e"
+            ></path>
+            <path
+              d="M492,495 L492,580"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,670 L360,670"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M624,670 L696,670"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M816,760 L816,925 L624,925"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,1000 L492,1100"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M624,973 L666,973 L666,796 L581.76,796 L581.76,760"
+              marker-end="url(#tg-dfd-overview-arrow-wait)"
+              class="tg-geometry-1231e69cca"
+            ></path>
+            <path
+              d="M360,1170 L288,1170"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M156,1240 L156,1340"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M288,925 L308,925 L308,1426 L288,1426"
+              marker-end="url(#tg-dfd-overview-arrow-control)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M492,1000 L492,1020 L648,1020 L648,1298 L581.76,1298 L581.76,1340"
+              marker-end="url(#tg-dfd-overview-arrow-main)"
+              class="tg-geometry-26355a186a"
+            ></path>
+            <path
+              d="M492,1340 L492,1240"
+              marker-end="url(#tg-dfd-overview-arrow-local)"
+              class="tg-geometry-f5b4b8a11e"
+            ></path>
+            <path
+              d="M624,1396.76 L696,1396.76"
+              marker-end="url(#tg-dfd-overview-arrow-sync)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+            <path
+              d="M696,1472.44 L624,1472.44"
+              marker-end="url(#tg-dfd-overview-arrow-sync)"
+              class="tg-geometry-b84e3b56d8"
+            ></path>
+          </svg>
+          <div
+            id="tg-dfd-overview-source"
+            class="tg-dfd-node tg-dfd-process tg-geometry-3d5a6a1712"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">01</span
+              ><strong>擷取原文，宣告片段</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>抽取文字 → 註冊段落</span><span>分句並保留原文範圍</span
+              ><span>送出文字、版本與位置資料</span
+              ><span>DOM 節點留在網頁端</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-receive"
+            class="tg-dfd-node tg-dfd-process tg-geometry-3d58118e94"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">02</span
+              ><strong>接收並建立需求身分</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>背景服務接收並交給排程系統</span
+              ><span>依瀏覽器提供的發送者核對來源</span
+              ><span>建立頁面綁定、正規化原文</span
+              ><span>追蹤片段的版本與生命週期</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-context"
+            class="tg-dfd-node tg-dfd-control tg-geometry-5d259214d7"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">C</span
+              ><strong>凍結文件背景候選</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>讀取文件前段的基準原文</span
+              ><span>凍結首批候選；另送上下文訊息</span
+              ><span>背景套用規則後才可採用</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-local"
+            class="tg-dfd-node tg-dfd-process tg-geometry-01476d3586"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">03</span
+              ><strong>規則、共享工作與本機查詢</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>規則／釘選譯文 → 相同工作共用</span
+              ><span>已存翻譯記憶 → 舊版快取</span
+              ><span>命中／未命中／錯誤分支見 01B</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-viewport"
+            class="tg-dfd-node tg-dfd-control tg-geometry-8ef2e44fff"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">V</span><strong>更新閱讀位置</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>觀察可見範圍與捲動方向</span
+              ><span>回報可見性、位置與前後方</span
+              ><span>影響排隊工作的優先級</span
+              ><span>這條更新不重新傳送原文</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-dispatch"
+            class="tg-dfd-node tg-dfd-process tg-geometry-ea6d5b7832"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">04</span
+              ><strong>排程、合批、預扣配額</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>優先層級 → 服務資源 → 相容批次</span
+              ><span>派送核准：預留並行槽與配額</span
+              ><span>先提交配額的 IndexedDB 交易</span
+              ><span>成功後才啟動翻譯服務轉接</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-provider"
+            class="tg-dfd-node tg-dfd-process tg-geometry-703472d1e3"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">05</span><strong>呼叫翻譯服務</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>語言模型：指令＋原文＋上下文</span
+              ><span>Microsoft：原文清單＋目標語言</span
+              ><span>由服務轉接層組裝實際請求</span
+              ><span>原始回覆先交回轉接層</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-identity"
+            class="tg-dfd-node tg-dfd-control tg-geometry-c4f7d1455b"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">G</span
+              ><strong>保留目前的原文身分</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>基準原文與閱讀世代</span
+              ><span>本機請求嘗試、節點連接狀態</span
+              ><span>回寫 DOM 時再次核對</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-validate"
+            class="tg-dfd-node tg-dfd-process tg-geometry-6ac205d2a0"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">06</span
+              ><strong>終止檢查與結果驗證</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>核對請求與世代，再釋放並行槽</span
+              ><span>再檢查提交權／結束原因</span
+              ><span>驗證回覆格式、編號與保留標記</span
+              ><span>錯誤／需修復項目交重試政策</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-projection"
+            class="tg-dfd-node tg-dfd-process tg-geometry-a4bd0e8d64"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">07</span
+              ><strong>送出狀態與結果通知</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>版本、可呈現譯文、保存狀態</span
+              ><span>原文／本機結果／受阻／完成</span
+              ><span>片段完成不等於 DOM 已更新</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-assemble"
+            class="tg-dfd-node tg-dfd-process tg-geometry-2b676f3f71"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">08</span
+              ><strong>核對版本，組裝整段</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>頁面端拒絕過期通知</span><span>依呈現節奏等待整段完成</span
+              ><span>組合譯文與原文；失敗另回報</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-render"
+            class="tg-dfd-node tg-dfd-process tg-geometry-04b488d9f1"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">09</span><strong>排程並提交 DOM</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>建立內容片段與呈現計畫</span
+              ><span>保護選取範圍＋每幀工作量限制</span
+              ><span>提交前核對原文與本機請求</span
+              ><span>更新雙語容器或純譯文</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-save"
+            class="tg-dfd-node tg-dfd-store tg-geometry-2380c9ef3a"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">10</span
+              ><strong>本機翻譯記憶與保存狀態</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>本機結果：保存佇列 → 交易</span
+              ><span>同步回填：直接寫入翻譯記憶</span
+              ><span>回報本機保存成功／失敗</span
+              ><span>同步只讀取已保存的翻譯記憶</span>
+            </div>
+          </div>
+          <div
+            id="tg-dfd-overview-sync"
+            class="tg-dfd-node tg-dfd-optional tg-geometry-b6b2e81f34"
+          >
+            <div class="tg-dfd-node-head">
+              <span class="tg-dfd-step">11</span><strong>雲端同步儲存</strong>
+            </div>
+            <div class="tg-dfd-node-body">
+              <span>選擇加入翻譯記憶同步</span
+              ><span>接收／提供加密資料物件</span
+              ><span>本機解密、合併後寫入記憶</span
+              ><span>同步不直接更新網頁 DOM</span>
+            </div>
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-d603e608d1"
+          >
+            原文片段<br />版本資料
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-f14cee2e27"
+          >
+            頁面綁定＋原文
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-d69a1c8193"
+          >
+            上下文<br />候選
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-2490e7a0e6"
+          >
+            凍結與連線確認後，釋出首批片段
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-a12e1b3fa6"
+          >
+            本機結果<br />或原文／<br />阻擋狀態
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-eb4edee532"
+          >
+            本機未命中，且允許外送
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-41a4da4382"
+          >
+            閱讀位置<br />更新
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-b5e098dc1c"
+          >
+            API 請求
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-14cfccc92f"
+          >
+            原始回覆／用量<br />轉接後確認終止
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-285e95e0df"
+          >
+            有效片段 → 譯文可用<br />失敗狀態另行回報
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-8ea81623e2"
+          >
+            失敗／需修復項目<br />符合政策才重排
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-48102674b1"
+          >
+            版本狀態<br />譯文內容
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-c51c52446d"
+          >
+            整段文字結果
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-530e96af18"
+          >
+            目前來源<br />再次核對
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-ed98e02a39"
+          >
+            有效且仍適用的<br />可呈現譯文<br />一般模式進保存佇列
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-5d27936032"
+          >
+            本機保存作業<br />狀態更新
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-sync tg-geometry-a33f6e4cd3"
+          >
+            加密上傳
+          </div>
+          <div
+            class="tg-dfd-edge-label tg-dfd-label-sync tg-geometry-7b4cfefcdd"
+          >
+            解密合併<br />寫入記憶
+          </div>
+        </div>
+      </div>
+      <details class="tg-dfd-text-alternative">
+        <summary>以文字讀取每條資料流</summary>
+        <ol>
+          <li>
+            <b>01 擷取原文，宣告片段</b> →
+            <b>02 接收並建立需求身分</b>：原文片段；版本資料
+          </li>
+          <li>
+            <b>02 接收並建立需求身分</b> →
+            <b>03 規則、共享工作與本機查詢</b>：頁面綁定＋原文
+          </li>
+          <li>
+            <b>C 凍結文件背景候選</b> →
+            <b>03 規則、共享工作與本機查詢</b>：上下文；候選
+          </li>
+          <li>
+            <b>C 凍結文件背景候選</b> →
+            <b>01 擷取原文，宣告片段</b>：凍結與連線確認後，釋出首批片段
+          </li>
+          <li>
+            <b>03 規則、共享工作與本機查詢</b> →
+            <b>07 送出狀態與結果通知</b>：本機結果；或原文／；阻擋狀態
+          </li>
+          <li>
+            <b>03 規則、共享工作與本機查詢</b> →
+            <b>04 排程、合批、預扣配額</b>：本機未命中，且允許外送
+          </li>
+          <li>
+            <b>V 更新閱讀位置</b> →
+            <b>04 排程、合批、預扣配額</b>：閱讀位置；更新
+          </li>
+          <li>
+            <b>04 排程、合批、預扣配額</b> → <b>05 呼叫翻譯服務</b>：API 請求
+          </li>
+          <li>
+            <b>05 呼叫翻譯服務</b> →
+            <b>06 終止檢查與結果驗證</b>：原始回覆／用量；轉接後確認終止
+          </li>
+          <li>
+            <b>06 終止檢查與結果驗證</b> →
+            <b>07 送出狀態與結果通知</b>：有效片段 → 譯文可用；失敗狀態另行回報
+          </li>
+          <li>
+            <b>06 終止檢查與結果驗證</b> →
+            <b>04 排程、合批、預扣配額</b>：失敗／需修復項目；符合政策才重排
+          </li>
+          <li>
+            <b>07 送出狀態與結果通知</b> →
+            <b>08 核對版本，組裝整段</b>：版本狀態；譯文內容
+          </li>
+          <li>
+            <b>08 核對版本，組裝整段</b> →
+            <b>09 排程並提交 DOM</b>：整段文字結果
+          </li>
+          <li>
+            <b>G 保留目前的原文身分</b> →
+            <b>09 排程並提交 DOM</b>：目前來源；再次核對
+          </li>
+          <li>
+            <b>06 終止檢查與結果驗證</b> →
+            <b>10 本機翻譯記憶與保存狀態</b
+            >：有效且仍適用的；可呈現譯文；一般模式進保存佇列
+          </li>
+          <li>
+            <b>10 本機翻譯記憶與保存狀態</b> →
+            <b>07 送出狀態與結果通知</b>：本機保存作業；狀態更新
+          </li>
+          <li>
+            <b>10 本機翻譯記憶與保存狀態</b> → <b>11 雲端同步儲存</b>：加密上傳
+          </li>
+          <li>
+            <b>11 雲端同步儲存</b> →
+            <b>10 本機翻譯記憶與保存狀態</b>：解密合併；寫入記憶
+          </li>
+        </ol>
+      </details>
+      <div class="tg-dfd-legend">
+        <span><i class="tg-legend-line"></i>實線：請求／結果主路徑</span
+        ><span><i class="tg-legend-line tg-local"></i>本機分支／狀態回報</span
+        ><span
+          ><i class="tg-legend-line tg-dashed"></i
+          >虛線：輔助更新／可選同步</span
+        >
+      </div>
+      <figcaption>
+        <span class="tg-why">讀圖重點：</span>保存與 DOM
+        提交從有效結果分岔，沒有固定的完成先後。文件背景在首批原文需求送出前凍結；閱讀位置更新只傳可見性與位置。圖面呈現資料依賴，沒有時間比例；交叉線未加接點時不表示合併。
+      </figcaption>
+    </figure>
+    <div class="tg-dfd-takeaway">
+      <strong>兩個關鍵出口：</strong>07
+      發出帶版本的狀態與結果通知；片段完成後，仍要經過整段組裝與 DOM 提交。10
+      處理本機保存，失敗重試只回保存佇列。11
+      的同步回程寫入本機翻譯記憶，後續再由正常查詢使用。
+    </div>
+    <details class="tg-deep tg-flow-detail">
+      <summary>展開圖 01B｜本機判斷、查詢失敗與外送閘門，逐分支追蹤</summary>
+      <figure class="tg-flow-figure">
+        <div class="tg-figure-head">
+          <span
+            ><span class="tg-fig-no">圖 01B</span
+            >背景決策流：哪些需求會真的呼叫翻譯服務？</span
+          ><span class="tg-fig-type">HTML 分支圖</span>
+        </div>
+        <div class="tg-dfd-read-guide">
+          <div>
+            <b>向下讀主線</b><span>D1 → D2 → D3 → D4 → D5 → D6 → T。</span>
+          </div>
+          <div>
+            <b>向右讀出口</b
+            ><span>P 回總覽 07；E 是讀取失敗；W 是等待／阻擋。</span>
+          </div>
+        </div>
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="圖 01B：背景本機判斷與派送分支；寬圖可左右捲動"
+          class="tg-dfd-scroll"
+        >
+          <div class="tg-dfd-canvas tg-geometry-4b7f7c41f2">
+            <svg
+              viewBox="0 0 960 1720"
+              width="960"
+              height="1720"
+              aria-hidden="true"
+              class="tg-dfd-connectors"
+            >
+              <defs>
+                <marker
+                  id="tg-dfd-decisions-arrow-main"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-813624a647"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-local"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-18d13f84b7"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-control"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-9bfe535aba"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-wait"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-c7e372af69"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-failure"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-ed391b6071"
+                  ></path>
+                </marker>
+                <marker
+                  id="tg-dfd-decisions-arrow-sync"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                >
+                  <path
+                    d="M0 0 L8 4 L0 8 Z"
+                    class="tg-geometry-9bfe535aba"
+                  ></path>
+                </marker>
+              </defs>
+              <path
+                d="M420,160 L560,160"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,240 L230,315"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,395 L560,395"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,475 L230,550"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,587 L490,587 L490,571 L560,571"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M420,638.8 L510,638.8 L510,710.4 L560,710.4"
+                marker-end="url(#tg-dfd-decisions-arrow-failure)"
+                class="tg-geometry-53aeb4f4dc"
+              ></path>
+              <path
+                d="M560,768 L464,768 L464,674.32 L420,674.32"
+                marker-end="url(#tg-dfd-decisions-arrow-control)"
+                class="tg-geometry-b84e3b56d8"
+              ></path>
+              <path
+                d="M230,698 L230,835"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,907 L560,907"
+                marker-end="url(#tg-dfd-decisions-arrow-local)"
+                class="tg-geometry-f5b4b8a11e"
+              ></path>
+              <path
+                d="M230,979 L230,1065"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,1151 L560,1151"
+                marker-end="url(#tg-dfd-decisions-arrow-wait)"
+                class="tg-geometry-1231e69cca"
+              ></path>
+              <path
+                d="M230,1237 L230,1320"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+              <path
+                d="M420,1380.2 L560,1380.2"
+                marker-end="url(#tg-dfd-decisions-arrow-wait)"
+                class="tg-geometry-1231e69cca"
+              ></path>
+              <path
+                d="M560,1452.44 L420,1452.44"
+                marker-end="url(#tg-dfd-decisions-arrow-control)"
+                class="tg-geometry-b84e3b56d8"
+              ></path>
+              <path
+                d="M230,1492 L230,1570"
+                marker-end="url(#tg-dfd-decisions-arrow-main)"
+                class="tg-geometry-26355a186a"
+              ></path>
+            </svg>
+            <div
+              id="tg-dfd-decisions-rules"
+              class="tg-dfd-node tg-dfd-process tg-geometry-20150d2055"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D1</span
+                ><strong>先套用規則與釘選譯文</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>停用頁面／保留原文／固定譯文／釘選譯文</span
+                ><span>需要翻譯者建立語意條件與保留標記</span
+                ><span>禁止外送仍允許使用已存譯文</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-local-result"
+              class="tg-dfd-node tg-dfd-local tg-geometry-3277b343d5"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>回傳本機狀態／結果</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>停用頁面 → 保持原文</span
+                ><span>保留原文 → 本機決定，不附譯文</span
+                ><span>固定或釘選譯文 → 本機決定並附譯文</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >接總覽 07：狀態與結果通知</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-work"
+              class="tg-dfd-node tg-dfd-process tg-geometry-382e0a1466"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D2</span
+                ><strong>相同語意鍵的共享工作是否存在？</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>存在：加入結果訂閱者</span
+                ><span>不存在：先登記待查詢的共享工作</span
+                ><span>再開始非同步查詢翻譯記憶</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-subscribe"
+              class="tg-dfd-node tg-dfd-local tg-geometry-7e01289ab2"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>訂閱既有共享工作</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>可能正在查詢、排隊、翻譯或已完成</span
+                ><span>沿用它的狀態／後續結果</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >接總覽 07；不另建相同工作</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory"
+              class="tg-dfd-node tg-dfd-store tg-geometry-21f6c08d66"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D3</span
+                ><strong>查已保存的翻譯記憶</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>以完整語意鍵精確查找</span
+                ><span>命中、未命中、讀取失敗分開處理</span
+                ><span>讀取失敗預設不外送</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory-hit"
+              class="tg-dfd-node tg-dfd-local tg-geometry-9449226155"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span><strong>已有持久譯文</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>可呈現譯文＋已保存狀態</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >接總覽 07；不呼叫翻譯服務</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-memory-error"
+              class="tg-dfd-node tg-dfd-failure tg-geometry-f106c168c6"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">E</span
+                ><strong>已存譯文讀取失敗</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>暫停外送：無法讀取已存譯文</span
+                ><span>重試先回本機讀取</span
+                ><span>明確選擇略過失敗，才繼續後續判斷</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-legacy"
+              class="tg-dfd-node tg-dfd-store tg-geometry-5435112f26"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D4</span
+                ><strong>查舊版翻譯快取</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>有對應舊版鍵才查精確記錄</span
+                ><span>未命中／讀取失敗／無對應鍵 → 下一關</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-legacy-hit"
+              class="tg-dfd-node tg-dfd-local tg-geometry-7bb0d73b94"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>沿用舊譯文，升級保存</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>可呈現譯文＋保存中狀態</span
+                ><span>另交保存佇列，升級為新版翻譯記憶</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection">接總覽 07</a> ＋
+                  <a href="#tg-dfd-overview-save">總覽 10</a></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-policy"
+              class="tg-dfd-node tg-dfd-process tg-geometry-79423e7964"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D5</span
+                ><strong>確認未命中，才決定是否外送</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>檢查禁止外送規則、文件派送政策</span
+                ><span>再檢查合格服務資源是否存在</span
+                ><span>允許者才進入可派送佇列</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-held"
+              class="tg-dfd-node tg-dfd-wait tg-geometry-1eb2c8fabc"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">P</span
+                ><strong>不派送的三種出口</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>禁止外送 → 阻擋並回報原因</span
+                ><span>僅用本機譯文 → 保留原文，暫存需求</span
+                ><span>無可用服務資源 → 阻擋並提示設定</span
+                ><span
+                  ><a href="#tg-dfd-overview-projection"
+                    >保留原文，回報對應狀態</a
+                  ></span
+                >
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-admission"
+              class="tg-dfd-node tg-dfd-process tg-geometry-a1882ca628"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">D6</span
+                ><strong>排序、合批，再核准請求嘗試</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>優先層級／服務資源／相容批次</span
+                ><span>並行槽＋速率額度＋時間窗配額</span
+                ><span>預留成功後，先持久化配額預扣</span
+                ><span>必須等寫盤成功，才能送 API</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-wait"
+              class="tg-dfd-node tg-dfd-wait tg-geometry-226febd91f"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">W</span
+                ><strong>等待／阻擋，不送 API</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span>配額或並行槽不可用：等待時間／事件</span
+                ><span>需求本身超限：暫停外送</span
+                ><span>預扣寫盤失敗：停止新的派送</span
+                ><span>條件恢復後重新判斷</span>
+              </div>
+            </div>
+            <div
+              id="tg-dfd-decisions-transport"
+              class="tg-dfd-node tg-dfd-process tg-geometry-c7ae16e98f"
+            >
+              <div class="tg-dfd-node-head">
+                <span class="tg-dfd-step">T</span
+                ><strong>啟動翻譯服務轉接</strong>
+              </div>
+              <div class="tg-dfd-node-body">
+                <span
+                  ><a href="#tg-dfd-overview-provider"
+                    >接總覽 05：實際網路請求</a
+                  ></span
+                ><span>回覆驗證／修復與呈現接回總覽 06–10</span>
+              </div>
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-0114811edf"
+            >
+              本機處理
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-25e9a71bf0"
+            >
+              需要翻譯
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-cea73a5ca4"
+            >
+              已存在
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-7a18d5a966"
+            >
+              新共享工作：先登記再查詢
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-9ef41eff26"
+            >
+              命中
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-failure tg-geometry-bd686d48d3"
+            >
+              讀取失敗
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-7d6dadfb27"
+            >
+              重試讀取
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-9aeb927753"
+            >
+              確認未命中
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-local tg-geometry-ff0d5b5bb6"
+            >
+              命中
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-56610ca96d"
+            >
+              未命中／讀取失敗／無舊版鍵
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-1ad0f8d4b4"
+            >
+              不派送
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-15b1698f10"
+            >
+              允許外送，進入派送佇列
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-wait tg-geometry-e4e34b71d4"
+            >
+              尚未就緒<br />或寫盤失敗
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-control tg-geometry-773a6c265c"
+            >
+              條件恢復<br />重新判斷
+            </div>
+            <div
+              class="tg-dfd-edge-label tg-dfd-label-main tg-geometry-78c67497b9"
+            >
+              已提交保守扣帳
+            </div>
+          </div>
+        </div>
+        <details class="tg-dfd-text-alternative">
+          <summary>以文字讀取每條資料流</summary>
+          <ol>
+            <li>
+              <b>D1 先套用規則與釘選譯文</b> →
+              <b>P 回傳本機狀態／結果</b>：本機處理
+            </li>
+            <li>
+              <b>D1 先套用規則與釘選譯文</b> →
+              <b>D2 相同語意鍵的共享工作是否存在？</b>：需要翻譯
+            </li>
+            <li>
+              <b>D2 相同語意鍵的共享工作是否存在？</b> →
+              <b>P 訂閱既有共享工作</b>：已存在
+            </li>
+            <li>
+              <b>D2 相同語意鍵的共享工作是否存在？</b> →
+              <b>D3 查已保存的翻譯記憶</b>：新共享工作：先登記再查詢
+            </li>
+            <li><b>D3 查已保存的翻譯記憶</b> → <b>P 已有持久譯文</b>：命中</li>
+            <li>
+              <b>D3 查已保存的翻譯記憶</b> → <b>E 已存譯文讀取失敗</b>：讀取失敗
+            </li>
+            <li>
+              <b>E 已存譯文讀取失敗</b> → <b>D3 查已保存的翻譯記憶</b>：重試讀取
+            </li>
+            <li>
+              <b>D3 查已保存的翻譯記憶</b> →
+              <b>D4 查舊版翻譯快取</b>：確認未命中
+            </li>
+            <li>
+              <b>D4 查舊版翻譯快取</b> → <b>P 沿用舊譯文，升級保存</b>：命中
+            </li>
+            <li>
+              <b>D4 查舊版翻譯快取</b> →
+              <b>D5 確認未命中，才決定是否外送</b>：未命中／讀取失敗／無舊版鍵
+            </li>
+            <li>
+              <b>D5 確認未命中，才決定是否外送</b> →
+              <b>P 不派送的三種出口</b>：不派送
+            </li>
+            <li>
+              <b>D5 確認未命中，才決定是否外送</b> →
+              <b>D6 排序、合批，再核准請求嘗試</b>：允許外送，進入派送佇列
+            </li>
+            <li>
+              <b>D6 排序、合批，再核准請求嘗試</b> →
+              <b>W 等待／阻擋，不送 API</b>：尚未就緒；或寫盤失敗
+            </li>
+            <li>
+              <b>W 等待／阻擋，不送 API</b> →
+              <b>D6 排序、合批，再核准請求嘗試</b>：條件恢復；重新判斷
+            </li>
+            <li>
+              <b>D6 排序、合批，再核准請求嘗試</b> →
+              <b>T 啟動翻譯服務轉接</b>：已提交保守扣帳
+            </li>
+          </ol>
+        </details>
+        <figcaption>
+          <span class="tg-why">讀圖重點：</span
+          >首次宣告時，已有相同工作就共用；新工作先登記再查詢。本機記憶的讀取失敗，不當成查無記錄。無痕或明確重新翻譯可略過記憶查詢，仍須經派送政策與資源核准；這張主線畫一般查詢路徑。
+        </figcaption>
+      </figure>
+    </details>
+    <details class="tg-deep">
+      <summary>為什麼要考慮 service worker 重新啟動？</summary>
+      <div class="tg-deep-body">
+        <p>
+          Chrome 的 extension service worker
+          是事件驅動的，可能在閒置時結束；一般 JavaScript
+          全域變數不會自動保存。本專案因此把翻譯記憶與配額寫進
+          IndexedDB，並讓頁面在重連後重新宣告活躍需求。這是生命週期設計，不能解讀成
+          worker 永遠不會中斷。
+        </p>
+        <p class="tg-mini">
+          平台依據：<a
+            href="https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle"
+            >Chrome 官方：service worker lifecycle</a
+          >（查閱 2026-10-25）。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">02</span>
+      <h2 id="tg-entrypoints">入口不同，共用的部分也不同</h2>
+    </div>
+    <p>
+      各翻譯入口共用背景資源與派送核准機制。頁面批次、選取串流與翻譯中心，仍保留各自的輸出方式。
+    </p>
+    <div class="tg-table-scroll">
+      <table class="tg-fit">
+        <thead>
+          <tr>
+            <th>入口</th>
+            <th>送進系統的方式</th>
+            <th>目前如何顯示</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>網頁段落</th>
+            <td>段落 → 句子單位 → 共用翻譯流程</td>
+            <td>
+              <strong>等待最終結果</strong
+              >，確認仍適用後才更新畫面；不逐段顯示暫時預覽
+            </td>
+          </tr>
+          <tr>
+            <th>文件標題</th>
+            <td>獨立文字單位，歸入鄰近可見區的優先級</td>
+            <td>只管理最上層文件；用請求版本避免舊結果覆蓋新標題</td>
+          </tr>
+          <tr>
+            <th>字幕</th>
+            <td>獨立文字單位，歸入可見內容的優先級</td>
+            <td>片段完成後交回字幕呈現流程</td>
+          </tr>
+          <tr>
+            <th>選取文字 · LLM</th>
+            <td>背景串流文字；共用資源與配額核准</td>
+            <td>累積的純文字可持續更新畫面；與頁面的批次回覆解析方式不同</td>
+          </tr>
+          <tr>
+            <th>翻譯中心</th>
+            <td>查詢翻譯記憶，再按需要發出翻譯請求</td>
+            <td>收到整筆回應後更新卡片；用請求身分隔離取消與舊回覆</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tg-boundary">
+      <strong>各入口有自己的重試策略：</strong
+      >頁面翻譯的自動服務切換預設關閉；選取文字另有「LLM 回空字串 →
+      嘗試已啟用標準翻譯」的備援，以及最多 2 次額外重試（等待 800／1600ms）。
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">03</span>
+      <h2 id="tg-identity">先分清楚：位置、工作、請求</h2>
+    </div>
+    <p>
+      <strong>頁面綁定</strong
+      >記錄畫面上的需求；<strong>共享工作</strong>代表一份可重用的翻譯任務；<strong>請求嘗試</strong>則是向特定翻譯資源執行的一次操作。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span><span class="tg-fig-no">圖 02</span>三種身分，三段生命週期</span
+        ><span class="tg-fig-type">SVG 架構示意</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-identities-svg"
+          viewBox="0 0 900 366"
+          role="img"
+          aria-labelledby="tg-identities-title tg-identities-desc"
+        >
+          <title id="tg-identities-title">
+            頁面綁定、共享工作、請求嘗試的三層生命週期
+          </title>
+          <desc id="tg-identities-desc">
+            兩個頁面綁定共享工作①；相容工作可裝入同一次請求嘗試。圖為概念例，合批仍須通過文件等限制。
+          </desc>
+          <defs>
+            <marker
+              id="tg-identities-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <text x="28" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            頁面需求
+          </text>
+          <text x="350" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            語意相同的工作
+          </text>
+          <text x="650" y="32" class="tg-blue tg-geometry-b54f4860ae">
+            一次網路嘗試
+          </text>
+          <rect
+            x="28"
+            y="62"
+            width="240"
+            height="88"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="44" y="89" class="tg-h tg-geometry-b54f4860ae">
+            頁面綁定 A1
+          </text>
+          <text x="44" y="115" class="tg-muted tg-geometry-b54f4860ae">
+            頁面 A 的一段原文
+          </text>
+          <text x="44" y="137" class="tg-muted tg-geometry-b54f4860ae">
+            位置、原文版本、訂閱
+          </text>
+          <rect
+            x="28"
+            y="174"
+            width="240"
+            height="88"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="44" y="201" class="tg-h tg-geometry-b54f4860ae">
+            頁面綁定 B1
+          </text>
+          <text x="44" y="227" class="tg-muted tg-geometry-b54f4860ae">
+            頁面 B 的同一語意需求
+          </text>
+          <text x="44" y="249" class="tg-muted tg-geometry-b54f4860ae">
+            另有自己的 DOM／版本
+          </text>
+          <rect
+            x="350"
+            y="86"
+            width="240"
+            height="96"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="366" y="113" class="tg-h tg-geometry-b54f4860ae">
+            共享工作 ①
+          </text>
+          <text x="366" y="139" class="tg-muted tg-geometry-b54f4860ae">
+            同一語意鍵
+          </text>
+          <text x="366" y="161" class="tg-muted tg-geometry-b54f4860ae">
+            共用結果與重試生命週期
+          </text>
+          <rect
+            x="350"
+            y="218"
+            width="240"
+            height="76"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="366" y="245" class="tg-h tg-geometry-b54f4860ae">
+            共享工作 ②
+          </text>
+          <text x="366" y="271" class="tg-muted tg-geometry-b54f4860ae">
+            另一個相容工作
+          </text>
+          <rect
+            x="654"
+            y="120"
+            width="218"
+            height="112"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="670" y="147" class="tg-h tg-geometry-b54f4860ae">
+            請求嘗試 α
+          </text>
+          <text x="670" y="173" class="tg-muted tg-geometry-b54f4860ae">
+            服務資源＋配額預留
+          </text>
+          <text x="670" y="195" class="tg-muted tg-geometry-b54f4860ae">
+            包含工作：①、②
+          </text>
+          <text x="670" y="217" class="tg-muted tg-geometry-b54f4860ae">
+            背景世代／終止狀態
+          </text>
+          <path
+            d="M268,105 L308,105 L308,132 L350,132"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M268,216 L308,216 L308,154 L350,154"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="290" y="286" class="tg-small tg-geometry-35afd8367b">
+            去重：語意契約完全相同才共用
+          </text>
+          <path
+            d="M590,134 L620,134 L620,157 L654,157"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M590,256 L620,256 L620,203 L654,203"
+            marker-end="url(#tg-identities-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="650" y="280" class="tg-small tg-geometry-b54f4860ae">
+            合批：文件、上下文、優先層級
+          </text>
+          <text x="650" y="301" class="tg-small tg-geometry-b54f4860ae">
+            與服務資源必須相容
+          </text>
+          <text x="28" y="338" class="tg-muted tg-geometry-b54f4860ae">
+            同一段文字的不同頁面綁定，不等於兩次 API
+            呼叫。取消其中一個訂閱，也不必撤銷其他訂閱。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">寬圖可橫向捲動；文字可選取。</p>
+      <figcaption>
+        <span class="tg-why">設計意義：</span>重複需求能共用結果，重試不必重建
+        DOM
+        身分；某一頁離開，也不必取消其他頁仍需要的同一份工作。圖中合批只是概念例，仍須通過相容性條件。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>同時到達的兩個相同需求，如何避免重複送出？</summary>
+      <div class="tg-deep-body">
+        <p>
+          背景排程器在第一次非同步記憶查詢之前，就把「正在查詢」的工作放進索引。後到的頁面需求訂閱同一份工作；即使前一個查詢尚未返回，也不另外建立相同任務。這讓非同步查詢期間的重複需求仍能合併。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">04</span>
+      <h2 id="tg-capture">擷取的是可辨識的原文，不是一整包 HTML</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span><span class="tg-fig-no">圖 03</span>一份 DOM，兩種讀取責任</span
+        ><span class="tg-fig-type">SVG · 合成範例</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-source-shapes-svg"
+          viewBox="0 0 900 501"
+          role="img"
+          aria-labelledby="tg-source-shapes-title tg-source-shapes-desc"
+        >
+          <title id="tg-source-shapes-title">
+            DOM 的兩條讀取責任與分句位置
+          </title>
+          <desc id="tg-source-shapes-desc">
+            DOM 分成來源身分核對與翻譯請求文字兩支，各自讀取所需的原文。分句
+            Hello 和 Goodbye 的 UTF-16 範圍是 [0,6) 與 [7,15)。
+          </desc>
+          <defs>
+            <marker
+              id="tg-source-shapes-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="80"
+            width="268"
+            height="142"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="107" class="tg-h tg-geometry-b54f4860ae">
+            原始 DOM · 合成例
+          </text>
+          <text x="40" y="133" class="tg-muted tg-geometry-b54f4860ae">
+            漢（かん）字：含讀音標註
+          </text>
+          <text x="40" y="155" class="tg-muted tg-geometry-b54f4860ae">
+            ＋ 工具加入的譯文容器
+          </text>
+          <text x="40" y="177" class="tg-muted tg-geometry-b54f4860ae">
+            DOM 身分留在網頁端
+          </text>
+          <rect
+            x="342"
+            y="24"
+            width="534"
+            height="102"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="358" y="51" class="tg-h tg-geometry-b54f4860ae">
+            來源核對／文件上下文
+          </text>
+          <text x="358" y="77" class="tg-muted tg-geometry-b54f4860ae">
+            讀取基準原文：漢字（本例）
+          </text>
+          <text x="358" y="99" class="tg-muted tg-geometry-b54f4860ae">
+            排除讀音與工具輸出，採用 OCR／閱讀標註原文
+          </text>
+          <rect
+            x="342"
+            y="164"
+            width="534"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="191" class="tg-h tg-geometry-b54f4860ae">
+            翻譯請求文字
+          </text>
+          <text x="358" y="217" class="tg-muted tg-geometry-b54f4860ae">
+            抽取可翻文字 → 分句
+          </text>
+          <text x="358" y="239" class="tg-muted tg-geometry-b54f4860ae">
+            背景正規化：CRLF → LF、NFC、去頭尾空白
+          </text>
+          <path
+            d="M292,140 L318,140 L318,75 L342,75"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M292,170 L318,170 L318,215 L342,215"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="24" y="310" class="tg-h tg-geometry-b54f4860ae">
+            另一個分句範例：Hello. Goodbye.
+          </text>
+          <rect
+            x="24"
+            y="330"
+            width="268"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="357" class="tg-h tg-geometry-b54f4860ae">
+            來源區塊
+          </text>
+          <text x="40" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Hello. Goodbye.
+          </text>
+          <text x="40" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            以原始 UTF-16 位置記錄
+          </text>
+          <rect
+            x="342"
+            y="330"
+            width="238"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="358" y="357" class="tg-h tg-geometry-b54f4860ae">
+            片段 1
+          </text>
+          <text x="358" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Hello.
+          </text>
+          <text x="358" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            範圍：[0, 6)
+          </text>
+          <rect
+            x="630"
+            y="330"
+            width="246"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="646" y="357" class="tg-h tg-geometry-b54f4860ae">
+            片段 2
+          </text>
+          <text x="646" y="383" class="tg-muted tg-geometry-b54f4860ae">
+            Goodbye.
+          </text>
+          <text x="646" y="405" class="tg-muted tg-geometry-b54f4860ae">
+            範圍：[7, 15)
+          </text>
+          <path
+            d="M292,367 L342,367"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="317.0" y="358.0" class="tg-small tg-geometry-35afd8367b">
+            分句
+          </text>
+          <path
+            d="M292,390 L316,390 L316,436 L612,436 L612,377 L630,377"
+            marker-end="url(#tg-source-shapes-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="24" y="471" class="tg-muted tg-geometry-b54f4860ae">
+            兩條 DOM
+            讀取路徑責任不同；分句範圍仍指向原始來源，正規化不會重寫來源位置。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">寬圖可橫向捲動。</p>
+      <figcaption>
+        一條路徑擷取待翻文字並分句；另一條路徑讀取一致的原文表示，用來核對身分與建立文件背景。兩條路徑都避免把系統生成的譯文當成新原文。
+      </figcaption>
+    </figure>
+    <div class="tg-three">
+      <div class="tg-lane">
+        <p class="tg-subheading">先辨識段落</p>
+        <p class="tg-mini">
+          依 DOM、顯示類型與排除規則走訪，跳過自己的輸出、隱藏內容與發音標記。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">再拆成句子</p>
+        <p class="tg-mini">
+          使用瀏覽器文字分段能力；超過 2000 UTF-16
+          單位時，先找子句標點，再找字素邊界。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">最後保留身分</p>
+        <p class="tg-mini">
+          每個片段保留原始範圍、分段順序與原文版本；原文變更後重新建立文字單位。
+        </p>
+      </div>
+    </div>
+    <details class="tg-deep">
+      <summary>UTF-16、字形與 token 為什麼不能混在一起？</summary>
+      <div class="tg-deep-body">
+        <p>
+          UTF-16 編碼單位是 JavaScript 字串長度使用的單位；emoji
+          可能占多個單位，多個 Unicode
+          碼點也可能組成一個使用者看到的字形。字素（grapheme）描述這類可視文字單位的分群；token
+          則由模型的分詞器決定。
+        </p>
+        <p>
+          預設 2000
+          是每個文字單位的字串長度限制。若單一字素已超過上限，就回報輸入過大；瀏覽器不支援文字分段時，備援只逐碼點處理，不能保證完整複合字形分群。
+        </p>
+        <p>
+          短片段另有本機啟發式：移除 URL
+          等雜訊後，單一拉丁字母詞可能被略過；含中日韓文字的短片段可保留。這降低零碎請求，也可能漏掉有意義的單字。選取翻譯不套用同一個頁面短文門檻。
+        </p>
+        <p class="tg-mini">
+          延伸閱讀：<a
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter"
+            >瀏覽器的文字分段能力</a
+          >。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">05</span>
+      <h2 id="tg-viewport">先服務正在讀的地方，再預載前方</h2>
+    </div>
+    <p>
+      頁面知道「原文在哪裡」；背景決定「現在值得翻哪一段」。預載區隨閱讀方向與速度改變，排程優先級則跨頁面統一比較。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 04</span
+          >改變閱讀狀態，看看預載區怎麼變</span
+        ><span class="tg-fig-type">可互動公式示意 · 非效能測量</span>
+      </div>
+      <div class="tg-figure-body">
+        <section id="tg-lookahead-controls" class="tg-demo-controls"></section>
+        <div class="tg-lookahead-view">
+          <div
+            aria-label="預載區的空間關係示意，非等比例"
+            class="tg-viewport-illustration"
+          >
+            <div class="tg-near-band">
+              <span id="tg-look-top-role">上方 · 閱讀後方</span
+              ><strong id="tg-look-top">400 px</strong>
+            </div>
+            <div class="tg-screen-band">
+              <strong>目前畫面｜可見文字優先</strong
+              ><span id="tg-look-height-label">可見畫面高度 H = 800 px</span>
+            </div>
+            <div class="tg-near-band">
+              <span id="tg-look-bottom-role">下方 · 閱讀前方</span
+              ><strong id="tg-look-bottom">2400 px</strong>
+            </div>
+          </div>
+          <div class="tg-math-notes">
+            <p class="tg-sample">區域示意，長度不依畫面像素等比例繪製</p>
+            <div class="tg-metric-line">
+              <span>翻譯前方範圍</span><span id="tg-look-ahead">2400 px</span>
+            </div>
+            <div class="tg-metric-line">
+              <span>段落註冊前方範圍</span
+              ><span id="tg-look-registration">2800 px</span>
+            </div>
+            <div class="tg-metric-line">
+              <span>閱讀後方範圍</span><span id="tg-look-behind">400 px</span>
+            </div>
+            <p id="tg-look-status" aria-live="polite" class="tg-mini">
+              閱讀中：前方 3 個畫面高度；段落註冊比翻譯再多 0.5 個畫面高度。
+            </p>
+          </div>
+        </div>
+        <div class="tg-no-script-note">
+          <p class="tg-mini">
+            JavaScript 未啟用：以上保留 閱讀中、向下、高度 800px、邊距 1000px
+            的靜態範例。
+          </p>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >先把即將讀到的段落宣告給背景；慢讀與快滑使用不同範圍。預載邊距設為 0
+        時，前後預載都關閉。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>展開預載公式與捲動演算法</summary>
+      <div class="tg-deep-body">
+        <div class="tg-formula">
+          前方範圍 = min(10000, max(設定邊距, round((倍數 + 提前量) × H)))
+          後方範圍 = min(設定邊距, round(0.5 × H)) 倍數：尚未捲動 1.5／閱讀中
+          3／快速掃讀 5 提前量：翻譯區 0／段落註冊區 0.5
+        </div>
+        <p>
+          當設定邊距≤0，兩邊都回 0。向上閱讀時交換上下方範圍。捲動速度用 EMA
+          平滑：<span class="tg-mono">α=1−exp(−dt/200)</span
+          >，新速度＝舊速度＋（瞬時速度−舊速度）×α。dt 的單位為
+          ms，瞬時速度的單位為 px/s；間隔達 400ms 時直接採新樣本。
+        </p>
+        <p>
+          轉向要累積
+          <span class="tg-mono">max(120px, 0.35H)</span> 的反向移動；前向速度達
+          2.5 viewport/s 可進入快速掃讀狀態，維持 2
+          秒。這些門檻減少少量回拉造成的
+          觀察範圍重建；它們是工程啟發式，不是閱讀意圖辨識模型。
+        </p>
+      </div>
+    </details>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 05</span
+          >排程優先級：從畫面需求到跨頁公平性</span
+        ><span class="tg-fig-type">HTML 排序圖</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-tier-stack">
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T0</div>
+            <strong>焦點頁 · 可見</strong><small>優先處理眼前的內容</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T1</div>
+            <strong>其他頁 · 可見</strong><small>同一層各頁輪流派送</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T2</div>
+            <strong>焦點頁 · 鄰近可見區</strong
+            ><small>閱讀方向前方優先，再依文件順序</small>
+          </div>
+          <div class="tg-tier-row">
+            <div class="tg-tier-id">T3</div>
+            <strong>其他可派送需求</strong
+            ><small>各頁輪流派送；明確在範圍外的內容不派送</small>
+          </div>
+        </div>
+        <p class="tg-sample">
+          排程示例：1 個並行槽、單筆請求；P1 為焦點頁，三頁各有 3 段可見文字
+        </p>
+        <div aria-label="派送順序" class="tg-queue-demo">
+          <span>P1.1</span><span>P1.2</span><span>P1.3</span
+          ><span class="tg-p2">P2.1</span><span class="tg-p3">P3.1</span
+          ><span class="tg-p2">P2.2</span><span class="tg-p3">P3.2</span
+          ><span class="tg-p2">P2.3</span><span class="tg-p3">P3.3</span>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >焦點切換會重排尚未送出的工作，正常執行中的請求不被搶占。輪流派送改善同層公平性；低優先層仍可能等待。
+      </figcaption>
+    </figure>
+    <div class="tg-boundary">
+      <strong>先讀位置，再更新畫面：</strong
+      >頁面端先批次讀取段落位置，再插入佔位元素；後續翻譯流程重用可見性觀察器提供的位置資料，減少排版讀取與
+      DOM 寫入交錯。
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">06</span>
+      <h2 id="tg-rules">規則先決定什麼能翻，再保護關鍵詞</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 06</span
+          >詞彙表：先找命中，再決定替換</span
+        ><span class="tg-fig-type">HTML 演算法圖</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node">
+            <strong>1 · 找到全部候選</strong
+            ><span
+              >Aho–Corasick 字典樹<br />一次尋找多個詞組<br />包含互相重疊的命中</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>2 · 排序</strong
+            ><span
+              >最左 → 最長 → 優先級<br />再比規則精確度、識別編號<br />得到穩定的選取順序</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>3 · 選不重疊詞組</strong
+            ><span
+              >游標單向前進<br />轉成 ⟦n⟧ 佔位符<br />已替換內容不再掃描</span
+            >
+          </div>
+        </div>
+        <p class="tg-sample">詞彙保護示例；模型回覆為示意文字</p>
+        <div class="tg-sentence">The <i>Rust Belt</i> uses <i>Rust</i>.</div>
+        <div class="tg-connector">
+          同起點先取較長詞組；短詞即使優先級較高，也不會搶走 Rust Belt
+        </div>
+        <div class="tg-two">
+          <div>
+            <p class="tg-subheading">送給模型</p>
+            <div class="tg-sentence">The <i>⟦1⟧</i> uses <i>⟦2⟧</i>.</div>
+          </div>
+          <div>
+            <p class="tg-subheading">回覆並還原</p>
+            <div class="tg-sentence">
+              <i>⟦1⟧</i>使用<i>⟦2⟧</i>。<br />→ 鏽帶使用Rust 語言。
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >把受控詞彙變成可驗證的保留標記。每個佔位符
+        必須剛好出現一次；缺少、重複或模型捏造的新標記，都不能直接上屏。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>規則優先順序與 Aho–Corasick 的精確分工</summary>
+      <div class="tg-deep-body">
+        <p>
+          先處理整頁停用，再看整句保留原文／固定譯文、使用者釘選譯文、禁止外送，最後才做詞組佔位符替換。禁止外送仍允許顯示本機已保存的譯文。
+        </p>
+        <p>
+          Aho–Corasick
+          負責找到多個詞組；「最左、最長」是後續排序與游標選取共同決定的結果。掃描以
+          UTF-16
+          編碼單位進行，並不理解自然語言詞界。完整流程還包含命中展開與排序，不能直接把全部成本寫成
+          O(n)。
+        </p>
+        <p>
+          匹配範圍包含任意文字、整句精確比對與字面詞組，不提供任意正規表示式。編譯或比對失敗時，可退回較直接的參考掃描方式。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">07</span>
+      <h2 id="tg-context">上下文要穩定，也要遵守同一套外送規則</h2>
+    </div>
+    <p>
+      啟用文件背景的翻譯設定，會在第一批送出前凍結候選文字。背景端再依目前政策挑出合格內容，避免「禁止翻的段落」透過其他句子的上下文被間接送出。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 07</span>從文件候選到有限的翻譯背景</span
+        ><span class="tg-fig-type">HTML 資料流</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node">
+            <strong>文件第一批候選</strong
+            ><span
+              >50ms 靜默／最長 200ms 擷取視窗<br />最多 16 個內文區塊<br />候選合計
+              ≤6000 UTF-16</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>背景套用政策</strong
+            ><span
+              >排除禁止外送、保留原文、固定譯文、僅用釘選譯文及受佔位符保護的候選</span
+            >
+          </div>
+          <div class="tg-node tg-good">
+            <strong>最終文件背景</strong
+            ><span
+              >合格標題＋前 8 個合格內文區塊<br />總長最多 1500 UTF-16<br />計算上下文指紋</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          凍結候選的意義：同一份快照不因消息分批、重連順序或開始捲動的位置而改變
+        </div>
+        <div class="tg-two">
+          <div class="tg-lane">
+            <p class="tg-subheading">與待翻句子分開</p>
+            <p class="tg-mini">
+              上下文只提供背景，不需要另外輸出譯文。不同上下文可形成不同語意鍵。
+            </p>
+          </div>
+          <div class="tg-lane">
+            <p class="tg-subheading">限制仍然存在</p>
+            <p class="tg-mini">
+              有限的文件前段視窗不保證涵蓋全文；各翻譯入口使用的上下文也有差異。
+            </p>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >穩定快照有助於可重用的語意身分；政策檢查也必須涵蓋「間接外送」的背景文字。
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">08</span>
+      <h2 id="tg-memory">先問本機：這個語意契約，是否已經翻過？</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 08</span
+          >本機優先，讀取錯誤與查無記錄分開</span
+        ><span class="tg-fig-type">HTML 決策圖</span>
+      </div>
+      <div class="tg-figure-body tg-local-grid">
+        <div>
+          <div class="tg-decision-row">
+            <span class="tg-step">01</span>
+            <div>
+              <strong>規則與釘選譯文</strong>
+              <div class="tg-result">固定結果／保留原文，可在本機決定</div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">02</span>
+            <div>
+              <strong>已保存的翻譯記憶</strong>
+              <div class="tg-result">
+                命中 → 直接使用；讀取失敗 → 預設停止外送
+              </div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">03</span>
+            <div>
+              <strong>舊版精確快取</strong>
+              <div class="tg-result">命中 → 使用，並嘗試升級保存</div>
+            </div>
+          </div>
+          <div class="tg-decision-row">
+            <span class="tg-step">04</span>
+            <div>
+              <strong>確認查無記錄，再看派送政策</strong>
+              <div class="tg-result">
+                允許外送 → 資源核准；僅限本機 → 保留原文
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="tg-key-box">
+            <p class="tg-subheading">語意鍵：是哪一份翻譯？</p>
+            <div class="tg-key-fields">
+              <span>正規化原文</span><span>翻譯入口</span
+              ><span>來源／目標語言</span><span>翻譯設定</span
+              ><span>提示詞版本</span><span>詞彙表版本</span
+              ><span>上下文指紋</span><span>規則指紋</span><span>輸出約定</span
+              ><span>隱私分區</span>
+            </div>
+            <div class="tg-key-arrow">一致的資料表示 → SHA-256 → 語意鍵</div>
+          </div>
+          <div class="tg-key-box tg-geometry-92c18f6bda">
+            <p class="tg-subheading">頁面鍵：重新開頁要還原什麼？</p>
+            <p class="tg-mini">
+              頁面鍵管理還原意圖與頁面關聯；語意鍵才決定哪句原文對應哪份譯文。
+            </p>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >「讀不到已存譯文」與「從來沒有譯文」是不同狀況。暫時讀取失敗，不自動等於同意重新外送原文、重新付出一次翻譯成本。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>資料層</th>
+            <th>保存策略</th>
+            <th>設計取捨</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>翻譯記憶</th>
+            <td>
+              不設有效期限、不自動驅逐；預設 512 MiB 內容計數／20 萬筆／單筆 1
+              MiB
+            </td>
+            <td>
+              滿了拒絕新寫入，保住已有紀錄。數值不含整個 IndexedDB
+              索引與額外儲存成本。
+            </td>
+          </tr>
+          <tr>
+            <th>舊版快取</th>
+            <td>預設 30 天／128 MiB；LRU 驅逐</td>
+            <td>可重建的快取，採用不同於已保存譯文的保留策略。</td>
+          </tr>
+          <tr>
+            <th>規則／釘選譯文</th>
+            <td>持久政策資料</td>
+            <td>使用者指定的行為，不是一般 LRU 快取。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>換模型、換頁面，哪些結果可以重用？</summary>
+      <div class="tg-deep-body">
+        <p>
+          頁面翻譯的語意身分不直接包含供應商或模型。其他語意條件相同時，換模型仍可能命中舊結果；「強制重新翻譯」才跳過翻譯記憶與舊版快取，結果驗證成功後替換同一語意鍵的記憶。
+        </p>
+        <p>
+          選取翻譯與翻譯中心使用各自的入口約定，翻譯設定中也包含供應商識別。因此翻譯中心的
+          A 供應商卡片不會使用 B
+          供應商卡片的結果；同一供應商設定更換模型，則保留原有身分。
+        </p>
+        <p>
+          上下文、規則與版本也納入語意契約，透過精確雜湊比對尋找譯文。不同頁面的相同句子，只有其他語意條件也相同才可共用；相似的文字不會自動命中。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">09</span>
+      <h2 id="tg-admission">合批節省請求，派送核准守住資源與配額</h2>
+    </div>
+    <p>
+      候選工作先依閱讀需求排序，再選擇可用的翻譯資源，最後嘗試合併成一批。批次大一點能合併工作；可見內容則採較小門檻，讓第一批結果不用等太多句。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 09</span
+          >兩種批次門檻，仍要經過同一組相容性檢查</span
+        ><span class="tg-fig-type">HTML 條件圖</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-two">
+          <div class="tg-node tg-good">
+            <strong>可見內容 · T0／T1</strong
+            ><span
+              >追加合批門檻：最多 3 項／900 個 UTF-16 單位<br />取使用者設定與可見門檻中較小者</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>其他可派送內容</strong
+            ><span
+              >初始預設：8 項／2400 個 UTF-16 單位<br />依翻譯流程的批次設定合併</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          按候選順序追加；遇到不相容的下一項便停止擴展
+        </div>
+        <div class="tg-key-box">
+          <p class="tg-subheading">同批必須相容</p>
+          <div class="tg-key-fields">
+            <span>文件與頁面連線</span><span>優先層級</span><span>翻譯設定</span
+            ><span>上下文</span><span>隱私分區</span><span>翻譯資源</span
+            ><span>token 配額</span>
+          </div>
+        </div>
+        <p class="tg-mini">
+          T1／T3
+          的候選視窗內若出現多個頁面，維持單筆派送，避免為了填滿某頁的批次跳過另一頁。需要單獨修復的工作也不合批。
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >吞吐與首筆等待時間需要折衷，公平性也不能被合批繞過。批次門檻限制合併規模，實際速度與成本仍取決於內容及服務回應。
+      </figcaption>
+    </figure>
+    <div class="tg-boundary">
+      <strong>900 不是每次請求的絕對字數上限：</strong
+      >第一個項目先加入批次，追加其他項目時才檢查總長。單一已分句的翻譯單位可能超過
+      900；提示詞與上下文也不算在這個原文長度裡。UTF-16 編碼單位、模型 token
+      與網路位元組是三套不同的計量。
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 10</span
+          >並行槽與配額帳本：兩種不同的生命週期</span
+        ><span class="tg-fig-type">SVG 生命週期</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-admission-ledger-svg"
+          viewBox="0 0 900 516"
+          role="img"
+          aria-labelledby="tg-admission-ledger-title tg-admission-ledger-desc"
+        >
+          <title id="tg-admission-ledger-title">並行槽與配額帳本分開管理</title>
+          <desc id="tg-admission-ledger-desc">
+            派送核准同時檢查並行槽、速率額度與配額群組，先持久化再送
+            API。確認網路請求終止後釋放並行槽；已提交的保守扣帳留到時間窗到期，速率額度另依速率補充。
+          </desc>
+          <defs>
+            <marker
+              id="tg-admission-ledger-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="28"
+            width="240"
+            height="102"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="40" y="55" class="tg-h tg-geometry-b54f4860ae">
+            一次 API 請求嘗試
+          </text>
+          <text x="40" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            需要並行槽
+          </text>
+          <text x="40" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            需要請求／詞元額度
+          </text>
+          <rect
+            x="330"
+            y="28"
+            width="245"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="346" y="55" class="tg-h tg-geometry-b54f4860ae">並行槽</text>
+          <text x="346" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            全域／服務資源／配額群組
+          </text>
+          <text x="346" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            預留或尚未結束的網路請求
+          </text>
+          <rect
+            x="630"
+            y="28"
+            width="246"
+            height="102"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="646" y="55" class="tg-h tg-geometry-b54f4860ae">
+            時間窗配額帳本
+          </text>
+          <text x="646" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            請求／詞元的分窗計數
+          </text>
+          <text x="646" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            記錄保守的時間窗扣帳
+          </text>
+          <path
+            d="M264,75 L330,75"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M575,75 L630,75"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="602.5" y="66.0" class="tg-small tg-geometry-35afd8367b">
+            同時核准
+          </text>
+          <rect
+            x="330"
+            y="180"
+            width="245"
+            height="106"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="207" class="tg-h tg-geometry-b54f4860ae">
+            先提交 IndexedDB 交易
+          </text>
+          <text x="346" y="233" class="tg-muted tg-geometry-b54f4860ae">
+            請求紀錄＋速率與配額帳本
+          </text>
+          <text x="346" y="255" class="tg-muted tg-geometry-b54f4860ae">
+            交易成功才允許送出
+          </text>
+          <path
+            d="M753,130 L753,154 L452,154 L452,180"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M452,130 L452,180"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="24"
+            y="180"
+            width="240"
+            height="106"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="207" class="tg-h tg-geometry-b54f4860ae">
+            呼叫翻譯服務
+          </text>
+          <text x="40" y="233" class="tg-muted tg-geometry-b54f4860ae">
+            送出前先留下預扣證據
+          </text>
+          <text x="40" y="255" class="tg-muted tg-geometry-b54f4860ae">
+            寫盤失敗：不送 API
+          </text>
+          <path
+            d="M330,230 L264,230"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="297.0" y="221.0" class="tg-small tg-geometry-35afd8367b">
+            交易完成
+          </text>
+          <rect
+            x="24"
+            y="340"
+            width="240"
+            height="86"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="367" class="tg-h tg-geometry-b54f4860ae">
+            網路請求已確認終止
+          </text>
+          <text x="40" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            已完成／已確認取消／失敗
+          </text>
+          <path
+            d="M144,286 L144,340"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="330"
+            y="340"
+            width="245"
+            height="86"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="346" y="367" class="tg-h tg-geometry-b54f4860ae">
+            釋放並行槽
+          </text>
+          <text x="346" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            後續工作可以使用空出的槽位
+          </text>
+          <rect
+            x="630"
+            y="340"
+            width="246"
+            height="86"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="646" y="367" class="tg-h tg-geometry-b54f4860ae">
+            時間窗扣帳仍保留
+          </text>
+          <text x="646" y="393" class="tg-muted tg-geometry-b54f4860ae">
+            等計數區間到期；實際用量
+          </text>
+          <text x="646" y="415" class="tg-muted tg-geometry-b54f4860ae">
+            較小也不會自動退回預扣
+          </text>
+          <path
+            d="M264,382 L330,382"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M575,382 L630,382"
+            marker-end="url(#tg-admission-ledger-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="602.5" y="373.0" class="tg-small tg-geometry-35afd8367b">
+            與此分開
+          </text>
+          <text x="24" y="464" class="tg-muted tg-geometry-b54f4860ae">
+            並行槽追蹤占用；時間窗配額保留預扣；請求速率額度另依速率補充。
+          </text>
+          <text x="24" y="488" class="tg-muted tg-geometry-b54f4860ae">
+            網路請求結束不直接退回速率額度；預扣成功後取消，也可能保留未送出的扣帳。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">寬圖可橫向捲動。</p>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >請求結束只代表網路操作不再占用並行名額，並不代表供應商沒有計費。先保存保守扣帳紀錄，也讓背景服務重啟後能保留已知用量。控制送出速率的令牌另依時間補充，請求結束不會直接退還已消耗的令牌。
+      </figcaption>
+    </figure>
+    <div class="tg-three">
+      <div class="tg-lane">
+        <p class="tg-subheading">並行量</p>
+        <p class="tg-mini">
+          同時檢查全系統、單一翻譯資源與所有相關配額群組。初始預設上限分別是
+          16、12、16 個並行名額。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">送出速率</p>
+        <p class="tg-mini">
+          每個翻譯資源的令牌桶預設每秒補充 8 次請求的容量，最多累積 16
+          次。它管理啟動節奏，不保證每秒完成 8 次。
+        </p>
+      </div>
+      <div class="tg-lane">
+        <p class="tg-subheading">時間窗配額</p>
+        <p class="tg-mini">
+          依設定檢查每分鐘請求數、每分鐘 token
+          數與每日請求數。實際用量較高時向上補記；較低或未回報時，不自動退還預扣量。
+        </p>
+      </div>
+    </div>
+    <details class="tg-deep">
+      <summary>演算法：何時等待時間，何時等待事件？</summary>
+      <div class="tg-deep-body">
+        <div class="tg-formula">
+          D = S + P + a − L S = 已提交至時間窗帳本、尚未到期的保守扣帳 P =
+          尚未完成送出提交的預留量 a = 新需求　　L = 設定上限
+        </div>
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>條件</th>
+                <th>派送判斷</th>
+                <th>含義</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>a &gt; L</th>
+                <td>阻擋需求</td>
+                <td>這筆需求本身超限，設定不變時，等待也無法容納。</td>
+              </tr>
+              <tr>
+                <th>D ≤ 0</th>
+                <td>通過這項配額檢查</td>
+                <td>還要繼續通過並行名額、送出速率與其他配額檢查。</td>
+              </tr>
+              <tr>
+                <th>0 &lt; D ≤ S</th>
+                <td>等待指定時間</td>
+                <td>掃描時間格，找出足夠扣帳到期的時刻。</td>
+              </tr>
+              <tr>
+                <th>D &gt; S</th>
+                <td>等待狀態變更</td>
+                <td>即使已提交扣帳全到期，待提交預留加上新需求仍超限。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          同一翻譯資源的時間條件取最晚門檻；若還需要釋放名額或完成寫入，就等待相應事件。不同候選工作之間則找最早可能喚醒的時刻。固定容量的環狀時間格，避免記憶體隨歷史請求數無限增加：分鐘窗
+          62 格、每格 1 秒；日窗 1442 格、每格 60 秒。
+        </p>
+        <p>
+          扣帳所屬的時間格編號為 ceil（歸屬時間 ÷
+          每格長度），也就是向上取整。建立持久化快照時，待提交扣帳的歸屬時間至少設到當下加
+          1000ms；交易完成後，再確保它不早於當下，採保守到期。請求令牌桶使用整數計數，一次請求等於
+          1,000,000 個微量單位；這與模型切分文字的 token 無關。
+        </p>
+      </div>
+    </details>
+    <details class="tg-deep">
+      <summary>演算法：資源選擇、token 估算與可選的自適應</summary>
+      <div class="tg-deep-body">
+        <p>
+          多個翻譯資源可用時，先比較「候選視窗內的相容需求量 ÷
+          可用並行數」，分母至少取
+          1；再比較負載、路由優先度與穩定的資源識別順序。這是從眼前候選中挑選資源的啟發式，沒有求解全域最佳配置。
+        </p>
+        <div class="tg-formula">
+          估算基底 = ceil（所有字元權重之和）+ 4 字元權重：Unicode 碼位大於
+          0x2E80 時取 1，否則取 0.34 互動式完整提示詞：ceil（各非空片段基底之和
+          × 1.2）+ 256 互動式輸出預留：請求指定的上限，未指定則為 4096
+        </div>
+        <p>
+          這是本機決定能否派送時的估算，與供應商實際切分 token
+          的方式可能不同，也無法代替帳戶的剩餘額度。頁面批次還會把翻譯指令與上下文加入估算，不能只拿原文字數當每分鐘
+          token 用量。
+        </p>
+        <p>
+          自適應並行量預設關閉。啟用後，並行上限從硬上限的一半向上取整開始。成功回應到達時，若統計窗已滿
+          20 秒，就檢查前一窗是否至少成功 10
+          次、仍有待辦工作且沒有壅塞；符合才增加 1
+          個名額。容量壅塞時減半，同一調整週期最多下降一次。自動備援切換也預設關閉，需要明確啟用才會在符合條件時改用其他資源。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">10</span>
+      <h2 id="tg-protocol">模型回傳的是資料協定，通過驗證才成為譯文</h2>
+    </div>
+    <p>
+      預設的頁面批次翻譯，使用簡短編號對應每一項結果。輸出順序可以不同；編號、譯文與佔位符都必須通過驗證。這讓「整包壞掉」與「只有幾個項目需要修復」可以分開處理。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 11</span>從串流文字，到可提交的譯文</span
+        ><span class="tg-fig-type">HTML 協定與分支圖</span>
+      </div>
+      <div class="tg-figure-body">
+        <p class="tg-sample">
+          合成資料示意。來源語言自動辨識，目標為臺灣繁體中文，不附額外上下文。回覆順序故意交換，仍以項目編號一一對應。
+        </p>
+        <div class="tg-two">
+          <div>
+            <p class="tg-subheading">送出的翻譯項目</p>
+            <div class="tg-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>項目編號</th>
+                    <th>原文</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>1</th>
+                    <td>Hello.</td>
+                  </tr>
+                  <tr>
+                    <th>2</th>
+                    <td>Goodbye.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <p class="tg-subheading">收到的翻譯結果</p>
+            <div class="tg-table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>項目編號</th>
+                    <th>譯文</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>2</th>
+                    <td>再見。</td>
+                  </tr>
+                  <tr>
+                    <th>1</th>
+                    <td>你好。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tg-node">
+          <strong>串流回覆解析器｜保留狀態，逐段掃描新字元</strong
+          ><span
+            >外框 → JSON 結構 → 資料欄位 → 項目編號 → 文字與
+            Unicode；完整項目可產生暫時預覽。</span
+          >
+        </div>
+        <div class="tg-connector">
+          網路操作成功結束，且模型正常完成回覆後，再做整份驗證
+        </div>
+        <div class="tg-three">
+          <div class="tg-node tg-good">
+            <strong>合法項目</strong
+            ><span>接受結果 → 還原佔位符<br />→ 可呈現譯文 → 最終結果</span>
+          </div>
+          <div class="tg-node tg-optional">
+            <strong>個別項目需修復</strong
+            ><span
+              >已知編號缺漏／重複<br />譯文空白／超長／佔位符不符<br />→
+              後續單筆重試</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>整包不合法</strong
+            ><span
+              >未知編號／欄位、重複欄位名稱<br />版本錯誤、非法
+              JSON、額外散文<br />→ 拒絕整包回覆</span
+            >
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >先確認「這是誰的完整結果」，再決定能否採用。預覽是可撤回的暫時結果，不會成為持久快取；頁面段落會等最終結果確認後才更新。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>翻譯服務</th>
+            <th>實際網路行為</th>
+            <th>回覆要求</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>DeepSeek／OpenAI／Google</th>
+            <td>
+              底層關閉自動重送，每次操作最多發出 1
+              次網路請求；重試交由上層排程管理。自訂服務網址仍須符合對應服務的連線規則。
+            </td>
+            <td>串流文字交給回覆解析器，必須符合結構化資料格式。</td>
+          </tr>
+          <tr>
+            <th>Microsoft</th>
+            <td>
+              一次操作內，先取得 Edge 認證，再送出翻譯；兩個階段各限 1
+              次網路請求，合計最多 2 次。
+            </td>
+            <td>檢查回傳筆數，按原位置補上相同項目編號，轉成統一格式。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>哪些容錯被允許？哪些數字不是 token 上限？</summary>
+      <div class="tg-deep-body">
+        <p>
+          解析器容許以指定標記包住的前置思考段落，以及完整包住回覆、未標語言或標成
+          JSON 的Markdown 圍欄；合法空白與資料欄位換序也可接受。任意散文中的
+          JSON 不會被猜測擷取。大量串流增量會切成 32,768 個 UTF-16
+          單位的片段處理，跨片段保留文字、跳脫符號與 Unicode 的解析狀態。
+        </p>
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>界線</th>
+                <th>預設值</th>
+                <th>計量方式</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>整份文字回覆</th>
+                <td>262,144</td>
+                <td>2 × UTF-16 長度，含外框文字</td>
+              </tr>
+              <tr>
+                <th>模型回覆的網路資料量</th>
+                <td>16 MiB</td>
+                <td>文字回覆預算 × 64，包含 SSE 與 JSON 外框</td>
+              </tr>
+              <tr>
+                <th>單項譯文</th>
+                <td>24,000</td>
+                <td>UTF-16 編碼單位</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          產品方向是「來源自動辨識 →
+          臺灣繁體中文」。頁面翻譯與共用設定採用不同的繁體中文語言標記；Microsoft
+          另外透過 ISO
+          語言對照表轉換，找不到對應時使用繁體中文標記。跨服務連接時，需要處理這層語言表示的差異。
+        </p>
+        <p>
+          系統提示詞要求忽略原文與上下文中的指令，譯文內容使用純文字。這能表達預期行為，仍無法保證完全消除提示詞注入或翻譯錯誤。DeepSeek
+          預設關閉思考模式，使用者也可自行調整。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">11</span>
+      <h2 id="tg-render">回來得再快，也要先確認頁面還是那一份</h2>
+    </div>
+    <p>
+      動態網頁可能在翻譯途中改字、換段落、離開頁面，使用者也可能正在反白。背景完成只代表取得候選結果；真正更新網頁節點前，還要核對當下的原文與操作狀態。
+    </p>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 12</span
+          >舊結果晚到，不該蓋掉新版原文</span
+        ><span class="tg-fig-type">SVG 時序 · 合成示意</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-stale-race-svg"
+          viewBox="0 0 900 520"
+          role="img"
+          aria-labelledby="tg-stale-race-title tg-stale-race-desc"
+        >
+          <title id="tg-stale-race-title">非同步譯文如何避免覆蓋新原文</title>
+          <desc id="tg-stale-race-desc">
+            網站變更原文後，舊結果即使較晚回來也不能覆寫新版；接收結果與提交 DOM
+            時各自核對身分。時序是合成示意，無延遲量測。
+          </desc>
+          <defs>
+            <marker
+              id="tg-stale-race-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <text x="30" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            網站／來源
+          </text>
+          <text x="335" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            翻譯背景
+          </text>
+          <text x="640" y="30" class="tg-blue tg-geometry-b54f4860ae">
+            頁面驗證／呈現
+          </text>
+          <path d="M150,55 L150,398" class="tg-dash"></path>
+          <path d="M450,55 L450,398" class="tg-dash"></path>
+          <path d="M760,55 L760,398" class="tg-dash"></path>
+          <rect
+            x="26"
+            y="65"
+            width="246"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="42" y="92" class="tg-h tg-geometry-b54f4860ae">
+            原文版本 1
+          </text>
+          <text x="42" y="118" class="tg-muted tg-geometry-b54f4860ae">
+            擷取請求 A
+          </text>
+          <path
+            d="M272,99 L342,99"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="307.0" y="90.0" class="tg-small tg-geometry-35afd8367b">
+            送出 A
+          </text>
+          <rect
+            x="342"
+            y="65"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="92" class="tg-h tg-geometry-b54f4860ae">
+            請求嘗試 A
+          </text>
+          <text x="358" y="118" class="tg-muted tg-geometry-b54f4860ae">
+            等待翻譯服務
+          </text>
+          <rect
+            x="26"
+            y="166"
+            width="246"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="42" y="193" class="tg-h tg-geometry-b54f4860ae">
+            網站改成版本 2
+          </text>
+          <text x="42" y="219" class="tg-muted tg-geometry-b54f4860ae">
+            新片段／閱讀世代
+          </text>
+          <path
+            d="M272,197 L342,197"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="307.0" y="188.0" class="tg-small tg-geometry-35afd8367b">
+            送出 B
+          </text>
+          <rect
+            x="342"
+            y="166"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="193" class="tg-h tg-geometry-b54f4860ae">
+            請求嘗試 B
+          </text>
+          <text x="358" y="219" class="tg-muted tg-geometry-b54f4860ae">
+            新版語意需求
+          </text>
+          <rect
+            x="342"
+            y="268"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="358" y="295" class="tg-h tg-geometry-b54f4860ae">
+            A 在原文更新後回覆
+          </text>
+          <text x="358" y="321" class="tg-muted tg-geometry-b54f4860ae">
+            結果仍屬於舊來源
+          </text>
+          <path
+            d="M562,300 L652,300"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="607.0" y="291.0" class="tg-small tg-geometry-35afd8367b">
+            檢查版本
+          </text>
+          <rect
+            x="652"
+            y="268"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-bad"
+          ></rect>
+          <text x="668" y="295" class="tg-h tg-geometry-b54f4860ae">
+            拒絕舊結果
+          </text>
+          <text x="668" y="321" class="tg-muted tg-geometry-b54f4860ae">
+            不更新 DOM
+          </text>
+          <rect
+            x="342"
+            y="366"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="358" y="393" class="tg-h tg-geometry-b54f4860ae">
+            B 完成
+          </text>
+          <text x="358" y="419" class="tg-muted tg-geometry-b54f4860ae">
+            完整譯文
+          </text>
+          <path
+            d="M562,398 L652,398"
+            marker-end="url(#tg-stale-race-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="607.0" y="389.0" class="tg-small tg-geometry-35afd8367b">
+            再核對原文
+          </text>
+          <rect
+            x="652"
+            y="366"
+            width="220"
+            height="65"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="668" y="393" class="tg-h tg-geometry-b54f4860ae">
+            符合當前身分
+          </text>
+          <text x="668" y="419" class="tg-muted tg-geometry-b54f4860ae">
+            排入／提交呈現計畫
+          </text>
+          <text x="26" y="466" class="tg-muted tg-geometry-b54f4860ae">
+            接收時核對：背景世代 → 文件世代 → 原文版本 → 結果通知版本
+          </text>
+          <text x="26" y="491" class="tg-muted tg-geometry-b54f4860ae">
+            提交 DOM 前，再核對本機閱讀世代、請求嘗試、原文與節點連接狀態。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">寬圖可橫向捲動。</p>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >背景執行代次、文件版本、原文版本與結果更新序號分層核對；已排入呈現佇列的工作，還要確認本機翻譯輪次與請求身分。取消與版本核對一起處理非同步競爭。
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 13</span
+          >同一批結果，可以在不同動畫影格更新</span
+        ><span class="tg-fig-type">HTML 呈現排程</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-node tg-good">
+            <strong>段落 A · 可提交</strong
+            ><span
+              >身分符合、沒有選取<br />這一影格的預算足夠<br />→ 現在更新</span
+            >
+          </div>
+          <div class="tg-node tg-optional">
+            <strong>段落 B · 正在反白</strong
+            ><span
+              >保護使用者的選取範圍<br />只留這段最新更新方案<br />→
+              等保護條件解除</span
+            >
+          </div>
+          <div class="tg-node">
+            <strong>段落 C · 等下一幀</strong
+            ><span
+              >這一影格已達工作預算<br />先保留更新方案<br />→
+              下一影格再檢查</span
+            >
+          </div>
+        </div>
+        <div class="tg-connector">
+          提交前再次核對原文；不清除使用者選取，也不凍結其他段落
+        </div>
+        <div class="tg-clock-row">
+          <div><strong>4 ms</strong><span>分段讓出工作的時間預算</span></div>
+          <div><strong>8</strong><span>區塊／觀測根節點／影格</span></div>
+          <div><strong>256</strong><span>預估網頁節點</span></div>
+          <div><strong>32 KiB</strong><span>以 UTF-16 計算的位元組</span></div>
+        </div>
+        <p class="tg-mini">
+          每完成一次區塊更新才檢查時間；第一個超過預算、卻必須完整更新的區塊仍可單獨提交。因此
+          4ms 是讓出工作的預算，不是每次網頁更新的硬性最長時間。
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >把結果抵達的節奏與網頁寫入節奏分開，讓翻譯更新與閱讀、選取、輸入法組字共存。放開滑鼠或觸控後，若仍有一段文字被選取，保護仍然存在。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>顯示模式</th>
+            <th>原文怎麼處理</th>
+            <th>譯文怎麼寫入</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>雙語</th>
+            <td>原文留在原位；已有舊譯文時，等新的更新方案提交才替換。</td>
+            <td>建立容納譯文的節點，再交由呈現佇列更新。</td>
+          </tr>
+          <tr>
+            <th>純譯文</th>
+            <td>暫存原來的節點物件，再移出頁面；還原時插回同一批節點。</td>
+            <td>
+              主要路徑使用文字與換行節點組合譯文；模型文字不當作 HTML 執行。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>更細的呈現策略：合併、延後與避免不必要的重寫</summary>
+      <div class="tg-deep-body">
+        <p>
+          呈現節奏控制器合併陸續抵達的結果，依最近一次工作的耗時調整節奏：新成本估值
+          = 0.6 × 舊成本估值 + 0.4 × 本次耗時；下一輪間隔為 min（1000ms，2 ×
+          新成本估值）。瀏覽器的動畫影格通知尚未到達時，另有 250ms
+          的計時器補位。這裡追蹤的是工作耗時，無法完整代表瀏覽器排版與繪製的成本。
+        </p>
+        <p>
+          同一區塊只保留最新的等待更新方案；最多保留 128
+          份延後方案，超過後可改記「需要重新整理」，這類記號上限為
+          4096。頁面變動的重新比對則合併成每段一個進行中的工作，再加一個待重跑記號。
+        </p>
+        <p>
+          呈現摘要使用「文字長度＋32 位元 FNV-1a
+          雜湊」判斷能否略過重寫，與背景使用 SHA-256
+          的語意識別不同；不同內容仍可能得到相同摘要。多句譯文依原翻譯單位的順序組合，接縫以中、日、韓文字的空白規則推估，並不逐字還原原始空白。
+        </p>
+        <p>
+          保留同一批原始節點，有利於延續原有物件關係；事件綁定、排版與互動效果，仍受到網站本身的結構與更新方式影響。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">12</span>
+      <h2 id="tg-durability">讀得到譯文，不等於已經存好</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span><span class="tg-fig-no">圖 14</span>一份結果，兩條完成路徑</span
+        ><span class="tg-fig-type">SVG 狀態圖</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-durability-svg"
+          viewBox="0 0 900 378"
+          role="img"
+          aria-labelledby="tg-durability-title tg-durability-desc"
+        >
+          <title id="tg-durability-title">結果可用與保存成功是兩個狀態</title>
+          <desc id="tg-durability-desc">
+            片段譯文可在保存期間交給頁面組裝；本機交易完成才算保存成功，保存失敗只重試本機寫入。實際顯示仍經過頁面的呈現佇列。
+          </desc>
+          <defs>
+            <marker
+              id="tg-durability-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="26"
+            y="28"
+            width="244"
+            height="90"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="42" y="55" class="tg-h tg-geometry-b54f4860ae">
+            結果通過驗證
+          </text>
+          <text x="42" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            回覆格式／保留標記已驗證
+          </text>
+          <text x="42" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            產生可呈現譯文
+          </text>
+          <rect
+            x="330"
+            y="28"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="346" y="55" class="tg-h tg-geometry-b54f4860ae">
+            譯文結果可用
+          </text>
+          <text x="346" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            保存狀態：進行中
+          </text>
+          <text x="346" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            等待頁面組裝／排程呈現
+          </text>
+          <rect
+            x="632"
+            y="28"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="648" y="55" class="tg-h tg-geometry-b54f4860ae">
+            本機保存佇列
+          </text>
+          <text x="648" y="81" class="tg-muted tg-geometry-b54f4860ae">
+            等待 IndexedDB 交易
+          </text>
+          <text x="648" y="103" class="tg-muted tg-geometry-b54f4860ae">
+            佇列本身不持久保存
+          </text>
+          <path
+            d="M270,74 L330,74"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M572,74 L632,74"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="328"
+            y="198"
+            width="244"
+            height="96"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="344" y="225" class="tg-h tg-geometry-b54f4860ae">
+            保存失敗
+          </text>
+          <text x="344" y="251" class="tg-muted tg-geometry-b54f4860ae">
+            材料仍保留且可重試時
+          </text>
+          <text x="344" y="273" class="tg-muted tg-geometry-b54f4860ae">
+            「重試保存」只重做寫盤
+          </text>
+          <rect
+            x="632"
+            y="198"
+            width="242"
+            height="96"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="648" y="225" class="tg-h tg-geometry-b54f4860ae">
+            交易完成
+          </text>
+          <text x="648" y="251" class="tg-muted tg-geometry-b54f4860ae">
+            保存狀態：已完成
+          </text>
+          <text x="648" y="273" class="tg-muted tg-geometry-b54f4860ae">
+            才可標示已儲存在此裝置
+          </text>
+          <path
+            d="M754,118 L754,198"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M680,118 L680,154 L450,154 L450,198"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="522" y="146" class="tg-small tg-geometry-b54f4860ae">
+            失敗
+          </text>
+          <text x="770" y="169" class="tg-small tg-geometry-b54f4860ae">
+            成功
+          </text>
+          <path
+            d="M450,198 L450,164 L607,164 L607,75 L632,75"
+            marker-end="url(#tg-durability-arrow)"
+            class="tg-dash"
+          ></path>
+          <text x="26" y="348" class="tg-muted tg-geometry-b54f4860ae">
+            保存佇列滿 →
+            暫停新的翻譯請求；已發出的仍可完成。背景重啟不會自動恢復未保存材料。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">寬圖可橫向捲動。</p>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >本機保存暫時失敗時，已通過驗證的譯文仍可留在畫面；「重試保存」只重做本機寫入，避免把儲存錯誤轉成另一筆模型請求。
+      </figcaption>
+    </figure>
+    <details class="tg-deep">
+      <summary>保存佇列如何限制記憶體？</summary>
+      <div class="tg-deep-body">
+        <div class="tg-table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>區域</th>
+                <th>筆數上限</th>
+                <th>估計位元組上限</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>主要保存佇列</th>
+                <td>32</td>
+                <td>16 MiB</td>
+              </tr>
+              <tr>
+                <th>額外等候區</th>
+                <td>64</td>
+                <td>8 MiB</td>
+              </tr>
+              <tr>
+                <th>保存失敗後保留的內容</th>
+                <td>64</td>
+                <td>8 MiB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          等候或保存失敗的內容，有效保留期為 10
+          分鐘，於後續佇列操作或重試時檢查清理。容量估計為「原文 UTF-8
+          位元組＋譯文 UTF-8 位元組 ×
+          2＋1024」，與實際記憶體占用可能不同。佇列滿時，會暫停新的頁面翻譯派送；已發出的請求可完成。
+        </p>
+        <p>
+          這個佇列只保存在執行中的記憶體。背景服務結束時，尚未完成寫入的內容，不會因重啟自動恢復。圖中呈現的是頁面翻譯的保存狀態；互動式入口只將內容排入保存工作，不等待同一套完整的畫面狀態流程。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">13</span>
+      <h2 id="tg-recovery">取消是撤銷提交權，重試則需要明確理由</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 15</span
+          >發出取消訊號，不等於網路操作已經結束</span
+        ><span class="tg-fig-type">SVG 生命週期</span>
+      </div>
+      <div class="tg-svg-scroll">
+        <svg
+          id="tg-cancel-restart-svg"
+          viewBox="0 0 900 389"
+          role="img"
+          aria-labelledby="tg-cancel-restart-title tg-cancel-restart-desc"
+        >
+          <title id="tg-cancel-restart-title">取消與重啟的不同生命週期</title>
+          <desc id="tg-cancel-restart-desc">
+            取消先撤銷結果提交權，再等待網路請求確認終止。預設 5
+            秒未確認終止會隔離服務資源；背景服務重啟會切換世代，並保留已知配額消耗。
+          </desc>
+          <defs>
+            <marker
+              id="tg-cancel-restart-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8" class="tg-geometry-fb87c76b6d"></path>
+            </marker>
+          </defs>
+          <rect
+            x="24"
+            y="25"
+            width="248"
+            height="90"
+            rx="8"
+            class="tg-accent"
+          ></rect>
+          <text x="40" y="52" class="tg-h tg-geometry-b54f4860ae">執行中</text>
+          <text x="40" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            並行槽已占用
+          </text>
+          <text x="40" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            保有結果提交權
+          </text>
+          <rect
+            x="330"
+            y="25"
+            width="242"
+            height="90"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="52" class="tg-h tg-geometry-b54f4860ae">
+            要求取消
+          </text>
+          <text x="346" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            撤銷結果提交權
+          </text>
+          <text x="346" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            送出取消訊號
+          </text>
+          <rect
+            x="630"
+            y="25"
+            width="246"
+            height="90"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="646" y="52" class="tg-h tg-geometry-b54f4860ae">
+            正在取消
+          </text>
+          <text x="646" y="78" class="tg-muted tg-geometry-b54f4860ae">
+            仍等待網路請求確認終止
+          </text>
+          <text x="646" y="100" class="tg-muted tg-geometry-b54f4860ae">
+            此時不先釋放並行槽
+          </text>
+          <path
+            d="M272,70 L330,70"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M572,70 L630,70"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <rect
+            x="630"
+            y="190"
+            width="246"
+            height="92"
+            rx="8"
+            class="tg-good"
+          ></rect>
+          <text x="646" y="217" class="tg-h tg-geometry-b54f4860ae">
+            收到終止確認
+          </text>
+          <text x="646" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            釋放並行槽
+          </text>
+          <text x="646" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            遲到成功仍不能提交結果
+          </text>
+          <rect
+            x="330"
+            y="190"
+            width="242"
+            height="92"
+            rx="8"
+            class="tg-warn"
+          ></rect>
+          <text x="346" y="217" class="tg-h tg-geometry-b54f4860ae">
+            預設 5 秒未確認
+          </text>
+          <text x="346" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            網路終止狀態不明
+          </text>
+          <text x="346" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            隔離服務資源、保留並行槽
+          </text>
+          <path
+            d="M750,115 L750,190"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <path
+            d="M665,115 L665,151 L451,151 L451,190"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="604" y="151" class="tg-small tg-geometry-35afd8367b">
+            超過寬限
+          </text>
+          <path
+            d="M572,236 L630,236"
+            marker-end="url(#tg-cancel-restart-arrow)"
+            class="tg-line"
+          ></path>
+          <text x="601.0" y="227.0" class="tg-small tg-geometry-35afd8367b">
+            遲到終止
+          </text>
+          <rect
+            x="24"
+            y="190"
+            width="248"
+            height="92"
+            rx="8"
+            class="tg-box"
+          ></rect>
+          <text x="40" y="217" class="tg-h tg-geometry-b54f4860ae">
+            背景服務重新啟動
+          </text>
+          <text x="40" y="243" class="tg-muted tg-geometry-b54f4860ae">
+            切換新的背景世代
+          </text>
+          <text x="40" y="265" class="tg-muted tg-geometry-b54f4860ae">
+            釋放舊槽位；保留扣帳計數
+          </text>
+          <text x="24" y="332" class="tg-muted tg-geometry-b54f4860ae">
+            重新連線：頁面確認連線 → 重送上下文與活躍片段快照 → 背景重建需求。
+          </text>
+          <text x="24" y="360" class="tg-muted tg-geometry-b54f4860ae">
+            保存中的文字不因重啟自動復活；已提交的翻譯記憶與配額帳本才具有持久性。
+          </text>
+        </svg>
+      </div>
+      <p class="tg-svg-hint">寬圖可橫向捲動。</p>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >先防止已取消結果上屏，再等待真正終止的證據。若先歸還並行名額，底層請求卻仍在跑，就會低估實際並行量。
+      </figcaption>
+    </figure>
+    <div class="tg-clock-row">
+      <div><strong>25 s</strong><span>等待第一份內容</span></div>
+      <div><strong>20 s</strong><span>串流無新內容的期限</span></div>
+      <div><strong>90 s</strong><span>單次嘗試的逾時門檻</span></div>
+      <div><strong>5 s</strong><span>取消後等待終止的寬限期</span></div>
+    </div>
+    <p class="tg-mini">
+      以上為可調整的預設值。一般頁面重試策略以 4
+      次實際送出為預設門檻，包含首次；累計執行時間預算為 180
+      秒。過大的多項目批次另有拆成單筆重新排隊的修復路徑。從未嘗試、只在畫面外等待的需求，不套用一般
+      30 分鐘的需求到期限制。
+    </p>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>失敗</th>
+            <th>處理方向</th>
+            <th>為什麼分開</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>HTTP 401／一般 403／404</th>
+            <td>視為認證、權限或模型設定問題，阻擋相關翻譯資源。</td>
+            <td>盲目重送不會修好設定。</td>
+          </tr>
+          <tr>
+            <th>HTTP 429 · 容量類</th>
+            <td>
+              對受限的資源或配額範圍設定冷卻期；工作留在佇列，等待資源再次可用。
+            </td>
+            <td>讓負載下降後才再試。</td>
+          </tr>
+          <tr>
+            <th>HTTP 402／429 · 付費或額度不足</th>
+            <td>
+              預設不再重試；額度類 403
+              也屬此類。明確啟用備援切換，且有符合獨立備援條件的可用資源時，仍可轉送。
+            </td>
+            <td>付費／帳戶額度問題不是瞬時壅塞。</td>
+          </tr>
+          <tr>
+            <th>HTTP 408／409／425／5xx</th>
+            <td>視為暫時性的伺服器失敗，可以重試。</td>
+            <td>有機會隨時間恢復，仍受次數與預算限制。</td>
+          </tr>
+          <tr>
+            <th>HTTP 413／過大輸入</th>
+            <td>多項目批次拆成單筆重試；單筆仍過大則阻擋該工作。</td>
+            <td>批次過大，不代表每個項目都無法單獨翻譯。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="tg-deep">
+      <summary>重試時間、喚醒與時鐘跳動</summary>
+      <div class="tg-deep-body">
+        <p>
+          一般工作的延後重試，使用完整隨機抖動：每次從零到等待上界之間取一個隨機延遲。容量型
+          HTTP 429
+          則對受限的資源或配額範圍設定冷卻期，採用伺服器指定的等待時間；未提供時使用基礎延遲，不套用隨機抖動。
+        </p>
+        <div class="tg-formula">
+          等待上界 = min（延遲上限，基礎延遲 × 2^(已嘗試次數−1)） 可重試時間 =
+          max（伺服器指定時間， 現在 + floor（隨機值 × 等待上界）） 隨機值介於
+          0（含）與 1（不含）；floor 表示向下取整
+        </div>
+        <p>
+          隨機抖動讓重試時間分散；回應標頭 Retry-After
+          指定的時間是額外下限，可接受秒數或 HTTP
+          日期，並考慮伺服器時間差。伺服器要求的等待時間最多保留 7 天。
+        </p>
+        <p>
+          喚醒排程合併成一個最早到期的計時器；預期等待至少 30
+          秒時，再以瀏覽器的背景鬧鐘補充喚醒。時鐘檢查會比較系統時間與單調時鐘各自經過了多久：偏移超過
+          5 秒，或系統時間倒退超過 5 秒，就暫停新的派送。沒有新異常且穩定期達 2
+          秒後，才依保守策略恢復。
+        </p>
+        <p>
+          取消圖描述已送出的網路嘗試。已保留名額但尚未送出的嘗試，可先結束並釋放名額；若進行中的扣帳交易隨後成功提交，即使沒有真的呼叫服務，也會保留該筆保守扣帳。無法確認是否終止的網路操作，會隔離相關資源並保留名額；收到遲來的終止通知後才釋放。背景服務重啟後建立新的執行代次，舊請求不再占用並行名額，已知的配額帳本則繼續保留。
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">14</span>
+      <h2 id="tg-boundaries">「本機優先」要說清楚資料仍會去哪裡</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 16</span
+          >原文、譯文與金鑰，各有不同邊界</span
+        ><span class="tg-fig-type">HTML 資料邊界圖</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-three">
+          <div class="tg-zone">
+            <div class="tg-zone-title">網頁與內容腳本</div>
+            <div class="tg-node">
+              <strong>原文與 DOM</strong
+              ><span
+                >DOM 節點留在網頁端<br />原文單位／文件背景傳往背景端<br />接收帶版本的狀態與結果通知</span
+              >
+            </div>
+          </div>
+          <div class="tg-zone">
+            <div class="tg-zone-title">擴充套件的儲存空間</div>
+            <div class="tg-node">
+              <strong>翻譯記憶</strong
+              ><span
+                >正規化原文、譯文、產生者<br />同筆記錄包含頁面關聯<br />頁面還原意圖獨立保存</span
+              >
+            </div>
+            <div class="tg-node">
+              <strong>翻譯服務的敏感設定</strong
+              ><span
+                >API 金鑰／請求標頭／服務選項<br />與網頁端可見設定分開<br />本機未另做應用層加密</span
+              >
+            </div>
+          </div>
+          <div class="tg-zone">
+            <div class="tg-zone-title">外部網路</div>
+            <div class="tg-node">
+              <strong>翻譯服務</strong
+              ><span
+                >接收待翻文字<br />LLM 另可接收合格的上下文<br />依各服務協定回傳</span
+              >
+            </div>
+            <div class="tg-node tg-optional">
+              <strong>選擇加入翻譯記憶同步</strong
+              ><span
+                >包含正規化原文與譯文<br />由共用同步服務加密後上傳<br />同步回程寫入本機記憶</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="tg-bridge">
+          <div>
+            <strong>同步不帶：</strong>頁面關聯、最後使用時間、頁面還原意圖。
+          </div>
+          <div>
+            <strong>同步仍帶：</strong
+            >翻譯內容本身；不能只稱為「同步少量中繼資料」。
+          </div>
+        </div>
+        <p class="tg-mini">
+          提供給網頁端的設定會移除 API
+          金鑰、請求標頭與供應商選項；設定同步也排除這些欄位，只傳送允許同步的設定。
+        </p>
+      </div>
+      <figcaption>
+        <span class="tg-why">設計意義：</span
+        >設定隔離、傳輸加密與本機命中，解決的是不同問題。本機優先能避免部分重複請求；真正呼叫遠端翻譯服務時，文字仍會離開裝置。
+      </figcaption>
+    </figure>
+    <div class="tg-table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>機制</th>
+            <th>實際行為</th>
+            <th>需要保留的界線</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>禁止外送</th>
+            <td>禁止該工作送往翻譯服務；仍可查本機已保存譯文。</td>
+            <td>
+              上下文候選也須通過政策檢查；翻譯記憶同步則另依使用者是否加入同步處理。
+            </td>
+          </tr>
+          <tr>
+            <th>無痕</th>
+            <td>不查找／保存／同步該無痕工作產生的翻譯記憶。</td>
+            <td>仍保存不含文字內容的派送與配額中繼資料。</td>
+          </tr>
+          <tr>
+            <th>翻譯網路請求</th>
+            <td>
+              不附帶瀏覽器憑證、拒絕重新導向、限制目標來源；遠端使用 HTTPS。
+            </td>
+            <td>明確指定的本機／私有網路主機可使用 HTTP。</td>
+          </tr>
+          <tr>
+            <th>同步加密</th>
+            <td>HKDF-SHA-256 衍生金鑰，AES-256-GCM 加密同步資料物件。</td>
+            <td>加密保護同步內容；本機設定隔離仍是另一層責任。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="tg-chapter">
+    <div>
+      <span class="tg-section-number">15</span>
+      <h2 id="tg-design">把設計放回它要解決的問題</h2>
+    </div>
+    <figure>
+      <div class="tg-figure-head">
+        <span
+          ><span class="tg-fig-no">圖 17</span
+          >從閱讀需求，到可解釋的工程取捨</span
+        ><span class="tg-fig-type">HTML 設計對照</span>
+      </div>
+      <div class="tg-figure-body">
+        <div class="tg-design-row">
+          <div class="tg-design-problem">同一句話重複出現</div>
+          <div>
+            <strong>頁面綁定／共享工作分離＋語意鍵</strong
+            ><span>共用相同語意工作；上下文或規則改變時，保留不同身分。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            多管理一層狀態，換取明確的重用邊界。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">眼前內容等不到</div>
+          <div>
+            <strong>可見性分層＋小批次派送</strong
+            ><span>優先服務焦點可見區，再預載閱讀前方。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            低優先層可能等待；不保證每頁同時等速。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">模型輸出不穩定</div>
+          <div>
+            <strong>項目編號對應＋佔位符驗證</strong
+            ><span>整包錯誤與個別項目修復分開。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            多一道解析成本；語意正確性仍依賴翻譯品質。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">請求跨越取消／重啟</div>
+          <div>
+            <strong>執行世代＋持久配額扣帳</strong
+            ><span>撤銷提交權與保留已知消耗分開。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            保守預扣可能高估使用量；未知終止會先停派。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">網頁更新與使用者操作</div>
+          <div>
+            <strong>版本核對＋選取保護＋每幀預算</strong
+            ><span>提交前再核對原文，受影響區塊延後寫入。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            翻譯完成到真正上屏之間，可能還要等待。
+          </div>
+        </div>
+        <div class="tg-design-row">
+          <div class="tg-design-problem">本機儲存暫時故障</div>
+          <div>
+            <strong>結果可用與保存完成分離</strong
+            ><span>已驗證譯文可用；保存失敗只重試寫盤。</span>
+          </div>
+          <div class="tg-design-tradeoff">
+            未完成保存的結果，不保證在背景程序重啟後仍可恢復。
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        這套架構的價值，是把「翻譯」拆成可分別檢查的責任。每個結果都有來源身分，每次外送都經過核准，每次畫面更新都要重新證明自己仍然適用。
+      </figcaption>
+    </figure>
+    <h3 id="tg-design-detail-1">理解這套系統的八個關鍵界線</h3>
+    <div class="tg-claim-grid">
+      <div class="tg-claim">
+        <b>串流能力與頁面上屏分開</b
+        ><span
+          >底層能提供暫時預覽；網頁段落等待最終結果。選取文字的 LLM
+          翻譯使用串流文字更新。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>共用資源，各入口仍有差異</b
+        ><span
+          >派送核准共用；回覆解析、上下文、入口重試與畫面狀態各有差異。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>精確記憶與相似搜尋分開</b
+        ><span>語意鍵是完整翻譯條件的 SHA-256；相似文字不會自動命中。</span>
+      </div>
+      <div class="tg-claim">
+        <b>原文字串長度與 token 分開</b
+        ><span
+          >2000、900、2400 指不同處的 UTF-16 門檻；不能改寫成 token 數。</span
+        >
+      </div>
+      <div class="tg-claim">
+        <b>並行槽與配額扣帳分開</b
+        ><span>終止可以釋放並行槽；已送消耗仍留在時間窗。</span>
+      </div>
+      <div class="tg-claim">
+        <b>4ms 是合作式預算</b
+        ><span>單一不可拆分的更新可能超出預算，頁面仍可能掉幀。</span>
+      </div>
+      <div class="tg-claim">
+        <b>可見、已存、已同步分開</b
+        ><span>結果可用、已保存、已完成同步，是三個分別推進的狀態。</span>
+      </div>
+      <div class="tg-claim">
+        <b>保護措施與品質保證分開</b
+        ><span
+          >純文字輸出與版本檢查降低呈現風險；翻譯品質、成本與效能仍需另行量測。</span
+        >
+      </div>
+    </div>
+  </section>
+
+  <div class="tg-footer">
+    <p>Browser Script Manager · 翻譯系統圖解</p>
+    <p>
+      可離線閱讀；寬幅資料流圖可橫向捲動。啟用 JavaScript
+      後，可操作預載區示例並下載個別 SVG。<a href="#article-title"
+        >回到文章開頭</a
+      >
+    </p>
+  </div>
+</div>

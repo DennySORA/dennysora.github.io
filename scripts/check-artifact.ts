@@ -20,6 +20,8 @@ import {
   loadPostMedia,
 } from '../src/lib/post-media.server.ts';
 import { routePath } from '../src/lib/route-manifest.ts';
+import { articlePath } from '../src/lib/blog-tree.ts';
+import { articleDemoPublication } from '../src/lib/article-demo-publication.ts';
 import brand from '../data/brand-assets.json' with { type: 'json' };
 import illustrations from '../data/illustration-assets.json' with { type: 'json' };
 
@@ -33,6 +35,16 @@ function walk(directory: string): string[] {
   );
 }
 const files = walk(root);
+const demoPublication = articleDemoPublication(loadPosts());
+for (const file of files) {
+  const name = relative(root, file);
+  for (const kind of ['privacy', 'translation'] as const)
+    if (
+      !demoPublication[kind] &&
+      new RegExp(`(?:^|/)${kind}-demos-[^/]+\\.js$`).test(name)
+    )
+      failures.push(`Draft article demo emitted in public bundle: ${name}`);
+}
 
 // Owner-retired learning series and fan review must not survive in a stale build.
 const retiredNotePath = /\/note\/japan(?:\/|["'?#\s]|$)|140mm-case-fans/;
@@ -68,7 +80,7 @@ const postMedia = loadPostMedia().files;
 for (const post of loadPosts())
   for (const locale of post.editions) {
     const rendered = renderPost(post.id, locale);
-    const page = join(root, locale, 'blog', post.slug, 'index.html');
+    const page = join(root, articlePath(post.slug, locale), 'index.html');
     try {
       const html = readFileSync(page, 'utf8');
       checkPostMediaMarkup(post.id, locale, html, postMedia);

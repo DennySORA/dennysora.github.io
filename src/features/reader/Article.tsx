@@ -1,3 +1,8 @@
+import {
+  articleFolder,
+  articlePath,
+  blogFolders,
+} from '../../lib/blog-tree.ts';
 import type { ViewData } from '../../app/page.tsx';
 import { taxonomyMaps } from '../../components/ArticleListItem.tsx';
 import { EndOfBuffer } from '../../components/Buffer.tsx';
@@ -39,12 +44,16 @@ export function Article({
   // Short notes skip the side contents; long ones get it from four sections up.
   const showToc = tocEntries(body.headings).length >= tocMinimum;
   const topic = post.topics[0];
+  const folder = articleFolder(post.slug);
   return (
     <div className="reader">
       <div className={`reader-shell${showToc ? ' has-toc' : ''}`}>
-        <a className="backlink" href={`/${locale}/blog/`}>
+        <a
+          className="backlink"
+          href={folder ? `/${locale}/blog/${folder}/` : `/${locale}/blog/`}
+        >
           <Icon name="arrow-left" size={18} />
-          {t.backToLibrary}
+          {folder ? blogFolders[folder].title[locale] : t.backToLibrary}
         </a>
         <div className="reader-grid">
           <div className="reader-main">
@@ -80,11 +89,15 @@ export function Article({
                 />
                 <p className="ln article-lede">{edition.summary}</p>
                 <p className="ln article-byline" data-pagefind-ignore="index">
-                  <span>
-                    <Icon name="user" size={14} />
-                    {post.author}
-                  </span>
-                  <span aria-hidden="true">·</span>
+                  {post.author ? (
+                    <>
+                      <span>
+                        <Icon name="user" size={14} />
+                        {post.author}
+                      </span>
+                      <span aria-hidden="true">·</span>
+                    </>
+                  ) : null}
                   <span>
                     <Icon name="clock" size={14} />
                     <span className="sr-only">{t.published} </span>
@@ -122,7 +135,7 @@ export function Article({
                   data-pagefind-ignore="all"
                 >
                   <CopyButton
-                    value={`${siteUrl}/${locale}/blog/${post.slug}/`}
+                    value={`${siteUrl}${articlePath(post.slug, locale)}`}
                     label={t.copyLink}
                     success={t.linkCopied}
                     failure={t.copyLinkFailed}
@@ -155,35 +168,50 @@ export function Article({
               {post.source.kind === 'profile-adaptation' ? (
                 <p>{t.adapted}</p>
               ) : null}
-              <a href={post.source.url}>
-                <Icon name={linkIcon(post.source.url)} size={15} />
-                {t.viewSource}
-                <Icon name="arrow-up-right" size={14} />
-                <span className="sr-only">（{t.newTab}）</span>
-              </a>
+              {post.source.kind === 'imported-manuscript' ? (
+                <p>
+                  {
+                    {
+                      'zh-hant':
+                        '依提供的稿件轉製，保留原文內容、觀點、圖解與參考來源。',
+                      en: 'Adapted from the provided manuscript, preserving its content, views, diagrams and references.',
+                      ja: '提供された原稿をもとに、内容・見解・図解・参考資料を保持して再構成しています。',
+                    }[locale]
+                  }
+                </p>
+              ) : (
+                <a href={post.source.url}>
+                  <Icon name={linkIcon(post.source.url)} size={15} />
+                  {t.viewSource}
+                  <Icon name="arrow-up-right" size={14} />
+                  <span className="sr-only">（{t.newTab}）</span>
+                </a>
+              )}
             </aside>
 
-            <aside className="author-mini" aria-label={t.aboutAuthor}>
-              <img
-                src="/assets/avatar.png"
-                alt=""
-                width={44}
-                height={44}
-                loading="lazy"
-                decoding="async"
-              />
-              <div>
-                <p className="author-name">
-                  {author.name}{' '}
-                  <span lang="zh-Hant">· {author.publicName}</span>
-                </p>
-                <p>{t.authorNote}</p>
-                <a className="text-action" href={`/${locale}/`}>
-                  {t.aboutAuthor}
-                  <Icon name="arrow" size={18} />
-                </a>
-              </div>
-            </aside>
+            {post.author ? (
+              <aside className="author-mini" aria-label={t.aboutAuthor}>
+                <img
+                  src="/assets/avatar.png"
+                  alt=""
+                  width={44}
+                  height={44}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div>
+                  <p className="author-name">
+                    {author.name}{' '}
+                    <span lang="zh-Hant">· {author.publicName}</span>
+                  </p>
+                  <p>{t.authorNote}</p>
+                  <a className="text-action" href={`/${locale}/`}>
+                    {t.aboutAuthor}
+                    <Icon name="arrow" size={18} />
+                  </a>
+                </div>
+              </aside>
+            ) : null}
 
             <Comments view={comments} locale={locale} />
 
@@ -196,7 +224,7 @@ export function Article({
                 <ul className="related-list">
                   {related.map((item) => (
                     <li key={item.id}>
-                      <a href={`/${locale}/blog/${item.slug}/`}>{item.title}</a>
+                      <a href={articlePath(item.slug, locale)}>{item.title}</a>
                       <span className="fine">
                         {maps.types.get(item.contentType)} ·{' '}
                         {formatCompactDate(item.publishedAt)}

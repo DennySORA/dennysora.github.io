@@ -1,3 +1,4 @@
+import { articlePath } from '../src/lib/blog-tree.ts';
 import {
   mkdirSync,
   writeFileSync,
@@ -105,7 +106,7 @@ for (const locale of locales) {
   const t = dictionaries[locale];
   const items = listPosts(locale)
     .map((post) => {
-      const link = `${siteUrl}/${locale}/blog/${post.slug}/`;
+      const link = `${siteUrl}${articlePath(post.slug, locale)}`;
       return `<item><title>${escapeHtml(post.title)}</title><link>${link}</link><guid isPermaLink="true">${link}</guid><description>${escapeHtml(post.summary)}</description><pubDate>${new Date(post.publishedAt + 'T00:00:00Z').toUTCString()}</pubDate></item>`;
     })
     .join('');
@@ -184,7 +185,10 @@ for (const slug of migration.legacyBlog.missingSlugs)
   }
 
 // Former profile adaptations are unpublished; keep their URLs as honest notices.
-for (const post of loadPosts().filter((post) => post.editions.length === 0))
+for (const post of loadPosts().filter(
+  (post) =>
+    post.editions.length === 0 && post.source.kind === 'profile-adaptation',
+))
   for (const locale of locales) {
     const copy = {
       'zh-hant': ['原先的示範內容已移除。', '回到部落格'],
@@ -195,7 +199,7 @@ for (const post of loadPosts().filter((post) => post.editions.length === 0))
       ja: ['以前のサンプル内容は削除されました。', 'ブログに戻る'],
     }[locale];
     write(
-      `${locale}/blog/${post.slug}/index.html`,
+      `${articlePath(post.slug, locale).slice(1)}index.html`,
       noticePage(
         htmlLang[locale],
         dictionaries[locale].noPostsTitle,

@@ -1,0 +1,1857 @@
+<div class="privacy-guide">
+  <p class="pg-opening">
+    想像你正在用 BitTorrent 下載一份 Linux
+    ISO。檔案本身完全公開，但你可能仍不希望任何人都能輕易整理出「這個網路端點，什麼時候參與了哪些下載」。這個例子讓我們把內容是否合法與通信是否具備隱私分開思考，也把問題拉回網路本身。
+  </p>
+  <div class="pg-takeaway">
+    理解 P2P 隱私，要沿著三個問題往下走：<strong
+      >內容由誰讀取、端點由誰看見、不同活動又能被誰連在一起。</strong
+    >
+  </div>
+  <p>
+    本文以公開網際網路上的 BitTorrent 為主要例子；談到 Tor、I2P
+    與混合網路時，會另外說明它們的通訊模型。圖中的時間序列與試算使用合成資料，目的是展示因果關係，並不代表某個產品的實測效果。
+  </p>
+
+  <div class="pg-no-script-note">
+    <p class="pg-noscript">
+      目前未啟用 JavaScript。全文、圖解與預設試算仍可閱讀；互動控制會隱藏。
+    </p>
+  </div>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">01 · 可見性</div>
+    <h2 id="pg-start">從一次下載開始：別人究竟看見什麼？</h2>
+    <p>
+      BitTorrent 把一份檔案拆成可分別取得的片段，讓參與者互相提供資料。參與同一
+      torrent 的節點集合稱為
+      <strong>swarm</strong>，實際連線交換資料的節點則稱為
+      <strong>peer</strong
+      >。客戶端必須先找到對方的聯絡方式，再建立連線。這正是它能高效率分散傳輸負載的基礎，也解釋了為什麼網路端點會成為可觀察資訊。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a></sup
+      >
+    </p>
+    <p>
+      先把觀察位置放對。與你交換片段的 peer 看見的是連線另一端的 IP 與
+      port；接取 ISP 看見的是你從這條接取線路送出的封包；VPN
+      營運者則位於加密隧道的終點。每個位置掌握的資料不同，<strong>某個位置看不到的資訊，可能只是轉移到另一個位置</strong>。
+    </p>
+    <figure id="pg-route-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">換一條路徑，觀察位置也跟著改變</span
+        ><span class="pg-figure-tag">架構示意</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-route-controls" class="pg-demo-controls"></section>
+        <div id="pg-route-path" class="pg-route-path">
+          <div class="pg-route-node">
+            <strong>你的裝置</strong
+            ><small>住宅網路先連到 VPN。<br />內層封包被隧道包裝。</small
+            ><span class="pg-mono">來源：住宅 IP</span>
+          </div>
+          <div class="pg-route-node">
+            <strong>VPN 伺服器</strong
+            ><small>終止 VPN 隧道。<br />代表客戶端向 peer 連線。</small
+            ><span class="pg-mono">入口 ↔ 出口</span>
+          </div>
+          <div class="pg-route-node">
+            <strong>BitTorrent peer</strong
+            ><small>實際交換片段。<br />看到 VPN 的對外端點。</small
+            ><span class="pg-mono">來源：VPN 出口 IP</span>
+          </div>
+        </div>
+        <div id="pg-route-observation" class="pg-observation">
+          <p class="pg-subheading">接取 ISP</p>
+          <p class="pg-subheading">
+            看得到你連向
+            VPN，以及封包時間、方向與大小；內層目的端受隧道加密保護。
+          </p>
+          <p class="pg-subheading">VPN 端</p>
+          <p class="pg-subheading">
+            轉送時具有入口與出口的觀察位置；應用另有加密時，移除 VPN
+            外層不會解開應用密文。
+          </p>
+          <p class="pg-subheading">Tracker／Peer</p>
+          <p class="pg-subheading">
+            相關流量都經隧道時，看見 VPN 出口；peer 仍知道自己交換的是哪個
+            torrent。
+          </p>
+        </div>
+        <p id="pg-route-summary" aria-live="polite" class="pg-status-line">
+          這張圖假設所有相關 P2P 流量都經由指定路徑。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 01</span>VPN 加密的範圍是裝置到 VPN
+        端。出口到目的端是否另外加密，取決於內層協定。多跳分散了網路位置，但同供應商的管理權限沒有因此自動分離。<a
+          href="#pg-ref-06"
+          class="pg-ref"
+          >[6]</a
+        ><a href="#pg-ref-09" class="pg-ref">[9]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-start-detail-1">內容保密、IP 分離與活動不可連結性</h3>
+    <p>
+      加密保護的是內容的可讀性。VPN 可以讓 swarm 裡看到的來源改成 VPN
+      出口。再往前一步，<strong>活動不可連結性</strong>問的是：觀察到兩次活動的人，能不能判斷它們出自同一個來源？即使不知道真名，也可能把多次活動整理成同一組。
+    </p>
+    <p>
+      而且，peer
+      本身是資料接收者。你把片段傳給它，就不能同時期待這條連線的加密向它隱藏該片段。真正要保護的是哪些中間觀察者、哪些端點資訊，以及它們能否與其他資料接起來。只有把這些問題分開，VPN、協定加密與匿名網路的用途才會清楚。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">02 · 協定</div>
+    <h2 id="pg-discovery">找到同伴的同時，也公布了聯絡方式</h2>
+    <p>
+      一次下載通常跨過三個角色：<strong>索引網站</strong>讓你找到 torrent 檔或
+      magnet link；<strong>發現機制</strong>協助客戶端取得
+      peers；<strong>資料連線</strong>才真正搬運檔案片段。索引、tracker 與 peer
+      不必由同一個單位控制，因此「誰造訪過某網站」與「誰參與某個
+      swarm」原本就是不同的觀察。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a
+        ><a href="#pg-ref-02" class="pg-ref">[2]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">發現同伴與交換資料，是兩種連線</span
+        ><span class="pg-figure-tag">虛線：發現　實線：資料</span>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="BitTorrent 發現機制圖，可橫向捲動"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <svg
+          viewBox="0 0 760 370"
+          role="img"
+          aria-labelledby="pg-discovery-title pg-discovery-desc"
+          class="pg-diagram"
+        >
+          <title id="pg-discovery-title">BitTorrent 的發現路徑與資料交換</title>
+          <desc id="pg-discovery-desc">
+            索引提供 torrent 描述；客戶端透過 Tracker 或 DHT 尋找端點。已連線的
+            peer 也可透過 PEX 提供新端點。檔案片段直接在客戶端與 peers
+            之間傳輸。
+          </desc>
+          <defs>
+            <marker
+              id="pg-arrow-disc"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M1 1 7 4 1 7" class="pg-geometry-a311b83b06"></path>
+            </marker>
+          </defs>
+          <rect
+            x="20"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="113" y="48" class="pg-geometry-35afd8367b">
+            索引網站／發布頁
+          </text>
+          <text x="113" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            torrent 檔、magnet link
+          </text>
+          <rect
+            x="288"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="381" y="48" class="pg-geometry-35afd8367b">Tracker</text>
+          <text x="381" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            接收宣告、回覆端點
+          </text>
+          <rect
+            x="554"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="647" y="48" class="pg-geometry-35afd8367b">DHT 節點</text>
+          <text x="647" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            分散查詢、儲存宣告
+          </text>
+          <rect
+            x="20"
+            y="176"
+            width="230"
+            height="118"
+            rx="8"
+            class="pg-frame"
+          ></rect>
+          <text x="135" y="209" class="pg-geometry-35afd8367b">
+            你的 BitTorrent 客戶端
+          </text>
+          <text x="135" y="235" class="pg-secondary pg-geometry-35afd8367b">
+            辨識 torrent、挑選片段
+          </text>
+          <text x="135" y="258" class="pg-secondary pg-geometry-35afd8367b">
+            取得可連線的 IP : port
+          </text>
+          <rect
+            x="494"
+            y="170"
+            width="246"
+            height="76"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="617" y="201" class="pg-geometry-35afd8367b">
+            已連線的 Peer A
+          </text>
+          <text x="617" y="225" class="pg-secondary pg-geometry-35afd8367b">
+            傳片段，也可用 PEX 交換端點
+          </text>
+          <rect
+            x="494"
+            y="292"
+            width="246"
+            height="56"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="617" y="326" class="pg-geometry-35afd8367b">
+            新找到的 Peer B、Peer C
+          </text>
+          <path
+            d="M113 88V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <text x="125" y="112" class="pg-tiny">描述與識別資訊</text>
+          <path
+            d="M381 88V130H205V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path
+            d="M647 88V145H230V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path
+            d="M260 207H484"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M484 237H260"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+          <text x="372" y="195" class="pg-secondary pg-geometry-35afd8367b">
+            請求與交換片段
+          </text>
+          <path
+            d="M494 264H268"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path d="M617 246V264H494" class="pg-wire pg-dash"></path>
+          <text x="382" y="284" class="pg-tiny pg-geometry-35afd8367b">
+            PEX：其他 peer 的聯絡資訊
+          </text>
+          <path
+            d="M135 294V320H484"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 02</span
+        >關閉某一條發現支線，其他連線仍可能存在。圖中流程是概念關係，並非每次下載都會同時使用所有機制。寬圖可橫向捲動。<a
+          href="#pg-ref-02"
+          class="pg-ref"
+          >[2]</a
+        ><a href="#pg-ref-03" class="pg-ref">[3]</a
+        ><a href="#pg-ref-04" class="pg-ref">[4]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-discovery-detail-1">Infohash 把大家帶到同一個 torrent</h3>
+    <p>
+      <code>infohash</code> 是 torrent 的 <code>info</code> dictionary
+      經編碼後的雜湊，用來識別 torrent 描述。v1 使用 SHA-1，v2 使用 SHA-256；v2
+      在部分協定欄位使用截斷後的 20
+      bytes。它既不是使用者帳號，也不是直接把整份檔案做一次雜湊得到的通用名稱。由於描述本身可以不同，同一份內容也可能對應不同
+      torrent。<sup><a href="#pg-ref-01" class="pg-ref">[1]</a></sup>
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="同伴發現機制比較"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          三種常見發現方式，以及它們產生的觀察
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">機制</th>
+            <th scope="col">如何找到 peers</th>
+            <th scope="col">資料能說明什麼</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Tracker</th>
+            <td>
+              客戶端 announce 自己參與某 torrent，tracker 回傳一組聯絡端點。
+            </td>
+            <td>
+              Tracker
+              可見來源端點與宣告欄位；上傳量、剩餘量等通常由客戶端自行回報。<a
+                href="#pg-ref-02"
+                class="pg-ref"
+                >[2]</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">DHT</th>
+            <td>
+              <code>get_peers</code> 查詢端點，<code>announce_peer</code>
+              登記自己的參與資訊。
+            </td>
+            <td>
+              它是分散式通訊錄。Token 有助於限制替其他 IP
+              登記，卻不證明實際傳輸了什麼。<a href="#pg-ref-03" class="pg-ref"
+                >[3]</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">PEX</th>
+            <td>已連線的 peer 交換其他 peers 的聯絡資訊。</td>
+            <td>
+              收到的是另一個節點提供的資訊；即使協定要求反映連線狀態，也必須考慮過時或惡意資料。<a
+                href="#pg-ref-04"
+                class="pg-ref"
+                >[4]</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      端點資訊還有一個容易忽略的細節：<strong
+        >宣告的監聽 port、封包實際的來源 port，以及 NAT 對外映射的
+        port，可能不是同一個數字。</strong
+      >只留下一個沒有語意的
+      <code>IP:port</code>，後續就可能把不同階段的資料接錯。<sup
+        ><a href="#pg-ref-02" class="pg-ref">[2]</a></sup
+      >
+    </p>
+    <h3 id="pg-discovery-detail-2">減少廣播資訊，與限制連線路徑</h3>
+    <p>
+      關閉 DHT 或 PEX，會減少相應的發現途徑；只要仍直接與 peer
+      連線，對方就仍能看到這條連線的端點。Private torrent 的
+      <code>private</code> 設定把發現限制在指定
+      tracker，主要維持其存取控制；swarm 內的通信依然需要端點資訊。區域網路的
+      Local Service Discovery 則可能用 multicast 宣告 infohash 與監聽
+      port，屬於另一個局部可見面。<sup
+        ><a href="#pg-ref-05" class="pg-ref">[5]</a></sup
+      >
+    </p>
+    <p>
+      qBittorrent 的 <strong>Anonymous Mode</strong> 主要減少
+      user-agent、版本或額外 IP 欄位等自報資訊。實際行為依 libtorrent 版本及
+      torrent 類型而異；官方頁面中的舊版停用 DHT／LSD／UPnP
+      行為，不能套用到所有版本。真正送出封包時使用哪個網路端點，仍由
+      socket、路由與隔離安排決定。<sup
+        ><a href="#pg-ref-07" class="pg-ref">[7]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">03 · 信任</div>
+    <h2 id="pg-trust">VPN 搬動了信任邊界</h2>
+    <p>
+      在 VPN 路徑中，你的裝置先把內層 IP 封包包進加密隧道。VPN
+      伺服器解開這層包裝，再把內層流量送向目的端。對 peer
+      而言，回覆資料的目的地通常是 VPN 出口；對接取 ISP 而言，直接看到的對端則是
+      VPN 伺服器。<sup><a href="#pg-ref-06" class="pg-ref">[6]</a></sup>
+    </p>
+    <p>
+      這種分離很有價值，但 VPN
+      營運者站在一個新的信任位置。轉送封包需要維持即時狀態；若由同一管理者控制入口和出口，它在架構上具有觀察兩邊的能力。這件事必須與另一個問題分開：<strong
+        >它是否把這些關係保存成可以事後查詢的紀錄？</strong
+      >
+    </p>
+    <h3 id="pg-trust-detail-1">No-log 處理歷史資料，RAM-only 處理殘留位置</h3>
+    <p>
+      以 Mullvad
+      的公開政策為例，其主張不保存使用者活動紀錄，同時說明帳號、WireGuard
+      設定、付款與其他必要資料的處理方式。隨機編號帳號減少註冊時要求的識別資料；某些付款方式仍可能形成「付款人與帳號」的關係。可是這條關係本身，還不足以補出「這個帳號在某時刻產生了某筆出口流量」。<sup
+        ><a href="#pg-ref-08" class="pg-ref">[8]</a></sup
+      >
+    </p>
+    <p>
+      RAM-only
+      伺服器則把重點放在持久磁碟殘留：重啟後不保留一般磁碟上的運作狀態，有助於降低某一類事後取證風險。仍在運作的記憶體、網路觀察，以及其他系統保存的資料，是不同問題。Mullvad
+      在 2023 年公告完成 RAM-only
+      遷移；這裡引用的是供應商公開說明，不是本文對其營運環境的獨立稽核。<sup
+        ><a href="#pg-ref-08" class="pg-ref">[8]</a></sup
+      >
+    </p>
+    <h3 id="pg-trust-detail-2">多跳把位置分開，還需要問誰控制它們</h3>
+    <p>
+      多跳讓入口節點靠近使用者、出口節點靠近目的端。只能觀察其中一處的人，可能較難把兩邊接起來；若同一觀察者已能取得兩端流量，僅增加中繼數仍可能保留時間與流量的關聯。同一供應商的多台伺服器也不會自動變成彼此獨立的管理者。<sup
+        ><a href="#pg-ref-09" class="pg-ref">[9]</a
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a></sup
+      >
+    </p>
+    <p>
+      VPN
+      同樣不會移除應用層的登入、帳號或裝置資訊。如果某活動直接帶著已知帳號進行，網站不需要從網路節奏重新猜出你是誰。由這個角度看，網路匿名與應用身分是兩個可以互相影響、卻各自需要理解的層次。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">04 · 路徑</div>
+    <h2 id="pg-isolation">隧道中斷後，封包會走去哪裡？</h2>
+    <p>
+      「連上 VPN」描述的是當下狀態。要理解住宅 IP 是否可能出現在
+      swarm，還得看隧道失效之後的行為：應用會停止等待，還是透過其他可用路徑繼續送？<strong
+        >Fail-closed</strong
+      >
+      指的是保護路徑失效時，受保護的通信也隨之停止，直到安全路徑恢復。
+    </p>
+    <p>
+      路由表負責選擇下一跳；介面綁定限制應用使用的網路介面；防火牆則可以拒絕走錯出口的封包。Linux
+      的
+      <strong>network namespace</strong>
+      更往前一步，給程序一套獨立的網路環境，讓它只看見特定介面與路由。這些機制處理不同的控制點，實際效果取決於它們涵蓋了哪些流量。<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <figure id="pg-isolation-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >應用只看得見 wg0；外層 UDP 留在主機空間</span
+        ><span class="pg-figure-tag">WireGuard／Linux 架構</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-tunnel-controls" class="pg-demo-controls"></section>
+        <div id="pg-transport" class="pg-transport">
+          <div class="pg-transport-box">
+            <p class="pg-subheading">應用網路空間 B</p>
+            <div class="pg-step-node">
+              BitTorrent 客戶端<br /><span class="pg-small"
+                >送出內層 IP 封包</span
+              >
+            </div>
+            <div aria-hidden="true" class="pg-step-arrow pg-app-arrow">↓</div>
+            <div class="pg-step-node pg-wg-node">
+              <strong>wg0</strong><br /><span
+                id="pg-wg-state"
+                class="pg-small pg-wg-state"
+                >隧道可用：經指定介面送出</span
+              >
+            </div>
+            <p class="pg-small pg-geometry-76b14685f3">
+              此空間沒有 eth0／wlan0，也沒有普通 WAN 備用路徑。
+            </p>
+          </div>
+          <div class="pg-transport-box">
+            <p class="pg-subheading">主機網路空間 A</p>
+            <div class="pg-step-node">
+              WireGuard UDP socket<br /><span class="pg-small"
+                >留在介面建立時的空間</span
+              >
+            </div>
+            <div aria-hidden="true" class="pg-step-arrow">↓</div>
+            <div class="pg-step-node">
+              eth0／wlan0 → VPN 伺服器<br /><span class="pg-small"
+                >傳送加密後的外層封包</span
+              >
+            </div>
+            <div id="pg-tunnel-explain" class="pg-tunnel-strip">
+              wg0 的內層流量，經這個 UDP socket 加密後運送。
+            </div>
+          </div>
+        </div>
+        <p id="pg-tunnel-status" aria-live="polite" class="pg-status-line">
+          隧道可用時，應用資料經 wg0 封裝，再由實體網卡運送。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 03</span>依 WireGuard 官方 namespace
+        模式重繪。隧道不可達時，應用可能等待或失敗；圖中的重點是沒有直連替代出口。實體網卡仍可能傳送握手或重試封包，並不需要完全零流量。<a
+          href="#pg-ref-06"
+          class="pg-ref"
+          >[6]</a
+        >
+      </figcaption>
+    </figure>
+    <h3 id="pg-isolation-detail-1">為什麼只改預設路由仍可能留下縫隙？</h3>
+    <p>
+      因為系統還可能有更具體的路由、區域網路例外，或介面重建後的新選擇。<i
+        >Bypassing Tunnels</i
+      >
+      與 TunnelVision 的研究，分別展示過路由例外及 DHCP 路由資訊造成 VPN
+      旁路的情況。它們說明了路由偏好與流量隔離之間的差別；各產品的當前狀態仍需依版本與修正情況判斷。<sup
+        ><a href="#pg-ref-12" class="pg-ref">[12]</a></sup
+      >
+    </p>
+    <p>
+      介面綁定也有細節。綁定一個本機 IP，與把 socket
+      限制在特定網路裝置，並非所有系統上都具有完全相同的效果。TCP peer、UDP
+      tracker 與 DHT 又可能使用不同
+      socket。當某類流量表現和其他流量不同時，應先確認實際控制的是哪個出口，而不是只看應用顯示的連線圖示。<sup
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <h3 id="pg-isolation-detail-2">IPv6、DNS 與管理介面，為什麼要分開看？</h3>
+    <p>
+      如果 IPv4 被送進 VPN，IPv6 卻仍可直接連到
+      peer，對方就可能從另一個位址族看到你的端點。DNS
+      查詢若在隧道外進行，可能透露查過哪些服務網域；但一般網域查詢本身不會自動包含
+      torrent 的 infohash。兩者洩露的資訊不同，不能只用同一個「漏 IP」標籤帶過。
+    </p>
+    <p>
+      Web UI、搜尋擴充或主機上的 DNS
+      代理也可能由另一個程序處理。限制下載引擎，不會自動限制這些程序的路徑。Port
+      forwarding 則處理外部 peer 能否主動連入；開在 VPN
+      出口與開在住宅路由器上，涉及不同的網路位置。這些都是從元件與連線路徑推導出的差異，並非聲稱所有客戶端都有相同問題。<sup
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <p>
+      Namespace
+      隔離的前提，是主機核心與能修改網路的權限仍可信。它可以減少應用意外使用其他出口的機會，卻無法替一台已被高權限控制的主機提供完整保護。到這裡，我們解決的仍是「封包走哪裡」；下一個問題，是封包走進正確路徑後，還留下什麼形狀。
+    </p>
+  </section>
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">05 · 時序</div>
+    <h2 id="pg-rhythm">加密把內容藏起來，通信仍然有節奏</h2>
+    <p>
+      你連續送出一批請求，遠端開始回傳資料；接收端忙碌時暫停，緩衝區騰出空間後又出現下一波。加密改變了封包裡的位元組，這些由應用與網路共同造成的時間變化，卻仍可能出現在外層。
+    </p>
+    <p>
+      <strong>端對端流量關聯</strong
+      >要解的問題是：兩個觀察點取得的流量，是否屬於同一次通信？對手需要能看見兩邊的相應資料；單單知道某個
+      VPN 出口 IP，還沒有取得使用者側的流量。Tor
+      官方也明確把「同時觀察通訊兩端」列為其不防禦的威脅模型。<sup
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a></sup
+      >
+    </p>
+    <figure id="pg-trace-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >把兩條時間線對齊，看形狀留下多少相似性</span
+        ><span class="pg-figure-tag">合成教學資料 · 無網路擷取</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-trace-controls" class="pg-demo-controls"></section>
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="兩個觀察點的每秒流量折線圖，可橫向捲動"
+          class="pg-figure-viewport"
+        >
+          <svg
+            viewBox="0 0 760 395"
+            role="img"
+            aria-labelledby="pg-trace-svg-title pg-trace-svg-desc"
+            class="pg-diagram pg-geometry-b27c9a47f2"
+          >
+            <title id="pg-trace-svg-title">入口與出口的合成流量時間序列</title>
+            <desc id="pg-trace-svg-desc">
+              兩個圖使用相同的零到三百二十 KiB
+              每秒尺度。四十個時間窗，每窗零點五秒，總共二十秒。入口實線，出口虛線。出口可向前對齊；超出觀察區間的值不計算。
+            </desc>
+            <text x="62" y="25" class="pg-geometry-9eb8107a7b">入口 X</text>
+            <text x="736" y="25" class="pg-geometry-79d2b00c97">
+              KiB/s · 使用者 → 目的端
+            </text>
+            <path d="M62 150L736 150" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="154" class="pg-geometry-79d2b00c97">0</text>
+            <path
+              d="M62 123.75L736 123.75"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="127.75" class="pg-geometry-79d2b00c97">80</text>
+            <path d="M62 97.5L736 97.5" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="101.5" class="pg-geometry-79d2b00c97">160</text>
+            <path d="M62 71.25L736 71.25" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="75.25" class="pg-geometry-79d2b00c97">240</text>
+            <path d="M62 45L736 45" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="49" class="pg-geometry-79d2b00c97">320</text>
+            <path
+              id="pg-trace-x"
+              d="M70.42 147.38 L87.28 146.72 L104.13 146.06 L120.98 146.72 L137.82 130.31 L154.68 110.63 L171.53 120.47 L188.38 140.16 L205.23 146.06 L222.08 147.05 L238.93 146.06 L255.78 145.41 L272.63 120.47 L289.48 100.78 L306.33 108.98 L323.18 138.52 L340.03 146.06 L356.88 146.72 L373.73 147.38 L390.58 145.41 L407.43 131.95 L424.28 113.91 L441.13 120.47 L457.98 136.88 L474.83 146.06 L491.68 147.05 L508.53 146.72 L525.38 146.06 L542.23 117.19 L559.08 104.06 L575.93 123.75 L592.78 145.08 L609.63 150.00 L626.48 150.00 L643.33 150.00 L660.18 150.00 L677.03 150.00 L693.88 150.00 L710.73 150.00 L727.58 150.00"
+              class="pg-geometry-071d7d91b8"
+            ></path>
+            <text x="62" y="173" class="pg-geometry-04e7741d74">0</text>
+            <text x="196.8" y="173" class="pg-geometry-04e7741d74">4</text>
+            <text x="331.6" y="173" class="pg-geometry-04e7741d74">8</text>
+            <text x="466.4" y="173" class="pg-geometry-04e7741d74">12</text>
+            <text x="601.2" y="173" class="pg-geometry-04e7741d74">16</text>
+            <text x="736" y="173" class="pg-geometry-04e7741d74">20</text>
+            <text x="62" y="207" class="pg-geometry-9eb8107a7b">出口 Y</text>
+            <text x="736" y="207" class="pg-geometry-79d2b00c97">
+              相同方向 · 相同縱軸
+            </text>
+            <path d="M62 330L736 330" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="334" class="pg-geometry-79d2b00c97">0</text>
+            <path
+              d="M62 303.75L736 303.75"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="307.75" class="pg-geometry-79d2b00c97">80</text>
+            <path d="M62 277.5L736 277.5" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="281.5" class="pg-geometry-79d2b00c97">160</text>
+            <path
+              d="M62 251.25L736 251.25"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="255.25" class="pg-geometry-79d2b00c97">240</text>
+            <path d="M62 225L736 225" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="229" class="pg-geometry-79d2b00c97">320</text>
+            <path
+              id="pg-trace-y"
+              d="M70.42 330.00 L87.28 330.00 L104.13 330.00 L120.98 326.27 L137.82 327.64 L154.68 325.72 L171.53 326.98 L188.38 313.20 L205.23 292.79 L222.08 302.50 L238.93 321.27 L255.78 325.72 L272.63 328.27 L289.48 325.06 L306.33 326.43 L323.18 302.50 L340.03 284.06 L356.88 293.25 L373.73 319.11 L390.58 325.06 L407.43 327.64 L424.28 326.93 L441.13 325.77 L457.98 314.71 L474.83 295.81 L491.68 302.50 L508.53 318.25 L525.38 325.72 L542.23 328.27 L559.08 325.67 L575.93 327.03 L592.78 299.48 L609.63 287.08 L626.48 306.83 L643.33 325.14 L660.18 330.00 L677.03 330.00 L693.88 330.00 L710.73 330.00 L727.58 330.00"
+              class="pg-geometry-465c34fd09"
+            ></path>
+            <text x="62" y="353" class="pg-geometry-04e7741d74">0</text>
+            <text x="196.8" y="353" class="pg-geometry-04e7741d74">4</text>
+            <text x="331.6" y="353" class="pg-geometry-04e7741d74">8</text>
+            <text x="466.4" y="353" class="pg-geometry-04e7741d74">12</text>
+            <text x="601.2" y="353" class="pg-geometry-04e7741d74">16</text>
+            <text x="736" y="353" class="pg-geometry-04e7741d74">20</text>
+            <text x="399" y="384" class="pg-geometry-04e7741d74">
+              時間（秒）；對齊後使用共同的時間原點
+            </text>
+            <g id="pg-trace-cursor" class="pg-geometry-23fe0971da">
+              <path
+                id="pg-trace-cursor-line"
+                d="M62 40L62 335"
+                class="pg-geometry-b26d2719f4"
+              ></path>
+            </g>
+          </svg>
+        </div>
+        <div class="pg-legend">
+          <span><i></i>入口 X：選定方向的流量</span
+          ><span><i class="pg-amber"></i>出口 Y：同方向的候選流量</span>
+        </div>
+        <div class="pg-trace-meta">
+          <span
+            >相關係數 r：<span id="pg-trace-correlation"
+              >-0.315（非配對機率）</span
+            ></span
+          ><span id="pg-trace-clock">時間掃描：未播放</span>
+        </div>
+        <p id="pg-trace-limit" class="pg-model-caveat">
+          固定時間窗 0.5 秒、縱軸為 KiB/s。這組「同一通訊」資料刻意加入 1.5
+          秒延遲；可移動時間軸觀察變化。r
+          只是這組特徵的相似度，並非配對機率。為了對齊而移出範圍的尾端不參與計算。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 04</span
+        >兩張圖保持相同座標尺度。「加上其他流量」用來示範聚合可能改變形狀；任何模式下的高低分，都不能當成真實攻擊或防禦的成績。即使另一段通訊偶然相似，也不代表它們具有共同來源。
+      </figcaption>
+    </figure>
+    <h3 id="pg-rhythm-detail-1">最簡單的做法：按時間窗加總，再容許一點位移</h3>
+    <p>
+      把某個方向的封包分成固定時間窗，每窗加總觀察到的位元組。若窗寬是 Δ
+      秒，<code>xₖ</code> 與 <code>yₖ</code> 就是兩側第 k
+      個時間窗的流量。為了容許轉送延遲，可以把第二條序列往前或往後移動幾格，再比較它們的變化。
+    </p>
+    <div class="pg-equation">
+      xₖ = Σ sᵢ，條件為 kΔ ≤ tᵢ &lt; (k + 1)Δ<br />C(ℓ) = corr(xₖ, yₖ₊ℓ)<small
+        >tᵢ：封包時間；sᵢ：在指定觀察層計算的位元組數。ℓ 是整數格數，對應 ℓΔ
+        秒。上行與下行分開比較；圖中除以 Δ，換成 KiB/s 顯示。</small
+      >
+    </div>
+    <p>
+      這個簡單模型只是在說明訊號從哪裡來。研究也會用學習式表示、不同長度的窗口及多項特徵。更複雜的模型仍需要觀察資料，也仍會受到資料收集方式、真實網路變動與容許誤報率的影響。2026
+      年作者公開的 ESPRESSO 稿件，就特別研究了人工資料與真實 Tor
+      流量之間的落差。<sup><a href="#pg-ref-13" class="pg-ref">[13]</a></sup>
+    </p>
+    <h3 id="pg-rhythm-detail-2">一條 VPN 隧道，往往裝著很多條連線</h3>
+    <p>
+      上面的圖刻意從相近的計數層次開始。實際網路中，實體網卡看到的是 VPN
+      外層封包；出口看到的可能是某一條 peer 連線。入口隧道同時還裝著其他
+      peers、DNS、網頁或背景同步。把整條隧道的總量直接當成單一 peer
+      flow，已經改變了比較對象。
+    </p>
+    <p>
+      封裝標頭、重傳、ACK、MTU、封包分段、壅塞與
+      padding，也會改變數量和長度。合理的直覺是：資料必須經過轉送才能送達，低延遲轉送常會保留某些因果節奏；不能進一步假設每個入口封包都在出口找到一個等長、等間隔的副本。<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <div class="pg-two-col">
+      <div>
+        <h3 id="pg-rhythm-detail-3">流量指紋辨識</h3>
+        <p>
+          看某一側的加密流量，問「它像哪個已知網站、影片或活動？」需要可供學習或比較的類別。
+        </p>
+      </div>
+      <div>
+        <h3 id="pg-rhythm-detail-4">雙端流量關聯</h3>
+        <p>
+          看兩個位置的流量，問「它們是否屬於同一次通訊？」需要候選配對與兩側的觀察能力。
+        </p>
+      </div>
+    </div>
+    <p class="pg-geometry-2bdf8e45fd">
+      這兩個問題可以使用相似特徵，評估結果卻不能直接互換。被動對手只觀察已有流量；能影響延遲、丟包或速率的主動對手，還可能讓另一側出現可辨識的反應。防住一種觀察模型，不會自動涵蓋另一種。<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">06 · 推論</div>
+    <h2 id="pg-inference">看起來相似，距離「同一個人」還有多遠？</h2>
+    <p>
+      相關係數
+      <code>r = 0.91</code>
+      說的是兩組數值在這個比較方式下很相似，並沒有直接給出「91%
+      是同一條通信」的校準機率，更沒有跨過裝置、帳號與自然人之間的距離。若同時搜尋許多候選、許多時間位移和許多窗口，再挑最高分，偶然相似的機會也會增加。
+    </p>
+    <p>
+      同樣地，tracker
+      名單與實際資料交換提供的是不同程度的觀察。要把網路事件繼續接到操作身分，通常還需要其他來源的證據，並處理共用
+      IP、時鐘誤差與紀錄缺口。共享 IPv4 的情況尤其需要來源
+      port、準確時間及相關傳輸資訊；即使對應到訂戶，也還沒有自動確定是哪一個人操作。<sup
+        ><a href="#pg-ref-21" class="pg-ref">[21]</a
+        ><a href="#pg-ref-23" class="pg-ref">[23]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">每往前一步，都需要新的證據</span
+        ><span class="pg-figure-tag">主張的層次</span>
+      </div>
+      <div class="pg-figure-body">
+        <ol class="pg-chain">
+          <li>
+            <strong>名單出現端點</strong
+            ><small>Tracker／PEX 回報的聯絡資訊。</small>
+          </li>
+          <li>
+            <strong>實際建立連線</strong><small>某時刻有可回覆的對端。</small>
+          </li>
+          <li>
+            <strong>交換可驗證片段</strong
+            ><small>該連線提供了可比對的資料。</small>
+          </li>
+          <li>
+            <strong>確認操作身分</strong
+            ><small>結合裝置、帳號與其他獨立資料。</small>
+          </li>
+        </ol>
+        <p class="pg-evidence-gap">
+          箭頭代表「還需要補強」，不是協定會自動完成的身分推導。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 05</span
+        >片段完整性可以用雜湊驗證，雜湊本身卻不會證明自然人身分、著作權歸屬或最初發布者。不同主張需要各自對應的證據。
+      </figcaption>
+    </figure>
+    <h3 id="pg-inference-detail-1">誤報率很低，仍可能出現很多錯誤候選</h3>
+    <p>
+      假設某次分析有 1,000,001
+      個候選，其中剛好一個是真配對。模型找出真配對的機率是
+      90%，每個錯誤候選被誤判的機率只有十萬分之一。這個誤報率聽起來很低，可是在一百萬個錯誤候選上，平均仍會產生
+      10 個誤報。
+    </p>
+    <figure id="pg-base-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">把候選規模放回計算裡</span
+        ><span class="pg-figure-tag">由假設計算 · 非案件資料</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-base-controls" class="pg-demo-controls"></section>
+        <div aria-live="polite" aria-atomic="true" class="pg-stats">
+          <div>
+            <span class="pg-stat-label">平均每輪找到的真配對</span
+            ><span id="pg-base-tp" class="pg-stat-number">0.90</span>
+          </div>
+          <div>
+            <span class="pg-stat-label">平均每輪的錯誤候選</span
+            ><span id="pg-base-fp" class="pg-stat-number pg-amber">10.00</span>
+          </div>
+          <div>
+            <span class="pg-stat-label">模型陽性預測值 PPV</span
+            ><span id="pg-base-ppv" class="pg-stat-number">8.26%</span>
+          </div>
+        </div>
+        <div
+          role="img"
+          id="pg-base-bar"
+          aria-label="被標記的候選中，真配對模型比例約 8.26%，錯誤候選約 91.74%"
+          class="pg-share-bar"
+        >
+          <div id="pg-base-share" class="pg-share-true"></div>
+          <div class="pg-share-false"></div>
+        </div>
+        <div class="pg-share-legend">
+          <span><b>■</b> 真配對</span><span><b>▨</b> 錯誤候選</span>
+        </div>
+        <p class="pg-model-caveat">
+          這裡的分數是許多同分布分析輪次累積後的模型比例。單次分析不會真的出現
+          0.9 個人；也不能把 PPV 當成某個人的身分或責任機率。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 06</span
+        >假設每輪恰有一個真配對、所有候選使用同一門檻與同一組
+        TPR／FPR。改變候選數即可看見基準率的影響。比例圖從 0% 到
+        100%，沒有截短尺度。
+      </figcaption>
+    </figure>
+    <div class="pg-equation">
+      E[TP] = TPR<br />E[FP] = (N − 1) × FPR<br />PPV = TPR / [TPR + (N − 1) ×
+      FPR]<small
+        >這是由上述單一真配對模型推得的陽性預測值。TP 是找到的真配對，FP
+        是錯誤標記。期望數量的計算不要求所有候選彼此獨立；估計誤報率的可信範圍時，樣本相依性仍然重要。</small
+      >
+    </div>
+    <p>
+      如果真配對根本不在候選池，強迫系統選出「最像的那個」，就可能把全部錯誤候選中的最高分誤認為答案。這也是研究要區分封閉世界與開放世界的原因：前者常假設答案就在已知範圍內，後者必須容許「這些都不是」。<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <h3 id="pg-inference-detail-2">更多證據，必須真的是更多資訊</h3>
+    <p>
+      同一份 tracker
+      紀錄匯出三張報表，仍然可能只是一筆觀察。把它們當成三個彼此獨立的佐證相乘，會高估結論的確定程度。時間線也需要對齊：時區、時鐘偏差、NAT
+      映射變化，以及日誌是事件時間還是寫入時間，都可能改變配對結果。
+    </p>
+    <p>
+      長期觀察則可能逐步縮小候選集合。例如多次活動都需要來源在線，符合所有觀察時段的人就可能變少；但離線判斷錯誤、漏抓、背景程式或不同裝置，都會破壞這個推論的前提。I2P
+      的威脅模型也討論了這類交集攻擊。不能只畫一條人數下降的曲線，就假定最後一定剩下唯一操作者。<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+    <details class="pg-math-note">
+      <summary>為什麼候選有 100 人，也不代表保有同樣的匿名性？</summary>
+      <p>
+        如果每個人都同樣可能，觀察者還有很大的不確定性；若其中一個人已占 99%
+        的模型機率，其餘 99 人只是很小的尾巴，「100
+        個候選」就不再是有力描述。資訊理論用熵表示這種差別：
+      </p>
+      <div class="pg-equation">
+        H(U | O = o) = −Σᵢ pᵢ log₂ pᵢ<small
+          >U 是要隱藏的來源，o 是已取得的觀察，pᵢ
+          是在這組觀察下各候選的機率。熵的單位是
+          bit；它依賴所採用的候選與機率模型，不是從流量圖直接讀出的匿名分數。</small
+        >
+      </div>
+      <p>
+        若研究要隱藏的是入口與出口的配對 M，也可以研究觀察 O 提供了多少關於 M
+        的資訊。重點在於先定義要保護的秘密，而不是對兩條任意流量曲線算出一個數字，就宣稱完成匿名性證明。
+      </p>
+    </details>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">07 · 外觀</div>
+    <h2 id="pg-padding">Padding 改變封包外觀，DAITA 讓策略隨連線改變</h2>
+    <p>
+      如果封包的大小與間隔會留下線索，一個自然想法是讓封包變得更相似。<strong
+        >Padding</strong
+      >
+      可以把較短封包填到指定大小；<strong>dummy traffic</strong>
+      則在沒有同等真實資料時，加入對端可辨識並丟棄的虛設資料。前者改變尺寸，後者也能改變某些空隙或突發的形狀。
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">同樣大小的封包，仍然可以有不同節奏</span
+        ><span class="pg-figure-tag">概念時序 · 非封包擷取</span>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="原始封包、固定大小與固定速率三列比較，可橫向捲動"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <div class="pg-packet-comparison">
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              原始流量<br />大小、間隔皆變動
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-2069f90061"></i
+              ><i class="pg-packet pg-geometry-9a99ab2da7"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-4515267cdf"></i
+              ><i class="pg-packet pg-geometry-ffb2e49749"></i
+              ><i class="pg-packet pg-geometry-7b2c1b0f26"></i
+              ><i class="pg-packet pg-geometry-b3fcf0824d"></i>
+            </div>
+          </div>
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              固定封包大小<br />突發時間仍保留
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-d5b815c143"></i
+              ><i class="pg-packet pg-geometry-e37327da60"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-e24598056c"></i
+              ><i class="pg-packet pg-geometry-96b59ee503"></i
+              ><i class="pg-packet pg-geometry-db8cd4399c"></i
+              ><i class="pg-packet pg-geometry-97c9b714f9"></i>
+            </div>
+          </div>
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              固定速率排程<br />等待＋填補空槽
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-d5b815c143"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-16b1624071"></i
+              ><i class="pg-packet pg-dummy pg-geometry-20de4764a4"></i
+              ><i class="pg-packet pg-dummy pg-geometry-3fbb676c2f"></i
+              ><i class="pg-packet pg-geometry-a541a1e575"></i
+              ><i class="pg-packet pg-geometry-f4235a132d"></i
+              ><i class="pg-packet pg-dummy pg-geometry-15eaa369da"></i
+              ><i class="pg-packet pg-geometry-db8cd4399c"></i
+              ><i class="pg-packet pg-geometry-51ae4cb3c9"></i>
+            </div>
+          </div>
+        </div>
+        <p class="pg-packet-note">
+          橫向位置表示時間往右前進；矩形高度表示封包大小。實心包含真實資料，斜線是
+          dummy。最後一列中，趕不上當前時間槽的資料要等待下一槽。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 07</span
+        >固定封包大小減少尺寸差異；固定速率需要控制送出時刻，並用 dummy
+        補滿空槽。兩者的成本與能遮蔽的訊號不同。
+      </figcaption>
+    </figure>
+    <h3 id="pg-padding-detail-1">DAITA 的重點在形狀，不在更換加密演算法</h3>
+    <p>
+      Mullvad 公開的 DAITA 設計結合固定封包大小、背景虛設流量與模式擾動。2025
+      年公布的 DAITA v2，進一步在 VPN
+      連線建立時分配動態設定，讓不同連線使用不同的 dummy
+      插入策略；重新建立連線時也會換設定。這個作用單位是 VPN
+      連線，不能直接視為每條 BitTorrent peer flow 都有一套獨立策略。<sup
+        ><a href="#pg-ref-15" class="pg-ref">[15]</a></sup
+      >
+    </p>
+    <p>
+      v2 公告說 dummy
+      封包用量約減半，指的是該類額外封包的調整，並非總流量開銷在所有工作負載下一律減半。同樣地，固定封包大小也沒有直接承諾固定傳送速率。效果要看原本的流量、填充策略、瓶頸頻寬，以及對手觀察的位置。
+    </p>
+    <h3 id="pg-padding-detail-2">防禦會變，觀察者也可以重新學習</h3>
+    <p>
+      <i>Ephemeral Network-Layer Fingerprinting Defenses</i>（PoPETs
+      2026）研究每次連線使用不同防禦的策略，並報告與 WireGuard 整合及在 Mullvad
+      的部署經驗。主要評估涵蓋 circuit、website、video
+      fingerprinting；這些結果不能直接換算成 BitTorrent
+      雙端關聯的成功或失敗比例。<sup
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      同篇論文也提供了必要的反面結果：在指定的封閉世界模擬中，當攻擊者有更多訓練與資料增強機會，多種受測
+      padding-only 防禦的效果明顯減弱；加入
+      blocking／延遲的防禦仍有作用，但同樣受模型與成本限制。隨機設定能讓固定模板更難套用，卻不能阻止對手學習整個設定分布。
+    </p>
+    <h3 id="pg-padding-detail-3">DeTorrent：用對抗訓練搜尋填充策略</h3>
+    <p>
+      <i>DeTorrent</i>（PoPETs
+      2024）讓生成防禦與辨識流量的模型彼此競爭，搜尋插入 dummy
+      的策略。它研究的是 Tor
+      等匿名通訊環境，並分別評估網站指紋與流量關聯，<strong
+        >不是因為名稱帶有 Torrent，就已經證明適用所有 BitTorrent 傳輸</strong
+      >。論文在指定 FC 設定下報告：當 FPR 為 10⁻⁵，TPR 可降至約
+      0.12；這是該實驗的操作點，不是使用者只剩 12% 風險。<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a></sup
+      >
+    </p>
+    <p>
+      Padding-only 表示策略不刻意扣住真實封包等待，但額外資料仍會占用頻寬、CPU
+      與佇列。當線路已接近飽和，「沒有排程延遲」仍可能伴隨更高的實際延遲。把演算法動作與整個網路上的結果分開，才能理解這些研究的價值與限制。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">08 · 成本</div>
+    <h2 id="pg-cost">想把節奏壓平，就得付出頻寬或等待</h2>
+    <p>
+      固定速率是一個很清楚的思想實驗：不管應用有沒有資料，連線每秒都送出固定數量。真實資料不足的時候，用
+      dummy
+      補滿；資料突然超過額度，就先放進佇列。觀察者看到的短期速率更穩定了，代價也轉移到看得見的地方。
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="固定速率佇列範例"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          示例：每秒固定送出 2 MiB；每格長 1 秒，忽略標頭與重傳
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">時間槽</th>
+            <th scope="col">新資料<br />MiB</th>
+            <th scope="col">送出真實資料<br />MiB</th>
+            <th scope="col">送出 dummy<br />MiB</th>
+            <th scope="col">槽末排隊<br />MiB</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">第 1 秒</th>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <th scope="row">第 2 秒</th>
+            <td>5</td>
+            <td>2</td>
+            <td>0</td>
+            <td><strong>3</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">第 3 秒</th>
+            <td>1</td>
+            <td>2</td>
+            <td>0</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <th scope="row">第 4 秒</th>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <th scope="row">第 5 秒</th>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      這五秒共送出 10 MiB，其中只有 7 MiB 是真實資料；額外 3 MiB
+      是保持外觀穩定的成本。第二秒的突發沒有立刻完整反映到輸出，因為其中 3 MiB
+      被留在佇列裡。資料沒有消失，只是晚一點送達。
+    </p>
+    <div class="pg-equation">
+      qₖ₊₁ = max(0, qₖ + aₖ − RΔ)<small
+        >qₖ：槽開始時等待的資料量；aₖ：本槽加入的資料量；R：固定服務速率；Δ：時間槽長度。RΔ、q
+        與 a
+        使用相同的資料量單位。範例假設資料在每槽開始加入，採流體化計數。</small
+      >
+    </div>
+    <p>
+      如果長期輸入速率高於 R，佇列會持續成長；即使平均輸入低於
+      R，大型突發仍可能造成長尾等待。想限制記憶體，就需要把壓力傳回應用、拒絕更多輸入，或改變策略。臨時提高輸出速率則可能重新暴露負載變化。
+    </p>
+    <h3 id="pg-cost-detail-1">閒置時間，往往才是昂貴的部分</h3>
+    <p>
+      假設單方向持續維持 <strong>20 Mbit/s</strong>，一天 24 小時會送出約
+      <strong>216 GB</strong>：20,000,000 × 86,400 ÷ 8。這裡使用十進位
+      GB，忽略其他封裝與重傳。若當天真正需要傳送的資料只有 10 GB，其餘約 206 GB
+      都是維持這個排程的容量成本；額外量相對真實資料約為
+      2,060%。這是算術示例，沒有對應任何產品預設值。
+    </p>
+    <p>
+      因此看防禦效能時，需要同時注意
+      <strong>goodput</strong>——真正送達的有用資料量。線路上每秒 bytes
+      很高，可能只是 dummy
+      很多。若真實資料量為零，額外／真實的比率也沒有定義，這時直接看每秒掩護流量，比報一個百分比更清楚。
+    </p>
+    <h3 id="pg-cost-detail-2">為什麼匿名通訊反覆遇到這個取捨？</h3>
+    <p>
+      想隱藏「誰在什麼時候突然有資料」，常見做法就是在沒資料時也傳送，或把資料暫時留下來，等其他訊息一起混合。前者花頻寬，後者花時間。<i
+        >Comprehensive Anonymity Trilemma</i
+      >
+      把這類限制放進形式模型，也將使用者協調納入分析；其結論依賴特定的匿名定義、觀察能力與協定模型。<sup
+        ><a href="#pg-ref-18" class="pg-ref">[18]</a></sup
+      >
+    </p>
+    <p>
+      這並不妨礙在有限對手與實際預算下改善防禦。真正有意義的進展，是在相同條件下以更少的頻寬或等待，移除更多可利用的訊號。固定速率也仍有邊界：啟動與停止時刻、策略切換、排程不足時的超載，以及不受保護的其他路徑，都可能繼續留下資訊。
+    </p>
+  </section>
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">09 · 混合</div>
+    <h2 id="pg-mixing">多跳、多人共用與真正的混合</h2>
+    <p>
+      增加中繼節點，可以把觀察位置分散；讓很多人共用出口，可以讓同一個對外 IP
+      對應多人。但如果每個輸入都立刻從另一端送出，時間上的對應仍可能很鮮明。<strong>聚合</strong>只是把流量放到一起，<strong>混合</strong>則進一步嘗試讓觀察者難以把輸入與輸出一一接回去。
+    </p>
+    <p>
+      一個混合節點可以先保留訊息，再改變不同訊息的送出順序。加密封裝也要避免輸入與輸出保留可直接比對的外觀；否則即使換了順序，觀察者仍可能直接比對相同位元組。實際匿名網路還需要處理封包格式、路徑、重播、丟棄與惡意節點等條件。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <figure id="pg-mix-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">把輸入順序，轉成多個可能的輸出對應</span
+        ><span class="pg-figure-tag">概念動畫 · 非 Loopix 實作</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-mix-controls" class="pg-demo-controls"></section>
+        <div id="pg-mix-grid" class="pg-mix-grid">
+          <div class="pg-mix-lane">
+            <div class="pg-mix-label">收到的順序 · 三個來源</div>
+            <div class="pg-mix-packets">
+              <span class="pg-mix-token">A₁</span
+              ><span class="pg-mix-token">B₁</span
+              ><span class="pg-mix-token">A₂</span
+              ><span class="pg-mix-token">C₁</span>
+            </div>
+          </div>
+          <div class="pg-mix-center">
+            <span id="pg-mix-center-label">等待與換序</span
+            ><span aria-hidden="true" class="pg-arrow">→</span>
+          </div>
+          <div class="pg-mix-lane">
+            <div id="pg-mix-output-label" class="pg-mix-label">
+              一種可能的送出順序
+            </div>
+            <div id="pg-mix-output" class="pg-mix-packets">
+              <span class="pg-mix-token">C₁</span
+              ><span class="pg-mix-token">A₁</span
+              ><span class="pg-mix-token">D</span
+              ><span class="pg-mix-token">B₁</span
+              ><span class="pg-mix-token">A₂</span>
+            </div>
+          </div>
+        </div>
+        <p id="pg-mix-status" aria-live="polite" class="pg-status-line">
+          經過等待、換序與加入 D（dummy），輸出不再直接照到達順序排列。
+        </p>
+        <p class="pg-model-caveat">
+          A／B／C、顏色與邊框只是教學標記；真正送出的密文不會附上這些來源標籤。這個小動畫只展示機制，沒有計算匿名集合或證明安全性。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 08</span
+        >單純換序仍不充分。混合需要不同來源的可混淆訊息、合適的加密外觀，以及符合模型的等待與掩護流量。若其他訊息全由觀察者控制，它可以排除自己的資料，剩下的保護就會改變。
+      </figcaption>
+    </figure>
+    <h3 id="pg-mixing-detail-1">Loopix 為什麼會願意等上幾秒？</h3>
+    <p>
+      <i>Loopix</i>（USENIX Security 2017）是訊息導向的匿名通訊系統，結合多層
+      mix、掩護流量與 loop messages。它的
+      <strong>Poisson mixing</strong>
+      讓訊息各自等待隨機時間，不必所有節點一起等同一個同步回合。論文採用指數分布的獨立延遲，並在其模型下分析全域網路觀察者與主動攻擊。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <p>
+      Loopix 的整體訊息延遲是秒級。「相對低延遲」是在 mix-system
+      的脈絡中使用；與互動式 VPN
+      的體感目標不同。把它的機制延伸到能接受等待的通訊很有啟發，但不能直接把訊息系統的分析，視為高速、持續、雙向
+      BitTorrent 的既有保證。
+    </p>
+    <h3 id="pg-mixing-detail-2">很多使用者，必須真的帶來可混淆的流量</h3>
+    <p>
+      一萬個註冊帳號，不代表某個時間窗口裡就有一萬個有效候選。大多數人可能離線，或其流量形狀很容易區分；也可能有大量訊息來自對手自己控制的節點。能提供掩護的是在相關時間、路徑與觀察條件下仍難以區分的流量，而不只是總節點數。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a
+        ><a href="#pg-ref-18" class="pg-ref">[18]</a></sup
+      >
+    </p>
+    <p>
+      多路徑也有類似條件。對只能看到部分路徑的觀察者，拆散資料可能減少可取得的資訊；如果同一對手能把所有路徑重新匯總，分流本身就不能消除關聯。邏輯上畫出三條線，也還需要確認它們是否真的穿過不同的觀察與控制範圍。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">10 · 架構選擇</div>
+    <h2 id="pg-architectures">把機制放回 VPN、Seedbox、Tor 與 I2P</h2>
+    <p>
+      理解可見性、隔離與混合後，就可以比較不同架構。重點是它改變了哪一段通信，以及新的信任落在哪裡。把所有方案壓成一個匿名分數，會忽略它們本來就在回答不同的問題。
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="VPN、Seedbox、Tor、I2P 與混合網路的架構比較"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          相同問題，不同路徑；這是機制比較，沒有統一效能排名
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">架構</th>
+            <th scope="col">改變了什麼</th>
+            <th scope="col">理解它時要接著問</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">VPN＋路徑隔離</th>
+            <td>讓一般 Internet P2P 透過 VPN 出口，限制意外直連。</td>
+            <td>哪些流量被涵蓋？誰控制 VPN？失效時還有什麼出口？</td>
+          </tr>
+          <tr>
+            <th scope="row">Seedbox</th>
+            <td>
+              把下載與做種程序移到遠端主機；家用端經管理或取回通道使用它。
+            </td>
+            <td>遠端磁碟、帳號、主機商與檔案取回紀錄由誰處理？</td>
+          </tr>
+          <tr>
+            <th scope="row">Tor</th>
+            <td>由不同中繼分擔路徑資訊，讓單一中繼通常只掌握局部關係。</td>
+            <td>應用是否正確使用 Tor？對手能否觀察兩端？</td>
+          </tr>
+          <tr>
+            <th scope="row">I2P 原生 P2P</th>
+            <td>
+              以 overlay Destination 與隧道進行應用通信，peer 發現也配合 I2P。
+            </td>
+            <td>通信是否完整留在 overlay？底層與長期活動仍留下哪些訊號？</td>
+          </tr>
+          <tr>
+            <th scope="row">Mixnet</th>
+            <td>透過訊息封裝、等待與混合，改變輸入與輸出的對應。</td>
+            <td>哪些節點必須誠實？能承受多少延遲？掩護流量與負載條件為何？</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="pg-architectures-detail-1">Seedbox 移動的是執行位置</h3>
+    <p>
+      Seedbox 上的客戶端直接參與
+      swarm；你的家用裝置只管理它或取回檔案。這可以在架構上分開住宅網路與 swarm
+      端點，代價是檔案、應用狀態與帳號留在另一台主機。這是從通信路徑得出的結論，實際紀錄與信任條件則依服務或自行管理方式而定。
+    </p>
+    <h3 id="pg-architectures-detail-2">Tor 以分散資訊降低單點可見性</h3>
+    <p>
+      Tor
+      的路徑設計讓不同中繼各自掌握部分關係，但低延遲轉送仍可能保留可比對的節奏。它也不是普通
+      BitTorrent 客戶端的通用包裝：Tor 官方不建議透過 Tor 使用 Torrent
+      客戶端，指出客戶端洩露與出口節點負載等問題。這個使用限制，與討論 Tor
+      在匿名通訊研究中的價值，是兩件都需要說清楚的事。<sup
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a
+        ><a href="#pg-ref-25" class="pg-ref">[25]</a></sup
+      >
+    </p>
+    <h3 id="pg-architectures-detail-3">I2P 改變了應用如何找到對方</h3>
+    <p>
+      I2P 應用使用 <strong>Destination</strong> 這類密碼學端點識別，經 outbound
+      與 inbound tunnels 把訊息送到對方。BitTorrent over I2P 的 tracker 與 peer
+      表達方式也要配合這個模型，並不是把普通公開 swarm 原封不動接到另一個 VPN
+      出口。<sup><a href="#pg-ref-19" class="pg-ref">[19]</a></sup>
+    </p>
+    <p>
+      應用端點不直接等同住宅 IP，仍不代表底層 router 之間完全沒有 IP 可見性。I2P
+      的威脅分析涵蓋時間、交集、Sybil
+      與流量分析等問題；對照這些觀察能力，比用「多了幾跳」估計匿名程度更有幫助。它的舊威脅模型頁標示適用版本
+      0.8.1，因此這裡借用的是威脅分類，而非現行版本的安全評分。<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">11 · 深入機制</div>
+    <h2 id="pg-bulk">如果把混合帶進大量檔案傳輸，網路需要改變什麼？</h2>
+    <p>
+      前面的機制自然引出一個想法：把多人的真實流量收在一起，每次連線換一種整形策略，在可接受的延遲內混合，再沿不同路徑送出。其他人的真實資料可能成為掩護，dummy
+      就不必承擔全部工作。
+    </p>
+    <p>
+      困難在於，應用傳輸有自己的語意。TCP
+      提供可靠、有序的位元組流，連線還有序號、確認與狀態。不能把一條 peer TCP
+      連線任意切成三條對外連線，就假設未修改的 peer 會把它們視為同一個串流。<sup
+        ><a href="#pg-ref-20" class="pg-ref">[20]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >可以在自有 overlay 裡改變形狀，出口仍要還原串流</span
+        ><span class="pg-figure-tag">假想架構 · 用於解釋機制</span>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="多流 overlay 與出口重組圖，可橫向捲動"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <svg
+          viewBox="0 0 800 350"
+          role="img"
+          aria-labelledby="pg-overlay-title pg-overlay-desc"
+          class="pg-diagram pg-geometry-1c0dc43552"
+        >
+          <title id="pg-overlay-title">多流混合 overlay 的語意邊界</title>
+          <desc id="pg-overlay-desc">
+            兩條應用串流交給入口代理，在合作代理之間切分、整形與等待，經不同路徑送到出口代理。出口先按各串流重組，再分別連接原有對端。切分發生在
+            overlay 內，沒有自動消除出口連線。
+          </desc>
+          <defs>
+            <marker
+              id="pg-arrow-overlay"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M1 1 7 4 1 7" class="pg-geometry-a311b83b06"></path>
+            </marker>
+          </defs>
+          <rect
+            x="167"
+            y="18"
+            width="468"
+            height="286"
+            rx="10"
+            class="pg-geometry-54265e0d6e"
+          ></rect>
+          <text x="401" y="45" class="pg-secondary pg-geometry-35afd8367b">
+            合作代理之間的 overlay：封裝、整形、等待、重組
+          </text>
+          <rect
+            x="12"
+            y="128"
+            width="126"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="75" y="159" class="pg-geometry-35afd8367b">應用串流</text>
+          <text x="75" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            A、B …
+          </text>
+          <text x="75" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            原本的資料順序
+          </text>
+          <rect
+            x="186"
+            y="128"
+            width="120"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="246" y="160" class="pg-geometry-35afd8367b">入口代理</text>
+          <text x="246" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            切成內部訊息
+          </text>
+          <text x="246" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            多來源一起排程
+          </text>
+          <rect
+            x="353"
+            y="76"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="105" class="pg-secondary pg-geometry-35afd8367b">
+            路徑 1
+          </text>
+          <rect
+            x="353"
+            y="150"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="179" class="pg-secondary pg-geometry-35afd8367b">
+            路徑 2
+          </text>
+          <rect
+            x="353"
+            y="224"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="253" class="pg-secondary pg-geometry-35afd8367b">
+            路徑 3
+          </text>
+          <rect
+            x="502"
+            y="128"
+            width="114"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="559" y="160" class="pg-geometry-35afd8367b">出口代理</text>
+          <text x="559" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            去除 dummy
+          </text>
+          <text x="559" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            按串流重組
+          </text>
+          <rect
+            x="668"
+            y="94"
+            width="120"
+            height="66"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="728" y="121" class="pg-geometry-35afd8367b">對端 A</text>
+          <text x="728" y="144" class="pg-tiny pg-geometry-35afd8367b">
+            A 的連線語意
+          </text>
+          <rect
+            x="668"
+            y="188"
+            width="120"
+            height="66"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="728" y="215" class="pg-geometry-35afd8367b">對端 B</text>
+          <text x="728" y="238" class="pg-tiny pg-geometry-35afd8367b">
+            B 的連線語意
+          </text>
+          <path
+            d="M138 174H179"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M306 174H327V100H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M306 174H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M327 174V248H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M455 100H478V174H495"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M455 174H495"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path d="M455 248H478V174" class="pg-wire"></path>
+          <path
+            d="M616 174H646V127H661"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M646 174V221H661"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <text x="400" y="333" class="pg-secondary pg-geometry-35afd8367b">
+            改變中間的傳輸安排，不會自動消除出口端的連線與時間資訊。
+          </text>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">圖 09</span
+        >這張圖是在說明一條可能的工程路線，沒有宣稱新的協定已經具備匿名性證明。入口與出口的控制關係、路徑可見性及有效混合來源，仍會決定保護範圍。
+      </figcaption>
+    </figure>
+    <h3 id="pg-bulk-detail-1">在 overlay 裡切分，對外仍維持原本的通訊</h3>
+    <p>
+      比較容易理解的做法，是讓合作的入口與出口代理先接手傳輸。在兩個代理之間，每條串流可以被切成內部訊息，經過整形、等待與多路徑轉送；到了出口，再按各串流的邏輯順序重組，維持對原本
+      peer 的通訊。
+    </p>
+    <p>
+      這樣可以改變中間網路看到的形狀，但出口仍然要把資料送往原本對端。想進一步合併不同對外連線、移動連線身分或改變
+      peer
+      的協定行為，就需要接收端或額外代理的合作。把箭頭畫成「split／merge」很容易，維持傳輸語意才是實際困難。這些是由
+      TCP 與代理模型推導的工程限制。<sup
+        ><a href="#pg-ref-20" class="pg-ref">[20]</a></sup
+      >
+    </p>
+    <h3 id="pg-bulk-detail-2">延遲有上限，會讓哪些事情變得更難？</h3>
+    <p>
+      如果每個訊息最多只能等 50
+      毫秒，低負載時可能還沒等到其他來源，就必須把它送出去。延遲上限縮小了可以混合的時間範圍；多加一些
+      dummy
+      可以補足部分外觀，但仍要付出頻寬。高負載時又可能面臨緩衝、背壓及尾端延遲的問題。
+    </p>
+    <p>
+      這也解釋了為什麼不能直接沿用 Loopix
+      的安全結論：指數分布的延遲本身沒有固定的有限上界。把它截短、加入 deadline
+      或在壅塞時換策略，已經改變了訊息離開的分布與可觀察行為。50
+      毫秒只是上述思想實驗的數字，沒有代表任何已驗證的安全門檻。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <h3 id="pg-bulk-detail-3">機器學習可以搜尋策略，仍要面對未知環境</h3>
+    <p>
+      學習式控制器可以嘗試在頻寬、延遲與某個攻擊模型的表現之間找折衷，但「讓目前這個模型猜錯」與「讓所有未來觀察者都無法分辨」之間仍有距離。對手可能重新訓練，使用不同特徵，或從更長時間、其他路徑取得資料。<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      因此，多流混合的研究價值在於理解哪些可見訊號真的被削弱，以及為此增加多少等待與傳輸量。只有把少人、多人、背景流量、資源耗盡和長期觀察放回同一幅圖，才能知道一個看似漂亮的流量形狀，在什麼條件下仍有意義。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">12 · 證據</div>
+    <h2 id="pg-evidence">研究與新聞案件，能告訴我們什麼？</h2>
+    <p>
+      公開 P2P
+      的可觀察性已有長期研究，但「可以觀察」與「每次都能正確歸因」需要一起閱讀。把正面結果與失敗案例放在一起，才不會一邊高估匿名工具，另一邊又高估監測能力。
+    </p>
+    <h3 id="pg-evidence-detail-1">
+      一台電腦可以累積很多紀錄，也可能把端點理解錯
+    </h3>
+    <p>
+      2010 年發表的 <i>Spying the World from your Laptop</i>，以 2009 年 5 月 13
+      日至 8 月 23 日、共 103 天的觀測為基礎，報告約 1.48 億個 IP 位址與約 20
+      億份內容副本相關觀察。這展示了當時利用公開基礎設施建立大量
+      IP—內容關係的可行性；它沒有把那些 IP
+      都確認成不同自然人，也不代表完成了同等數量的完整下載驗證。作者同時討論
+      NAT、代理與 VPN 等混淆因素。<sup
+        ><a href="#pg-ref-22" class="pg-ref">[22]</a></sup
+      >
+    </p>
+    <p>
+      2008 年的
+      <i>Why My Printer Received a DMCA Takedown Notice</i>
+      則展示另一面：研究者控制的印表機與無線基地台，在沒有參與相關檔案交換的情況下仍收到誤發通知。它提醒我們，間接名單與實際內容交換是不同證據。這是當年方法的實驗結果，不該直接改寫成今日所有監測服務都採用相同流程。<sup
+        ><a href="#pg-ref-23" class="pg-ref">[23]</a></sup
+      >
+    </p>
+    <h3 id="pg-evidence-detail-2">
+      Nyaa／CODA／JHA 案例：結果無法替代未公開的方法
+    </h3>
+    <p>
+      CODA 在 2026 年 7 月 28 日公告一宗涉及 Nyaa
+      初始散布者的調查。公告說明，日本駭客協會在合作計畫中開發解析工具，協助取得嫌疑人相關資訊，京都府警再透過調查完成識別。公開資料支持工具與調查合作的存在，卻沒有揭露足以重建工具的資料來源或演算法。<sup
+        ><a href="#pg-ref-24" class="pg-ref">[24]</a></sup
+      >
+    </p>
+    <p>
+      因此，僅憑這則公告，無法判斷使用了哪一種流量關聯、是否取得某類日誌，或當事人是否使用
+      VPN。也不能從「找到嫌疑人」反推出某個加密協定被破解。案件裡使用的「第一上傳者」還要與一般
+      BitTorrent 的 seed 區分：seed
+      通常指持有完整資料的節點，並不必然是最初發布者。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a
+        ><a href="#pg-ref-24" class="pg-ref">[24]</a></sup
+      >
+    </p>
+    <h3 id="pg-evidence-detail-3">讀到漂亮的成功率時，先找分母</h3>
+    <p>
+      模型在特定資料集找到很多真配對，可能是真正的進展；但若資料已保證每個樣本都有答案、訓練與測試共享近似片段，或只報最有利的門檻，讀者就還不知道它在未知流量與大量錯誤候選中的表現。2026
+      年的 Ephemeral 與 ESPRESSO 研究，分別從攻擊者充分訓練，以及更接近真實 Tor
+      流量的評估，說明了條件如何改變結果。<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      「沒有看到誤報」也需要樣本量。假設有 m
+      個近似獨立、同分布的負例，零誤報時的二項模型單側 95% 上界約為
+      <code>3/m</code>。即使測了 300,000 個這樣的負例，上界仍約是
+      10⁻⁵。大量配對若共用同一批流量，彼此就可能相依，不能直接把配對總數當成相同程度的獨立證據。這是統計模型的推導，並非任何特定研究的實測數字。
+    </p>
+    <p>
+      同理，一次觀察到沒有直連，只支持那個版本、當時狀態與觀察範圍下的結論。它和「長期活動難以關聯」之間，仍隔著不同的問題。仔細描述觀察範圍，才能讓技術結果累積成可用的知識。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">13 · 回到全貌</div>
+    <h2 id="pg-ending">隱私的邊界，藏在每一段可觀察的資訊裡</h2>
+    <p>
+      沿著一次下載走到這裡，問題已經比較具體了。BitTorrent
+      為了找到同伴，需要交換聯絡資訊；VPN
+      讓對外端點換到另一個位置；介面綁定、防火牆與 namespace
+      限制的是資料能走哪些路。這些機制可以有效處理不同的暴露面，但不會自動消除時間、大小、帳號與長期活動留下的關係。
+    </p>
+    <p>
+      若觀察者能取得通信兩端，防禦就要處理流量形狀本身。Padding
+      增加可用的掩護，整形重新安排送出節奏，混合把不同來源放進同一個時間與路徑脈絡。每一種改變都有條件，也會把成本移到頻寬、等待、緩衝或應用協定裡。
+    </p>
+    <div class="pg-takeaway">
+      評估一種隱私技術時，最有用的起點是：<strong
+        >觀察者原本看得見什麼，使用它之後還看得見什麼，而哪些關係因此更難建立。</strong
+      >
+    </div>
+    <p>
+      這樣的問法，能讓我們既看見 VPN
+      隔離的實際價值，也理解匿名通訊研究為何持續探索混合、動態整形與多來源掩護。安全性不需要被壓成一個漂亮分數；把保護的位置、可用的證據與付出的代價說清楚，本身就是更可靠的技術判斷。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">延伸閱讀</div>
+    <h2 id="pg-sources">資料來源</h2>
+    <p class="pg-small">
+      來源查閱日：2026-10-25。協定行為以原始文件為準；供應商政策與公告代表其公開聲明；研究結果依各自的資料、對手模型與實驗條件解讀。本文圖解為重新繪製的教學示意。
+    </p>
+    <ol class="pg-source-list">
+      <li id="pg-ref-01">
+        <span class="pg-source-id">[1] BitTorrent 基礎與內容識別</span
+        ><a href="https://www.bittorrent.org/beps/bep_0003.html"
+          >BEP 3 · The BitTorrent Protocol</a
+        >；<a href="https://www.bittorrent.org/beps/bep_0052.html"
+          >BEP 52 · BitTorrent Protocol v2</a
+        >；<a href="https://libtorrent.org/manual-ref.html#glossary"
+          >libtorrent manual · seed 的定義</a
+        ><small
+          >原始協定與實作文件；info dictionary、v1／v2
+          infohash、資料片段。</small
+        >
+      </li>
+      <li id="pg-ref-02">
+        <span class="pg-source-id">[2] Tracker</span
+        ><a href="https://www.bittorrent.org/beps/bep_0015.html"
+          >BEP 15 · UDP Tracker Protocol</a
+        ><small>Announce 欄位、端點、port 與 IPv6 格式。</small>
+      </li>
+      <li id="pg-ref-03">
+        <span class="pg-source-id">[3] 分散式發現</span
+        ><a href="https://www.bittorrent.org/beps/bep_0005.html"
+          >BEP 5 · DHT Protocol</a
+        ><small>get_peers、announce_peer、token 與來源 IP。</small>
+      </li>
+      <li id="pg-ref-04">
+        <span class="pg-source-id">[4] 同伴交換</span
+        ><a href="https://www.bittorrent.org/beps/bep_0011.html"
+          >BEP 11 · Peer Exchange</a
+        ><small>PEX 的加入／移除語意，以及不可信輸入。</small>
+      </li>
+      <li id="pg-ref-05">
+        <span class="pg-source-id">[5] 私有 torrent 與本地發現</span
+        ><a href="https://www.bittorrent.org/beps/bep_0027.html"
+          >BEP 27 · Private Torrents</a
+        >；<a href="https://www.bittorrent.org/beps/bep_0014.html"
+          >BEP 14 · Local Service Discovery</a
+        ><small>存取控制、發現範圍與 multicast 宣告。</small>
+      </li>
+      <li id="pg-ref-06">
+        <span class="pg-source-id">[6] WireGuard 與 Linux 隔離</span
+        ><a href="https://www.wireguard.com/netns/"
+          >Routing &amp; Network Namespace Integration</a
+        ><small>介面與其建立時的 UDP socket 所在 namespace。</small>
+      </li>
+      <li id="pg-ref-07">
+        <span class="pg-source-id">[7] qBittorrent 的識別資訊</span
+        ><a
+          href="https://github.com/qbittorrent/qBittorrent/wiki/Anonymous-Mode"
+          >Anonymous Mode</a
+        ><small
+          >官方 Wiki；頁面更新 2026-09-03，明列版本與 private torrent
+          差異。</small
+        >
+      </li>
+      <li id="pg-ref-08">
+        <span class="pg-source-id">[8] Mullvad 資料與基礎設施政策</span
+        ><a href="https://mullvad.net/en/help/no-logging-data-policy"
+          >No-logging of user activity policy</a
+        >；<a
+          href="https://mullvad.net/en/blog/we-have-successfully-completed-our-migration-to-ram-only-vpn-infrastructure"
+          >RAM-only VPN infrastructure</a
+        ><small
+          >供應商聲明；活動資料政策更新 2026-06-17，RAM-only 遷移公告為 2023
+          年。</small
+        >
+      </li>
+      <li id="pg-ref-09">
+        <span class="pg-source-id">[9] 多跳 VPN</span
+        ><a href="https://mullvad.net/en/help/multihop-wireguard"
+          >Multihop with WireGuard</a
+        ><small>入口與出口的網路位置分離。</small>
+      </li>
+      <li id="pg-ref-10">
+        <span class="pg-source-id">[10] 介面與 socket 行為</span
+        ><a
+          href="https://github.com/qbittorrent/qBittorrent/wiki/How-to-bind-your-vpn-to-prevent-ip-leaks"
+          >qBittorrent · VPN interface binding</a
+        >；<a href="https://libtorrent.org/reference-Settings.html"
+          >libtorrent · Settings</a
+        ><small
+          >官方文件；查閱的 libtorrent 線上參考標示為
+          2.1.0，不能據此推定讀者本機版本。</small
+        >
+      </li>
+      <li id="pg-ref-11">
+        <span class="pg-source-id">[11] Tor 的雙端觀察限制</span
+        ><a
+          href="https://support.torproject.org/about-tor/security/attacks-on-onion-routing/"
+          >Limitations and remaining attacks against Tor’s anonymity</a
+        ><small>Tor 官方說明；兩端 timing correlation 的威脅模型。</small>
+      </li>
+      <li id="pg-ref-12">
+        <span class="pg-source-id">[12] 路由旁路研究</span
+        ><a
+          href="https://www.usenix.org/conference/usenixsecurity23/presentation/xue"
+          >Xue 等 · Bypassing Tunnels</a
+        >；<a href="https://www.leviathansecurity.com/blog/tunnelvision"
+          >Leviathan · TunnelVision</a
+        ><small
+          >USENIX Security 2023／2024
+          研究者公告；不代表所有當前客戶端仍存在相同缺陷。</small
+        >
+      </li>
+      <li id="pg-ref-13">
+        <span class="pg-source-id">[13] 更貼近真實條件的流量關聯</span
+        ><a href="https://www.robgjansen.com/publications/espresso-ccs2026.pdf"
+          >Jeon 等 · Brewing Under Pressure: More Realistic Tor Flow Correlation
+          Considering Low FPRs</a
+        ><small
+          >作者公開的 CCS 2026 稿件；PDF 標示會議日期
+          2026-11-15～19，截至本文日期尚未到該會期。</small
+        >
+      </li>
+      <li id="pg-ref-14">
+        <span class="pg-source-id">[14] 對抗式 padding</span
+        ><a href="https://petsymposium.org/popets/2024/popets-2024-0007.php"
+          >Holland 等 · DeTorrent</a
+        ><small>PoPETs 2024(1), 98–115；網站指紋與流量關聯分開評估。</small>
+      </li>
+      <li id="pg-ref-15">
+        <span class="pg-source-id">[15] DAITA 公開設計</span
+        ><a
+          href="https://mullvad.net/en/blog/daita-defense-against-ai-guided-traffic-analysis"
+          >DAITA · Defense Against AI-guided Traffic Analysis</a
+        >；<a
+          href="https://mullvad.net/en/blog/daita-version-2-now-available-on-all-platforms"
+          >DAITA version 2</a
+        ><small
+          >Mullvad 官方介紹與 2025-03-28 的 v2 公告；固定尺寸、dummy
+          與動態設定。</small
+        >
+      </li>
+      <li id="pg-ref-16">
+        <span class="pg-source-id">[16] 每次連線不同的防禦</span
+        ><a href="https://petsymposium.org/popets/2026/popets-2026-0022.pdf"
+          >Pulls 等 · Ephemeral Network-Layer Fingerprinting Defenses</a
+        ><small
+          >PoPETs 2026(1), 426–449；部署與實驗範圍、§5.3
+          充分訓練下的限制。</small
+        >
+      </li>
+      <li id="pg-ref-17">
+        <span class="pg-source-id">[17] 混合與掩護流量</span
+        ><a
+          href="https://www.usenix.org/conference/usenixsecurity17/technical-sessions/presentation/piotrowska"
+          >Piotrowska 等 · The Loopix Anonymity System</a
+        >；<a
+          href="https://www.usenix.org/system/files/conference/usenixsecurity17/sec17-piotrowska.pdf"
+          >原始論文 PDF</a
+        ><small
+          >USENIX Security 2017；Poisson mixing、loop traffic
+          與秒級訊息延遲。</small
+        >
+      </li>
+      <li id="pg-ref-18">
+        <span class="pg-source-id">[18] 匿名與成本的形式限制</span
+        ><a href="https://petsymposium.org/popets/2020/popets-2020-0056.pdf"
+          >Das 等 · Comprehensive Anonymity Trilemma: User Coordination is not
+          enough</a
+        ><small>PoPETs 2020(3), 356–383；結論依匿名定義與對手模型成立。</small>
+      </li>
+      <li id="pg-ref-19">
+        <span class="pg-source-id">[19] I2P 的通訊與威脅模型</span
+        ><a href="https://i2p.net/en/docs/overview/intro/">I2P overview</a>；<a
+          href="https://i2p.net/en/docs/applications/bittorrent/"
+          >BitTorrent over I2P</a
+        >；<a href="https://i2p.net/en/docs/overview/threat-model/"
+          >I2P’s Threat Model</a
+        ><small
+          >官方文件；威脅模型頁標示更新 2010-11、適用
+          0.8.1，用於理解分類，並非現行版本實測。</small
+        >
+      </li>
+      <li id="pg-ref-20">
+        <span class="pg-source-id">[20] 串流語意</span
+        ><a href="https://www.rfc-editor.org/rfc/rfc9293.html"
+          >RFC 9293 · Transmission Control Protocol</a
+        ><small>IETF，2022；可靠、有序位元組流與連線狀態。</small>
+      </li>
+      <li id="pg-ref-21">
+        <span class="pg-source-id">[21] 共享 IP 與端點紀錄</span
+        ><a href="https://www.rfc-editor.org/rfc/rfc6302.html"
+          >RFC 6302 · Logging Recommendations for Internet-Facing Servers</a
+        ><small>IETF，2011；來源 port、準確時間與共享 IPv4 的對應問題。</small>
+      </li>
+      <li id="pg-ref-22">
+        <span class="pg-source-id">[22] 大規模 P2P 觀察</span
+        ><a
+          href="https://www.usenix.org/legacy/event/leet10/tech/full_papers/LeBlond.pdf"
+          >Le Blond 等 · Spying the World from your Laptop</a
+        ><small>USENIX LEET 2010；觀測發生於 2009 年，共 103 日。</small>
+      </li>
+      <li id="pg-ref-23">
+        <span class="pg-source-id">[23] 監測誤歸因</span
+        ><a
+          href="https://www.usenix.org/legacy/event/hotsec08/tech/full_papers/piatek/piatek_html/"
+          >Piatek 等 · Why My Printer Received a DMCA Takedown Notice</a
+        ><small>HotSec 2008；間接監測的限制與印表機誤收通知實驗。</small>
+      </li>
+      <li id="pg-ref-24">
+        <span class="pg-source-id">[24] Nyaa 案例的一手公告</span
+        ><a href="https://coda-cj.jp/news/2850/"
+          >CODA · Nyaa 第一上傳者逮捕公告（日文）</a
+        ><small
+          >2026-07-28；公告說明合作與調查結果，未公開可重建的解析演算法。</small
+        >
+      </li>
+      <li id="pg-ref-25">
+        <span class="pg-source-id">[25] Tor 與 Torrent 的使用限制</span
+        ><a
+          href="https://support.torproject.org/about-tor/using-and-sharing/torrent/"
+          >Tor Project · Can I use Tor with Torrent?</a
+        ><small>Tor 官方不建議透過 Tor 使用 Torrent 客戶端。</small>
+      </li>
+    </ol>
+  </section>
+  <div class="pg-footer">
+    <span>圖解中的數字與動畫皆為文中明示的教學模型。</span
+    ><a href="#article-title">回到文章開頭 ↑</a>
+  </div>
+</div>

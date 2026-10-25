@@ -1,3 +1,4 @@
+import { articleFolder, blogFolders } from './blog-tree.ts';
 import {
   folderPath,
   folderTrail,
@@ -118,8 +119,28 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
         { label: `${route.projectId}.md`, href: self },
       ];
     }
-    case 'article':
-      return [home, blog, { label: `${route.slug}.md`, href: self }];
+    case 'blog-folder':
+      return [
+        home,
+        blog,
+        { label: blogFolders[route.folder].title[locale], href: self },
+      ];
+    case 'article': {
+      const folder = articleFolder(route.slug);
+      return [
+        home,
+        blog,
+        ...(folder
+          ? [
+              {
+                label: blogFolders[folder].title[locale],
+                href: `/${locale}/blog/${folder}/`,
+              },
+            ]
+          : []),
+        { label: `${route.slug}.md`, href: self },
+      ];
+    }
     case 'topic':
       return [
         home,
@@ -138,6 +159,7 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
 
 const folders: RouteDescriptor['kind'][] = [
   'library',
+  'blog-folder',
   'notes',
   'note-folder',
   'projects',

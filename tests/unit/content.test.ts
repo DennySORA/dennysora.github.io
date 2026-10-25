@@ -45,6 +45,8 @@ describe('publication boundaries', () => {
   it('publishes originals and inherited translations with immutable evidence', () => {
     for (const locale of locales)
       expect(editionStatus(post, locale, post.revision)).toBe('published');
+    if (post.source.kind === 'imported-manuscript')
+      throw new Error('Expected repository source fixture');
     expect(post.source.commit).toMatch(/^[a-f0-9]{40}$/);
   });
   it('detects source edits without silently republishing translations', () => {
@@ -93,7 +95,11 @@ describe('publication boundaries', () => {
     for (const value of loadPosts())
       expect(value.locales.en?.sourceRevision).toBe(
         createHash('sha256')
-          .update(readFileSync(`content/posts/${value.id}/zh-hant.md`))
+          .update(
+            readFileSync(
+              `content/posts/${value.id}/zh-hant.${value.bodyFormat === 'static-html' ? 'html' : 'md'}`,
+            ),
+          )
           .digest('hex'),
       );
   });
@@ -237,7 +243,14 @@ describe('retained content and empty blog', () => {
       loadPosts()
         .map((post) => post.id)
         .sort(),
-    ).toEqual(['engineering-principles', 'production-systems']);
+    ).toEqual([
+      'browser-translation-architecture',
+      'engineering-principles',
+      'p2p-downloader-architecture',
+      'p2p-privacy-boundaries',
+      'password-manager-recommendations',
+      'production-systems',
+    ]);
     const anchors = loadHeadingAnchors();
     expect(Object.keys(anchors).sort()).toEqual([
       'engineering-principles',

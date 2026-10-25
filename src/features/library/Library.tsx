@@ -1,3 +1,4 @@
+import { blogFolders, populatedBlogFolders } from '../../lib/blog-tree.ts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import type { ViewData } from '../../app/page.tsx';
@@ -234,6 +235,20 @@ export function Library({
       <PageHead eyebrow={t.libraryEyebrow} title={t.libraryTitle} icon="pen">
         {hasPosts ? <p className="ln page-intro">{t.libraryIntro}</p> : null}
       </PageHead>
+      {populatedBlogFolders(view.posts).length ? (
+        <nav className="blog-folders" aria-label={t.navLibrary}>
+          {populatedBlogFolders(view.posts).map((folder) => (
+            <a
+              className="text-action"
+              key={folder}
+              href={`/${locale}/blog/${folder}/`}
+            >
+              <Icon name="folder-open" size={18} />
+              {blogFolders[folder].title[locale]}
+            </a>
+          ))}
+        </nav>
+      ) : null}
 
       <div className="search-block requires-js" id={pageIds.search}>
         <form

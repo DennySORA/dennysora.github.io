@@ -1,0 +1,2098 @@
+<div class="privacy-guide">
+  <p class="pg-opening">
+    BitTorrent で Linux ISO
+    をダウンロードしている場面を想像してください。ファイルそのものは完全に公開されています。それでも、「このネットワークエンドポイントが、いつ、どのダウンロードに参加したか」を誰もが簡単にまとめられる状態は望まないかもしれません。この例では、コンテンツが合法かどうかと、通信のプライバシーが守られているかどうかを分けて考え、問題をネットワークそのものに立ち戻って捉えます。
+  </p>
+  <div class="pg-takeaway">
+    P2P のプライバシーを理解するには、次の 3
+    つの問いをたどる必要があります。<strong
+      >誰が内容を読めるのか、誰がエンドポイントを見られるのか、そして誰が異なる活動を結び付けられるのか。</strong
+    >
+  </div>
+  <p>
+    本記事では、公開インターネット上の BitTorrent
+    を主な例とします。Tor、I2P、ミックスネットワークについては、それぞれの通信モデルを別途説明します。図の時系列と試算には合成データを使用しています。因果関係を示すためのもので、特定製品の実測効果を示すものではありません。
+  </p>
+
+  <div class="pg-no-script-note">
+    <p class="pg-noscript">
+      現在 JavaScript
+      が無効になっています。本文、図解、既定の試算はそのまま読めます。インタラクティブな操作部は非表示になります。
+    </p>
+  </div>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">01 · 可視性</div>
+    <h2 id="pg-start">
+      1 回のダウンロードから考える：他者には何が見えるのか？
+    </h2>
+    <p>
+      BitTorrent は 1
+      つのファイルを個別に取得できるピースに分割し、参加者同士がデータを提供し合えるようにします。同じ
+      torrent に参加するノードの集まりを
+      <strong>swarm</strong>、実際に接続してデータを交換するノードを
+      <strong>peer</strong>
+      と呼びます。クライアントはまず相手の連絡先を見つけ、その後に接続を確立する必要があります。これが転送負荷を効率よく分散できる基盤であり、ネットワークエンドポイントが観察可能な情報になる理由でもあります。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a></sup
+      >
+    </p>
+    <p>
+      まず、どこから観察するのかを正しく捉えましょう。あなたとピースを交換する
+      peer に見えるのは、接続相手の IP と port です。アクセス回線の ISP
+      に見えるのは、その回線から送信されるパケットです。VPN
+      運営者は、暗号化トンネルの終端に位置します。それぞれの位置で得られる情報は異なり、<strong>ある位置から見えない情報は、別の位置へ移っただけかもしれません</strong>。
+    </p>
+    <figure id="pg-route-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">経路が変わると、観察する位置も変わる</span
+        ><span class="pg-figure-tag">構成の模式図</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-route-controls" class="pg-demo-controls"></section>
+        <div id="pg-route-path" class="pg-route-path">
+          <div class="pg-route-node">
+            <strong>あなたの端末</strong
+            ><small
+              >自宅のネットワークから、まず VPN に接続します。<br />内側のパケットをトンネルで包みます。</small
+            ><span class="pg-mono">送信元：自宅の IP</span>
+          </div>
+          <div class="pg-route-node">
+            <strong>VPN サーバー</strong
+            ><small
+              >VPN トンネルを終端します。<br />クライアントに代わって peer
+              に接続します。</small
+            ><span class="pg-mono">入口 ↔ 出口</span>
+          </div>
+          <div class="pg-route-node">
+            <strong>BitTorrent peer</strong
+            ><small
+              >実際にピースを交換します。<br />VPN
+              の外向きエンドポイントが見えます。</small
+            ><span class="pg-mono">送信元：VPN 出口の IP</span>
+          </div>
+        </div>
+        <div id="pg-route-observation" class="pg-observation">
+          <p class="pg-subheading">アクセス回線の ISP</p>
+          <p class="pg-subheading">
+            あなたが VPN
+            に接続していることと、パケットの時刻、方向、サイズが見えます。内側の宛先はトンネルの暗号化で保護されます。
+          </p>
+          <p class="pg-subheading">VPN 側</p>
+          <p class="pg-subheading">
+            転送時に入口と出口を観察できる位置にあります。アプリケーションが別途暗号化している場合、VPN
+            の外側の暗号化を解除しても、アプリケーションの暗号文は復号されません。
+          </p>
+          <p class="pg-subheading">Tracker／Peer</p>
+          <p class="pg-subheading">
+            関連するトラフィックがすべてトンネルを通る場合、VPN
+            の出口が見えます。peer は、自分がどの torrent
+            のデータを交換しているかを引き続き把握しています。
+          </p>
+        </div>
+        <p id="pg-route-summary" aria-live="polite" class="pg-status-line">
+          この図は、関連するすべての P2P
+          トラフィックが指定の経路を通ることを前提としています。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 01</span>VPN が暗号化する範囲は、端末から
+        VPN
+        側までです。出口から宛先までが別途暗号化されるかは、内側のプロトコルによって決まります。マルチホップはネットワーク上の位置を分散しますが、同一事業者の管理権限まで自動的に分離するわけではありません。<a
+          href="#pg-ref-06"
+          class="pg-ref"
+          >[6]</a
+        ><a href="#pg-ref-09" class="pg-ref">[9]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-start-detail-1">内容の機密性、IP の分離、活動のリンク不能性</h3>
+    <p>
+      暗号化が守るのは、内容を読めるかどうかです。VPN は、swarm
+      内で見える送信元を VPN の出口へ変えられます。さらに一歩進んだ
+      <strong>活動のリンク不能性</strong> では、2
+      つの活動を観察した人が、それらが同じ送信元によるものか判断できるかを問います。本名が分からなくても、複数の活動を同じグループとしてまとめられる可能性があります。
+    </p>
+    <p>
+      また、peer
+      自体がデータの受信者です。ピースを相手へ送る以上、その接続の暗号化によって相手からもピースを隠せるとは期待できません。本当に考えるべきなのは、どの中間観察者から、どのエンドポイント情報を守るのか、そしてそれらを他のデータと結び付けられるかです。こうした問いを分けてこそ、VPN、プロトコル暗号化、匿名ネットワークの用途が明確になります。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">02 · プロトコル</div>
+    <h2 id="pg-discovery">仲間を見つけると同時に、連絡先も公開される</h2>
+    <p>
+      1 回のダウンロードには、通常 3 つの役割が関わります。<strong
+        >インデックスサイト</strong
+      >
+      は torrent ファイルや magnet link を見つける場を提供し、<strong
+        >発見機構</strong
+      >
+      はクライアントが peers を取得するのを助け、<strong>データ接続</strong>
+      が実際にファイルのピースを運びます。インデックス、tracker、peer
+      を同じ組織が管理する必要はありません。そのため、「誰があるサイトを訪れたか」と「誰がある
+      swarm に参加したか」は、もともと異なる観察なのです。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a
+        ><a href="#pg-ref-02" class="pg-ref">[2]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">仲間の発見とデータの交換は、別の接続</span
+        ><span class="pg-figure-tag">破線：発見　実線：データ</span>
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="BitTorrent の発見機構の図。横方向にスクロールできます"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <svg
+          viewbox="0 0 760 370"
+          role="img"
+          aria-labelledby="pg-discovery-title pg-discovery-desc"
+          class="pg-diagram"
+        >
+          <title id="pg-discovery-title">
+            BitTorrent の発見経路とデータ交換
+          </title>
+          <desc id="pg-discovery-desc">
+            インデックスが torrent の記述を提供し、クライアントは Tracker や DHT
+            を通じてエンドポイントを探します。接続済みの peer も、PEX
+            を通じて新しいエンドポイントを提供できます。ファイルのピースは、クライアントと
+            peers の間で直接転送されます。
+          </desc>
+          <defs>
+            <marker
+              id="pg-arrow-disc"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M1 1 7 4 1 7" class="pg-geometry-a311b83b06"></path>
+            </marker>
+          </defs>
+          <rect
+            x="20"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="113" y="48" class="pg-geometry-35afd8367b">
+            インデックスサイト／公開ページ
+          </text>
+          <text x="113" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            torrent ファイル、magnet link
+          </text>
+          <rect
+            x="288"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="381" y="48" class="pg-geometry-35afd8367b">Tracker</text>
+          <text x="381" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            参加通知を受け取り、エンドポイントを返す
+          </text>
+          <rect
+            x="554"
+            y="20"
+            width="186"
+            height="68"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="647" y="48" class="pg-geometry-35afd8367b">DHT ノード</text>
+          <text x="647" y="70" class="pg-secondary pg-geometry-35afd8367b">
+            分散検索と参加通知の保存
+          </text>
+          <rect
+            x="20"
+            y="176"
+            width="230"
+            height="118"
+            rx="8"
+            class="pg-frame"
+          ></rect>
+          <text x="135" y="209" class="pg-geometry-35afd8367b">
+            あなたの BitTorrent クライアント
+          </text>
+          <text x="135" y="235" class="pg-secondary pg-geometry-35afd8367b">
+            torrent を識別し、ピースを選ぶ
+          </text>
+          <text x="135" y="258" class="pg-secondary pg-geometry-35afd8367b">
+            接続可能な IP : port を取得
+          </text>
+          <rect
+            x="494"
+            y="170"
+            width="246"
+            height="76"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="617" y="201" class="pg-geometry-35afd8367b">
+            接続済みの Peer A
+          </text>
+          <text x="617" y="225" class="pg-secondary pg-geometry-35afd8367b">
+            ピースを転送し、PEX でエンドポイントも交換できる
+          </text>
+          <rect
+            x="494"
+            y="292"
+            width="246"
+            height="56"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="617" y="326" class="pg-geometry-35afd8367b">
+            新たに見つかった Peer B、Peer C
+          </text>
+          <path
+            d="M113 88V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <text x="125" y="112" class="pg-tiny">記述と識別情報</text>
+          <path
+            d="M381 88V130H205V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path
+            d="M647 88V145H230V166"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path
+            d="M260 207H484"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M484 237H260"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+          <text x="372" y="195" class="pg-secondary pg-geometry-35afd8367b">
+            ピースを要求・交換
+          </text>
+          <path
+            d="M494 264H268"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire pg-dash"
+          ></path>
+          <path d="M617 246V264H494" class="pg-wire pg-dash"></path>
+          <text x="382" y="284" class="pg-tiny pg-geometry-35afd8367b">
+            PEX：他の peer の連絡先情報
+          </text>
+          <path
+            d="M135 294V320H484"
+            marker-end="url(#pg-arrow-disc)"
+            class="pg-wire"
+          ></path>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 02</span
+        >ある発見経路を無効にしても、別の接続は残る可能性があります。図の流れは概念上の関係であり、ダウンロードのたびにすべての仕組みを同時に使うわけではありません。横長の図は横方向にスクロールできます。<a
+          href="#pg-ref-02"
+          class="pg-ref"
+          >[2]</a
+        ><a href="#pg-ref-03" class="pg-ref">[3]</a
+        ><a href="#pg-ref-04" class="pg-ref">[4]</a>
+      </figcaption>
+    </figure>
+    <h3 id="pg-discovery-detail-1">Infohash が参加者を同じ torrent へ導く</h3>
+    <p>
+      <code>infohash</code> は、torrent の <code>info</code> dictionary
+      をエンコードしたもののハッシュで、torrent
+      の記述を識別するために使われます。v1 は SHA-1、v2 は SHA-256 を使用し、v2
+      の一部のプロトコルフィールドでは切り詰めた 20 bytes
+      を使用します。これは利用者アカウントではなく、ファイル全体を 1
+      回ハッシュして得る汎用的な名前でもありません。記述自体が異なる場合があるため、同じ内容が異なる
+      torrent に対応することもあります。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a></sup
+      >
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="ピア発見機構の比較"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          よく使われる 3 つの発見方法と、それぞれで観察できること
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">仕組み</th>
+            <th scope="col">peers を見つける方法</th>
+            <th scope="col">データから分かること</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Tracker</th>
+            <td>
+              クライアントが特定の torrent への参加を announce し、tracker
+              が連絡先エンドポイントの集合を返します。
+            </td>
+            <td>
+              Tracker
+              には送信元エンドポイントと通知フィールドが見えます。アップロード量や残りの量などは、通常クライアントの自己申告です。<a
+                href="#pg-ref-02"
+                class="pg-ref"
+                >[2]</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">DHT</th>
+            <td>
+              <code>get_peers</code> でエンドポイントを検索し、<code
+                >announce_peer</code
+              >
+              で自分の参加情報を登録します。
+            </td>
+            <td>
+              分散型の連絡先帳です。Token は他の IP
+              に代わって登録する行為を制限する助けになりますが、実際に何を転送したかを証明するものではありません。<a
+                href="#pg-ref-03"
+                class="pg-ref"
+                >[3]</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">PEX</th>
+            <td>
+              接続済みの peer 同士が、他の peers の連絡先情報を交換します。
+            </td>
+            <td>
+              受け取るのは別のノードが提供した情報です。プロトコルが接続状態の反映を求めていても、古いデータや悪意のあるデータを考慮する必要があります。<a
+                href="#pg-ref-04"
+                class="pg-ref"
+                >[4]</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      エンドポイント情報には、もう 1 つ見落としやすい点があります。<strong
+        >通知された待ち受け port、パケットの実際の送信元 port、NAT
+        が外部に割り当てた port は、同じ番号とは限りません。</strong
+      >意味を区別せずに
+      <code>IP:port</code>
+      だけを記録すると、後で異なる段階のデータを誤って結び付ける可能性があります。<sup
+        ><a href="#pg-ref-02" class="pg-ref">[2]</a></sup
+      >
+    </p>
+    <h3 id="pg-discovery-detail-2">
+      公開する情報を減らすことと、接続経路を制限すること
+    </h3>
+    <p>
+      DHT や PEX を無効にすれば、それに対応する発見経路は減ります。しかし peer
+      と直接接続している限り、相手にはその接続のエンドポイントが見えます。Private
+      torrent の <code>private</code> 設定は、発見先を指定された tracker
+      に限定し、主にそのアクセス制御を維持します。swarm
+      内の通信には、引き続きエンドポイント情報が必要です。ローカルネットワークの
+      Local Service Discovery は、multicast で infohash と待ち受け port
+      を通知することがあり、別の局所的な可視範囲を持ちます。<sup
+        ><a href="#pg-ref-05" class="pg-ref">[5]</a></sup
+      >
+    </p>
+    <p>
+      qBittorrent の <strong>Anonymous Mode</strong> は、主に
+      user-agent、バージョン、追加の IP
+      フィールドなど、自己申告する情報を減らします。実際の動作は libtorrent
+      のバージョンや torrent
+      の種類によって異なります。公式ページにある、旧バージョンで DHT／LSD／UPnP
+      を無効にする動作を、すべてのバージョンに当てはめることはできません。実際のパケット送信に使うネットワークエンドポイントは、引き続き
+      socket、ルーティング、分離の構成によって決まります。<sup
+        ><a href="#pg-ref-07" class="pg-ref">[7]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">03 · 信頼</div>
+    <h2 id="pg-trust">VPN は信頼境界を移動させる</h2>
+    <p>
+      VPN 経路では、端末がまず内側の IP パケットを暗号化トンネルに包みます。VPN
+      サーバーがその包みを解き、内側のトラフィックを宛先へ送ります。peer
+      から見ると、応答データの宛先は通常 VPN の出口です。アクセス回線の ISP
+      から直接見える接続相手は、VPN サーバーです。<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a></sup
+      >
+    </p>
+    <p>
+      この分離には大きな価値がありますが、VPN
+      運営者は新たな信頼の位置に立ちます。パケットの転送には、その時点の状態を維持する必要があります。同じ管理者が入口と出口を制御しているなら、構造上は両側を観察する能力があります。この点は、次の別の問いと分ける必要があります。<strong
+        >その対応関係を、後から検索できる記録として保存しているのか？</strong
+      >
+    </p>
+    <h3 id="pg-trust-detail-1">
+      No-log は履歴データの問題、RAM-only は残留先の問題
+    </h3>
+    <p>
+      Mullvad
+      の公開ポリシーを例にすると、利用者の活動記録を保存しないと表明する一方、アカウント、WireGuard
+      設定、支払い、その他必要なデータの取り扱いも説明しています。ランダムな番号によるアカウントは、登録時に求める識別情報を減らします。ただし支払方法によっては、「支払人とアカウント」の関係が生じることがあります。それでも、その関係だけでは「このアカウントが、ある時刻に特定の出口トラフィックを発生させた」という対応まで埋めるには不十分です。<sup
+        ><a href="#pg-ref-08" class="pg-ref">[8]</a></sup
+      >
+    </p>
+    <p>
+      一方、RAM-only
+      サーバーが焦点を当てるのは、永続ディスクへの残留です。再起動後に通常のディスク上へ稼働状態を残さないことで、ある種の事後フォレンジックのリスクを下げる助けになります。稼働中のメモリ、ネットワークの観察、他のシステムが保存したデータは、それぞれ別の問題です。Mullvad
+      は 2023 年に RAM-only
+      への移行完了を発表しました。ここで引用しているのは事業者の公開説明であり、本記事が運用環境を独立に監査した結果ではありません。<sup
+        ><a href="#pg-ref-08" class="pg-ref">[8]</a></sup
+      >
+    </p>
+    <h3 id="pg-trust-detail-2">
+      マルチホップで位置を分けても、誰が管理するかは別途問う必要がある
+    </h3>
+    <p>
+      マルチホップは、入口ノードを利用者側、出口ノードを宛先側に配置します。一方しか観察できない人にとっては、両側を結び付けにくくなる可能性があります。しかし同じ観察者が両端のトラフィックを取得できるなら、中継数を増やすだけでは時刻や流量の相関が残ることがあります。同じ事業者の複数サーバーも、自動的に互いに独立した管理者になるわけではありません。<sup
+        ><a href="#pg-ref-09" class="pg-ref">[9]</a
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a></sup
+      >
+    </p>
+    <p>
+      VPN
+      は、アプリケーション層のログイン、アカウント、端末情報も取り除きません。既知のアカウントを使って活動していれば、サイトはネットワークのリズムから身元を推測し直す必要がありません。この意味で、ネットワークの匿名性とアプリケーション上の身元は、互いに影響し合うものの、それぞれ理解する必要がある別の層です。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">04 · 経路</div>
+    <h2 id="pg-isolation">トンネルが切れた後、パケットはどこへ向かうのか？</h2>
+    <p>
+      「VPN に接続している」は、その瞬間の状態を表します。自宅の IP が swarm
+      に現れる可能性を理解するには、トンネルが機能しなくなった後の動作も見る必要があります。アプリケーションは送信を止めて待つのか、それとも別の利用可能な経路で送り続けるのか？<strong
+        >Fail-closed</strong
+      >
+      とは、保護された経路が機能しなくなったときに、保護対象の通信も停止し、安全な経路が復旧するまで再開しないことです。
+    </p>
+    <p>
+      ルーティングテーブルは次のホップを選び、インターフェースへのバインドはアプリケーションが使えるネットワークインターフェースを制限し、ファイアウォールは誤った出口へ向かうパケットを拒否できます。Linux
+      の
+      <strong>network namespace</strong>
+      はさらに一歩進めて、プロセスに独立したネットワーク環境を与え、特定のインターフェースと経路だけが見えるようにします。これらはそれぞれ異なる制御点を扱う仕組みであり、実際の効果はどのトラフィックを対象にしているかによって決まります。<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <figure id="pg-isolation-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >アプリケーションに見えるのは wg0 だけ。外側の UDP
+          はホスト側の空間に残る</span
+        ><span class="pg-figure-tag">WireGuard／Linux の構成</span>
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-tunnel-controls" class="pg-demo-controls"></section>
+        <div id="pg-transport" class="pg-transport">
+          <div class="pg-transport-box">
+            <p class="pg-subheading">アプリケーションのネットワーク空間 B</p>
+            <div class="pg-step-node">
+              BitTorrent クライアント<br /><span class="pg-small"
+                >内側の IP パケットを送信</span
+              >
+            </div>
+            <div aria-hidden="true" class="pg-step-arrow pg-app-arrow">↓</div>
+            <div class="pg-step-node pg-wg-node">
+              <strong>wg0</strong><br /><span
+                id="pg-wg-state"
+                class="pg-small pg-wg-state"
+                >トンネル利用可能：指定インターフェース経由で送信</span
+              >
+            </div>
+            <p class="pg-small pg-geometry-76b14685f3">
+              この空間には eth0／wlan0 がなく、通常の WAN
+              への代替経路もありません。
+            </p>
+          </div>
+          <div class="pg-transport-box">
+            <p class="pg-subheading">ホストのネットワーク空間 A</p>
+            <div class="pg-step-node">
+              WireGuard UDP socket<br /><span class="pg-small"
+                >インターフェースを作成した空間に残る</span
+              >
+            </div>
+            <div aria-hidden="true" class="pg-step-arrow">↓</div>
+            <div class="pg-step-node">
+              eth0／wlan0 → VPN サーバー<br /><span class="pg-small"
+                >暗号化された外側のパケットを転送</span
+              >
+            </div>
+            <div id="pg-tunnel-explain" class="pg-tunnel-strip">
+              wg0 の内側のトラフィックは、この UDP socket
+              を通じて暗号化して運ばれます。
+            </div>
+          </div>
+        </div>
+        <p id="pg-tunnel-status" aria-live="polite" class="pg-status-line">
+          トンネルが利用可能なとき、アプリケーションのデータは wg0
+          でカプセル化され、物理 NIC で運ばれます。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 03</span>WireGuard 公式の namespace
+        モデルをもとに描き直した図です。トンネルに到達できないと、アプリケーションは待機したり失敗したりする可能性があります。図の要点は、直接接続の代替出口がないことです。物理
+        NIC
+        は引き続きハンドシェイクや再試行のパケットを送信する場合があり、トラフィックが完全にゼロになる必要はありません。<a
+          href="#pg-ref-06"
+          class="pg-ref"
+          >[6]</a
+        >
+      </figcaption>
+    </figure>
+    <h3 id="pg-isolation-detail-1">
+      デフォルトルートを変えるだけでは、なぜ隙間が残り得るのか？
+    </h3>
+    <p>
+      システムには、より具体的な経路、ローカルネットワーク向けの例外、インターフェース再作成後の新たな選択肢が存在し得るからです。<i
+        >Bypassing Tunnels</i
+      >
+      と TunnelVision の研究では、それぞれ経路の例外と DHCP
+      のルーティング情報によって VPN
+      が迂回される状況が示されました。これらは、経路の優先順位とトラフィックの分離の違いを示しています。各製品の現在の状態は、バージョンと修正状況に応じて判断する必要があります。<sup
+        ><a href="#pg-ref-12" class="pg-ref">[12]</a></sup
+      >
+    </p>
+    <p>
+      インターフェースへのバインドにも細かな違いがあります。ローカル IP
+      へのバインドと、socket
+      を特定のネットワークデバイスに制限することは、すべてのシステムで完全に同じ効果を持つわけではありません。TCP
+      peer、UDP tracker、DHT は、それぞれ異なる socket
+      を使うこともあります。ある種類のトラフィックだけ動作が異なる場合は、アプリケーションの接続アイコンだけを見るのではなく、実際にどの出口を制御しているのかを確認するべきです。<sup
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <h3 id="pg-isolation-detail-2">
+      IPv6、DNS、管理インターフェースを分けて考えるのはなぜか？
+    </h3>
+    <p>
+      IPv4 が VPN に送られていても、IPv6 では peer
+      に直接接続できるなら、相手には別のアドレスファミリーからあなたのエンドポイントが見える可能性があります。DNS
+      クエリをトンネル外で行うと、どのサービスのドメインを問い合わせたかが漏れることがあります。ただし、通常のドメイン問い合わせ自体に
+      torrent の infohash
+      が自動的に含まれるわけではありません。両者が漏らす情報は異なり、同じ「IP
+      漏えい」というラベルだけで片付けることはできません。
+    </p>
+    <p>
+      Web UI、検索拡張、ホスト上の DNS
+      プロキシは、別のプロセスが処理している場合もあります。ダウンロードエンジンを制限しても、それらのプロセスの経路まで自動的に制限されるわけではありません。Port
+      forwarding が扱うのは、外部の peer から接続を開始できるかどうかです。VPN
+      の出口で開くのと、自宅のルーターで開くのとでは、関わるネットワーク上の位置が異なります。これらは構成要素と接続経路から導かれる違いであり、すべてのクライアントに同じ問題があるという主張ではありません。<sup
+        ><a href="#pg-ref-10" class="pg-ref">[10]</a></sup
+      >
+    </p>
+    <p>
+      Namespace
+      による分離は、ホストのカーネルとネットワークを変更できる権限が引き続き信頼できることを前提とします。アプリケーションが意図せず別の出口を使う機会は減らせますが、高い権限で支配されたホストを完全に保護することはできません。ここまでで扱ったのは、あくまで「パケットがどこを通るか」です。次の問いは、正しい経路を通った後にも、パケットがどんな形を残すかです。
+    </p>
+  </section>
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">05 · 時系列</div>
+    <h2 id="pg-rhythm">暗号化で内容を隠しても、通信にはリズムが残る</h2>
+    <p>
+      要求を続けて送ると、遠隔側がデータを返し始めます。受信側が忙しければ一時停止し、バッファに空きができると次の波が来ます。暗号化はパケット内のバイト列を変えますが、アプリケーションとネットワークが一緒に生み出すこうした時間的な変化は、外側にも現れる可能性があります。
+    </p>
+    <p>
+      <strong>エンドツーエンドのトラフィック相関</strong> が解こうとするのは、2
+      つの観察点で取得したトラフィックが同じ通信に属するか、という問題です。攻撃者には、両側の対応するデータを見られる能力が必要です。ある
+      VPN 出口の IP
+      を知っているだけでは、利用者側のトラフィックを取得したことにはなりません。Tor
+      公式も、「通信の両端を同時に観察すること」を、防御しない脅威モデルとして明示しています。<sup
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a></sup
+      >
+    </p>
+    <figure id="pg-trace-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >2 つの時間軸をそろえ、形にどれだけ類似性が残るかを見る</span
+        ><span class="pg-figure-tag"
+          >教育用の合成データ · ネットワークのキャプチャなし</span
+        >
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-trace-controls" class="pg-demo-controls"></section>
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="2 つの観察点における毎秒の流量の折れ線グラフ。横方向にスクロールできます"
+          class="pg-figure-viewport"
+        >
+          <svg
+            viewbox="0 0 760 395"
+            role="img"
+            aria-labelledby="pg-trace-svg-title pg-trace-svg-desc"
+            class="pg-diagram pg-geometry-b27c9a47f2"
+          >
+            <title id="pg-trace-svg-title">
+              入口と出口の合成トラフィック時系列
+            </title>
+            <desc id="pg-trace-svg-desc">
+              2 つのグラフは、毎秒 0〜320 KiB の同じ尺度を使っています。時間窓は
+              40 個、各窓は 0.5 秒、合計 20
+              秒です。入口は実線、出口は破線です。出口は時間的に前へずらして整列できます。観察区間の外へ出た値は計算に含めません。
+            </desc>
+            <text x="62" y="25" class="pg-geometry-9eb8107a7b">入口 X</text>
+            <text x="736" y="25" class="pg-geometry-79d2b00c97">
+              KiB/s · 利用者 → 宛先
+            </text>
+            <path d="M62 150L736 150" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="154" class="pg-geometry-79d2b00c97">0</text>
+            <path
+              d="M62 123.75L736 123.75"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="127.75" class="pg-geometry-79d2b00c97">80</text>
+            <path d="M62 97.5L736 97.5" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="101.5" class="pg-geometry-79d2b00c97">160</text>
+            <path d="M62 71.25L736 71.25" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="75.25" class="pg-geometry-79d2b00c97">240</text>
+            <path d="M62 45L736 45" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="49" class="pg-geometry-79d2b00c97">320</text>
+            <path
+              id="pg-trace-x"
+              d="M70.42 147.38 L87.28 146.72 L104.13 146.06 L120.98 146.72 L137.82 130.31 L154.68 110.63 L171.53 120.47 L188.38 140.16 L205.23 146.06 L222.08 147.05 L238.93 146.06 L255.78 145.41 L272.63 120.47 L289.48 100.78 L306.33 108.98 L323.18 138.52 L340.03 146.06 L356.88 146.72 L373.73 147.38 L390.58 145.41 L407.43 131.95 L424.28 113.91 L441.13 120.47 L457.98 136.88 L474.83 146.06 L491.68 147.05 L508.53 146.72 L525.38 146.06 L542.23 117.19 L559.08 104.06 L575.93 123.75 L592.78 145.08 L609.63 150.00 L626.48 150.00 L643.33 150.00 L660.18 150.00 L677.03 150.00 L693.88 150.00 L710.73 150.00 L727.58 150.00"
+              class="pg-geometry-071d7d91b8"
+            ></path>
+            <text x="62" y="173" class="pg-geometry-04e7741d74">0</text>
+            <text x="196.8" y="173" class="pg-geometry-04e7741d74">4</text>
+            <text x="331.6" y="173" class="pg-geometry-04e7741d74">8</text>
+            <text x="466.4" y="173" class="pg-geometry-04e7741d74">12</text>
+            <text x="601.2" y="173" class="pg-geometry-04e7741d74">16</text>
+            <text x="736" y="173" class="pg-geometry-04e7741d74">20</text>
+            <text x="62" y="207" class="pg-geometry-9eb8107a7b">出口 Y</text>
+            <text x="736" y="207" class="pg-geometry-79d2b00c97">
+              同じ方向 · 同じ縦軸
+            </text>
+            <path d="M62 330L736 330" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="334" class="pg-geometry-79d2b00c97">0</text>
+            <path
+              d="M62 303.75L736 303.75"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="307.75" class="pg-geometry-79d2b00c97">80</text>
+            <path d="M62 277.5L736 277.5" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="281.5" class="pg-geometry-79d2b00c97">160</text>
+            <path
+              d="M62 251.25L736 251.25"
+              class="pg-geometry-33742d2ce2"
+            ></path>
+            <text x="52" y="255.25" class="pg-geometry-79d2b00c97">240</text>
+            <path d="M62 225L736 225" class="pg-geometry-33742d2ce2"></path>
+            <text x="52" y="229" class="pg-geometry-79d2b00c97">320</text>
+            <path
+              id="pg-trace-y"
+              d="M70.42 330.00 L87.28 330.00 L104.13 330.00 L120.98 326.27 L137.82 327.64 L154.68 325.72 L171.53 326.98 L188.38 313.20 L205.23 292.79 L222.08 302.50 L238.93 321.27 L255.78 325.72 L272.63 328.27 L289.48 325.06 L306.33 326.43 L323.18 302.50 L340.03 284.06 L356.88 293.25 L373.73 319.11 L390.58 325.06 L407.43 327.64 L424.28 326.93 L441.13 325.77 L457.98 314.71 L474.83 295.81 L491.68 302.50 L508.53 318.25 L525.38 325.72 L542.23 328.27 L559.08 325.67 L575.93 327.03 L592.78 299.48 L609.63 287.08 L626.48 306.83 L643.33 325.14 L660.18 330.00 L677.03 330.00 L693.88 330.00 L710.73 330.00 L727.58 330.00"
+              class="pg-geometry-465c34fd09"
+            ></path>
+            <text x="62" y="353" class="pg-geometry-04e7741d74">0</text>
+            <text x="196.8" y="353" class="pg-geometry-04e7741d74">4</text>
+            <text x="331.6" y="353" class="pg-geometry-04e7741d74">8</text>
+            <text x="466.4" y="353" class="pg-geometry-04e7741d74">12</text>
+            <text x="601.2" y="353" class="pg-geometry-04e7741d74">16</text>
+            <text x="736" y="353" class="pg-geometry-04e7741d74">20</text>
+            <text x="399" y="384" class="pg-geometry-04e7741d74">
+              時間（秒）。整列後は共通の時間原点を使用
+            </text>
+            <g id="pg-trace-cursor" class="pg-geometry-23fe0971da">
+              <path
+                id="pg-trace-cursor-line"
+                d="M62 40L62 335"
+                class="pg-geometry-b26d2719f4"
+              ></path>
+            </g>
+          </svg>
+        </div>
+        <div class="pg-legend">
+          <span><i></i>入口 X：選択した方向の流量</span
+          ><span
+            ><i class="pg-amber"></i>出口 Y：同じ方向の候補トラフィック</span
+          >
+        </div>
+        <div class="pg-trace-meta">
+          <span
+            >相関係数 r：<span id="pg-trace-correlation"
+              >-0.315（対応する確率ではありません）</span
+            ></span
+          ><span id="pg-trace-clock">時間スキャン：未再生</span>
+        </div>
+        <p id="pg-trace-limit" class="pg-model-caveat">
+          固定時間窓は 0.5 秒、縦軸は KiB/s
+          です。この「同じ通信」のデータには、意図的に 1.5
+          秒の遅延を加えています。時間軸を動かして変化を観察できます。r
+          はこの特徴の類似度にすぎず、対応する確率ではありません。整列のために範囲外へ出た末尾は、計算に含めません。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 04</span>2
+        つのグラフは同じ座標尺度を保ちます。「別のトラフィックを加える」は、集約によって形が変わり得ることを示すためのものです。どのモードでも、点数の高低を実際の攻撃や防御の成績と見なすことはできません。別の通信が偶然似ていても、共通の送信元を持つとは限りません。
+      </figcaption>
+    </figure>
+    <h3 id="pg-rhythm-detail-1">
+      最も単純な方法：時間窓ごとに合計し、少しのずれを許容する
+    </h3>
+    <p>
+      ある方向のパケットを固定の時間窓に分け、各窓で観察したバイト数を合計します。窓幅が
+      Δ 秒なら、<code>xₖ</code> と <code>yₖ</code> は、両側の k
+      番目の時間窓の流量です。転送遅延を許容するために、2
+      本目の系列を数区間だけ前後にずらし、その変化を比較できます。
+    </p>
+    <div class="pg-equation">
+      xₖ = Σ sᵢ、ただし kΔ ≤ tᵢ &lt; (k + 1)Δ<br />C(ℓ) = corr(xₖ, yₖ₊ℓ)<small
+        >tᵢ：パケットの時刻。sᵢ：指定した観察レイヤーで数えたバイト数。ℓ
+        は整数の区間数で、ℓΔ
+        秒に対応します。上りと下りは分けて比較します。図では Δ で割り、KiB/s
+        に変換して表示しています。</small
+      >
+    </div>
+    <p>
+      この単純なモデルは、信号がどこから生まれるかを説明しているだけです。研究では、学習された表現、長さの異なる窓、複数の特徴も使われます。より複雑なモデルでも観察データは必要であり、データ収集方法、実際のネットワーク変動、許容する偽陽性率の影響を受けます。2026
+      年に著者が公開した ESPRESSO の原稿は、人工データと実際の Tor
+      トラフィックの間の隔たりを特に研究しています。<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <h3 id="pg-rhythm-detail-2">
+      1 本の VPN トンネルには、多くの接続が入っていることが多い
+    </h3>
+    <p>
+      上の図では、意図的に近い計数レイヤーから始めています。実際のネットワークでは、物理
+      NIC に見えるのは VPN の外側のパケットで、出口に見えるのは特定の peer
+      接続かもしれません。入口のトンネルには、他の
+      peers、DNS、ウェブ閲覧、バックグラウンド同期も同時に入っています。トンネル全体の総量をそのまま単一の
+      peer flow と見なすと、比較対象がすでに変わってしまいます。
+    </p>
+    <p>
+      カプセル化のヘッダー、再送、ACK、MTU、パケットの分割、輻輳、パディングも、数や長さを変えます。妥当な直感は、データは転送されて初めて届き、低遅延の転送では因果関係に由来するリズムがある程度残りやすい、ということです。そこからさらに、入口の各パケットに対して出口に同じ長さ・同じ間隔の複製が
+      1 つずつあると仮定することはできません。<sup
+        ><a href="#pg-ref-06" class="pg-ref">[6]</a
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <div class="pg-two-col">
+      <div>
+        <h3 id="pg-rhythm-detail-3">トラフィック指紋識別</h3>
+        <p>
+          片側の暗号化トラフィックを見て、「どの既知のサイト、動画、活動に似ているか」を問います。学習や比較に使えるクラスが必要です。
+        </p>
+      </div>
+      <div>
+        <h3 id="pg-rhythm-detail-4">両端のトラフィック相関</h3>
+        <p>
+          2
+          つの位置のトラフィックを見て、「同じ通信に属するか」を問います。候補となる組み合わせと、両側を観察する能力が必要です。
+        </p>
+      </div>
+    </div>
+    <p class="pg-geometry-2bdf8e45fd">
+      この 2
+      つの問題では似た特徴を使えますが、評価結果をそのまま相互に置き換えることはできません。受動的な攻撃者は既存のトラフィックを観察するだけです。遅延、パケット損失、速度に影響を与えられる能動的な攻撃者は、反対側に識別可能な反応を生じさせることもあります。ある観察モデルを防げても、別のモデルまで自動的にカバーするわけではありません。<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">06 · 推論</div>
+    <h2 id="pg-inference">
+      似て見えることと「同じ人物」であることには、どれほど隔たりがあるのか？
+    </h2>
+    <p>
+      相関係数 <code>r = 0.91</code> は、この比較方法では 2
+      組の数値がよく似ていることを示します。「91%
+      の確率で同じ通信である」という校正済みの確率を直接示すものではなく、端末、アカウント、自然人の間の隔たりを埋めるものでもありません。多数の候補、多数の時間のずれ、多数の窓を同時に探索して最高点を選べば、偶然似る機会も増えます。
+    </p>
+    <p>
+      同様に、tracker
+      の一覧と実際のデータ交換は、異なる強さの観察を提供します。ネットワーク上の出来事を操作した人の身元へ結び付けるには、通常、他の情報源の証拠が必要であり、共有
+      IP、時計の誤差、記録の欠落にも対処しなければなりません。IPv4
+      を共有している場合は、特に送信元
+      port、正確な時刻、関連するトランスポート情報が必要です。契約者へ対応付けられても、誰が操作したかが自動的に確定するわけではありません。<sup
+        ><a href="#pg-ref-21" class="pg-ref">[21]</a
+        ><a href="#pg-ref-23" class="pg-ref">[23]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >一歩進むたびに、新しい証拠が必要になる</span
+        ><span class="pg-figure-tag">主張の段階</span>
+      </div>
+      <div class="pg-figure-body">
+        <ol class="pg-chain">
+          <li>
+            <strong>一覧にエンドポイントが現れる</strong
+            ><small>Tracker／PEX が報告した連絡先情報。</small>
+          </li>
+          <li>
+            <strong>実際に接続を確立する</strong
+            ><small>ある時刻に応答できる相手が存在した。</small>
+          </li>
+          <li>
+            <strong>検証可能なピースを交換する</strong
+            ><small>その接続から照合可能なデータが提供された。</small>
+          </li>
+          <li>
+            <strong>操作者の身元を確認する</strong
+            ><small
+              >端末、アカウント、その他の独立したデータを組み合わせる。</small
+            >
+          </li>
+        </ol>
+        <p class="pg-evidence-gap">
+          矢印は「さらに裏付けが必要」を意味し、プロトコルが自動的に身元を導き出すことを意味しません。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 05</span
+        >ピースの完全性はハッシュで検証できますが、ハッシュ自体が自然人の身元、著作権の帰属、最初の公開者を証明するわけではありません。異なる主張には、それぞれに対応する証拠が必要です。
+      </figcaption>
+    </figure>
+    <h3 id="pg-inference-detail-1">
+      偽陽性率が非常に低くても、誤った候補が多数生じ得る
+    </h3>
+    <p>
+      ある分析に 1,000,001 個の候補があり、正しい対応がちょうど 1
+      つだけ含まれるとします。モデルが正しい対応を見つける確率は
+      90%、誤った各候補を誤検出する確率は 10 万分の 1
+      にすぎません。この偽陽性率は低く聞こえますが、100
+      万個の誤った候補に対しては、平均で 10 個の偽陽性が生じます。
+    </p>
+    <figure id="pg-base-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title">候補の規模を計算に戻す</span
+        ><span class="pg-figure-tag"
+          >仮定に基づく計算 · 事件のデータではありません</span
+        >
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-base-controls" class="pg-demo-controls"></section>
+        <div aria-live="polite" aria-atomic="true" class="pg-stats">
+          <div>
+            <span class="pg-stat-label"
+              >1 回あたりに見つかる正しい対応の平均数</span
+            ><span id="pg-base-tp" class="pg-stat-number">0.90</span>
+          </div>
+          <div>
+            <span class="pg-stat-label">1 回あたりの誤った候補の平均数</span
+            ><span id="pg-base-fp" class="pg-stat-number pg-amber">10.00</span>
+          </div>
+          <div>
+            <span class="pg-stat-label">モデルの陽性的中率 PPV</span
+            ><span id="pg-base-ppv" class="pg-stat-number">8.26%</span>
+          </div>
+        </div>
+        <div
+          role="img"
+          id="pg-base-bar"
+          aria-label="マークされた候補のうち、モデル上の正しい対応は約 8.26%、誤った候補は約 91.74%"
+          class="pg-share-bar"
+        >
+          <div id="pg-base-share" class="pg-share-true"></div>
+          <div class="pg-share-false"></div>
+        </div>
+        <div class="pg-share-legend">
+          <span><b>■</b> 正しい対応</span><span><b>▨</b> 誤った候補</span>
+        </div>
+        <p class="pg-model-caveat">
+          ここでの割合は、同じ分布に従う分析を多数回積み重ねたときのモデル上の比率です。1
+          回の分析で実際に 0.9 人が現れるわけではありません。PPV
+          を特定の人の身元や責任の確率と見なすこともできません。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 06</span>各回に正しい対応がちょうど 1
+        つあり、すべての候補に同じしきい値と同じ TPR／FPR
+        を使うと仮定しています。候補数を変えると、基準率の影響が分かります。割合の図は
+        0% から 100% までを表示し、尺度を途中で切っていません。
+      </figcaption>
+    </figure>
+    <div class="pg-equation">
+      E[TP] = TPR<br />E[FP] = (N − 1) × FPR<br />PPV = TPR / [TPR + (N − 1) ×
+      FPR]<small
+        >これは、正しい対応が 1
+        つだけある上記のモデルから導いた陽性的中率です。TP
+        は見つかった正しい対応、FP
+        は誤ってマークされたものです。期待数の計算には、すべての候補が互いに独立である必要はありません。ただし偽陽性率の信頼区間を推定する際には、標本の依存性が依然として重要です。</small
+      >
+    </div>
+    <p>
+      正しい対応がそもそも候補群に入っていないのに、システムに「最も似たもの」を必ず選ばせると、すべて誤った候補の中の最高点を答えと誤認する可能性があります。研究でクローズドワールドとオープンワールドを区別するのも、このためです。前者は答えが既知の範囲にあると仮定することが多く、後者は「この中にはない」を認める必要があります。<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a></sup
+      >
+    </p>
+    <h3 id="pg-inference-detail-2">
+      証拠が増えたなら、情報も本当に増えていなければならない
+    </h3>
+    <p>
+      同じ tracker 記録から 3 つのレポートを出力しても、観察としては 1
+      件にすぎないかもしれません。それらを互いに独立した 3
+      つの裏付けとして掛け合わせると、結論の確かさを過大評価します。時系列もそろえる必要があります。タイムゾーン、時計のずれ、NAT
+      マッピングの変化、ログの時刻がイベント発生時刻なのか書き込み時刻なのかによって、対応付けの結果が変わる可能性があります。
+    </p>
+    <p>
+      長期間の観察は、候補集合を徐々に狭める可能性があります。たとえば複数の活動で送信元がオンラインである必要があれば、すべての観察時間帯に当てはまる人は少なくなるかもしれません。しかし、オフライン判定の誤り、観測漏れ、バックグラウンドプログラム、異なる端末は、この推論の前提を崩します。I2P
+      の脅威モデルでも、この種の交差攻撃を論じています。人数が減る曲線を描くだけで、最後には必ず
+      1 人の操作者が残ると仮定してはいけません。<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+    <details class="pg-math-note">
+      <summary>
+        候補が 100 人いても、同じ匿名性が保たれているとは限らないのはなぜか？
+      </summary>
+      <p>
+        全員が同じ確率なら、観察者には大きな不確実性が残ります。しかし 1
+        人がモデル上の確率の 99% を占め、残る 99
+        人はごく小さな裾にすぎないなら、「候補が 100
+        人」という説明は有力ではありません。情報理論では、この違いをエントロピーで表します。
+      </p>
+      <div class="pg-equation">
+        H(U | O = o) = −Σᵢ pᵢ log₂ pᵢ<small
+          >U は隠したい送信元、o は得られた観察、pᵢ
+          はその観察のもとで各候補に割り当てられる確率です。エントロピーの単位は
+          bit
+          です。採用する候補と確率モデルに依存するもので、トラフィックのグラフから直接読み取れる匿名性の点数ではありません。</small
+        >
+      </div>
+      <p>
+        研究が隠そうとしているものが入口と出口の対応 M なら、観察 O が M
+        についてどれだけ情報を与えるかを調べることもできます。重要なのは、守りたい秘密を先に定義することです。任意の
+        2 本のトラフィック曲線から数値を 1
+        つ計算しただけで、匿名性を証明したと宣言することではありません。
+      </p>
+    </details>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">07 · 外観</div>
+    <h2 id="pg-padding">
+      パディングはパケットの外観を変え、DAITA は接続ごとに戦略を変える
+    </h2>
+    <p>
+      パケットのサイズや間隔が手がかりを残すなら、パケット同士をもっと似せる、というのは自然な発想です。<strong
+        >パディング</strong
+      >
+      は短いパケットを指定サイズまで埋めることができます。一方、<strong
+        >dummy traffic</strong
+      >
+      は、同量の実データがないときに、相手が識別して破棄できるダミーデータを加えます。前者はサイズを変え、後者は一部の空白やバーストの形も変えられます。
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >同じサイズのパケットでも、リズムは異なり得る</span
+        ><span class="pg-figure-tag"
+          >概念的な時系列 · パケットキャプチャではありません</span
+        >
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="元のパケット、固定サイズ、固定レートの 3 行の比較。横方向にスクロールできます"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <div class="pg-packet-comparison">
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              元のトラフィック<br />サイズも間隔も変動
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-2069f90061"></i
+              ><i class="pg-packet pg-geometry-9a99ab2da7"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-4515267cdf"></i
+              ><i class="pg-packet pg-geometry-ffb2e49749"></i
+              ><i class="pg-packet pg-geometry-7b2c1b0f26"></i
+              ><i class="pg-packet pg-geometry-b3fcf0824d"></i>
+            </div>
+          </div>
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              固定パケットサイズ<br />バーストの時刻は残る
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-d5b815c143"></i
+              ><i class="pg-packet pg-geometry-e37327da60"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-e24598056c"></i
+              ><i class="pg-packet pg-geometry-96b59ee503"></i
+              ><i class="pg-packet pg-geometry-db8cd4399c"></i
+              ><i class="pg-packet pg-geometry-97c9b714f9"></i>
+            </div>
+          </div>
+          <div class="pg-packet-row">
+            <div class="pg-packet-row-label">
+              固定レートのスケジューリング<br />待機＋空きスロットの補充
+            </div>
+            <div aria-hidden="true" class="pg-packet-line">
+              <i class="pg-packet pg-geometry-d5b815c143"></i
+              ><i class="pg-packet pg-geometry-8bf1c54dd2"></i
+              ><i class="pg-packet pg-geometry-16b1624071"></i
+              ><i class="pg-packet pg-dummy pg-geometry-20de4764a4"></i
+              ><i class="pg-packet pg-dummy pg-geometry-3fbb676c2f"></i
+              ><i class="pg-packet pg-geometry-a541a1e575"></i
+              ><i class="pg-packet pg-geometry-f4235a132d"></i
+              ><i class="pg-packet pg-dummy pg-geometry-15eaa369da"></i
+              ><i class="pg-packet pg-geometry-db8cd4399c"></i
+              ><i class="pg-packet pg-geometry-51ae4cb3c9"></i>
+            </div>
+          </div>
+        </div>
+        <p class="pg-packet-note">
+          横方向の位置は右へ進む時間を、長方形の高さはパケットサイズを表します。塗りつぶしは実データを含み、斜線は
+          dummy
+          です。最後の行では、現在の時間スロットに間に合わないデータは次のスロットまで待ちます。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 07</span
+        >固定パケットサイズはサイズの違いを減らします。固定レートでは送信時刻を制御し、空きスロットを
+        dummy で埋める必要があります。両者はコストも、隠せる信号も異なります。
+      </figcaption>
+    </figure>
+    <h3 id="pg-padding-detail-1">
+      DAITA の焦点は形であり、暗号アルゴリズムの変更ではない
+    </h3>
+    <p>
+      Mullvad が公開した DAITA
+      の設計は、固定パケットサイズ、バックグラウンドのダミートラフィック、パターンの撹乱を組み合わせています。2025
+      年に発表された DAITA v2 は、VPN
+      接続の確立時に動的な設定を割り当て、接続ごとに異なる dummy
+      挿入戦略を使います。再接続時にも設定が変わります。作用する単位は VPN
+      接続であり、BitTorrent の各 peer flow
+      が独立した戦略を持つとそのまま見なすことはできません。<sup
+        ><a href="#pg-ref-15" class="pg-ref">[15]</a></sup
+      >
+    </p>
+    <p>
+      v2 の発表にある「dummy
+      パケットの使用量を約半減」は、その種の追加パケットの調整を指します。すべてのワークロードで総トラフィックのオーバーヘッドが一律に半減するという意味ではありません。同様に、固定パケットサイズが固定送信レートを直接約束するわけでもありません。効果は、元のトラフィック、パディング戦略、ボトルネックの帯域、攻撃者が観察する位置によって変わります。
+    </p>
+    <h3 id="pg-padding-detail-2">防御が変われば、観察者も学習し直せる</h3>
+    <p>
+      <i>Ephemeral Network-Layer Fingerprinting Defenses</i>（PoPETs
+      2026）は、接続ごとに異なる防御を使う戦略を研究し、WireGuard との統合と
+      Mullvad での導入経験を報告しています。主な評価対象は
+      circuit、website、video fingerprinting です。これらの結果を、BitTorrent
+      の両端相関が成功または失敗する割合へ直接換算することはできません。<sup
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      同じ論文は、必要な反証的結果も示しています。指定されたクローズドワールドのシミュレーションでは、攻撃者により多くの訓練とデータ拡張の機会があると、評価した複数の
+      padding-only
+      防御の効果が大幅に弱まりました。blocking／遅延を加える防御には効果が残りましたが、やはりモデルとコストの制約を受けます。設定をランダムにすれば固定テンプレートを当てはめにくくなりますが、攻撃者が設定の分布全体を学習することは防げません。
+    </p>
+    <h3 id="pg-padding-detail-3">
+      DeTorrent：敵対的学習でパディング戦略を探索する
+    </h3>
+    <p>
+      <i>DeTorrent</i>（PoPETs
+      2024）は、防御を生成するモデルとトラフィックを識別するモデルを競わせ、dummy
+      の挿入戦略を探索します。研究対象は Tor
+      などの匿名通信環境であり、ウェブサイト指紋識別とトラフィック相関を別々に評価しています。<strong
+        >名前に Torrent が入っているからといって、あらゆる BitTorrent
+        転送への適用が証明されたわけではありません</strong
+      >。論文では、指定の FC 設定において、FPR が 10⁻⁵ のとき TPR を約 0.12
+      まで下げられると報告しています。これはその実験の動作点であり、利用者のリスクが
+      12% だけになるという意味ではありません。<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a></sup
+      >
+    </p>
+    <p>
+      Padding-only
+      は、戦略として実パケットを意図的に保持して待たせないことを意味します。それでも追加データは帯域、CPU、キューを消費します。回線が飽和に近い場合、「スケジューリングによる遅延がない」ことと、実際の遅延が増えることは両立します。アルゴリズムの動作とネットワーク全体での結果を分けてこそ、こうした研究の価値と限界が理解できます。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">08 · コスト</div>
+    <h2 id="pg-cost">
+      リズムを平らにするには、帯域か待ち時間を支払う必要がある
+    </h2>
+    <p>
+      固定レートは、分かりやすい思考実験です。アプリケーションにデータがあってもなくても、接続は毎秒一定量を送ります。実データが足りないときは
+      dummy
+      で埋め、急に割り当て量を超えたときはキューに入れます。観察者から見える短期的なレートは安定しますが、コストは別の見える場所へ移ります。
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="固定レートのキューの例"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          例：毎秒 2 MiB を固定で送信。各スロットは 1 秒で、ヘッダーと再送は無視
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">時間スロット</th>
+            <th scope="col">新しいデータ<br />MiB</th>
+            <th scope="col">送信する実データ<br />MiB</th>
+            <th scope="col">送信する dummy<br />MiB</th>
+            <th scope="col">スロット終了時の待機量<br />MiB</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1 秒目</th>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <th scope="row">2 秒目</th>
+            <td>5</td>
+            <td>2</td>
+            <td>0</td>
+            <td><strong>3</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">3 秒目</th>
+            <td>1</td>
+            <td>2</td>
+            <td>0</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <th scope="row">4 秒目</th>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <th scope="row">5 秒目</th>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      この 5 秒間に送るのは合計 10 MiB で、そのうち実データは 7 MiB
+      だけです。追加の 3 MiB は、外観を安定させるためのコストです。2
+      秒目のバーストは出力へすぐに全量が反映されません。そのうち 3 MiB
+      がキューに残るためです。データは消えたのではなく、少し遅れて届くのです。
+    </p>
+    <div class="pg-equation">
+      qₖ₊₁ = max(0, qₖ + aₖ − RΔ)<small
+        >qₖ：スロット開始時に待機しているデータ量。aₖ：このスロットで追加されるデータ量。R：固定のサービスレート。Δ：時間スロットの長さ。RΔ、q、a
+        には同じデータ量の単位を使います。この例では、データが各スロットの開始時に加わると仮定し、流体モデルで数えています。</small
+      >
+    </div>
+    <p>
+      長期的な入力レートが R を上回ると、キューは増え続けます。平均入力が R
+      を下回っていても、大きなバーストは裾の長い待ち時間を生じさせる可能性があります。メモリを制限するには、アプリケーションへ圧力を返す、追加の入力を拒否する、または戦略を変える必要があります。出力レートを一時的に引き上げると、負荷の変化が再び露出する可能性があります。
+    </p>
+    <h3 id="pg-cost-detail-1">
+      高くつくのは、むしろアイドル時間であることが多い
+    </h3>
+    <p>
+      一方向の通信を継続して <strong>20 Mbit/s</strong> に維持すると、1 日 24
+      時間で約 <strong>216 GB</strong> を送信します。計算は 20,000,000 × 86,400
+      ÷ 8 です。ここでは 10 進数の GB
+      を使い、その他のカプセル化や再送は無視しています。その日に本当に送る必要があるデータが
+      10 GB だけなら、残りの約 206 GB
+      はすべて、このスケジュールを維持するための容量コストです。実データに対する追加量は約
+      2,060%
+      になります。これは算術上の例であり、どの製品の既定値にも対応していません。
+    </p>
+    <p>
+      そのため、防御の性能を見るときは、
+      <strong>goodput</strong
+      >、つまり実際に届いた有用なデータ量にも注意する必要があります。回線上の毎秒の
+      bytes が多くても、dummy
+      が多いだけかもしれません。実データ量がゼロなら、追加量／実データ量の比率は定義できません。その場合は、割合を示すより毎秒のカバートラフィックを直接見るほうが明確です。
+    </p>
+    <h3 id="pg-cost-detail-2">
+      匿名通信で、このトレードオフに繰り返し直面するのはなぜか？
+    </h3>
+    <p>
+      「誰が、いつ、突然データを持ったか」を隠す一般的な方法は、データがないときにも送信するか、データを一時的に保持して他のメッセージと混ぜることです。前者は帯域を、後者は時間を使います。<i
+        >Comprehensive Anonymity Trilemma</i
+      >
+      は、こうした制約を形式モデルに取り込み、利用者間の協調も分析に含めています。その結論は、特定の匿名性の定義、観察能力、プロトコルモデルに依存します。<sup
+        ><a href="#pg-ref-18" class="pg-ref">[18]</a></sup
+      >
+    </p>
+    <p>
+      それでも、限定された攻撃者と現実的な予算のもとで防御を改善することは可能です。意味のある進歩とは、同じ条件のもとで、より少ない帯域や待ち時間で、利用可能な信号をより多く取り除くことです。固定レートにも境界があります。開始・終了の時刻、戦略の切り替え、スケジュールで処理しきれない過負荷、保護されていない別の経路は、引き続き情報を残す可能性があります。
+    </p>
+  </section>
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">09 · ミキシング</div>
+    <h2 id="pg-mixing">マルチホップ、複数利用者による共有、本当のミキシング</h2>
+    <p>
+      中継ノードを増やすと観察位置を分散でき、多くの人が出口を共有すれば同じ外向き
+      IP
+      に複数の人を対応させられます。しかし、すべての入力が反対側から直ちに送り出されるなら、時間的な対応関係は依然として鮮明な場合があります。<strong
+        >集約</strong
+      >
+      は単にトラフィックをまとめることですが、<strong>ミキシング</strong>
+      はさらに、観察者が入力と出力を 1 対 1
+      に結び直すことを難しくしようとします。
+    </p>
+    <p>
+      ミックスノードは、まずメッセージを保持し、その後、異なるメッセージの送信順序を変えることができます。暗号化によるカプセル化でも、入力と出力に直接照合できる外観が残らないようにする必要があります。そうしなければ、順序を入れ替えても、観察者は同じバイト列を直接照合できるかもしれません。実際の匿名ネットワークでは、パケット形式、経路、リプレイ、破棄、悪意のあるノードなどの条件にも対処する必要があります。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <figure id="pg-mix-figure" class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >入力順序から、複数の出力対応の可能性を作る</span
+        ><span class="pg-figure-tag"
+          >概念アニメーション · Loopix の実装ではありません</span
+        >
+      </div>
+      <div class="pg-figure-body">
+        <section id="pg-mix-controls" class="pg-demo-controls"></section>
+        <div id="pg-mix-grid" class="pg-mix-grid">
+          <div class="pg-mix-lane">
+            <div class="pg-mix-label">受信順序 · 3 つの送信元</div>
+            <div class="pg-mix-packets">
+              <span class="pg-mix-token">A₁</span
+              ><span class="pg-mix-token">B₁</span
+              ><span class="pg-mix-token">A₂</span
+              ><span class="pg-mix-token">C₁</span>
+            </div>
+          </div>
+          <div class="pg-mix-center">
+            <span id="pg-mix-center-label">待機と並べ替え</span
+            ><span aria-hidden="true" class="pg-arrow">→</span>
+          </div>
+          <div class="pg-mix-lane">
+            <div id="pg-mix-output-label" class="pg-mix-label">
+              可能な送信順序の一例
+            </div>
+            <div id="pg-mix-output" class="pg-mix-packets">
+              <span class="pg-mix-token">C₁</span
+              ><span class="pg-mix-token">A₁</span
+              ><span class="pg-mix-token">D</span
+              ><span class="pg-mix-token">B₁</span
+              ><span class="pg-mix-token">A₂</span>
+            </div>
+          </div>
+        </div>
+        <p id="pg-mix-status" aria-live="polite" class="pg-status-line">
+          待機、並べ替え、D（dummy）の追加を経ると、出力は到着順にそのまま並ばなくなります。
+        </p>
+        <p class="pg-model-caveat">
+          A／B／C、色、枠線は説明用の印にすぎません。実際に送る暗号文には、こうした送信元ラベルは付きません。この小さなアニメーションは仕組みを示すだけで、匿名集合の計算や安全性の証明はしていません。
+        </p>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 08</span
+        >順序を変えるだけでは不十分です。ミキシングには、異なる送信元の区別しにくいメッセージ、適切な暗号化後の外観、モデルに合った待機とカバートラフィックが必要です。他のメッセージがすべて観察者の管理下にあれば、観察者は自分のデータを除外でき、残る保護は変わります。
+      </figcaption>
+    </figure>
+    <h3 id="pg-mixing-detail-1">
+      Loopix が数秒待つことを受け入れるのはなぜか？
+    </h3>
+    <p>
+      <i>Loopix</i>（USENIX Security 2017）は、複数層の
+      mix、カバートラフィック、loop messages
+      を組み合わせた、メッセージ指向の匿名通信システムです。その
+      <strong>Poisson mixing</strong>
+      は、各メッセージをそれぞれランダムな時間だけ待たせ、すべてのノードが同じ同期ラウンドを一緒に待つ必要をなくします。論文は指数分布に従う独立した遅延を採用し、そのモデルのもとで、ネットワーク全体を見られる観察者と能動攻撃を分析しています。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <p>
+      Loopix のメッセージ全体の遅延は秒単位です。「比較的低遅延」という表現は
+      mix-system の文脈で使われており、対話的な VPN
+      が目指す体感とは異なります。待ち時間を許容できる通信へこの仕組みを広げることには示唆がありますが、メッセージシステムの分析を、高速で持続的かつ双方向の
+      BitTorrent に対する既存の保証と直接見なすことはできません。
+    </p>
+    <h3 id="pg-mixing-detail-2">
+      多数の利用者は、実際に区別しにくいトラフィックをもたらす必要がある
+    </h3>
+    <p>
+      登録アカウントが 1 万あっても、ある時間窓に有効な候補が 1
+      万存在するとは限りません。大半がオフラインだったり、トラフィックの形を容易に見分けられたりするかもしれません。また、多数のメッセージが攻撃者自身の管理するノードから来ている可能性もあります。カバーを提供するのは、関連する時間、経路、観察条件のもとでなお区別しにくいトラフィックであり、単なる総ノード数ではありません。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a
+        ><a href="#pg-ref-18" class="pg-ref">[18]</a></sup
+      >
+    </p>
+    <p>
+      マルチパスにも同様の条件があります。一部の経路しか見えない観察者に対しては、データを分散すると得られる情報を減らせる可能性があります。しかし同じ攻撃者が全経路を再集約できるなら、分流自体は相関を消しません。論理上
+      3
+      本の線を描くだけでなく、それらが本当に異なる観察・管理範囲を通るか確認する必要があります。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">10 · 構成の選択</div>
+    <h2 id="pg-architectures">仕組みを VPN、Seedbox、Tor、I2P に当てはめる</h2>
+    <p>
+      可視性、分離、ミキシングを理解すると、異なる構成を比較できます。重要なのは、通信のどの区間を変え、新たな信頼をどこに置くかです。すべての方式を
+      1
+      つの匿名性スコアに押し込めると、もともと異なる問いに答えていることを見落とします。
+    </p>
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="VPN、Seedbox、Tor、I2P、ミックスネットワークの構成比較"
+      class="pg-table-wrap"
+    >
+      <table>
+        <caption>
+          同じ問い、異なる経路。これは仕組みの比較であり、統一的な性能順位ではありません
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">構成</th>
+            <th scope="col">何を変えるか</th>
+            <th scope="col">理解するために、続けて問うべきこと</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">VPN＋経路の分離</th>
+            <td>
+              通常のインターネット P2P を VPN
+              の出口経由にし、意図しない直接接続を制限します。
+            </td>
+            <td>
+              どのトラフィックが対象か？ VPN を誰が管理するか？
+              機能しなくなったとき、他にどんな出口があるか？
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Seedbox</th>
+            <td>
+              ダウンロードとシーディングのプロセスを遠隔ホストへ移し、自宅側は管理またはファイル取得の経路で利用します。
+            </td>
+            <td>
+              遠隔ディスク、アカウント、ホスティング事業者、ファイル取得記録は誰が扱うか？
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Tor</th>
+            <td>
+              経路情報を異なる中継へ分担させ、単一の中継が通常は一部の関係だけを把握するようにします。
+            </td>
+            <td>
+              アプリケーションは Tor を正しく使っているか？
+              攻撃者は両端を観察できるか？
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">I2P ネイティブ P2P</th>
+            <td>
+              オーバーレイの Destination
+              とトンネルでアプリケーション通信を行い、peer の発見も I2P
+              に合わせます。
+            </td>
+            <td>
+              通信は完全にオーバーレイ内にとどまるか？
+              下位層と長期的な活動は、どんな信号を残すか？
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Mixnet</th>
+            <td>
+              メッセージのカプセル化、待機、ミキシングによって、入力と出力の対応を変えます。
+            </td>
+            <td>
+              どのノードが正直である必要があるか？
+              どれだけの遅延を許容できるか？
+              カバートラフィックと負荷の条件は何か？
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="pg-architectures-detail-1">Seedbox が移すのは実行場所</h3>
+    <p>
+      Seedbox 上のクライアントが swarm
+      に直接参加し、自宅の端末はそれを管理するか、ファイルを取得するだけです。構造上、自宅のネットワークと
+      swarm
+      のエンドポイントを分離できますが、代わりにファイル、アプリケーションの状態、アカウントは別のホストに置かれます。これは通信経路から導かれる結論です。実際の記録と信頼条件は、サービスや自主管理の方法によって異なります。
+    </p>
+    <h3 id="pg-architectures-detail-2">
+      Tor は情報を分散して、単一地点からの可視性を下げる
+    </h3>
+    <p>
+      Tor
+      の経路設計では、異なる中継が関係の一部ずつを把握します。しかし低遅延の転送には、照合可能なリズムが残る可能性があります。また、Tor
+      は通常の BitTorrent クライアントを汎用的に包む仕組みではありません。Tor
+      公式は、クライアントからの漏えいや出口ノードの負荷などを指摘し、Tor 経由で
+      Torrent
+      クライアントを使うことを推奨していません。この利用上の制限と、匿名通信研究における
+      Tor の価値は、どちらも分けて明確にする必要があります。<sup
+        ><a href="#pg-ref-11" class="pg-ref">[11]</a
+        ><a href="#pg-ref-25" class="pg-ref">[25]</a></sup
+      >
+    </p>
+    <h3 id="pg-architectures-detail-3">
+      I2P は、アプリケーションが相手を見つける方法を変える
+    </h3>
+    <p>
+      I2P アプリケーションは
+      <strong>Destination</strong>
+      のような暗号学的なエンドポイント識別子を使い、outbound と inbound tunnels
+      を通じて相手へメッセージを届けます。BitTorrent over I2P の tracker と peer
+      の表現も、このモデルに合わせる必要があります。通常の公開 swarm
+      をそのまま別の VPN 出口につなぐわけではありません。<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+    <p>
+      アプリケーションのエンドポイントが自宅の IP
+      と直接同じではなくても、下位層の router 同士で IP
+      がまったく見えないという意味ではありません。I2P
+      の脅威分析は、タイミング、交差、Sybil、トラフィック分析などを扱っています。こうした観察能力と照らし合わせるほうが、「何ホップ増えたか」で匿名性を推測するより有益です。旧脅威モデルのページには適用バージョンが
+      0.8.1
+      と記されているため、ここでは脅威の分類を参照しており、現行バージョンの安全性評価として扱ってはいません。<sup
+        ><a href="#pg-ref-19" class="pg-ref">[19]</a></sup
+      >
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">11 · 仕組みを掘り下げる</div>
+    <h2 id="pg-bulk">
+      大量のファイル転送にミキシングを取り入れるなら、ネットワークは何を変える必要があるのか？
+    </h2>
+    <p>
+      ここまでの仕組みから、自然に 1
+      つの考えが生まれます。複数の人の実トラフィックを集め、接続ごとに整形戦略を変え、許容できる遅延の範囲で混ぜ、異なる経路に送り出すというものです。他の人の実データがカバーになれば、dummy
+      がすべてを担う必要はありません。
+    </p>
+    <p>
+      難しいのは、アプリケーションの転送には固有の意味論があることです。TCP
+      は信頼性のある順序付きバイトストリームを提供し、接続にはシーケンス番号、確認応答、状態もあります。1
+      本の peer TCP 接続を任意に 3 本の外向き接続へ切り分けて、変更していない
+      peer がそれらを同じストリームとして扱うと仮定することはできません。<sup
+        ><a href="#pg-ref-20" class="pg-ref">[20]</a></sup
+      >
+    </p>
+    <figure class="pg-figure">
+      <div class="pg-figure-head">
+        <span class="pg-figure-title"
+          >自前のオーバーレイ内では形を変えられても、出口ではストリームを復元する必要がある</span
+        ><span class="pg-figure-tag"
+          >仮想的な構成 · 仕組みを説明するためのもの</span
+        >
+      </div>
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="複数ストリームのオーバーレイと出口での再構成の図。横方向にスクロールできます"
+        class="pg-figure-body pg-figure-viewport"
+      >
+        <svg
+          viewbox="0 0 800 350"
+          role="img"
+          aria-labelledby="pg-overlay-title pg-overlay-desc"
+          class="pg-diagram pg-geometry-1c0dc43552"
+        >
+          <title id="pg-overlay-title">
+            複数ストリームを混合するオーバーレイの意味論上の境界
+          </title>
+          <desc id="pg-overlay-desc">
+            2
+            本のアプリケーションストリームを入口プロキシへ渡し、協調するプロキシ間で分割、整形、待機を行い、異なる経路で出口プロキシへ送ります。出口は各ストリームを再構成してから、それぞれ元の相手へ接続します。分割はオーバーレイ内で行われるもので、出口の接続を自動的になくすものではありません。
+          </desc>
+          <defs>
+            <marker
+              id="pg-arrow-overlay"
+              markerwidth="8"
+              markerheight="8"
+              refx="7"
+              refy="4"
+              orient="auto"
+            >
+              <path d="M1 1 7 4 1 7" class="pg-geometry-a311b83b06"></path>
+            </marker>
+          </defs>
+          <rect
+            x="167"
+            y="18"
+            width="468"
+            height="286"
+            rx="10"
+            class="pg-geometry-54265e0d6e"
+          ></rect>
+          <text x="401" y="45" class="pg-secondary pg-geometry-35afd8367b">
+            協調するプロキシ間のオーバーレイ：カプセル化、整形、待機、再構成
+          </text>
+          <rect
+            x="12"
+            y="128"
+            width="126"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="75" y="159" class="pg-geometry-35afd8367b">
+            アプリケーションストリーム
+          </text>
+          <text x="75" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            A、B …
+          </text>
+          <text x="75" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            元のデータ順序
+          </text>
+          <rect
+            x="186"
+            y="128"
+            width="120"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="246" y="160" class="pg-geometry-35afd8367b">
+            入口プロキシ
+          </text>
+          <text x="246" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            内部メッセージに分割
+          </text>
+          <text x="246" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            複数の送信元をまとめてスケジュール
+          </text>
+          <rect
+            x="353"
+            y="76"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="105" class="pg-secondary pg-geometry-35afd8367b">
+            経路 1
+          </text>
+          <rect
+            x="353"
+            y="150"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="179" class="pg-secondary pg-geometry-35afd8367b">
+            経路 2
+          </text>
+          <rect
+            x="353"
+            y="224"
+            width="102"
+            height="48"
+            rx="6"
+            class="pg-box"
+          ></rect>
+          <text x="404" y="253" class="pg-secondary pg-geometry-35afd8367b">
+            経路 3
+          </text>
+          <rect
+            x="502"
+            y="128"
+            width="114"
+            height="92"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="559" y="160" class="pg-geometry-35afd8367b">
+            出口プロキシ
+          </text>
+          <text x="559" y="184" class="pg-secondary pg-geometry-35afd8367b">
+            dummy を除去
+          </text>
+          <text x="559" y="205" class="pg-tiny pg-geometry-35afd8367b">
+            ストリームごとに再構成
+          </text>
+          <rect
+            x="668"
+            y="94"
+            width="120"
+            height="66"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="728" y="121" class="pg-geometry-35afd8367b">接続相手 A</text>
+          <text x="728" y="144" class="pg-tiny pg-geometry-35afd8367b">
+            A の接続の意味論
+          </text>
+          <rect
+            x="668"
+            y="188"
+            width="120"
+            height="66"
+            rx="7"
+            class="pg-box"
+          ></rect>
+          <text x="728" y="215" class="pg-geometry-35afd8367b">接続相手 B</text>
+          <text x="728" y="238" class="pg-tiny pg-geometry-35afd8367b">
+            B の接続の意味論
+          </text>
+          <path
+            d="M138 174H179"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M306 174H327V100H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M306 174H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M327 174V248H347"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M455 100H478V174H495"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M455 174H495"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path d="M455 248H478V174" class="pg-wire"></path>
+          <path
+            d="M616 174H646V127H661"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <path
+            d="M646 174V221H661"
+            marker-end="url(#pg-arrow-overlay)"
+            class="pg-wire"
+          ></path>
+          <text x="400" y="333" class="pg-secondary pg-geometry-35afd8367b">
+            途中の転送方法を変えても、出口側の接続や時刻の情報が自動的になくなるわけではありません。
+          </text>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="pg-fig-number">図 09</span
+        >この図は、考えられる実装上の道筋を説明しており、新しいプロトコルに匿名性の証明がすでにあると主張するものではありません。入口と出口の管理関係、経路の可視性、有効な混合元が、引き続き保護範囲を決めます。
+      </figcaption>
+    </figure>
+    <h3 id="pg-bulk-detail-1">
+      オーバーレイ内で分割し、外部に対しては元の通信を維持する
+    </h3>
+    <p>
+      比較的分かりやすい方法は、協調する入口・出口プロキシが、まず転送を引き受けることです。2
+      つのプロキシの間では、各ストリームを内部メッセージへ分割し、整形、待機、マルチパス転送を行えます。出口では各ストリームの論理的な順序に沿って再構成し、元の
+      peer との通信を維持します。
+    </p>
+    <p>
+      これにより途中のネットワークから見える形は変えられますが、出口は依然として元の相手へデータを送る必要があります。異なる外向き接続をさらに統合する、接続の識別情報を移す、peer
+      のプロトコル動作を変えるといったことには、受信側や追加のプロキシの協力が必要です。矢印に「split／merge」と書くのは簡単ですが、転送の意味論を維持することこそ実際の難しさです。これらは
+      TCP とプロキシモデルから導かれる工学的な制約です。<sup
+        ><a href="#pg-ref-20" class="pg-ref">[20]</a></sup
+      >
+    </p>
+    <h3 id="pg-bulk-detail-2">遅延に上限があると、何が難しくなるのか？</h3>
+    <p>
+      各メッセージが最大 50
+      ミリ秒しか待てないなら、低負荷時には他の送信元が到着する前に送り出さなければならないかもしれません。遅延上限は、混ぜられる時間範囲を狭めます。dummy
+      を増やせば外観の一部を補えますが、やはり帯域を支払う必要があります。高負荷時には、バッファ、バックプレッシャー、テール遅延の問題にも直面する可能性があります。
+    </p>
+    <p>
+      これが、Loopix
+      の安全性の結論をそのまま流用できない理由でもあります。指数分布の遅延には、固定された有限の上限がありません。それを打ち切ったり、deadline
+      を加えたり、輻輳時に戦略を変えたりすると、メッセージが出ていく分布と観察可能な動作が変わります。50
+      ミリ秒は上記の思考実験の数値にすぎず、検証済みの安全なしきい値を表すものではありません。<sup
+        ><a href="#pg-ref-17" class="pg-ref">[17]</a></sup
+      >
+    </p>
+    <h3 id="pg-bulk-detail-3">
+      機械学習で戦略を探索できても、未知の環境には向き合う必要がある
+    </h3>
+    <p>
+      学習型コントローラーは、帯域、遅延、特定の攻撃モデルの性能の間で折り合いを探せます。しかし、「現在のこのモデルに推測を誤らせる」ことと、「今後のあらゆる観察者にも識別できなくする」ことには、なお隔たりがあります。攻撃者は再訓練し、異なる特徴を使い、より長い時間や別の経路からデータを取得するかもしれません。<sup
+        ><a href="#pg-ref-14" class="pg-ref">[14]</a
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      したがって、複数ストリームを混合する研究の価値は、どの可視信号が本当に弱まるのか、そしてそのために待ち時間と転送量がどれだけ増えるのかを理解することにあります。少人数、多人数、バックグラウンドトラフィック、資源枯渇、長期観察を同じ全体像へ戻して初めて、見た目のよいトラフィックの形がどの条件で意味を持ち続けるかが分かります。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">12 · 証拠</div>
+    <h2 id="pg-evidence">研究や報道された事件から、何が分かるのか？</h2>
+    <p>
+      公開 P2P
+      の観察可能性には、長年の研究があります。しかし「観察できる」ことと「毎回正しく帰属を特定できる」ことは、併せて読む必要があります。成功した結果と失敗例を一緒に見ることで、匿名化ツールを過大評価する一方で、監視能力も過大評価してしまうことを避けられます。
+    </p>
+    <h3 id="pg-evidence-detail-1">
+      1
+      台のコンピューターで大量の記録を集められるが、エンドポイントを誤解することもある
+    </h3>
+    <p>
+      2010 年に発表された <i>Spying the World from your Laptop</i> は、2009 年 5
+      月 13 日から 8 月 23 日までの計 103 日間の観測に基づき、約 1.48 億の IP
+      アドレスと約 20
+      億のコンテンツコピーに関する観察を報告しました。これは、当時の公開インフラを使って大量の
+      IP—コンテンツ関係を構築できたことを示しています。それらの IP
+      をすべて別々の自然人として確認したわけではなく、同数の完全ダウンロードを検証したという意味でもありません。著者らは、NAT、プロキシ、VPN
+      などの交絡要因も論じています。<sup
+        ><a href="#pg-ref-22" class="pg-ref">[22]</a></sup
+      >
+    </p>
+    <p>
+      2008 年の
+      <i>Why My Printer Received a DMCA Takedown Notice</i>
+      は、別の側面を示しました。研究者が管理するプリンターと無線アクセスポイントが、該当するファイル交換に参加していないにもかかわらず、誤って通知を受け取ったのです。この結果は、間接的な一覧と実際のコンテンツ交換が異なる証拠であることを思い出させます。これは当時の手法に関する実験結果であり、今日のすべての監視サービスが同じ手順を使っているという説明に置き換えるべきではありません。<sup
+        ><a href="#pg-ref-23" class="pg-ref">[23]</a></sup
+      >
+    </p>
+    <h3 id="pg-evidence-detail-2">
+      Nyaa／CODA／JHA の事例：結果は非公開の手法を説明してくれない
+    </h3>
+    <p>
+      CODA は 2026 年 7 月 28 日、Nyaa
+      の初期アップローダーに関する捜査を発表しました。発表によると、日本ハッカー協会が共同プロジェクトで解析ツールを開発し、被疑者に関する情報の取得を支援した後、京都府警が捜査によって特定に至りました。公開資料は、ツールと捜査協力の存在を裏付けますが、ツールを再構築できるほどのデータ源やアルゴリズムは明らかにしていません。<sup
+        ><a href="#pg-ref-24" class="pg-ref">[24]</a></sup
+      >
+    </p>
+    <p>
+      したがって、この発表だけでは、どの種類のトラフィック相関を使ったのか、何らかのログを取得したのか、当事者が
+      VPN
+      を使っていたのかは判断できません。「被疑者を特定した」という結果から、何らかの暗号プロトコルが破られたと逆算することもできません。事件で使われる「最初のアップローダー」は、一般的な
+      BitTorrent の seed とも区別する必要があります。seed
+      は通常、完全なデータを持つノードを意味し、最初の公開者とは限りません。<sup
+        ><a href="#pg-ref-01" class="pg-ref">[1]</a
+        ><a href="#pg-ref-24" class="pg-ref">[24]</a></sup
+      >
+    </p>
+    <h3 id="pg-evidence-detail-3">見事な成功率を読んだら、まず分母を探す</h3>
+    <p>
+      モデルが特定のデータセットで多数の正しい対応を見つけたことは、本当の進歩かもしれません。しかし、各サンプルに答えがあることをデータ側ですでに保証していたり、訓練とテストに似た断片が共有されていたり、最も有利なしきい値だけが報告されていたりすれば、未知のトラフィックや大量の誤った候補に対する性能はまだ分かりません。2026
+      年の Ephemeral と ESPRESSO
+      の研究は、それぞれ攻撃者が十分に訓練した場合と、実際の Tor
+      トラフィックにより近い評価を通じて、条件が結果をどう変えるかを示しています。<sup
+        ><a href="#pg-ref-13" class="pg-ref">[13]</a
+        ><a href="#pg-ref-16" class="pg-ref">[16]</a></sup
+      >
+    </p>
+    <p>
+      「偽陽性が見られなかった」にも標本数が必要です。ほぼ独立で同じ分布に従う負例が
+      m 個あるとすると、偽陽性がゼロだったときの二項モデルによる片側 95%
+      上限は、およそ <code>3/m</code> です。そのような負例を 300,000
+      個テストしても、上限は約 10⁻⁵
+      です。多数の組み合わせが同じ一群のトラフィックを共有していれば、互いに依存する可能性があります。そのため、組み合わせの総数をそのまま同じ程度の独立した証拠と見なすことはできません。これは統計モデルからの導出であり、特定の研究の実測値ではありません。
+    </p>
+    <p>
+      同様に、1
+      回の観察で直接接続がなかったとしても、裏付けられるのは、そのバージョン、その時点の状態、その観察範囲での結論だけです。それと「長期的な活動を関連付けにくい」ことの間には、なお別の問題があります。観察範囲を丁寧に記述してこそ、技術的な結果を使える知識として積み重ねられます。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">13 · 全体像に戻る</div>
+    <h2 id="pg-ending">
+      プライバシーの境界は、観察できる情報の一つひとつにある
+    </h2>
+    <p>
+      1
+      回のダウンロードをここまでたどると、問題はより具体的になりました。BitTorrent
+      は仲間を見つけるために連絡先情報を交換し、VPN
+      は外向きのエンドポイントを別の場所へ移します。インターフェースへのバインド、ファイアウォール、namespace
+      が制限するのは、データが通れる経路です。これらは異なる露出面に有効に対処できますが、時刻、サイズ、アカウント、長期的な活動が残す関係を自動的に消すものではありません。
+    </p>
+    <p>
+      観察者が通信の両端を取得できるなら、防御はトラフィックの形そのものに対処する必要があります。パディングは使えるカバーを増やし、整形は送信のリズムを組み替え、ミキシングは異なる送信元を同じ時間・経路の文脈に置きます。どの変更にも条件があり、コストは帯域、待ち時間、バッファ、アプリケーションプロトコルへ移ります。
+    </p>
+    <div class="pg-takeaway">
+      プライバシー技術を評価する際、最も役立つ出発点は次の問いです。<strong
+        >観察者にはもともと何が見え、利用後には何がまだ見え、そしてどの関係を構築しにくくなったのか。</strong
+      >
+    </div>
+    <p>
+      こう問うことで、VPN
+      による分離の実際の価値と、匿名通信研究がミキシング、動的な整形、複数の送信元によるカバーを探究し続ける理由の両方を理解できます。安全性を見栄えのよい
+      1
+      つのスコアに押し込める必要はありません。保護する位置、使える証拠、支払うコストを明確にすること自体が、より信頼できる技術判断です。
+    </p>
+  </section>
+
+  <section class="pg-article-section">
+    <div class="pg-section-kicker">参考資料</div>
+    <h2 id="pg-sources">出典</h2>
+    <p class="pg-small">
+      出典の参照日：2026-10-25。プロトコルの動作は原文書を基準とします。事業者のポリシーや発表は、その公開声明を表します。研究結果は、それぞれのデータ、攻撃者モデル、実験条件に沿って解釈します。本記事の図解は、描き直した教育用の模式図です。
+    </p>
+    <ol class="pg-source-list">
+      <li id="pg-ref-01">
+        <span class="pg-source-id">[1] BitTorrent の基礎とコンテンツ識別</span
+        ><a href="https://www.bittorrent.org/beps/bep_0003.html"
+          >BEP 3 · The BitTorrent Protocol</a
+        >；<a href="https://www.bittorrent.org/beps/bep_0052.html"
+          >BEP 52 · BitTorrent Protocol v2</a
+        >；<a href="https://libtorrent.org/manual-ref.html#glossary"
+          >libtorrent manual · seed の定義</a
+        ><small
+          >原プロトコルと実装の文書。info dictionary、v1／v2
+          infohash、データのピース。</small
+        >
+      </li>
+      <li id="pg-ref-02">
+        <span class="pg-source-id">[2] Tracker</span
+        ><a href="https://www.bittorrent.org/beps/bep_0015.html"
+          >BEP 15 · UDP Tracker Protocol</a
+        ><small>Announce フィールド、エンドポイント、port、IPv6 形式。</small>
+      </li>
+      <li id="pg-ref-03">
+        <span class="pg-source-id">[3] 分散型の発見</span
+        ><a href="https://www.bittorrent.org/beps/bep_0005.html"
+          >BEP 5 · DHT Protocol</a
+        ><small>get_peers、announce_peer、token、送信元 IP。</small>
+      </li>
+      <li id="pg-ref-04">
+        <span class="pg-source-id">[4] ピア交換</span
+        ><a href="https://www.bittorrent.org/beps/bep_0011.html"
+          >BEP 11 · Peer Exchange</a
+        ><small>PEX の追加／削除の意味論と、信頼できない入力。</small>
+      </li>
+      <li id="pg-ref-05">
+        <span class="pg-source-id">[5] プライベート torrent とローカル発見</span
+        ><a href="https://www.bittorrent.org/beps/bep_0027.html"
+          >BEP 27 · Private Torrents</a
+        >；<a href="https://www.bittorrent.org/beps/bep_0014.html"
+          >BEP 14 · Local Service Discovery</a
+        ><small>アクセス制御、発見の範囲、multicast による通知。</small>
+      </li>
+      <li id="pg-ref-06">
+        <span class="pg-source-id">[6] WireGuard と Linux による分離</span
+        ><a href="https://www.wireguard.com/netns/"
+          >Routing &amp; Network Namespace Integration</a
+        ><small
+          >インターフェースと、その作成時の UDP socket が属する
+          namespace。</small
+        >
+      </li>
+      <li id="pg-ref-07">
+        <span class="pg-source-id">[7] qBittorrent の識別情報</span
+        ><a
+          href="https://github.com/qbittorrent/qBittorrent/wiki/Anonymous-Mode"
+          >Anonymous Mode</a
+        ><small
+          >公式 Wiki。ページ更新日は 2026-09-03 で、バージョンと private torrent
+          による違いを明記。</small
+        >
+      </li>
+      <li id="pg-ref-08">
+        <span class="pg-source-id">[8] Mullvad のデータ・インフラポリシー</span
+        ><a href="https://mullvad.net/en/help/no-logging-data-policy"
+          >No-logging of user activity policy</a
+        >；<a
+          href="https://mullvad.net/en/blog/we-have-successfully-completed-our-migration-to-ram-only-vpn-infrastructure"
+          >RAM-only VPN infrastructure</a
+        ><small
+          >事業者の声明。活動データのポリシーは 2026-06-17 更新、RAM-only
+          への移行発表は 2023 年。</small
+        >
+      </li>
+      <li id="pg-ref-09">
+        <span class="pg-source-id">[9] マルチホップ VPN</span
+        ><a href="https://mullvad.net/en/help/multihop-wireguard"
+          >Multihop with WireGuard</a
+        ><small>入口と出口のネットワーク上の位置を分離。</small>
+      </li>
+      <li id="pg-ref-10">
+        <span class="pg-source-id">[10] インターフェースと socket の動作</span
+        ><a
+          href="https://github.com/qbittorrent/qBittorrent/wiki/How-to-bind-your-vpn-to-prevent-ip-leaks"
+          >qBittorrent · VPN interface binding</a
+        >；<a href="https://libtorrent.org/reference-Settings.html"
+          >libtorrent · Settings</a
+        ><small
+          >公式文書。参照した libtorrent のオンラインリファレンスは 2.1.0
+          と表示されており、これをもとに読者のローカルバージョンを推定することはできません。</small
+        >
+      </li>
+      <li id="pg-ref-11">
+        <span class="pg-source-id">[11] Tor における両端観察の限界</span
+        ><a
+          href="https://support.torproject.org/about-tor/security/attacks-on-onion-routing/"
+          >Limitations and remaining attacks against Tor’s anonymity</a
+        ><small
+          >Tor 公式の説明。両端の timing correlation に関する脅威モデル。</small
+        >
+      </li>
+      <li id="pg-ref-12">
+        <span class="pg-source-id">[12] 経路迂回の研究</span
+        ><a
+          href="https://www.usenix.org/conference/usenixsecurity23/presentation/xue"
+          >Xue ほか · Bypassing Tunnels</a
+        >；<a href="https://www.leviathansecurity.com/blog/tunnelvision"
+          >Leviathan · TunnelVision</a
+        ><small
+          >USENIX Security 2023／2024
+          年の研究者による発表。現在のすべてのクライアントに同じ欠陥が残ることを意味しません。</small
+        >
+      </li>
+      <li id="pg-ref-13">
+        <span class="pg-source-id"
+          >[13] 現実の条件により近いトラフィック相関</span
+        ><a href="https://www.robgjansen.com/publications/espresso-ccs2026.pdf"
+          >Jeon ほか · Brewing Under Pressure: More Realistic Tor Flow
+          Correlation Considering Low FPRs</a
+        ><small
+          >著者が公開した CCS 2026 の原稿。PDF に記載された会期は 2026-11-15～19
+          で、本記事の日付時点ではまだ会期前です。</small
+        >
+      </li>
+      <li id="pg-ref-14">
+        <span class="pg-source-id">[14] 敵対的パディング</span
+        ><a href="https://petsymposium.org/popets/2024/popets-2024-0007.php"
+          >Holland ほか · DeTorrent</a
+        ><small
+          >PoPETs 2024(1),
+          98–115。ウェブサイト指紋識別とトラフィック相関を別々に評価。</small
+        >
+      </li>
+      <li id="pg-ref-15">
+        <span class="pg-source-id">[15] DAITA の公開設計</span
+        ><a
+          href="https://mullvad.net/en/blog/daita-defense-against-ai-guided-traffic-analysis"
+          >DAITA · Defense Against AI-guided Traffic Analysis</a
+        >；<a
+          href="https://mullvad.net/en/blog/daita-version-2-now-available-on-all-platforms"
+          >DAITA version 2</a
+        ><small
+          >Mullvad 公式の紹介と 2025-03-28 の v2
+          発表。固定サイズ、dummy、動的設定。</small
+        >
+      </li>
+      <li id="pg-ref-16">
+        <span class="pg-source-id">[16] 接続ごとに異なる防御</span
+        ><a href="https://petsymposium.org/popets/2026/popets-2026-0022.pdf"
+          >Pulls ほか · Ephemeral Network-Layer Fingerprinting Defenses</a
+        ><small
+          >PoPETs 2026(1), 426–449。導入と実験の範囲、§5.3
+          の十分な訓練を行った場合の限界。</small
+        >
+      </li>
+      <li id="pg-ref-17">
+        <span class="pg-source-id">[17] ミキシングとカバートラフィック</span
+        ><a
+          href="https://www.usenix.org/conference/usenixsecurity17/technical-sessions/presentation/piotrowska"
+          >Piotrowska ほか · The Loopix Anonymity System</a
+        >；<a
+          href="https://www.usenix.org/system/files/conference/usenixsecurity17/sec17-piotrowska.pdf"
+          >原論文の PDF</a
+        ><small
+          >USENIX Security 2017。Poisson mixing、loop
+          traffic、秒単位のメッセージ遅延。</small
+        >
+      </li>
+      <li id="pg-ref-18">
+        <span class="pg-source-id">[18] 匿名性とコストの形式的な制約</span
+        ><a href="https://petsymposium.org/popets/2020/popets-2020-0056.pdf"
+          >Das ほか · Comprehensive Anonymity Trilemma: User Coordination is not
+          enough</a
+        ><small
+          >PoPETs 2020(3),
+          356–383。結論は匿名性の定義と攻撃者モデルに依存して成立。</small
+        >
+      </li>
+      <li id="pg-ref-19">
+        <span class="pg-source-id">[19] I2P の通信と脅威モデル</span
+        ><a href="https://i2p.net/en/docs/overview/intro/">I2P overview</a>；<a
+          href="https://i2p.net/en/docs/applications/bittorrent/"
+          >BitTorrent over I2P</a
+        >；<a href="https://i2p.net/en/docs/overview/threat-model/"
+          >I2P’s Threat Model</a
+        ><small
+          >公式文書。脅威モデルのページは更新 2010-11、適用 0.8.1
+          と記載されており、分類の理解に用いるもので、現行バージョンの実測ではありません。</small
+        >
+      </li>
+      <li id="pg-ref-20">
+        <span class="pg-source-id">[20] ストリームの意味論</span
+        ><a href="https://www.rfc-editor.org/rfc/rfc9293.html"
+          >RFC 9293 · Transmission Control Protocol</a
+        ><small
+          >IETF、2022
+          年。信頼性のある順序付きバイトストリームと接続状態。</small
+        >
+      </li>
+      <li id="pg-ref-21">
+        <span class="pg-source-id">[21] 共有 IP とエンドポイント記録</span
+        ><a href="https://www.rfc-editor.org/rfc/rfc6302.html"
+          >RFC 6302 · Logging Recommendations for Internet-Facing Servers</a
+        ><small
+          >IETF、2011 年。送信元 port、正確な時刻、共有 IPv4
+          の対応付けの問題。</small
+        >
+      </li>
+      <li id="pg-ref-22">
+        <span class="pg-source-id">[22] 大規模な P2P 観察</span
+        ><a
+          href="https://www.usenix.org/legacy/event/leet10/tech/full_papers/LeBlond.pdf"
+          >Le Blond ほか · Spying the World from your Laptop</a
+        ><small>USENIX LEET 2010。観測は 2009 年に行われ、計 103 日間。</small>
+      </li>
+      <li id="pg-ref-23">
+        <span class="pg-source-id">[23] 監視における誤った帰属判断</span
+        ><a
+          href="https://www.usenix.org/legacy/event/hotsec08/tech/full_papers/piatek/piatek_html/"
+          >Piatek ほか · Why My Printer Received a DMCA Takedown Notice</a
+        ><small
+          >HotSec
+          2008。間接的な監視の限界と、プリンターが誤って通知を受け取る実験。</small
+        >
+      </li>
+      <li id="pg-ref-24">
+        <span class="pg-source-id">[24] Nyaa 事例の一次発表</span
+        ><a href="https://coda-cj.jp/news/2850/"
+          >CODA · Nyaa の最初のアップローダー逮捕に関する発表（日本語）</a
+        ><small
+          >2026-07-28。協力と捜査結果を説明した発表であり、再構築可能な解析アルゴリズムは公開していません。</small
+        >
+      </li>
+      <li id="pg-ref-25">
+        <span class="pg-source-id">[25] Tor と Torrent の利用上の制限</span
+        ><a
+          href="https://support.torproject.org/about-tor/using-and-sharing/torrent/"
+          >Tor Project · Can I use Tor with Torrent?</a
+        ><small
+          >Tor 公式は、Tor 経由で Torrent
+          クライアントを使うことを推奨していません。</small
+        >
+      </li>
+    </ol>
+  </section>
+  <div class="pg-footer">
+    <span
+      >図解の数値とアニメーションは、すべて本文で明示した教育用モデルです。</span
+    ><a href="#article-title">記事の先頭に戻る ↑</a>
+  </div>
+</div>
