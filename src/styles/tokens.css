@@ -124,7 +124,8 @@
 
   --width-profile: 960px;
   --width-library: 920px;
-  --width-reader: 740px;
+  --width-reader: 960px;
+  --width-reader-focus: 1120px;
   --width-toc: 220px;
   --gutter: 32px;
   --motion: 140ms ease-out;

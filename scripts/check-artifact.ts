@@ -35,6 +35,27 @@ function walk(directory: string): string[] {
   );
 }
 const files = walk(root);
+// The reader must fill the editor while only its prose column is capped. A
+// capped outer shell strands both the article and its outline on the left.
+const screenCss = files
+  .filter((file) => extname(file) === '.css')
+  .map((file) => readFileSync(file, 'utf8'))
+  .join('\n');
+const readerShellRule = /\.reader-shell\{([^}]+)\}/.exec(screenCss)?.[1];
+const readerMainRule = /\.reader-main\{([^}]+)\}/.exec(screenCss)?.[1];
+if (
+  !readerShellRule?.includes('width:100%') ||
+  readerShellRule.includes('max-width:') ||
+  !readerMainRule?.includes('margin-inline:auto') ||
+  !readerMainRule.includes('max-width:') ||
+  !screenCss.includes('--reader-width:var(--width-reader-focus)') ||
+  !/grid-template-columns:minmax\(0,\s*1fr\)\s*var\(--width-toc\)/.test(
+    screenCss,
+  )
+)
+  failures.push(
+    'Reader must center its prose and keep the outline at the edge',
+  );
 const demoPublication = articleDemoPublication(loadPosts());
 for (const file of files) {
   const name = relative(root, file);

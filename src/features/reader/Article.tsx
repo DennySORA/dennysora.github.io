@@ -48,15 +48,15 @@ export function Article({
   return (
     <div className="reader">
       <div className={`reader-shell${showToc ? ' has-toc' : ''}`}>
-        <a
-          className="backlink"
-          href={folder ? `/${locale}/blog/${folder}/` : `/${locale}/blog/`}
-        >
-          <Icon name="arrow-left" size={18} />
-          {folder ? blogFolders[folder].title[locale] : t.backToLibrary}
-        </a>
         <div className="reader-grid">
           <div className="reader-main">
+            <a
+              className="backlink"
+              href={folder ? `/${locale}/blog/${folder}/` : `/${locale}/blog/`}
+            >
+              <Icon name="arrow-left" size={18} />
+              {folder ? blogFolders[folder].title[locale] : t.backToLibrary}
+            </a>
             {/* Only the header and the text form the search record for this article. */}
             <article
               className="reader-article"
