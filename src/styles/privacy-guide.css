@@ -169,7 +169,7 @@
 }
 .privacy-guide .pg-diagram {
   width: 100%;
-  min-width: 760px;
+  min-width: 0;
   height: auto;
   display: block;
   font: 14px var(--font-sans);
@@ -913,7 +913,7 @@
   height: 31px;
 }
 .privacy-guide .pg-geometry-1c0dc43552 {
-  min-width: 800px;
+  min-width: 0;
 }
 .privacy-guide .pg-geometry-2069f90061 {
   left: 2%;

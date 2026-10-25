@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 // One outline vocabulary (24-unit grid, 1.6 stroke, round caps) for every
 // tab, tree row, action, entity type, status and heading. See docs/DESIGN.md §6.
-const paths = {
+export const paths = {
   arrow: 'M4 12h15m-6-6 6 6-6 6',
   'arrow-left': 'M20 12H5m6-6-6 6 6 6',
   'arrow-down': 'M12 4v15m-6-6 6 6 6-6',

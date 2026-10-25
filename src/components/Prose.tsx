@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 declare const __PRIVACY_DEMOS__: boolean;
 declare const __TRANSLATION_DEMOS__: boolean;
 import { dictionaries, type Locale } from '../i18n/index.ts';
+import { enhanceArticleDiagrams } from '../lib/article-diagrams.ts';
 
 /**
  * Renders build-time sanitized HTML. Copy buttons are progressive enhancement:
@@ -9,6 +10,10 @@ import { dictionaries, type Locale } from '../i18n/index.ts';
  */
 export function Prose({ html, locale }: { html: string; locale: Locale }) {
   const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current) return enhanceArticleDiagrams(ref.current, locale);
+    return undefined;
+  }, [html, locale]);
   useEffect(() => {
     const t = dictionaries[locale];
     const cleanups: (() => void)[] = [];

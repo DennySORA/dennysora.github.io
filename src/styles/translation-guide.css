@@ -135,7 +135,7 @@
   display: block;
   width: 100%;
   height: auto;
-  min-width: 880px;
+  min-width: 0;
 }
 .translation-guide .tg-svg-hint {
   font-size: 12px;
@@ -716,6 +716,7 @@
   overscroll-behavior-inline: contain;
   max-width: 100%;
   background: var(--color-background);
+  container-type: inline-size;
 }
 .translation-guide .tg-dfd-scroll:focus-visible {
   outline: 3px solid var(--color-focus);
@@ -727,6 +728,8 @@
   margin: 0 auto;
   flex: none;
   background: var(--color-background);
+  /* Scale layout as well as paint, so the original height leaves no blank tail. */
+  zoom: var(--diagram-scale, min(1, calc(100cqw / 960px)));
 }
 .translation-guide .tg-dfd-lane {
   position: absolute;

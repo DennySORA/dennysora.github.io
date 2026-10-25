@@ -96,8 +96,36 @@
   padding: var(--space-4);
   border: 1px solid var(--color-border-decorative);
 }
-.translation-guide .tg-dfd-canvas {
-  min-width: 960px;
+.article-diagram-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+  max-width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-chrome);
+  color: var(--color-text);
+  font: 13px/1.5 var(--font-code);
+  white-space: normal;
+}
+.article-diagram-toggle:hover {
+  background: var(--color-surface-raised);
+}
+.article-diagram-toggle:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.translation-guide .tg-dfd-scroll[data-diagram-expanded] > .tg-dfd-canvas {
+  zoom: 1;
+}
+.translation-guide .tg-svg-scroll[data-diagram-expanded] > svg,
+.network-guide .np-diagram-scroll[data-diagram-expanded] > svg,
+.privacy-guide .pg-figure-viewport[data-diagram-expanded] > svg {
+  width: max(100%, var(--diagram-width));
+  max-width: none;
 }
 :lang(ja) .privacy-guide,
 :lang(ja) .translation-guide {

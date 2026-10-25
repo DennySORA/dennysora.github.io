@@ -18,6 +18,9 @@ const noScriptStyles =
   '<style>.requires-js{display:none!important}.no-js-only{display:block!important}' +
   '.tree-children[data-collapsed]{display:block!important}' +
   '.tree-link>.tree-icon-open{display:block!important}.tree-link>.tree-icon-closed{display:none!important}' +
+  '.translation-guide .tg-dfd-canvas{zoom:1}' +
+  '.translation-guide .tg-svg-scroll svg,.network-guide .np-diagram-scroll>svg{min-width:880px}' +
+  '.privacy-guide .pg-diagram{min-width:800px}' +
   '.tree-folder-row>.tree-link>.tree-expander{visibility:visible!important}</style>';
 
 export default function Root() {
