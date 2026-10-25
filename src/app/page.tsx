@@ -31,6 +31,7 @@ import {
   type RouteDescriptor,
 } from '../lib/route-manifest.ts';
 import { siteUrl } from '../lib/site.ts';
+import { crumbs } from '../lib/workspace.ts';
 import { SiteLayout } from '../components/SiteLayout.tsx';
 import { Readme } from '../features/home/Readme.tsx';
 import { SiteSearch } from '../features/search/SiteSearch.tsx';
@@ -465,6 +466,20 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
       )
     : [];
   const article = view.kind === 'article' ? view.article : null;
+  const collection = [
+    'library',
+    'notes',
+    'note-folder',
+    'projects',
+    'project-category',
+    'tags',
+    'topic',
+    'tag',
+  ].includes(view.kind);
+  // Reuse the visible winbar trail; do not invent URLs for unlinked folders.
+  const breadcrumbs = crumbs(data.route).flatMap(({ label, href }) =>
+    href ? [{ label, href }] : [],
+  );
   return [
     { title: data.title },
     { name: 'description', content: data.description },
@@ -541,12 +556,35 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
             }
           : {
               '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'DennySORA',
+              '@type': collection ? 'CollectionPage' : 'WebPage',
+              name: data.title,
+              description: data.description,
               url: data.canonical,
               inLanguage: htmlLang[locale],
+              isPartOf: {
+                '@type': 'WebSite',
+                '@id': `${siteUrl}/#website`,
+                name: 'DennySORA',
+                url: `${siteUrl}/`,
+              },
             },
     },
+    ...(data.indexable && !home && breadcrumbs.length > 1
+      ? [
+          {
+            'script:ld+json': {
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: breadcrumbs.map(({ label, href }, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: label,
+                item: siteUrl + href,
+              })),
+            },
+          },
+        ]
+      : []),
   ];
 };
 
