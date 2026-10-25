@@ -440,15 +440,6 @@ export function validateContent(): void {
   const profile = loadProfile();
   for (const id of profile.featuredProjectIds)
     if (!projectIds.has(id)) problems.push(`Unknown featured project ${id}`);
-  for (const competency of profile.competencies)
-    for (const evidence of competency.evidence)
-      if (
-        (evidence.kind === 'post' && !postIds.has(evidence.id)) ||
-        (evidence.kind === 'project' && !projectIds.has(evidence.id))
-      )
-        problems.push(
-          `Unknown evidence ${evidence.kind}:${evidence.id} in ${competency.id}`,
-        );
   loadComments();
   // A route is publishable only when its complete translated body is loadable.
   for (const locale of locales) {

@@ -135,14 +135,7 @@ export const projectsSchema = z.array(
 export type Project = z.infer<typeof projectsSchema>[number];
 
 const sourceRef = z.object({ url: https, note: z.string() }).strict();
-const evidenceSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('post'), id: safeId }).strict(),
-  z.object({ kind: z.literal('project'), id: safeId }).strict(),
-  z
-    .object({ kind: z.literal('section'), id: z.literal('experience') })
-    .strict(),
-]);
-const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
+const experienceDate = z.string().regex(/^\d{4}(?:-(?:0[1-9]|1[0-2]))?$/);
 export const profileSchema = z
   .object({
     id: z.literal('dennysora'),
@@ -184,26 +177,26 @@ export const profileSchema = z
         z
           .object({
             id: safeId,
-            levels: z
-              .array(z.enum(['production', 'practice', 'learning']))
-              .min(1),
             title: localizedSchema,
             description: localizedSchema,
-            examples: z.array(localizedSchema).max(2),
-            evidence: z.array(evidenceSchema).min(1).max(2),
-            tools: z.array(z.string().min(1)).min(4).max(6),
+            tools: z.array(text).length(3),
+            source: z
+              .object({ label: localizedSchema, url: https })
+              .strict()
+              .optional(),
           })
           .strict(),
       )
-      .length(2),
+      .length(6),
     featuredProjectIds: z.array(safeId).min(2).max(3),
     experience: z.array(
       z
         .object({
           id: safeId,
-          kind: z.enum(['work', 'education']),
-          startDate: yearMonth,
-          endDate: yearMonth.nullable(),
+          kind: z.enum(['work', 'education', 'award']),
+          startDate: experienceDate,
+          endDate: experienceDate.nullable(),
+          dateLabel: localizedSchema.optional(),
           // null never implies "current"; the source must say so.
           current: z.boolean(),
           role: localizedSchema,

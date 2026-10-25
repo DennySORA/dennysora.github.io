@@ -151,80 +151,109 @@
 }
 
 /* Markdown-style lists: a dash marker in the syntax colour. */
-.capability-examples,
 .timeline-highlights,
 .timeline-group ul {
   padding-left: 1.4em;
   list-style-type: '- ';
 }
-.capability-examples li::marker,
 .timeline-highlights li::marker,
 .timeline-group li::marker {
   color: var(--color-syntax-marker);
   font-family: var(--font-code);
 }
 
-/* Competencies: one scope each, framed by an indent guide, not a card. */
+/* Owner-approved v11: six compact skill cards; natural height for translations. */
 .capabilities {
   display: grid;
-  gap: var(--space-5);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
 }
 .capability {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   gap: var(--space-2);
-  padding-left: var(--space-4);
-  border-left: 1px solid var(--color-border-decorative);
-  transition: border-color var(--motion);
-}
-.capability:hover {
-  border-left-color: var(--color-link);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-chip);
+  background: var(--color-surface);
 }
 .capability-title {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
-  font-size: 18px;
+  align-items: start;
+  gap: var(--space-2);
+  font-size: 16.5px;
+  line-height: 1.4;
 }
 .capability-title > .icon {
+  flex: none;
+  margin-top: 2px;
   color: var(--color-link);
 }
-.capability > p {
+.capability-description {
   color: var(--color-text-secondary);
-  font-size: 15.5px;
-  line-height: 1.85;
-}
-.capability-examples {
-  color: var(--color-text-secondary);
-  font-size: 15px;
+  font-size: 14.5px;
   line-height: 1.8;
 }
+.capability-description a {
+  color: var(--color-link);
+}
+.capability-description a .icon {
+  vertical-align: baseline;
+}
 .capability-tools {
-  color: var(--color-text-muted);
-  font-family: var(--font-code);
-  font-size: 12.5px;
-}
-.capability-tools-label {
-  margin-right: 1ch;
-  color: var(--color-entity-kind);
-}
-.capability-tools-label::after {
-  content: ':';
-  content: ':' / '';
-  color: var(--color-syntax-marker);
-}
-.capability-evidence {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 var(--space-5);
+  align-items: baseline;
+  gap: 0 6px;
+  margin-top: auto;
+  padding: 0;
   list-style: none;
-  font-size: 14.5px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 22px;
 }
-.capability-evidence a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 32px;
+.capability-tools li {
+  white-space: nowrap;
+}
+.capability-tools li + li::before {
+  content: '·';
+  margin-right: 6px;
+}
+.capability[data-skill='cloud'] .capability-tools {
+  color: var(--color-skill-cloud);
+}
+.capability[data-skill='backend'] .capability-tools {
+  color: var(--color-skill-backend);
+}
+.capability[data-skill='secure-network'] .capability-tools {
+  color: var(--color-skill-network);
+}
+.capability[data-skill='model-training'] .capability-tools {
+  color: var(--color-skill-model);
+}
+.capability[data-skill='gpu-inference'] .capability-tools {
+  color: var(--color-skill-gpu);
+}
+.capability[data-skill='cryptography'] .capability-tools {
+  color: var(--color-skill-crypto);
+}
+.capability-note {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+@media (max-width: 959px) {
+  .capabilities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 599px) {
+  .capabilities {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* Experience as `git log --graph`: a rail with one commit per role. */

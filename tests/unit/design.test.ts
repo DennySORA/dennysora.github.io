@@ -37,6 +37,12 @@ const reference: Record<string, string> = {
   'entity-kind': '#ccafff',
   'entity-file': '#83d8cf',
   'entity-folder': '#91c6ff',
+  'skill-cloud': '#96c3ff',
+  'skill-backend': '#83d8cf',
+  'skill-network': '#e8b27f',
+  'skill-model': '#ccafff',
+  'skill-gpu': '#f0a3b7',
+  'skill-crypto': '#a9d58b',
   'status-success': '#9bd2ac',
   'status-warning': '#edca8b',
   'status-danger': '#ffa8a1',
@@ -90,6 +96,12 @@ describe('semantic dark tokens', () => {
       'entity-kind',
       'entity-file',
       'entity-folder',
+      'skill-cloud',
+      'skill-backend',
+      'skill-network',
+      'skill-model',
+      'skill-gpu',
+      'skill-crypto',
       'status-warning',
       'status-danger',
       'status-success',
@@ -179,12 +191,15 @@ describe('structured About content', () => {
       expect(text).toContain('EKS');
       expect(text).toContain('Kafka');
       expect(profile.competencies.map((item) => item.id)).toEqual([
-        'backend',
         'cloud',
+        'backend',
+        'secure-network',
+        'model-training',
+        'gpu-inference',
+        'cryptography',
       ]);
-      expect(text).not.toMatch(
-        /Google ADK|LangGraph|CopilotKit|Paper Daily|AI 論文|LLM Architecture/,
-      );
+      expect(text).toMatch(/Google ADK/);
+      expect(text).not.toMatch(/Paper Daily|AI 論文/);
       for (const item of items)
         expect(text, `${locale}: ${item}`).toContain(
           JSON.stringify(item).slice(1, -1),

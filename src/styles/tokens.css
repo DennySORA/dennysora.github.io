@@ -7,6 +7,7 @@
  * --color-gutter, --color-syntax-marker, --color-syntax-constant and
  * --color-overlay-scrim. Status, entity and action roles stay separate even
  * where two share a value.
+ * Owner-approved 2026-10-25: six skill-category text tokens below.
  */
 @theme static {
   /* Surfaces, darkest first: chrome fill, editor canvas, panels, overlays. */
@@ -43,6 +44,14 @@
   --color-entity-kind: #ccafff;
   --color-entity-file: #83d8cf;
   --color-entity-folder: #91c6ff;
+
+  /* Owner-approved 2026-10-25 skill categories: text only, never status. */
+  --color-skill-cloud: #96c3ff;
+  --color-skill-backend: #83d8cf;
+  --color-skill-network: #e8b27f;
+  --color-skill-model: #ccafff;
+  --color-skill-gpu: #f0a3b7;
+  --color-skill-crypto: #a9d58b;
 
   /* States, only for real observed states. */
   --color-status-success: #9bd2ac;

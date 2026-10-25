@@ -28,7 +28,7 @@
 
 **Moonlit Vim**：整個網站是一個設定精良的 Neovim 工作階段。上方 tabline 列出 buffers，左側是 neo-tree 檔案樹，視窗頂端的 winbar 顯示路徑，內容是帶行號的 Markdown buffer，底部是 lualine 式狀態列與 Vim 命令列。
 
-色彩取自品牌 Logo「懷抱月亮的宇宙人像」：深夜藍的畫布、冷藍色的動作色，紫色與青綠色標示類型與檔案。唯一的暖色是月光金，只用在真實的警告狀態與插圖點綴。
+色彩取自品牌 Logo「懷抱月亮的宇宙人像」：深夜藍的畫布、冷藍色的動作色，紫色與青綠色標示類型與檔案。月光金只用在真實的警告狀態與插圖點綴；首頁技能文字分類依 2026-10-25 核准的六色例外呈現，不表示狀態。
 
 三條底線：
 
@@ -79,6 +79,13 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **對比**：所有文字角色在七種表面上都 ≥4.5:1（實測最低 5.05:1）；亮色填色上的深色字 ≥7:1；控制項邊框與焦點框 ≥3:1；行號 ≥3:1。由 [`tests/unit/design.test.ts`](../tests/unit/design.test.ts) 守護。
 - **Vim 模式色**：NORMAL = `action-primary`，INSERT = `status-success`，VISUAL = `entity-kind`，字都是 `action-ink`。
 - **程式碼語法**：註解 `syntax-marker`（斜體）、關鍵字 `entity-kind`、字串 `entity-file`、函式 `link`、型別 `action-primary`、常數 `syntax-constant`、diff 的新增與刪除用 success／danger。
+
+### 首頁技能分類（擁有者核准，2026-10-25）
+
+六張技能卡以文字顏色區分類別，不使用彩色晶片背景，不代表熟練度或狀態。
+`skill-cloud` = `#96c3ff`、`skill-backend` = `#83d8cf`、`skill-network` = `#e8b27f`、
+`skill-model` = `#ccafff`、`skill-gpu` = `#f0a3b7`、`skill-crypto` = `#a9d58b`。
+唯一色碼來源仍是 `tokens.css`，守護測試檢查數值與對比。標題文字也提供分類意義，不只靠顏色。
 
 ## 3. 外框結構
 
@@ -249,6 +256,7 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **浮動視窗**：圖片或預覽放在有標題列的框裡（`.float-title`：圖示＋真實檔名＋可選的真實尺寸），例如首頁 Logo 與醫學封面。
 - **經歷**：`git log --graph` 樣式（`.git-log`），目前的項目以 `HEAD` 標示。
 - **首頁社群邀請**（`.community-recommendation`）：依擁有者 2026-10-24 指示，沒有可見的區段標題；邀請文字與品牌連結置中，三語邀請為 18–20px，社群名稱為 20–26px sans 粗體，Facebook 平台標示為 16px。保留可存取的區域名稱與既有錨點，連結在窄容器內換列，不新增背景、顏色或外框。
+- **首頁技能卡**（2026-10-25 核准）：以 `.capabilities`／`.capability` 呈現六卡，桌面 3 欄 × 2 列；959px 以下為 2 欄、599px 以下為 1 欄。沿用 surface、border-subtle 與 4px 圓角；標題 16.5px、正文 14.5px、技術標籤 12px sans。三語文字可自然增高，不固定高度、截斷或縮字。標籤桌面盡量單行，窄容器允許換行。整個 grid 只有一個行號。保留 AI 驗證限制說明，移除僅跳到下方經歷的 CTA。
 - **首頁捷徑**：依同日指示移除首頁的閱讀部落格／筆記／全站搜尋捷徑；外框導覽、搜尋入口與鍵盤捷徑保留。
 
 ## 9. 元件配方

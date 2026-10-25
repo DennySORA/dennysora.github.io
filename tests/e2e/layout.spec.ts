@@ -33,7 +33,7 @@ test('the home README answers who, what and where to look first on desktop and p
         (heading.textContent ?? '').replace(/^#+\s*/, ''),
       ),
     );
-  expect(names).toEqual(['我主要在做什麼', '一路走來']);
+  expect(names).toEqual(['核心技術與實作方向', '一路走來']);
   // Numbers share one gutter column: every numbered line is unpositioned and
   // measured from the same buffer, however deeply it is nested.
   const gutters = await page.locator('main .ln').evaluateAll((lines) => ({
@@ -57,7 +57,7 @@ test('work history reads without expanding, and details open from the keyboard',
   await page.goto('/en/');
   const entry = page.locator('.timeline-entry').nth(1);
   await expect(entry).toContainText('Senior Cloud Engineer');
-  await expect(entry.locator('.timeline-highlights li')).toHaveCount(1);
+  await expect(entry.locator('.timeline-highlights li')).toHaveCount(2);
   const details = entry.locator('details');
   await details.locator('summary').focus();
   await page.keyboard.press('Enter');
@@ -149,11 +149,19 @@ test('normal screens use the semantic colour roles', async ({ page }) => {
     'rgb(138, 184, 245)',
   );
   expect(await colour('.status-mode')).toBe('rgb(8, 17, 30)');
-  expect(await colour('.capability-evidence a')).toBe('rgb(150, 195, 255)');
-  expect(await colour('.capability .label')).toBe('rgb(204, 175, 255)');
-  expect(await colour('.capability-evidence .resource-link .icon')).toBe(
-    'rgb(131, 216, 207)',
-  );
+  expect(await colour('.capability-description a')).toBe('rgb(150, 195, 255)');
+  for (const [skill, color] of [
+    ['cloud', 'rgb(150, 195, 255)'],
+    ['backend', 'rgb(131, 216, 207)'],
+    ['secure-network', 'rgb(232, 178, 127)'],
+    ['model-training', 'rgb(204, 175, 255)'],
+    ['gpu-inference', 'rgb(240, 163, 183)'],
+    ['cryptography', 'rgb(169, 213, 139)'],
+  ]) {
+    const selector = `.capability[data-skill="${skill}"] .capability-tools`;
+    expect(await colour(selector)).toBe(color);
+    expect(await colour(selector, 'background-color')).toBe('rgba(0, 0, 0, 0)');
+  }
   await page.goto('/zh-hant/note/medical/');
   // Folders carry the folder colour; files the file colour.
   expect(await colour('.tab[data-area="notes"] > .icon')).toBe(

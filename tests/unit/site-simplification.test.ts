@@ -118,7 +118,9 @@ describe('requested website simplification', () => {
       ])
         expect(data.view.profile).not.toHaveProperty(key);
       expect(html).not.toContain('/projects/');
-      expect(html).toContain('https://github.com/DennySORA/httpulse');
+      expect(html).toContain(
+        'https://github.com/trendmicro/adk-agui-middleware',
+      );
       expect(html).not.toMatch(/class="dashboard"|class="dash-item"/);
       const community = html.match(
         /<section[^>]*id="community-title"[^>]*>([\s\S]*?)<\/section>/,

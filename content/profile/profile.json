@@ -2,7 +2,7 @@
   "id": "dennysora",
   "displayName": "DennySORA",
   "publicName": "李汶道",
-  "reviewedAt": "2026-09-20",
+  "reviewedAt": "2026-10-25",
   "provenance": {
     "sources": [
       {
@@ -12,9 +12,21 @@
       {
         "url": "https://github.com/DennySORA/dennysora.github.io/blob/c21ae9e6f360953d348d45f6fc7b3b55d6e53800/detail/about/index.html",
         "note": "Original published profile page."
+      },
+      {
+        "url": "https://www.nkust.edu.tw/p/404-1000-8221.php",
+        "note": "2018 team award; NKUST is the competition host and reporting institution, not the university attended."
+      },
+      {
+        "url": "https://www.ntsh.ntct.edu.tw/ischool/publish_page/6/?cid=191",
+        "note": "2015 competition result, announced 2016-02-16; not attendance dates."
+      },
+      {
+        "url": "https://ithelp.ithome.com.tw/users/20130205/ironman/3517",
+        "note": "Thirty published cryptography tutorials; no evidence of production WireGuard/PKI deployment."
       }
     ],
-    "editorial": "Introduction, focus notes, competency descriptions, examples and experience summaries are v2.1 editorial adaptations of the published profile. The Traditional Chinese wording follows the approved UI/UX v2.1 package; English and Japanese wording was adapted from the existing published translations and still needs owner review.",
+    "editorial": "Introduction, focus notes, competency descriptions, examples and experience summaries are v2.1 editorial adaptations of the published profile. The Traditional Chinese wording follows the approved UI/UX v2.1 package; English and Japanese wording was adapted from the existing published translations and still needs owner review. Owner-approved v11 on 2026-10-25 restores 15 Trend Micro details from the original supplied résumé PDF. New skill descriptions combine owner-supplied copy and repository-source review; VPN/TLS/PKI and DiT architecture remain research, and some GPU workflows remain unverified. Translations preserve these limits. Graduation wording and 2016–2020 years are owner-confirmed; no degree or months inferred.",
     "withheld": "See data/migration/about-sections.json for removed version labels, star counts and repositories that are private (confirmed on 2026-09-26)."
   },
   "introduction": {
@@ -84,85 +96,96 @@
   },
   "competencies": [
     {
+      "id": "cloud",
+      "title": {
+        "zh-hant": "Kubernetes 與雲端架構",
+        "en": "Kubernetes & cloud architecture",
+        "ja": "Kubernetes とクラウド設計"
+      },
+      "description": {
+        "zh-hant": "以 Kubernetes、Terraform 與 Helm 管理基礎設施與服務部署，處理資源配置、網路及相容性問題。",
+        "en": "Manage infrastructure and service deployments with Kubernetes, Terraform and Helm, addressing resource allocation, networking and compatibility.",
+        "ja": "Kubernetes、Terraform、Helm でインフラとサービスのデプロイを管理し、リソース配分、ネットワーク、互換性の課題に対応。"
+      },
+      "tools": ["Kubernetes", "Terraform", "Helm"]
+    },
+    {
       "id": "backend",
-      "levels": ["production"],
       "title": {
         "zh-hant": "後端與分散式系統",
         "en": "Backend & distributed systems",
         "ja": "バックエンドと分散システム"
       },
       "description": {
-        "zh-hant": "從 API 與事件處理，到模組化的服務邊界。關注非同步流程、失敗處理，以及系統如何長期維護。",
-        "en": "From APIs and event processing to modular service boundaries, with attention to asynchronous flows, failure handling and how a system stays maintainable over time.",
-        "ja": "API とイベント処理から、モジュール化されたサービス境界まで。非同期処理、障害時の扱い、そしてシステムを長く保守できるかに注目しています。"
+        "zh-hant": "使用 Go、Python 建構 API 平台與分散式服務，設計非同步資料流、服務協作及故障處理機制。",
+        "en": "Build API platforms and distributed services in Go and Python, designing asynchronous data flows, service coordination and failure handling.",
+        "ja": "Go と Python で API 基盤と分散サービスを構築し、非同期データフロー、サービス連携、障害処理を設計。"
       },
-      "examples": [
-        {
-          "zh-hant": "以 plugin 為基礎的 API 平台（趨勢科技）",
-          "en": "A plugin-based API platform (Trend Micro)",
-          "ja": "プラグインベースの API プラットフォーム（トレンドマイクロ）"
-        },
-        {
-          "zh-hant": "Kafka consumer 服務架構與 Go 低延遲串流伺服器（KKStream）",
-          "en": "Kafka-based consumer services and a low-latency Go streaming server (KKStream)",
-          "ja": "Kafka ベースのコンシューマーサービスと Go による低遅延ストリーミングサーバー（KKStream）"
-        }
-      ],
-      "evidence": [
-        {
-          "kind": "post",
-          "id": "production-systems"
-        },
-        {
-          "kind": "section",
-          "id": "experience"
-        }
-      ],
-      "tools": ["Go", "Python", "Rust", "Kafka", "PostgreSQL", "Redis"]
+      "tools": ["Go", "Python", "Plugin Architecture"]
     },
     {
-      "id": "cloud",
-      "levels": ["production"],
+      "id": "secure-network",
       "title": {
-        "zh-hant": "雲端平台與可觀測性",
-        "en": "Cloud platforms & observability",
-        "ja": "クラウド基盤とオブザーバビリティ"
+        "zh-hant": "VPN 與安全通訊",
+        "en": "VPN & secure communication",
+        "ja": "VPN と安全な通信"
       },
       "description": {
-        "zh-hant": "以 AWS、Kubernetes、Terraform 與可觀測性工具，處理部署、資源配置和基礎設施的實際問題。",
-        "en": "Solving real deployment, resource-allocation and infrastructure problems with AWS, Kubernetes, Terraform and observability tooling.",
-        "ja": "AWS、Kubernetes、Terraform とオブザーバビリティのツールで、デプロイ、リソース配分、インフラの実際の課題に取り組んでいます。"
+        "zh-hant": "研究 WireGuard 隧道、TLS 交握與憑證驗證，釐清網路連線、加密通訊與身分信任的關係。",
+        "en": "Study WireGuard tunnels, TLS handshakes and certificate validation to understand the links between networking, encrypted communication and identity trust.",
+        "ja": "WireGuard トンネル、TLS ハンドシェイク、証明書検証を研究し、ネットワーク、暗号化通信、ID の信頼関係を整理。"
       },
-      "examples": [
-        {
-          "zh-hant": "重新架構 EKS node groups，並把監控移至 ARM 節點（趨勢科技）",
-          "en": "Re-architected EKS node groups and moved monitoring to ARM nodes (Trend Micro)",
-          "ja": "EKS ノードグループを再設計し、監視を ARM ノードへ移行（トレンドマイクロ）"
+      "tools": ["WireGuard", "TLS", "PKI"]
+    },
+    {
+      "id": "model-training",
+      "title": {
+        "zh-hant": "模型架構與訓練",
+        "en": "Model architecture & training",
+        "ja": "モデルアーキテクチャと学習"
+      },
+      "description": {
+        "zh-hant": "實作 LLM 訓練與 SFT／DPO 流程，探索動態層路由；研究 DiT 架構與推論整合。",
+        "en": "Implement LLM training and SFT/DPO workflows, explore dynamic layer routing, and study DiT architecture and inference integration.",
+        "ja": "LLM 学習と SFT／DPO の処理を実装し、動的な層ルーティングを探究。DiT の構造と推論統合を研究。"
+      },
+      "tools": ["DiT", "SFT", "DPO"]
+    },
+    {
+      "id": "gpu-inference",
+      "title": {
+        "zh-hant": "AI 推論與 GPU 效能工程",
+        "en": "AI inference & GPU performance",
+        "ja": "AI 推論と GPU 性能設計"
+      },
+      "description": {
+        "zh-hant": "設計 PTQ 量化工作流，整合模型載入、逐層卸載與 CUDA 預取，分析精度、顯存與效能取捨。",
+        "en": "Design PTQ workflows and integrate model loading, block offload and CUDA prefetch, examining precision, memory and performance trade-offs.",
+        "ja": "PTQ のワークフローを設計し、モデルの読み込み、層単位のオフロード、CUDA プリフェッチを統合。精度、GPU メモリ、性能のトレードオフを分析。"
+      },
+      "tools": ["PTQ", "Block Offload", "CUDA Prefetch"]
+    },
+    {
+      "id": "cryptography",
+      "title": {
+        "zh-hant": "密碼學與安全基礎",
+        "en": "Cryptography & security foundations",
+        "ja": "暗号技術とセキュリティの基礎"
+      },
+      "description": {
+        "zh-hant": "整理對稱／非對稱加密與訊息驗證，撰寫 30 篇密碼學教學，分享原理與實驗程式。",
+        "en": "Explain symmetric/asymmetric encryption and message authentication in 30 cryptography tutorials, sharing principles and experimental code.",
+        "ja": "共通鍵・公開鍵暗号とメッセージ認証を整理し、30 本の暗号技術チュートリアルで原理と実験コードを紹介。"
+      },
+      "tools": ["RSA", "ECC", "HMAC"],
+      "source": {
+        "label": {
+          "zh-hant": "30 篇密碼學教學",
+          "en": "30 cryptography tutorials",
+          "ja": "30 本の暗号技術チュートリアル"
         },
-        {
-          "zh-hant": "模組化 Helm charts 與 CNI 問題排解（趨勢科技）",
-          "en": "Modular Helm charts and CNI troubleshooting (Trend Micro)",
-          "ja": "モジュラー Helm チャートと CNI のトラブルシューティング（トレンドマイクロ）"
-        }
-      ],
-      "evidence": [
-        {
-          "kind": "section",
-          "id": "experience"
-        },
-        {
-          "kind": "project",
-          "id": "httpulse"
-        }
-      ],
-      "tools": [
-        "AWS",
-        "Kubernetes (EKS)",
-        "Terraform",
-        "Helm",
-        "OpenTelemetry",
-        "Prometheus"
-      ]
+        "url": "https://ithelp.ithome.com.tw/users/20130205/ironman/3517"
+      }
     }
   ],
   "featuredProjectIds": ["dgxtop", "httpulse"],
@@ -209,11 +232,16 @@
         "ja": "トレンドマイクロ Trend Micro"
       },
       "summary": {
-        "zh-hant": "參與平台與 API 系統、雲端基礎設施及資料保護相關工作。",
-        "en": "Worked across platform and API systems, cloud infrastructure and data protection.",
-        "ja": "プラットフォームと API システム、クラウド基盤、データ保護に携わりました。"
+        "zh-hant": "參與 AI Agent 編排、平台與 API 系統、雲端基礎設施及資料保護相關工作。",
+        "en": "Worked on AI Agent orchestration, platform and API systems, cloud infrastructure and data protection.",
+        "ja": "AI Agent のオーケストレーション、プラットフォームと API システム、クラウド基盤、データ保護に携わりました。"
       },
       "highlights": [
+        {
+          "zh-hant": "設計並交付 Google ADK Agent 編排平台，整合 A2A、LangGraph、CopilotKit 與 SSE／Human-in-the-Loop。",
+          "en": "Designed and delivered a Google ADK Agent orchestration platform integrating A2A, LangGraph, CopilotKit and SSE/Human-in-the-Loop.",
+          "ja": "Google ADK Agent オーケストレーション基盤を設計・提供し、A2A、LangGraph、CopilotKit、SSE／Human-in-the-Loop を統合。"
+        },
         {
           "zh-hant": "重新架構 EKS node groups：將監控移至 ARM 節點以節省成本，並導入專用的 CPU／記憶體最佳化資源池。",
           "en": "Re-architected EKS node groups: moved monitoring to ARM nodes for cost savings and introduced dedicated CPU-/memory-optimized pools.",
@@ -221,6 +249,55 @@
         }
       ],
       "details": [
+        {
+          "title": {
+            "zh-hant": "Companion-Orchestrator Agent Center",
+            "en": "Companion-Orchestrator Agent Center",
+            "ja": "Companion-Orchestrator Agent Center"
+          },
+          "items": [
+            {
+              "zh-hant": "以 Google ADK 設計並交付 Agent 編排平台，建立清楚的應用架構與模組邊界。",
+              "en": "Designed and delivered an Agent orchestration platform with Google ADK, establishing clear application architecture and module boundaries.",
+              "ja": "Google ADK で Agent オーケストレーション基盤を設計・提供し、アプリケーション構造とモジュール境界を明確化。"
+            },
+            {
+              "zh-hant": "實作 Agent-to-Agent（A2A）通訊，協調遠端 Agent。",
+              "en": "Implemented Agent-to-Agent (A2A) communication to coordinate remote agents.",
+              "ja": "Agent-to-Agent（A2A）通信を実装し、リモート Agent を連携。"
+            },
+            {
+              "zh-hant": "建立具備工具使用、狀態追蹤、重試與錯誤處理的 LLM Agent。",
+              "en": "Built LLM agents with tool use, state tracking, retries and error handling.",
+              "ja": "ツール利用、状態追跡、リトライ、エラー処理を備えた LLM Agent を構築。"
+            },
+            {
+              "zh-hant": "交付 Web Playground，支援情境測試與 prompt／工具除錯；透過 AI 輔助工作流程獨立開發前端。",
+              "en": "Delivered a Web Playground for scenario testing and prompt/tool debugging; independently developed its frontend through an AI-assisted workflow.",
+              "ja": "シナリオテストと prompt／ツールのデバッグ用 Web Playground を提供。AI 支援のワークフローでフロントエンドを単独開発。"
+            },
+            {
+              "zh-hant": "建立 CopilotKit adapter，並組合多步驟 LangGraph 流程。",
+              "en": "Built a CopilotKit adapter and composed multi-step LangGraph workflows.",
+              "ja": "CopilotKit adapter を構築し、複数ステップの LangGraph フローを構成。"
+            },
+            {
+              "zh-hant": "透過資料庫設定動態載入 Agent，支援零停機更新。",
+              "en": "Dynamically loaded agents from database configuration, supporting zero-downtime updates.",
+              "ja": "データベースの設定から Agent を動的に読み込み、無停止更新に対応。"
+            },
+            {
+              "zh-hant": "開發 ADK ↔ AGUI Middleware，提供 SSE 串流與 Human-in-the-Loop 流程，並整合至 orchestrator。",
+              "en": "Developed ADK ↔ AGUI Middleware for SSE streaming and Human-in-the-Loop workflows, integrating it into the orchestrator.",
+              "ja": "SSE ストリーミングと Human-in-the-Loop フロー用の ADK ↔ AGUI Middleware を開発し、orchestrator に統合。"
+            },
+            {
+              "zh-hant": "完成 A2A → ADK → LangGraph → CopilotKit 端到端流程，並由另一團隊跨組織採用。",
+              "en": "Completed an end-to-end A2A → ADK → LangGraph → CopilotKit workflow that was adopted by another team across the organization.",
+              "ja": "A2A → ADK → LangGraph → CopilotKit の一連のフローを完成させ、組織をまたぐ別チームでも採用。"
+            }
+          ]
+        },
         {
           "title": {
             "zh-hant": "平台開發與 API 管理",
@@ -237,6 +314,16 @@
               "zh-hant": "開發 Collector Manager，支援可設定的日誌路由、背壓與重試控制。",
               "en": "Developed a Collector Manager for configurable log routing with backpressure and retry controls.",
               "ja": "バックプレッシャーとリトライ制御を備えた、設定可能なログルーティングの Collector Manager を開発。"
+            },
+            {
+              "zh-hant": "建立 Mini-Companion 系統，透過 GitHub 同步支援宣告式工作流程。",
+              "en": "Built Mini-Companion with GitHub synchronization to support declarative workflows.",
+              "ja": "GitHub 同期で宣言的なワークフローを支える Mini-Companion を構築。"
+            },
+            {
+              "zh-hant": "實作 Companion Proxy，執行 PII 遮蔽與政策式請求過濾。",
+              "en": "Implemented Companion Proxy for PII redaction and policy-based request filtering.",
+              "ja": "PII のマスキングとポリシーに基づくリクエストのフィルタリングを行う Companion Proxy を実装。"
             }
           ]
         },
@@ -271,15 +358,30 @@
         },
         {
           "title": {
-            "zh-hant": "資料安全",
-            "en": "Data Security",
-            "ja": "データセキュリティ"
+            "zh-hant": "AI 整合與資料安全",
+            "en": "AI Integration & Data Security",
+            "ja": "AI 統合とデータセキュリティ"
           },
           "items": [
+            {
+              "zh-hant": "建立 AWS Comprehend PII 管線，成本降低約 99%，同時維持偵測品質。",
+              "en": "Built an AWS Comprehend PII pipeline, reducing its cost by approximately 99% while maintaining detection quality.",
+              "ja": "AWS Comprehend の PII パイプラインを構築し、検出品質を維持しながら、そのコストを約 99% 削減。"
+            },
+            {
+              "zh-hant": "建立 AI Proxy Adapter，整合 Amazon Bedrock 與政策執行。",
+              "en": "Built an AI Proxy Adapter integrating Amazon Bedrock and policy enforcement.",
+              "ja": "Amazon Bedrock とポリシー適用を統合する AI Proxy Adapter を構築。"
+            },
             {
               "zh-hant": "開發 Kafka → Neptune 管線，建置符合 MITRE 框架的知識圖譜。",
               "en": "Developed a Kafka → Neptune pipeline for MITRE-aligned knowledge graphs.",
               "ja": "MITRE 準拠のナレッジグラフ構築のため Kafka → Neptune パイプラインを開発。"
+            },
+            {
+              "zh-hant": "實作細粒度 AI 存取控制，支援可稽核性與租戶隔離。",
+              "en": "Implemented fine-grained AI access controls with auditability and tenant isolation.",
+              "ja": "監査可能性とテナント分離に対応する、きめ細かな AI アクセス制御を実装。"
             }
           ]
         },
@@ -290,6 +392,16 @@
             "ja": "テクニカルリーダーシップ"
           },
           "items": [
+            {
+              "zh-hant": "製作供 CEO 的 NVIDIA 簡報使用之 AI demo。",
+              "en": "Built AI demos for the CEO's NVIDIA presentation.",
+              "ja": "CEO の NVIDIA 向けプレゼンテーションで使用する AI デモを制作。"
+            },
+            {
+              "zh-hant": "帶領內部 AI 工具與最佳實務工作坊。",
+              "en": "Led internal workshops on AI tools and best practices.",
+              "ja": "AI ツールとベストプラクティスに関する社内ワークショップを実施。"
+            },
             {
               "zh-hant": "獲頒本季最佳員工（Employee of the Quarter）。",
               "en": "Recognized as Employee of the Quarter.",
@@ -303,7 +415,16 @@
           ]
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": {
+            "zh-hant": "ADK ↔ AGUI Middleware 原始碼",
+            "en": "ADK ↔ AGUI Middleware source",
+            "ja": "ADK ↔ AGUI Middleware ソースコード"
+          },
+          "url": "https://github.com/trendmicro/adk-agui-middleware"
+        }
+      ]
     },
     {
       "id": "kkstream",
@@ -518,6 +639,85 @@
         }
       ],
       "links": []
+    },
+    {
+      "id": "ntut",
+      "kind": "education",
+      "startDate": "2016",
+      "endDate": "2020",
+      "current": false,
+      "role": {
+        "zh-hant": "電子工程系畢業",
+        "en": "Electronic Engineering graduate",
+        "ja": "電子工学科卒業"
+      },
+      "organization": {
+        "zh-hant": "國立臺北科技大學",
+        "en": "National Taipei University of Technology",
+        "ja": "国立台北科技大学"
+      },
+      "summary": {
+        "zh-hant": "2018 永續環境黑客松技職盃全國大賽｜評審團大獎。",
+        "en": "2018 National Technical and Vocational Sustainable Environment Hackathon — Jury Grand Prize.",
+        "ja": "2018 年サステナブル環境ハッカソン技術職業教育全国大会・審査員大賞。"
+      },
+      "highlights": [
+        {
+          "zh-hant": "以「北科魔法師」團隊參賽，提出結合潮水與輻射熱的發電構想。",
+          "en": "Competed with the “NTUT Magicians” team, proposing a power-generation concept combining tidal water and radiant heat.",
+          "ja": "「北科魔法師」チームで参加し、潮水と輻射熱を組み合わせる発電構想を提案。"
+        }
+      ],
+      "details": [],
+      "links": [
+        {
+          "label": {
+            "zh-hant": "高科大官方報導",
+            "en": "Official NKUST report",
+            "ja": "高科大公式記事"
+          },
+          "url": "https://www.nkust.edu.tw/p/404-1000-8221.php"
+        }
+      ]
+    },
+    {
+      "id": "ntsh-competition",
+      "kind": "award",
+      "startDate": "2015",
+      "endDate": null,
+      "current": false,
+      "dateLabel": {
+        "zh-hant": "2015（民國 104 年競賽）",
+        "en": "2015 competition",
+        "ja": "2015 年の競技大会"
+      },
+      "role": {
+        "zh-hant": "電子科",
+        "en": "Electronics Department",
+        "ja": "電子科"
+      },
+      "organization": {
+        "zh-hant": "國立南投高級中學",
+        "en": "National Nantou Senior High School",
+        "ja": "国立南投高級中学"
+      },
+      "summary": {
+        "zh-hant": "104 年全國工科技藝競賽・工業電子職種金手獎第 2 名。",
+        "en": "2015 National Industrial Skills Competition — Golden Hand Award, 2nd place in Industrial Electronics.",
+        "ja": "2015 年全国工業技術競技大会・工業電子部門で金手賞第 2 位。"
+      },
+      "highlights": [],
+      "details": [],
+      "links": [
+        {
+          "label": {
+            "zh-hant": "校方公告（2016.02.16）",
+            "en": "School announcement (2016.02.16)",
+            "ja": "学校発表（2016.02.16）"
+          },
+          "url": "https://www.ntsh.ntct.edu.tw/ischool/publish_page/6/?cid=191"
+        }
+      ]
     }
   ],
   "personal": {

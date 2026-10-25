@@ -1,8 +1,4 @@
-import type {
-  AboutProfile,
-  ProjectCardData,
-  ViewData,
-} from '../../app/page.tsx';
+import type { AboutProfile, ViewData } from '../../app/page.tsx';
 import { EndOfBuffer, MdHeading } from '../../components/Buffer.tsx';
 import { Icon, type IconName } from '../../components/Icon.tsx';
 import { linkIcon } from '../../components/link-icon.ts';
@@ -15,13 +11,16 @@ import {
 import { pageIds } from '../../lib/page-ids.ts';
 
 type HomeView = Extract<ViewData, { kind: 'home' }>;
-type PostLinks = HomeView['posts'];
 
 const yearMonth = (value: string) => value.replace('-', '.');
 
 const competencyIcons: Record<string, IconName> = {
   backend: 'server',
   cloud: 'cloud',
+  'secure-network': 'shield',
+  'model-training': 'branch',
+  'gpu-inference': 'cpu',
+  cryptography: 'book',
 };
 
 // Official wordmarks stay local and unchanged; provenance lives in brand-assets.json.
@@ -32,7 +31,7 @@ const employerLogos: Record<string, string> = {
 
 /** The profile as the workspace README: front matter, logo, then the résumé. */
 export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
-  const { profile, projects, posts, recent } = view;
+  const { profile, recent } = view;
   const t = dictionaries[locale];
   return (
     <div className="buffer readme">
@@ -130,12 +129,7 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
         </p>
       </section>
 
-      <Competencies
-        profile={profile}
-        projects={projects}
-        posts={posts}
-        locale={locale}
-      />
+      <Competencies profile={profile} locale={locale} />
 
       <Experience profile={profile} locale={locale} />
 
@@ -174,21 +168,12 @@ export function Readme({ view, locale }: { view: HomeView; locale: Locale }) {
 
 function Competencies({
   profile,
-  projects,
-  posts,
   locale,
 }: {
   profile: AboutProfile;
-  projects: ProjectCardData[];
-  posts: PostLinks;
   locale: Locale;
 }) {
   const t = dictionaries[locale];
-  const levelLabel = {
-    production: t.levelProduction,
-    practice: t.levelPractice,
-    learning: t.levelLearning,
-  };
   return (
     <section className="md-section" aria-labelledby="competencies-title">
       <span id="skills-h" className="anchor-alias" aria-hidden="true" />
@@ -198,75 +183,52 @@ function Competencies({
         {t.competenciesTitle}
       </MdHeading>
       <p className="ln md-lead">{t.competenciesIntro}</p>
-      <div className="capabilities">
-        {profile.competencies.map((competency) => (
-          <article className="capability" key={competency.id}>
-            <h3 className="ln capability-title">
-              <Icon
-                name={competencyIcons[competency.id] ?? 'package'}
-                size={18}
-              />
-              <span className="capability-name">{competency.title}</span>
-              <span className="level-labels">
-                {competency.levels.map((level) => (
-                  <span key={level} className="label">
-                    {levelLabel[level]}
-                  </span>
-                ))}
-              </span>
-            </h3>
-            <p className="ln">{competency.description}</p>
-            <ul className="capability-examples" aria-label={t.examples}>
-              {competency.examples.map((example) => (
-                <li className="ln" key={example}>
-                  {example}
-                </li>
-              ))}
-            </ul>
-            <p className="ln capability-tools">
-              <span className="capability-tools-label">{t.tools}</span>
-              {competency.tools.join(' · ')}
-            </p>
-            <ul className="ln capability-evidence">
-              {competency.evidence.map((evidence) => {
-                if (evidence.kind === 'section')
-                  return (
-                    <li key="experience">
-                      <a href={`#${pageIds.experience}`}>
-                        <Icon name="arrow-down" size={16} />
-                        {t.seeExperience}
-                      </a>
-                    </li>
-                  );
-                if (evidence.kind === 'post') {
-                  const post = posts[evidence.id];
-                  return post ? (
-                    <li key={evidence.id}>
-                      <a href={`/${locale}/blog/${post.slug}/`}>
-                        <Icon name="markdown" size={16} />
-                        {t.readPost}：{post.title}
-                      </a>
-                    </li>
-                  ) : null;
-                }
-                const project = projects.find(
-                  (item) => item.id === evidence.id,
-                );
-                return project ? (
-                  <li key={evidence.id}>
-                    <a className="resource-link" href={project.repository}>
-                      <Icon name={linkIcon(project.repository)} size={16} />
-                      {t.projectSource}：{project.title}
-                      <Icon name="arrow-up-right" size={14} />
+      <div className="ln capabilities">
+        {profile.competencies.map((competency) => {
+          const source = competency.source;
+          const sourceIndex = source
+            ? competency.description.indexOf(source.label)
+            : -1;
+          return (
+            <article
+              className="capability"
+              key={competency.id}
+              data-skill={competency.id}
+            >
+              <h3 className="capability-title">
+                <Icon
+                  name={competencyIcons[competency.id] ?? 'package'}
+                  size={18}
+                />
+                <span>{competency.title}</span>
+              </h3>
+              <p className="capability-description">
+                {source && sourceIndex >= 0 ? (
+                  <>
+                    {competency.description.slice(0, sourceIndex)}
+                    <a href={source.url}>
+                      {source.label}
+                      <Icon name="arrow-up-right" size={12} />
                       <span className="sr-only">（{t.newTab}）</span>
                     </a>
-                  </li>
-                ) : null;
-              })}
-            </ul>
-          </article>
-        ))}
+                    {competency.description.slice(
+                      sourceIndex + source.label.length,
+                    )}
+                  </>
+                ) : (
+                  competency.description
+                )}
+              </p>
+              <ul className="capability-tools" aria-label={t.tools}>
+                {competency.tools.map((tool) => (
+                  <li key={tool}>{tool}</li>
+                ))}
+              </ul>
+            </article>
+          );
+        })}
       </div>
+      <p className="ln capability-note">{t.competenciesCaveat}</p>
     </section>
   );
 }
@@ -304,6 +266,16 @@ function Experience({
             (sum, group) => sum + group.items.length,
             0,
           );
+          const links = entry.links.map((link) => (
+            <p className={count ? undefined : 'ln'} key={link.url}>
+              <a className="text-action resource-link" href={link.url}>
+                <Icon name={linkIcon(link.url)} size={16} />
+                {link.label}
+                <Icon name="arrow-up-right" size={14} />
+                <span className="sr-only">（{t.newTab}）</span>
+              </a>
+            </p>
+          ));
           return (
             <li
               className="timeline-entry"
@@ -318,9 +290,9 @@ function Experience({
                   </span>
                 ) : null}
                 <time dateTime={entry.startDate}>
-                  {yearMonth(entry.startDate)}
+                  {entry.dateLabel ?? yearMonth(entry.startDate)}
                 </time>
-                {' — '}
+                {entry.endDate || entry.current ? ' — ' : null}
                 {entry.endDate ? (
                   <time dateTime={entry.endDate}>
                     {yearMonth(entry.endDate)}
@@ -331,7 +303,7 @@ function Experience({
                 {duration ? (
                   <span className="timeline-duration">{duration}</span>
                 ) : null}
-                {entry.kind === 'education' ? (
+                {entry.kind === 'education' && entry.current ? (
                   <span className="label">{t.educationStatus}</span>
                 ) : null}
               </p>
@@ -350,7 +322,7 @@ function Experience({
               ) : null}
               <h3 className="ln timeline-role">
                 <Icon
-                  name={entry.kind === 'education' ? 'graduation' : 'briefcase'}
+                  name={entry.kind === 'work' ? 'briefcase' : 'graduation'}
                   size={18}
                 />
                 <span>
@@ -388,20 +360,10 @@ function Experience({
                       </ul>
                     </div>
                   ))}
-                  {entry.links.map((link) => (
-                    <a
-                      className="text-action resource-link"
-                      key={link.url}
-                      href={link.url}
-                    >
-                      <Icon name={linkIcon(link.url)} size={16} />
-                      {link.label}
-                      <Icon name="arrow-up-right" size={14} />
-                      <span className="sr-only">（{t.newTab}）</span>
-                    </a>
-                  ))}
+                  {links}
                 </details>
               ) : null}
+              {!count ? links : null}
             </li>
           );
         })}
