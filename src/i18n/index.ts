@@ -216,16 +216,20 @@ const en = {
   commentsUnconfiguredText:
     'The discussion service has not been set up. You can reach me on GitHub or by email in the meantime.',
   commentsDisabled: 'Comments are closed for this page.',
-  commentsLoad: 'Load comments',
   commentsOpenGitHub: 'Open the discussion on GitHub',
   commentsFindGitHub: 'Find this page’s discussion on GitHub',
   commentsThirdParty:
-    'Load only if you want to connect to giscus.app and GitHub. Comments are stored in public GitHub Discussions; signing in may store a giscus session in your browser. A thread is created when the first comment or reaction is posted.',
+    'Comments and the composer load automatically as you approach this section, connecting to giscus.app and GitHub. Reading needs no sign-in; posting uses a GitHub account. Comments are public, and signing in may store a giscus session in your browser.',
   commentsLoading: 'Connecting to the comment service…',
   commentsFailed: 'Comments could not be loaded',
-  commentsFailedTimeout: 'The comment service did not respond in time.',
+  commentsSlow:
+    'Comments are taking longer to load. The connection is still open; you can wait, retry or read on GitHub.',
+  commentsFailedAuthentication:
+    'Comment sign-in could not be restored. Reading needs no sign-in; the widget may reconnect automatically, or you can retry.',
+  commentsFailedRateLimit:
+    'The comment service is temporarily rate-limited. Please retry later or read on GitHub.',
   commentsFailedBlocked:
-    'The comment service was blocked or could not be reached.',
+    'The comment service could not be reached. Please retry or read on GitHub.',
   commentsFailedMissing: 'The discussion for this page could not be found.',
   commentsLocked: 'This discussion is locked; existing comments stay readable.',
   commentsEmpty: 'No comments yet.',
@@ -387,15 +391,19 @@ const zh: Dictionary = {
   commentsUnconfiguredText:
     '留言服務尚未設定完成。在此之前，歡迎透過 GitHub 或 Email 與我聯絡。',
   commentsDisabled: '這個頁面已關閉留言。',
-  commentsLoad: '載入留言',
   commentsOpenGitHub: '在 GitHub 開啟討論',
   commentsFindGitHub: '在 GitHub 尋找本頁討論',
   commentsThirdParty:
-    '按下載入後才會連線到 giscus.app 與 GitHub。留言存放在公開的 GitHub Discussions；登入後，giscus 可能在瀏覽器儲存登入階段。第一則留言或表情反應送出時才會建立討論串。',
+    '接近本區時會自動連線至 giscus.app 與 GitHub，顯示留言和輸入框。閱讀不需登入，發言才需要 GitHub 帳號。留言公開；登入後，giscus 可能在瀏覽器儲存登入階段。',
   commentsLoading: '正在連線到留言服務…',
   commentsFailed: '留言載入失敗',
-  commentsFailedTimeout: '留言服務沒有在時限內回應。',
-  commentsFailedBlocked: '留言服務被封鎖或無法連線。',
+  commentsSlow:
+    '留言載入較慢，仍在等待連線。你可以繼續等候、重試，或在 GitHub 閱讀。',
+  commentsFailedAuthentication:
+    '無法恢復留言的登入狀態。閱讀不需登入；留言框可能會自動重新連線，也可以按重試。',
+  commentsFailedRateLimit:
+    '留言服務暫時達到請求上限，請稍後重試，或在 GitHub 閱讀。',
+  commentsFailedBlocked: '目前無法連線到留言服務；請重試，或在 GitHub 閱讀。',
   commentsFailedMissing: '找不到這個頁面對應的討論串。',
   commentsLocked: '這個討論已鎖定，既有留言仍可閱讀。',
   commentsEmpty: '目前還沒有留言。',
@@ -554,16 +562,20 @@ const ja: Dictionary = {
   commentsUnconfiguredText:
     'コメントサービスの設定がまだ完了していません。それまでは GitHub またはメールでご連絡ください。',
   commentsDisabled: 'このページのコメントは受け付けていません。',
-  commentsLoad: 'コメントを読み込む',
   commentsOpenGitHub: 'GitHub でディスカッションを開く',
   commentsFindGitHub: 'GitHub でこのページの議論を探す',
   commentsThirdParty:
-    '読み込みを選択した場合のみ giscus.app と GitHub に接続します。コメントは公開の GitHub Discussions に保存され、ログイン後はブラウザーに giscus のセッションが保存される場合があります。最初のコメントやリアクションの投稿時にスレッドが作成されます。',
+    'この欄に近づくと giscus.app と GitHub に自動接続し、コメントと入力欄を表示します。閲覧にログインは不要で、投稿には GitHub アカウントを使用します。コメントは公開され、ログイン後はブラウザーに giscus のセッションが保存される場合があります。',
   commentsLoading: 'コメントサービスに接続しています…',
   commentsFailed: 'コメントを読み込めませんでした',
-  commentsFailedTimeout: 'コメントサービスが時間内に応答しませんでした。',
+  commentsSlow:
+    'コメントの読み込みに時間がかかっています。接続は継続中です。そのまま待つか、再試行するか、GitHub で閲覧できます。',
+  commentsFailedAuthentication:
+    'コメントのログイン状態を復元できませんでした。閲覧にログインは不要です。自動で再接続する場合がありますが、再試行もできます。',
+  commentsFailedRateLimit:
+    'コメントサービスのリクエスト上限に達しています。しばらくしてから再試行するか、GitHub で閲覧してください。',
   commentsFailedBlocked:
-    'コメントサービスがブロックされたか、接続できませんでした。',
+    'コメントサービスに接続できませんでした。再試行するか、GitHub で閲覧してください。',
   commentsFailedMissing: 'このページのディスカッションが見つかりません。',
   commentsLocked:
     'このディスカッションはロックされています。既存のコメントは読めます。',

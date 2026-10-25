@@ -137,7 +137,7 @@ describe('sitewide comment identity and configuration', () => {
       'https://github.com/DennySORA/site-discussions/discussions/12',
     );
   });
-  it('prerenders an accessible fallback without third-party resource loads or searchable boilerplate', () => {
+  it('prerenders automatic loading and an accessible fallback without a click gate or searchable boilerplate', () => {
     const view = commentsView(giscus, {
       id: 'page:home',
       discussionNumber: null,
@@ -147,8 +147,10 @@ describe('sitewide comment identity and configuration', () => {
       const html = renderToStaticMarkup(
         createElement(Comments, { view, locale }),
       );
-      expect(html).toContain('data-state="dormant"');
+      expect(html).toContain('data-state="loading"');
       expect(html).toContain('href="https://github.com/');
+      expect(html).not.toContain('<button');
+      expect(html).not.toMatch(/<div[^>]*\shidden(?:=|>)/);
       expect(html).not.toMatch(/<(?:script|iframe|link|img)\b/);
       expect(html).toContain('aria-labelledby="comments-title"');
       expect(searchableText(`<p>Keep page text</p>${html}`)).toBe(
@@ -169,64 +171,65 @@ describe('sitewide comment identity and configuration', () => {
 });
 
 describe('giscus runtime states', () => {
-  const dormant: GiscusState = { status: 'dormant' };
-  it('stays dormant until the reader asks, then reports real outcomes', () => {
-    expect(
-      giscusReducer(dormant, { type: 'metadata', count: 2, locked: false }),
-    ).toBe(dormant);
-    expect(giscusReducer(dormant, { type: 'timeout' })).toBe(dormant);
-    expect(giscusReducer(dormant, { type: 'empty' })).toBe(dormant);
-    const loading = giscusReducer(dormant, { type: 'load' });
-    expect(loading).toEqual({ status: 'loading' });
+  const loading: GiscusState = { status: 'loading' };
+  it('reports real empty, populated and locked outcomes', () => {
     expect(giscusReducer(loading, { type: 'empty' })).toEqual({
       status: 'ready',
       count: 0,
       locked: false,
     });
     expect(
-      giscusReducer(loading, { type: 'metadata', count: 0, locked: false }),
-    ).toEqual({
-      status: 'ready',
-      count: 0,
-      locked: false,
-    });
-    expect(
       giscusReducer(loading, { type: 'metadata', count: 4, locked: true }),
-    ).toMatchObject({ locked: true });
+    ).toEqual({ status: 'ready', count: 4, locked: true });
   });
-  it('classifies failures and keeps later timeouts from overwriting success', () => {
-    const loading: GiscusState = { status: 'loading' };
-    expect(
-      giscusReducer(loading, {
-        type: 'error',
-        message: 'Discussion not found',
-      }),
-    ).toEqual({
-      status: 'failed',
-      reason: 'missing',
+  it('keeps slow loads alive, classifies genuine failures and supports retry', () => {
+    expect(giscusReducer(loading, { type: 'timeout' })).toEqual({
+      status: 'slow',
     });
-    expect(
-      giscusReducer(loading, {
-        type: 'error',
-        message: 'giscus is not installed',
-      }),
-    ).toEqual({
-      status: 'failed',
-      reason: 'blocked',
-    });
+    for (const [message, reason] of [
+      ['Discussion not found', 'missing'],
+      ['giscus is not installed', 'blocked'],
+      ['Bad credentials', 'authentication'],
+      ['Invalid state value', 'authentication'],
+      ['State has expired', 'authentication'],
+      ['API rate limit exceeded', 'rate-limit'],
+    ] as const)
+      expect(giscusReducer(loading, { type: 'error', message })).toEqual({
+        status: 'failed',
+        reason,
+      });
     expect(giscusReducer(loading, { type: 'script-error' })).toEqual({
       status: 'failed',
       reason: 'blocked',
     });
-    expect(giscusReducer(loading, { type: 'timeout' })).toEqual({
-      status: 'failed',
-      reason: 'timeout',
-    });
-    const ready: GiscusState = { status: 'ready', count: 1, locked: false };
+    const failed: GiscusState = { status: 'failed', reason: 'blocked' };
+    expect(giscusReducer(failed, { type: 'timeout' })).toBe(failed);
+    expect(giscusReducer(failed, { type: 'load' })).toEqual(loading);
+  });
+  it('recovers from late real responses without allowing an old deadline to hide a ready widget', () => {
+    const empty = { status: 'ready', count: 0, locked: false };
+    const ready: GiscusState = { status: 'ready', count: 3, locked: false };
+    for (const state of [
+      { status: 'slow' },
+      { status: 'failed', reason: 'authentication' },
+      { status: 'failed', reason: 'blocked' },
+      { status: 'failed', reason: 'rate-limit' },
+    ] as GiscusState[]) {
+      expect(giscusReducer(state, { type: 'empty' })).toEqual(empty);
+      expect(
+        giscusReducer(state, { type: 'metadata', count: 3, locked: false }),
+      ).toEqual(ready);
+    }
     expect(giscusReducer(ready, { type: 'timeout' })).toBe(ready);
+    expect(giscusReducer(ready, { type: 'empty' })).toBe(ready);
+    // A later real service error is still an error; no synthetic iframe-load
+    // event or elapsed deadline can declare a working connection.
     expect(
-      giscusReducer({ status: 'failed', reason: 'timeout' }, { type: 'load' }),
-    ).toEqual({ status: 'loading' });
+      giscusReducer(ready, {
+        type: 'error',
+        message: 'API rate limit exceeded',
+      }),
+    ).toEqual({ status: 'failed', reason: 'rate-limit' });
   });
   it('accepts messages only from the frame it created on the giscus origin', () => {
     const frame = {};

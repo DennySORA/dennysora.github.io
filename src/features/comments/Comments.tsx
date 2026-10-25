@@ -108,48 +108,69 @@ function GiscusComments({
   locale: Locale;
 }) {
   const t = dictionaries[locale];
-  const [state, dispatch] = useReducer(giscusReducer, { status: 'dormant' });
+  const [state, dispatch] = useReducer(giscusReducer, { status: 'loading' });
   const [attempt, setAttempt] = useState(0);
   const host = useRef<HTMLDivElement>(null);
   const failures: Record<FailureReason, string> = {
-    timeout: t.commentsFailedTimeout,
     blocked: t.commentsFailedBlocked,
     missing: t.commentsFailedMissing,
+    authentication: t.commentsFailedAuthentication,
+    'rate-limit': t.commentsFailedRateLimit,
   };
 
   useEffect(() => {
     const container = host.current;
-    // Nothing reaches giscus.app until the reader asks for comments.
-    if (attempt === 0 || !container) return;
-    container.replaceChildren();
-    const script = document.createElement('script');
-    script.src = `${giscusOrigin}/client.js`;
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    for (const [name, value] of Object.entries(
-      giscusAttributes(view.config, view.mapping, locale),
-    ))
-      script.setAttribute(name, value);
+    if (!container) return;
     let active = true;
+    let started = false;
+    let script: HTMLScriptElement | undefined;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let observer: IntersectionObserver | undefined;
     const failed = () => {
       if (active) dispatch({ type: 'script-error' });
     };
-    script.addEventListener('error', failed);
     function receive(event: MessageEvent) {
       const frame = container?.querySelector('iframe')?.contentWindow;
       const message = parseGiscusMessage(event, frame, view.mapping);
       if (active && message) dispatch(message);
     }
+    function start() {
+      if (!active || started || !container) return;
+      started = true;
+      observer?.disconnect();
+      container.replaceChildren();
+      script = document.createElement('script');
+      script.src = `${giscusOrigin}/client.js`;
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      for (const [name, value] of Object.entries(
+        giscusAttributes(view.config, view.mapping, locale),
+      ))
+        script.setAttribute(name, value);
+      script.addEventListener('error', failed);
+      // Start the slow-network hint only when a request actually starts, not
+      // while an auto-loading comment section is still below a long article.
+      timeout = setTimeout(() => {
+        if (active) dispatch({ type: 'timeout' });
+      }, giscusTimeoutMs);
+      container.append(script);
+    }
     window.addEventListener('message', receive);
-    const timeout = setTimeout(
-      () => dispatch({ type: 'timeout' }),
-      giscusTimeoutMs,
-    );
-    container.append(script);
+    if (attempt > 0 || typeof IntersectionObserver === 'undefined') start();
+    else {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) start();
+        },
+        { rootMargin: '320px' },
+      );
+      observer.observe(container);
+    }
     return () => {
       active = false;
+      observer?.disconnect();
       clearTimeout(timeout);
-      script.removeEventListener('error', failed);
+      script?.removeEventListener('error', failed);
       window.removeEventListener('message', receive);
       container.replaceChildren();
     };
@@ -162,33 +183,21 @@ function GiscusComments({
 
   return (
     <div className="comments-panel" data-state={state.status}>
-      {state.status === 'dormant' ? (
-        <>
-          <div className="action-row">
-            <button
-              type="button"
-              className="button button-primary requires-js"
-              onClick={load}
-            >
-              {t.commentsLoad}
-            </button>
-            <NativeLink
-              url={view.url}
-              label={
-                view.mapping.kind === 'specific'
-                  ? t.commentsFindGitHub
-                  : t.commentsOpenGitHub
-              }
-              hint={t.newTab}
-            />
-          </div>
-          <p className="fine">{t.commentsThirdParty}</p>
-        </>
-      ) : null}
+      <p className="fine">{t.commentsThirdParty}</p>
       {state.status === 'loading' ? (
-        <p className="comments-status" role="status">
+        <p className="comments-status requires-js" role="status">
           {t.commentsLoading}
         </p>
+      ) : null}
+      {state.status === 'slow' ? (
+        <div className="notice requires-js" data-status="info" role="status">
+          <Icon name="info" size={18} />
+          <p>{t.commentsSlow}</p>
+          <button type="button" className="button button-quiet" onClick={load}>
+            <Icon name="retry" size={18} />
+            {t.retry}
+          </button>
+        </div>
       ) : null}
       {state.status === 'ready' ? (
         <p className="comments-status" role="status">
@@ -214,23 +223,16 @@ function GiscusComments({
           </button>
         </div>
       ) : null}
-      {state.status !== 'dormant' ? (
-        <NativeLink
-          url={view.url}
-          label={
-            view.mapping.kind === 'specific'
-              ? t.commentsFindGitHub
-              : t.commentsOpenGitHub
-          }
-          hint={t.newTab}
-        />
-      ) : null}
-      <div
-        key={attempt}
-        ref={host}
-        className="giscus-frame-host"
-        hidden={state.status === 'dormant' || state.status === 'failed'}
+      <NativeLink
+        url={view.url}
+        label={
+          view.mapping.kind === 'specific'
+            ? t.commentsFindGitHub
+            : t.commentsOpenGitHub
+        }
+        hint={t.newTab}
       />
+      <div key={attempt} ref={host} className="giscus-frame-host" />
     </div>
   );
 }

@@ -136,10 +136,11 @@ export function giscusAttributes(
   };
 }
 
-export type FailureReason = 'timeout' | 'blocked' | 'missing';
+export type FailureReason =
+  'blocked' | 'missing' | 'authentication' | 'rate-limit';
 export type GiscusState =
-  | { status: 'dormant' }
   | { status: 'loading' }
+  | { status: 'slow' }
   | { status: 'ready'; count: number | null; locked: boolean }
   | { status: 'failed'; reason: FailureReason };
 export type GiscusEvent =
@@ -158,28 +159,34 @@ export function giscusReducer(
     case 'load':
       return { status: 'loading' };
     case 'empty':
-      return state.status === 'loading'
-        ? { status: 'ready', count: 0, locked: false }
-        : state;
+      // A validated response can arrive after a slow network or an error that
+      // the official client recovers from (for example, an expired session).
+      return state.status === 'ready'
+        ? state
+        : { status: 'ready', count: 0, locked: false };
     case 'metadata':
-      return state.status === 'dormant'
-        ? state
-        : { status: 'ready', count: event.count, locked: event.locked };
+      return { status: 'ready', count: event.count, locked: event.locked };
     case 'error':
-      return state.status === 'dormant'
-        ? state
-        : {
-            status: 'failed',
-            reason: /not found/i.test(event.message) ? 'missing' : 'blocked',
-          };
+      return {
+        status: 'failed',
+        reason: /not found/i.test(event.message)
+          ? 'missing'
+          : /bad credentials|invalid state value|state has expired/i.test(
+                event.message,
+              )
+            ? 'authentication'
+            : /rate limit/i.test(event.message)
+              ? 'rate-limit'
+              : 'blocked',
+      };
     case 'script-error':
-      return state.status === 'loading'
+      return state.status === 'loading' || state.status === 'slow'
         ? { status: 'failed', reason: 'blocked' }
         : state;
     case 'timeout':
-      return state.status === 'loading'
-        ? { status: 'failed', reason: 'timeout' }
-        : state;
+      // A deadline is not proof of failure. Keep the live frame visible so it
+      // can finish on mobile/slow networks and accept its later real result.
+      return state.status === 'loading' ? { status: 'slow' } : state;
   }
 }
 

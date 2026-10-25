@@ -331,17 +331,19 @@ for (const route of publishedRoutes()) {
   if (
     target?.commentsEnabled &&
     loadComments().mode === 'giscus' &&
-    !pageHtml.includes('data-state="dormant"')
+    !pageHtml.includes('data-state="loading"')
   )
     failures.push(
-      `Configured giscus is not ready to load: ${routePath(route)}`,
+      `Configured giscus is not set to auto-load: ${routePath(route)}`,
     );
   if (
     /<(?:script|iframe|link)[^>]*(?:src|href)="https:\/\/giscus\.app/.test(
       pageHtml,
     )
   )
-    failures.push(`Comments load before reader consent: ${routePath(route)}`);
+    failures.push(
+      `Comment resources bypass the viewport loader: ${routePath(route)}`,
+    );
   const listed = sitemap.includes(`<loc>${siteUrl}${routePath(route)}</loc>`);
   const file = join(root, routePath(route), 'index.html');
   const noindex =

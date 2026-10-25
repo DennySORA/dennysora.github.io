@@ -128,7 +128,7 @@ Topic、type、Tag 以 ID 作為篩選值；多個 Tag 使用 Pagefind 的 `any`
 
 - `unconfigured`：明示尚未設定，不載入第三方。
 - `github-native`：只使用文章已記錄的 GitHub 討論連結，沒有編號時明示尚未設定。
-- `giscus`：需填入已驗證的 `repository`、`repositoryId`、`category`、`categoryId`、`theme: "transparent_dark"`、`inputPosition: "top"`、`reactionsEnabled: true`。只有讀者按下「載入留言」後才執行官方 `https://giscus.app/client.js`，無須增加 npm 套件。
+- `giscus`：需填入已驗證的 `repository`、`repositoryId`、`category`、`categoryId`、`theme: "transparent_dark"`、`inputPosition: "top"`、`reactionsEnabled: true`。依擁有者後續要求，接近留言區時自動執行官方 `https://giscus.app/client.js`，不需要先按載入；無須增加 npm 套件。
 
 ### 範圍與討論識別
 
@@ -136,7 +136,7 @@ Topic、type、Tag 以 ID 作為篩選值；多個 Tag 使用 Pagefind 的 `any`
 
 `src/lib/comments.ts` 依內容 ID 產生固定命名空間：`page:home`、`index:blog`、`article:<post.id>`、`note:<noteId>`、`project:<projectId>`、資料夾及 taxonomy 各自分開。`data-mapping="specific"` 搭配 `data-strict="1"`，完整 term 加上 `dennysora.me:` 前綴。翻譯、標題或路徑調整不改變內容 ID；搜尋固定使用 `page:search`，不把查詢或篩選條件當作討論識別。介面語言分別為 `zh-TW`、`en`、`ja`。
 
-尚無討論串時不預先大量建立；giscus 在第一則留言或表情反應送出時才建立。此時官方回傳的 `Discussion not found` 是可留言的空狀態，不是服務失敗。舊文章已有 `discussionNumber` 則保留 `mapping=number`，不搬移、刪除或複製討論。未載入、無 JavaScript、服務阻擋或逾時時，均保留 GitHub 討論連結；新內容尚無編號時連到該固定 ID 的討論搜尋，明確標為「尋找本頁討論」，不假裝已有討論串。
+尚無討論串時不預先大量建立；giscus 在第一則留言或表情反應送出時才建立。此時官方回傳的 `Discussion not found` 是可留言的空狀態，不是服務失敗。舊文章已有 `discussionNumber` 則保留 `mapping=number`，不搬移、刪除或複製討論。無 JavaScript、服務阻擋或載入較慢時，均保留 GitHub 討論連結；新內容尚無編號時連到該固定 ID 的討論搜尋，明確標為「尋找本頁討論」，不假裝已有討論串。
 
 目前四篇正式文章依全站要求開放留言，正文與內容 ID 不變。已退役文章不重新發布，其歷史 `discussionNumber` 原樣保留；重新發布前必須讀取實際討論標題與內容重新核對，不可把歷史 metadata 當成已驗證的對應。
 
@@ -146,9 +146,9 @@ Topic、type、Tag 以 ID 作為篩選值；多個 Tag 使用 Pagefind 的 `any`
 
 根目錄 [`giscus.json`](../giscus.json) 的既有允許來源仍只有 `https://dennysora.me`，不擴大到預覽或其他網域。此網站目前沒有在原始碼設定 CSP；若部署層日後加入 CSP，官方腳本需要 `script-src https://giscus.app`、外層樣式需要 `style-src https://giscus.app`、留言框需要 `frame-src https://giscus.app`，不得用萬用字元放寬整站。這是相容性需求說明，不授權修改安全設定。
 
-按下載入前不請求第三方資源；載入後會連線 giscus.app 與 GitHub，官方腳本會使用當前頁面網址作為嵌入來源。`giscus:backlink` 使用不含查詢字串的 canonical URL，避免把篩選條件寫入新討論的返回連結。留言公開存放於 GitHub Discussions，發言需要 GitHub 帳號及 giscus OAuth 授權；官方腳本可能在登入後以 `giscus-session` 儲存登入階段，因此不能宣稱啟用後永遠沒有瀏覽器儲存。未新增站內帳號、分析或追蹤程式。
+留言區接近視窗（320px 預載範圍）時自動連線 giscus.app 與 GitHub 並顯示留言／輸入框；閱讀不需登入，官方腳本會使用當前頁面網址作為嵌入來源。`giscus:backlink` 使用不含查詢字串的 canonical URL，避免把篩選條件寫入新討論的返回連結。留言公開存放於 GitHub Discussions，發言需要 GitHub 帳號及 giscus OAuth 授權；官方腳本可能在登入後以 `giscus-session` 儲存登入階段，因此不能宣稱啟用後永遠沒有瀏覽器儲存。未新增站內帳號、分析或追蹤程式。
 
-官方來源：[嵌入與自動建立規則](https://giscus.app/)、[嚴格比對與 metadata](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md)、[client.ts 的資源及 session 行為](https://github.com/giscus/giscus/blob/main/client.ts)。程式處理正常、空、鎖定、逾時、封鎖與重試狀態；只接受本次 giscus iframe、正確 origin 送出的 metadata。
+官方來源：[嵌入與自動建立規則](https://giscus.app/)、[嚴格比對與 metadata](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md)、[client.ts 的資源及 session 行為](https://github.com/giscus/giscus/blob/main/client.ts)。程式處理正常、空、鎖定、緩慢、連線／登入階段／請求上限錯誤與重試狀態；只接受本次 giscus iframe、正確 origin 送出的 metadata。15 秒只代表回應較慢，不是假定失敗；不隱藏仍可完成載入的 iframe。延遲的有效空狀態或 metadata 可從緩慢／錯誤恢復，真正錯誤仍顯示並保留重試。
 
 ## 自介與專案
 

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { dictionaries } from '../../src/i18n/index.ts';
 import { publishedPaths } from '../../src/lib/content.server.ts';
 import { hasRawAsset } from '../../src/lib/asset-policy.ts';
-import { origin, trackExternalRequests } from './helpers.ts';
+import { origin } from './helpers.ts';
 
 test('every production route is complete, dark-first and self-hosted HTML', async ({
   request,
@@ -219,34 +219,31 @@ test('migrated AI and video pages have no links or forwarding stubs', async ({
       expect((await request.get(`/${locale}/${path}/`)).status()).toBe(404);
 });
 
-test('no third-party requests, cookies or storage before comments are loaded', async ({
+test('comments start automatically near the section without loading a real third party in the test', async ({
   page,
 }) => {
-  const external = trackExternalRequests(page);
-  for (const path of ['/en/', '/ja/', '/en/note/']) await page.goto(path);
-  await page.goto('/en/blog/');
-  await page.getByRole('searchbox').fill('zzzznomatch');
-  await expect(page.locator('.article-row')).toHaveCount(0);
-  await expect(
-    page.getByRole('heading', { name: dictionaries.en.noPostsTitle }),
-  ).toBeVisible();
-  expect(external).toEqual([]);
-  expect(await page.context().cookies()).toEqual([]);
-  expect(
-    await page.evaluate(() => localStorage.length + sessionStorage.length),
-  ).toBe(0);
-  // Removed placeholders have no live discussions or comment embeds.
+  let scriptRequests = 0;
+  await page.route('https://giscus.app/client.js', async (route) => {
+    scriptRequests++;
+    await route.fulfill({
+      contentType: 'application/javascript',
+      body: '/* isolated transport fixture */',
+    });
+  });
+  await page.goto('/zh-hant/note/medical/drugs/analgesics/');
+  await expect(page.locator('#comments')).toHaveCount(1);
+  await expect(page.locator('#comments button')).toHaveCount(0);
+  expect(scriptRequests).toBe(0);
+  await page.locator('#comments').scrollIntoViewIfNeeded();
+  await expect.poll(() => scriptRequests).toBe(1);
+  await expect(page.locator('.giscus-frame-host script')).toHaveAttribute(
+    'data-lang',
+    'zh-TW',
+  );
   for (const locale of ['en', 'ja']) {
     await page.goto(`/${locale}/blog/engineering-principles/`);
     await expect(page.locator('#comments, iframe')).toHaveCount(0);
   }
-  await page.goto('/zh-hant/note/medical/drugs/analgesics/');
-  await expect(page.locator('iframe')).toHaveCount(0);
-  await expect(page.locator('#comments')).toHaveCount(1);
-  await expect(
-    page.getByRole('button', { name: dictionaries['zh-hant'].commentsLoad }),
-  ).toHaveCount(1);
-  expect(external).toEqual([]);
 });
 
 test('feeds, sitemap and published alternates agree with real pages', async ({
