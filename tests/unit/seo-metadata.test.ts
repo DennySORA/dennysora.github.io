@@ -81,7 +81,15 @@ describe('public page structured data', () => {
           hrefLang: htmlLang[target],
           href: `https://dennysora.me/${target}/`,
         });
-      for (const path of ['blog/', 'search/']) {
+      const blog = metadata(`/${locale}/blog/`);
+      expect(blog.data.indexable).toBe(true);
+      expect(blog.schemas[0]).toMatchObject({ '@type': 'CollectionPage' });
+      expect(
+        blog.descriptors.filter(
+          (item) => 'name' in item && item.name === 'robots',
+        ),
+      ).toEqual([]);
+      for (const path of ['search/']) {
         const hidden = metadata(`/${locale}/${path}`);
         expect(hidden.schemas).toHaveLength(1);
         expect(hidden.descriptors).toContainEqual({

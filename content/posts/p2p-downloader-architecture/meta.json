@@ -23,26 +23,26 @@
     "zh-hant": {
       "title": "P2P 下載器的架構與機制",
       "summary": "把來源探索與實際傳輸分開，讓大量下載持續前進。從整體分工開始，理解片段、連線、資源與檔案狀態如何彼此配合。",
-      "publication": "draft",
+      "publication": "published",
       "translationState": "original",
       "sourceRevision": "0a8984d77b1e8afcfb6e08ce43b428ecfa57bcde320a43c8a5266603c9d0ec51",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-imported-blog-2026-10-25.md"
     },
     "en": {
       "title": "P2P downloader architecture and mechanisms",
       "summary": "Separate source discovery from data transfer to keep large download workloads moving. Explore how components, pieces, connections, resources and file states fit together.",
-      "publication": "draft",
-      "translationState": "machine-draft",
+      "publication": "published",
+      "translationState": "reviewed",
       "sourceRevision": "0a8984d77b1e8afcfb6e08ce43b428ecfa57bcde320a43c8a5266603c9d0ec51",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-imported-blog-2026-10-25.md"
     },
     "ja": {
       "title": "P2P ダウンローダーのアーキテクチャと仕組み",
       "summary": "ソース探索と実際の転送を分離し、大量のダウンロードを前へ進める。全体の役割分担から、ピース、接続、リソース、ファイル状態の連携を理解する。",
-      "publication": "draft",
-      "translationState": "machine-draft",
+      "publication": "published",
+      "translationState": "reviewed",
       "sourceRevision": "0a8984d77b1e8afcfb6e08ce43b428ecfa57bcde320a43c8a5266603c9d0ec51",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-imported-blog-2026-10-25.md"
     }
   }
 }

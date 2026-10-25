@@ -27,6 +27,13 @@ import {
 } from '../../src/lib/route-manifest.ts';
 import { postSchema } from '../../src/lib/schema.ts';
 
+const publishedArticleIds = [
+  'browser-translation-architecture',
+  'p2p-downloader-architecture',
+  'p2p-privacy-boundaries',
+  'password-manager-recommendations',
+];
+
 function load(path: string) {
   return loader({
     params: { '*': path.replace(/^\//, '') },
@@ -82,7 +89,9 @@ describe('publication boundaries', () => {
     expect(() => postSchema.parse({ ...value, extra: true })).toThrow();
   });
   it('keeps every unpublished example out of public article payloads', () => {
-    for (const retained of loadPosts())
+    for (const retained of loadPosts().filter(
+      (item) => item.source.kind === 'profile-adaptation',
+    ))
       for (const locale of locales) {
         expect(editionStatus(retained, locale, retained.revision)).toBe(
           'draft',
@@ -158,17 +167,26 @@ describe('route manifest', () => {
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).not.toEqual([]);
     for (const locale of locales) {
-      expect(paths).not.toContain(prerenderPath({ kind: 'tags', locale }));
+      expect(paths).toContain(prerenderPath({ kind: 'tags', locale }));
       expect(paths).toContain(`/${locale}/projects/tools/dgxtop`);
-      expect(tagsInLocale(locale)).toEqual([]);
-      expect(listPosts(locale)).toEqual([]);
+      expect(tagsInLocale(locale).sort()).toEqual([
+        'architecture',
+        'networking',
+        'p2p',
+        'privacy',
+        'security',
+      ]);
+      expect(
+        listPosts(locale)
+          .map((post) => post.id)
+          .sort(),
+      ).toEqual(publishedArticleIds);
       for (const path of [
         'ai',
         'research',
         'papers',
         'blog/video-console',
         'blog/trilingual-model-research',
-        'blog/tags',
         'blog/tags/video-generation',
         'blog/topics/ai',
       ]) {
@@ -185,14 +203,13 @@ describe('route manifest', () => {
   });
 });
 
-describe('retained content and empty blog', () => {
+describe('retained content and published blog', () => {
   it('answers unknown paths, drafts and empty taxonomy with a real 404', () => {
     for (const path of [
       '/en/blog/not-a-post',
       '/en/blog/engineering-principles',
       '/zh-hant/blog/production-systems',
       '/en/blog/tags/llm',
-      '/en/blog/topics/engineering',
       '/en/blog/tags/unknown-tag',
       '/en/blog/topics/unknown',
       '/en/projects/unknown',
@@ -209,15 +226,19 @@ describe('retained content and empty blog', () => {
     }
   });
   it.each(locales)(
-    '%s keeps the localized home, notes and empty blog',
+    '%s keeps the localized home, notes and published blog',
     (locale) => {
       const home = load(`/${locale}/`);
       if (home.view.kind !== 'home') throw new Error('Expected home');
       expect(home.canonical).toBe(`https://dennysora.me/${locale}/`);
       expect(home.indexable).toBe(true);
       expect(home.view.profile.displayName).toBe('DennySORA');
-      expect(home.view.recent).toEqual([]);
-      expect(home.workspace.posts).toEqual([]);
+      expect(home.view.recent.map((post) => post.id).sort()).toEqual(
+        publishedArticleIds.slice(0, 3),
+      );
+      expect(home.workspace.posts.map((post) => post.slug).sort()).toEqual(
+        publishedArticleIds,
+      );
       expect(home.view.projects.map((project) => project.id)).toEqual([
         'dgxtop',
         'httpulse',
@@ -225,16 +246,34 @@ describe('retained content and empty blog', () => {
       expect(JSON.stringify(home)).not.toContain('provenance');
       const blog = load(`/${locale}/blog/`);
       if (blog.view.kind !== 'library') throw new Error('Expected blog');
-      expect(blog.view.posts).toEqual([]);
-      expect(blog.indexable).toBe(false);
-      expect(isIndexable({ kind: 'library', locale })).toBe(false);
-      expect(blog.view.available).toEqual({ topics: [], types: [], tags: [] });
+      expect(blog.view.posts.map((post) => post.id).sort()).toEqual(
+        publishedArticleIds,
+      );
+      expect(blog.indexable).toBe(true);
+      expect(isIndexable({ kind: 'library', locale })).toBe(true);
+      expect(blog.view.available.topics).toEqual(['engineering', 'systems']);
+      expect(blog.view.available.types).toEqual(['research-note', 'tutorial']);
+      expect([...blog.view.available.tags].sort()).toEqual([
+        'architecture',
+        'networking',
+        'p2p',
+        'privacy',
+        'security',
+      ]);
       expect(blog.languageLinks).toEqual(
         locales.map((target) => ({ locale: target, href: `/${target}/blog/` })),
       );
       expect(isIndexable({ kind: 'search', locale })).toBe(false);
-      for (const post of loadPosts())
-        expect(relatedPosts(locale, post.id)).toEqual([]);
+      for (const post of listPosts(locale)) {
+        const related = relatedPosts(locale, post.id);
+        expect(related.length).toBeLessThanOrEqual(3);
+        expect(
+          related.every(
+            (item) =>
+              publishedArticleIds.includes(item.id) && item.id !== post.id,
+          ),
+        ).toBe(true);
+      }
     },
   );
   it('validates retained content and all its frozen heading anchors', () => {

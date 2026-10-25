@@ -39,7 +39,7 @@ const articles = [
     controls: 1,
   },
 ] as const;
-describe('new imported article drafts', () => {
+describe('reviewed imported article publication', () => {
   it('keeps all teaching figures, tables, source links and safe editable SVG text', () => {
     for (const article of articles)
       for (const locale of locales) {
@@ -77,9 +77,7 @@ describe('new imported article drafts', () => {
         expect(body.html).not.toMatch(
           /<(?:script|style|input|select|button|iframe|foreignObject)\b|\son\w+=|\sstyle=|\ssrc=/i,
         );
-        expect(
-          renderPost(article.id, locale, { mode: 'draft-preview' }).html,
-        ).toBe(body.html);
+        expect(renderPost(article.id, locale).html).toBe(body.html);
         if (locale === 'en')
           expect(body.text.match(/[\u3400-\u9fff]+/g) ?? []).toEqual(
             article.id === 'browser-translation-architecture'
@@ -88,7 +86,7 @@ describe('new imported article drafts', () => {
           );
       }
   });
-  it('adds a real trilingual tools category but does not expose draft routes', () => {
+  it('publishes all reviewed locales in real localized categories', () => {
     for (const locale of locales)
       expect(blogFolders.tools.title[locale].trim()).toBeTruthy();
     expect(
@@ -98,21 +96,35 @@ describe('new imported article drafts', () => {
       for (const locale of locales) {
         const path = articlePath(article.id, locale);
         expect(path).toBe(`/${locale}/blog/${article.folder}/${article.id}/`);
-        expect(publishedPaths()).not.toContain(path.slice(0, -1));
-        expect(loadArticle(locale, article.id)).toBeNull();
+        expect(publishedPaths()).toContain(path.slice(0, -1));
+        expect(loadArticle(locale, article.id)).not.toBeNull();
         const post = loadPosts().find((p) => p.id === article.id);
-        expect(post?.locales[locale]?.publication).toBe('draft');
-        expect(post?.locales[locale]?.reviewEvidence).toBeNull();
+        expect(post?.locales[locale]?.publication).toBe('published');
+        expect(post?.locales[locale]?.reviewEvidence).toMatch(
+          /^https:\/\/github\.com\/DennySORA\/dennysora\.github\.io\/blob\/[a-f0-9]{40}\/docs\/process\/REVIEW-/,
+        );
         expect(post?.locales[locale]?.translationState).toBe(
-          locale === 'zh-hant' ? 'original' : 'machine-draft',
+          locale === 'zh-hant' ? 'original' : 'reviewed',
         );
       }
   });
   it('gates each demo chunk independently from actual publication', () => {
     expect(articleDemoPublication(loadPosts())).toEqual({
-      privacy: false,
-      translation: false,
+      privacy: true,
+      translation: true,
     });
+    expect(
+      articleDemoPublication([
+        {
+          id: 'p2p-privacy-boundaries',
+          locales: { en: { publication: 'draft' } },
+        },
+        {
+          id: 'browser-translation-architecture',
+          locales: { ja: { publication: 'draft' } },
+        },
+      ]),
+    ).toEqual({ privacy: false, translation: false });
     expect(
       articleDemoPublication([
         {

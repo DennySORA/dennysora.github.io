@@ -15,9 +15,10 @@ vi.mock('node:fs', async (importOriginal) => {
       )
         return bytes;
       const post = JSON.parse(bytes.toString()) as {
-        locales: { 'zh-hant': { publication: string } };
+        locales: Record<string, { publication: string }>;
       };
-      post.locales['zh-hant'].publication = 'published';
+      post.locales['zh-hant']!.publication = 'published';
+      post.locales['en']!.publication = 'draft';
       const value = JSON.stringify(post);
       return typeof bytes === 'string' ? value : Buffer.from(value);
     },

@@ -1,3 +1,5 @@
+> Historical draft checkpoint. For the subsequent authorized publication and current technical workflow, see [the publication record](DELIVERY-blog-publication-2026-10-25.md).
+
 # Blog／網路與工具新稿整合（草稿）
 
 日期：2026-10-25。手動交接紀錄 `bootstrap_manual`；檢查摘要為 `agent_reported`，

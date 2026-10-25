@@ -23,26 +23,26 @@
     "zh-hant": {
       "title": "密碼管理器推薦",
       "summary": "從重複密碼的風險開始，圖解 Vault 加密、TOTP、FIDO2、Passkey、自動填入與備份，並附可展開的算法說明。",
-      "publication": "draft",
+      "publication": "published",
       "translationState": "original",
       "sourceRevision": "ddd26e2c8a786b92e992656f41ffca982f4391c07d9f276bfe3537e79a05d31c",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-imported-blog-2026-10-25.md"
     },
     "en": {
       "title": "Password manager recommendations",
       "summary": "From password reuse to vault encryption, TOTP, FIDO2, passkeys, autofill and backups—with diagrams and expandable technical notes.",
-      "publication": "draft",
-      "translationState": "machine-draft",
+      "publication": "published",
+      "translationState": "reviewed",
       "sourceRevision": "ddd26e2c8a786b92e992656f41ffca982f4391c07d9f276bfe3537e79a05d31c",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-imported-blog-2026-10-25.md"
     },
     "ja": {
       "title": "パスワードマネージャーのおすすめ",
       "summary": "パスワードの使い回しから、Vault の暗号化、TOTP、FIDO2、パスキー、自動入力、バックアップまで。図解と展開式の技術補足で整理する。",
-      "publication": "draft",
-      "translationState": "machine-draft",
+      "publication": "published",
+      "translationState": "reviewed",
       "sourceRevision": "ddd26e2c8a786b92e992656f41ffca982f4391c07d9f276bfe3537e79a05d31c",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-imported-blog-2026-10-25.md"
     }
   }
 }

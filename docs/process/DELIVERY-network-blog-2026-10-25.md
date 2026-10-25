@@ -1,3 +1,5 @@
+> Historical draft checkpoint. For the subsequent authorized publication and current technical workflow, see [the publication record](DELIVERY-blog-publication-2026-10-25.md).
+
 # Blog／網路稿件轉製（草稿）
 
 日期：2026-10-25。來源：`agent_reported`。未提交、未推送、未發布。

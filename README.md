@@ -18,7 +18,7 @@ pnpm verify
 pnpm preview
 ```
 
-`pnpm verify` runs formatting, lint, strict type checks, unit tests, static generation with the Pagefind search index, artifact checks and Playwright/axe checks. Browser tests require an installed Google Chrome, configured in [playwright.config.ts](playwright.config.ts). Preview serves `build/client` at `http://127.0.0.1:4173` with real 404 responses and no SPA fallback.
+`pnpm verify` runs formatting, lint, strict type checks, unit tests, static generation with the Pagefind search index, and content/route/SEO/feed/artifact checks. The owner reviews visuals and interactions on the live site after an authorized release and reports issues; browser previews, screenshots and Playwright/axe are not routine publication blockers. `pnpm test:e2e` remains available for explicitly requested diagnostics and requires the configured Google Chrome. This verification workflow does not independently authorize any commit, push or deployment. Preview serves `build/client` at `http://127.0.0.1:4173` with real 404 responses and no SPA fallback.
 
 ## Content and routes
 

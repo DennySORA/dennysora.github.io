@@ -23,26 +23,26 @@
     "zh-hant": {
       "title": "P2P 隱私的真正邊界：從 IP 暴露到端對端流量關聯",
       "summary": "VPN 能改變對外連線的位址，卻不會自動抹去通信的節奏。沿著一次 BitTorrent 下載，理解協定線索、隧道路徑，以及匿名所需的頻寬與時間。",
-      "publication": "draft",
+      "publication": "published",
       "translationState": "original",
       "sourceRevision": "ecd385241ceef11e4186beb93d0489b331d914ac26469361381a426d49e320b3",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-p2p-privacy-2026-10-25.md"
     },
     "en": {
       "title": "The real boundaries of P2P privacy: from IP exposure to end-to-end traffic correlation",
       "summary": "A VPN can change your public endpoint without erasing communication rhythms. Follow a BitTorrent download through protocol clues, tunnel paths and the bandwidth and time costs of stronger anonymity.",
-      "publication": "draft",
-      "translationState": "machine-draft",
+      "publication": "published",
+      "translationState": "reviewed",
       "sourceRevision": "ecd385241ceef11e4186beb93d0489b331d914ac26469361381a426d49e320b3",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-p2p-privacy-2026-10-25.md"
     },
     "ja": {
       "title": "P2P プライバシーの本当の境界：IP の露出からエンドツーエンドのトラフィック相関まで",
       "summary": "VPN は対外接続のアドレスを変えられても、通信のリズムまでは自動的に消さない。BitTorrent のダウンロードをたどり、プロトコルの手がかり、トンネル経路、匿名性に必要な帯域と時間を理解する。",
-      "publication": "draft",
-      "translationState": "machine-draft",
+      "publication": "published",
+      "translationState": "reviewed",
       "sourceRevision": "ecd385241ceef11e4186beb93d0489b331d914ac26469361381a426d49e320b3",
-      "reviewEvidence": null
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/9b1a75b3a89704b7612fcf0e0e8affce3516cb03/docs/process/REVIEW-p2p-privacy-2026-10-25.md"
     }
   }
 }

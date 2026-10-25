@@ -138,7 +138,7 @@ describe('global site search', () => {
       ),
     ).toBe('A & B next');
   });
-  it('indexes only published main content including notes when articles are absent', () => {
+  it('indexes published blog navigation and notes without private or search pages', () => {
     const output = mkdtempSync(join(tmpdir(), 'site-search-'));
     temp.push(output);
     const routes = [
@@ -157,7 +157,7 @@ describe('global site search', () => {
       );
     }
     const index = buildSiteSearch(output, routes);
-    expect(index).toHaveLength(2);
+    expect(index).toHaveLength(3);
     expect(index.some((item) => item.kind === 'note')).toBe(true);
     expect(index.every((item) => item.text === 'choke_lease 架構設計')).toBe(
       true,
@@ -167,7 +167,8 @@ describe('global site search', () => {
     expect(index[0]?.tags[0]?.label.en).toBe('Architecture');
     expect(searchSite(index, 'system design', 'note', 'en')).toHaveLength(1);
     expect(index.map((item) => item.href)).not.toContain('/en/search/');
-    expect(index.map((item) => item.href)).not.toContain('/en/blog/');
+    expect(index.map((item) => item.href)).toContain('/en/blog/');
+    expect(index.map((item) => item.href)).not.toContain('/en/privacy/');
     expect(searchSite(index, 'choke_lease', 'note', 'en')).toHaveLength(1);
   });
   it('publishes separate localized search pages', () => {

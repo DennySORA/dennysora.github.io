@@ -24,11 +24,9 @@ describe('imported static article boundary', () => {
         expect(body.html).toContain(`id="src-${String(n).padStart(2, '0')}"`);
       expect(body.html).toContain('viewBox="0 0 24 24"');
       expect(body.html).not.toMatch(/<script|\son\w+=|\sstyle=|\ssrc=/i);
-      expect(
-        renderPost('password-manager-recommendations', locale, {
-          mode: 'draft-preview',
-        }).html,
-      ).toBe(body.html);
+      expect(renderPost('password-manager-recommendations', locale).html).toBe(
+        body.html,
+      );
     }
   });
 
@@ -65,11 +63,9 @@ describe('imported static article boundary', () => {
       ).toHaveLength(52);
       expect(body.html.match(/href="https:\/\//g)).toHaveLength(21);
       expect(body.html).not.toMatch(/<script|<input|\son\w+=|\sstyle=|\ssrc=/i);
-      expect(
-        renderPost('p2p-downloader-architecture', locale, {
-          mode: 'draft-preview',
-        }).html,
-      ).toBe(body.html);
+      expect(renderPost('p2p-downloader-architecture', locale).html).toBe(
+        body.html,
+      );
       const comparison =
         /<details class="np-coverage-cases">([\s\S]*?)<\/details>/.exec(
           body.html,
@@ -107,8 +103,8 @@ describe('imported static article boundary', () => {
       const route = parseRoute(path);
       expect(route).not.toBeNull();
       if (route) expect(routePath(route)).toBe(path);
-      expect(loadArticle(locale, 'p2p-downloader-architecture')).toBeNull();
-      expect(publishedPaths()).not.toContain(path.slice(0, -1));
+      expect(loadArticle(locale, 'p2p-downloader-architecture')).not.toBeNull();
+      expect(publishedPaths()).toContain(path.slice(0, -1));
     }
   });
 
@@ -131,7 +127,7 @@ describe('imported static article boundary', () => {
       expect(() => renderStaticArticle(input)).toThrow();
   });
 
-  it('uses the populated security folder and keeps draft articles private', () => {
+  it('publishes reviewed articles in the populated security folder', () => {
     expect(populatedBlogFolders([])).toEqual([]);
     expect(
       populatedBlogFolders([{ slug: 'password-manager-recommendations' }]),
@@ -147,10 +143,10 @@ describe('imported static article boundary', () => {
       expect(
         parseRoute(`/${locale}/blog/password-manager-recommendations/`),
       ).toBeNull();
-      expect(publishedPaths()).not.toContain(path.slice(0, -1));
+      expect(publishedPaths()).toContain(path.slice(0, -1));
       expect(
         loadArticle(locale, 'password-manager-recommendations'),
-      ).toBeNull();
+      ).not.toBeNull();
     }
   });
 

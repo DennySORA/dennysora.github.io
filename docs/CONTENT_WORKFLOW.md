@@ -25,7 +25,7 @@
 3. 新譯文先設 `translationState=machine-draft`、`publication=draft`。缺少語言可省略該 edition。機器翻譯不自動成為 reviewed；代理審閱須逐項對照原文並保留證據，且不得標為人工審閱。
 4. 作者審閱，或依作者明示授權完成代理對照審閱後，填入可核對的 `reviewEvidence` HTTPS 連結與原文檔案 SHA-256，將譯文改為 `reviewed`、`published`。`source-published` 僅供本次繼承原站公開譯文，不能拿來跳過新稿審阅。
 5. 更新原文時同步更新 `updatedAt`；舊譯文 hash 不符會被判定 stale。先把譯文改回 draft，再重新審阅；不要只更新 hash 來略過審查。宣稱 published 卻 stale 的譯文會阻止建置。
-6. 執行 `pnpm verify`，檢查實際三語頁面，再依擁有者授權提交與發布；直接發布流程仍遵守 main → release 契約。
+6. 執行 `pnpm verify` 的技術檢查，再依擁有者授權提交與發布；發布後核對三語 HTTP／連結。擁有者自行檢視正式站的排版與互動並回報問題，不再把預覽、截圖或 Playwright／axe 當作例行發布前阻擋；這不構成獨立發布授權，main → release 契約仍適用。
 
 計算單篇原文 revision（示例指向既有文章）：
 
@@ -191,3 +191,14 @@ P2P 隱私與翻譯架構新增到 Blog／網路與 Blog／工具；三語完整
 本文與示意。新增或修改互動須同步三語 copy、公式測試、no-JS／motion／cleanup 驗收。
 Vite 依各篇 publication 旗標排除未發布的 demo chunk，避免草稿文字藏在公開 JS。
 私有預覽 script 與 `.draft-preview/` 不可一併發布；發布產物仍只有 `build/client`。
+
+## 擁有者發布後視覺檢視（2026-10-25）
+
+個人網站採用「授權發布後，由擁有者查看正式頁面並回報問題」的視覺／互動檢視流程。
+例行發布不再等待雲端瀏覽器預覽、截圖、Playwright／axe 或付費渲染；遇到擁有者
+回報的問題或明確要求時，仍可選用這些診斷工具，沒有執行就記為未執行，不宣稱通過。
+
+`pnpm verify` 保留 formatting、lint、types、unit tests、content、build、search、
+route／SEO／RSS／sitemap 與 artifact 檢查；部署後保留實際 HTTP／連結核對。
+此流程規則不授予 commit／push／publish 的常態權限、不改站台安全設定，也不延伸至
+獨立的論文發布流程。每次遠端寫入與發布仍須有對應的明確授權。

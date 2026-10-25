@@ -14,9 +14,9 @@ vi.mock('node:fs', async (importOriginal) => {
         source: { kind: string };
         locales: Record<string, { publication: string }>;
       };
-      if (post.source.kind !== 'profile-adaptation') return bytes;
       for (const edition of Object.values(post.locales))
-        edition.publication = 'published';
+        edition.publication =
+          post.source.kind === 'profile-adaptation' ? 'published' : 'draft';
       const json = JSON.stringify(post);
       return typeof bytes === 'string' ? json : Buffer.from(json);
     },
