@@ -38,6 +38,7 @@ export default function Root() {
         <meta name="color-scheme" content="dark" />
         <meta name="theme-color" content="#080C12" />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="msvalidate.01" content="B88CF5221D729BD97AE27FBF459A25FA" />
         <link rel="icon" href="/assets/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
         <Meta />
