@@ -18,7 +18,7 @@ function navigation(
   route: RouteDescriptor,
   posts: WorkspaceFiles['posts'],
 ) {
-  const files = { posts, notes: noteTree(locale) };
+  const files = { posts, thoughts: [], notes: noteTree(locale) };
   return renderToStaticMarkup(
     createElement(
       MemoryRouter,
@@ -74,11 +74,12 @@ describe('empty blog navigation category', () => {
         expect(html).not.toContain('data-area="library"');
         expect(html).not.toContain('class="tree-empty"');
         expect(html.match(/class="explorer"/g)).toHaveLength(2);
-        for (const area of ['note', 'projects'])
+        for (const area of ['thoughts', 'note', 'projects'])
           expect(html).toContain(`href="/${locale}/${area}/"`);
         expect(html).toContain(`href="/${locale}/search/#search"`);
         expect(areas(locale, { posts: [] }).map((area) => area.key)).toEqual([
           'home',
+          'thoughts',
           'notes',
           'projects',
         ]);
@@ -100,6 +101,7 @@ describe('empty blog navigation category', () => {
       expect(areas(locale, { posts }).map((area) => area.key)).toEqual([
         'home',
         'library',
+        'thoughts',
         'notes',
         'projects',
       ]);

@@ -21,6 +21,7 @@ import {
 
 export type WorkspaceFiles = {
   posts: { slug: string; title: string }[];
+  thoughts: { slug: string; title: string }[];
   /** The note/ tree in the page's language; their copy
    * arrives as loader data. */
   notes: NoteTreeFolder[];
@@ -51,6 +52,12 @@ export function areas(
           },
         ]
       : []),
+    {
+      key: 'thoughts',
+      file: 'thoughts',
+      href: `/${locale}/thoughts/`,
+      external: false,
+    },
     { key: 'notes', file: 'note', href: `/${locale}/note/`, external: false },
     {
       key: 'projects',
@@ -88,6 +95,14 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
       return [home, { label: 'README.md', href: self }];
     case 'library':
       return [home, blog];
+    case 'thoughts':
+      return [home, { label: 'thoughts', href: self }];
+    case 'thought':
+      return [
+        home,
+        { label: 'thoughts', href: `/${locale}/thoughts/` },
+        { label: `${route.slug}.md`, href: self },
+      ];
     case 'search':
       return [home, { label: 'search', href: self }];
     case 'notes':
@@ -159,6 +174,7 @@ export function crumbs(route: RouteDescriptor): Crumb[] {
 
 const folders: RouteDescriptor['kind'][] = [
   'library',
+  'thoughts',
   'blog-folder',
   'notes',
   'note-folder',
@@ -190,7 +206,9 @@ export function fileKind(route: RouteDescriptor): FileKind {
 
 /** An area's own landing page, such as blog/ or note/, rather than a page inside it. */
 export function isAreaLanding(route: RouteDescriptor): boolean {
-  return ['root', 'home', 'library', 'notes', 'projects'].includes(route.kind);
+  return ['root', 'home', 'library', 'thoughts', 'notes', 'projects'].includes(
+    route.kind,
+  );
 }
 
 /** Section landing pages are the current page; articles and tags sit inside one. */

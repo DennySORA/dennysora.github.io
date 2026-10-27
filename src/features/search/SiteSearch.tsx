@@ -18,6 +18,7 @@ import { searchCopy } from './search-copy.ts';
 
 const kindIcons: Record<SiteSearchDocument['kind'], IconName> = {
   article: 'markdown',
+  thought: 'pen',
   note: 'notebook',
   page: 'file',
 };

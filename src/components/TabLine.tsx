@@ -34,6 +34,7 @@ export type ExplorerToggle = {
 const areaIcons: Record<AreaKey, IconName> = {
   home: 'markdown',
   library: 'folder',
+  thoughts: 'folder',
   notes: 'folder',
   projects: 'folder',
 };
@@ -60,6 +61,7 @@ function Buffers({
   const labels: Record<AreaKey, string> = {
     home: t.navAbout,
     library: t.navLibrary,
+    thoughts: t.navThoughts,
     notes: noteCopy[locale].notes,
     projects: projectsCopy[locale].title,
   };
@@ -90,7 +92,9 @@ function Buffers({
   ) : null;
   const tab = (area: Area) => {
     const state = areaState(route, area.key);
-    const folder = ['library', 'notes', 'projects'].includes(area.key);
+    const folder = ['library', 'thoughts', 'notes', 'projects'].includes(
+      area.key,
+    );
     return (
       <li key={area.key}>
         <a

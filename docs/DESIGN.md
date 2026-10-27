@@ -305,6 +305,15 @@ Dark only：不提供淺色主題、主題切換或跟隨作業系統的分支�
 - **無 JavaScript**：所有內容與導覽都能讀。只在 JavaScript 下才有用的控制項加 `requires-js`；只給無 JavaScript 看的說明用 `no-js-only` 元素（由 head 裡的 noscript 樣式顯示）。**不要把內容放在 body 的 `<noscript>` 裡**，Chrome 的無 JavaScript 模擬會把它隱藏。
 - **站內介面不使用 storage 與 cookie**：檔案樹收合等狀態只存在記憶體裡。2026-10-25 依擁有者要求加入全站 giscus；依擁有者後續要求，接近留言區時自動連線第三方並顯示留言與輸入框，閱讀不需登入；登入 GitHub 留言後 giscus 可能儲存登入階段。留言沿用 `.comments-panel` 與深色主題，不新增網站外框。擁有者同日要求精簡 host：移除歡迎／第三方說明、重複空狀態／數量及 GitHub 搜尋連結，只保留原生 giscus 內容、必要載入狀態及真實錯誤／重試；不操作跨來源 iframe DOM。
 
+### Thoughts（擁有者要求，2026-10-27）
+
+`thoughts/` 是與 Blog 平行的獨立 buffer 和 Explorer 資料夾，空目錄也保留。
+列表沿用 `.article-row`，內頁沿用 `.reader`／`.reader-shell`、Markdown／Prose、
+行號與目錄，不新增設計 tokens 或外框。繁中／英文／日文的名稱分別為「隨想」／
+「Thoughts」／「雑記」。封面可選，不套用 Note／Blog 每篇必備封面的規則；
+有封面時沿用 `.article-cover`，顯示同源 JPEG 與實際寬高、各語言 alt，
+不要求產生額外縮圖、checksum 或來源審查資料。無封面時不留下空白圖片區。
+
 ## 11. 之後加入新東西時怎麼做
 
 - **新頁面或路由**：在 `route-manifest.ts` 加入路由，在 `workspace.ts` 的 `crumbs()` 給它真實的路徑與檔名（檔名決定 winbar、buffer 與狀態列的顯示），內容用 `.buffer`／`.container`＋`PageHead`＋`.ln`＋`EndOfBuffer`。要出現在檔案樹，就在 `Explorer.tsx` 加一列，並給它正確的種類（markdown、folder、external）。

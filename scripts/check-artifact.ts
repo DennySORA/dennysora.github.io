@@ -1,3 +1,4 @@
+import { loadThought } from '../src/lib/thoughts.server.ts';
 import { buildSiteSearch } from '../src/lib/site-search.server.ts';
 import { parseSearchIndex } from '../src/lib/site-search.ts';
 import { hasRawAsset } from '../src/lib/asset-policy.ts';
@@ -368,8 +369,13 @@ for (const route of publishedRoutes()) {
     'medical-note',
     'collection-note',
   ].includes(route.kind);
+  const thought =
+    route.kind === 'thought' ? loadThought(route.locale, route.slug) : null;
   const coverCount = [...pageHtml.matchAll(/class="article-cover"/g)].length;
-  if (coverCount !== (expectsCover ? 1 : 0) || (expectsCover && !cover))
+  if (
+    coverCount !== (expectsCover || thought?.cover ? 1 : 0) ||
+    (expectsCover && !cover)
+  )
     failures.push(`Article banner coverage mismatch: ${routePath(route)}`);
   if (cover) {
     const head = pageHtml.split('</head>')[0] ?? '';
@@ -394,6 +400,23 @@ for (const route of publishedRoutes()) {
       failures.push(
         `Article banner placement or responsive source mismatch: ${routePath(route)}`,
       );
+  }
+  if (thought?.cover) {
+    const cover = thought.cover;
+    const head = pageHtml.split('</head>')[0] ?? '';
+    if (
+      !existsSync(join(root, cover.src)) ||
+      !head.includes(
+        `<meta property="og:image" content="${siteUrl}${cover.socialSrc}"`,
+      ) ||
+      !head.includes(
+        `<meta property="og:image:width" content="${cover.width}"`,
+      ) ||
+      !head.includes(
+        `<meta property="og:image:height" content="${cover.height}"`,
+      )
+    )
+      failures.push(`Incomplete thought cover: ${routePath(route)}`);
   }
   const post =
     route.kind === 'article'

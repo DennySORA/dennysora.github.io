@@ -140,7 +140,7 @@ describe('project folders and explorer', () => {
         createElement(Explorer, {
           locale,
           route: { kind: 'projects', locale },
-          files: { posts: [], notes: noteTree(locale) },
+          files: { posts: [], thoughts: [], notes: noteTree(locale) },
         }),
       );
       expect(explorer).toContain(`href="/${locale}/projects/"`);

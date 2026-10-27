@@ -1,5 +1,31 @@
 # 寫作、翻譯與發布
 
+## Thoughts：獨立隨想
+
+Thoughts 與 Blog 平行，網址為 `/:locale/thoughts/` 和
+`/:locale/thoughts/:slug/`。沒有文章時仍保留導覽及三語空狀態；空列表
+不加入 sitemap 或全站搜尋。
+
+每篇放在 `content/thoughts/<slug>/`，包含 `meta.json`、`zh-hant.md`、
+`en.md`、`ja.md`。metadata 只需 `slug`、`publication`（`draft`／`published`）、
+`publishedAt`、`updatedAt`（`YYYY-MM-DD`），以及 `locales` 下三語各自的
+`title` 與 `summary`。三語 metadata 必須齊全；發布時三份 Markdown 都必須非空。
+不使用 Blog 的來源 repo／commit、revision hash 或 review metadata；不改動舊 Blog 規則。
+
+封面可省略。有封面時，在同目錄放 JPEG，加入
+`cover: { "file": "cover.jpg", "alt": { "zh-hant": "…", "en": "…", "ja": "…" } }`；
+檔名只用小寫英數和連字號，寬高由實際圖片讀取。Markdown 內文可引用同目錄圖片，
+沿用既有安全 Markdown／Prose renderer。建置只複製已發布內容使用的圖片。
+
+三語保留同一個穩定 `slug`（也用於跨語留言身份），發布後不要任意改名。
+英文照原文翻譯，不加料、不改意思；日文也須保留原意。
+日後 Hacker News 的英文須使用這份 `en.md` 相同文字，不另寫美化版本。
+只有明示同意發布後才將 `publication` 改為 `published`；「先不要發」的稿件與圖片
+不加入公開內容。本分類沒有 CMS、後端或自動投遞 Hacker News 的功能。
+
+Thoughts 使用全站搜尋的「隨想」分類，不混入 Blog 的列表、taxonomy、Pagefind 或 RSS。
+本次未新增 Thoughts RSS。沿用網站建置、canonical／三語 alternate、sitemap 和留言設定。
+
 ## 內容來源
 
 ### 含影片的本機草稿預覽

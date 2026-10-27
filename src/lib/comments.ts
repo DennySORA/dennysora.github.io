@@ -32,6 +32,12 @@ export function commentTarget(
     case 'article':
       if (!post) throw new Error('Article comments require a content ID');
       return { ...post, id: `article:${post.id}` };
+    case 'thought':
+      id = `thought:${route.slug}`;
+      break;
+    case 'thoughts':
+      id = 'index:thoughts';
+      break;
     case 'home':
     case 'search':
       id = `page:${route.kind}`;

@@ -51,8 +51,8 @@ export function buildSiteSearch(
         id: href.replace(/^\/(?:zh-hant|en|ja)\//, '/'),
         locale: routeLocale(route),
         kind:
-          route.kind === 'article'
-            ? 'article'
+          route.kind === 'article' || route.kind === 'thought'
+            ? route.kind
             : ['medical-note', 'network-note', 'collection-note'].includes(
                   route.kind,
                 )

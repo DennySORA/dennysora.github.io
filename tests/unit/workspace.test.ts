@@ -32,7 +32,13 @@ describe('workspace chrome', () => {
       areas('ja', { posts: [{ slug: 'example', title: 'Example' }] }).map(
         (area) => area.href,
       ),
-    ).toEqual(['/ja/', '/ja/blog/', '/ja/note/', '/ja/projects/']);
+    ).toEqual([
+      '/ja/',
+      '/ja/blog/',
+      '/ja/thoughts/',
+      '/ja/note/',
+      '/ja/projects/',
+    ]);
   });
   it('marks landing pages as the page and inner pages as inside their area', () => {
     expect(areaState({ kind: 'home', locale: 'en' }, 'home')).toBe('page');

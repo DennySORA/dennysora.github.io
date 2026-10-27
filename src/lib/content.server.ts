@@ -1,3 +1,8 @@
+import {
+  listThoughts,
+  loadThoughts,
+  renderThought,
+} from './thoughts.server.ts';
 import { renderStaticArticle } from './static-article.server.ts';
 import { populatedBlogFolders, articleFolder } from './blog-tree.ts';
 import {
@@ -320,6 +325,7 @@ export function publishedRoutes(): RouteDescriptor[] {
     routes.push(
       { kind: 'home', locale },
       { kind: 'library', locale },
+      { kind: 'thoughts', locale },
       { kind: 'search', locale },
       { kind: 'notes', locale },
       { kind: 'projects', locale },
@@ -331,6 +337,8 @@ export function publishedRoutes(): RouteDescriptor[] {
       routes.push({ kind: 'project-category', locale, category });
     for (const folder of populatedBlogFolders(listPosts(locale)))
       routes.push({ kind: 'blog-folder', locale, folder });
+    for (const thought of listThoughts(locale))
+      routes.push({ kind: 'thought', locale, slug: thought.slug });
     for (const post of listPosts(locale))
       routes.push({ kind: 'article', locale, slug: post.slug });
     for (const topicId of topicsInLocale(locale))
@@ -356,6 +364,7 @@ export function isIndexable(route: RouteDescriptor): boolean {
       (post) => articleFolder(post.slug) === route.folder,
     );
   if (route.kind === 'not-found' || route.kind === 'search') return false;
+  if (route.kind === 'thoughts') return listThoughts(route.locale).length > 0;
   if (route.kind === 'library') return listPosts(route.locale).length > 0;
   return true;
 }
@@ -366,6 +375,9 @@ export function publishedPaths(): string[] {
 /** Cross-reference checks that schemas alone cannot express. Throws on the first defect list. */
 export function validateContent(): void {
   const problems: string[] = [];
+  for (const thought of loadThoughts())
+    if (thought.publication === 'published')
+      for (const locale of locales) renderThought(thought, locale);
   const posts = loadPosts();
   const postIds = new Set(posts.map((post) => post.id));
   for (const id of Object.keys(loadPostSections()))

@@ -34,6 +34,7 @@ describe('requested website simplification', () => {
       }
       expect(areas(locale, { posts: [] }).map((area) => area.key)).toEqual([
         'home',
+        'thoughts',
         'notes',
         'projects',
       ]);
@@ -47,7 +48,7 @@ describe('requested website simplification', () => {
           createElement(TabLine, {
             locale,
             route: { kind: 'home', locale },
-            files: { posts: [], notes: noteTree(locale) },
+            files: { posts: [], thoughts: [], notes: noteTree(locale) },
             languageLinks: locales.map((target) => ({
               locale: target,
               href: `/${target}/`,
@@ -78,7 +79,7 @@ describe('requested website simplification', () => {
         [...(buffers ?? '').matchAll(/class="tab-name">([^<]+)</g)].map(
           (match) => match[1],
         ),
-      ).toEqual(['README.md', 'note', 'projects']);
+      ).toEqual(['README.md', 'thoughts', 'note', 'projects']);
       expect(html).toContain(`href="/${locale}/search/#search"`);
       expect(html).not.toMatch(/navigation-icons|activity-art|<img[^>]*sprite/);
     });

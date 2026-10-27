@@ -3,7 +3,13 @@ import { matchSearch } from './search.ts';
 import { parseRoute } from './route-manifest.ts';
 import type { LocalizedText } from './schema.ts';
 
-export const searchKinds = ['all', 'article', 'note', 'page'] as const;
+export const searchKinds = [
+  'all',
+  'article',
+  'thought',
+  'note',
+  'page',
+] as const;
 export type SearchKind = (typeof searchKinds)[number];
 export type SiteSearchTag = {
   id: string;
@@ -63,7 +69,7 @@ export function parseSearchIndex(value: unknown): SiteSearchDocument[] {
         typeof item.locale === 'string' &&
         isLocale(item.locale) &&
         'kind' in item &&
-        ['article', 'note', 'page'].includes(String(item.kind)) &&
+        ['article', 'thought', 'note', 'page'].includes(String(item.kind)) &&
         'href' in item &&
         typeof item.href === 'string' &&
         item.href.startsWith(`/${item.locale}/`) &&

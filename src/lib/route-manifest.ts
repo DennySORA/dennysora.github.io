@@ -32,6 +32,8 @@ export type RouteDescriptor =
   | { kind: 'not-found' }
   | { kind: 'home'; locale: Locale }
   | { kind: 'library'; locale: Locale }
+  | { kind: 'thoughts'; locale: Locale }
+  | { kind: 'thought'; locale: Locale; slug: string }
   | { kind: 'blog-folder'; locale: Locale; folder: BlogFolderId }
   | { kind: 'search'; locale: Locale }
   | { kind: 'notes'; locale: Locale }
@@ -47,7 +49,7 @@ export type RouteDescriptor =
   | { kind: 'tags'; locale: Locale }
   | { kind: 'tag'; locale: Locale; tagId: string };
 export type RouteKind = RouteDescriptor['kind'];
-export type NavSection = 'home' | 'library' | 'notes' | 'projects';
+export type NavSection = 'home' | 'library' | 'thoughts' | 'notes' | 'projects';
 
 // Slugs that would collide with fixed Library routes.
 export const reservedSlugs = ['tags', 'topics', ...blogFolderIds] as const;
@@ -94,6 +96,12 @@ export function parseRoute(pathname: string): RouteDescriptor | null {
         )
         ? { kind: 'project', locale, projectId: b as ProjectPageId }
         : null;
+    case 'thoughts':
+      return rest.length === 0
+        ? { kind: 'thoughts', locale }
+        : rest.length === 1 && a
+          ? { kind: 'thought', locale, slug: a }
+          : null;
     case 'blog':
       if (rest.length === 0) return { kind: 'library', locale };
       if (blogFolderIds.some((folder) => folder === a)) {
@@ -149,6 +157,8 @@ export function routePath(route: RouteDescriptor): string {
       return `/${route.locale}/blog/`;
     case 'blog-folder':
       return `/${route.locale}/blog/${route.folder}/`;
+    case 'thought':
+      return `/${route.locale}/thoughts/${route.slug}/`;
     case 'article':
       return articlePath(route.slug, route.locale);
     case 'notes':
@@ -196,6 +206,9 @@ export function navSection(route: RouteDescriptor): NavSection | null {
     case 'root':
     case 'home':
       return 'home';
+    case 'thoughts':
+    case 'thought':
+      return 'thoughts';
     case 'library':
     case 'blog-folder':
     case 'article':

@@ -1,3 +1,8 @@
+import {
+  loadThoughts,
+  renderThought,
+  thoughtAssets,
+} from '../src/lib/thoughts.server.ts';
 import { articlePath } from '../src/lib/blog-tree.ts';
 import {
   mkdirSync,
@@ -106,6 +111,16 @@ for (const post of loadPosts())
     for (const asset of [...rendered.images, ...rendered.subtitles])
       cpSync(asset.source, join(output, decodeURIComponent(asset.url)));
   }
+for (const thought of loadThoughts()) {
+  if (thought.publication !== 'published') continue;
+  for (const locale of locales)
+    usesMath ||= renderThought(thought, locale).hasMath;
+  for (const asset of thoughtAssets(thought)) {
+    const target = join(output, decodeURIComponent(asset.url));
+    mkdirSync(dirname(target), { recursive: true });
+    cpSync(asset.source, target);
+  }
+}
 if (usesMath) {
   const katex = join('node_modules', 'katex', 'dist');
   cpSync(

@@ -1,0 +1,28 @@
+{
+  "slug": "google-era-is-over",
+  "publication": "published",
+  "publishedAt": "2026-10-28",
+  "updatedAt": "2026-10-28",
+  "locales": {
+    "zh-hant": {
+      "title": "Google 的時代結束了",
+      "summary": "這幾年 Google 證明了一件事，別讓別人知道你的真本事，因為你會發現，沒什麼本事。"
+    },
+    "en": {
+      "title": "Google's era is over",
+      "summary": "These past few years, Google has proved one thing: don't let others know your real ability, because you will find out, there isn't much ability."
+    },
+    "ja": {
+      "title": "Google の時代は終わった",
+      "summary": "ここ数年で、Google は一つのことを証明しました。他人に自分の本当の実力を知られないようにすること。なぜなら、大した実力はないと気づくことになるからです。"
+    }
+  },
+  "cover": {
+    "file": "cover.jpg",
+    "alt": {
+      "zh-hant": "深藍色背景中，Google 的 G 標誌正分解成彩色像素。",
+      "en": "Google's G logo breaking into colored pixels against a dark blue background.",
+      "ja": "濃紺の背景で、Google の G ロゴが色付きのピクセルに分解している。"
+    }
+  }
+}

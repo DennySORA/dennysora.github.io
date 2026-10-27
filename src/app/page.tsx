@@ -1,3 +1,5 @@
+import { listThoughts, loadThought } from '../lib/thoughts.server.ts';
+import { Thoughts, Thought } from '../features/thoughts/Thoughts.tsx';
 import { articleFolder, blogFolders } from '../lib/blog-tree.ts';
 import { articleCoverForRoute } from '../lib/article-covers.server.ts';
 import type { ArticleCoverData } from '../lib/article-covers.ts';
@@ -173,6 +175,13 @@ function loadView(route: RouteDescriptor) {
         recent: listPosts(locale).slice(0, 3),
         taxonomy: taxonomyLabels(locale),
       };
+    case 'thoughts':
+      return { kind: 'thoughts' as const, thoughts: listThoughts(locale) };
+    case 'thought': {
+      const thought = loadThought(locale, route.slug);
+      if (!thought) notFound();
+      return { kind: 'thought' as const, thought };
+    }
     case 'search':
       return { kind: 'search' as const };
     case 'library':
@@ -353,6 +362,13 @@ function describe(view: ViewData, locale: Locale) {
         title: withSite(searchCopy[locale].title),
         description: searchCopy[locale].intro,
       };
+    case 'thoughts':
+      return { title: withSite(t.navThoughts), description: t.thoughtsIntro };
+    case 'thought':
+      return {
+        title: withSite(view.thought.title),
+        description: view.thought.summary,
+      };
     case 'library':
       return { title: withSite(t.libraryTitle), description: t.libraryIntro };
     case 'blog-folder':
@@ -455,6 +471,7 @@ export function loader({ params }: LoaderFunctionArgs) {
   }));
   // The explorer lists the real files of this workspace on every page.
   const workspace = {
+    thoughts: listThoughts(locale).map(({ slug, title }) => ({ slug, title })),
     posts: listPosts(locale).map(({ slug, title }) => ({ slug, title })),
     notes: noteTree(locale),
   };
@@ -465,12 +482,18 @@ export function loader({ params }: LoaderFunctionArgs) {
     title,
     description,
     canonical,
-    cover: articleCoverForRoute(route, locale),
+    cover:
+      view.kind === 'thought'
+        ? view.thought.cover
+        : articleCoverForRoute(route, locale),
     indexable,
     languageLinks,
     commentId: target?.id ?? null,
     comments: target ? commentsView(loadComments(), target) : null,
-    hasMath: view.kind === 'article' && view.article.body.hasMath,
+    hasMath:
+      view.kind === 'article'
+        ? view.article.body.hasMath
+        : view.kind === 'thought' && view.thought.body.hasMath,
     view,
   };
 }
@@ -502,10 +525,12 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
       )
     : [];
   const article = view.kind === 'article' ? view.article : null;
+  const thought = view.kind === 'thought' ? view.thought : null;
   const cover = data.cover;
   const socialImage = siteUrl + (cover?.socialSrc ?? '/assets/avatar.png');
   const collection = [
     'library',
+    'thoughts',
     'blog-folder',
     'notes',
     'note-folder',
@@ -556,7 +581,10 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
     { property: 'og:title', content: data.title },
     { property: 'og:description', content: data.description },
     { property: 'og:url', content: data.canonical },
-    { property: 'og:type', content: article ? 'article' : 'website' },
+    {
+      property: 'og:type',
+      content: article || thought ? 'article' : 'website',
+    },
     {
       property: 'og:locale',
       content:
@@ -599,35 +627,52 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData: data }) => {
               : {}),
             mainEntityOfPage: data.canonical,
           }
-        : view.kind === 'home'
+        : thought
           ? {
               '@context': 'https://schema.org',
-              '@type': 'ProfilePage',
-              url: data.canonical,
+              '@type': 'Article',
+              headline: thought.title,
+              description: thought.summary,
+              datePublished: thought.publishedAt,
+              dateModified: thought.updatedAt,
               inLanguage: htmlLang[locale],
-              mainEntity: {
+              mainEntityOfPage: data.canonical,
+              author: {
                 '@type': 'Person',
-                name: view.profile.publicName,
-                alternateName: view.profile.displayName,
-                url: `${siteUrl}/${locale}/`,
-                sameAs: [view.profile.contact.github],
-              },
-            }
-          : {
-              '@context': 'https://schema.org',
-              '@type': collection ? 'CollectionPage' : 'WebPage',
-              ...(cover ? { image: socialImage } : {}),
-              name: data.title,
-              description: data.description,
-              url: data.canonical,
-              inLanguage: htmlLang[locale],
-              isPartOf: {
-                '@type': 'WebSite',
-                '@id': `${siteUrl}/#website`,
                 name: 'DennySORA',
-                url: `${siteUrl}/`,
+                url: `${siteUrl}/${locale}/`,
               },
-            },
+              ...(cover ? { image: socialImage } : {}),
+            }
+          : view.kind === 'home'
+            ? {
+                '@context': 'https://schema.org',
+                '@type': 'ProfilePage',
+                url: data.canonical,
+                inLanguage: htmlLang[locale],
+                mainEntity: {
+                  '@type': 'Person',
+                  name: view.profile.publicName,
+                  alternateName: view.profile.displayName,
+                  url: `${siteUrl}/${locale}/`,
+                  sameAs: [view.profile.contact.github],
+                },
+              }
+            : {
+                '@context': 'https://schema.org',
+                '@type': collection ? 'CollectionPage' : 'WebPage',
+                ...(cover ? { image: socialImage } : {}),
+                name: data.title,
+                description: data.description,
+                url: data.canonical,
+                inLanguage: htmlLang[locale],
+                isPartOf: {
+                  '@type': 'WebSite',
+                  '@id': `${siteUrl}/#website`,
+                  name: 'DennySORA',
+                  url: `${siteUrl}/`,
+                },
+              },
     },
     ...(data.indexable && !home && breadcrumbs.length > 1
       ? [
@@ -673,6 +718,10 @@ function View({ data }: { data: PageData }) {
       return <Readme view={view} locale={locale} />;
     case 'search':
       return <SiteSearch locale={locale} />;
+    case 'thoughts':
+      return <Thoughts thoughts={view.thoughts} locale={locale} />;
+    case 'thought':
+      return <Thought thought={view.thought} locale={locale} />;
     case 'library':
       return <Library view={view} locale={locale} />;
     case 'blog-folder':

@@ -292,6 +292,34 @@ export function Explorer({
             ))}
           </TreeFolder>
         </li>
+        <li>
+          <TreeFolder
+            currentPath={currentPath}
+            locale={locale}
+            href={`/${locale}/thoughts/`}
+            name={t.navThoughts}
+            current={areaState(route, 'thoughts')}
+            onNavigate={onNavigate}
+          >
+            {files.thoughts.map((thought) => (
+              <li key={thought.slug}>
+                <TreeLink
+                  href={routePath({
+                    kind: 'thought',
+                    locale,
+                    slug: thought.slug,
+                  })}
+                  kind="markdown"
+                  name={thought.title}
+                  current={page(
+                    route.kind === 'thought' && route.slug === thought.slug,
+                  )}
+                  onNavigate={onNavigate}
+                />
+              </li>
+            ))}
+          </TreeFolder>
+        </li>
         {files.posts.length > 0 ? (
           <li>
             <TreeFolder

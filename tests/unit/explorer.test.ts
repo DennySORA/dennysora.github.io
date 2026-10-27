@@ -35,7 +35,7 @@ function explorerHtml(route: Parameters<typeof Explorer>[0]['route']) {
     createElement(Explorer, {
       locale,
       route,
-      files: { posts: [], notes: noteTree(locale) },
+      files: { posts: [], thoughts: [], notes: noteTree(locale) },
     }),
   );
 }
@@ -47,7 +47,7 @@ describe('folder disclosures', () => {
         createElement(Explorer, {
           locale,
           route: { kind: 'home', locale },
-          files: { posts: [], notes: noteTree(locale) },
+          files: { posts: [], thoughts: [], notes: noteTree(locale) },
         }),
       );
       const buttons = [...html.matchAll(/<button\b[^>]*>/g)].map(
@@ -55,8 +55,8 @@ describe('folder disclosures', () => {
       );
       // note, software (+network, +p2p), medical (+3 subfolders),
       // hardware (+1), other,
-      // projects (+1 category)
-      expect(buttons).toHaveLength(13);
+      // projects (+1 category), thoughts
+      expect(buttons).toHaveLength(14);
       // On the home page no folder is on the current path, so all start closed.
       for (const button of buttons) {
         expect(attribute(button, 'type')).toBe('button');
@@ -79,7 +79,7 @@ describe('folder disclosures', () => {
       );
       expect(
         links.filter((link) => link.includes('data-kind="folder"')),
-      ).toHaveLength(13);
+      ).toHaveLength(14);
       expect(links.every((link) => !link.includes('<button'))).toBe(true);
       expect(html).not.toContain(' hidden');
       // Every name is in the page's language: no slugs or .md file names.
@@ -91,11 +91,12 @@ describe('folder disclosures', () => {
         names.filter((name) => /\.md$|^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(name)),
       ).toEqual([]);
       // The README comes first, then projects and notes; the empty blog is absent.
-      expect(names.slice(0, 5)).toEqual([
+      expect(names.slice(0, 6)).toEqual([
         t.navAbout,
         projectsCopy[locale].title,
         projectCategoryCopy[locale].tools.title,
         'dgxtop',
+        t.navThoughts,
         noteCopy[locale].notes,
       ]);
       expect(names).toEqual(
@@ -120,7 +121,7 @@ describe('folder disclosures', () => {
         .filter(([, expanded]) => expanded)
         .map(([href]) => href);
     const home = folderStates(explorerHtml({ kind: 'home', locale: 'en' }));
-    expect(home).toHaveLength(13);
+    expect(home).toHaveLength(14);
     expect(home.every(([, expanded]) => !expanded)).toBe(true);
     expect(
       open(
@@ -175,7 +176,7 @@ describe('folder disclosures', () => {
         /<button[^>]*aria-controls="([^"]+)"[^>]*>[\s\S]*?<\/button><a[^>]*href="([^"]+)"/g,
       ),
     ];
-    expect(folders).toHaveLength(13);
+    expect(folders).toHaveLength(14);
     // A folder's entries sit one level below it, so the levels follow the
     // path: /note/ holds level 2 and /note/software/network/p2p/ level 5.
     for (const [, id, href] of folders) {
@@ -193,7 +194,7 @@ describe('folder disclosures', () => {
         locale: 'zh-hant',
         noteId: 'brain-cns-tumors',
       },
-      files: { posts: [], notes: noteTree('zh-hant') },
+      files: { posts: [], thoughts: [], notes: noteTree('zh-hant') },
     });
     const html = renderToStaticMarkup(
       createElement(Fragment, null, explorer, explorer),
@@ -201,7 +202,7 @@ describe('folder disclosures', () => {
     const ids = [...html.matchAll(/aria-controls="([^"]+)"/g)].map(
       (match) => match[1],
     );
-    expect(ids).toHaveLength(26);
+    expect(ids).toHaveLength(28);
     expect(new Set(ids).size).toBe(ids.length);
     const current = [...html.matchAll(/<a\b[^>]*aria-current="page"[^>]*>/g)];
     expect(current).toHaveLength(2);

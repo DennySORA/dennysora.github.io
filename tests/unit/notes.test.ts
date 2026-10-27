@@ -151,7 +151,7 @@ it('keeps medical category buffers immediately after the note area', () => {
         createElement(TabLine, {
           locale: 'zh-hant',
           route: { kind: 'note-folder', locale: 'zh-hant', folder: category },
-          files: { posts: [], notes: noteTree('zh-hant') },
+          files: { posts: [], thoughts: [], notes: noteTree('zh-hant') },
           languageLinks: [],
           explorer: {
             id: 'test-explorer',
