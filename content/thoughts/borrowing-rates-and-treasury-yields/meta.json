@@ -1,0 +1,28 @@
+{
+  "slug": "borrowing-rates-and-treasury-yields",
+  "publication": "published",
+  "publishedAt": "2026-10-28",
+  "updatedAt": "2026-10-28",
+  "locales": {
+    "zh-hant": {
+      "title": "借款利率與美債殖利率",
+      "summary": "我覺得有個指標大家都沒有注意，怎麼看自己的利率合不合理，直接看目前無風險利率指標。"
+    },
+    "en": {
+      "title": "Borrowing rates and U.S. Treasury yields",
+      "summary": "I think there is a benchmark that nobody is paying attention to. How do you tell whether your interest rate is reasonable? Just look at the current risk-free rate benchmark."
+    },
+    "ja": {
+      "title": "借入金利と米国債の利回り",
+      "summary": "みんなが注目していない指標があると思います。自分の金利が妥当かどうかをどう判断するか。今のリスクフリーレートの指標をそのまま見ればいい。"
+    }
+  },
+  "cover": {
+    "file": "cover.jpg",
+    "alt": {
+      "zh-hant": "借款利率比較插圖：金色天秤兩端放著貸款與公債文件，上方寫著「借款利率，怎麼比較？」。",
+      "en": "An illustration about comparing borrowing rates: loan and government bond documents on a golden balance, with a Chinese heading asking how to compare borrowing rates.",
+      "ja": "借入金利の比較を描いたイラスト。金色の天秤に融資と国債の書類が載り、上部には中国語で「借入金利、どう比較する？」と書かれている。"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+Honestly, whenever it comes to borrowing money, everyone talks about interest rates.
+I think there is a benchmark that nobody is paying attention to. How do you tell whether your interest rate is reasonable? Just look at the current risk-free rate benchmark. I think comparing it with the yield on U.S. Treasuries matching your loan term is enough. Basically, if it is below that, you can borrow with peace of mind; if it is above, look at the range.
