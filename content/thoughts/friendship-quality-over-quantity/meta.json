@@ -1,0 +1,20 @@
+{
+  "slug": "friendship-quality-over-quantity",
+  "publication": "published",
+  "publishedAt": "2026-10-29",
+  "updatedAt": "2026-10-29",
+  "locales": {
+    "zh-hant": {
+      "title": "朋友要質，不要量",
+      "summary": "我的人生歷練不多，但如果要我說，朋友不用多，交一個能夠帶來正向意義的朋友就夠。"
+    },
+    "en": {
+      "title": "Friendship: quality over quantity",
+      "summary": "I don't have that much life experience, but if you ask me, you don't need many friends. One friend who brings something positive into your life is enough."
+    },
+    "ja": {
+      "title": "友達は量より質",
+      "summary": "私の人生経験はまだ多くありませんが、言わせてもらうなら、友達は多くなくていい。前向きな意味をもたらしてくれる友達が一人いれば、それで十分。"
+    }
+  }
+}
