@@ -1,0 +1,20 @@
+{
+  "slug": "build-your-own-wheels",
+  "publication": "published",
+  "publishedAt": "2026-10-31",
+  "updatedAt": "2026-10-31",
+  "locales": {
+    "zh-hant": {
+      "title": "請自己造輪子",
+      "summary": "以前是：不要重複造輪子。現在我推薦：請自己造輪子。"
+    },
+    "en": {
+      "title": "Build your own wheels",
+      "summary": "It used to be: don't reinvent the wheel. Now my recommendation is: please build your own wheels."
+    },
+    "ja": {
+      "title": "自分で車輪を作ろう",
+      "summary": "以前は「車輪の再発明をするな」でした。今の私のおすすめは「自分で車輪を作ろう」です。"
+    }
+  }
+}
