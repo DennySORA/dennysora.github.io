@@ -145,3 +145,6 @@
     border-block: 2px dashed CanvasText;
   }
 }
+.article-diagram-toggle[hidden] {
+  display: none;
+}
