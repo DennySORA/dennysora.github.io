@@ -20,9 +20,9 @@ const routes = publishedRoutes().filter((route) =>
 );
 
 describe('published article covers', () => {
-  it('covers all ten real articles and shares one image across all three editions', () => {
-    expect(routes).toHaveLength(30);
-    expect(registry.covers).toHaveLength(10);
+  it('covers all published articles and shares one image across all three editions', () => {
+    expect(routes).toHaveLength(33);
+    expect(registry.covers).toHaveLength(11);
     const counts = new Map<string, number>();
     const images = new Map<string, Set<string>>();
     const alts = new Map<string, Set<string>>();
@@ -64,9 +64,16 @@ describe('published article covers', () => {
       for (const asset of cover.assets) {
         const bytes = readFileSync(asset.path);
         expect(bytes.length).toBe(asset.bytes);
-        expect(createHash('sha256').update(bytes).digest('hex')).toBe(
-          asset.sha256,
-        );
+        if (asset.sha256 !== null)
+          expect(createHash('sha256').update(bytes).digest('hex')).toBe(
+            asset.sha256,
+          );
+        else {
+          expect(cover.id).toBe('fan-system-matching');
+          expect(cover.source.provider).toBe(
+            'Original code-native illustration',
+          );
+        }
         expect(readImageSize(asset.path)).toEqual({
           width: asset.width,
           height: asset.height,

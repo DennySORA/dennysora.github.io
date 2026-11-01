@@ -1,0 +1,129 @@
+.fan-lab {
+  margin-block: var(--space-8);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.fan-lab > p {
+  max-width: 76ch;
+  line-height: 1.7;
+}
+.fan-lab-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-decorative);
+}
+.fan-lab-controls legend {
+  padding-inline: var(--space-2);
+}
+.fan-lab-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.fan-lab-controls input:not([type='checkbox']),
+.fan-lab-controls select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: var(--space-2);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  background: var(--color-chrome);
+  font: inherit;
+}
+.fan-lab-controls input:hover,
+.fan-lab-controls select:hover {
+  border-color: var(--color-action-hover);
+}
+.fan-lab-controls input:focus-visible,
+.fan-lab-controls select:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.fan-lab-controls .fan-lab-check {
+  flex-direction: row;
+  align-items: center;
+}
+.fan-lab-check input {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--color-action-primary);
+}
+.fan-lab-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 48rem;
+  overflow: visible;
+}
+.fan-lab-chart text {
+  fill: var(--color-text);
+  font: 14px var(--font-sans);
+}
+.fan-lab-chart path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.fan-lab-axis {
+  stroke: var(--color-control-border);
+  stroke-width: 1;
+}
+.fan-lab-fan {
+  stroke: var(--color-entity-file);
+  stroke-width: 3;
+}
+.fan-lab-system {
+  stroke: var(--color-entity-kind);
+  stroke-width: 3;
+  stroke-dasharray: 7 5;
+}
+.fan-lab-point {
+  fill: var(--color-text);
+  stroke: var(--color-background);
+  stroke-width: 2;
+}
+.fan-lab figure {
+  margin: var(--space-4) 0;
+}
+.fan-lab figcaption {
+  color: var(--color-text-secondary);
+}
+.fan-lab-error {
+  color: var(--color-status-danger);
+}
+.fan-lab-table {
+  overflow-x: auto;
+}
+.fan-lab table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.fan-lab caption {
+  text-align: start;
+  font-weight: 600;
+  margin-block: var(--space-3);
+}
+.fan-lab th,
+.fan-lab td {
+  text-align: start;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.fan-lab td {
+  font-variant-numeric: tabular-nums;
+}
+.fan-lab-sandbox {
+  margin-top: var(--space-6);
+}
+.fan-lab-sandbox > summary {
+  cursor: pointer;
+  color: var(--color-link);
+  padding-block: var(--space-3);
+}
+.fan-lab-sandbox > summary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}

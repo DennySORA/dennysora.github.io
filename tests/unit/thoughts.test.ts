@@ -207,7 +207,8 @@ describe('independent Thoughts', () => {
     const { root, folder, thought } = fixture();
     expect(content.loadThought('en', 'fixture', root)?.cover).toBeNull();
     const image = covers.covers
-      .flatMap((cover) => cover.assets)
+      .map((cover) => cover.assets)
+      .flat()
       .find((asset) => asset.path.endsWith('.jpg'));
     if (!image) throw new Error('Expected an existing repository JPEG fixture');
     cpSync(image.path, join(folder, 'cover.jpg'));

@@ -61,6 +61,7 @@ export const noteFolderOf = {
   'brain-cns-tumors': 'pathology',
   'lumbar-spine-care': 'daily-care',
   'landscape-photography': 'other',
+  'fan-system-matching': 'computer',
 } as const satisfies Record<NoteId, NoteFolderId>;
 
 /** Which page renders a note: each kind has its own reviewed fragment format. */

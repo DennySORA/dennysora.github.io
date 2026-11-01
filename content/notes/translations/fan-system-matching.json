@@ -1,0 +1,367 @@
+[
+  {
+    "source": "機殼風扇怎麼選：從 P–Q 曲線到 Pop XL Silent 的工作點",
+    "en": "Choosing case fans: from P–Q curves to the Pop XL Silent operating point",
+    "ja": "ケースファンの選び方：P–Q 曲線から Pop XL Silent の動作点まで"
+  },
+  {
+    "source": "這份筆記整理七份研究稿，把重複的資料收成一條選型路徑。測試數據由 Cybenetics 提供；本筆記整理曲線、比較條件與計算方法。附件未提供這台 Pop XL Silent 的風洞、溫度或噪音實測，因此不作此聲稱。原稿價格是 2026-10-12 快照，不當作今天的報價。",
+    "en": "This note consolidates seven research drafts into one selection process. The test data comes from Cybenetics; this note organizes the curves, comparison conditions and calculation methods. The attachments do not provide wind-tunnel, temperature or noise measurements on this Pop XL Silent. Prices in the drafts are a snapshot from 2026-10-12, not current quotations.",
+    "ja": "このノートは 7 つの研究稿を整理し、重複する資料を一つの選定手順にまとめたものです。試験データは Cybenetics によるものです。曲線、比較条件、計算方法を整理しています。添付資料には、この Pop XL Silent の風洞試験、温度測定、騒音測定は含まれていません。原稿の価格は 2026-10-12 時点の記録であり、現在の見積価格ではありません。"
+  },
+  {
+    "source": "先說結論",
+    "en": "The conclusion first",
+    "ja": "結論から"
+  },
+  {
+    "source": "選型先確認現有配置是否真的需要換扇，再比較候選。只要溫度、時脈與音色已經符合需求，就可以停止升級。若前方進氣確實成為限制，P14 Pro PST 可以作為一般預算路線的比較基準；願意為低噪調整投入，可比較方框 NF-A14x25 G2 PWM，或保留三段 120 mm 佈局的 NF-A12x25 G2 PWM。",
+    "en": "First check whether the existing configuration actually needs different fans, then decide what to buy. If temperatures, clock speeds and sound character already meet the requirements, there is no need to keep upgrading. If front intake is genuinely a limitation, the P14 Pro PST is a useful budget comparison baseline. For a more expensive low-noise setup, compare the square-frame NF-A14x25 G2 PWM, or the NF-A12x25 G2 PWM if retaining three 120 mm positions.",
+    "ja": "まず現在の構成で本当にファン交換が必要かを確認してから、購入する製品を決めます。温度、クロック、音の質がすでに目的を満たしていれば、アップグレードを続ける必要はありません。前面吸気が確かに制約なら、P14 Pro PST を一般的な予算重視の比較基準にできます。低騒音化に予算をかけるなら角形フレームの NF-A14x25 G2 PWM、120 mm を縦に 3 基並べる構成を残すなら NF-A12x25 G2 PWM を比較できます。"
+  },
+  {
+    "source": "長時間高負載、願意接受全速聲音，則應把 MasterFan A140 FC／A120 FC 的高速模式納入候選，而非一開始排除高靜壓產品。但「值得比較」不等於「必須購買」：仍要驗證厚度、供電、模式控制與裝機收益。沒有 Pop XL Silent 的實測阻力，現在無法承諾哪款會帶來多少 CFM、需要幾 RPM，或降幾度。",
+    "en": "For sustained high loads where full-speed noise is acceptable, include the high-speed modes of the MasterFan A140 FC / A120 FC rather than dismissing high-static-pressure products from the outset. But “worth comparing” does not mean “must buy”: thickness, power delivery, mode control and the installed benefit still need verification. Without measured resistance for the Pop XL Silent, no specific airflow in CFM, required RPM or temperature reduction can be promised.",
+    "ja": "長時間の高負荷で全速時の音を許容できるなら、高静圧製品を最初から除外せず、MasterFan A140 FC / A120 FC の高速モードも候補に含めます。ただし「比較する価値がある」は「購入が必須」という意味ではありません。厚さ、電源、モード制御、組み込み後の効果を確認する必要があります。Pop XL Silent の抵抗を測定していない以上、得られる CFM、必要な RPM、温度低下を現時点で約束することはできません。"
+  },
+  {
+    "source": "七份稿件，實際上是同一條研究沿革",
+    "en": "Seven drafts, one research lineage",
+    "ja": "7 つの原稿は、一つの研究の流れ"
+  },
+  {
+    "source": "購買指南 v4 是敘述層；P–Q 工作台 v4 已內嵌那份指南，也保存 40 筆型號／測試模式資料。整合版 v5 再吸收前面板阻力說明與 K–Q 示範工具，並修正模型的預載假資料、範圍限制與來源設定語義。v6 高壓補充及 Top10 Rev7 增加高負載情境，不是另外兩次獨立實驗。",
+    "en": "The buying guide v4 provides the narrative. The P–Q workbench v4 already embeds that guide and holds 40 model / test-mode records. The integrated v5 incorporates the front-panel resistance explanation and K–Q demonstration tool, correcting preloaded fictitious model data, range limits and the meaning of source settings. The v6 high-pressure supplement and Top10 Rev7 add high-load scenarios; they are not two further independent experiments.",
+    "ja": "購入ガイド v4 は説明の土台です。P–Q ワークベンチ v4 はそのガイドをすでに内包し、40 件の型番 / 試験モードの記録を保存しています。統合版 v5 は前面パネルの抵抗説明と K–Q デモツールを取り込み、モデルに初期入力されていた架空データ、範囲制限、ソース設定の意味を修正しています。v6 の高静圧補足と Top10 Rev7 は高負荷の場面を追加したもので、別々の独立した試験を 2 回追加したわけではありません。"
+  },
+  {
+    "source": "40 筆核心資料在 v4 與 v5 完全相同：381 組原始掃描、3,048 點；368 組／2,944 點允許比較，13 組／104 點隔離保留。補充稿帶來 A140 FC High Speed（報告238）及 A120 FC High Speed（報告240）兩條全速曲線，不能覆蓋原庫 A120 FC Low Speed（報告239）。同款不同模式也要分開。",
+    "en": "The 40 core records are identical in v4 and v5: 381 raw scans and 3,048 points; 368 scans / 2,944 points are available for comparison, while 13 scans / 104 points remain quarantined. The supplements add two full-speed curves, A140 FC High Speed (report 238) and A120 FC High Speed (report 240). They must not overwrite the original A120 FC Low Speed (report 239). Different modes of the same product also need separate identities.",
+    "ja": "40 件の中核データは v4 と v5 で同一です。元のスキャンは 381 組、3,048 点。そのうち比較に使えるのは 368 組 / 2,944 点で、13 組 / 104 点は隔離して保存されています。補足稿では A140 FC High Speed（報告 238）と A120 FC High Speed（報告 240）の全速曲線を 2 本追加しています。元の A120 FC Low Speed（報告 239）を上書きしてはいけません。同じ製品でもモードが異なれば別に扱います。"
+  },
+  {
+    "source": "最大風量與最大靜壓要分開讀",
+    "en": "Read maximum airflow and maximum static pressure separately",
+    "ja": "最大風量と最大静圧は分けて読む"
+  },
+  {
+    "source": "最大風量通常在接近零壓差時取得；最大靜壓在接近零流量時取得。規格寫 110 CFM、5.2 mmH₂O，不能解讀成在 5.2 mmH₂O 下仍能送出 110 CFM。中間的 P–Q 曲線才描述不同負載下可提供的壓差；端點不足以重建曲線。",
+    "en": "Maximum airflow is normally obtained near zero pressure difference; maximum static pressure is obtained near zero flow. A specification of 110 CFM and 5.2 mmH₂O does not mean the fan still delivers 110 CFM against 5.2 mmH₂O. The intermediate P–Q curve describes the pressure available under different loads; endpoints alone cannot reconstruct it.",
+    "ja": "最大風量は通常、圧力差がほぼゼロの条件で得られます。最大静圧は流量がほぼゼロの条件で得られます。仕様に 110 CFM、5.2 mmH₂O とあっても、5.2 mmH₂O に対して 110 CFM を送れるという意味ではありません。その間の P–Q 曲線が、負荷ごとに供給できる圧力差を示します。端点だけから曲線を再現することはできません。"
+  },
+  {
+    "source": "曲線上的圓點是來源測點，連線是分段線性插值。插值只是讀取兩點之間的近似值，不是新增實驗，也不應跨出資料範圍。原始小負壓、隆起與逐點 RPM 變化保留；異常資料另列，不為了圖好看修平。",
+    "en": "Dots on the curve are source measurement points, while connecting lines are piecewise linear interpolation. Interpolation estimates values between two points; it is not another experiment and must not extend beyond the data range. Small negative pressures, humps and point-by-point RPM variation are retained. Anomalous data is listed separately, not smoothed away to make the chart look better.",
+    "ja": "曲線の丸印はソースの測定点、点を結ぶ線は区分線形補間です。補間は 2 点間の近似値を読むためのもので、追加の試験ではなく、データの範囲外へ延ばすべきでもありません。元の小さな負圧、盛り上がり、各点の RPM 変化は残します。異常なデータは別に示し、図を見栄えよくするために平滑化しません。"
+  },
+  {
+    "source": "來源依據：",
+    "en": "Source:",
+    "ja": "根拠："
+  },
+  {
+    "source": "AMCA 風扇曲線",
+    "en": "AMCA on fan curves",
+    "ja": "AMCA のファン曲線解説"
+  },
+  {
+    "source": "Pop XL Silent 的風阻仍然未知",
+    "en": "The Pop XL Silent's airflow resistance is still unknown",
+    "ja": "Pop XL Silent の通風抵抗はまだ不明"
+  },
+  {
+    "source": "官方確認前方可裝 3×120 或 2×140 mm，後方 1×120／140，頂部移除頂蓋後可裝 2×120／140；原配前方三顆、後方一顆 Aspect 12。這些安裝位不等於每款厚扇都已實物驗收。",
+    "en": "The official specifications list 3×120 or 2×140 mm at the front, 1×120/140 at the rear, and 2×120/140 at the top with the top cover removed. Three front and one rear Aspect 12 fans are included. These mounting positions do not establish that every thick fan has been physically checked for fit.",
+    "ja": "公式仕様では、前面に 3×120 または 2×140 mm、背面に 1×120/140、天板を外した上面に 2×120/140 を取り付けられます。標準で前面に 3 基、背面に 1 基の Aspect 12 が付属します。ただし、この取り付け位置の仕様は、あらゆる厚型ファンの収まりを現物で確認済みという意味ではありません。"
+  },
+  {
+    "source": "Fractal 官方規格",
+    "en": "Fractal official specifications",
+    "ja": "Fractal 公式仕様"
+  },
+  {
+    "source": "定義前板壓損時，應同步量「室內靜壓 − 前扇上游靜壓」及真正穿過前板的總風量。單點機殼內壓、風扇規格最大 CFM、拆前板後的溫差，都不能單獨識別前板 K。只量前板，也還沒包含主艙、出口、後排扇與漏風支路。",
+    "en": "To define front-panel pressure loss, measure “room static pressure − static pressure upstream of the front fans” together with the total airflow actually crossing the front panel. A single internal case pressure, a fan's specified maximum CFM, or the temperature change after removing the panel cannot individually identify front-panel K. Measuring only the front panel also excludes the main chamber, outlets, rear exhaust fan and leakage branches.",
+    "ja": "前面パネルの圧力損失を定義するには、「室内の静圧 − 前面ファン上流の静圧」と、前面パネルを本当に通過する総流量を同時に測ります。ケース内の 1 点の圧力、ファン仕様上の最大 CFM、前面パネルを外した際の温度差だけでは、前面パネルの K は求まりません。また、前面パネルだけの測定には、主室、出口、背面排気ファン、漏れの分岐は含まれません。"
+  },
+  {
+    "source": "原稿情境",
+    "en": "Draft scenario",
+    "ja": "原稿の場面"
+  },
+  {
+    "source": "總量40 CFM壓損",
+    "en": "Pressure loss at 40 CFM total",
+    "ja": "総流量 40 CFM での圧力損失"
+  },
+  {
+    "source": "性質",
+    "en": "Status",
+    "ja": "性質"
+  },
+  {
+    "source": "K–Q 工具",
+    "en": "K–Q tool",
+    "ja": "K–Q ツール"
+  },
+  {
+    "source": "人工示範",
+    "en": "Artificial demonstration",
+    "ja": "仮定によるデモ"
+  },
+  {
+    "source": "P–Q 工作台",
+    "en": "P–Q workbench",
+    "ja": "P–Q ワークベンチ"
+  },
+  {
+    "source": "前面板說明",
+    "en": "Front-panel explanation",
+    "ja": "前面パネルの説明"
+  },
+  {
+    "source": "Pop XL Silent 真實流路",
+    "en": "Actual Pop XL Silent airflow path",
+    "ja": "Pop XL Silent の実際の流路"
+  },
+  {
+    "source": "未知",
+    "en": "Unknown",
+    "ja": "不明"
+  },
+  {
+    "source": "尚未量測",
+    "en": "Not measured",
+    "ja": "未測定"
+  },
+  {
+    "source": "平方律 ΔP=KQ² 是固定流路的近似。40 CFM 必須註明是每顆或整組；三顆各40 CFM與整片前板40 CFM的定義，會讓同壓差算出的總流量 K 差九倍。最後一個示範在80 CFM推得7.40 mmH₂O，只能說明假設的後果，不能反過來宣稱機殼需要這個壓力。",
+    "en": "The square law ΔP=KQ² approximates a fixed airflow path. State whether 40 CFM means each fan or the whole group: defining three fans at 40 CFM each versus 40 CFM through the entire front panel changes the total-flow K calculated at the same pressure difference by a factor of nine. The final demonstration predicts 7.40 mmH₂O at 80 CFM. That illustrates the consequences of the assumption; it does not establish that the case requires this pressure.",
+    "ja": "二乗則 ΔP=KQ² は、固定された流路の近似です。40 CFM が 1 基あたりか全体かを明記する必要があります。3 基がそれぞれ 40 CFM の場合と、前面パネル全体で 40 CFM の場合では、同じ圧力差から算出する総流量の K に 9 倍の差が生じます。最後のデモは 80 CFM で 7.40 mmH₂O を導きますが、これは仮定の帰結を示すだけで、ケースがその圧力を必要とする証拠にはなりません。"
+  },
+  {
+    "source": "兩顆140與三顆120，怎樣比較才有意義",
+    "en": "Comparing two 140 mm fans with three 120 mm fans meaningfully",
+    "ja": "140 mm を 2 基と 120 mm を 3 基、意味のある比較方法"
+  },
+  {
+    "source": "在相同壓差、相同風扇、均勻負載的理想並聯假設下，P組(Q總)=P單(Q總/N)。加的是同一壓差下的流量，靜壓不乘顆數。前進氣與後排氣如果在無旁通的同一路徑，才可在同一流量下相加壓升；不能把前後自由風量直接相加。",
+    "en": "Under ideal parallel operation with identical fans, equal pressure difference and uniform loading, P_group(Q_total)=P_single(Q_total/N). Flow is added at the same pressure difference; static pressure is not multiplied by the fan count. Pressure rises from front intake and rear exhaust may be added at the same flow only when they share one path without bypasses. Their free-air flow ratings cannot simply be added.",
+    "ja": "同じ圧力差、同一ファン、均一な負荷という理想的な並列動作では、P_group(Q_total)=P_single(Q_total/N) となります。足し合わせるのは同じ圧力差での流量であり、静圧を台数倍にはしません。前面吸気と背面排気の圧力上昇を同じ流量で加算できるのは、バイパスのない同一流路にある場合だけです。前後の自由風量をそのまま足すことはできません。"
+  },
+  {
+    "source": "真實機殼有不同入口、出口與漏風，加上 GPU 自帶風扇，不能用一個顆數概括全機。三顆120也可能覆蓋較多縱向位置；兩顆140少一顆馬達與接線。最後看的是空氣是否通過需要散熱的位置，而非名義尺寸或自由風量總和。",
+    "en": "Real cases have different inlets, outlets and leaks, plus the GPU's own fans; one fan count cannot represent the entire system. Three 120 mm fans may cover more vertical positions; two 140 mm fans mean one fewer motor and cable. What matters is whether air reaches the components that need cooling, not nominal size or the sum of free-air ratings.",
+    "ja": "実際のケースには異なる入口、出口、漏れがあり、GPU 自身のファンもあります。台数一つで全体を表すことはできません。120 mm を 3 基なら縦方向のより多くの位置を覆える場合があり、140 mm を 2 基ならモーターと配線が一つ少なくなります。最後に重要なのは、名目上のサイズや自由風量の合計ではなく、冷却が必要な場所を空気が通るかどうかです。"
+  },
+  {
+    "source": "AMCA 安裝效應",
+    "en": "AMCA on installation effects",
+    "ja": "AMCA の取り付けによる影響の解説"
+  },
+  {
+    "source": "把一般候選與高壓候選放在同一張證據表",
+    "en": "Put mainstream and high-pressure candidates in one evidence table",
+    "ja": "一般的な候補と高静圧の候補を同じ根拠表に置く"
+  },
+  {
+    "source": "型號／模式",
+    "en": "Model / mode",
+    "ja": "型番 / モード"
+  },
+  {
+    "source": "證據與用途",
+    "en": "Evidence and role",
+    "ja": "根拠と用途"
+  },
+  {
+    "source": "不能省略的條件",
+    "en": "Conditions that cannot be omitted",
+    "ja": "省略できない条件"
+  },
+  {
+    "source": "核心報告204；一般預算比較基準",
+    "en": "Core report 204; budget comparison baseline",
+    "ja": "中核報告 204、予算重視の比較基準"
+  },
+  {
+    "source": "27mm；裝機音色、實際到手價；不能只憑5.11mmH₂O選冠軍",
+    "en": "27 mm; installed sound character and actual purchase price; 5.11 mmH₂O alone does not determine a winner",
+    "ja": "27 mm、組み込み後の音の質と購入総額、5.11 mmH₂O だけで最良とは決めない"
+  },
+  {
+    "source": "核心報告140；方框140高階候選",
+    "en": "Core report 140; premium square-frame 140 mm candidate",
+    "ja": "中核報告 140、角形 140 mm の上位候補"
+  },
+  {
+    "source": "與圓框r型號分開；裸框25mm、含墊27mm",
+    "en": "Separate from the round-frame r model; 25 mm bare frame, 27 mm with pads",
+    "ja": "丸形フレームの r 型とは区別、フレームのみ 25 mm、パッド込み 27 mm"
+  },
+  {
+    "source": "核心報告195；保留3×120的高階候選",
+    "en": "Core report 195; premium candidate retaining 3×120",
+    "ja": "中核報告 195、3×120 を残す上位候補"
+  },
+  {
+    "source": "普通版與LS分開；含墊27mm",
+    "en": "Keep standard and LS versions separate; 27 mm with pads",
+    "ja": "通常版と LS は区別、パッド込み 27 mm"
+  },
+  {
+    "source": "核心報告61；30mm替代",
+    "en": "Core report 61; 30 mm alternative",
+    "ja": "中核報告 61、30 mm の代替候補"
+  },
+  {
+    "source": "2000RPM模式，不能套用Advanced規格",
+    "en": "2000 RPM mode; do not apply Advanced specifications",
+    "ja": "2000 RPM モード、Advanced の仕様を流用しない"
+  },
+  {
+    "source": "補充報告238；2×140高負載候選",
+    "en": "Supplementary report 238; 2×140 high-load candidate",
+    "ja": "補足報告 238、2×140 の高負荷候補"
+  },
+  {
+    "source": "30mm、Turbo控制、獨立供電條件需確認",
+    "en": "Verify 30 mm fit, Turbo control and separate power-supply requirements",
+    "ja": "30 mm の取り付け、Turbo 制御、別系統の電源条件を確認"
+  },
+  {
+    "source": "補充報告240；3×120高負載候選",
+    "en": "Supplementary report 240; 3×120 high-load candidate",
+    "ja": "補足報告 240、3×120 の高負荷候補"
+  },
+  {
+    "source": "不與Low239混用；100%來源設定也不等於主機板自動Turbo",
+    "en": "Do not mix with Low 239; a 100% source setting does not mean automatic motherboard Turbo",
+    "ja": "Low 239 と混同しない、ソース設定 100% はマザーボードが自動的に Turbo にする意味ではない"
+  },
+  {
+    "source": "原稿的其他採購候選",
+    "en": "Other buying candidates in the drafts",
+    "ja": "原稿にあるその他の購入候補"
+  },
+  {
+    "source": "本次沒有同等可核對內嵌多點曲線；不借其他SKU的線",
+    "en": "No equivalent verifiable embedded multipoint curve in this review; do not borrow another SKU's curve",
+    "ja": "今回は同等に確認できる内蔵の多点曲線がない、別の SKU の線を借用しない"
+  },
+  {
+    "source": "Cybenetics 的全報告端點摘要：P14 Pro為103.78 CFM／5.11 mmH₂O／39.0 dBA；A120 High為122.92／12.84／48.7；A140 High為156.67／7.65／48.5。這些是不同端點與聲學條件的摘要，不是同時成立的工作點，也不是等噪比較。",
+    "en": "Cybenetics whole-report endpoint summaries: P14 Pro is 103.78 CFM / 5.11 mmH₂O / 39.0 dBA; A120 High is 122.92 / 12.84 / 48.7; A140 High is 156.67 / 7.65 / 48.5. These summarize different endpoints and acoustic conditions, not a simultaneous operating point or a noise-normalized comparison.",
+    "ja": "Cybenetics の報告全体の端点要約では、P14 Pro は 103.78 CFM / 5.11 mmH₂O / 39.0 dBA、A120 High は 122.92 / 12.84 / 48.7、A140 High は 156.67 / 7.65 / 48.5 です。これらは異なる端点と音響条件の要約であり、同時に成立する動作点でも、同じ騒音での比較でもありません。"
+  },
+  {
+    "source": "特別注意：A120 High 的最大端點出現在90%來源掃描；100%掃描是122.47 CFM與12.65 mmH₂O。P14 Pro的全報告5.11也不是100%那條線的5.09。不要把摘要端點塞回每條線。",
+    "en": "In particular, the A120 High maximum endpoints occur in the 90% source scan; the 100% scan gives 122.47 CFM and 12.65 mmH₂O. The P14 Pro whole-report value of 5.11 is likewise not the 5.09 of its 100% curve. Do not insert summary endpoints into every curve.",
+    "ja": "特に A120 High の最大端点はソース設定 90% のスキャンに現れ、100% のスキャンは 122.47 CFM と 12.65 mmH₂O です。P14 Pro の報告全体の 5.11 も、100% の曲線の 5.09 とは異なります。要約の端点をすべての曲線へ埋め込んではいけません。"
+  },
+  {
+    "source": "噪音、轉速與供電不能靠同一個百分比比較",
+    "en": "One percentage cannot normalize noise, speed and power",
+    "ja": "騒音、回転数、電源は同じ百分率では比較できない"
+  },
+  {
+    "source": "對相同測點、互不相關的等強音源，N顆理想合成增加10log₁₀N dB，兩顆約+3.01、三顆約+4.77。這是聲能算術；不同測距、原廠／實驗室方法、遮音與反射都會改變實際結果。單顆低於55dBA不保證整機低於55dBA。25dBA的Qmax與Pmax也不是一整條等噪曲線。",
+    "en": "For equally strong, uncorrelated sound sources at the same measurement position, combining N sources ideally adds 10log₁₀N dB: about +3.01 for two and +4.77 for three. This is sound-energy arithmetic; measurement distance, manufacturer versus laboratory methods, insulation and reflections affect the actual result. A single fan below 55 dBA does not guarantee a whole system below 55 dBA. Qmax and Pmax at 25 dBA do not constitute an entire noise-normalized curve either.",
+    "ja": "同じ測定位置における、相互に無相関で同じ強さの音源では、N 個の理想的な合成で 10log₁₀N dB 増加します。2 個なら約 +3.01、3 個なら約 +4.77 です。これは音のエネルギーの計算であり、測定距離、メーカーと試験所の方法、遮音、反射によって実際の結果は変わります。単体で 55 dBA 未満でも、システム全体が 55 dBA 未満になる保証はありません。25 dBA における Qmax と Pmax も、同じ騒音にそろえた曲線全体ではありません。"
+  },
+  {
+    "source": "來源欄位叫Speed Setting；先保留為「來源設定」，不要直接叫BIOS PWM。P14 Pro 100%掃描的逐點RPM約2026–2450；這種曲線不能當作固定2500RPM基準再縮放。相似律 P_s(Q)≈s²P_ref(Q/s) 只適合前提相容的同型固定轉速基準，PWM duty與RPM還需要實機標定。",
+    "en": "The source field is called Speed Setting; retain the label “source setting” rather than calling it BIOS PWM. Point-by-point RPM in the P14 Pro 100% scan ranges roughly from 2026–2450; this curve cannot be rescaled as a fixed 2500 RPM reference. The affinity relation P_s(Q)≈s²P_ref(Q/s) requires a compatible fixed-speed reference for the same model, and PWM duty versus RPM still needs physical calibration.",
+    "ja": "ソースの項目名は Speed Setting です。まず「ソース設定」として保持し、BIOS PWM と呼び替えないでください。P14 Pro の 100% スキャンでは各点の RPM が約 2026–2450 の範囲にあり、固定 2500 RPM の基準として拡大縮小することはできません。相似則 P_s(Q)≈s²P_ref(Q/s) は、前提が適合する同型の固定回転数の基準に限って使えます。PWM duty と RPM の関係も実機での校正が必要です。"
+  },
+  {
+    "source": "接線以原廠最大／安全電流、控制器邊界與主機板／Hub額定為準。P14 Pro原廠電流0.35A，三顆名義1.05A；PST不會增加插座容量。A120FC／A140FC原廠額定0.50／0.52A，另列每顆安全電流1A；不能只用低負載實驗A/W設計整組供電。",
+    "en": "Base wiring decisions on manufacturer maximum / safety current, controller limits and motherboard / hub ratings. The P14 Pro manufacturer current is 0.35 A, nominally 1.05 A for three; PST does not increase header capacity. A120 FC / A140 FC ratings are 0.50 / 0.52 A, with a separate safety-current specification of 1 A per fan. Do not design group power delivery using only low-load laboratory A/W readings.",
+    "ja": "配線はメーカーの最大 / 安全電流、コントローラーの限界、マザーボード / Hub の定格に従います。P14 Pro のメーカー電流は 0.35 A、3 基の公称合計は 1.05 A です。PST はヘッダーの容量を増やしません。A120 FC / A140 FC の定格は 0.50 / 0.52 A で、別途 1 基あたり 1 A の安全電流が示されています。低負荷での試験の A/W だけから全体の電源を設計してはいけません。"
+  },
+  {
+    "source": "S12038-4K 的舊稿警告需要收斂：ARCTIC官方手冊有PC主機板PWM使用方式，不能把單一零售商警語寫成全球禁止接主機板。官方規格有典型0.33A及最大0.6A，三顆最大1.8A仍超過假設1A插座，必須按實際接頭與供電規格配置。",
+    "en": "The old S12038-4K warning needs narrowing: ARCTIC's official manual documents PC motherboard PWM use, so one retailer's warning should not become a universal ban on motherboard connection. Official specifications list 0.33 A typical and 0.6 A maximum. Three fans at a maximum 1.8 A would still exceed an assumed 1 A header; configure them according to the actual connector and power ratings.",
+    "ja": "S12038-4K に関する旧稿の警告は範囲を絞る必要があります。ARCTIC の公式マニュアルには PC マザーボードの PWM を使う方法があり、一販売店の警告を、マザーボード接続の全面的な禁止として書くことはできません。公式仕様は標準 0.33 A、最大 0.6 A です。3 基の最大 1.8 A は、仮に 1 A のヘッダーなら容量を超えるため、実際のコネクターと電源の仕様に従って構成します。"
+  },
+  {
+    "source": "官方手冊",
+    "en": "Official manual",
+    "ja": "公式マニュアル"
+  },
+  {
+    "source": "規格表",
+    "en": "Specification sheet",
+    "ja": "仕様書"
+  },
+  {
+    "source": "65°C雙段控制：保留策略，先標定條件",
+    "en": "Two-stage control at 65°C: keep the strategy, calibrate the conditions",
+    "ja": "65°C の二段制御：方針を残し、先に条件を校正する"
+  },
+  {
+    "source": "原稿採用低溫固定低速、高溫全速的情境。可以把65°C進入高檔、61°C以下回低檔作為可修改的示範，但不是所有CPU／GPU都適用的安全門檻。CPU Package、GPU Core與Hotspot代表不同位置；GPU忙、CPU不忙時，只有CPU輸入可能根本不觸發。",
+    "en": "The drafts consider a fixed low speed at low temperature and full speed at high temperature. Entering the high stage at 65°C and returning to the low stage below 61°C can be an editable example, but these are not safe thresholds for every CPU / GPU. CPU Package, GPU Core and Hotspot represent different locations. If the GPU is busy while the CPU is not, a CPU-only input may never trigger.",
+    "ja": "原稿は、低温では一定の低速、高温では全速という場面を想定しています。65°C で高速側へ入り、61°C 未満で低速側へ戻る設定は変更可能な例にできますが、すべての CPU / GPU に適した安全なしきい値ではありません。CPU Package、GPU Core、Hotspot は異なる場所を表します。GPU が高負荷でも CPU が低負荷なら、CPU だけの入力では切り替わらない可能性があります。"
+  },
+  {
+    "source": "先決定各感測器何時需要高檔，再合併需求；檢查最低可靠起轉、實際RPM、Turbo模式是否上電保留，以及控制程式停止、睡眠喚醒、重啟和感測器失效時的行為。這份網頁不會控制實體風扇。",
+    "en": "Decide when each sensor should demand the high stage, then combine those demands. Check the minimum reliable starting speed, actual RPM, whether Turbo mode survives power cycling, and behavior when the controller program stops, the system wakes from sleep or restarts, or a sensor fails. This webpage does not control physical fans.",
+    "ja": "各センサーがいつ高速側を要求するかを決めてから、その要求をまとめます。確実に始動する最低速度、実際の RPM、電源を入れ直しても Turbo モードが保持されるか、制御プログラムの停止、スリープ復帰、再起動、センサー故障時の挙動を確認します。このウェブページは実際のファンを制御しません。"
+  },
+  {
+    "source": "怎麼做一次可歸因的驗證",
+    "en": "A comparison process that isolates causes",
+    "ja": "原因を切り分ける比較の進め方"
+  },
+  {
+    "source": "記錄原配置、功耗、時脈、CPU／GPU與機殼扇RPM、進風環境溫度和座位噪音；等熱狀態穩定。",
+    "en": "Record the original configuration, power, clock speeds, CPU / GPU and case-fan RPM, intake ambient temperature and noise at the seat; wait for thermal conditions to stabilize.",
+    "ja": "元の構成、消費電力、クロック、CPU / GPU とケースファンの RPM、吸気の周囲温度、座席位置の騒音を記録し、熱状態が安定するまで待ちます。"
+  },
+  {
+    "source": "只拆前板，其餘條件不變；比較元件溫度相對環境的差值，再裝回確認結果可重現。這能診斷流路影響，不能直接反算K。",
+    "en": "Remove only the front panel, leaving everything else unchanged. Compare component temperature above ambient, then refit the panel to check reproducibility. This diagnoses airflow-path effects, but cannot directly recover K.",
+    "ja": "ほかの条件を変えず、前面パネルだけを外します。部品温度と周囲温度の差を比較し、パネルを戻して再現性を確認します。流路の影響は診断できますが、K を直接逆算することはできません。"
+  },
+  {
+    "source": "單獨比較頂蓋／出口，再決定換前扇或後扇；不要一次換滿所有孔位。",
+    "en": "Compare the top cover / outlet separately before deciding whether to replace front or rear fans; do not fill every mounting position at once.",
+    "ja": "天板 / 出口を別に比較してから、前面か背面のファンを交換するか決めます。すべての取り付け位置を一度に埋めないでください。"
+  },
+  {
+    "source": "最終回到正常封閉面板，比日常控制或接近整機音量的表現。GPU自動扇可能把收益表現成RPM下降，而不是溫度下降。",
+    "en": "Finally return to normal closed-panel use and compare under everyday control or at similar whole-system sound levels. Automatic GPU fan control may turn the benefit into lower RPM rather than lower temperature.",
+    "ja": "最後は通常のパネルを閉じた状態へ戻し、日常の制御条件または近いシステム全体の音量で比較します。GPU の自動ファン制御によって、効果が温度低下ではなく RPM の低下として現れる場合があります。"
+  },
+  {
+    "source": "達到工作負載、效能與音色目標就停止；若必須大開面板才行，再比較通風機殼與重裝成本。",
+    "en": "Stop when workload, performance and sound-character targets are met. If large panels must remain open, compare the cost of a better-ventilated case and rebuilding instead.",
+    "ja": "負荷、性能、音の質の目標を満たしたら終了します。パネルを大きく開ける必要があるなら、通風のよいケースと組み直しの費用を比較します。"
+  },
+  {
+    "source": "進階量測工具應從空白開始，只接受同一流路的總Q與壓損。至少五個不同正Q點有利檢查過原點平方擬合K=Σ(Q²ΔP)/Σ(Q⁴)，但不自動保證模型正確。看殘差與有效範圍，必要時使用aQ+bQ²或完整曲線；量測範圍之外不回報「校準工作點」。",
+    "en": "Advanced measurement tools should start blank and accept only total Q and pressure loss for the same airflow path. At least five distinct positive-Q points help assess a through-origin square-law fit, K=Σ(Q²ΔP)/Σ(Q⁴), but do not automatically validate the model. Examine residuals and the valid range; use aQ+bQ² or a full curve when needed. Do not report a “calibrated operating point” outside the measured range.",
+    "ja": "高度な測定ツールは空欄から始め、同じ流路の総 Q と圧力損失だけを受け付けるべきです。異なる正の Q を少なくとも 5 点測ると、原点を通る二乗近似 K=Σ(Q²ΔP)/Σ(Q⁴) を検討しやすくなりますが、モデルの正しさを自動的に保証するものではありません。残差と有効範囲を確認し、必要なら aQ+bQ² または曲線全体を使います。測定範囲外では「校正済み動作点」を報告しません。"
+  },
+  {
+    "source": "這次保留的未知",
+    "en": "What remains unknown",
+    "ja": "今回も不明のまま残すこと"
+  },
+  {
+    "source": "沒有Pop XL Silent實測K、裝機熱／聲A/B、全市場排名或長期故障率。原稿有來源與日期，不代表每個欄位都在這次重新逐列核實。價格與庫存不延用為現價。這份整理把每個結論接回它真正能支持的條件，讓下一次量測或換扇有明確的比較基準。",
+    "en": "There is no measured Pop XL Silent K, installed thermal / acoustic A/B comparison, whole-market ranking or long-term failure-rate evidence here. Sources and dates in a draft do not mean every field was reverified line by line in this review. Prices and stock are not carried forward as current. The goal is to connect each conclusion to the conditions that actually support it, giving the next measurement or fan replacement a clear comparison baseline.",
+    "ja": "Pop XL Silent の測定済み K、組み込み後の熱 / 音響 A/B 比較、市場全体の順位、長期故障率はありません。原稿にソースと日付があるからといって、今回すべての項目を一行ずつ再確認したわけではありません。価格と在庫を現在の情報として引き継ぎません。目的は、各結論を本当に裏付けられる条件へ結び直し、次の測定やファン交換の比較基準を明確にすることです。"
+  },
+  {
+    "source": "本文章節",
+    "en": "On this page",
+    "ja": "このページの目次"
+  },
+  {
+    "source": "曲線工作台",
+    "en": "Curve workbench",
+    "ja": "曲線ワークベンチ"
+  }
+]

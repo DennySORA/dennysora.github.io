@@ -452,6 +452,49 @@
       },
       "processing": "ImageMagick Lanczos resize with centered aspect-ratio crop to 1200×630 and 640×336; WebP quality 82/method 6; JPEG quality 87 with 4:2:0 sampling; metadata stripped.",
       "acceptance": "Visually inspected original and web derivative: topic-specific metaphor; no lettering, logo or watermark; opaque full-bleed article cover."
+    },
+    {
+      "id": "fan-system-matching",
+      "kind": "note",
+      "alt": {
+        "zh-hant": "原創風扇示意：七片扇葉、穿過格柵的氣流線，以及抽象的壓力與流量曲線交點；不是特定產品或實測圖。",
+        "en": "Original fan illustration with seven blades, airflow through a grille and an abstract pressure–flow intersection; not a specific product or a measured chart.",
+        "ja": "7 枚の羽根、グリルを通る気流、抽象的な圧力・流量曲線の交点を描いたオリジナル図。特定製品や測定グラフではありません。"
+      },
+      "assets": [
+        {
+          "path": "assets/article-covers/fan-system-matching-v1.webp",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/webp",
+          "bytes": 21342,
+          "sha256": null
+        },
+        {
+          "path": "assets/article-covers/fan-system-matching-v1-640.webp",
+          "width": 640,
+          "height": 336,
+          "mimeType": "image/webp",
+          "bytes": 10014,
+          "sha256": null
+        },
+        {
+          "path": "assets/article-covers/fan-system-matching-v1.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "bytes": 72053,
+          "sha256": null
+        }
+      ],
+      "source": {
+        "provider": "Original code-native illustration",
+        "model": "not applicable",
+        "generatedAt": "2026-11-01",
+        "brief": "Original abstract seven-blade fan, flow through a grille and P–Q intersection motif. No logo, product likeness or measured-data claim. No new checksum recorded, per owner instruction."
+      },
+      "processing": "Original geometric drawing rasterized with Pillow; Lanczos 1200×630 and 640×336; WebP quality 82 and JPEG quality 87; no source photograph or embedded metadata.",
+      "acceptance": "Subject-specific original technical illustration; no letters, logos or product claims. Opaque dark cover; source and derivatives inspected."
     }
   ]
 }

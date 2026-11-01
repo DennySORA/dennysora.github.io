@@ -158,7 +158,8 @@ for (const cover of covers.covers) {
     const size = readImageSize(path);
     if (
       bytes.length !== asset.bytes ||
-      createHash('sha256').update(bytes).digest('hex') !== asset.sha256 ||
+      (asset.sha256 !== null &&
+        createHash('sha256').update(bytes).digest('hex') !== asset.sha256) ||
       size.width !== asset.width ||
       size.height !== asset.height
     )

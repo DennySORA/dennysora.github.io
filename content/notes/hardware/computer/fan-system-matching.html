@@ -1,0 +1,271 @@
+<h1 id="note-title" class="ln">
+  機殼風扇怎麼選：從 P–Q 曲線到 Pop XL Silent 的工作點
+</h1>
+<blockquote>
+  <p>
+    這份筆記整理七份研究稿，把重複的資料收成一條選型路徑。測試數據由 Cybenetics
+    提供；本筆記整理曲線、比較條件與計算方法。附件未提供這台 Pop XL Silent
+    的風洞、溫度或噪音實測，因此不作此聲稱。原稿價格是 2026-10-12
+    快照，不當作今天的報價。
+  </p>
+</blockquote>
+<nav class="sn-toc" aria-label="本文章節">
+  <a href="#overview">先說結論</a
+  ><a href="#source-lineage">七份稿件，實際上是同一條研究沿革</a
+  ><a href="#pq-curves">最大風量與最大靜壓要分開讀</a
+  ><a href="#case-resistance">Pop XL Silent 的風阻仍然未知</a
+  ><a href="#fan-layout">兩顆140與三顆120，怎樣比較才有意義</a
+  ><a href="#candidates">把一般候選與高壓候選放在同一張證據表</a
+  ><a href="#noise-power">噪音、轉速與供電不能靠同一個百分比比較</a
+  ><a href="#control">65°C雙段控制：保留策略，先標定條件</a
+  ><a href="#validation">怎麼做一次可歸因的驗證</a
+  ><a href="#limits">這次保留的未知</a><a href="#fan-lab-anchor">曲線工作台</a>
+</nav>
+<h2 id="overview">先說結論</h2>
+<p>
+  選型先確認現有配置是否真的需要換扇，再比較候選。只要溫度、時脈與音色已經符合需求，就可以停止升級。若前方進氣確實成為限制，P14
+  Pro PST 可以作為一般預算路線的比較基準；願意為低噪調整投入，可比較方框
+  NF-A14x25 G2 PWM，或保留三段 120 mm 佈局的 NF-A12x25 G2 PWM。
+</p>
+<p>
+  長時間高負載、願意接受全速聲音，則應把 MasterFan A140 FC／A120 FC
+  的高速模式納入候選，而非一開始排除高靜壓產品。但「值得比較」不等於「必須購買」：仍要驗證厚度、供電、模式控制與裝機收益。沒有
+  Pop XL Silent 的實測阻力，現在無法承諾哪款會帶來多少 CFM、需要幾
+  RPM，或降幾度。
+</p>
+<h2 id="source-lineage">七份稿件，實際上是同一條研究沿革</h2>
+<p>
+  購買指南 v4 是敘述層；P–Q 工作台 v4 已內嵌那份指南，也保存 40
+  筆型號／測試模式資料。整合版 v5 再吸收前面板阻力說明與 K–Q
+  示範工具，並修正模型的預載假資料、範圍限制與來源設定語義。v6 高壓補充及 Top10
+  Rev7 增加高負載情境，不是另外兩次獨立實驗。
+</p>
+<p>
+  40 筆核心資料在 v4 與 v5 完全相同：381 組原始掃描、3,048 點；368 組／2,944
+  點允許比較，13 組／104 點隔離保留。補充稿帶來 A140 FC High Speed（報告238）及
+  A120 FC High Speed（報告240）兩條全速曲線，不能覆蓋原庫 A120 FC Low
+  Speed（報告239）。同款不同模式也要分開。
+</p>
+<h2 id="pq-curves">最大風量與最大靜壓要分開讀</h2>
+<p>
+  最大風量通常在接近零壓差時取得；最大靜壓在接近零流量時取得。規格寫 110
+  CFM、5.2 mmH₂O，不能解讀成在 5.2 mmH₂O 下仍能送出 110 CFM。中間的 P–Q
+  曲線才描述不同負載下可提供的壓差；端點不足以重建曲線。
+</p>
+<p>
+  曲線上的圓點是來源測點，連線是分段線性插值。插值只是讀取兩點之間的近似值，不是新增實驗，也不應跨出資料範圍。原始小負壓、隆起與逐點
+  RPM 變化保留；異常資料另列，不為了圖好看修平。
+</p>
+<p>
+  來源依據：<a
+    href="https://www.amca.org/educate/articles-and-technical-papers/amca-inmotion-articles/straightening-out-fan-curves.html"
+    >AMCA 風扇曲線</a
+  >。
+</p>
+<h2 id="case-resistance">Pop XL Silent 的風阻仍然未知</h2>
+<p>
+  官方確認前方可裝 3×120 或 2×140 mm，後方 1×120／140，頂部移除頂蓋後可裝
+  2×120／140；原配前方三顆、後方一顆 Aspect
+  12。這些安裝位不等於每款厚扇都已實物驗收。<a
+    href="https://www.fractal-design.com/products/cases/pop-series/pop-xl-silent/pop-xl-silent-black-solid/"
+    >Fractal 官方規格</a
+  >
+</p>
+<p>
+  定義前板壓損時，應同步量「室內靜壓 −
+  前扇上游靜壓」及真正穿過前板的總風量。單點機殼內壓、風扇規格最大
+  CFM、拆前板後的溫差，都不能單獨識別前板
+  K。只量前板，也還沒包含主艙、出口、後排扇與漏風支路。
+</p>
+<div class="sn-table">
+  <table>
+    <thead>
+      <tr>
+        <th>原稿情境</th>
+        <th align="right">K，Pa/CFM²</th>
+        <th align="right">總量40 CFM壓損</th>
+        <th>性質</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>K–Q 工具</td>
+        <td align="right">0.00100000</td>
+        <td align="right">1.600 Pa</td>
+        <td>人工示範</td>
+      </tr>
+      <tr>
+        <td>P–Q 工作台</td>
+        <td align="right">0.00551624</td>
+        <td align="right">8.826 Pa</td>
+        <td>人工示範</td>
+      </tr>
+      <tr>
+        <td>前面板說明</td>
+        <td align="right">0.01133894</td>
+        <td align="right">18.142 Pa</td>
+        <td>人工示範</td>
+      </tr>
+      <tr>
+        <td>Pop XL Silent 真實流路</td>
+        <td align="right">未知</td>
+        <td align="right">未知</td>
+        <td>尚未量測</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>
+  平方律 ΔP=KQ² 是固定流路的近似。40 CFM 必須註明是每顆或整組；三顆各40
+  CFM與整片前板40 CFM的定義，會讓同壓差算出的總流量 K 差九倍。最後一個示範在80
+  CFM推得7.40 mmH₂O，只能說明假設的後果，不能反過來宣稱機殼需要這個壓力。
+</p>
+<h2 id="fan-layout">兩顆140與三顆120，怎樣比較才有意義</h2>
+<p>
+  在相同壓差、相同風扇、均勻負載的理想並聯假設下，P組(Q總)=P單(Q總/N)。加的是同一壓差下的流量，靜壓不乘顆數。前進氣與後排氣如果在無旁通的同一路徑，才可在同一流量下相加壓升；不能把前後自由風量直接相加。
+</p>
+<p>
+  真實機殼有不同入口、出口與漏風，加上 GPU
+  自帶風扇，不能用一個顆數概括全機。三顆120也可能覆蓋較多縱向位置；兩顆140少一顆馬達與接線。最後看的是空氣是否通過需要散熱的位置，而非名義尺寸或自由風量總和。<a
+    href="https://www.amca.org/educate/articles-and-technical-papers/amca-inmotion-articles/mitigating-system-effect-to-optimize-fan-performance-efficiency.html"
+    >AMCA 安裝效應</a
+  >
+</p>
+<h2 id="candidates">把一般候選與高壓候選放在同一張證據表</h2>
+<div class="sn-table">
+  <table>
+    <thead>
+      <tr>
+        <th>型號／模式</th>
+        <th>證據與用途</th>
+        <th>不能省略的條件</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ARCTIC P14 Pro PST</td>
+        <td>核心報告204；一般預算比較基準</td>
+        <td>27mm；裝機音色、實際到手價；不能只憑5.11mmH₂O選冠軍</td>
+      </tr>
+      <tr>
+        <td>
+          <a
+            href="https://www.noctua.at/en/products/nf-a14x25-g2-pwm/specifications"
+            >NF-A14x25 G2 PWM</a
+          >
+        </td>
+        <td>核心報告140；方框140高階候選</td>
+        <td>與圓框r型號分開；裸框25mm、含墊27mm</td>
+      </tr>
+      <tr>
+        <td>
+          <a
+            href="https://www.noctua.at/en/products/nf-a12x25-g2-pwm/specifications"
+            >NF-A12x25 G2 PWM</a
+          >
+        </td>
+        <td>核心報告195；保留3×120的高階候選</td>
+        <td>普通版與LS分開；含墊27mm</td>
+      </tr>
+      <tr>
+        <td>T30-120 Performance</td>
+        <td>核心報告61；30mm替代</td>
+        <td>2000RPM模式，不能套用Advanced規格</td>
+      </tr>
+      <tr>
+        <td>A140 FC High Speed</td>
+        <td>補充報告238；2×140高負載候選</td>
+        <td>30mm、Turbo控制、獨立供電條件需確認</td>
+      </tr>
+      <tr>
+        <td>A120 FC High Speed</td>
+        <td>補充報告240；3×120高負載候選</td>
+        <td>不與Low239混用；100%來源設定也不等於主機板自動Turbo</td>
+      </tr>
+      <tr>
+        <td>FHS140X／T30-140／P12 Pro PST</td>
+        <td>原稿的其他採購候選</td>
+        <td>本次沒有同等可核對內嵌多點曲線；不借其他SKU的線</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>
+  Cybenetics 的全報告端點摘要：P14 Pro為103.78 CFM／5.11 mmH₂O／39.0 dBA；A120
+  High為122.92／12.84／48.7；A140
+  High為156.67／7.65／48.5。這些是不同端點與聲學條件的摘要，不是同時成立的工作點，也不是等噪比較。<a
+    href="https://www.cybenetics.com/evaluations/fans/204/cert/en/"
+    >204</a
+  >、<a href="https://www.cybenetics.com/evaluations/fans/240/cert/en/">240</a
+  >、<a href="https://www.cybenetics.com/evaluations/fans/238/cn/">238</a>
+</p>
+<p>
+  特別注意：A120 High 的最大端點出現在90%來源掃描；100%掃描是122.47 CFM與12.65
+  mmH₂O。P14 Pro的全報告5.11也不是100%那條線的5.09。不要把摘要端點塞回每條線。
+</p>
+<h2 id="noise-power">噪音、轉速與供電不能靠同一個百分比比較</h2>
+<p>
+  對相同測點、互不相關的等強音源，N顆理想合成增加10log₁₀N
+  dB，兩顆約+3.01、三顆約+4.77。這是聲能算術；不同測距、原廠／實驗室方法、遮音與反射都會改變實際結果。單顆低於55dBA不保證整機低於55dBA。25dBA的Qmax與Pmax也不是一整條等噪曲線。
+</p>
+<p>
+  來源欄位叫Speed Setting；先保留為「來源設定」，不要直接叫BIOS PWM。P14 Pro
+  100%掃描的逐點RPM約2026–2450；這種曲線不能當作固定2500RPM基準再縮放。相似律
+  P_s(Q)≈s²P_ref(Q/s) 只適合前提相容的同型固定轉速基準，PWM
+  duty與RPM還需要實機標定。
+</p>
+<p>
+  接線以原廠最大／安全電流、控制器邊界與主機板／Hub額定為準。P14
+  Pro原廠電流0.35A，三顆名義1.05A；PST不會增加插座容量。A120FC／A140FC原廠額定0.50／0.52A，另列每顆安全電流1A；不能只用低負載實驗A/W設計整組供電。<a
+    href="https://www.arctic.de/en/P14-Pro-PST/ACFAN00314A"
+    >ARCTIC</a
+  >、<a
+    href="https://sfcc.coolermaster.com/en-global/products/masterfan-a-series.html"
+    >Cooler Master</a
+  >
+</p>
+<p>
+  S12038-4K
+  的舊稿警告需要收斂：ARCTIC官方手冊有PC主機板PWM使用方式，不能把單一零售商警語寫成全球禁止接主機板。官方規格有典型0.33A及最大0.6A，三顆最大1.8A仍超過假設1A插座，必須按實際接頭與供電規格配置。<a
+    href="https://support.arctic.de/en/s12038-4k"
+    >官方手冊</a
+  >、<a
+    href="https://www.arctic.de/media/56/44/26/1724331696/Spec-Sheet_S12038-4K_EN.pdf"
+    >規格表</a
+  >
+</p>
+<h2 id="control">65°C雙段控制：保留策略，先標定條件</h2>
+<p>
+  原稿採用低溫固定低速、高溫全速的情境。可以把65°C進入高檔、61°C以下回低檔作為可修改的示範，但不是所有CPU／GPU都適用的安全門檻。CPU
+  Package、GPU
+  Core與Hotspot代表不同位置；GPU忙、CPU不忙時，只有CPU輸入可能根本不觸發。
+</p>
+<p>
+  先決定各感測器何時需要高檔，再合併需求；檢查最低可靠起轉、實際RPM、Turbo模式是否上電保留，以及控制程式停止、睡眠喚醒、重啟和感測器失效時的行為。這份網頁不會控制實體風扇。
+</p>
+<h2 id="validation">怎麼做一次可歸因的驗證</h2>
+<ol>
+  <li>
+    記錄原配置、功耗、時脈、CPU／GPU與機殼扇RPM、進風環境溫度和座位噪音；等熱狀態穩定。
+  </li>
+  <li>
+    只拆前板，其餘條件不變；比較元件溫度相對環境的差值，再裝回確認結果可重現。這能診斷流路影響，不能直接反算K。
+  </li>
+  <li>單獨比較頂蓋／出口，再決定換前扇或後扇；不要一次換滿所有孔位。</li>
+  <li>
+    最終回到正常封閉面板，比日常控制或接近整機音量的表現。GPU自動扇可能把收益表現成RPM下降，而不是溫度下降。
+  </li>
+  <li>
+    達到工作負載、效能與音色目標就停止；若必須大開面板才行，再比較通風機殼與重裝成本。
+  </li>
+</ol>
+<p>
+  進階量測工具應從空白開始，只接受同一流路的總Q與壓損。至少五個不同正Q點有利檢查過原點平方擬合K=Σ(Q²ΔP)/Σ(Q⁴)，但不自動保證模型正確。看殘差與有效範圍，必要時使用aQ+bQ²或完整曲線；量測範圍之外不回報「校準工作點」。
+</p>
+<h2 id="limits">這次保留的未知</h2>
+<p>
+  沒有Pop XL
+  Silent實測K、裝機熱／聲A/B、全市場排名或長期故障率。原稿有來源與日期，不代表每個欄位都在這次重新逐列核實。價格與庫存不延用為現價。這份整理把每個結論接回它真正能支持的條件，讓下一次量測或換扇有明確的比較基準。
+</p>
+
+<div id="fan-lab-anchor"></div>

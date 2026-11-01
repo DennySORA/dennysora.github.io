@@ -66,6 +66,7 @@ describe('owner-retired notes', () => {
         'brain-cns-tumors',
         'lumbar-spine-care',
         'landscape-photography',
+        'fan-system-matching',
       ]);
     });
   }

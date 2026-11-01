@@ -5,6 +5,21 @@ import { folderTrail, noteFolderOf } from './note-tree.ts';
 type Text = Record<Locale, string>;
 
 export const collectionNoteMeta = {
+  'fan-system-matching': {
+    tagIds: ['hardware', 'pc-cooling', 'case-fans'],
+    name: { 'zh-hant': '風扇與風道', en: 'Fans & airflow', ja: 'ファンと通風' },
+    title: {
+      'zh-hant': '電腦風扇與風道：從 P–Q 曲線到系統工作點',
+      en: 'PC fans and airflow: from P–Q curves to the operating point',
+      ja: 'PC ファンと通風：P–Q 曲線から動作点まで',
+    },
+    description: {
+      'zh-hant':
+        '整合七份選購與實驗資料，分清原廠規格、第三方量測與模型假設，重新理解風扇比較、阻抗、噪音與安裝供電。附不冒充實測的互動試算。',
+      en: 'Seven guides and labs reconciled: distinguish vendor specifications, third-party measurements and model assumptions when comparing fans, resistance, noise and installation power. Includes an explicitly hypothetical interactive model.',
+      ja: '7 つのガイドと実験資料を統合。メーカー仕様、第三者測定、モデルの仮定を区別し、ファンの比較、通風抵抗、騒音、取り付けと電源を整理。仮想モデルであることを明示した対話型計算付き。',
+    },
+  },
   'lumbar-spine-care': {
     tagIds: ['health', 'lower-back', 'ergonomics'],
     name: {
