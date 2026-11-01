@@ -32,6 +32,7 @@ const publishedArticleIds = [
   'p2p-downloader-architecture',
   'p2p-privacy-boundaries',
   'password-manager-recommendations',
+  'vpn-manager-architecture',
 ];
 
 function load(path: string) {
@@ -52,7 +53,10 @@ describe('publication boundaries', () => {
   it('publishes originals and inherited translations with immutable evidence', () => {
     for (const locale of locales)
       expect(editionStatus(post, locale, post.revision)).toBe('published');
-    if (post.source.kind === 'imported-manuscript')
+    if (
+      post.source.kind === 'imported-manuscript' ||
+      post.source.kind === 'library-manuscript'
+    )
       throw new Error('Expected repository source fixture');
     expect(post.source.commit).toMatch(/^[a-f0-9]{40}$/);
   });
@@ -101,7 +105,9 @@ describe('publication boundaries', () => {
     expect(loadArticle('en', 'not-a-post')).toBeNull();
   });
   it('keeps content revisions tied to actual source bytes', () => {
-    for (const value of loadPosts())
+    for (const value of loadPosts().filter(
+      (post) => post.source.kind !== 'library-manuscript',
+    ))
       expect(value.locales.en?.sourceRevision).toBe(
         createHash('sha256')
           .update(
@@ -233,9 +239,11 @@ describe('retained content and published blog', () => {
       expect(home.canonical).toBe(`https://dennysora.me/${locale}/`);
       expect(home.indexable).toBe(true);
       expect(home.view.profile.displayName).toBe('DennySORA');
-      expect(home.view.recent.map((post) => post.id).sort()).toEqual(
-        publishedArticleIds.slice(0, 3),
-      );
+      expect(home.view.recent.map((post) => post.id).sort()).toEqual([
+        'browser-translation-architecture',
+        'p2p-downloader-architecture',
+        'vpn-manager-architecture',
+      ]);
       expect(home.workspace.posts.map((post) => post.slug).sort()).toEqual(
         publishedArticleIds,
       );
@@ -289,6 +297,7 @@ describe('retained content and published blog', () => {
       'p2p-privacy-boundaries',
       'password-manager-recommendations',
       'production-systems',
+      'vpn-manager-architecture',
     ]);
     const anchors = loadHeadingAnchors();
     expect(Object.keys(anchors).sort()).toEqual([

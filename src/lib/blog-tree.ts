@@ -18,7 +18,7 @@ export const blogFolders = {
       en: 'Explore the architecture, data flows and design trade-offs behind everyday tools.',
       ja: '日常的なツールのアーキテクチャ、データフロー、設計上の選択を読み解く。',
     },
-    slugs: ['browser-translation-architecture'],
+    slugs: ['browser-translation-architecture', 'vpn-manager-architecture'],
   },
   security: {
     title: { 'zh-hant': '資安', en: 'Security', ja: 'セキュリティ' },

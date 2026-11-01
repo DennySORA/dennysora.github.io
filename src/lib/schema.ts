@@ -35,7 +35,12 @@ export const editionSchema = z
       'source-published',
       'stale',
     ]),
-    sourceRevision: hash.nullable(),
+    sourceRevision: z
+      .union([
+        hash,
+        z.string().regex(/^library:libfile_[a-f0-9]+:v[0-9]+:edition-[0-9]+$/),
+      ])
+      .nullable(),
     reviewEvidence: https.nullable(),
   })
   .strict();
@@ -58,6 +63,16 @@ export const postSchema = z
     relatedPostIds: z.array(safeId),
     relatedProjectIds: z.array(safeId),
     source: z.union([
+      z
+        .object({
+          kind: z.literal('library-manuscript'),
+          filename: z.string().min(1),
+          libraryFileId: z.string().regex(/^libfile_[a-f0-9]+$/),
+          version: z.number().int().nonnegative(),
+          edition: z.number().int().positive(),
+        })
+        .strict(),
+
       z
         .object({
           repo: z.string().min(1),

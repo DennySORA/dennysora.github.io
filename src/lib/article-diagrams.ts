@@ -16,14 +16,16 @@ export function enhanceArticleDiagrams(root: HTMLElement, locale: Locale) {
   }[locale];
   const cleanups: (() => void)[] = [];
   for (const viewport of root.querySelectorAll<HTMLElement>(
-    '.tg-dfd-scroll,.tg-svg-scroll,.np-diagram-scroll,.pg-figure-viewport',
+    '.tg-dfd-scroll,.tg-svg-scroll,.np-diagram-scroll,.pg-figure-viewport,.vp-diagram-scroller',
   )) {
     const diagram = viewport.querySelector<HTMLElement | SVGSVGElement>(
       ':scope > .tg-dfd-canvas,:scope > svg',
     );
     const heading = viewport
       .closest('figure')
-      ?.querySelector('.tg-figure-head,.np-figure-head,.pg-figure-head');
+      ?.querySelector(
+        '.tg-figure-head,.np-figure-head,.pg-figure-head,figcaption',
+      );
     if (!diagram || !heading) continue;
     const svg = diagram instanceof SVGSVGElement;
     const width = svg ? diagram.viewBox.baseVal.width : diagram.offsetWidth;

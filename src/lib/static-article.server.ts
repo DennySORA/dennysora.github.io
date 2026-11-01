@@ -1,3 +1,6 @@
+import { realpathSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
+import { readImageSize } from './image-size.server.ts';
 import sanitizeHtml from 'sanitize-html';
 import { decodeEntities } from './html.ts';
 import type { Heading, RenderedMarkdown } from './markdown.server.ts';
@@ -5,6 +8,8 @@ import { reservedIds } from './page-ids.ts';
 import { estimateReadingMinutes } from './reading-time.ts';
 
 const tags = [
+  'img',
+  'line',
   'div',
   'p',
   'a',
@@ -61,11 +66,15 @@ const text = (html: string) =>
   );
 
 /** Separate from Markdown: reviewed static diagrams, never executable HTML. */
-export function renderStaticArticle(source: string): RenderedMarkdown {
+export function renderStaticArticle(
+  source: string,
+  assets?: { directory: string; urlPrefix: string },
+): RenderedMarkdown {
+  const images: RenderedMarkdown['images'] = [];
   if (Buffer.byteLength(source) > 500_000)
     throw new Error('Static article exceeds size limit');
   if (
-    /<(?:script|iframe|object|embed|form|style|link|img|image|use|foreignObject|animate|set)\b|\son[a-z]+\s*=|\s(?:style|src|srcset|xlink:href)\s*=/i.test(
+    /<(?:script|iframe|object|embed|form|style|link|image|use|foreignObject|animate|set)\b|\son[a-z]+\s*=|\s(?:style|srcset|xlink:href)\s*=/i.test(
       source,
     )
   )
@@ -78,6 +87,7 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
     'marker',
     'g',
     'text',
+    'line',
     'path',
     'circle',
     'rect',
@@ -93,6 +103,8 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
     else if (svgTags.has(name) && svgDepth < 1)
       throw new Error('SVG element outside its diagram');
     if (svgDepth < 0) throw new Error('Unbalanced SVG diagram');
+    if (name !== 'img' && /\ssrc\s*=/i.test(token))
+      throw new Error('Only local article images may have src');
     if (name !== 'a' && /\shref\s*=/i.test(token))
       throw new Error('Only article links may have href');
   }
@@ -136,6 +148,44 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
   const html = sanitizeHtml(source, {
     transformTags: {
       '*': (tagName, attribs) => {
+        if (tagName === 'img') {
+          const filename = attribs['src'];
+          if (
+            !assets ||
+            !filename ||
+            !/^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:png|webp|jpg|jpeg)$/.test(filename)
+          )
+            throw new Error(
+              'Static article images require a local asset filename',
+            );
+          const directory = realpathSync(assets.directory);
+          const file = realpathSync(join(directory, filename));
+          const path = relative(directory, file);
+          if (
+            path.startsWith('..' + sep) ||
+            path === '..' ||
+            path.includes(sep)
+          )
+            throw new Error('Static article image escapes its asset directory');
+          const size = readImageSize(file);
+          if (
+            String(size.width) !== attribs['width'] ||
+            String(size.height) !== attribs['height'] ||
+            !attribs['alt']?.trim()
+          )
+            throw new Error(
+              'Static article image dimensions or alt text are missing',
+            );
+          if (!/^\/content-assets\/posts\/[a-z0-9-]+\/$/.test(assets.urlPrefix))
+            throw new Error('Invalid static article asset URL prefix');
+          const url = assets.urlPrefix + filename;
+          attribs['src'] = url;
+          attribs['loading'] = 'lazy';
+          attribs['decoding'] = 'async';
+          images.push({ source: file, url });
+        } else if (attribs['src'] !== undefined) {
+          throw new Error('Only local article images may have src');
+        }
         const id = attribs['id'];
         if (id !== undefined) {
           if (
@@ -171,7 +221,9 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
     },
     allowedTags: tags,
     allowedAttributes: {
-      '*': ['class', 'id', 'aria-live', 'aria-atomic'],
+      '*': ['class', 'id', 'aria-live', 'aria-atomic', 'aria-labelledby'],
+      img: ['src', 'alt', 'width', 'height', 'loading', 'decoding'],
+      line: ['x1', 'y1', 'x2', 'y2', 'marker-start', 'marker-end'],
       a: ['href', 'class', 'aria-label'],
       div: ['class', 'aria-hidden', 'aria-label', 'role', 'tabindex'],
       section: ['class', 'id', 'aria-label'],
@@ -183,6 +235,7 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
       svg: [
         'class',
         'aria-hidden',
+        'aria-label',
         'aria-labelledby',
         'role',
         'viewBox',
@@ -216,7 +269,8 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
         'network-guide',
         'privacy-guide',
         'translation-guide',
-        /^(?:pm|np|pg|tg)-[a-z0-9-]+$/,
+        'vpn-guide',
+        /^(?:pm|np|pg|tg|vp)-[a-z0-9-]+$/,
       ],
     },
     allowedSchemes: ['https'],
@@ -242,7 +296,7 @@ export function renderStaticArticle(source: string): RenderedMarkdown {
       codeLines: 0,
       formulas: 0,
     }),
-    images: [],
+    images,
     previewVideos: [],
     subtitles: [],
     hasMath: false,

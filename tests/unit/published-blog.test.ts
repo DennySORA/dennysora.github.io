@@ -14,11 +14,12 @@ const articles = [
   'p2p-downloader-architecture',
   'p2p-privacy-boundaries',
   'password-manager-recommendations',
+  'vpn-manager-architecture',
 ];
 const reviewCommit = '9b1a75b3a89704b7612fcf0e0e8affce3516cb03';
 
-describe('four-article trilingual publication', () => {
-  it('publishes exactly the four authorized articles in every language', () => {
+describe('authorized trilingual publication', () => {
+  it('publishes exactly the authorized articles in every language', () => {
     for (const locale of locales) {
       expect(
         listPosts(locale)
@@ -40,12 +41,14 @@ describe('four-article trilingual publication', () => {
         );
         expect(edition?.sourceRevision).toBe(post.revision);
         expect(edition?.reviewEvidence).toContain(
-          `/blob/${reviewCommit}/docs/process/REVIEW-`,
+          post.source.kind === 'library-manuscript'
+            ? '/blob/main/docs/process/REVIEW-vpn-manager-2026-11-01.md'
+            : `/blob/${reviewCommit}/docs/process/REVIEW-`,
         );
       }
   });
 
-  it('keeps all twelve article canonicals, alternates and schemas coherent', () => {
+  it('keeps all article canonicals, alternates and schemas coherent', () => {
     for (const id of articles)
       for (const locale of locales) {
         const path = articlePath(id, locale);

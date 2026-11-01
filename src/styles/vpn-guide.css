@@ -1,0 +1,446 @@
+/* Imported architecture manuscript in the existing Moonlit Vim reading buffer. */
+.vpn-guide {
+  min-width: 0;
+  color: var(--color-text);
+}
+.vpn-guide .vp-intro {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border-decorative);
+}
+.vpn-guide section {
+  margin-top: var(--space-7);
+}
+.vpn-guide .vp-sec-no,
+.vpn-guide .vp-figlabel {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-entity-kind);
+  margin-right: var(--space-3);
+}
+.vpn-guide .vp-inline-flow {
+  border-left: 2px solid var(--color-entity-file);
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+.vpn-guide .vp-inline-flow span {
+  padding-inline: var(--space-2);
+}
+.vpn-guide figure {
+  margin: var(--space-6) 0;
+  max-width: 100%;
+  border: 1px solid var(--color-border-decorative);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-background);
+}
+.vpn-guide .vp-diagram-scroller,
+.vpn-guide .vp-screen-scroll,
+.vpn-guide .vp-route-demo-scroll,
+.vpn-guide .vp-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.vpn-guide .vp-diagram-scroller:focus-visible,
+.vpn-guide .vp-screen-scroll:focus-visible,
+.vpn-guide .vp-route-demo-scroll:focus-visible,
+.vpn-guide .vp-table-wrap:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -3px;
+}
+.vpn-guide .vp-diagram-scroller > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.vpn-guide .vp-diagram-scroller[data-diagram-expanded] > svg {
+  width: var(--diagram-width);
+  max-width: none;
+}
+.vpn-guide .vp-screen-scroll > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+.vpn-guide figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+}
+.vpn-guide figcaption small {
+  flex-basis: 100%;
+}
+.vpn-guide .vp-route-demo-head,
+.vpn-guide .vp-route-demo-row {
+  display: grid;
+  grid-template-columns:
+    minmax(140px, 1fr) 24px minmax(190px, 1.2fr)
+    24px minmax(200px, 1.3fr);
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 740px;
+  padding: var(--space-4);
+}
+.vpn-guide .vp-route-demo-head {
+  background: var(--color-surface);
+  font: 12px/1.7 var(--font-mono);
+  color: var(--color-text-muted);
+}
+.vpn-guide .vp-route-demo-row {
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 14px;
+}
+.vpn-guide .vp-route-demo-row strong,
+.vpn-guide .vp-route-demo-row small {
+  display: block;
+}
+.vpn-guide .vp-route-demo-row small {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+.vpn-guide .vp-route-box {
+  border: 1px solid var(--color-control-border);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+.vpn-guide .vp-route-arrow {
+  text-align: center;
+  color: var(--color-entity-file);
+}
+.vpn-guide .vp-route-demo-failure {
+  margin: 0;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-decorative);
+}
+.vpn-guide .vp-table-wrap {
+  margin-block: var(--space-6);
+}
+.vpn-guide table {
+  min-width: 680px;
+}
+.vpn-guide caption {
+  text-align: left;
+  color: var(--color-text);
+  padding-bottom: var(--space-3);
+}
+@media (max-width: 767px) {
+  .vpn-guide .vp-screen-scroll > img {
+    min-width: 760px;
+    max-width: none;
+  }
+}
+@media print {
+  .vpn-guide .vp-diagram-scroller,
+  .vpn-guide .vp-screen-scroll {
+    overflow: visible;
+  }
+  .vpn-guide .vp-diagram-scroller > svg,
+  .vpn-guide .vp-screen-scroll > img {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+.vpn-guide .vp-paint-1 {
+  fill: var(--color-link);
+}
+.vpn-guide .vp-paint-2 {
+  fill: var(--color-entity-file);
+}
+.vpn-guide .vp-paint-3 {
+  fill: var(--color-syntax-constant);
+}
+.vpn-guide .vp-paint-4 {
+  fill: var(--color-entity-kind);
+}
+.vpn-guide .vp-paint-5 {
+  fill: var(--color-skill-gpu);
+}
+.vpn-guide .vp-paint-6 {
+  fill: var(--color-background);
+}
+.vpn-guide .vp-paint-7 {
+  fill: var(--color-link);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-8 {
+  fill: var(--color-surface);
+  stroke: var(--color-control-border);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-9 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-10 {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+}
+.vpn-guide .vp-paint-11 {
+  fill: none;
+  stroke: var(--color-link);
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-12 {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+}
+.vpn-guide .vp-paint-13 {
+  fill: var(--color-surface);
+  stroke: var(--color-link);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-14 {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-kind);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-15 {
+  fill: var(--color-surface);
+  stroke: var(--color-syntax-constant);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-16 {
+  fill: none;
+  stroke: var(--color-link);
+  stroke-dasharray: 7 5;
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-17 {
+  fill: var(--color-surface);
+  stroke: var(--color-entity-file);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-18 {
+  fill: none;
+  stroke: var(--color-syntax-constant);
+  stroke-dasharray: 7 5;
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-19 {
+  fill: none;
+  stroke: var(--color-entity-kind);
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-20 {
+  fill: none;
+  stroke: var(--color-entity-kind);
+  stroke-dasharray: 7 5;
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-21 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-22 {
+  fill: none;
+  stroke: var(--color-entity-file);
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-23 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-24 {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+}
+.vpn-guide .vp-paint-25 {
+  fill: none;
+  stroke: var(--color-entity-file);
+  stroke-dasharray: 7 5;
+}
+.vpn-guide .vp-paint-26 {
+  fill: var(--color-entity-file);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-27 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-28 {
+  fill: none;
+  stroke: var(--color-entity-file);
+  stroke-dasharray: 7 5;
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-29 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-30 {
+  fill: none;
+  stroke: var(--color-control-border);
+  stroke-dasharray: 7 5;
+}
+.vpn-guide .vp-paint-31 {
+  fill: var(--color-control-border);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-32 {
+  fill: none;
+  stroke: var(--color-syntax-constant);
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-33 {
+  fill: var(--color-surface);
+  stroke: var(--color-skill-gpu);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-34 {
+  fill: none;
+  stroke: var(--color-skill-gpu);
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-35 {
+  fill: none;
+  stroke: var(--color-skill-gpu);
+  stroke-dasharray: 7 5;
+  stroke-width: 2.2;
+}
+.vpn-guide .vp-paint-36 {
+  fill: var(--color-chrome);
+}
+.vpn-guide .vp-paint-37 {
+  fill: var(--color-link);
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-38 {
+  fill: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.vpn-guide .vp-paint-39 {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+}
+.vpn-guide .vp-paint-40 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.vpn-guide .vp-paint-41 {
+  stroke: var(--color-border-decorative);
+  stroke-dasharray: 5 7;
+  stroke-width: 1.3;
+}
+.vpn-guide .vp-paint-42 {
+  fill: var(--color-surface);
+}
+.vpn-guide .vp-paint-43 {
+  stroke: var(--color-link);
+  stroke-width: 2;
+}
+.vpn-guide .vp-paint-44 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  text-anchor: middle;
+}
+.vpn-guide .vp-paint-45 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  text-anchor: middle;
+}
+.vpn-guide .vp-paint-46 {
+  stroke: var(--color-entity-file);
+  stroke-dasharray: 7 5;
+  stroke-width: 2;
+}
+.vpn-guide .vp-paint-47 {
+  fill: none;
+  stroke: var(--color-link);
+  stroke-dasharray: 7 5;
+}
+.vpn-guide .vp-paint-48 {
+  fill: var(--color-link);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+}
+.vpn-guide .vp-paint-49 {
+  fill: var(--color-link);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 700;
+}
+.vpn-guide .vp-paint-50 {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+.vpn-guide .vp-paint-51 {
+  stroke: var(--color-entity-file);
+}
+.vpn-guide .vp-paint-52 {
+  stroke: var(--color-entity-kind);
+}
+.vpn-guide .vp-paint-53 {
+  fill: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 650;
+}
+.vpn-guide .vp-paint-54 {
+  font-size: 16px;
+}
+.vpn-guide .vp-paint-55 {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.vpn-guide .vp-paint-56 {
+  fill: none;
+  stroke: var(--color-link);
+  stroke-width: 2.5;
+}
+.vpn-guide .vp-paint-57 {
+  fill: none;
+  stroke: var(--color-entity-kind);
+  stroke-dasharray: 5 5;
+  stroke-width: 2;
+}
+.vpn-guide .vp-paint-58 {
+  fill: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+[lang='ja'] .vpn-guide text {
+  font-family: var(--font-sans-ja);
+}

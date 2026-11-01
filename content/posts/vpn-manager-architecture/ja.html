@@ -1,0 +1,3722 @@
+<div class="vpn-guide">
+  <p class="vp-eyebrow">VPN MANAGER / 開発ノート</p>
+
+  <h2 id="opening">最初に作りたかったもの</h2>
+  <div class="vp-intro">
+    <p>
+      ホストの元のネットワークは変えない。<br />指定したアプリは指定した出口だけを使う。
+    </p>
+    <p>
+      最初に VPN Manager を作りたいと思ったのは、一般的な VPN
+      クライアントの多くが、コンピューター全体をまとめて切り替えるものだと感じたからです。<br />でも、私が必要としているのはそれではありません。<br />どの
+      App がどの VPN
+      を使うかを指定し、管理対象外のプログラムにはホストの元のネットワークをそのまま使わせたいのです。
+    </p>
+    <p>
+      例えば、ブラウザー、ダウンロード用プログラム、そのほかの App
+      を同時に開いているとします。<br />ブラウザーの担当は
+      <code>Instance A</code>、ダウンロード用プログラムの担当は
+      <code>Instance B</code>、そのほかは元のネットワークを使います。<br />A と
+      B は、それぞれ独自の WireGuard
+      identity、DNS、Gateway、接続リソース、ライフサイクルを持ちます。
+    </p>
+    <p>
+      A
+      が切断されたら、ブラウザーはそのままネットワークにつながらなくなる方がよいと思っています。<br />自動的に
+      B に移ってはいけませんし、ISP の元の出口に戻ることも許しません。
+    </p>
+    <figure aria-labelledby="route-demo-caption" class="vp-route-demo">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="アプリケーションの出口の振り分け図。横にスクロールできます"
+        class="vp-route-demo-scroll"
+      >
+        <div aria-hidden="true" class="vp-route-demo-head">
+          <span>ユーザーのプログラム</span><span></span
+          ><span>結び付けた出口</span><span></span><span>外部への経路</span>
+        </div>
+        <div class="vp-route-demo-row">
+          <div>
+            <strong>ブラウザー</strong><small>管理対象アプリケーション</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-instance-a">
+            <strong>Instance A</strong><small>ID A／DNS A</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>WireGuard ピア A</strong><small>独立した VPN 出口</small>
+          </div>
+        </div>
+        <div class="vp-route-demo-row">
+          <div>
+            <strong>ダウンロード用プログラム</strong
+            ><small>管理対象アプリケーション</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-instance-b">
+            <strong>Instance B</strong><small>ID B／DNS B</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>WireGuard ピア B</strong><small>別の独立した出口</small>
+          </div>
+        </div>
+        <div class="vp-route-demo-row">
+          <div>
+            <strong>そのほかの App など</strong
+            ><small>管理対象外アプリケーション</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-host-route">
+            <strong>ホストの元のネットワーク</strong
+            ><small>元のルーティングを維持</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>元のネットワーク</strong
+            ><small>VPN Manager は変更しない</small>
+          </div>
+        </div>
+      </div>
+      <p class="vp-route-demo-failure">
+        <strong>A が切断された場合：</strong
+        >ブラウザーはネットワークにつながらなくなります。<br />Instance B
+        と管理対象外のプログラムは通常どおり動作し、一緒に切り替える必要はありません。
+      </p>
+      <figcaption id="route-demo-caption">
+        利用例｜同じホスト上の 3
+        つの異なる経路（小さい画面では左右にスクロールできます）。これは想定するアーキテクチャの動作を示す図であり、リアルタイムの接続画面ではありません。
+      </figcaption>
+    </figure>
+
+    <p>
+      異なる VPN プロバイダーのアカウント、Profile、Gateway
+      も、同じシステムで管理できるようにしたいです。<br />指定した App や
+      Service は、できれば OS のネットワーク層で直接隔離したいです。Docker
+      を使わず、コンピューター全体の default route も変更しません。
+    </p>
+    <p>
+      トラフィック情報も、作りたい機能の一つです。<br />各 Instance
+      がどれだけ通信したのか、どの Gateway が混雑しているのか、DNS
+      にどれだけ時間がかかったのか、どのプロセスが最も CPU
+      やメモリーを使っているのかを見たいです。<br />Connected
+      と表示されるだけでは、あまり意味がないと思っています。
+    </p>
+    <p>
+      似たことを実現している人はすでにいますし、netns、Proxy、firewall
+      を自分で組み合わせて必要な環境を作っている人も少なくありません。<br />ただ私は、複数
+      VPN の管理、App
+      の隔離、障害復旧、監視を一つにまとめ、毎回いろいろなものを自分でつなぎ合わせずに済むようにしたいのです。
+    </p>
+    <p>まず、システム全体のアーキテクチャから始めます。</p>
+  </div>
+
+  <div
+    id="interface-shots"
+    aria-labelledby="interface-shots-title"
+    class="vp-interface-shots"
+  >
+    <h3 id="interface-shots-title">現在の操作画面</h3>
+    <figure aria-labelledby="shot-cap-1" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="VPN Manager の概要画面。横にスクロールして確認できます"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-1.png"
+          width="1514"
+          height="769"
+          alt="VPN Manager の概要：2 本の VPN 接続、それぞれのローカル Proxy Port、ダウンロード・アップロード統計、トラフィック経路図"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-1">
+        <span class="vp-figlabel">画面 01</span
+        ><span
+          >VPN Manager の概要：2
+          本の接続、それぞれのプロキシポート、トラフィック経路。</span
+        ><small
+          >実際のインターフェースのスクリーンショット・2026-11-01
+          <span class="vp-mobile-pan">（左右にスクロールできます）</span></small
+        >
+      </figcaption>
+    </figure>
+    <figure aria-labelledby="shot-cap-2" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="VPN Manager の接続一覧。横にスクロールして確認できます"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-2.png"
+          width="1523"
+          height="760"
+          alt="VPN Manager の接続ページ：オランダと香港の 2 本の WireGuard 接続。接続状態、プロキシポート、リアルタイムのトラフィック、リソース監視を含みます"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-2">
+        <span class="vp-figlabel">画面 02</span
+        ><span
+          >接続ページ：各接続の状態、リアルタイムのトラフィック、リソース情報。</span
+        ><small
+          >実際のインターフェースのスクリーンショット・2026-11-01
+          <span class="vp-mobile-pan">（左右にスクロールできます）</span></small
+        >
+      </figcaption>
+    </figure>
+  </div>
+
+  <section aria-labelledby="system">
+    <h2 id="system"><span class="vp-sec-no">01</span>システム全体の骨格</h2>
+    <figure id="fig-system" aria-labelledby="cap-system" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="図 1：横にスクロールすると図全体を確認できます"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1510.3999999999999"
+          height="1290"
+          viewBox="0 0 1510.3999999999999 1290"
+          role="img"
+          aria-label="VPN Manager の全体アーキテクチャ（日本語版）"
+        >
+          <title>システム全体のアーキテクチャ</title>
+          <desc>
+            VPN Controller は意図だけを渡し、Instance Manager が Instance
+            を独立して管理します。永続データはすべて Store helper を経由して
+            Store に渡り、データフローは管理プレーンを通りません。
+          </desc>
+          <defs>
+            <marker
+              id="system-01-system-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="system-01-system-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="system-01-system-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="system-01-system-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="system-01-system-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1510.4" height="1290" class="vp-paint-6"></rect>
+          <text x="33.04" y="34" class="vp-paint-7">
+            図 1｜VPN Manager 全体：制御、データ、永続化、観測
+          </text>
+          <rect
+            x="35.4"
+            y="70"
+            width="365.8"
+            height="90"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="54.28" y="100" class="vp-paint-9">Web リソースサービス</text>
+          <text x="54.28" y="129" class="vp-paint-10">
+            React 静的リソースを同一オリジンで配信
+          </text>
+          <rect
+            x="519.2"
+            y="70"
+            width="448.4"
+            height="90"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="538.08" y="100" class="vp-paint-9">
+            React ユーザーインターフェース
+          </text>
+          <text x="538.08" y="129" class="vp-paint-10">
+            コア操作／プロバイダー／性能パネル
+          </text>
+          <path
+            d="M 401.2 115.0 H 516.84"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="408.28" y="99" class="vp-paint-12">静的リソース</text>
+          <path
+            d="M 743.4 160.0 V 238.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="767.0" y="206" class="vp-paint-12">HTTP／SSE</text>
+          <rect
+            x="35.4"
+            y="240"
+            width="365.8"
+            height="160"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="54.28" y="270" class="vp-paint-9">
+            VPN プロバイダーマネージャー
+          </text>
+          <text x="54.28" y="299" class="vp-paint-10">
+            Mullvad／AIRVPN アダプター
+          </text>
+          <text x="54.28" y="323" class="vp-paint-10">
+            プロバイダーごとの出口 IP 検査
+          </text>
+          <text x="54.28" y="347" class="vp-paint-10">候補の設定と状態</text>
+          <rect
+            x="519.2"
+            y="240"
+            width="448.4"
+            height="190"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="538.08" y="270" class="vp-paint-9">VPN コントローラー</text>
+          <text x="538.08" y="299" class="vp-paint-10">VPN Core／Web API</text>
+          <text x="538.08" y="323" class="vp-paint-10">
+            VPN プラットフォーム制御コーディネーター
+          </text>
+          <text x="538.08" y="347" class="vp-paint-10">
+            Profile 検証／Store helper
+          </text>
+          <text x="538.08" y="371" class="vp-paint-10">
+            操作意図の調整だけを担当
+          </text>
+          <rect
+            x="1085.6"
+            y="240"
+            width="389.4"
+            height="160"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1104.48" y="270" class="vp-paint-9">
+            セキュリティポリシーマネージャー
+          </text>
+          <text x="1104.48" y="299" class="vp-paint-10">
+            DNS プロファイル検証
+          </text>
+          <text x="1104.48" y="323" class="vp-paint-10">
+            ファイアウォールポリシー／自動遮断
+          </text>
+          <text x="1104.48" y="347" class="vp-paint-10">
+            IP ブロックリストポリシー
+          </text>
+          <path
+            d="M 401.2 315.0 H 516.84"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1085.6 315.0 H 969.96"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="413.0" y="299" class="vp-paint-12">プロファイル</text>
+          <text x="988.84" y="299" class="vp-paint-12">ポリシー</text>
+          <rect
+            x="35.4"
+            y="540"
+            width="365.8"
+            height="120"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="54.28" y="570" class="vp-paint-9">性能マネージャー</text>
+          <text x="54.28" y="599" class="vp-paint-10">
+            分析／ベンチマークセッション
+          </text>
+          <text x="54.28" y="623" class="vp-paint-10">比較／性能レポート</text>
+          <rect
+            x="519.2"
+            y="540"
+            width="448.4"
+            height="120"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="538.08" y="570" class="vp-paint-9">
+            Instance マネージャー
+          </text>
+          <text x="538.08" y="599" class="vp-paint-10">
+            ライフサイクルの唯一の管理権／外側の監視
+          </text>
+          <text x="538.08" y="623" class="vp-paint-10">
+            世代、リソースリース、自動復旧
+          </text>
+          <rect
+            x="1085.6"
+            y="540"
+            width="389.4"
+            height="120"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1104.48" y="570" class="vp-paint-9">
+            プラットフォームマネージャー
+          </text>
+          <text x="1104.48" y="599" class="vp-paint-10">
+            Linux／macOS システムアダプター
+          </text>
+          <text x="1104.48" y="623" class="vp-paint-10">
+            OS 権限／サンドボックス／リソース制御
+          </text>
+          <path
+            d="M 743.4 430.0 V 538.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="767.0" y="487" class="vp-paint-12">
+            型付きライフサイクル意図
+          </text>
+          <path
+            d="M 519.2 385.0 H 448.4 V 600.0 H 403.56"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="59.0" y="505" class="vp-paint-12">
+            明示的に許可された性能テスト
+          </text>
+          <path
+            d="M 401.2 635.0 H 516.84"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-16"
+          ></path>
+          <text x="415.36" y="655" class="vp-paint-12">テスト用リース</text>
+          <path
+            d="M 967.6 600.0 H 1083.24"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="985.3" y="583" class="vp-paint-12">OS への要求</text>
+          <rect
+            x="35.4"
+            y="830"
+            width="365.8"
+            height="115"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="54.28" y="860" class="vp-paint-9">メトリクスサービス</text>
+          <text x="54.28" y="889" class="vp-paint-10">
+            メトリクスコレクター
+          </text>
+          <text x="54.28" y="913" class="vp-paint-10">
+            メトリクス圧縮モジュール
+          </text>
+          <rect
+            x="519.2"
+            y="830"
+            width="448.4"
+            height="150"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="538.08" y="860" class="vp-paint-9">VPN Instance A … N</text>
+          <text x="538.08" y="889" class="vp-paint-10">
+            それぞれが完全な内部サービスを所有
+          </text>
+          <text x="538.08" y="913" class="vp-paint-10">
+            独立した GotaTun／DNS／Gateway
+          </text>
+          <text x="538.08" y="937" class="vp-paint-10">
+            App の通信は Controller を通らない
+          </text>
+          <rect
+            x="1085.6"
+            y="830"
+            width="389.4"
+            height="95"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1104.48" y="860" class="vp-paint-9">Store helper</text>
+          <text x="1104.48" y="889" class="vp-paint-10">
+            共通の型安全な永続化クライアント
+          </text>
+          <path
+            d="M 743.4 660.0 V 828.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="767.0" y="753" class="vp-paint-12">
+            設定／起動／開通／停止
+          </text>
+          <path
+            d="M 1085.6 635.0 H 1032.5 V 900.0 H 969.96"
+            marker-end="url(#system-01-system-amber)"
+            class="vp-paint-18"
+          ></path>
+          <text x="1041.94" y="780" class="vp-paint-12">
+            ファイルディスクリプター（FD）
+          </text>
+          <path
+            d="M 519.2 900.0 H 403.56"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="417.72" y="883" class="vp-paint-12">監視メトリクス</text>
+          <path
+            d="M 218.3 660.0 V 828.0"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-20"
+          ></path>
+          <text x="49.56" y="750" class="vp-paint-12">
+            上限のあるデータ照会
+          </text>
+          <path
+            d="M 218.3 945.0 V 1010.0 H 1280.3 V 927.0"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-20"
+          ></path>
+          <text x="672.6" y="1003" class="vp-paint-12">
+            メトリクスとレポートの永続化はすべて Store helper 経由
+          </text>
+          <path
+            d="M 967.6 415.0 H 1492.7 V 877.0 H 1477.36"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="1085.6"
+            y="1050"
+            width="389.4"
+            height="95"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1104.48" y="1080" class="vp-paint-9">
+            Store ストレージサービス
+          </text>
+          <text x="1104.48" y="1109" class="vp-paint-10">
+            唯一の SQLite アクセス主体／内部モジュール
+          </text>
+          <rect
+            x="1085.6"
+            y="1190"
+            width="389.4"
+            height="65"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1104.48" y="1220" class="vp-paint-9">SQLite</text>
+          <text x="1104.48" y="1249" class="vp-paint-10">
+            制御 DB＋メトリクス DB
+          </text>
+          <path
+            d="M 1280.3 925.0 V 1048.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1280.3 1145.0 V 1188.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="519.2"
+            y="1080"
+            width="210.04"
+            height="90"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="538.08" y="1110" class="vp-paint-21">管理対象 App</text>
+          <text x="538.08" y="1139" class="vp-paint-10">
+            Gateway クライアント
+          </text>
+          <rect
+            x="784.7"
+            y="1080"
+            width="236.0"
+            height="90"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="803.58" y="1110" class="vp-paint-21">VPN ピア</text>
+          <text x="803.58" y="1139" class="vp-paint-10">
+            暗号化済み WireGuard UDP
+          </text>
+          <path
+            d="M 625.4 1080.0 V 982.0"
+            marker-end="url(#system-01-system-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 873.2 980.0 V 1078.0"
+            marker-end="url(#system-01-system-green)"
+            class="vp-paint-22"
+          ></path>
+          <text x="35.4" y="1210" class="vp-paint-12">
+            青：制御　緑：データ　黄：OS リソース　紫：観測
+          </text>
+          <text x="35.4" y="1238" class="vp-paint-12">
+            永続化はすべて Store helper
+            経由。秘密情報には独立した非公開の受け渡しチャネルを使います。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-system">
+        <span class="vp-figlabel">図 1</span
+        ><span>VPN Manager の全体アーキテクチャ</span
+        ><small
+          >制御プレーン、データプレーン、観測、永続化を分離。<span
+            class="vp-mobile-pan"
+            >（左右にスクロールすると図全体を確認できます）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>全体の制御経路は、まず次のように計画しています：</p>
+      <p class="vp-inline-flow">
+        <code>React UI</code><span>→</span><code>VPN Web API / VPN Core</code
+        ><span>→</span><code>Instance Manager</code><span>→</span
+        ><code>Instance Controller</code>
+      </p>
+      <p>
+        ここでは、
+        <strong>Instance Manager を独立プロセスにします</strong>。<br />すべての
+        Instance
+        の起動、停止、generation、リソースリース、復旧を担当させます。<br />Controller
+        は UI／API の操作意図だけを受け取り、App の TCP／UDP
+        データは転送しません。
+      </p>
+      <p>
+        OS 権限を扱う部分の担当は
+        <strong>Platform Manager</strong>。<br />network namespace、process
+        sandbox、FD、firewall policy、macOS の capture／deny
+        のいずれも、これが担当します。<br />ほかのコンポーネントが、便利だからという理由でシステムのネットワーク設定を直接変更することは避けたいです。
+      </p>
+      <p>
+        Store が状態を保存し、Metrics がデータを収集し、Performance Manager
+        が分析と許可されたテストを処理します。<br />これらが App
+        のパケット経路を妨げてはいけません。<br />例えば Metrics
+        やデータベースへの書き込みが遅くなっても、そのために送信中のパケットを待たせてはいけません。新たな状態変更は、元の閉鎖ルールに従って処理します。
+      </p>
+    </div>
+    <div
+      role="region"
+      tabindex="0"
+      aria-label="実行境界と主な責任。横にスクロールできます"
+      class="vp-table-wrap"
+    >
+      <table>
+        <caption>
+          表 1｜実行境界と主な責任
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">実行境界</th>
+            <th scope="col">主な責任</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><code>vpn-controllerd</code></th>
+            <td>
+              React の静的アセット、VPN Web API、VPN Core、および
+              Provider／Security／Metrics／Performance の制御調整を提供。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-instance-managerd</code></th>
+            <td>
+              Instance をまたぐライフサイクルの唯一の owner。desired
+              state、generation、identity／resource lease、外側の
+              Watchdog、復旧時の照合を管理。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-platformd</code></th>
+            <td>
+              高権限 OS 操作を独占。Linux/macOS Adapter、sandbox、FD／policy
+              作成、spawn、seal、安全性の証拠収集を実行。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-stored</code></th>
+            <td>
+              SQLite の唯一の owner。管理対象は
+              <code>control.sqlite</code
+              >、<code>metrics.sqlite</code>、secret、revision、operation
+              journal、バックアップ。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-instance × N</code></th>
+            <td>
+              VPN ごとの独立 worker。専用の
+              GotaTun、DNS、Gateway、Port、Metrics、内側の Watchdog を所有。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-provider-worker</code></th>
+            <td>
+              Provider job ごとに API 操作、route-bound IP preflight、制限付き
+              connector を実行し、Instance の作成や起動・停止を独断で行わない。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">macOS system extension（有効な場合）</th>
+            <td>
+              管理対象 App の flow capture、deny、bridge
+              を処理し、ネイティブプラットフォームの能力に応じた安全境界を提供。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="ownership" class="vp-subsection">
+      <h3 id="vp-heading-758">コンポーネントの所属全体</h3>
+      <div class="vp-prose">
+        <p>
+          まず、誰が管理し、誰が操作権限を持つかに従ってコンポーネントを分類します。<br />単に箱をたくさん描くだけでは役に立ちません。重要なのは、あるプロセスが落ちたときに誰に影響するのか、誰が再起動できるのかです。
+        </p>
+      </div>
+      <figure
+        id="fig-ownership"
+        aria-labelledby="cap-ownership"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="コンポーネント所属図：横にスクロールすると図全体を確認できます"
+          class="vp-diagram-scroller"
+        >
+          <svg
+            width="1510.3999999999999"
+            height="1256"
+            viewBox="0 0 1510.3999999999999 1256"
+            role="img"
+            aria-label="VPN Manager 全コンポーネントの所属アーキテクチャ（日本語版）"
+          >
+            <title>コンポーネント所属の全体図</title>
+            <desc>
+              正式な 55 コンポーネントをすべて掲載。同名の Process
+              Manager、Instance Watchdog
+              は親で区別します。インデントは所属を表し、各 helper が daemon
+              であることを意味しません。
+            </desc>
+            <defs>
+              <marker
+                id="ownership-02-component-map-blue"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-green"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-amber"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-purple"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-red"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+              </marker>
+            </defs>
+            <rect width="1510.4" height="1256" class="vp-paint-6"></rect>
+            <text x="33.04" y="34" class="vp-paint-7">
+              コンポーネントの所属｜実行境界と権限上の責任で分類
+            </text>
+            <rect
+              x="35.4"
+              y="70"
+              width="696.2"
+              height="145"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="54.28" y="100" class="vp-paint-23">
+              React ユーザーインターフェース（UI - React）
+            </text>
+            <text x="63.72" y="132" class="vp-paint-24">
+              · コア UI（Core UI）
+            </text>
+            <text x="84.96" y="159" class="vp-paint-24">
+              · 性能パネル（Performance Panel）
+            </text>
+            <text x="63.72" y="186" class="vp-paint-24">
+              · プロバイダー管理パネル
+            </text>
+            <rect
+              x="778.8"
+              y="70"
+              width="696.2"
+              height="199"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="797.68" y="100" class="vp-paint-23">
+              VPN コントローラー（VPN Controller）
+            </text>
+            <text x="807.12" y="132" class="vp-paint-24">
+              · VPN コア（VPN Core）
+            </text>
+            <text x="807.12" y="159" class="vp-paint-24">· VPN Web API</text>
+            <text x="807.12" y="186" class="vp-paint-24">
+              · VPN プラットフォーム制御コーディネーター
+            </text>
+            <text x="807.12" y="213" class="vp-paint-24">
+              · VPN プロファイル検証器
+            </text>
+            <text x="807.12" y="240" class="vp-paint-24">
+              · Store helper（ストレージ接続）
+            </text>
+            <rect
+              x="35.4"
+              y="239"
+              width="696.2"
+              height="280"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="54.28" y="269" class="vp-paint-23">
+              プラットフォームマネージャー（Platform Manager）
+            </text>
+            <text x="63.72" y="301" class="vp-paint-24">
+              · Linux システムアダプター
+            </text>
+            <text x="84.96" y="328" class="vp-paint-24">
+              · プロセスマネージャー
+            </text>
+            <text x="106.2" y="355" class="vp-paint-24">
+              · プロセスサンドボックス
+            </text>
+            <text x="127.44" y="382" class="vp-paint-24">
+              · ネットワークリソース制御
+            </text>
+            <text x="63.72" y="409" class="vp-paint-24">
+              · macOS システムアダプター
+            </text>
+            <text x="84.96" y="436" class="vp-paint-24">
+              · プロセスマネージャー
+            </text>
+            <text x="106.2" y="463" class="vp-paint-24">
+              · プロセスサンドボックス
+            </text>
+            <text x="127.44" y="490" class="vp-paint-24">
+              · ネットワークリソース制御
+            </text>
+            <rect
+              x="778.8"
+              y="293"
+              width="696.2"
+              height="172"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="797.68" y="323" class="vp-paint-23">
+              プロバイダーマネージャー（VPN Provide Manager）
+            </text>
+            <text x="807.12" y="355" class="vp-paint-24">
+              · Mullvad プロバイダーアダプター
+            </text>
+            <text x="828.36" y="382" class="vp-paint-24">
+              · Mullvad 出口 IP 検査器
+            </text>
+            <text x="807.12" y="409" class="vp-paint-24">
+              · AIRVPN プロバイダーアダプター
+            </text>
+            <text x="828.36" y="436" class="vp-paint-24">
+              · AIRVPN 出口 IP 検査器
+            </text>
+            <rect
+              x="778.8"
+              y="489"
+              width="696.2"
+              height="145"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="797.68" y="519" class="vp-paint-23">
+              セキュリティマネージャー（Security Manager）
+            </text>
+            <text x="807.12" y="551" class="vp-paint-24">
+              · DNS プロファイル検証器
+            </text>
+            <text x="807.12" y="578" class="vp-paint-24">
+              · ファイアウォールプロファイル
+            </text>
+            <text x="807.12" y="605" class="vp-paint-24">· 自動遮断検知器</text>
+            <rect
+              x="35.4"
+              y="543"
+              width="696.2"
+              height="118"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="54.28" y="573" class="vp-paint-23">
+              メトリクスサービス（Metrics Service）
+            </text>
+            <text x="63.72" y="605" class="vp-paint-24">
+              · メトリクスコレクター
+            </text>
+            <text x="63.72" y="632" class="vp-paint-24">
+              · メトリクス圧縮モジュール
+            </text>
+            <rect
+              x="778.8"
+              y="658"
+              width="696.2"
+              height="92"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="797.68" y="688" class="vp-paint-23">
+              性能マネージャー（Performance Manager）
+            </text>
+            <rect
+              x="35.4"
+              y="685"
+              width="696.2"
+              height="280"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="54.28" y="715" class="vp-paint-23">
+              ストレージサービス（Store）
+            </text>
+            <text x="63.72" y="747" class="vp-paint-24">
+              · 設定データ補助モジュール
+            </text>
+            <text x="63.72" y="774" class="vp-paint-24">
+              · 秘密情報補助モジュール
+            </text>
+            <text x="63.72" y="801" class="vp-paint-24">
+              · セキュリティポリシー補助モジュール
+            </text>
+            <text x="63.72" y="828" class="vp-paint-24">
+              · DNS プロファイル補助モジュール
+            </text>
+            <text x="63.72" y="855" class="vp-paint-24">
+              · プロバイダーデータ補助モジュール
+            </text>
+            <text x="84.96" y="882" class="vp-paint-24">
+              · Mullvad データ補助モジュール
+            </text>
+            <text x="84.96" y="909" class="vp-paint-24">
+              · AIRVPN データ補助モジュール
+            </text>
+            <text x="63.72" y="936" class="vp-paint-24">
+              · メトリクス保存補助モジュール
+            </text>
+            <rect
+              x="778.8"
+              y="774"
+              width="696.2"
+              height="388"
+              rx="8"
+              class="vp-paint-13"
+            ></rect>
+            <text x="797.68" y="804" class="vp-paint-23">
+              インスタンスマネージャー（Instance Manager）
+            </text>
+            <text x="807.12" y="836" class="vp-paint-24">
+              · 外側の Instance 監視器
+            </text>
+            <text x="807.12" y="863" class="vp-paint-24">
+              · VPN Instance（単一 Profile）
+            </text>
+            <text x="828.36" y="890" class="vp-paint-24">
+              · Instance コントローラー
+            </text>
+            <text x="828.36" y="917" class="vp-paint-24">
+              · Instance DNS コントローラー
+            </text>
+            <text x="828.36" y="944" class="vp-paint-24">
+              · Instance ポートコントローラー
+            </text>
+            <text x="849.6" y="971" class="vp-paint-24">
+              · ポート転送（Port forward）
+            </text>
+            <text x="828.36" y="998" class="vp-paint-24">
+              · Instance メトリクス
+            </text>
+            <text x="828.36" y="1025" class="vp-paint-24">
+              · Instance 内側監視器
+            </text>
+            <text x="828.36" y="1052" class="vp-paint-24">
+              · Gateway マネージャー
+            </text>
+            <text x="849.6" y="1079" class="vp-paint-24">
+              · Gateway サービス
+            </text>
+            <text x="870.84" y="1106" class="vp-paint-24">
+              · Gateway メトリクス
+            </text>
+            <text x="828.36" y="1133" class="vp-paint-24">· GotaTun</text>
+            <rect
+              x="35.4"
+              y="989"
+              width="696.2"
+              height="92"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="54.28" y="1019" class="vp-paint-23">
+              Web 静的リソースサービス
+            </text>
+            <text x="35.4" y="1218" class="vp-paint-12">
+              コンポーネントの所有権、権限、障害隔離境界に基づいて実行位置を決定します。
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-ownership">
+          <span class="vp-figlabel">コンポーネント所属図</span
+          ><span>全コンポーネントと責任の所属</span
+          ><small
+            >parent／owner で分類し、UI、Controller、Platform、Store、各
+            Instance 内部のコンポーネントを示します。<span class="vp-mobile-pan"
+              >（左右にスクロールすると図全体を確認できます）</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="instance">
+    <h2 id="instance">
+      <span class="vp-sec-no">02</span>VPN Instance アーキテクチャ
+    </h2>
+    <figure id="fig-instance" aria-labelledby="cap-instance" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="図 2：横にスクロールすると図全体を確認できます"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1510.3999999999999"
+          height="1090"
+          viewBox="0 0 1510.3999999999999 1090"
+          role="img"
+          aria-label="単一 Instance の内部全体とデータ経路"
+        >
+          <title>単一 Instance の内部全体とデータ経路</title>
+          <desc>
+            各 Instance は専用の
+            Controller、DNS、Port、Gateway、Metrics、Watchdog、GotaTun
+            を持ちます。内側の Watchdog
+            は遮断できますが、独断で再構築や遮断解除はできません。
+          </desc>
+          <defs>
+            <marker
+              id="instance-03-instance-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1510.4" height="1090" class="vp-paint-6"></rect>
+          <text x="33.04" y="34" class="vp-paint-7">
+            図 2｜単一 VPN Instance：独立サービスとデータ経路
+          </text>
+          <rect
+            x="519.2"
+            y="65"
+            width="460.2"
+            height="95"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="538.08" y="95" class="vp-paint-9">
+            Instance マネージャー
+          </text>
+          <text x="538.08" y="124" class="vp-paint-10">
+            コマンド発行／実行世代／リソースリース
+          </text>
+          <rect
+            x="306.8"
+            y="210"
+            width="1168.2"
+            height="650"
+            rx="12"
+            class="vp-paint-25"
+          ></rect>
+          <text x="328.04" y="240" class="vp-paint-26">
+            VPN Instance｜独立 Rust Worker
+          </text>
+          <rect
+            x="660.8"
+            y="260"
+            width="424.8"
+            height="95"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="679.68" y="290" class="vp-paint-9">
+            Instance コントローラー
+          </text>
+          <text x="679.68" y="319" class="vp-paint-10">
+            この Instance だけを制御
+          </text>
+          <path
+            d="M 749.3 160.0 V 258.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="354.0"
+            y="420"
+            width="306.8"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="372.88" y="450" class="vp-paint-27">
+            Gateway マネージャー
+          </text>
+          <text x="372.88" y="479" class="vp-paint-10">
+            Gateway サービス × N
+          </text>
+          <text x="372.88" y="503" class="vp-paint-10">Gateway メトリクス</text>
+          <rect
+            x="719.8"
+            y="420"
+            width="324.5"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="738.68" y="450" class="vp-paint-21">
+            Instance DNS コントローラー
+          </text>
+          <text x="738.68" y="479" class="vp-paint-10">
+            独立キャッシュ／接続プール／リゾルバー
+          </text>
+          <text x="738.68" y="503" class="vp-paint-10">
+            DNS は VPN トンネルのみを使用
+          </text>
+          <rect
+            x="1109.2"
+            y="420"
+            width="330.4"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1128.08" y="450" class="vp-paint-21">
+            Instance ポートコントローラー
+          </text>
+          <text x="1128.08" y="479" class="vp-paint-10">
+            ポート転送（Port forward）
+          </text>
+          <text x="1128.08" y="503" class="vp-paint-10">
+            同じ Instance の App のみ許可
+          </text>
+          <path
+            d="M 767.0 355.0 V 385.0 H 507.4 V 418.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <path
+            d="M 885.0 355.0 V 418.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <path
+            d="M 1003.0 355.0 V 385.0 H 1274.4 V 418.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="35.4"
+            y="420"
+            width="224.2"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="54.28" y="450" class="vp-paint-21">
+            指定された管理対象 App
+          </text>
+          <text x="54.28" y="479" class="vp-paint-10">
+            Proxy クライアント／
+          </text>
+          <text x="54.28" y="503" class="vp-paint-10">保護されたプロセス</text>
+          <path
+            d="M 259.6 475.0 H 351.64"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1109.2 450.0 H 1062.0 V 367.0 H 147.5 V 418.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-28"
+          ></path>
+          <text x="165.2" y="356" class="vp-paint-12">
+            ポート転送は同じ Instance の App のみへ
+          </text>
+          <rect
+            x="519.2"
+            y="610"
+            width="401.2"
+            height="95"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="538.08" y="640" class="vp-paint-9">
+            TCP/IP 処理＋GotaTun
+          </text>
+          <text x="538.08" y="669" class="vp-paint-10">
+            Linux カーネル／macOS Rust プロトコルスタック
+          </text>
+          <text x="538.08" y="693" class="vp-paint-10">
+            独立した WireGuard デバイスと鍵
+          </text>
+          <path
+            d="M 507.4 530.0 V 575.0 H 613.6 V 608.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 881.46 530.0 V 608.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1274.4 530.0 V 565.0 H 944.0 V 658.0 H 922.76"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="354.0"
+            y="755"
+            width="365.8"
+            height="75"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="372.88" y="785" class="vp-paint-27">
+            Instance メトリクス
+          </text>
+          <text x="372.88" y="814" class="vp-paint-10">
+            ローカルカウンター／遅延分布
+          </text>
+          <rect
+            x="932.2"
+            y="755"
+            width="507.4"
+            height="75"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="951.08" y="785" class="vp-paint-27">Instance 監視器</text>
+          <text x="951.08" y="814" class="vp-paint-10">
+            トンネル／DNS／プラットフォームポリシーの健全性
+          </text>
+          <path
+            d="M 507.4 530.0 V 730.0 H 536.9 V 753.0"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-20"
+          ></path>
+          <path
+            d="M 719.8 705.0 V 730.0 H 590.0 V 753.0"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-20"
+          ></path>
+          <path
+            d="M 1185.9 755.0 V 725.0 H 920.4"
+            marker-end="url(#instance-03-instance-amber)"
+            class="vp-paint-18"
+          ></path>
+          <rect
+            x="519.2"
+            y="915"
+            width="401.2"
+            height="85"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="538.08" y="945" class="vp-paint-23">VPN ピア</text>
+          <text x="538.08" y="974" class="vp-paint-10">
+            ピアを限定した暗号化 WireGuard UDP
+          </text>
+          <path
+            d="M 719.8 705.0 V 913.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="35.4"
+            y="730"
+            width="224.2"
+            height="110"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="54.28" y="760" class="vp-paint-29">
+            プラットフォームマネージャー
+          </text>
+          <text x="54.28" y="789" class="vp-paint-10">
+            プロセスサンドボックス／TUN／
+          </text>
+          <text x="54.28" y="813" class="vp-paint-10">制限付き UDP FD</text>
+          <path
+            d="M 259.6 785.0 H 306.8 V 657.0 H 516.84"
+            marker-end="url(#instance-03-instance-amber)"
+            class="vp-paint-18"
+          ></path>
+          <rect
+            x="1091.5"
+            y="915"
+            width="348.1"
+            height="85"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="1110.38" y="945" class="vp-paint-9">メトリクスサービス</text>
+          <text x="1110.38" y="974" class="vp-paint-10">
+            上限のあるスナップショット転送
+          </text>
+          <path
+            d="M 536.9 830.0 V 880.0 H 1262.6 V 913.0"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="35.4" y="1062" class="vp-paint-12">
+            App はホストの Underlay、秘密情報、Store、namespace
+            ディスクリプターを取得できません。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-instance">
+        <span class="vp-figlabel">図 2</span
+        ><span>単一 VPN Instance のサービスとデータ経路</span
+        ><small
+          >各 Instance は専用の
+          runtime、コントローラー、Gateway、DNS、Metrics、Watchdog
+          を持ちます。<span class="vp-mobile-pan"
+            >（左右にスクロールすると図全体を確認できます）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        各 Instance は専用の GotaTun、DNS Controller、Port Controller、Gateway
+        Manager、Metrics、Watchdog を持ちます。<br />WireGuard identity、DNS
+        cache、socket、buffer、queue も分ける必要があります。<br />CPU、NIC、OS
+        は共有できますが、A の実行状態を B と混在させるべきではありません。
+      </p>
+      <p>
+        先に明確にしておきたい点があります。<br /><strong
+          >GotaTun は WireGuard エンジンであり、それ自体が完全な TCP/IP socket
+          stack ではありません。</strong
+        ><br />そのため、GotaTun を接続しただけで TCP／UDP
+        の接続処理がすべて揃うわけではなく、この部分は別途処理する必要があります。
+      </p>
+      <p>
+        Linux では、隔離された network namespace 内の kernel TCP/IP stack
+        を直接使う方向で考えています。<br />macOS の明示的な Proxy では、各
+        Instance が個別に <code>smoltcp</code> と GotaTun を使います。<br />それぞれの
+        socket、buffer、queue も独立させ、Controller の SQL や Provider HTTP
+        呼び出しが実際のネットワーク通信を妨げないようにします。
+      </p>
+      <p>
+        DNS も Instance に従わせる必要があります。<br />名前解決に失敗したら失敗として報告し、こっそり
+        host resolver に問い合わせ直してはいけません。<br />Gateway が HTTP
+        CONNECT や SOCKS5 TCP／UDP を受け取ったら、実際に自分の Instance
+        に渡して宛先への接続を確立させます。<br />Port Forward の転送先は、同じ
+        Instance 内で検証済みの App endpoint
+        に限ります。手間を省くために直接接続してはいけないのが、host の
+        <code>127.0.0.1</code>。
+      </p>
+      <h3 id="vp-heading-1290">管理対象 App、Gateway、Port Forward の違い</h3>
+      <p>
+        トラフィックの入口を 3 種類に分けています。<br /><strong
+          >管理対象 App</strong
+        >
+        は先に隔離環境に入り、自分で host
+        ネットワークを選ぶことはできません。<br /><strong>Gateway</strong>
+        は、HTTP／SOCKS Proxy
+        に明示的に渡されたトラフィックだけを担当します。App
+        が別途確立した接続は自動的には保護されません。<br /><strong
+          >Port Forward</strong
+        >
+        は VPN から入ってくるトラフィックです。転送先は同じ Instance
+        内で有効な次のリースを持つ App のみです：
+        <code>AppEndpointLease</code> 。
+      </p>
+      <p>
+        DNS と IPv6 も例外にはできません。<br />Instance の DNS
+        経路が使えなければ、問い合わせを行いません。<br />IPv6 も、検証できる
+        tunnel
+        経路がない場合、ホストのネットワークを自動的に通してはいけません。
+      </p>
+      <h3 id="macos">macOS の App 隔離は少し厄介</h3>
+      <p>
+        macOS 側は、実際に少し厄介です。<br />明示的な Proxy
+        は作れますが、実際に Proxy に渡された通信だけを扱います。<br />QUIC、WebRTC、あるいは
+        App 自身が使うシステム DNS は、別途 socket を作る可能性があります。<br />そのため、Proxy
+        があるからといって、App 全体が隔離されたことにはなりません。
+      </p>
+    </div>
+    <figure aria-labelledby="shot-cap-3" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="ブラウザーツールボックスのサイト別プロキシルーティング。横にスクロールして確認できます"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-3.png"
+          width="1519"
+          height="757"
+          alt="ブラウザーツールボックスのサイト別プロキシルーティングページ：香港 SOCKS5 127.0.0.1:1080 とオランダ SOCKS5 127.0.0.1:1082 の 2 つのプロキシプロファイル"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-3">
+        <span class="vp-figlabel">画面 03</span
+        ><span
+          >ブラウザーツールボックスのサイト別プロキシルーティング：香港は
+          127.0.0.1:1080、オランダは 127.0.0.1:1082 を使用。</span
+        ><small
+          >実際のインターフェースのスクリーンショット・2026-11-01
+          <span class="vp-mobile-pan">（左右にスクロールできます）</span></small
+        >
+      </figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="linux">
+    <h2 id="linux">
+      <span class="vp-sec-no">03</span>Linux：OS 層で「逃げ道をなくす」
+    </h2>
+    <figure id="fig-linux" aria-labelledby="cap-linux" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="図 3：横にスクロールすると図全体を確認できます"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1510.3999999999999"
+          height="900"
+          viewBox="0 0 1510.3999999999999 900"
+          role="img"
+          aria-label="Linux の隔離データ経路"
+        >
+          <title>Linux の隔離データ経路</title>
+          <desc>
+            host で事前作成した制限付き UDP FD は GotaTun だけに渡します。App
+            の経路は netns 内の lo/TUN のみです。worker の世代交代時も閉鎖済み
+            sandbox を維持でき、ホストの default route/DNS は変更しません。
+          </desc>
+          <defs>
+            <marker
+              id="linux-06-linux-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1510.4" height="900" class="vp-paint-6"></rect>
+          <text x="33.04" y="34" class="vp-paint-7">
+            図 3｜Linux：管理対象プロセスの隔離と WireGuard UDP 出口
+          </text>
+          <rect
+            x="35.4"
+            y="70"
+            width="1439.6"
+            height="680"
+            rx="12"
+            class="vp-paint-30"
+          ></rect>
+          <text x="56.64" y="100" class="vp-paint-31">
+            ホストネットワーク namespace｜既存のネットワーク設定を維持
+          </text>
+          <rect
+            x="472.0"
+            y="150"
+            width="955.8"
+            height="450"
+            rx="12"
+            class="vp-paint-25"
+          ></rect>
+          <text x="493.24" y="180" class="vp-paint-26">
+            Instance 隔離サンドボックス：lo と TUN のみ、veth／Host NAT なし
+          </text>
+          <rect
+            x="76.7"
+            y="180"
+            width="336.3"
+            height="110"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="95.58" y="210" class="vp-paint-27">
+            ホスト loopback リスナー
+          </text>
+          <text x="95.58" y="239" class="vp-paint-10">
+            Gateway TCP／UDP 転送
+          </text>
+          <text x="95.58" y="263" class="vp-paint-10">
+            結び付け済みクライアントの通信のみ受付
+          </text>
+          <rect
+            x="525.1"
+            y="215"
+            width="354.0"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="543.98" y="245" class="vp-paint-9">
+            プロセスサンドボックス
+          </text>
+          <text x="543.98" y="274" class="vp-paint-10">
+            指定された管理対象 App のプロセスツリー
+          </text>
+          <text x="543.98" y="298" class="vp-paint-10">
+            ホスト IPC とネットワーク FD の継承を禁止
+          </text>
+          <rect
+            x="973.5"
+            y="215"
+            width="401.2"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="992.38" y="245" class="vp-paint-23">
+            Instance 内部サービス
+          </text>
+          <text x="992.38" y="274" class="vp-paint-10">
+            Gateway／DNS／ポート接続
+          </text>
+          <text x="992.38" y="298" class="vp-paint-10">
+            宛先 socket は隔離 netns 内で作成
+          </text>
+          <path
+            d="M 413.0 235.0 H 448.4 V 365.0 H 1168.2 V 327.0"
+            marker-end="url(#linux-06-linux-blue)"
+            class="vp-paint-16"
+          ></path>
+          <text x="454.3" y="391" class="vp-paint-12">
+            事前 bind 済みリスナー FD を受け渡し
+          </text>
+          <rect
+            x="525.1"
+            y="440"
+            width="354.0"
+            height="100"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="543.98" y="470" class="vp-paint-9">
+            Linux カーネル TCP/IP＋TUN
+          </text>
+          <text x="543.98" y="499" class="vp-paint-10">
+            独立ルーティング／DNS／ファイアウォールポリシー
+          </text>
+          <rect
+            x="973.5"
+            y="440"
+            width="401.2"
+            height="100"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="992.38" y="470" class="vp-paint-23">GotaTun</text>
+          <text x="992.38" y="499" class="vp-paint-10">
+            Instance ごとに独立デバイスを所有
+          </text>
+          <path
+            d="M 702.1 325.0 V 438.0"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1174.1 325.0 V 405.0 H 879.1 V 490.0"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 879.1 490.0 H 971.14"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="76.7"
+            y="440"
+            width="336.3"
+            height="100"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="95.58" y="470" class="vp-paint-27">制限付き UDP FD</text>
+          <text x="95.58" y="499" class="vp-paint-10">
+            ホスト netns で事前作成
+          </text>
+          <text x="95.58" y="523" class="vp-paint-10">
+            許可された VPN peer にのみ送信可能
+          </text>
+          <path
+            d="M 973.5 510.0 H 926.3 V 570.0 H 247.8 V 542.0"
+            marker-end="url(#linux-06-linux-amber)"
+            class="vp-paint-32"
+          ></path>
+          <rect
+            x="76.7"
+            y="645"
+            width="336.3"
+            height="70"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="95.58" y="675" class="vp-paint-27">
+            ホスト NIC → VPN ピア
+          </text>
+          <path
+            d="M 244.26 540.0 V 643.0"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="525.1"
+            y="645"
+            width="849.6"
+            height="70"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="543.98" y="675" class="vp-paint-21">
+            プラットフォーム管理：プロセスとネットワークリソースの制御
+          </text>
+          <text x="35.4" y="800" class="vp-paint-12">
+            Worker／TUN の障害時も App
+            に別の外部ネットワーク出口はありません。サンドボックスの寿命は
+            Worker 世代をまたげます。
+          </text>
+          <text x="35.4" y="830" class="vp-paint-12">
+            このシステムが所有する
+            namespace、cgroup、bind、フィルタールールだけを作成または削除します。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-linux">
+        <span class="vp-figlabel">図 3</span
+        ><span>Linux namespace の隔離と WireGuard UDP 経路</span
+        ><small
+          >通常の host ネットワークは変更しません。隔離 netns の App
+          に、許可されていない平文の host 出口はありません。<span
+            class="vp-mobile-pan"
+            >（左右にスクロールすると図全体を確認できます）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Linux の方法は比較的直接的です。<br />ホストの default route
+        を変更するつもりはありませんし、物理 NIC を別の namespace
+        に移すこともしません。<br />管理対象外の App
+        は、通常どおり元のネットワークを使います。
+      </p>
+      <p>
+        Platform Manager は最初に host network namespace 内で、指定した
+        WireGuard peer だけを許可する UDP socket を作ります。<br />続いて、制限付き
+        FD を隔離 namespace 内の VPN worker に渡します。<br />その namespace
+        には loopback と TUN しかなく、host に通じる veth／NAT
+        の平文出口は設けません。
+      </p>
+      <p>
+        App が送った IP パケットはまず TUN に入り、GotaTun で暗号化され、host
+        namespace 内で先に作成した UDP FD を通じて WireGuard peer
+        に送られます。<br />ただし、socket を host
+        で作成しただけでは不十分です。<br />どの IP／port に接続できるのか、誰が
+        FD を持つのか、Platform policy
+        が本当に有効なのか、すべて確認する必要があります。
+      </p>
+      <p>
+        私がより重視するのは、<strong
+          >App に通常の host internet 出口がそもそもないことです</strong
+        >。<br />worker
+        が落ちたら、まずネットワークを切断します。代替経路を探す必要はありません。<br />VPN
+        が切断された後に App が勝手に ISP
+        の出口へ迂回することは、受け入れられません。
+      </p>
+      <p>
+        ただし、 <code>netns</code> も完全な sandbox ではありません。<br />App
+        が別プロセスの FD を継承したり、Unix socket、D-Bus、host IPC
+        を通じて迂回路を見つけたりする可能性があります。
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="lifecycle">
+    <h2 id="lifecycle">
+      <span class="vp-sec-no">04</span>Instance の起動と障害復旧の流れ
+    </h2>
+    <figure id="fig-recovery" aria-labelledby="cap-recovery" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="図 5：横にスクロールすると図全体を確認できます"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1510.3999999999999"
+          height="950"
+          viewBox="0 0 1510.3999999999999 950"
+          role="img"
+          aria-label="ライフサイクル、自動復旧、停止の優先"
+        >
+          <title>ライフサイクル、自動復旧、停止の優先</title>
+          <desc>
+            manual Stop
+            と緊急停止は復旧より優先します。Manager/intent/generation/sandbox の
+            tuple 全体が一致して初めて CommitResume が可能です。Manager
+            の世代交代では worker を置き換え、closed sandbox
+            だけを引き継ぎます。
+          </desc>
+          <defs>
+            <marker
+              id="recovery-05-recovery-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1510.4" height="950" class="vp-paint-6"></rect>
+          <text x="33.04" y="34" class="vp-paint-7">
+            図 5｜安全な起動、自動復旧、手動停止の優先権
+          </text>
+          <rect
+            x="35.4"
+            y="80"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="54.28" y="110" class="vp-paint-27">
+            意図の永続化とリソース予約
+          </text>
+          <text x="54.28" y="139" class="vp-paint-10">
+            期待状態／手動停止／緊急停止
+          </text>
+          <text x="54.28" y="163" class="vp-paint-10">
+            Manager の任期／意図の版
+          </text>
+          <text x="54.28" y="187" class="vp-paint-10">
+            Worker 世代／ID リース
+          </text>
+          <rect
+            x="548.7"
+            y="80"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="567.58" y="110" class="vp-paint-27">
+            先に環境を閉鎖し、次にプロセスを起動
+          </text>
+          <text x="567.58" y="139" class="vp-paint-10">
+            サンドボックス世代は Worker 世代から独立
+          </text>
+          <text x="567.58" y="163" class="vp-paint-10">
+            未設定 Worker／検証済み ID
+          </text>
+          <text x="567.58" y="187" class="vp-paint-10">
+            Store が一度限りの秘密情報を非公開で受け渡し
+          </text>
+          <rect
+            x="1062.0"
+            y="80"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1080.88" y="110" class="vp-paint-27">
+            ヘルスプローブだけを許可
+          </text>
+          <text x="1080.88" y="139" class="vp-paint-10">
+            VPN トンネル／DNS／ポリシーを検証
+          </text>
+          <text x="1080.88" y="163" class="vp-paint-10">
+            App／Gateway／ポート転送を閉鎖
+          </text>
+          <text x="1080.88" y="187" class="vp-paint-10">
+            健全性を独立して検証
+          </text>
+          <path
+            d="M 448.4 145.0 H 546.34"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 961.7 145.0 H 1059.64"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="1062.0"
+            y="360"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1080.88" y="390" class="vp-paint-23">
+            開通の確定（CommitResume）
+          </text>
+          <text x="1080.88" y="419" class="vp-paint-10">
+            Manager が最新の意図を再確認
+          </text>
+          <text x="1080.88" y="443" class="vp-paint-10">
+            Platform が単回の許可を消費
+          </text>
+          <text x="1080.88" y="467" class="vp-paint-10">
+            この段階で初めて通信ゲートを開く
+          </text>
+          <path
+            d="M 1268.5 210.0 V 358.0"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="548.7"
+            y="360"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="567.58" y="390" class="vp-paint-23">
+            準備完了／VPN トンネルのみ使用
+          </text>
+          <text x="567.58" y="419" class="vp-paint-10">
+            設定済み App／Gateway を有効化
+          </text>
+          <text x="567.58" y="443" class="vp-paint-10">
+            現在の Worker 世代だけを許可
+          </text>
+          <text x="567.58" y="467" class="vp-paint-10">
+            Controller の障害はマネージャーに影響しない
+          </text>
+          <path
+            d="M 1062.0 425.0 H 964.06"
+            marker-end="url(#recovery-05-recovery-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="35.4"
+            y="360"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="54.28" y="390" class="vp-paint-27">障害 → 閉鎖／封印</text>
+          <text x="54.28" y="419" class="vp-paint-10">
+            関連するデータ入口を即座に閉鎖
+          </text>
+          <text x="54.28" y="443" class="vp-paint-10">
+            障害検知時も直結出口なし
+          </text>
+          <text x="54.28" y="467" class="vp-paint-10">
+            封印済み世代は再開通不可
+          </text>
+          <path
+            d="M 548.7 425.0 H 450.76"
+            marker-end="url(#recovery-05-recovery-red)"
+            class="vp-paint-34"
+          ></path>
+          <rect
+            x="35.4"
+            y="660"
+            width="413.0"
+            height="150"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="54.28" y="690" class="vp-paint-9">自動復旧</text>
+          <text x="54.28" y="719" class="vp-paint-10">
+            永続化された意図が desired=running の場合のみ
+          </text>
+          <text x="54.28" y="743" class="vp-paint-10">
+            手動停止／緊急停止は解除済みであること
+          </text>
+          <text x="54.28" y="767" class="vp-paint-10">
+            旧 Worker／FD の確実な失効が必要
+          </text>
+          <text x="54.28" y="791" class="vp-paint-10">
+            世代を新設、Instance ID は継続
+          </text>
+          <path
+            d="M 241.9 490.0 V 658.0"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 241.9 660.0 V 580.0 H 495.6 V 145.0 H 546.34"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="548.7"
+            y="660"
+            width="413.0"
+            height="150"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="567.58" y="690" class="vp-paint-27">手動停止／緊急停止</text>
+          <text x="567.58" y="719" class="vp-paint-10">
+            意図の版を進め、許可を撤回
+          </text>
+          <text x="567.58" y="743" class="vp-paint-10">
+            期限切れ復旧処理による再開通は禁止
+          </text>
+          <text x="567.58" y="767" class="vp-paint-10">
+            緊急状態解除後も停止を維持
+          </text>
+          <text x="567.58" y="791" class="vp-paint-10">
+            その後はユーザーの明示的な起動が必要
+          </text>
+          <path
+            d="M 755.2 660.0 V 492.0"
+            marker-end="url(#recovery-05-recovery-red)"
+            class="vp-paint-35"
+          ></path>
+          <rect
+            x="1062.0"
+            y="660"
+            width="413.0"
+            height="150"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1080.88" y="690" class="vp-paint-27">
+            Manager または Platform の再起動
+          </text>
+          <text x="1080.88" y="719" class="vp-paint-10">旧世代を封印</text>
+          <text x="1080.88" y="743" class="vp-paint-10">
+            閉鎖を証明済みのサンドボックスリースだけを維持
+          </text>
+          <text x="1080.88" y="767" class="vp-paint-10">
+            稼働中の Worker を置換
+          </text>
+          <text x="1080.88" y="791" class="vp-paint-10">
+            停止意図を証明できない → 閉鎖
+          </text>
+          <path
+            d="M 1268.5 660.0 V 580.0 H 495.6"
+            marker-end="url(#recovery-05-recovery-amber)"
+            class="vp-paint-18"
+          ></path>
+          <text x="35.4" y="880" class="vp-paint-12">
+            CommitResume を承認できるのは Instance Manager だけです。ApplyPolicy
+            単独では再開通できません。
+          </text>
+          <text x="35.4" y="910" class="vp-paint-12">
+            CPU／Store／Metrics
+            の停止によって、許可されていないホスト直結の代替経路が生じてはいけません。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-recovery">
+        <span class="vp-figlabel">図 5</span
+        ><span>Instance の起動と障害復旧の流れ</span
+        ><small
+          >図中の Resume には、現在の意図、worker generation、Platform
+          enforcement の証拠が必要です。<span class="vp-mobile-pan"
+            >（左右にスクロールすると図全体を確認できます）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        WireGuard のハンドシェイクが成功しても、App
+        にインターネット接続を始めさせてよいとは限りません。
+      </p>
+      <p>
+        Instance
+        を起動するときは、先に隔離環境を作り、デフォルトでは閉鎖しておきます。<br />worker
+        が起動した後も、WireGuard
+        のハンドシェイク、DNS、ヘルスプローブだけを許可します。<br />現在の設定、Platform
+        policy、worker generation に問題がないことを確認してから、App と Gateway
+        を開通させます。
+      </p>
+      <p>
+        途中で一つでも失敗したら、維持する状態は
+        <code>blocked</code>。<br />worker
+        を再構築するときは、必ず新しくするのが <code>generation</code>です。
+        <code>Seal</code> された旧 generation は再開通できません。<br />Manager
+        の世代交代、Platform epoch の変更、またはその間にユーザーが Start／Stop
+        を押した場合、それ以前に発行したコマンドはもう有効にしてはいけません。
+      </p>
+      <p>
+        Watchdog は 2 層に分けます。<br />Instance 内の Watchdog
+        は問題を見つけたら自分の ingress
+        を先に閉じ、その後で障害を報告します。<br />外側の Instance Manager
+        が意図の記録、旧リソースの回収、再構築を担当します。<br />両者が同時に同じ
+        Instance の restart を奪い合うような状態にはしたくありません。
+      </p>
+      <p>
+        手動の <code>Stop</code> と
+        <code>EmergencyStop</code> の優先順位は、必ず最上位にします。<br />Stop
+        の際にデータベースが壊れ、最新の停止意図を保存できたかさえ分からないとします。その場合、システムが自動的に再開する根拠にしてはいけないのが、古い
+        <code>desired=running</code> です。<br />このときは、入る状態を
+        <code>recovery_required</code
+        >として、人の確認を待つ方がよいと思っています。
+      </p>
+      <p>
+        元の TCP session が crash
+        後に再接続できるかどうかについては、無理に保証するつもりはありません。<br />間違った出口を通るより、接続が切れる方がよいからです。
+      </p>
+      <h3 id="vp-heading-1890">
+        接続状態は Connected／Disconnected だけでは足りない
+      </h3>
+      <p>
+        UI が Connected／Disconnected の 2
+        状態だけになることは望んでいません。<br />例えば、A に設定したのは
+        <code>desired_state=running</code>ですが、現在の状態は
+        <code>reconnecting</code>で、さらに
+        <code>enforcement=blocked</code>。<br />この 3
+        つは分けて表示すべきです。<br />動作を続けてほしいという意図と、今実際に外へ送信できるかどうかは、別のことです。
+      </p>
+    </div>
+    <div id="start-sequence" class="vp-subsection">
+      <h3 id="vp-heading-1920">
+        起動、障害時の閉鎖、自動復旧：START／ACTIVATE シーケンス図
+      </h3>
+      <div class="vp-prose">
+        <p>
+          この流れでは、まず <code>desired=running</code> を Store
+          に書き込み、Manager が generation と identity lease を予約し、Platform
+          に実行を依頼するのが <code>PrepareClosed</code>。<br />worker は最初に
+          <code>probe_only</code>
+          で起動します。<br />tunnel、DNS、policy、現在の権限情報がすべて一致していることを確認して初めて、実行するのが
+          <code>CommitResume</code> と <code>Activate</code>。
+        </p>
+      </div>
+      <figure
+        id="fig-start-seq"
+        aria-labelledby="cap-start-seq"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="シーケンス図 A：横にスクロールすると図全体を確認できます"
+          class="vp-diagram-scroller vp-sequence"
+        >
+          <svg
+            viewBox="0 0 1675.6 1334"
+            width="1675.6"
+            height="1334"
+            role="img"
+            aria-label="START／ACTIVATE シーケンス図"
+          >
+            <title>START／ACTIVATE シーケンス図</title>
+            <desc>
+              すべての payload gate はデフォルトで閉鎖。現在の Manager と
+              Platform の証拠だけが開通を許可できます。
+            </desc>
+            <defs>
+              <marker
+                id="start-seq-arrow-flow"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="start-seq-arrow-back"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-2"></path>
+              </marker>
+            </defs>
+            <rect
+              width="1675.6"
+              height="1334"
+              rx="14"
+              class="vp-paint-36"
+            ></rect>
+            <text x="49.56" y="40" class="vp-paint-37">
+              START／ACTIVATE 起動・開通シーケンス図
+            </text>
+            <text x="49.56" y="75" class="vp-paint-38">
+              データゲートはデフォルトで閉鎖。現在の Manager と Platform
+              の検証証拠だけが開通を承認できます。
+            </text>
+            <rect
+              x="16.52"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="118.0" y="128" class="vp-paint-40">
+              ユーザーインターフェース
+            </text>
+            <line
+              x1="118.0"
+              x2="118.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="304.44"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="405.92" y="128" class="vp-paint-40">VPN コア</text>
+            <line
+              x1="405.92"
+              x2="405.92"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="592.36"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="693.84" y="128" class="vp-paint-40">
+              ストレージサービス
+            </text>
+            <line
+              x1="693.84"
+              x2="693.84"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="880.28"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="981.76" y="128" class="vp-paint-40">
+              Instance マネージャー
+            </text>
+            <line
+              x1="981.76"
+              x2="981.76"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1168.2"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1269.68" y="128" class="vp-paint-40">
+              プラットフォームサービス
+            </text>
+            <line
+              x1="1269.68"
+              x2="1269.68"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1456.12"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1557.6" y="128" class="vp-paint-40">Instance Worker</text>
+            <line
+              x1="1557.6"
+              x2="1557.6"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="29.5"
+              y="144"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="118.0"
+              x2="394.12"
+              y1="187"
+              y2="187"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="261.96" y="173" class="vp-paint-44">
+              01 · 起動＋版の照合
+            </text>
+            <line
+              x1="405.92"
+              x2="682.04"
+              y1="261"
+              y2="261"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="549.88" y="247" class="vp-paint-45">
+              02 · CAS で desired=running を永続化
+            </text>
+            <rect
+              x="29.5"
+              y="292"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="405.92"
+              x2="969.96"
+              y1="335"
+              y2="335"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="693.84" y="321" class="vp-paint-44">
+              03 · 起動意図を発行
+            </text>
+            <line
+              x1="981.76"
+              x2="705.64"
+              y1="409"
+              y2="409"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="837.8" y="395" class="vp-paint-45">
+              04 · Worker 世代と鍵リースを予約
+            </text>
+            <rect
+              x="29.5"
+              y="440"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="981.76"
+              x2="1257.88"
+              y1="483"
+              y2="483"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1125.72" y="469" class="vp-paint-45">
+              05 · PrepareClosed：先に閉鎖
+            </text>
+            <line
+              x1="1269.68"
+              x2="993.56"
+              y1="557"
+              y2="557"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1125.72" y="543" class="vp-paint-45">
+              06 · サンドボックス／ポリシーの証拠を返却
+            </text>
+            <rect
+              x="29.5"
+              y="588"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="981.76"
+              x2="1257.88"
+              y1="631"
+              y2="631"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1125.72" y="617" class="vp-paint-45">
+              07 · Worker と制限付き FD を作成
+            </text>
+            <line
+              x1="1269.68"
+              x2="1545.8"
+              y1="705"
+              y2="705"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1413.64" y="691" class="vp-paint-45">
+              08 · 制限付きリソースを渡して起動
+            </text>
+            <rect
+              x="29.5"
+              y="736"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="693.84"
+              x2="1545.8"
+              y1="779"
+              y2="779"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1125.72" y="765" class="vp-paint-44">
+              09 · 単回の秘密情報リースを受け渡し
+            </text>
+            <line
+              x1="981.76"
+              x2="1545.8"
+              y1="853"
+              y2="853"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1269.68" y="839" class="vp-paint-44">
+              10 · Configure／Start：プローブのみ
+            </text>
+            <rect
+              x="29.5"
+              y="884"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1557.6"
+              x2="993.56"
+              y1="927"
+              y2="927"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1269.68" y="913" class="vp-paint-44">
+              11 · VPN トンネルと DNS の検証完了
+            </text>
+            <line
+              x1="981.76"
+              x2="1257.88"
+              y1="1001"
+              y2="1001"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1125.72" y="987" class="vp-paint-45">
+              12 · CommitResume：開通を承認
+            </text>
+            <rect
+              x="29.5"
+              y="1032"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="981.76"
+              x2="1545.8"
+              y1="1075"
+              y2="1075"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1269.68" y="1061" class="vp-paint-44">
+              13 · Activate：正式に準備完了
+            </text>
+            <line
+              x1="981.76"
+              x2="705.64"
+              y1="1149"
+              y2="1149"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="837.8" y="1135" class="vp-paint-45">14 · 操作成功</text>
+            <rect
+              x="29.5"
+              y="1180"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="405.92"
+              x2="129.8"
+              y1="1223"
+              y2="1223"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="261.96" y="1209" class="vp-paint-45">
+              15 · SSE で最新状態を返却
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-start-seq">
+          <span class="vp-figlabel">シーケンス図 A</span
+          ><span>START／ACTIVATE シーケンス図</span
+          ><small
+            >意図の永続化、環境の閉鎖、probe-only を経て、最後に Activate
+            を許可します。<span class="vp-mobile-pan"
+              >（左右にスクロールすると図全体を確認できます）</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="bootstrap">
+    <h2 id="bootstrap">
+      <span class="vp-sec-no">05</span>最初の Provider
+      はどう作るのか？これはブートストラップの問題
+    </h2>
+    <figure id="fig-provider" aria-labelledby="cap-provider" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="図 6：横にスクロールすると図全体を確認できます"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1510.3999999999999"
+          height="1140"
+          viewBox="0 0 1510.3999999999999 1140"
+          role="img"
+          aria-label="Provider の初回接続とアクセスごとの検査"
+        >
+          <title>Provider の初回接続とアクセスごとの検査</title>
+          <desc>
+            初めて Profile を取得したら Instance
+            を自動作成し、元のネットワークを撤回してから latch を封印します。全
+            Provider は手動選択した出口を共有しますが、各 Adapter
+            が個別に検査し、HTTP ごとに preflight をやり直します。
+          </desc>
+          <defs>
+            <marker
+              id="provider-04-provider-egress-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1510.4" height="1140" class="vp-paint-6"></rect>
+          <text x="33.04" y="34" class="vp-paint-7">
+            図 6｜Provider の初回ブートストラップ、出口切替、要求ごとの検証
+          </text>
+          <rect
+            x="35.4"
+            y="70"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="54.28" y="100" class="vp-paint-27">
+            Provider の初回作成ジョブ
+          </text>
+          <text x="54.28" y="129" class="vp-paint-10">
+            単一アカウント／制限付きホスト網のみ許可
+          </text>
+          <text x="54.28" y="153" class="vp-paint-10">
+            許可は 10 分間／1 セッション 60 秒
+          </text>
+          <text x="54.28" y="177" class="vp-paint-10">
+            API 要求ごとの検査は引き続き必要
+          </text>
+          <rect
+            x="548.7"
+            y="70"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="567.58" y="100" class="vp-paint-9">
+            最初の有効な Profile を取得
+          </text>
+          <text x="567.58" y="129" class="vp-paint-10">
+            検証器と一意な子操作の永続化
+          </text>
+          <text x="567.58" y="153" class="vp-paint-10">
+            コントローラー → Instance マネージャー
+          </text>
+          <text x="567.58" y="177" class="vp-paint-10">
+            Instance を自動作成・起動
+          </text>
+          <rect
+            x="1062.0"
+            y="70"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1080.88" y="100" class="vp-paint-27">
+            新 Instance が初期プローブに合格
+          </text>
+          <text x="1080.88" y="129" class="vp-paint-10">
+            独立トンネル／DNS／システム制限
+          </text>
+          <text x="1080.88" y="153" class="vp-paint-10">
+            候補接続はヘルスプローブにのみ使用可能
+          </text>
+          <path
+            d="M 448.4 135.0 H 546.34"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 961.7 135.0 H 1059.64"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="1062.0"
+            y="300"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1080.88" y="330" class="vp-paint-9">元の直結出口を閉鎖</text>
+          <text x="1080.88" y="359" class="vp-paint-10">
+            1．閉鎖意図を永続記録
+          </text>
+          <text x="1080.88" y="383" class="vp-paint-10">
+            2．全直結 socket を撤回
+          </text>
+          <text x="1080.88" y="407" class="vp-paint-10">
+            3．永久 latch と出口の紐付けを記録
+          </text>
+          <path
+            d="M 1268.5 200.0 V 298.0"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="548.7"
+            y="300"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="567.58" y="330" class="vp-paint-27">
+            全体で選択された Instance
+          </text>
+          <text x="567.58" y="359" class="vp-paint-10">
+            全 Provider が同じ出口を共有
+          </text>
+          <text x="567.58" y="383" class="vp-paint-10">
+            切替や無効化は手動のみ
+          </text>
+          <text x="567.58" y="407" class="vp-paint-10">
+            ホスト直結への自動 fallback 禁止
+          </text>
+          <path
+            d="M 1062.0 365.0 H 964.06"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="35.4"
+            y="300"
+            width="413.0"
+            height="130"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="54.28" y="330" class="vp-paint-23">遮断／無効化</text>
+          <text x="54.28" y="359" class="vp-paint-10">
+            元の選択 Instance を引き続き表示
+          </text>
+          <text x="54.28" y="383" class="vp-paint-10">
+            古い監視情報を正常扱いしない
+          </text>
+          <text x="54.28" y="407" class="vp-paint-10">
+            復旧が手動停止を上書きしてはいけない
+          </text>
+          <path
+            d="M 548.7 365.0 H 450.76"
+            marker-end="url(#provider-04-provider-egress-red)"
+            class="vp-paint-35"
+          ></path>
+          <rect
+            x="35.4"
+            y="510"
+            width="1439.6"
+            height="480"
+            rx="12"
+            class="vp-paint-47"
+          ></rect>
+          <text x="56.64" y="540" class="vp-paint-48">
+            実際の Provider API
+            要求すべて：再試行、ページ取得、トークン更新、照合を含む
+          </text>
+          <rect
+            x="76.7"
+            y="570"
+            width="377.6"
+            height="125"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="95.58" y="600" class="vp-paint-27">
+            1．クォータを計画・予約
+          </text>
+          <text x="95.58" y="629" class="vp-paint-10">
+            IP ファミリーと不変の要求を固定
+          </text>
+          <text x="95.58" y="653" class="vp-paint-10">
+            IP プローブと API のクォータを予約
+          </text>
+          <text x="95.58" y="677" class="vp-paint-10">
+            現在の接続 ID を読み取る
+          </text>
+          <rect
+            x="554.6"
+            y="570"
+            width="383.5"
+            height="125"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="573.48" y="600" class="vp-paint-27">
+            2．Provider の出口 IP 検査
+          </text>
+          <text x="573.48" y="629" class="vp-paint-10">
+            API と同じ接続／IP ファミリーを使用
+          </text>
+          <text x="573.48" y="653" class="vp-paint-10">
+            IP、所在地、プロバイダー所属を個別照合
+          </text>
+          <text x="573.48" y="677" class="vp-paint-10">
+            プローブ要求にアカウント認証情報は含めない
+          </text>
+          <rect
+            x="1032.5"
+            y="570"
+            width="389.4"
+            height="125"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="1051.38" y="600" class="vp-paint-27">
+            3．単回の要求許可を発行
+          </text>
+          <text x="1051.38" y="629" class="vp-paint-10">
+            要求、ルート、接続世代を結び付ける
+          </text>
+          <text x="1051.38" y="653" class="vp-paint-10">
+            乱数値＋送信期限 2 秒
+          </text>
+          <text x="1051.38" y="677" class="vp-paint-10">
+            検査処理が自身を再帰呼び出ししない
+          </text>
+          <path
+            d="M 454.3 633.0 H 552.24"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 938.1 633.0 H 1030.14"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="1032.5"
+            y="810"
+            width="389.4"
+            height="120"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="1051.38" y="840" class="vp-paint-27">
+            4．送信前に原子的検証
+          </text>
+          <text x="1051.38" y="869" class="vp-paint-10">
+            世代、IP ファミリー、期限を再検証
+          </text>
+          <text x="1051.38" y="893" class="vp-paint-10">
+            API の最初のバイト前に許可を消費
+          </text>
+          <text x="1051.38" y="917" class="vp-paint-10">
+            自動リダイレクトや隠れた再試行は禁止
+          </text>
+          <path
+            d="M 1227.2 695.0 V 808.0"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="554.6"
+            y="810"
+            width="383.5"
+            height="120"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="573.48" y="840" class="vp-paint-27">
+            5．Provider API を実行
+          </text>
+          <text x="573.48" y="869" class="vp-paint-10">
+            選択した VPN トンネルからのみ送信
+          </text>
+          <text x="573.48" y="893" class="vp-paint-10">
+            遠隔変更の結果が不明 → unknown
+          </text>
+          <text x="573.48" y="917" class="vp-paint-10">
+            先に照合し、再試行するか判断
+          </text>
+          <path
+            d="M 1032.5 868.0 H 940.46"
+            marker-end="url(#provider-04-provider-egress-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="76.7"
+            y="810"
+            width="377.6"
+            height="120"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="95.58" y="840" class="vp-paint-27">Provider 管理パネル</text>
+          <text x="95.58" y="869" class="vp-paint-10">
+            Instance がオフラインでも選択を維持
+          </text>
+          <text x="95.58" y="893" class="vp-paint-10">
+            出口 IP／国／都市／時刻
+          </text>
+          <text x="95.58" y="917" class="vp-paint-10">
+            プロバイダー所属は確認できない場合あり
+          </text>
+          <path
+            d="M 554.6 868.0 H 456.66"
+            marker-end="url(#provider-04-provider-egress-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="35.4" y="1050" class="vp-paint-12">
+            IP の観測だけでは DNS、IPv6、QUIC、すべての App
+            経路は証明できません。プラットフォーム制限による強制的な保護が必要です。
+          </text>
+          <text x="35.4" y="1080" class="vp-paint-12">
+            切替完了後：ホスト DNS、ホスト HTTP、ほかの出口への自動切替は禁止。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-provider">
+        <span class="vp-figlabel">図 6</span
+        ><span
+          >Provider の初回ブートストラップ、出口切替、要求ごとの事前検査</span
+        ><small
+          >初回ブートストラップの制限付き直結権限は、VPN
+          への切替後に撤回します。自動 fallback は許可しません。<span
+            class="vp-mobile-pan"
+            >（左右にスクロールすると図全体を確認できます）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Provider にも問題があります。<br />VPN Manager
+        をインストールした直後には、VPN Profile がまだありません。まず Mullvad
+        や AIRVPN からアカウント、device、WireGuard
+        設定を取得する必要があります。<br />では、最初の管理要求はどこを通すのでしょうか？
+      </p>
+      <p>
+        現在は、初回だけ条件付きの直結を許可することを考えています。<br />Provider
+        worker が受け取る、時間、アカウント、HTTPS
+        origin、DNS、通信量予算を制限した許可が
+        <code>BootstrapGrant</code>。<br />最初の有効な Profile
+        を取得したら、Controller が Instance Manager に最初の VPN
+        の作成と起動を要求します。
+      </p>
+      <p>
+        tunnel が管理要求を処理できることを確認したら、まず direct
+        を閉鎖する意図を Store に書き込み、元の grant と socket
+        を撤回し、最後に付ける印が
+        <code>bootstrap_consumed=true</code>で、そのうえで Provider
+        全体の出口を設定します。<br />この順番を崩してはいけません。特に、直結がまだ生きているのに切替完了と言ってはいけません。
+      </p>
+      <p>
+        以降、すべての Provider API はユーザーが選んだ VPN Instance
+        を通します。<br />その Instance が落ちたら、表示するのは
+        <code>blocked</code>で、host への切戻しも、別の Instance
+        への自動切替も禁止です。<br />どうしても処理できなければ、ユーザーが新しい出口を手動で選ぶか、明示的に一度限りで許可するのが
+        <code>rebootstrap</code>。
+      </p>
+      <p>
+        また、実際に Provider HTTP request を送信する前には、毎回 IP preflight
+        を実施したいと考えています。<br />retry、pagination、token refresh
+        を含め、同一の route tuple、IP family、connector を確認します。この
+        request だけに使える許可である
+        <code>ProviderRequestPermit</code>
+        を取得して初めて送信できます。<br />現時点では、preflight deadline を 3
+        秒、dispatch window を 2 秒と仮定しています。<br />これでは遅くなり、checker
+        quota も増えますが、少なくとも UI に数分前に表示された IP
+        を、現在の経路選択の証拠にはしません。
+      </p>
+      <p>
+        UI では、どの Instance を選んだのか、今回の request が本当に制御された
+        tunnel を通ったのか、外部 IP がその Provider
+        の出口なのかを、分けて表示する必要があります。<br />例えば、Mullvad
+        Instance を選んで AIRVPN の管理 API
+        を呼び出すことは、私の設定に完全に沿った動作になり得ます。<br />外部 IP
+        が AIRVPN ではないからといって、通信が漏れているとは限りません。
+      </p>
+      <h3 id="vp-heading-2475">Provider Adapter は何を担当するのか</h3>
+      <p>
+        プロバイダーの統合は、できるだけ同じ流れにしたいと考えています。<br />Profile
+        の検証、Instance
+        の作成、出口の紐付けは共通の制御ロジックで処理します。Adapter
+        に任せるのは、Mullvad、AIRVPN それぞれの device、server、port-forward
+        API です。<br />Provider を追加するとき、各 Adapter に Instance
+        の直接起動・停止や host socket の作成権限を持たせたくありません。
+      </p>
+      <p>
+        Provider API にはもう一つ厄介な点があります。request の送信後に timeout
+        しても、相手が実行しなかったとは限りません。<br />例えば、device
+        の作成自体は成功していて、返答だけ届かなかった可能性があります。<br />この場合、まず記録する状態は
+        <code>unknown</code>で、その後 operation journal
+        を使って遠隔側の状態を確認します。そのまま再送すべきではありません。
+      </p>
+    </div>
+    <div id="provider-sequence" class="vp-subsection">
+      <h3 id="vp-heading-2503">PROVIDER 初回ブートストラップのシーケンス図</h3>
+      <div class="vp-prose">
+        <p>
+          ブートストラップ全体が完了したといえるには、新 Instance
+          が管理要求を送信でき、元の direct
+          権限が確実に撤回されたことを確認し、最後に実行するのが
+          <code>CommitEgress</code
+          >。<br />切替中のある結果を確認できない場合、まず留めておきたい状態は
+          <code>blocked</code>で、状態を明らかにします。
+        </p>
+      </div>
+      <figure
+        id="fig-provider-seq"
+        aria-labelledby="cap-provider-seq"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="シーケンス図 B：横にスクロールすると図全体を確認できます"
+          class="vp-diagram-scroller vp-sequence"
+        >
+          <svg
+            viewBox="0 0 1675.6 1334"
+            width="1675.6"
+            height="1334"
+            role="img"
+            aria-label="PROVIDER 初回ブートストラップのシーケンス図"
+          >
+            <title>PROVIDER 初回ブートストラップのシーケンス図</title>
+            <desc>
+              初回の制限付き直結 → 最初の Profile → Instance 自動起動 →
+              seal/revoke → CommitEgress。
+            </desc>
+            <defs>
+              <marker
+                id="provider-seq-arrow-flow"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="provider-seq-arrow-back"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-2"></path>
+              </marker>
+            </defs>
+            <rect
+              width="1675.6"
+              height="1334"
+              rx="14"
+              class="vp-paint-36"
+            ></rect>
+            <text x="49.56" y="40" class="vp-paint-37">
+              Provider が初めて VPN を作成するシーケンス図
+            </text>
+            <text x="49.56" y="75" class="vp-paint-38">
+              初回の制限付き直結 → 最初の Profile → Instance 自動作成 → 直結閉鎖
+              → VPN 出口を紐付け。
+            </text>
+            <rect
+              x="16.52"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="118.0" y="128" class="vp-paint-40">UI／VPN コア</text>
+            <line
+              x1="118.0"
+              x2="118.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="256.41"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="357.89" y="128" class="vp-paint-40">
+              ストレージサービス
+            </text>
+            <line
+              x1="357.89"
+              x2="357.89"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="496.43"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="597.91" y="128" class="vp-paint-40">
+              プラットフォームサービス
+            </text>
+            <line
+              x1="597.91"
+              x2="597.91"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="736.32"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="837.8" y="128" class="vp-paint-40">
+              Provider ワーカープロセス
+            </text>
+            <line
+              x1="837.8"
+              x2="837.8"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="976.21"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1077.69" y="128" class="vp-paint-40">Provider API</text>
+            <line
+              x1="1077.69"
+              x2="1077.69"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1216.23"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1317.71" y="128" class="vp-paint-40">
+              インスタンスマネージャー
+            </text>
+            <line
+              x1="1317.71"
+              x2="1317.71"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1456.12"
+              y="99"
+              width="202.96"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1557.6" y="128" class="vp-paint-40">VPN Instance</text>
+            <line
+              x1="1557.6"
+              x2="1557.6"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="29.5"
+              y="144"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="118.0"
+              x2="346.09"
+              y1="187"
+              y2="187"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="238.01" y="173" class="vp-paint-45">
+              01 · ブートストラップ記録を作成
+            </text>
+            <line
+              x1="118.0"
+              x2="586.11"
+              y1="261"
+              y2="261"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="357.89" y="247" class="vp-paint-44">
+              02 · 期限付き直結権限を準備
+            </text>
+            <rect
+              x="29.5"
+              y="292"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="597.91"
+              x2="826.0"
+              y1="335"
+              y2="335"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="717.79" y="321" class="vp-paint-45">
+              03 · 許可された直結チャネルのみ受け渡し
+            </text>
+            <line
+              x1="837.8"
+              x2="1065.89"
+              y1="409"
+              y2="409"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="957.81" y="395" class="vp-paint-45">
+              04 · 出口 IP 事前検査＋Profile 取得
+            </text>
+            <rect
+              x="29.5"
+              y="440"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1077.69"
+              x2="849.6"
+              y1="483"
+              y2="483"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="957.81" y="469" class="vp-paint-44">
+              05 · Profile を返却
+            </text>
+            <line
+              x1="837.8"
+              x2="369.69"
+              y1="557"
+              y2="557"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="597.91" y="543" class="vp-paint-44">
+              06 · Profile と一意な子操作を保存
+            </text>
+            <rect
+              x="29.5"
+              y="588"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="118.0"
+              x2="1305.91"
+              y1="631"
+              y2="631"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="717.79" y="617" class="vp-paint-44">
+              07 · Instance を自動作成・起動
+            </text>
+            <line
+              x1="1317.71"
+              x2="609.71"
+              y1="705"
+              y2="705"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="957.81" y="691" class="vp-paint-44">
+              08 · 環境を閉鎖し、Worker を作成
+            </text>
+            <rect
+              x="29.5"
+              y="736"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="597.91"
+              x2="1545.8"
+              y1="779"
+              y2="779"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1077.69" y="765" class="vp-paint-44">
+              09 · FD を渡し、Worker を起動
+            </text>
+            <line
+              x1="1557.6"
+              x2="1329.51"
+              y1="853"
+              y2="853"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1437.59" y="839" class="vp-paint-45">
+              10 · VPN／DNS／管理チャネルが準備完了
+            </text>
+            <rect
+              x="29.5"
+              y="884"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="118.0"
+              x2="346.09"
+              y1="927"
+              y2="927"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="238.01" y="913" class="vp-paint-45">
+              11 · 閉鎖意図を永続化
+            </text>
+            <line
+              x1="118.0"
+              x2="586.11"
+              y1="1001"
+              y2="1001"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="357.89" y="987" class="vp-paint-44">
+              12 · 直結権限と socket を撤回
+            </text>
+            <rect
+              x="29.5"
+              y="1032"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="597.91"
+              x2="129.8"
+              y1="1075"
+              y2="1075"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="357.89" y="1061" class="vp-paint-44">
+              13 · 撤回の検証証拠を返却
+            </text>
+            <line
+              x1="118.0"
+              x2="346.09"
+              y1="1149"
+              y2="1149"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="238.01" y="1135" class="vp-paint-45">
+              14 · 出口と永久 latch を確認
+            </text>
+            <rect
+              x="29.5"
+              y="1180"
+              width="1616.6"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="118.0"
+              x2="826.0"
+              y1="1223"
+              y2="1223"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="477.9" y="1209" class="vp-paint-44">
+              15 · 以降は選択した Instance を使用
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-provider-seq">
+          <span class="vp-figlabel">シーケンス図 B</span
+          ><span>PROVIDER 初回ブートストラップのシーケンス図</span
+          ><small
+            >BootstrapGrant → 最初の Profile → Instance → Seal/Revocation →
+            CommitEgress。<span class="vp-mobile-pan"
+              >（左右にスクロールすると図全体を確認できます）</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="metrics">
+    <h2 id="metrics">
+      <span class="vp-sec-no">06</span>VPN
+      ごとのトラフィックとリソース使用量を明確に見たい
+    </h2>
+    <div class="vp-prose">
+      <p>
+        VPN Manager が、最後には VPN
+        接続を示す緑のランプをいくつか表示するだけのものになってほしくありません。<br />どの
+        Instance が通信量を消費しているのか、Gateway
+        にアクティブな接続がいくつあるのか、DNS
+        の遅延が上がっていないか、どのプロセスが CPU、メモリー、queue
+        を占有しているのかを知りたいです。
+      </p>
+      <p>
+        Metrics Service と Performance Manager は分けます。<br />Metrics Service
+        は統計データを収集します。例えば Instance counters、Gateway payload
+        bytes、WireGuard UDP bytes、DNS の成功・失敗、active flows、CPU、RSS
+        です。<br />Performance Manager
+        は、スループット、遅延、リソース効率の分析、または私が明示的に開始した
+        benchmark の実行を担当します。<br />速度測定のために、勝手に Instance
+        の状態を変えてはいけません。
+      </p>
+    </div>
+    <figure id="fig-metrics" aria-labelledby="cap-metrics" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="図 7：横にスクロールするとトラフィック観測のデータ経路全体を確認できます"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1321.6"
+          height="340"
+          viewBox="0 0 1321.6 340"
+          role="img"
+          aria-labelledby="svg-metrics-title svg-metrics-desc"
+        >
+          <title id="svg-metrics-title">
+            トラフィック観測と性能分析のアーキテクチャ
+          </title>
+          <desc id="svg-metrics-desc">
+            Instance のローカル counters は Metrics Collector
+            に非ブロッキングで渡し、圧縮して保存します。UI と Performance
+            Manager は集約データを照会します。App payload
+            はこの経路を通りません。
+          </desc>
+          <defs>
+            <marker
+              id="metrics-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0 0L8 4L0 8Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="metrics-dash"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0 0L8 4L0 8Z" class="vp-paint-4"></path>
+            </marker>
+          </defs>
+          <rect width="1321.6" height="340" class="vp-paint-6"></rect>
+          <text x="35.4" y="35" class="vp-paint-49">
+            図 7｜トラフィックメトリクス収集と非ブロッキングの観測経路
+          </text>
+          <g class="vp-paint-50">
+            <rect
+              x="33.04"
+              y="78"
+              width="241.9"
+              height="114"
+              rx="7"
+              class="vp-paint-51"
+            ></rect>
+            <rect x="339.84" y="78" width="241.9" height="114" rx="7"></rect>
+            <rect x="646.64" y="78" width="241.9" height="114" rx="7"></rect>
+            <rect x="953.44" y="78" width="331.58" height="114" rx="7"></rect>
+            <rect
+              x="646.64"
+              y="236"
+              width="241.9"
+              height="70"
+              rx="7"
+              class="vp-paint-52"
+            ></rect>
+            <rect
+              x="953.44"
+              y="236"
+              width="331.58"
+              height="70"
+              rx="7"
+              class="vp-paint-52"
+            ></rect>
+          </g>
+          <g class="vp-paint-53">
+            <text x="51.92" y="109">Instance メトリクス</text>
+            <text x="358.72" y="109">メトリクスコレクター</text>
+            <text x="665.52" y="109">圧縮と集約</text>
+            <text x="972.32" y="109">Store／メトリクス DB</text>
+            <text x="665.52" y="262" class="vp-paint-54">性能マネージャー</text>
+            <text x="972.32" y="262">React インターフェース</text>
+          </g>
+          <g class="vp-paint-55">
+            <text x="51.92" y="139">毎秒の累積カウンター</text>
+            <text x="51.92" y="164">パケット内容は転送しない</text>
+            <text x="358.72" y="139">順序検証／重複排除／欠損表示</text>
+            <text x="358.72" y="164">過負荷時はサンプル破棄可</text>
+            <text x="665.52" y="139">CBOR＋Zstd</text>
+            <text x="665.52" y="164">時間集約／保持期間</text>
+            <text x="972.32" y="139">制御とメトリクスを別 DB に保存</text>
+            <text x="972.32" y="164">上限のあるデータ照会</text>
+            <text x="665.52" y="288">分析／性能ベンチマーク</text>
+            <text x="972.32" y="288">レート／遅延／データ欠損</text>
+          </g>
+          <g marker-end="url(#metrics-arrow)" class="vp-paint-56">
+            <path d="M 274.94 136.0 H 337.48"></path>
+            <path d="M 581.74 136.0 H 644.28"></path>
+            <path d="M 888.54 136.0 H 951.08"></path>
+          </g>
+          <g marker-end="url(#metrics-dash)" class="vp-paint-57">
+            <path d="M 1103.3 192.0 V 219.0 H 768.18 V 234.0"></path>
+            <path d="M 888.54 271.0 H 951.08"></path>
+          </g>
+          <text x="34.22" y="330" class="vp-paint-58">
+            観測経路では統計データだけを渡します。App／Gateway
+            の実際の通信は、引き続きそれぞれの Instance を通ります。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-metrics">
+        <span class="vp-figlabel">図 7</span
+        ><span>Instance から UI への独立したトラフィック観測経路</span
+        ><small
+          >Metrics
+          が飽和するとサンプルの完全性は下がっても構いませんが、データプレーンを待たせてはいけません。グラフには欠損を示す必要があります。</small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Metrics
+        はデータプレーンにバックプレッシャーをかけない方がよいと考えています。<br />Instance
+        は毎秒 1 回、上限のある snapshot を送り、Collector
+        が順序検証と重複排除を行い、その後 CBOR／Zstd で圧縮・集約します。<br />収集側が詰まったら、いくつかのサンプルを捨て、表示するのは
+        <code>gap</code>
+        だけで十分です。パケットをデータベース待ちにしてはいけません。
+      </p>
+      <p>
+        トラフィックの数値も、いい加減に計算してはいけません。<br />Gateway
+        payload bytes と WireGuard UDP bytes
+        は異なる層の統計なので、足し合わせて総通信量にしてはいけません。<br />counter
+        reset
+        やデータ中断があった場合、グラフには欠損または不明を表示すべきで、そのまま
+        0 として描いてはいけません。<br />goodput
+        にはさらに受信側の確認が必要で、sender counter
+        だけで計算してはいけません。
+      </p>
+      <p>
+        トラフィック監視でも、すべてを記録する必要はありません。<br />デフォルトでは
+        counters、histograms、必要なエラー情報を集めるだけで十分です。<br />DNS
+        query name、完全な URL、パケット payload をすべて Metrics
+        に詰め込みたいとは思いません。
+      </p>
+    </div>
+  </section>
+</div>

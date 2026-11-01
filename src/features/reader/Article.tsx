@@ -173,7 +173,8 @@ export function Article({
               {post.source.kind === 'profile-adaptation' ? (
                 <p>{t.adapted}</p>
               ) : null}
-              {post.source.kind === 'imported-manuscript' ? (
+              {post.source.kind === 'imported-manuscript' ||
+              post.source.kind === 'library-manuscript' ? (
                 <p>
                   {
                     {

@@ -1,0 +1,3367 @@
+<div class="vpn-guide">
+  <p class="vp-eyebrow">VPN MANAGER / 開發筆記</p>
+
+  <h2 id="opening">最初想做什麼</h2>
+  <div class="vp-intro">
+    <p>主機原本的網路不變。<br />指定的 App 只走指定出口。</p>
+    <p>
+      最初會想做 VPN Manager，其實就是覺得一般 VPN
+      客戶端大多偏向整台電腦一起切換。<br />但我需要的不是這個。<br />我想指定哪些
+      App 走哪條 VPN，沒被管理的程式就繼續使用主機原本的網路。
+    </p>
+    <p>
+      例如我同時開著瀏覽器、下載程式，以及其他 App。<br />瀏覽器交給
+      <code>Instance A</code>，下載程式交給
+      <code>Instance B</code>，其他則使用原本的網路。<br />A 和 B 各自有自己的
+      WireGuard identity、DNS、Gateway、連線資源和生命週期。
+    </p>
+    <p>
+      如果 A 斷線，我寧願瀏覽器直接斷網。<br />它不能自動跑去 B，更不能退回 ISP
+      原本的出口。
+    </p>
+    <figure aria-labelledby="route-demo-caption" class="vp-route-demo">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="應用程式出口分流示意，可水平捲動"
+        class="vp-route-demo-scroll"
+      >
+        <div aria-hidden="true" class="vp-route-demo-head">
+          <span>使用者的程式</span><span></span><span>綁定的出口</span
+          ><span></span><span>對外路徑</span>
+        </div>
+        <div class="vp-route-demo-row">
+          <div><strong>瀏覽器</strong><small>受管應用程式</small></div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-instance-a">
+            <strong>Instance A</strong><small>身分 A／DNS A</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>WireGuard 對端 A</strong><small>獨立 VPN 出口</small>
+          </div>
+        </div>
+        <div class="vp-route-demo-row">
+          <div><strong>下載程式</strong><small>受管應用程式</small></div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-instance-b">
+            <strong>Instance B</strong><small>身分 B／DNS B</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>WireGuard 對端 B</strong><small>另一個獨立出口</small>
+          </div>
+        </div>
+        <div class="vp-route-demo-row">
+          <div><strong>其他 App 等</strong><small>未納管應用程式</small></div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-host-route">
+            <strong>主機原有網路</strong><small>維持原本路由</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>原有網路</strong><small>不受 VPN Manager 修改</small>
+          </div>
+        </div>
+      </div>
+      <p class="vp-route-demo-failure">
+        <strong>如果 A 斷線：</strong>瀏覽器就沒有網路。<br />Instance B
+        和沒被管理的程式照常運作，不需要跟著切換。
+      </p>
+      <figcaption id="route-demo-caption">
+        使用情境｜同一台主機的三條不同路徑（小螢幕可左右滑動）。這是預期的架構行為示意，而非即時連線畫面。
+      </figcaption>
+    </figure>
+
+    <p>
+      我還希望可以把不同 VPN 供應商的帳號、Profile 和 Gateway
+      放在同一套系統裡管理。<br />指定的 App 或 Service 最好能直接從 OS
+      的網路層隔離，不用 Docker，也不用修改整台電腦的 default route。
+    </p>
+    <p>
+      流量資訊也是我想做的功能。<br />我想看每個 Instance 用了多少流量、哪些
+      Gateway 正在塞車、DNS 花了多久，還有哪個程序吃掉最多 CPU 或記憶體。<br />如果只有一個
+      Connected，我覺得意義不大。
+    </p>
+    <p>
+      類似的做法其實已經有人做了，也有不少人自己用 netns、Proxy 和 firewall
+      拼出需要的環境。<br />但我想把多條 VPN 的管理、App
+      隔離、故障恢復和監控放在一起，不用每次都自己接一堆東西。
+    </p>
+    <p>先從整個系統架構開始。</p>
+  </div>
+
+  <div
+    id="interface-shots"
+    aria-labelledby="interface-shots-title"
+    class="vp-interface-shots"
+  >
+    <h3 id="interface-shots-title">目前的操作畫面</h3>
+    <figure aria-labelledby="shot-cap-1" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="VPN Manager 總覽，可水平捲動檢視"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-1.png"
+          width="1514"
+          height="769"
+          alt="VPN Manager 總覽：兩條 VPN 連線、各自本機 Proxy Port、下載上傳統計與流量路徑圖"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-1">
+        <span class="vp-figlabel">畫面 01</span
+        ><span>VPN Manager 總覽：兩條連線、各自的代理埠，以及流量路徑。</span
+        ><small
+          >實際介面截圖・2026-11-01
+          <span class="vp-mobile-pan">（可左右滑動）</span></small
+        >
+      </figcaption>
+    </figure>
+    <figure aria-labelledby="shot-cap-2" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="VPN Manager 連線清單，可水平捲動檢視"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-2.png"
+          width="1523"
+          height="760"
+          alt="VPN Manager 連線頁：荷蘭與香港兩條 WireGuard 連線，包含連線狀態、代理埠、即時流量與資源監測"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-2">
+        <span class="vp-figlabel">畫面 02</span
+        ><span>連線頁：每條連線的狀態、即時流量與資源資訊。</span
+        ><small
+          >實際介面截圖・2026-11-01
+          <span class="vp-mobile-pan">（可左右滑動）</span></small
+        >
+      </figcaption>
+    </figure>
+  </div>
+
+  <section aria-labelledby="system">
+    <h2 id="system"><span class="vp-sec-no">01</span>整個系統的主幹</h2>
+    <figure id="fig-system" aria-labelledby="cap-system" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="圖 1：可水平捲動查看完整圖表"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1280"
+          height="1290"
+          viewBox="0 0 1280 1290"
+          role="img"
+          aria-label="VPN Manager 完整系統架構（繁體中文版）"
+        >
+          <title>完整系統架構</title>
+          <desc>
+            VPN Controller只交意圖；Instance
+            Manager獨立管理Instance。所有持久資料經Store
+            helper到Store；資料流不經管理面。
+          </desc>
+          <defs>
+            <marker
+              id="system-01-system-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="system-01-system-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="system-01-system-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="system-01-system-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="system-01-system-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1280" height="1290" class="vp-paint-6"></rect>
+          <text x="28" y="34" class="vp-paint-7">
+            圖 1｜VPN Manager 全系統：控制、資料、持久化與觀測
+          </text>
+          <rect
+            x="30"
+            y="70"
+            width="310"
+            height="90"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="46" y="100" class="vp-paint-9">網頁資源服務</text>
+          <text x="46" y="129" class="vp-paint-10">
+            提供 React 靜態資源／同源
+          </text>
+          <rect
+            x="440"
+            y="70"
+            width="380"
+            height="90"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="456" y="100" class="vp-paint-9">React 使用者介面</text>
+          <text x="456" y="129" class="vp-paint-10">
+            核心操作／供應商／效能面板
+          </text>
+          <path
+            d="M340 115H438"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="346" y="99" class="vp-paint-12">靜態資源</text>
+          <path
+            d="M630 160V238"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="650" y="206" class="vp-paint-12">HTTP／SSE</text>
+          <rect
+            x="30"
+            y="240"
+            width="310"
+            height="160"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="46" y="270" class="vp-paint-9">VPN 供應商管理器</text>
+          <text x="46" y="299" class="vp-paint-10">Mullvad／AIRVPN 介接器</text>
+          <text x="46" y="323" class="vp-paint-10">各供應商 IP 出口檢查</text>
+          <text x="46" y="347" class="vp-paint-10">候選設定檔與狀態</text>
+          <rect
+            x="440"
+            y="240"
+            width="380"
+            height="190"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="456" y="270" class="vp-paint-9">VPN 控制器</text>
+          <text x="456" y="299" class="vp-paint-10">VPN Core／Web API</text>
+          <text x="456" y="323" class="vp-paint-10">VPN 平台控制協調器</text>
+          <text x="456" y="347" class="vp-paint-10">
+            Profile 驗證／Store helper
+          </text>
+          <text x="456" y="371" class="vp-paint-10">只負責操作意圖協調</text>
+          <rect
+            x="920"
+            y="240"
+            width="330"
+            height="160"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="936" y="270" class="vp-paint-9">安全策略管理器</text>
+          <text x="936" y="299" class="vp-paint-10">DNS 設定檔驗證</text>
+          <text x="936" y="323" class="vp-paint-10">防火牆策略／自動封鎖</text>
+          <text x="936" y="347" class="vp-paint-10">IP 封鎖清單政策</text>
+          <path
+            d="M340 315H438"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M920 315H822"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="350" y="299" class="vp-paint-12">設定檔</text>
+          <text x="838" y="299" class="vp-paint-12">策略</text>
+          <rect
+            x="30"
+            y="540"
+            width="310"
+            height="120"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="46" y="570" class="vp-paint-9">效能管理器</text>
+          <text x="46" y="599" class="vp-paint-10">分析／基準測試工作階段</text>
+          <text x="46" y="623" class="vp-paint-10">比較／效能報告</text>
+          <rect
+            x="440"
+            y="540"
+            width="380"
+            height="120"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="456" y="570" class="vp-paint-9">Instance 管理器</text>
+          <text x="456" y="599" class="vp-paint-10">
+            唯一生命週期管理權／外層監控
+          </text>
+          <text x="456" y="623" class="vp-paint-10">
+            世代、資源租約與自動恢復
+          </text>
+          <rect
+            x="920"
+            y="540"
+            width="330"
+            height="120"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="936" y="570" class="vp-paint-9">平台管理器</text>
+          <text x="936" y="599" class="vp-paint-10">Linux／macOS 系統介接</text>
+          <text x="936" y="623" class="vp-paint-10">
+            OS 權限／沙箱／資源控制
+          </text>
+          <path
+            d="M630 430V538"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="650" y="487" class="vp-paint-12">帶型別的生命週期意圖</text>
+          <path
+            d="M440 385H380V600H342"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="50" y="505" class="vp-paint-12">明確授權的效能測試</text>
+          <path
+            d="M340 635H438"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-16"
+          ></path>
+          <text x="352" y="655" class="vp-paint-12">測試租約</text>
+          <path
+            d="M820 600H918"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="835" y="583" class="vp-paint-12">作業系統請求</text>
+          <rect
+            x="30"
+            y="830"
+            width="310"
+            height="115"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="46" y="860" class="vp-paint-9">指標服務</text>
+          <text x="46" y="889" class="vp-paint-10">指標收集器</text>
+          <text x="46" y="913" class="vp-paint-10">指標壓縮模組</text>
+          <rect
+            x="440"
+            y="830"
+            width="380"
+            height="150"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="456" y="860" class="vp-paint-9">VPN Instance A … N</text>
+          <text x="456" y="889" class="vp-paint-10">各自擁有完整內部服務</text>
+          <text x="456" y="913" class="vp-paint-10">
+            獨立 GotaTun／DNS／Gateway
+          </text>
+          <text x="456" y="937" class="vp-paint-10">
+            App 流量不經 Controller
+          </text>
+          <rect
+            x="920"
+            y="830"
+            width="330"
+            height="95"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="936" y="860" class="vp-paint-9">Store helper</text>
+          <text x="936" y="889" class="vp-paint-10">
+            共用型別安全的持久化客戶端
+          </text>
+          <path
+            d="M630 660V828"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="650" y="753" class="vp-paint-12">
+            設定／啟動／開通／停止
+          </text>
+          <path
+            d="M920 635H875V900H822"
+            marker-end="url(#system-01-system-amber)"
+            class="vp-paint-18"
+          ></path>
+          <text x="883" y="780" class="vp-paint-12">檔案描述符（FD）</text>
+          <path
+            d="M440 900H342"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="354" y="883" class="vp-paint-12">監控指標</text>
+          <path
+            d="M185 660V828"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-20"
+          ></path>
+          <text x="42" y="750" class="vp-paint-12">有界資料查詢</text>
+          <path
+            d="M185 945V1010H1085V927"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-20"
+          ></path>
+          <text x="570" y="1003" class="vp-paint-12">
+            持久化指標與報表一律經 Store helper
+          </text>
+          <path
+            d="M820 415H1265V877H1252"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="920"
+            y="1050"
+            width="330"
+            height="95"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="936" y="1080" class="vp-paint-9">Store 儲存服務</text>
+          <text x="936" y="1109" class="vp-paint-10">
+            唯一 SQLite 存取者／內部模組
+          </text>
+          <rect
+            x="920"
+            y="1190"
+            width="330"
+            height="65"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="936" y="1220" class="vp-paint-9">SQLite</text>
+          <text x="936" y="1249" class="vp-paint-10">
+            控制資料庫＋指標資料庫
+          </text>
+          <path
+            d="M1085 925V1048"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M1085 1145V1188"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="440"
+            y="1080"
+            width="178"
+            height="90"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="456" y="1110" class="vp-paint-21">受管 App</text>
+          <text x="456" y="1139" class="vp-paint-10">Gateway 用戶端</text>
+          <rect
+            x="665"
+            y="1080"
+            width="200"
+            height="90"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="681" y="1110" class="vp-paint-21">VPN 對端節點</text>
+          <text x="681" y="1139" class="vp-paint-10">已加密 WireGuard UDP</text>
+          <path
+            d="M530 1080V982"
+            marker-end="url(#system-01-system-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M740 980V1078"
+            marker-end="url(#system-01-system-green)"
+            class="vp-paint-22"
+          ></path>
+          <text x="30" y="1210" class="vp-paint-12">
+            藍：控制　綠：資料　黃：OS 資源　紫：觀測
+          </text>
+          <text x="30" y="1238" class="vp-paint-12">
+            所有持久化透過 Store helper；秘密資料使用獨立的私密傳遞通道。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-system">
+        <span class="vp-figlabel">圖 1</span
+        ><span>VPN Manager 完整系統架構</span
+        ><small
+          >控制面、資料面、觀測與持久化分離。<span class="vp-mobile-pan"
+            >（可左右滑動檢視完整圖表）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>整體控制路徑先這樣規劃：</p>
+      <p class="vp-inline-flow">
+        <code>React UI</code><span>→</span><code>VPN Web API / VPN Core</code
+        ><span>→</span><code>Instance Manager</code><span>→</span
+        ><code>Instance Controller</code>
+      </p>
+      <p>
+        這裡我把 <strong>Instance Manager 做成獨立程序</strong>。<br />所有
+        Instance 的啟動、停止、generation、資源租約和恢復都交給它。<br />Controller
+        只接收 UI／API 的操作意圖，不去轉送 App 的 TCP／UDP 資料。
+      </p>
+      <p>
+        要動到 OS 權限的部分就交給
+        <strong>Platform Manager</strong>。<br />不管是 network
+        namespace、process sandbox、FD、firewall policy，還是 macOS 的
+        capture／deny，都由它負責。<br />我不希望其他元件因為方便，就直接跑去改系統網路設定。
+      </p>
+      <p>
+        Store 負責把狀態存下來，Metrics 收集數據，Performance Manager
+        再處理分析與授權的測試。<br />這些東西不要卡在 App 的封包路徑上。<br />例如
+        Metrics
+        或資料庫寫入變慢，不能因此讓正在傳送的封包排隊；新的狀態變更則照原本的封閉規則處理。
+      </p>
+    </div>
+    <div
+      role="region"
+      tabindex="0"
+      aria-label="執行邊界及主要責任，可水平捲動"
+      class="vp-table-wrap"
+    >
+      <table>
+        <caption>
+          表 1｜執行邊界與主要責任
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">執行邊界</th>
+            <th scope="col">主要責任</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><code>vpn-controllerd</code></th>
+            <td>
+              提供 React 靜態資產、VPN Web API、VPN Core，以及
+              Provider／Security／Metrics／Performance 控制協調。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-instance-managerd</code></th>
+            <td>
+              跨 Instance 唯一生命週期 owner；管理 desired
+              state、generation、identity／resource lease、外層 Watchdog
+              與復原對帳。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-platformd</code></th>
+            <td>
+              獨占高權限 OS 操作；執行 Linux/macOS Adapter、sandbox、FD／policy
+              建立、spawn、seal 與安全證據蒐集。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-stored</code></th>
+            <td>
+              唯一 SQLite owner；管理
+              <code>control.sqlite</code
+              >、<code>metrics.sqlite</code>、secret、revision、operation
+              journal 與備份。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-instance × N</code></th>
+            <td>
+              每條 VPN 的獨立 worker；擁有自己的
+              GotaTun、DNS、Gateway、Port、Metrics 與內層 Watchdog。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-provider-worker</code></th>
+            <td>
+              按 Provider job 執行 API 操作、route-bound IP preflight 與受限
+              connector，不自行建立或啟停 Instance。
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">macOS system extension（若啟用）</th>
+            <td>
+              處理受管 App 的 flow capture、deny 與
+              bridge；依原生平台能力提供安全邊界。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="ownership" class="vp-subsection">
+      <h3 id="vp-heading-758">完整的元件歸屬</h3>
+      <div class="vp-prose">
+        <p>
+          元件我先依照誰負責管理、誰有權限操作來分類。<br />光是畫一堆方塊沒什麼用，重要的是某個程序掛了，會影響到誰，以及誰可以把它重新啟動。
+        </p>
+      </div>
+      <figure
+        id="fig-ownership"
+        aria-labelledby="cap-ownership"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="元件歸屬圖：可水平捲動查看完整圖表"
+          class="vp-diagram-scroller"
+        >
+          <svg
+            width="1280"
+            height="1256"
+            viewBox="0 0 1280 1256"
+            role="img"
+            aria-label="VPN Manager 全部元件歸屬架構（繁體中文版）"
+          >
+            <title>完整元件歸屬圖</title>
+            <desc>
+              55個正式元件全部列入；同名Process Manager、Instance
+              Watchdog依父層區分。圖的縮排表示歸屬，不代表每個helper都是daemon。
+            </desc>
+            <defs>
+              <marker
+                id="ownership-02-component-map-blue"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-green"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-amber"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-purple"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-red"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+              </marker>
+            </defs>
+            <rect width="1280" height="1256" class="vp-paint-6"></rect>
+            <text x="28" y="34" class="vp-paint-7">
+              元件歸屬｜依執行邊界與權限責任分組
+            </text>
+            <rect
+              x="30"
+              y="70"
+              width="590"
+              height="145"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="46" y="100" class="vp-paint-23">
+              React 使用者介面（UI - React）
+            </text>
+            <text x="54" y="132" class="vp-paint-24">
+              · 核心介面（Core UI）
+            </text>
+            <text x="72" y="159" class="vp-paint-24">
+              · 效能面板（Performance Panel）
+            </text>
+            <text x="54" y="186" class="vp-paint-24">· 供應商管理面板</text>
+            <rect
+              x="660"
+              y="70"
+              width="590"
+              height="199"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="676" y="100" class="vp-paint-23">
+              VPN 控制器（VPN Controller）
+            </text>
+            <text x="684" y="132" class="vp-paint-24">
+              · VPN 核心（VPN Core）
+            </text>
+            <text x="684" y="159" class="vp-paint-24">· VPN Web API</text>
+            <text x="684" y="186" class="vp-paint-24">
+              · VPN 平台控制協調器
+            </text>
+            <text x="684" y="213" class="vp-paint-24">· VPN 設定檔驗證器</text>
+            <text x="684" y="240" class="vp-paint-24">
+              · Store helper（儲存介接）
+            </text>
+            <rect
+              x="30"
+              y="239"
+              width="590"
+              height="280"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="46" y="269" class="vp-paint-23">
+              平台管理器（Platform Manager）
+            </text>
+            <text x="54" y="301" class="vp-paint-24">· Linux 系統介接器</text>
+            <text x="72" y="328" class="vp-paint-24">· 程序管理器</text>
+            <text x="90" y="355" class="vp-paint-24">· 程序沙箱</text>
+            <text x="108" y="382" class="vp-paint-24">· 網路資源控制</text>
+            <text x="54" y="409" class="vp-paint-24">· macOS 系統介接器</text>
+            <text x="72" y="436" class="vp-paint-24">· 程序管理器</text>
+            <text x="90" y="463" class="vp-paint-24">· 程序沙箱</text>
+            <text x="108" y="490" class="vp-paint-24">· 網路資源控制</text>
+            <rect
+              x="660"
+              y="293"
+              width="590"
+              height="172"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="676" y="323" class="vp-paint-23">
+              供應商管理器（VPN Provide Manager）
+            </text>
+            <text x="684" y="355" class="vp-paint-24">
+              · Mullvad 供應商介接器
+            </text>
+            <text x="702" y="382" class="vp-paint-24">
+              · Mullvad IP 出口檢查器
+            </text>
+            <text x="684" y="409" class="vp-paint-24">
+              · AIRVPN 供應商介接器
+            </text>
+            <text x="702" y="436" class="vp-paint-24">
+              · AIRVPN IP 出口檢查器
+            </text>
+            <rect
+              x="660"
+              y="489"
+              width="590"
+              height="145"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="676" y="519" class="vp-paint-23">
+              安全管理器（Security Manager）
+            </text>
+            <text x="684" y="551" class="vp-paint-24">· DNS 設定檔驗證器</text>
+            <text x="684" y="578" class="vp-paint-24">· 防火牆設定檔</text>
+            <text x="684" y="605" class="vp-paint-24">· 自動封鎖偵測器</text>
+            <rect
+              x="30"
+              y="543"
+              width="590"
+              height="118"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="46" y="573" class="vp-paint-23">
+              指標服務（Metrics Service）
+            </text>
+            <text x="54" y="605" class="vp-paint-24">· 指標收集器</text>
+            <text x="54" y="632" class="vp-paint-24">· 指標壓縮模組</text>
+            <rect
+              x="660"
+              y="658"
+              width="590"
+              height="92"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="676" y="688" class="vp-paint-23">
+              效能管理器（Performance Manager）
+            </text>
+            <rect
+              x="30"
+              y="685"
+              width="590"
+              height="280"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="46" y="715" class="vp-paint-23">儲存服務（Store）</text>
+            <text x="54" y="747" class="vp-paint-24">· 設定資料輔助模組</text>
+            <text x="54" y="774" class="vp-paint-24">· 秘密資料輔助模組</text>
+            <text x="54" y="801" class="vp-paint-24">· 安全政策輔助模組</text>
+            <text x="54" y="828" class="vp-paint-24">· DNS 設定檔輔助模組</text>
+            <text x="54" y="855" class="vp-paint-24">· 供應商資料輔助模組</text>
+            <text x="72" y="882" class="vp-paint-24">
+              · Mullvad 資料輔助模組
+            </text>
+            <text x="72" y="909" class="vp-paint-24">
+              · AIRVPN 資料輔助模組
+            </text>
+            <text x="54" y="936" class="vp-paint-24">· 指標儲存輔助模組</text>
+            <rect
+              x="660"
+              y="774"
+              width="590"
+              height="388"
+              rx="8"
+              class="vp-paint-13"
+            ></rect>
+            <text x="676" y="804" class="vp-paint-23">
+              實例管理器（Instance Manager）
+            </text>
+            <text x="684" y="836" class="vp-paint-24">
+              · 外層 Instance 監控器
+            </text>
+            <text x="684" y="863" class="vp-paint-24">
+              · VPN Instance（單一 Profile）
+            </text>
+            <text x="702" y="890" class="vp-paint-24">· Instance 控制器</text>
+            <text x="702" y="917" class="vp-paint-24">
+              · Instance DNS 控制器
+            </text>
+            <text x="702" y="944" class="vp-paint-24">· Instance 埠控制器</text>
+            <text x="720" y="971" class="vp-paint-24">
+              · 埠轉發（Port forward）
+            </text>
+            <text x="702" y="998" class="vp-paint-24">· Instance 指標</text>
+            <text x="702" y="1025" class="vp-paint-24">
+              · Instance 內層監控器
+            </text>
+            <text x="702" y="1052" class="vp-paint-24">· Gateway 管理器</text>
+            <text x="720" y="1079" class="vp-paint-24">· Gateway 服務</text>
+            <text x="738" y="1106" class="vp-paint-24">· Gateway 指標</text>
+            <text x="702" y="1133" class="vp-paint-24">· GotaTun</text>
+            <rect
+              x="30"
+              y="989"
+              width="590"
+              height="92"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="46" y="1019" class="vp-paint-23">網頁靜態資源服務</text>
+            <text x="30" y="1218" class="vp-paint-12">
+              依元件所有權、權限及故障隔離邊界決定執行位置。
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-ownership">
+          <span class="vp-figlabel">元件歸屬圖</span
+          ><span>完整元件與責任歸屬</span
+          ><small
+            >依 parent／owner 分組，展示 UI、Controller、Platform、Store 與各個
+            Instance 內部的元件。<span class="vp-mobile-pan"
+              >（可左右滑動檢視完整圖表）</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="instance">
+    <h2 id="instance"><span class="vp-sec-no">02</span>VPN Instance 架構</h2>
+    <figure id="fig-instance" aria-labelledby="cap-instance" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="圖 2：可水平捲動查看完整圖表"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1280"
+          height="1090"
+          viewBox="0 0 1280 1090"
+          role="img"
+          aria-label="單一Instance完整內部與資料路徑"
+        >
+          <title>單一Instance完整內部與資料路徑</title>
+          <desc>
+            每個Instance都含自己的Controller、DNS、Port、Gateway、Metrics、Watchdog與GotaTun。內層Watchdog可封鎖，不能自行重建或解封。
+          </desc>
+          <defs>
+            <marker
+              id="instance-03-instance-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1280" height="1090" class="vp-paint-6"></rect>
+          <text x="28" y="34" class="vp-paint-7">
+            圖 2｜單一 VPN Instance：獨立服務與資料路徑
+          </text>
+          <rect
+            x="440"
+            y="65"
+            width="390"
+            height="95"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="456" y="95" class="vp-paint-9">Instance 管理器</text>
+          <text x="456" y="124" class="vp-paint-10">
+            下發命令／執行世代／資源租約
+          </text>
+          <rect
+            x="260"
+            y="210"
+            width="990"
+            height="650"
+            rx="12"
+            class="vp-paint-25"
+          ></rect>
+          <text x="278" y="240" class="vp-paint-26">
+            VPN Instance｜獨立 Rust Worker
+          </text>
+          <rect
+            x="560"
+            y="260"
+            width="360"
+            height="95"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="576" y="290" class="vp-paint-9">Instance 控制器</text>
+          <text x="576" y="319" class="vp-paint-10">只控制本 Instance</text>
+          <path
+            d="M635 160V258"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="300"
+            y="420"
+            width="260"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="316" y="450" class="vp-paint-27">Gateway 管理器</text>
+          <text x="316" y="479" class="vp-paint-10">Gateway 服務 × N</text>
+          <text x="316" y="503" class="vp-paint-10">Gateway 指標</text>
+          <rect
+            x="610"
+            y="420"
+            width="275"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="626" y="450" class="vp-paint-21">Instance DNS 控制器</text>
+          <text x="626" y="479" class="vp-paint-10">
+            獨立快取／連線池／解析器
+          </text>
+          <text x="626" y="503" class="vp-paint-10">DNS 僅透過 VPN 通道</text>
+          <rect
+            x="940"
+            y="420"
+            width="280"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="956" y="450" class="vp-paint-21">Instance 埠控制器</text>
+          <text x="956" y="479" class="vp-paint-10">
+            埠轉發（Port forward）
+          </text>
+          <text x="956" y="503" class="vp-paint-10">
+            僅允許同 Instance 的 App
+          </text>
+          <path
+            d="M650 355V385H430V418"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <path
+            d="M750 355V418"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <path
+            d="M850 355V385H1080V418"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="30"
+            y="420"
+            width="190"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="46" y="450" class="vp-paint-21">指定的受管 App</text>
+          <text x="46" y="479" class="vp-paint-10">Proxy 用戶端／</text>
+          <text x="46" y="503" class="vp-paint-10">受保護的程序</text>
+          <path
+            d="M220 475H298"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M940 450H900V367H125V418"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-28"
+          ></path>
+          <text x="140" y="356" class="vp-paint-12">
+            埠轉發僅送到同 Instance 的 App
+          </text>
+          <rect
+            x="440"
+            y="610"
+            width="340"
+            height="95"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="456" y="640" class="vp-paint-9">TCP/IP 處理＋GotaTun</text>
+          <text x="456" y="669" class="vp-paint-10">
+            Linux 核心／macOS Rust 協定堆疊
+          </text>
+          <text x="456" y="693" class="vp-paint-10">
+            獨立 WireGuard 裝置與金鑰
+          </text>
+          <path
+            d="M430 530V575H520V608"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M747 530V608"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M1080 530V565H800V658H782"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="300"
+            y="755"
+            width="310"
+            height="75"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="316" y="785" class="vp-paint-27">Instance 指標</text>
+          <text x="316" y="814" class="vp-paint-10">本地計數器／延遲分布</text>
+          <rect
+            x="790"
+            y="755"
+            width="430"
+            height="75"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="806" y="785" class="vp-paint-27">Instance 監控器</text>
+          <text x="806" y="814" class="vp-paint-10">
+            通道／DNS／平台政策健康狀態
+          </text>
+          <path
+            d="M430 530V730H455V753"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-20"
+          ></path>
+          <path
+            d="M610 705V730H500V753"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-20"
+          ></path>
+          <path
+            d="M1005 755V725H780"
+            marker-end="url(#instance-03-instance-amber)"
+            class="vp-paint-18"
+          ></path>
+          <rect
+            x="440"
+            y="915"
+            width="340"
+            height="85"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="456" y="945" class="vp-paint-23">VPN 對端節點</text>
+          <text x="456" y="974" class="vp-paint-10">
+            限定對端的加密 WireGuard UDP
+          </text>
+          <path
+            d="M610 705V913"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="30"
+            y="730"
+            width="190"
+            height="110"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="46" y="760" class="vp-paint-29">平台管理器</text>
+          <text x="46" y="789" class="vp-paint-10">程序沙箱／TUN／</text>
+          <text x="46" y="813" class="vp-paint-10">受限 UDP FD</text>
+          <path
+            d="M220 785H260V657H438"
+            marker-end="url(#instance-03-instance-amber)"
+            class="vp-paint-18"
+          ></path>
+          <rect
+            x="925"
+            y="915"
+            width="295"
+            height="85"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="941" y="945" class="vp-paint-9">指標服務</text>
+          <text x="941" y="974" class="vp-paint-10">有界的快照資料傳送</text>
+          <path
+            d="M455 830V880H1070V913"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="30" y="1062" class="vp-paint-12">
+            App 無法取得主機 Underlay、秘密資料、Store 或 namespace 描述符。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-instance">
+        <span class="vp-figlabel">圖 2</span
+        ><span>單一 VPN Instance 的服務與資料路徑</span
+        ><small
+          >每個 Instance 擁有自己的 runtime、控制器、Gateway、DNS、Metrics 與
+          Watchdog。<span class="vp-mobile-pan"
+            >（可左右滑動檢視完整圖表）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        每條 Instance 都有自己的 GotaTun、DNS Controller、Port
+        Controller、Gateway Manager、Metrics 和 Watchdog。<br />WireGuard
+        identity、DNS cache、socket、buffer、queue 也都要分開。<br />CPU、NIC 和
+        OS 可以共用，但 A 的執行狀態不應該和 B 混在一起。
+      </p>
+      <p>
+        有個地方要先講清楚。<br /><strong
+          >GotaTun 是 WireGuard 引擎，本身不是完整的 TCP/IP socket
+          stack。</strong
+        ><br />所以接上 GotaTun，不代表 TCP／UDP
+        連線處理就全部有了，這部分還是得另外處理。
+      </p>
+      <p>
+        Linux 我傾向直接用隔離 network namespace 裡的 kernel TCP/IP stack。<br />macOS
+        的顯式 Proxy 則由每條 Instance 自己使用 <code>smoltcp</code> 加上
+        GotaTun。<br />各自的 socket、buffer、queue 也要獨立，不要讓 Controller
+        的 SQL 或 Provider HTTP 呼叫卡到真正的網路流量。
+      </p>
+      <p>
+        DNS 也要跟著 Instance 走。<br />解析失敗就回報失敗，不能偷偷改問 host
+        resolver。<br />Gateway 收到 HTTP CONNECT 或 SOCKS5 TCP／UDP
+        後，要真的交給自己的 Instance 建立目的地連線。<br />Port Forward
+        只能轉到同一個 Instance 裡已驗證的 App endpoint，不能為了省事直接接到
+        host 的 <code>127.0.0.1</code>。
+      </p>
+      <h3 id="vp-heading-1290">受管 App、Gateway 和 Port Forward 的差別</h3>
+      <p>
+        我把流量入口分成三種。<br /><strong>受管 App</strong>
+        要先進入隔離環境，它自己不能選 host 網路。<br /><strong>Gateway</strong>
+        只負責明確交給 HTTP／SOCKS Proxy 的流量，App
+        另外建立的連線不會自動受到保護。<br /><strong>Port Forward</strong>
+        則是從 VPN 進來的流量，只能送到同一個 Instance 裡有有效
+        <code>AppEndpointLease</code> 的 App。
+      </p>
+      <p>
+        DNS 和 IPv6 也不能有特例。<br />如果 Instance 的 DNS
+        路徑不可用，那就不查。<br />IPv6 如果沒有能驗證的 tunnel
+        路徑，也不能自動放它走主機網路。
+      </p>
+      <h3 id="macos">macOS 的 App 隔離比較麻煩</h3>
+      <p>
+        macOS 這邊其實比較麻煩。<br />顯式 Proxy 可以做，但它只管真正交給 Proxy
+        的流量。<br />像 QUIC、WebRTC，或 App 自己使用的系統 DNS，都可能另外建立
+        socket。<br />所以有 Proxy，不代表整個 App 已經隔離。
+      </p>
+    </div>
+    <figure aria-labelledby="shot-cap-3" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="瀏覽器工具箱的網站代理路由，可水平捲動檢視"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-3.png"
+          width="1519"
+          height="757"
+          alt="瀏覽器工具箱的網站代理路由頁：香港 SOCKS5 127.0.0.1:1080 與荷蘭 SOCKS5 127.0.0.1:1082 兩個代理設定檔"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-3">
+        <span class="vp-figlabel">畫面 03</span
+        ><span
+          >瀏覽器工具箱的網站代理路由：香港使用 127.0.0.1:1080，荷蘭使用
+          127.0.0.1:1082。</span
+        ><small
+          >實際介面截圖・2026-11-01
+          <span class="vp-mobile-pan">（可左右滑動）</span></small
+        >
+      </figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="linux">
+    <h2 id="linux">
+      <span class="vp-sec-no">03</span>Linux：從 OS 層做到「無路可退」
+    </h2>
+    <figure id="fig-linux" aria-labelledby="cap-linux" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="圖 3：可水平捲動查看完整圖表"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1280"
+          height="900"
+          viewBox="0 0 1280 900"
+          role="img"
+          aria-label="Linux隔離資料路徑"
+        >
+          <title>Linux隔離資料路徑</title>
+          <desc>
+            host預建受限UDP
+            FD只交GotaTun；App只有netns內lo/TUN路徑。worker換代可保留封閉sandbox，不改主機default
+            route/DNS。
+          </desc>
+          <defs>
+            <marker
+              id="linux-06-linux-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1280" height="900" class="vp-paint-6"></rect>
+          <text x="28" y="34" class="vp-paint-7">
+            圖 3｜Linux：受管程序隔離與 WireGuard UDP 出口
+          </text>
+          <rect
+            x="30"
+            y="70"
+            width="1220"
+            height="680"
+            rx="12"
+            class="vp-paint-30"
+          ></rect>
+          <text x="48" y="100" class="vp-paint-31">
+            主機網路 namespace｜既有網路設定維持不變
+          </text>
+          <rect
+            x="400"
+            y="150"
+            width="810"
+            height="450"
+            rx="12"
+            class="vp-paint-25"
+          ></rect>
+          <text x="418" y="180" class="vp-paint-26">
+            Instance 隔離沙箱：僅 lo 與 TUN，沒有 veth／Host NAT
+          </text>
+          <rect
+            x="65"
+            y="180"
+            width="285"
+            height="110"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="81" y="210" class="vp-paint-27">主機 loopback 監聽端</text>
+          <text x="81" y="239" class="vp-paint-10">Gateway TCP／UDP 轉送</text>
+          <text x="81" y="263" class="vp-paint-10">
+            只接受已綁定的用戶端流量
+          </text>
+          <rect
+            x="445"
+            y="215"
+            width="300"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="461" y="245" class="vp-paint-9">程序沙箱</text>
+          <text x="461" y="274" class="vp-paint-10">指定的受管 App 程序樹</text>
+          <text x="461" y="298" class="vp-paint-10">
+            禁止主機 IPC 與繼承網路 FD
+          </text>
+          <rect
+            x="825"
+            y="215"
+            width="340"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="841" y="245" class="vp-paint-23">Instance 內部服務</text>
+          <text x="841" y="274" class="vp-paint-10">Gateway／DNS／埠連線</text>
+          <text x="841" y="298" class="vp-paint-10">
+            目的地 socket 建立於隔離 netns
+          </text>
+          <path
+            d="M350 235H380V365H990V327"
+            marker-end="url(#linux-06-linux-blue)"
+            class="vp-paint-16"
+          ></path>
+          <text x="385" y="391" class="vp-paint-12">
+            已預先綁定的監聽 FD 交付
+          </text>
+          <rect
+            x="445"
+            y="440"
+            width="300"
+            height="100"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="461" y="470" class="vp-paint-9">Linux 核心 TCP/IP＋TUN</text>
+          <text x="461" y="499" class="vp-paint-10">
+            獨立路由／DNS／防火牆策略
+          </text>
+          <rect
+            x="825"
+            y="440"
+            width="340"
+            height="100"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="841" y="470" class="vp-paint-23">GotaTun</text>
+          <text x="841" y="499" class="vp-paint-10">
+            每個 Instance 擁有獨立裝置
+          </text>
+          <path
+            d="M595 325V438"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M995 325V405H745V490"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M745 490H823"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="65"
+            y="440"
+            width="285"
+            height="100"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="81" y="470" class="vp-paint-27">受限 UDP FD</text>
+          <text x="81" y="499" class="vp-paint-10">預先建立於主機 netns</text>
+          <text x="81" y="523" class="vp-paint-10">
+            只能發送到核准的 VPN peer
+          </text>
+          <path
+            d="M825 510H785V570H210V542"
+            marker-end="url(#linux-06-linux-amber)"
+            class="vp-paint-32"
+          ></path>
+          <rect
+            x="65"
+            y="645"
+            width="285"
+            height="70"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="81" y="675" class="vp-paint-27">主機網卡 → VPN 對端</text>
+          <path
+            d="M207 540V643"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="445"
+            y="645"
+            width="720"
+            height="70"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="461" y="675" class="vp-paint-21">
+            平台管理：程序與網路資源控制
+          </text>
+          <text x="30" y="800" class="vp-paint-12">
+            Worker／TUN 故障時，App 仍沒有其他外網出口；沙箱生命週期可跨越
+            Worker 世代。
+          </text>
+          <text x="30" y="830" class="vp-paint-12">
+            只建立或清除本系統擁有的 namespace、cgroup、bind 與過濾規則。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-linux">
+        <span class="vp-figlabel">圖 3</span
+        ><span>Linux namespace 隔離與 WireGuard UDP 路徑</span
+        ><small
+          >一般 host 網路不變；隔離 netns 的 App 沒有未經授權的明文 host
+          出口。<span class="vp-mobile-pan"
+            >（可左右滑動檢視完整圖表）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Linux 的做法比較直接。<br />我不打算修改主機的 default
+        route，也不會把實體網卡搬去別的 namespace。<br />沒有被管理的 App
+        照常使用原本的網路。
+      </p>
+      <p>
+        Platform Manager 先在 host network namespace 建立只允許指定 WireGuard
+        peer 的 UDP socket。<br />接著把受限的 FD 交給隔離 namespace 裡的 VPN
+        worker。<br />那個 namespace 只有 loopback 和 TUN，不提供通往 host 的
+        veth／NAT 明文出口。
+      </p>
+      <p>
+        App 送出的 IP 封包先進 TUN，由 GotaTun 加密，再透過原先在 host namespace
+        建立的 UDP FD 送到 WireGuard peer。<br />不過，光是 socket 在 host
+        建立還不夠。<br />它可以連去哪個 IP／port、FD 由誰持有，以及 Platform
+        policy 是否真的生效，這些都要確認。
+      </p>
+      <p>
+        我比較在意的是，<strong>App 根本沒有普通的 host internet 出口</strong
+        >。<br />worker 掛掉就先斷網，沒必要替它找備用路線。<br />我不能接受 VPN
+        斷線以後，App 自己繞回 ISP 出口。
+      </p>
+      <p>
+        但 <code>netns</code> 也不是完整的 sandbox。<br />App
+        可能繼承了其他程序的 FD，或透過 Unix socket、D-Bus、host IPC 找到旁路。
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="lifecycle">
+    <h2 id="lifecycle">
+      <span class="vp-sec-no">04</span>Instance 的啟動與故障恢復流程
+    </h2>
+    <figure id="fig-recovery" aria-labelledby="cap-recovery" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="圖 5：可水平捲動查看完整圖表"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1280"
+          height="950"
+          viewBox="0 0 1280 950"
+          role="img"
+          aria-label="生命週期、自動恢復與停止優先"
+        >
+          <title>生命週期、自動恢復與停止優先</title>
+          <desc>
+            manual
+            Stop與急停優先於恢復；Manager/intent/generation/sandbox全tuple匹配後才能CommitResume。Manager換代替換worker，只收養closed
+            sandbox。
+          </desc>
+          <defs>
+            <marker
+              id="recovery-05-recovery-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1280" height="950" class="vp-paint-6"></rect>
+          <text x="28" y="34" class="vp-paint-7">
+            圖 5｜安全啟動、自動恢復與人工停止優先權
+          </text>
+          <rect
+            x="30"
+            y="80"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="46" y="110" class="vp-paint-27">持久化意圖與資源保留</text>
+          <text x="46" y="139" class="vp-paint-10">
+            期望狀態／人工停止／緊急停止
+          </text>
+          <text x="46" y="163" class="vp-paint-10">Manager 任期／意圖版次</text>
+          <text x="46" y="187" class="vp-paint-10">Worker 世代／身分租約</text>
+          <rect
+            x="465"
+            y="80"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="481" y="110" class="vp-paint-27">
+            先封閉環境，再啟動程序
+          </text>
+          <text x="481" y="139" class="vp-paint-10">
+            沙箱世代獨立於 Worker 世代
+          </text>
+          <text x="481" y="163" class="vp-paint-10">
+            未設定 Worker／已驗證身分
+          </text>
+          <text x="481" y="187" class="vp-paint-10">
+            Store 私密交付一次性秘密
+          </text>
+          <rect
+            x="900"
+            y="80"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="916" y="110" class="vp-paint-27">僅允許健康探測</text>
+          <text x="916" y="139" class="vp-paint-10">
+            驗證 VPN 通道／DNS／策略
+          </text>
+          <text x="916" y="163" class="vp-paint-10">
+            關閉 App／Gateway／埠轉發
+          </text>
+          <text x="916" y="187" class="vp-paint-10">獨立驗證健康狀態</text>
+          <path
+            d="M380 145H463"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M815 145H898"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="900"
+            y="360"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="916" y="390" class="vp-paint-23">
+            提交開通（CommitResume）
+          </text>
+          <text x="916" y="419" class="vp-paint-10">
+            Manager 重新核對最新意圖
+          </text>
+          <text x="916" y="443" class="vp-paint-10">Platform 消耗單次授權</text>
+          <text x="916" y="467" class="vp-paint-10">
+            此步驟才正式打開流量閘門
+          </text>
+          <path
+            d="M1075 210V358"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="465"
+            y="360"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="481" y="390" class="vp-paint-23">就緒／僅走 VPN 通道</text>
+          <text x="481" y="419" class="vp-paint-10">
+            啟用已設定的 App／Gateway
+          </text>
+          <text x="481" y="443" class="vp-paint-10">
+            只允許當前 Worker 世代
+          </text>
+          <text x="481" y="467" class="vp-paint-10">
+            Controller 故障不影響管理器
+          </text>
+          <path
+            d="M900 425H817"
+            marker-end="url(#recovery-05-recovery-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="30"
+            y="360"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="46" y="390" class="vp-paint-27">故障 → 封閉／封存</text>
+          <text x="46" y="419" class="vp-paint-10">立即關閉相關資料入口</text>
+          <text x="46" y="443" class="vp-paint-10">故障偵測時沒有直接出口</text>
+          <text x="46" y="467" class="vp-paint-10">已封存世代不可重新開通</text>
+          <path
+            d="M465 425H382"
+            marker-end="url(#recovery-05-recovery-red)"
+            class="vp-paint-34"
+          ></path>
+          <rect
+            x="30"
+            y="660"
+            width="350"
+            height="150"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="46" y="690" class="vp-paint-9">自動恢復</text>
+          <text x="46" y="719" class="vp-paint-10">
+            僅當持久意圖為 desired=running
+          </text>
+          <text x="46" y="743" class="vp-paint-10">
+            人工停止／緊急停止必須已清除
+          </text>
+          <text x="46" y="767" class="vp-paint-10">
+            舊 Worker／FD 必須確實失效
+          </text>
+          <text x="46" y="791" class="vp-paint-10">
+            新增世代，沿用 Instance ID
+          </text>
+          <path
+            d="M205 490V658"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M205 660V580H420V145H463"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="465"
+            y="660"
+            width="350"
+            height="150"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="481" y="690" class="vp-paint-27">人工停止／緊急停止</text>
+          <text x="481" y="719" class="vp-paint-10">
+            推進意圖版次並撤銷授權
+          </text>
+          <text x="481" y="743" class="vp-paint-10">
+            過期恢復程序不可重新開通
+          </text>
+          <text x="481" y="767" class="vp-paint-10">
+            解除緊急狀態仍保持停止
+          </text>
+          <text x="481" y="791" class="vp-paint-10">
+            其後必須由使用者明確啟動
+          </text>
+          <path
+            d="M640 660V492"
+            marker-end="url(#recovery-05-recovery-red)"
+            class="vp-paint-35"
+          ></path>
+          <rect
+            x="900"
+            y="660"
+            width="350"
+            height="150"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="916" y="690" class="vp-paint-27">
+            Manager 或 Platform 重啟
+          </text>
+          <text x="916" y="719" class="vp-paint-10">封存舊世代</text>
+          <text x="916" y="743" class="vp-paint-10">
+            僅保留已證明封閉的沙箱租約
+          </text>
+          <text x="916" y="767" class="vp-paint-10">更換執行中的 Worker</text>
+          <text x="916" y="791" class="vp-paint-10">
+            停止意圖無法證明 → 封閉
+          </text>
+          <path
+            d="M1075 660V580H420"
+            marker-end="url(#recovery-05-recovery-amber)"
+            class="vp-paint-18"
+          ></path>
+          <text x="30" y="880" class="vp-paint-12">
+            只有 Instance Manager 能核准 CommitResume；單獨 ApplyPolicy
+            無法重新開通。
+          </text>
+          <text x="30" y="910" class="vp-paint-12">
+            CPU／Store／Metrics 暫停不得產生非授權的主機直連備援。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-recovery">
+        <span class="vp-figlabel">圖 5</span
+        ><span>Instance 的啟動與故障恢復流程</span
+        ><small
+          >圖中的 Resume 需要當代意圖、worker generation 與 Platform enforcement
+          證據。<span class="vp-mobile-pan"
+            >（可左右滑動檢視完整圖表）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>WireGuard 握手成功，不代表我就可以讓 App 開始上網。</p>
+      <p>
+        啟動 Instance 時，先把隔離環境建好，而且預設封閉。<br />worker
+        起來後，只允許 WireGuard 握手、DNS 和健康探測。<br />等目前的設定、Platform
+        policy 和 worker generation 都確認沒問題，再把 App 和 Gateway 打開。
+      </p>
+      <p>
+        中間任何一步失敗，就維持 <code>blocked</code>。<br />重建 worker
+        時一定要換新的 <code>generation</code>，被 <code>Seal</code> 的舊
+        generation 不能再開。<br />Manager 換代、Platform epoch
+        變更，或使用者在這期間按了 Start／Stop，先前發出的命令都不能再生效。
+      </p>
+      <p>
+        Watchdog 我分成兩層。<br />Instance 裡面的 Watchdog 發現問題就先把自己的
+        ingress 關掉，然後回報故障。<br />外面的 Instance Manager
+        才負責記錄意圖、回收舊資源和重建。<br />我不想看到兩邊同時搶著 restart
+        同一個 Instance。
+      </p>
+      <p>
+        手動 <code>Stop</code> 和
+        <code>EmergencyStop</code> 的優先權一定要最高。<br />假設 Stop
+        的時候資料庫剛好壞掉，連最新的停止意圖有沒有成功保存都不知道，系統就不能拿舊的
+        <code>desired=running</code> 自動開回來。<br />這時我寧願進入
+        <code>recovery_required</code>，等人確認。
+      </p>
+      <p>
+        至於原本的 TCP session 能不能在 crash 後接回來，我沒有要硬保證。<br />讓連線斷掉，比走錯出口好。
+      </p>
+      <h3 id="vp-heading-1890">連線狀態不能只有 Connected／Disconnected</h3>
+      <p>
+        我不希望 UI 只有 Connected／Disconnected 兩種狀態。<br />例如我把 A 設成
+        <code>desired_state=running</code>，但它目前正在
+        <code>reconnecting</code>，而且
+        <code>enforcement=blocked</code
+        >。<br />這三件事應該分開顯示。<br />我想讓它繼續運作，跟它現在能不能外送，是不同的事情。
+      </p>
+    </div>
+    <div id="start-sequence" class="vp-subsection">
+      <h3 id="vp-heading-1920">
+        啟動、故障封閉與自動恢復：START／ACTIVATE 循序圖
+      </h3>
+      <div class="vp-prose">
+        <p>
+          流程會先把 <code>desired=running</code> 寫進 Store，Manager 再保留
+          generation 和 identity lease，請 Platform 執行
+          <code>PrepareClosed</code>。<br />worker 先以
+          <code>probe_only</code> 啟動。<br />確認 tunnel、DNS、policy
+          和當前的權限資訊都一致後，才執行 <code>CommitResume</code> 和
+          <code>Activate</code>。
+        </p>
+      </div>
+      <figure
+        id="fig-start-seq"
+        aria-labelledby="cap-start-seq"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="循序圖 A：可水平捲動查看完整圖表"
+          class="vp-diagram-scroller vp-sequence"
+        >
+          <svg
+            viewBox="0 0 1420 1334"
+            width="1420"
+            height="1334"
+            role="img"
+            aria-label="START／ACTIVATE 循序圖"
+          >
+            <title>START／ACTIVATE 循序圖</title>
+            <desc>
+              所有 payload gate 預設關閉；只有當代 Manager 與 Platform
+              證據可授權開通。
+            </desc>
+            <defs>
+              <marker
+                id="start-seq-arrow-flow"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="start-seq-arrow-back"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-2"></path>
+              </marker>
+            </defs>
+            <rect width="1420" height="1334" rx="14" class="vp-paint-36"></rect>
+            <text x="42" y="40" class="vp-paint-37">
+              START／ACTIVATE 啟動與開通循序圖
+            </text>
+            <text x="42" y="75" class="vp-paint-38">
+              資料閘門預設關閉；只有當代 Manager 與 Platform
+              的驗證證據能核准開通。
+            </text>
+            <rect
+              x="14.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="100.0" y="128" class="vp-paint-40">使用者介面</text>
+            <line
+              x1="100.0"
+              x2="100.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="258.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="344.0" y="128" class="vp-paint-40">VPN 核心</text>
+            <line
+              x1="344.0"
+              x2="344.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="502.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="588.0" y="128" class="vp-paint-40">儲存服務</text>
+            <line
+              x1="588.0"
+              x2="588.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="746.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="832.0" y="128" class="vp-paint-40">Instance 管理器</text>
+            <line
+              x1="832.0"
+              x2="832.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="990.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1076.0" y="128" class="vp-paint-40">平台服務</text>
+            <line
+              x1="1076.0"
+              x2="1076.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1234.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1320.0" y="128" class="vp-paint-40">Instance Worker</text>
+            <line
+              x1="1320.0"
+              x2="1320.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="25"
+              y="144"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="100.0"
+              x2="334.0"
+              y1="187"
+              y2="187"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="222.0" y="173" class="vp-paint-44">
+              01 · 啟動＋版本比對
+            </text>
+            <line
+              x1="344.0"
+              x2="578.0"
+              y1="261"
+              y2="261"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="466.0" y="247" class="vp-paint-45">
+              02 · CAS 持久化 desired=running
+            </text>
+            <rect
+              x="25"
+              y="292"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="344.0"
+              x2="822.0"
+              y1="335"
+              y2="335"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="588.0" y="321" class="vp-paint-44">03 · 發出啟動意圖</text>
+            <line
+              x1="832.0"
+              x2="598.0"
+              y1="409"
+              y2="409"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="710.0" y="395" class="vp-paint-45">
+              04 · 保留 Worker 世代與金鑰租約
+            </text>
+            <rect
+              x="25"
+              y="440"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="832.0"
+              x2="1066.0"
+              y1="483"
+              y2="483"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="954.0" y="469" class="vp-paint-45">
+              05 · PrepareClosed：先封閉
+            </text>
+            <line
+              x1="1076.0"
+              x2="842.0"
+              y1="557"
+              y2="557"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="954.0" y="543" class="vp-paint-45">
+              06 · 回傳沙箱／策略證據
+            </text>
+            <rect
+              x="25"
+              y="588"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="832.0"
+              x2="1066.0"
+              y1="631"
+              y2="631"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="954.0" y="617" class="vp-paint-45">
+              07 · 建立 Worker 與受限 FD
+            </text>
+            <line
+              x1="1076.0"
+              x2="1310.0"
+              y1="705"
+              y2="705"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1198.0" y="691" class="vp-paint-45">
+              08 · 交付受限資源並啟動
+            </text>
+            <rect
+              x="25"
+              y="736"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="588.0"
+              x2="1310.0"
+              y1="779"
+              y2="779"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="954.0" y="765" class="vp-paint-44">
+              09 · 單次秘密租約交付
+            </text>
+            <line
+              x1="832.0"
+              x2="1310.0"
+              y1="853"
+              y2="853"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1076.0" y="839" class="vp-paint-44">
+              10 · Configure／Start：僅探測
+            </text>
+            <rect
+              x="25"
+              y="884"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1320.0"
+              x2="842.0"
+              y1="927"
+              y2="927"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1076.0" y="913" class="vp-paint-44">
+              11 · VPN 通道與 DNS 驗證完成
+            </text>
+            <line
+              x1="832.0"
+              x2="1066.0"
+              y1="1001"
+              y2="1001"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="954.0" y="987" class="vp-paint-45">
+              12 · CommitResume：核准開通
+            </text>
+            <rect
+              x="25"
+              y="1032"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="832.0"
+              x2="1310.0"
+              y1="1075"
+              y2="1075"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1076.0" y="1061" class="vp-paint-44">
+              13 · Activate：正式就緒
+            </text>
+            <line
+              x1="832.0"
+              x2="598.0"
+              y1="1149"
+              y2="1149"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="710.0" y="1135" class="vp-paint-45">14 · 操作成功</text>
+            <rect
+              x="25"
+              y="1180"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="344.0"
+              x2="110.0"
+              y1="1223"
+              y2="1223"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="222.0" y="1209" class="vp-paint-45">
+              15 · SSE 回傳最新狀態
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-start-seq">
+          <span class="vp-figlabel">循序圖 A</span
+          ><span>START／ACTIVATE 循序圖</span
+          ><small
+            >從持久化意圖、封閉環境到 probe-only，最後才授權 Activate。<span
+              class="vp-mobile-pan"
+              >（可左右滑動檢視完整圖表）</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="bootstrap">
+    <h2 id="bootstrap">
+      <span class="vp-sec-no">05</span>第一次 Provider
+      要怎麼建立？這是一個自舉問題
+    </h2>
+    <figure id="fig-provider" aria-labelledby="cap-provider" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="圖 6：可水平捲動查看完整圖表"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1280"
+          height="1140"
+          viewBox="0 0 1280 1140"
+          role="img"
+          aria-label="Provider首次連線與每次訪問檢查"
+        >
+          <title>Provider首次連線與每次訪問檢查</title>
+          <desc>
+            首次取得Profile即自動建立Instance，撤銷原網路後封存latch。所有Provider共用人工選定出口，但每個Adapter各自檢查且每次HTTP重做preflight。
+          </desc>
+          <defs>
+            <marker
+              id="provider-04-provider-egress-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="1280" height="1140" class="vp-paint-6"></rect>
+          <text x="28" y="34" class="vp-paint-7">
+            圖 6｜Provider 首次自舉、切換出口與每次請求驗證
+          </text>
+          <rect
+            x="30"
+            y="70"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="46" y="100" class="vp-paint-27">首次 Provider 建立作業</text>
+          <text x="46" y="129" class="vp-paint-10">
+            單一帳號／僅授權受限主機網路
+          </text>
+          <text x="46" y="153" class="vp-paint-10">
+            10 分鐘授權／單次 60 秒工作階段
+          </text>
+          <text x="46" y="177" class="vp-paint-10">
+            每次 API 請求仍須執行檢查
+          </text>
+          <rect
+            x="465"
+            y="70"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="481" y="100" class="vp-paint-9">取得首份合法 Profile</text>
+          <text x="481" y="129" class="vp-paint-10">
+            驗證器與持久化唯一子操作
+          </text>
+          <text x="481" y="153" class="vp-paint-10">
+            控制器 → Instance 管理器
+          </text>
+          <text x="481" y="177" class="vp-paint-10">
+            自動建立並啟動 Instance
+          </text>
+          <rect
+            x="900"
+            y="70"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="916" y="100" class="vp-paint-27">
+            新 Instance 通過初步探測
+          </text>
+          <text x="916" y="129" class="vp-paint-10">
+            獨立通道／DNS／系統限制
+          </text>
+          <text x="916" y="153" class="vp-paint-10">
+            候選連線只能用於健康探測
+          </text>
+          <path
+            d="M380 135H463"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M815 135H898"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="900"
+            y="300"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="916" y="330" class="vp-paint-9">封閉原始直連出口</text>
+          <text x="916" y="359" class="vp-paint-10">1．持久記錄封閉意圖</text>
+          <text x="916" y="383" class="vp-paint-10">
+            2．撤銷全部直連 socket
+          </text>
+          <text x="916" y="407" class="vp-paint-10">
+            3．寫入永久鎖定與出口綁定
+          </text>
+          <path
+            d="M1075 200V298"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="465"
+            y="300"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="481" y="330" class="vp-paint-27">全域選定的 Instance</text>
+          <text x="481" y="359" class="vp-paint-10">
+            所有 Provider 共用同一出口
+          </text>
+          <text x="481" y="383" class="vp-paint-10">只能人工切換或停用</text>
+          <text x="481" y="407" class="vp-paint-10">不得自動回退主機直連</text>
+          <path
+            d="M900 365H817"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="30"
+            y="300"
+            width="350"
+            height="130"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="46" y="330" class="vp-paint-23">封鎖／停用</text>
+          <text x="46" y="359" class="vp-paint-10">
+            仍顯示原本選定的 Instance
+          </text>
+          <text x="46" y="383" class="vp-paint-10">
+            過期監控資訊不可視為正常
+          </text>
+          <text x="46" y="407" class="vp-paint-10">恢復不可覆蓋人工停止</text>
+          <path
+            d="M465 365H382"
+            marker-end="url(#provider-04-provider-egress-red)"
+            class="vp-paint-35"
+          ></path>
+          <rect
+            x="30"
+            y="510"
+            width="1220"
+            height="480"
+            rx="12"
+            class="vp-paint-47"
+          ></rect>
+          <text x="48" y="540" class="vp-paint-48">
+            每一個實際 Provider API 請求：含重試、分頁、權杖更新與對帳
+          </text>
+          <rect
+            x="65"
+            y="570"
+            width="320"
+            height="125"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="81" y="600" class="vp-paint-27">1．規劃並保留配額</text>
+          <text x="81" y="629" class="vp-paint-10">
+            固定 IP 家族與不可變請求
+          </text>
+          <text x="81" y="653" class="vp-paint-10">
+            保留 IP 探測與 API 配額
+          </text>
+          <text x="81" y="677" class="vp-paint-10">讀取當前連線身分</text>
+          <rect
+            x="470"
+            y="570"
+            width="325"
+            height="125"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="486" y="600" class="vp-paint-27">
+            2．Provider IP 出口檢查
+          </text>
+          <text x="486" y="629" class="vp-paint-10">
+            與 API 使用相同連線／IP 家族
+          </text>
+          <text x="486" y="653" class="vp-paint-10">
+            分別核對 IP、地理與供應商歸屬
+          </text>
+          <text x="486" y="677" class="vp-paint-10">探測請求不帶帳號憑證</text>
+          <rect
+            x="875"
+            y="570"
+            width="330"
+            height="125"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="891" y="600" class="vp-paint-27">3．核發單次請求許可</text>
+          <text x="891" y="629" class="vp-paint-10">
+            綁定請求、路由與連線世代
+          </text>
+          <text x="891" y="653" class="vp-paint-10">隨機值＋2 秒發送期限</text>
+          <text x="891" y="677" class="vp-paint-10">
+            檢查流程不遞迴呼叫自身
+          </text>
+          <path
+            d="M385 633H468"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M795 633H873"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="875"
+            y="810"
+            width="330"
+            height="120"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="891" y="840" class="vp-paint-27">4．發送前原子驗證</text>
+          <text x="891" y="869" class="vp-paint-10">
+            重驗世代、IP 家族與期限
+          </text>
+          <text x="891" y="893" class="vp-paint-10">
+            首個 API 位元組前消耗許可
+          </text>
+          <text x="891" y="917" class="vp-paint-10">
+            不允許自動轉址或隱藏重試
+          </text>
+          <path
+            d="M1040 695V808"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="470"
+            y="810"
+            width="325"
+            height="120"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="486" y="840" class="vp-paint-27">5．執行 Provider API</text>
+          <text x="486" y="869" class="vp-paint-10">
+            僅由選定的 VPN 通道送出
+          </text>
+          <text x="486" y="893" class="vp-paint-10">
+            遠端變更結果不明 → unknown
+          </text>
+          <text x="486" y="917" class="vp-paint-10">
+            先對帳，再決定是否重試
+          </text>
+          <path
+            d="M875 868H797"
+            marker-end="url(#provider-04-provider-egress-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="65"
+            y="810"
+            width="320"
+            height="120"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="81" y="840" class="vp-paint-27">Provider 管理面板</text>
+          <text x="81" y="869" class="vp-paint-10">
+            Instance 離線也保留選擇
+          </text>
+          <text x="81" y="893" class="vp-paint-10">
+            出口 IP／國家／城市／時間
+          </text>
+          <text x="81" y="917" class="vp-paint-10">供應商歸屬可能無法確認</text>
+          <path
+            d="M470 868H387"
+            marker-end="url(#provider-04-provider-egress-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="30" y="1050" class="vp-paint-12">
+            IP 觀測不能證明 DNS、IPv6、QUIC 或所有 App
+            路徑；必須由平台限制強制保護。
+          </text>
+          <text x="30" y="1080" class="vp-paint-12">
+            完成切換後：禁止主機 DNS、主機 HTTP 與自動改用其他出口。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-provider">
+        <span class="vp-figlabel">圖 6</span
+        ><span>Provider 第一次自舉、切換出口與每次請求的前置檢查</span
+        ><small
+          >首次自舉的受限直連權限，在切換至 VPN 後被撤銷，不允許自動
+          fallback。<span class="vp-mobile-pan"
+            >（可左右滑動檢視完整圖表）</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Provider 也有個問題。<br />剛安裝 VPN Manager 的時候，根本還沒有 VPN
+        Profile，我總得先去 Mullvad 或 AIRVPN 取得帳號、device 和 WireGuard
+        設定。<br />那第一個管理請求要走哪裡？
+      </p>
+      <p>
+        我目前的想法是只允許第一次有條件的直連。<br />Provider worker
+        拿到限時、限帳號、限 HTTPS origin、DNS 與流量預算的
+        <code>BootstrapGrant</code>。<br />拿到第一份合法 Profile，就由
+        Controller 要求 Instance Manager 建立並啟動第一條 VPN。
+      </p>
+      <p>
+        確認 tunnel 已經能處理管理請求後，先把封閉 direct 的意圖寫進
+        Store，再撤銷原本的 grant 和 socket，最後才標記
+        <code>bootstrap_consumed=true</code>，並設定 Provider 的全域出口。<br />這個順序不能亂，尤其不能在直連還活著的時候，就說已經切換完成。
+      </p>
+      <p>
+        之後所有 Provider API 都走使用者選定的 VPN Instance。<br />那條 Instance
+        掛了，就顯示 <code>blocked</code>，不准切回
+        host，也不能自動換另一條。<br />真的處理不了，再由使用者手動選新出口，或明確授權一次性的
+        <code>rebootstrap</code>。
+      </p>
+      <p>
+        我還希望每次真正送出 Provider HTTP request 前，都先做一次 IP
+        preflight。<br />包括 retry、pagination、token refresh，都要確認同一個
+        route tuple、IP family 和 connector，拿到只供這次 request 使用的
+        <code>ProviderRequestPermit</code> 才能送出。<br />目前暫定 preflight
+        deadline 3 秒、dispatch window 2 秒。<br />這會比較慢，也會增加 checker
+        quota，但至少不會拿 UI 幾分鐘前顯示的 IP 當成現在的選路證據。
+      </p>
+      <p>
+        UI 要把幾件事情分開顯示：選的是哪條 Instance、這次 request
+        有沒有真的經過受控 tunnel，以及外部 IP 是不是該 Provider 的出口。<br />例如我選
+        Mullvad Instance 去呼叫 AIRVPN 的管理 API，這可以完全符合我的設定。<br />對外
+        IP 不是 AIRVPN，不代表流量洩漏。
+      </p>
+      <h3 id="vp-heading-2475">Provider Adapter 要負責哪些事情</h3>
+      <p>
+        供應商整合我想盡量走同一個流程。<br />Profile 驗證、Instance
+        建立、出口綁定由共用的控制邏輯處理；Mullvad、AIRVPN 各自的
+        device、server 和 port-forward API 才交給 Adapter。<br />新增 Provider
+        的時候，我不想每個 Adapter 都有權限直接啟停 Instance 或開 host socket。
+      </p>
+      <p>
+        Provider API 還有一個麻煩：request 送出去以後
+        timeout，不代表對方沒有執行。<br />例如 device
+        其實建立成功，只是回覆沒有收到。<br />這時候先記成
+        <code>unknown</code>，再用 operation journal
+        查詢遠端狀態，不應該直接重送一次。
+      </p>
+    </div>
+    <div id="provider-sequence" class="vp-subsection">
+      <h3 id="vp-heading-2503">PROVIDER 首次自舉循序圖</h3>
+      <div class="vp-prose">
+        <p>
+          整個自舉要算完成，必須確認新 Instance 能發出管理請求，原本的 direct
+          授權也確實撤銷，最後才
+          <code>CommitEgress</code
+          >。<br />如果切換中的某個結果無法確認，我寧願先停在
+          <code>blocked</code>，把狀態查清楚。
+        </p>
+      </div>
+      <figure
+        id="fig-provider-seq"
+        aria-labelledby="cap-provider-seq"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="循序圖 B：可水平捲動查看完整圖表"
+          class="vp-diagram-scroller vp-sequence"
+        >
+          <svg
+            viewBox="0 0 1420 1334"
+            width="1420"
+            height="1334"
+            role="img"
+            aria-label="PROVIDER 首次自舉循序圖"
+          >
+            <title>PROVIDER 首次自舉循序圖</title>
+            <desc>
+              初次受限直連 → 首 Profile → 自動啟 Instance → seal/revoke →
+              CommitEgress。
+            </desc>
+            <defs>
+              <marker
+                id="provider-seq-arrow-flow"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="provider-seq-arrow-back"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-2"></path>
+              </marker>
+            </defs>
+            <rect width="1420" height="1334" rx="14" class="vp-paint-36"></rect>
+            <text x="42" y="40" class="vp-paint-37">
+              Provider 首次建立 VPN 循序圖
+            </text>
+            <text x="42" y="75" class="vp-paint-38">
+              初次受限直連 → 首份 Profile → 自動建立 Instance → 封閉直連 → 綁定
+              VPN 出口。
+            </text>
+            <rect
+              x="14.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="100.0" y="128" class="vp-paint-40">UI／VPN 核心</text>
+            <line
+              x1="100.0"
+              x2="100.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="217.3"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="303.3" y="128" class="vp-paint-40">儲存服務</text>
+            <line
+              x1="303.3"
+              x2="303.3"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="420.7"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="506.7" y="128" class="vp-paint-40">平台服務</text>
+            <line
+              x1="506.7"
+              x2="506.7"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="624.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="710.0" y="128" class="vp-paint-40">Provider 工作程序</text>
+            <line
+              x1="710.0"
+              x2="710.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="827.3"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="913.3" y="128" class="vp-paint-40">Provider API</text>
+            <line
+              x1="913.3"
+              x2="913.3"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1030.7"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1116.7" y="128" class="vp-paint-40">實例管理器</text>
+            <line
+              x1="1116.7"
+              x2="1116.7"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1234.0"
+              y="99"
+              width="172"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1320.0" y="128" class="vp-paint-40">VPN Instance</text>
+            <line
+              x1="1320.0"
+              x2="1320.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="25"
+              y="144"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="100.0"
+              x2="293.3"
+              y1="187"
+              y2="187"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="201.7" y="173" class="vp-paint-45">01 · 建立自舉紀錄</text>
+            <line
+              x1="100.0"
+              x2="496.7"
+              y1="261"
+              y2="261"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="303.3" y="247" class="vp-paint-44">
+              02 · 準備限時直連權限
+            </text>
+            <rect
+              x="25"
+              y="292"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="506.7"
+              x2="700.0"
+              y1="335"
+              y2="335"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="608.3" y="321" class="vp-paint-45">
+              03 · 僅交付核准的直連通道
+            </text>
+            <line
+              x1="710.0"
+              x2="903.3"
+              y1="409"
+              y2="409"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="811.7" y="395" class="vp-paint-45">
+              04 · IP 出口預檢＋取得 Profile
+            </text>
+            <rect
+              x="25"
+              y="440"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="913.3"
+              x2="720.0"
+              y1="483"
+              y2="483"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="811.7" y="469" class="vp-paint-44">05 · 回傳 Profile</text>
+            <line
+              x1="710.0"
+              x2="313.3"
+              y1="557"
+              y2="557"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="506.7" y="543" class="vp-paint-44">
+              06 · 儲存 Profile 與唯一子操作
+            </text>
+            <rect
+              x="25"
+              y="588"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="100.0"
+              x2="1106.7"
+              y1="631"
+              y2="631"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="608.3" y="617" class="vp-paint-44">
+              07 · 自動建立並啟動 Instance
+            </text>
+            <line
+              x1="1116.7"
+              x2="516.7"
+              y1="705"
+              y2="705"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="811.7" y="691" class="vp-paint-44">
+              08 · 封閉環境、建立 Worker
+            </text>
+            <rect
+              x="25"
+              y="736"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="506.7"
+              x2="1310.0"
+              y1="779"
+              y2="779"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="913.3" y="765" class="vp-paint-44">
+              09 · 交付 FD、啟動 Worker
+            </text>
+            <line
+              x1="1320.0"
+              x2="1126.7"
+              y1="853"
+              y2="853"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1218.3" y="839" class="vp-paint-45">
+              10 · VPN／DNS／管理通道就緒
+            </text>
+            <rect
+              x="25"
+              y="884"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="100.0"
+              x2="293.3"
+              y1="927"
+              y2="927"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="201.7" y="913" class="vp-paint-45">
+              11 · 持久寫入封閉意圖
+            </text>
+            <line
+              x1="100.0"
+              x2="496.7"
+              y1="1001"
+              y2="1001"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="303.3" y="987" class="vp-paint-44">
+              12 · 撤銷直連授權與 socket
+            </text>
+            <rect
+              x="25"
+              y="1032"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="506.7"
+              x2="110.0"
+              y1="1075"
+              y2="1075"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="303.3" y="1061" class="vp-paint-44">
+              13 · 回傳撤銷驗證證據
+            </text>
+            <line
+              x1="100.0"
+              x2="293.3"
+              y1="1149"
+              y2="1149"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="201.7" y="1135" class="vp-paint-45">
+              14 · 確認出口與永久鎖定
+            </text>
+            <rect
+              x="25"
+              y="1180"
+              width="1370"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="100.0"
+              x2="700.0"
+              y1="1223"
+              y2="1223"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="405.0" y="1209" class="vp-paint-44">
+              15 · 後續均透過選定 Instance
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-provider-seq">
+          <span class="vp-figlabel">循序圖 B</span
+          ><span>PROVIDER 首次自舉循序圖</span
+          ><small
+            >BootstrapGrant → 第一份 Profile → Instance → Seal/Revocation →
+            CommitEgress。<span class="vp-mobile-pan"
+              >（可左右滑動檢視完整圖表）</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="metrics">
+    <h2 id="metrics">
+      <span class="vp-sec-no">06</span>我想看清楚每條 VPN 的流量與資源使用
+    </h2>
+    <div class="vp-prose">
+      <p>
+        我不希望 VPN Manager 最後只有幾個綠燈告訴我 VPN 已連線。<br />我想知道哪條
+        Instance 正在吃流量、Gateway 有多少活躍連線、DNS 延遲有沒有升高，以及
+        CPU、記憶體和 queue 被哪個程序占用。
+      </p>
+      <p>
+        Metrics Service 和 Performance Manager 我會分開。<br />Metrics Service
+        負責收集統計資料，像 Instance counters、Gateway payload bytes、WireGuard
+        UDP bytes、DNS 成功與失敗、active flows、CPU 和 RSS。<br />Performance
+        Manager 才負責分析吞吐、延遲、資源效率，或執行我明確啟動的
+        benchmark。<br />它不能為了測速就自己改 Instance 的狀態。
+      </p>
+    </div>
+    <figure id="fig-metrics" aria-labelledby="cap-metrics" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="圖 7：可水平捲動查看完整流量觀測資料路徑"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1120"
+          height="340"
+          viewBox="0 0 1120 340"
+          role="img"
+          aria-labelledby="svg-metrics-title svg-metrics-desc"
+        >
+          <title id="svg-metrics-title">流量觀測與效能分析架構</title>
+          <desc id="svg-metrics-desc">
+            Instance 的本地 counters 非阻塞傳給 Metrics
+            Collector，再壓縮儲存。UI 與 Performance Manager 查詢聚合資料。App
+            payload 不經過這條鏈。
+          </desc>
+          <defs>
+            <marker
+              id="metrics-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0 0L8 4L0 8Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="metrics-dash"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0 0L8 4L0 8Z" class="vp-paint-4"></path>
+            </marker>
+          </defs>
+          <rect width="1120" height="340" class="vp-paint-6"></rect>
+          <text x="30" y="35" class="vp-paint-49">
+            圖 7｜流量指標收集與非阻塞觀測鏈
+          </text>
+          <g class="vp-paint-50">
+            <rect
+              x="28"
+              y="78"
+              width="205"
+              height="114"
+              rx="7"
+              class="vp-paint-51"
+            ></rect>
+            <rect x="288" y="78" width="205" height="114" rx="7"></rect>
+            <rect x="548" y="78" width="205" height="114" rx="7"></rect>
+            <rect x="808" y="78" width="281" height="114" rx="7"></rect>
+            <rect
+              x="548"
+              y="236"
+              width="205"
+              height="70"
+              rx="7"
+              class="vp-paint-52"
+            ></rect>
+            <rect
+              x="808"
+              y="236"
+              width="281"
+              height="70"
+              rx="7"
+              class="vp-paint-52"
+            ></rect>
+          </g>
+          <g class="vp-paint-53">
+            <text x="44" y="109">Instance 指標</text>
+            <text x="304" y="109">指標收集器</text>
+            <text x="564" y="109">壓縮與彙總</text>
+            <text x="824" y="109">Store／指標資料庫</text>
+            <text x="564" y="262" class="vp-paint-54">效能管理器</text>
+            <text x="824" y="262">React 介面</text>
+          </g>
+          <g class="vp-paint-55">
+            <text x="44" y="139">每秒累積計數器</text>
+            <text x="44" y="164">不轉送封包內容</text>
+            <text x="304" y="139">驗序／去重／缺口標記</text>
+            <text x="304" y="164">過載時可丟棄採樣</text>
+            <text x="564" y="139">CBOR＋Zstd</text>
+            <text x="564" y="164">時間彙總／保留期限</text>
+            <text x="824" y="139">控制與指標資料分庫</text>
+            <text x="824" y="164">有界資料查詢</text>
+            <text x="564" y="288">分析／效能基準測試</text>
+            <text x="824" y="288">速率／延遲／資料缺口</text>
+          </g>
+          <g marker-end="url(#metrics-arrow)" class="vp-paint-56">
+            <path d="M233 136H286"></path>
+            <path d="M493 136H546"></path>
+            <path d="M753 136H806"></path>
+          </g>
+          <g marker-end="url(#metrics-dash)" class="vp-paint-57">
+            <path d="M935 192V219H651V234"></path>
+            <path d="M753 271H806"></path>
+          </g>
+          <text x="29" y="330" class="vp-paint-58">
+            觀測鏈只傳統計資料；App／Gateway 的實際流量仍經由各自的 Instance。
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-metrics">
+        <span class="vp-figlabel">圖 7</span
+        ><span>流量資料從 Instance 到 UI 的獨立觀測鏈</span
+        ><small
+          >Metrics
+          滿載可降低採樣完整度，但不可以因此讓資料面等待；圖表必須標示缺口。</small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Metrics 最好不要對資料面產生反向壓力。<br />Instance 每秒送一次有界
+        snapshot，Collector 驗序、去重，後面再用 CBOR／Zstd 壓縮與彙總。<br />如果收集端塞住，丟幾筆樣本並標記
+        <code>gap</code> 就好，不能讓封包等資料庫。
+      </p>
+      <p>
+        流量數字也不能亂算。<br />Gateway payload bytes 和 WireGuard UDP bytes
+        是不同層的統計，不能加起來當總流量。<br />counter reset
+        或資料中斷時，圖表要顯示缺口或未知，不能直接畫成 0。<br />goodput
+        更要有接收端確認，不能只拿 sender counter 來算。
+      </p>
+      <p>
+        流量監控也不需要把所有東西都記下來。<br />預設收 counters、histograms
+        和必要的錯誤資料就好。<br />DNS query name、完整 URL 或封包
+        payload，我不想全部塞進 Metrics。
+      </p>
+    </div>
+  </section>
+</div>

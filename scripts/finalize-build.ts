@@ -108,8 +108,11 @@ for (const post of loadPosts())
   for (const locale of post.editions) {
     const rendered = renderPost(post.id, locale);
     usesMath ||= rendered.hasMath;
-    for (const asset of [...rendered.images, ...rendered.subtitles])
-      cpSync(asset.source, join(output, decodeURIComponent(asset.url)));
+    for (const asset of [...rendered.images, ...rendered.subtitles]) {
+      const target = join(output, decodeURIComponent(asset.url));
+      mkdirSync(dirname(target), { recursive: true });
+      cpSync(asset.source, target);
+    }
   }
 for (const thought of loadThoughts()) {
   if (thought.publication !== 'published') continue;

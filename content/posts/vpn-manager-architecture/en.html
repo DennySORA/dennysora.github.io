@@ -1,0 +1,3700 @@
+<div class="vpn-guide">
+  <p class="vp-eyebrow">VPN MANAGER / Development notes</p>
+
+  <h2 id="opening">What I first wanted to build</h2>
+  <div class="vp-intro">
+    <p>
+      The host's original network stays unchanged.<br />Designated apps use only
+      their designated exits.
+    </p>
+    <p>
+      I first wanted to build VPN Manager because most ordinary VPN clients seem
+      geared toward switching the whole computer together.<br />But that is not
+      what I need.<br />I want to specify which apps use which VPN, while
+      unmanaged programs keep using the host's original network.
+    </p>
+    <p>
+      For example, I may have a browser, a downloader and other apps open at the
+      same time.<br />The browser goes to <code>Instance A</code>, the
+      downloader goes to <code>Instance B</code>, and the others use the
+      original network.<br />A and B each have their own WireGuard identity,
+      DNS, Gateway, connection resources and lifecycle.
+    </p>
+    <p>
+      If A disconnects, I would rather the browser lose its network connection
+      outright.<br />It must not automatically move to B, much less fall back to
+      the ISP's original exit.
+    </p>
+    <figure aria-labelledby="route-demo-caption" class="vp-route-demo">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="App egress separation diagram; scroll horizontally"
+        class="vp-route-demo-scroll"
+      >
+        <div aria-hidden="true" class="vp-route-demo-head">
+          <span>User's programs</span><span></span><span>Bound exit</span
+          ><span></span><span>Outbound path</span>
+        </div>
+        <div class="vp-route-demo-row">
+          <div><strong>Browser</strong><small>Managed application</small></div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-instance-a">
+            <strong>Instance A</strong><small>Identity A / DNS A</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>WireGuard peer A</strong><small>Independent VPN exit</small>
+          </div>
+        </div>
+        <div class="vp-route-demo-row">
+          <div>
+            <strong>Downloader</strong><small>Managed application</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-instance-b">
+            <strong>Instance B</strong><small>Identity B / DNS B</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>WireGuard peer B</strong
+            ><small>Another independent exit</small>
+          </div>
+        </div>
+        <div class="vp-route-demo-row">
+          <div>
+            <strong>Other apps, etc.</strong
+            ><small>Unmanaged applications</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div class="vp-route-box vp-host-route">
+            <strong>Host's original network</strong
+            ><small>Keep the original routing</small>
+          </div>
+          <span aria-hidden="true" class="vp-route-arrow">→</span>
+          <div>
+            <strong>Original network</strong
+            ><small>Not modified by VPN Manager</small>
+          </div>
+        </div>
+      </div>
+      <p class="vp-route-demo-failure">
+        <strong>If A disconnects:</strong> The browser has no network.<br />Instance
+        B and unmanaged programs keep working normally, without having to switch
+        along with it.
+      </p>
+      <figcaption id="route-demo-caption">
+        Usage scenario | Three different paths on one host (scroll horizontally
+        on small screens). This illustrates the intended architectural behavior,
+        not a live connection view.
+      </figcaption>
+    </figure>
+
+    <p>
+      I also want to manage accounts, Profiles and Gateways from different VPN
+      providers in the same system.<br />Ideally, designated apps or services
+      should be isolated directly at the OS network layer, without Docker or
+      changing the whole computer's default route.
+    </p>
+    <p>
+      Traffic information is another feature I want to build.<br />I want to see
+      how much traffic each Instance uses, which Gateways are congested, how
+      long DNS takes and which process consumes the most CPU or memory.<br />A
+      single Connected indicator does not mean much to me.
+    </p>
+    <p>
+      People have already built similar things, and many assemble their own
+      environments using netns, proxies and firewalls.<br />But I want to bring
+      multi-VPN management, app isolation, failure recovery and monitoring
+      together, without having to wire a pile of things together each time.
+    </p>
+    <p>Start with the overall system architecture.</p>
+  </div>
+
+  <div
+    id="interface-shots"
+    aria-labelledby="interface-shots-title"
+    class="vp-interface-shots"
+  >
+    <h3 id="interface-shots-title">Current operating interface</h3>
+    <figure aria-labelledby="shot-cap-1" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="VPN Manager overview; scroll horizontally to inspect"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-1.png"
+          width="1514"
+          height="769"
+          alt="VPN Manager overview: two VPN connections, their local Proxy Ports, download/upload statistics and a traffic-path diagram"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-1">
+        <span class="vp-figlabel">Screen 01</span
+        ><span
+          >VPN Manager overview: two connections, their respective proxy ports
+          and the traffic paths.</span
+        ><small
+          >Actual interface screenshot · 2026-11-01
+          <span class="vp-mobile-pan">(scroll horizontally)</span></small
+        >
+      </figcaption>
+    </figure>
+    <figure aria-labelledby="shot-cap-2" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="VPN Manager connection list; scroll horizontally to inspect"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-2.png"
+          width="1523"
+          height="760"
+          alt="VPN Manager connections page: two WireGuard connections in the Netherlands and Hong Kong, with connection status, proxy ports, live traffic and resource monitoring"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-2">
+        <span class="vp-figlabel">Screen 02</span
+        ><span
+          >Connections page: each connection's status, live traffic and resource
+          information.</span
+        ><small
+          >Actual interface screenshot · 2026-11-01
+          <span class="vp-mobile-pan">(scroll horizontally)</span></small
+        >
+      </figcaption>
+    </figure>
+  </div>
+
+  <section aria-labelledby="system">
+    <h2 id="system">
+      <span class="vp-sec-no">01</span>The backbone of the system
+    </h2>
+    <figure id="fig-system" aria-labelledby="cap-system" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="Figure 1: scroll horizontally to see the full diagram"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="2112.0"
+          height="1290"
+          viewBox="0 0 2112.0 1290"
+          role="img"
+          aria-label="Complete VPN Manager system architecture (English edition)"
+        >
+          <title>Complete system architecture</title>
+          <desc>
+            VPN Controller only passes intent; Instance Manager manages
+            Instances independently. All persistent data goes through Store
+            helper to Store; data traffic does not pass through the management
+            plane.
+          </desc>
+          <defs>
+            <marker
+              id="system-01-system-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="system-01-system-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="system-01-system-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="system-01-system-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="system-01-system-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="2112.0" height="1290" class="vp-paint-6"></rect>
+          <text x="46.2" y="34" class="vp-paint-7">
+            Figure 1 | The whole VPN Manager system: control, data, persistence
+            and observation
+          </text>
+          <rect
+            x="49.5"
+            y="70"
+            width="511.5"
+            height="90"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="75.9" y="100" class="vp-paint-9">Web resource service</text>
+          <text x="75.9" y="129" class="vp-paint-10">
+            Serves React static assets / same origin
+          </text>
+          <rect
+            x="726.0"
+            y="70"
+            width="627.0"
+            height="90"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="752.4" y="100" class="vp-paint-9">React user interface</text>
+          <text x="752.4" y="129" class="vp-paint-10">
+            Core operations / providers / performance panel
+          </text>
+          <path
+            d="M 561.0 115.0 H 722.7"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="570.9" y="99" class="vp-paint-12">Static assets</text>
+          <path
+            d="M 1039.5 160.0 V 238.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="1072.5" y="206" class="vp-paint-12">HTTP／SSE</text>
+          <rect
+            x="49.5"
+            y="240"
+            width="511.5"
+            height="160"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="75.9" y="270" class="vp-paint-9">VPN provider manager</text>
+          <text x="75.9" y="299" class="vp-paint-10">
+            Mullvad / AIRVPN adapters
+          </text>
+          <text x="75.9" y="323" class="vp-paint-10">
+            Each provider's IP egress checks
+          </text>
+          <text x="75.9" y="347" class="vp-paint-10">
+            Candidate profiles and status
+          </text>
+          <rect
+            x="726.0"
+            y="240"
+            width="627.0"
+            height="190"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="752.4" y="270" class="vp-paint-9">VPN controller</text>
+          <text x="752.4" y="299" class="vp-paint-10">VPN Core／Web API</text>
+          <text x="752.4" y="323" class="vp-paint-10">
+            VPN platform control coordinator
+          </text>
+          <text x="752.4" y="347" class="vp-paint-10">
+            Profile validation / Store helper
+          </text>
+          <text x="752.4" y="371" class="vp-paint-10">
+            Only coordinates operation intent
+          </text>
+          <rect
+            x="1518.0"
+            y="240"
+            width="544.5"
+            height="160"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1544.4" y="270" class="vp-paint-9">
+            Security policy manager
+          </text>
+          <text x="1544.4" y="299" class="vp-paint-10">
+            DNS profile validation
+          </text>
+          <text x="1544.4" y="323" class="vp-paint-10">
+            Firewall policies / automatic blocking
+          </text>
+          <text x="1544.4" y="347" class="vp-paint-10">
+            IP blocklist policy
+          </text>
+          <path
+            d="M 561.0 315.0 H 722.7"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1518.0 315.0 H 1356.3"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="577.5" y="299" class="vp-paint-12">Profiles</text>
+          <text x="1382.7" y="299" class="vp-paint-12">Policies</text>
+          <rect
+            x="49.5"
+            y="540"
+            width="511.5"
+            height="120"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="75.9" y="570" class="vp-paint-9">Performance manager</text>
+          <text x="75.9" y="599" class="vp-paint-10">
+            Analysis / benchmark sessions
+          </text>
+          <text x="75.9" y="623" class="vp-paint-10">
+            Comparisons / performance reports
+          </text>
+          <rect
+            x="726.0"
+            y="540"
+            width="627.0"
+            height="120"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="752.4" y="570" class="vp-paint-9">Instance manager</text>
+          <text x="752.4" y="599" class="vp-paint-10">
+            Sole lifecycle ownership / outer monitoring
+          </text>
+          <text x="752.4" y="623" class="vp-paint-10">
+            Generations, resource leases and automatic recovery
+          </text>
+          <rect
+            x="1518.0"
+            y="540"
+            width="544.5"
+            height="120"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1544.4" y="570" class="vp-paint-9">Platform manager</text>
+          <text x="1544.4" y="599" class="vp-paint-10">
+            Linux / macOS system adapters
+          </text>
+          <text x="1544.4" y="623" class="vp-paint-10">
+            OS privileges / sandbox / resource control
+          </text>
+          <path
+            d="M 1039.5 430.0 V 538.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="1072.5" y="487" class="vp-paint-12">
+            Typed lifecycle intent
+          </text>
+          <path
+            d="M 726.0 385.0 H 627.0 V 600.0 H 564.3"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="82.5" y="505" class="vp-paint-12">
+            Explicitly authorized performance tests
+          </text>
+          <path
+            d="M 561.0 635.0 H 722.7"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-16"
+          ></path>
+          <text x="580.8" y="655" class="vp-paint-12">Test leases</text>
+          <path
+            d="M 1353.0 600.0 H 1514.7"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="1377.75" y="583" class="vp-paint-12">OS requests</text>
+          <rect
+            x="49.5"
+            y="830"
+            width="511.5"
+            height="115"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="75.9" y="860" class="vp-paint-9">Metrics service</text>
+          <text x="75.9" y="889" class="vp-paint-10">Metrics collector</text>
+          <text x="75.9" y="913" class="vp-paint-10">
+            Metrics compression module
+          </text>
+          <rect
+            x="726.0"
+            y="830"
+            width="627.0"
+            height="150"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="752.4" y="860" class="vp-paint-9">VPN Instance A … N</text>
+          <text x="752.4" y="889" class="vp-paint-10">
+            Each owns complete internal services
+          </text>
+          <text x="752.4" y="913" class="vp-paint-10">
+            Independent GotaTun / DNS / Gateway
+          </text>
+          <text x="752.4" y="937" class="vp-paint-10">
+            App traffic bypasses Controller
+          </text>
+          <rect
+            x="1518.0"
+            y="830"
+            width="544.5"
+            height="95"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1544.4" y="860" class="vp-paint-9">Store helper</text>
+          <text x="1544.4" y="889" class="vp-paint-10">
+            Shared type-safe persistence client
+          </text>
+          <path
+            d="M 1039.5 660.0 V 828.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <text x="1072.5" y="753" class="vp-paint-12">
+            Configure / start / activate / stop
+          </text>
+          <path
+            d="M 1518.0 635.0 H 1443.75 V 900.0 H 1356.3"
+            marker-end="url(#system-01-system-amber)"
+            class="vp-paint-18"
+          ></path>
+          <text x="1456.95" y="780" class="vp-paint-12">
+            File descriptors (FDs)
+          </text>
+          <path
+            d="M 726.0 900.0 H 564.3"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="584.1" y="883" class="vp-paint-12">Monitoring metrics</text>
+          <path
+            d="M 305.25 660.0 V 828.0"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-20"
+          ></path>
+          <text x="69.3" y="750" class="vp-paint-12">Bounded data queries</text>
+          <path
+            d="M 305.25 945.0 V 1010.0 H 1790.25 V 927.0"
+            marker-end="url(#system-01-system-purple)"
+            class="vp-paint-20"
+          ></path>
+          <text x="940.5" y="1003" class="vp-paint-12">
+            Persisted metrics and reports always go through Store helper
+          </text>
+          <path
+            d="M 1353.0 415.0 H 2087.25 V 877.0 H 2065.8"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="1518.0"
+            y="1050"
+            width="544.5"
+            height="95"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1544.4" y="1080" class="vp-paint-9">
+            Store storage service
+          </text>
+          <text x="1544.4" y="1109" class="vp-paint-10">
+            Sole SQLite accessor / internal modules
+          </text>
+          <rect
+            x="1518.0"
+            y="1190"
+            width="544.5"
+            height="65"
+            rx="8"
+            class="vp-paint-8"
+          ></rect>
+          <text x="1544.4" y="1220" class="vp-paint-9">SQLite</text>
+          <text x="1544.4" y="1249" class="vp-paint-10">
+            Control database + metrics database
+          </text>
+          <path
+            d="M 1790.25 925.0 V 1048.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1790.25 1145.0 V 1188.0"
+            marker-end="url(#system-01-system-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="726.0"
+            y="1080"
+            width="293.7"
+            height="90"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="752.4" y="1110" class="vp-paint-21">Managed app</text>
+          <text x="752.4" y="1139" class="vp-paint-10">Gateway client</text>
+          <rect
+            x="1097.25"
+            y="1080"
+            width="330.0"
+            height="90"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1123.65" y="1110" class="vp-paint-21">VPN peer</text>
+          <text x="1123.65" y="1139" class="vp-paint-10">
+            Encrypted WireGuard UDP
+          </text>
+          <path
+            d="M 874.5 1080.0 V 982.0"
+            marker-end="url(#system-01-system-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1221.0 980.0 V 1078.0"
+            marker-end="url(#system-01-system-green)"
+            class="vp-paint-22"
+          ></path>
+          <text x="49.5" y="1210" class="vp-paint-12">
+            Blue: control Green: data Yellow: OS resources Purple: observation
+          </text>
+          <text x="49.5" y="1238" class="vp-paint-12">
+            All persistence goes through Store helper; secrets use a separate
+            private delivery channel.
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-system">
+        <span class="vp-figlabel">Figure 1</span
+        ><span>Complete VPN Manager system architecture</span
+        ><small
+          >Control plane, data plane, observation and persistence are
+          separate.<span class="vp-mobile-pan"
+            >(scroll horizontally to inspect the full diagram)</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>The overall control path is initially planned as follows:</p>
+      <p class="vp-inline-flow">
+        <code>React UI</code><span>→</span> <code>VPN Web API / VPN Core</code
+        ><span>→</span> <code>Instance Manager</code><span>→</span>
+        <code>Instance Controller</code>
+      </p>
+      <p>
+        Here I make
+        <strong>Instance Manager a separate process</strong>.<br />It handles
+        starting, stopping, generation, resource leases and recovery for all
+        Instances.<br />Controller only receives operation intent from the
+        UI/API; it does not forward apps' TCP/UDP data.
+      </p>
+      <p>
+        Anything that needs OS privileges goes to
+        <strong>Platform Manager</strong>.<br />It handles network namespaces,
+        process sandboxes, FDs, firewall policies and macOS capture/deny.<br />I
+        do not want other components changing system network settings directly
+        just because it is convenient.
+      </p>
+      <p>
+        Store persists state, Metrics collects data, and Performance Manager
+        handles analysis and authorized tests.<br />These things should not sit
+        in the app packet path.<br />For example, slower Metrics or database
+        writes must not queue packets already being transmitted; new state
+        changes still follow the original fail-closed rules.
+      </p>
+    </div>
+    <div
+      role="region"
+      tabindex="0"
+      aria-label="Execution boundaries and main responsibilities; scroll horizontally"
+      class="vp-table-wrap"
+    >
+      <table>
+        <caption>
+          Table 1 | Execution boundaries and main responsibilities
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Execution boundary</th>
+            <th scope="col">Main responsibilities</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><code>vpn-controllerd</code></th>
+            <td>
+              Serves React static assets, VPN Web API and VPN Core, and
+              coordinates Provider/Security/Metrics/Performance control.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-instance-managerd</code></th>
+            <td>
+              Sole cross-Instance lifecycle owner; manages desired state,
+              generation, identity/resource leases, the outer Watchdog and
+              recovery reconciliation.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-platformd</code></th>
+            <td>
+              Exclusively handles privileged OS operations; runs Linux/macOS
+              Adapters, sandboxes, FD/policy creation, spawn, seal and safety
+              evidence collection.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-stored</code></th>
+            <td>
+              Sole SQLite owner; manages <code>control.sqlite</code>,
+              <code>metrics.sqlite</code>, secrets, revisions, the operation
+              journal and backups.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-instance × N</code></th>
+            <td>
+              An independent worker for each VPN; owns its own GotaTun, DNS,
+              Gateway, Port, Metrics and inner Watchdog.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row"><code>vpn-provider-worker</code></th>
+            <td>
+              Runs API operations, route-bound IP preflight and restricted
+              connectors per Provider job; does not create, start or stop
+              Instances itself.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">macOS system extension (if enabled)</th>
+            <td>
+              Handles flow capture, deny and bridging for managed apps; provides
+              safety boundaries according to native platform capabilities.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="ownership" class="vp-subsection">
+      <h3 id="vp-heading-758">Complete component ownership</h3>
+      <div class="vp-prose">
+        <p>
+          I first classify components by who manages them and who has authority
+          to operate them.<br />Drawing a pile of boxes alone is not useful.
+          What matters is who is affected when a process dies, and who can
+          restart it.
+        </p>
+      </div>
+      <figure
+        id="fig-ownership"
+        aria-labelledby="cap-ownership"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="Component ownership diagram: scroll horizontally to see the full diagram"
+          class="vp-diagram-scroller"
+        >
+          <svg
+            width="2112.0"
+            height="1256"
+            viewBox="0 0 2112.0 1256"
+            role="img"
+            aria-label="Ownership architecture of all VPN Manager components (English edition)"
+          >
+            <title>Complete component ownership diagram</title>
+            <desc>
+              All 55 formal components are included; identically named Process
+              Managers and Instance Watchdogs are distinguished by their
+              parents. Indentation indicates ownership, not that every helper is
+              a daemon.
+            </desc>
+            <defs>
+              <marker
+                id="ownership-02-component-map-blue"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-green"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-amber"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-purple"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+              </marker>
+              <marker
+                id="ownership-02-component-map-red"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+              </marker>
+            </defs>
+            <rect width="2112.0" height="1256" class="vp-paint-6"></rect>
+            <text x="46.2" y="34" class="vp-paint-7">
+              Component ownership | Grouped by execution boundary and privilege
+              responsibility
+            </text>
+            <rect
+              x="49.5"
+              y="70"
+              width="973.5"
+              height="145"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="75.9" y="100" class="vp-paint-23">
+              React user interface (UI - React)
+            </text>
+            <text x="89.1" y="132" class="vp-paint-24">· Core UI</text>
+            <text x="118.8" y="159" class="vp-paint-24">
+              · Performance Panel
+            </text>
+            <text x="89.1" y="186" class="vp-paint-24">
+              · Provider management panel
+            </text>
+            <rect
+              x="1089.0"
+              y="70"
+              width="973.5"
+              height="199"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="1115.4" y="100" class="vp-paint-23">VPN Controller</text>
+            <text x="1128.6" y="132" class="vp-paint-24">· VPN Core</text>
+            <text x="1128.6" y="159" class="vp-paint-24">· VPN Web API</text>
+            <text x="1128.6" y="186" class="vp-paint-24">
+              · VPN platform control coordinator
+            </text>
+            <text x="1128.6" y="213" class="vp-paint-24">
+              · VPN profile validator
+            </text>
+            <text x="1128.6" y="240" class="vp-paint-24">
+              · Store helper (storage adapter)
+            </text>
+            <rect
+              x="49.5"
+              y="239"
+              width="973.5"
+              height="280"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="75.9" y="269" class="vp-paint-23">Platform Manager</text>
+            <text x="89.1" y="301" class="vp-paint-24">
+              · Linux system adapter
+            </text>
+            <text x="118.8" y="328" class="vp-paint-24">· Process manager</text>
+            <text x="148.5" y="355" class="vp-paint-24">· Process sandbox</text>
+            <text x="178.2" y="382" class="vp-paint-24">
+              · Network resource control
+            </text>
+            <text x="89.1" y="409" class="vp-paint-24">
+              · macOS system adapter
+            </text>
+            <text x="118.8" y="436" class="vp-paint-24">· Process manager</text>
+            <text x="148.5" y="463" class="vp-paint-24">· Process sandbox</text>
+            <text x="178.2" y="490" class="vp-paint-24">
+              · Network resource control
+            </text>
+            <rect
+              x="1089.0"
+              y="293"
+              width="973.5"
+              height="172"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="1115.4" y="323" class="vp-paint-23">
+              Provider manager (VPN Provide Manager)
+            </text>
+            <text x="1128.6" y="355" class="vp-paint-24">
+              · Mullvad provider adapter
+            </text>
+            <text x="1158.3" y="382" class="vp-paint-24">
+              · Mullvad IP egress checker
+            </text>
+            <text x="1128.6" y="409" class="vp-paint-24">
+              · AIRVPN provider adapter
+            </text>
+            <text x="1158.3" y="436" class="vp-paint-24">
+              · AIRVPN IP egress checker
+            </text>
+            <rect
+              x="1089.0"
+              y="489"
+              width="973.5"
+              height="145"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="1115.4" y="519" class="vp-paint-23">Security Manager</text>
+            <text x="1128.6" y="551" class="vp-paint-24">
+              · DNS profile validator
+            </text>
+            <text x="1128.6" y="578" class="vp-paint-24">
+              · Firewall profile
+            </text>
+            <text x="1128.6" y="605" class="vp-paint-24">
+              · Automatic block detector
+            </text>
+            <rect
+              x="49.5"
+              y="543"
+              width="973.5"
+              height="118"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="75.9" y="573" class="vp-paint-23">Metrics Service</text>
+            <text x="89.1" y="605" class="vp-paint-24">
+              · Metrics collector
+            </text>
+            <text x="89.1" y="632" class="vp-paint-24">
+              · Metrics compression module
+            </text>
+            <rect
+              x="1089.0"
+              y="658"
+              width="973.5"
+              height="92"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="1115.4" y="688" class="vp-paint-23">
+              Performance Manager
+            </text>
+            <rect
+              x="49.5"
+              y="685"
+              width="973.5"
+              height="280"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="75.9" y="715" class="vp-paint-23">
+              Storage service (Store)
+            </text>
+            <text x="89.1" y="747" class="vp-paint-24">
+              · Configuration data helper
+            </text>
+            <text x="89.1" y="774" class="vp-paint-24">
+              · Secret data helper
+            </text>
+            <text x="89.1" y="801" class="vp-paint-24">
+              · Security policy helper
+            </text>
+            <text x="89.1" y="828" class="vp-paint-24">
+              · DNS profile helper
+            </text>
+            <text x="89.1" y="855" class="vp-paint-24">
+              · Provider data helper
+            </text>
+            <text x="118.8" y="882" class="vp-paint-24">
+              · Mullvad data helper
+            </text>
+            <text x="118.8" y="909" class="vp-paint-24">
+              · AIRVPN data helper
+            </text>
+            <text x="89.1" y="936" class="vp-paint-24">
+              · Metrics storage helper
+            </text>
+            <rect
+              x="1089.0"
+              y="774"
+              width="973.5"
+              height="388"
+              rx="8"
+              class="vp-paint-13"
+            ></rect>
+            <text x="1115.4" y="804" class="vp-paint-23">Instance Manager</text>
+            <text x="1128.6" y="836" class="vp-paint-24">
+              · Outer Instance watchdog
+            </text>
+            <text x="1128.6" y="863" class="vp-paint-24">
+              · VPN Instance (single Profile)
+            </text>
+            <text x="1158.3" y="890" class="vp-paint-24">
+              · Instance controller
+            </text>
+            <text x="1158.3" y="917" class="vp-paint-24">
+              · Instance DNS controller
+            </text>
+            <text x="1158.3" y="944" class="vp-paint-24">
+              · Instance port controller
+            </text>
+            <text x="1188.0" y="971" class="vp-paint-24">
+              · Port forwarding
+            </text>
+            <text x="1158.3" y="998" class="vp-paint-24">
+              · Instance metrics
+            </text>
+            <text x="1158.3" y="1025" class="vp-paint-24">
+              · Inner Instance watchdog
+            </text>
+            <text x="1158.3" y="1052" class="vp-paint-24">
+              · Gateway manager
+            </text>
+            <text x="1188.0" y="1079" class="vp-paint-24">
+              · Gateway service
+            </text>
+            <text x="1217.7" y="1106" class="vp-paint-24">
+              · Gateway metrics
+            </text>
+            <text x="1158.3" y="1133" class="vp-paint-24">· GotaTun</text>
+            <rect
+              x="49.5"
+              y="989"
+              width="973.5"
+              height="92"
+              rx="8"
+              class="vp-paint-8"
+            ></rect>
+            <text x="75.9" y="1019" class="vp-paint-23">
+              Web static resource service
+            </text>
+            <text x="49.5" y="1218" class="vp-paint-12">
+              Execution locations are determined by component ownership,
+              privileges, and fault-isolation boundaries.
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-ownership">
+          <span class="vp-figlabel">Component ownership diagram</span
+          ><span>All components and their responsibility ownership</span
+          ><small
+            >Grouped by parent／owner, showing the components inside the UI,
+            Controller, Platform, Store, and each Instance.<span
+              class="vp-mobile-pan"
+              >(scroll horizontally to inspect the full diagram)</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="instance">
+    <h2 id="instance">
+      <span class="vp-sec-no">02</span>VPN Instance architecture
+    </h2>
+    <figure id="fig-instance" aria-labelledby="cap-instance" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="Figure 2: scroll horizontally to view the complete diagram"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="2112.0"
+          height="1090"
+          viewBox="0 0 2112.0 1090"
+          role="img"
+          aria-label="The complete internals and data path of a single Instance"
+        >
+          <title>
+            The complete internals and data path of a single Instance
+          </title>
+          <desc>
+            Each Instance contains its own Controller, DNS, Port, Gateway,
+            Metrics, Watchdog, and GotaTun. The inner Watchdog can block
+            traffic, but cannot rebuild or unblock on its own.
+          </desc>
+          <defs>
+            <marker
+              id="instance-03-instance-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="instance-03-instance-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="2112.0" height="1090" class="vp-paint-6"></rect>
+          <text x="46.2" y="34" class="vp-paint-7">
+            Figure 2｜A single VPN Instance: independent services and data paths
+          </text>
+          <rect
+            x="726.0"
+            y="65"
+            width="643.5"
+            height="95"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="752.4" y="95" class="vp-paint-9">Instance manager</text>
+          <text x="752.4" y="124" class="vp-paint-10">
+            Commands／execution generation／resource leases
+          </text>
+          <rect
+            x="429.0"
+            y="210"
+            width="1633.5"
+            height="650"
+            rx="12"
+            class="vp-paint-25"
+          ></rect>
+          <text x="458.7" y="240" class="vp-paint-26">
+            VPN Instance｜Independent Rust Worker
+          </text>
+          <rect
+            x="924.0"
+            y="260"
+            width="594.0"
+            height="95"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="950.4" y="290" class="vp-paint-9">Instance Controller</text>
+          <text x="950.4" y="319" class="vp-paint-10">
+            Controls only this Instance
+          </text>
+          <path
+            d="M 1047.75 160.0 V 258.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="495.0"
+            y="420"
+            width="429.0"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="521.4" y="450" class="vp-paint-27">Gateway Manager</text>
+          <text x="521.4" y="479" class="vp-paint-10">Gateway Service × N</text>
+          <text x="521.4" y="503" class="vp-paint-10">Gateway Metrics</text>
+          <rect
+            x="1006.5"
+            y="420"
+            width="453.75"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1032.9" y="450" class="vp-paint-21">
+            Instance DNS Controller
+          </text>
+          <text x="1032.9" y="479" class="vp-paint-10">
+            Independent cache／connection pool／resolver
+          </text>
+          <text x="1032.9" y="503" class="vp-paint-10">
+            DNS only through the VPN tunnel
+          </text>
+          <rect
+            x="1551.0"
+            y="420"
+            width="462.0"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1577.4" y="450" class="vp-paint-21">
+            Instance Port Controller
+          </text>
+          <text x="1577.4" y="479" class="vp-paint-10">
+            Port forwarding（Port forward）
+          </text>
+          <text x="1577.4" y="503" class="vp-paint-10">
+            Only Apps in the same Instance are allowed
+          </text>
+          <path
+            d="M 1072.5 355.0 V 385.0 H 709.5 V 418.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <path
+            d="M 1237.5 355.0 V 418.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <path
+            d="M 1402.5 355.0 V 385.0 H 1782.0 V 418.0"
+            marker-end="url(#instance-03-instance-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="49.5"
+            y="420"
+            width="313.5"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="75.9" y="450" class="vp-paint-21">
+            Designated managed App
+          </text>
+          <text x="75.9" y="479" class="vp-paint-10">Proxy client／</text>
+          <text x="75.9" y="503" class="vp-paint-10">Protected process</text>
+          <path
+            d="M 363.0 475.0 H 491.7"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1551.0 450.0 H 1485.0 V 367.0 H 206.25 V 418.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-28"
+          ></path>
+          <text x="231.0" y="356" class="vp-paint-12">
+            Port forwarding goes only to Apps in the same Instance
+          </text>
+          <rect
+            x="726.0"
+            y="610"
+            width="561.0"
+            height="95"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="752.4" y="640" class="vp-paint-9">
+            TCP/IP handling＋GotaTun
+          </text>
+          <text x="752.4" y="669" class="vp-paint-10">
+            Linux kernel／macOS Rust protocol stack
+          </text>
+          <text x="752.4" y="693" class="vp-paint-10">
+            Independent WireGuard device and keys
+          </text>
+          <path
+            d="M 709.5 530.0 V 575.0 H 858.0 V 608.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1232.55 530.0 V 608.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1782.0 530.0 V 565.0 H 1320.0 V 658.0 H 1290.3"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="495.0"
+            y="755"
+            width="511.5"
+            height="75"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="521.4" y="785" class="vp-paint-27">Instance Metrics</text>
+          <text x="521.4" y="814" class="vp-paint-10">
+            Local counters／latency distributions
+          </text>
+          <rect
+            x="1303.5"
+            y="755"
+            width="709.5"
+            height="75"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1329.9" y="785" class="vp-paint-27">Instance Watchdog</text>
+          <text x="1329.9" y="814" class="vp-paint-10">
+            Tunnel／DNS／platform policy health
+          </text>
+          <path
+            d="M 709.5 530.0 V 730.0 H 750.75 V 753.0"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-20"
+          ></path>
+          <path
+            d="M 1006.5 705.0 V 730.0 H 825.0 V 753.0"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-20"
+          ></path>
+          <path
+            d="M 1658.25 755.0 V 725.0 H 1287.0"
+            marker-end="url(#instance-03-instance-amber)"
+            class="vp-paint-18"
+          ></path>
+          <rect
+            x="726.0"
+            y="915"
+            width="561.0"
+            height="85"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="752.4" y="945" class="vp-paint-23">VPN peer</text>
+          <text x="752.4" y="974" class="vp-paint-10">
+            Peer-restricted encrypted WireGuard UDP
+          </text>
+          <path
+            d="M 1006.5 705.0 V 913.0"
+            marker-end="url(#instance-03-instance-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="49.5"
+            y="730"
+            width="313.5"
+            height="110"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="75.9" y="760" class="vp-paint-29">Platform manager</text>
+          <text x="75.9" y="789" class="vp-paint-10">
+            Process sandbox／TUN／
+          </text>
+          <text x="75.9" y="813" class="vp-paint-10">Restricted UDP FD</text>
+          <path
+            d="M 363.0 785.0 H 429.0 V 657.0 H 722.7"
+            marker-end="url(#instance-03-instance-amber)"
+            class="vp-paint-18"
+          ></path>
+          <rect
+            x="1526.25"
+            y="915"
+            width="486.75"
+            height="85"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="1552.65" y="945" class="vp-paint-9">Metrics service</text>
+          <text x="1552.65" y="974" class="vp-paint-10">
+            Bounded snapshot transfer
+          </text>
+          <path
+            d="M 750.75 830.0 V 880.0 H 1765.5 V 913.0"
+            marker-end="url(#instance-03-instance-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="49.5" y="1062" class="vp-paint-12">
+            Apps cannot obtain the host Underlay, secrets, Store, or namespace
+            descriptors.
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-instance">
+        <span class="vp-figlabel">Figure 2</span
+        ><span>The services and data paths of a single VPN Instance</span
+        ><small
+          >Each Instance owns its own runtime, controller, Gateway, DNS,
+          Metrics, and Watchdog.<span class="vp-mobile-pan"
+            >(scroll horizontally to inspect the full diagram)</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Each Instance has its own GotaTun, DNS Controller, Port Controller,
+        Gateway Manager, Metrics, and Watchdog.<br />WireGuard identity, DNS
+        cache, sockets, buffers, and queues also need to be separate.<br />CPU,
+        NIC, and OS can be shared, but A's execution state should not be mixed
+        with B's.
+      </p>
+      <p>
+        There is one point I want to make clear first.<br />
+        <strong
+          >GotaTun is a WireGuard engine, not a complete TCP/IP socket stack in
+          itself.</strong
+        ><br />So connecting GotaTun does not mean that all TCP／UDP connection
+        handling is already there. That part still needs to be handled
+        separately.
+      </p>
+      <p>
+        On Linux, I lean toward directly using the kernel TCP/IP stack inside an
+        isolated network namespace.<br />For an explicit Proxy on macOS, each
+        Instance uses its own <code>smoltcp</code> along with GotaTun.<br />Their
+        sockets, buffers, and queues also need to be independent. Controller SQL
+        or Provider HTTP calls must not hold up actual network traffic.
+      </p>
+      <p>
+        DNS also needs to follow its Instance.<br />If resolution fails, report
+        failure. Do not quietly switch to asking the host resolver.<br />After
+        receiving HTTP CONNECT or SOCKS5 TCP／UDP, the Gateway must actually
+        hand it to its own Instance to establish the destination connection.<br />Port
+        Forward can only forward to a verified App endpoint within the same
+        Instance. It must not take the shortcut of connecting directly to the
+        host's <code>127.0.0.1</code>.
+      </p>
+      <h3 id="vp-heading-1290">
+        The difference between managed Apps, Gateway, and Port Forward
+      </h3>
+      <p>
+        I divide traffic entry points into three types.<br />
+        <strong>Managed app</strong> must first enter an isolated environment
+        and cannot choose the host network on its own.<br />
+        <strong>Gateway</strong> only handles traffic explicitly handed to the
+        HTTP／SOCKS Proxy. Connections the App establishes separately are not
+        automatically protected.<br />
+        <strong>Port Forward</strong> is traffic arriving from the VPN. It can
+        only be delivered to an App within the same Instance that has a valid
+        <code>AppEndpointLease</code> .
+      </p>
+      <p>
+        DNS and IPv6 cannot be exceptions either.<br />If the Instance's DNS
+        path is unavailable, do not query.<br />If IPv6 has no verifiable tunnel
+        path, it must not automatically be allowed onto the host network either.
+      </p>
+      <h3 id="macos">App isolation on macOS is more troublesome</h3>
+      <p>
+        The macOS side is actually more troublesome.<br />An explicit Proxy is
+        possible, but it only handles traffic actually handed to the Proxy.<br />QUIC,
+        WebRTC, or the system DNS used by an App itself may create separate
+        sockets.<br />So having a Proxy does not mean the entire App is
+        isolated.
+      </p>
+    </div>
+    <figure aria-labelledby="shot-cap-3" class="vp-screen-shot">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="The browser toolbox&#x27;s per-site proxy routing; scroll horizontally to view"
+        class="vp-screen-scroll"
+      >
+        <img
+          src="screenshot-3.png"
+          width="1519"
+          height="757"
+          alt="The browser toolbox&#x27;s per-site proxy routing page: two proxy profiles, Hong Kong SOCKS5 127.0.0.1:1080 and Netherlands SOCKS5 127.0.0.1:1082"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption id="shot-cap-3">
+        <span class="vp-figlabel">Screen 03</span
+        ><span
+          >The browser toolbox's per-site proxy routing: Hong Kong uses
+          127.0.0.1:1080, and the Netherlands uses 127.0.0.1:1082.</span
+        ><small
+          >Actual interface screenshot · 2026-11-01
+          <span class="vp-mobile-pan">(scroll horizontally)</span></small
+        >
+      </figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="linux">
+    <h2 id="linux">
+      <span class="vp-sec-no">03</span>Linux: making sure there is “no way back”
+      at the OS layer
+    </h2>
+    <figure id="fig-linux" aria-labelledby="cap-linux" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="Figure 3: scroll horizontally to view the complete diagram"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="2112.0"
+          height="900"
+          viewBox="0 0 2112.0 900"
+          role="img"
+          aria-label="Linux isolated data path"
+        >
+          <title>Linux isolated data path</title>
+          <desc>
+            The restricted UDP FD created in advance on the host is given only
+            to GotaTun. Apps have only the lo/TUN path inside netns. Worker
+            replacement can retain the closed sandbox without changing the host
+            default route/DNS.
+          </desc>
+          <defs>
+            <marker
+              id="linux-06-linux-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="linux-06-linux-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="2112.0" height="900" class="vp-paint-6"></rect>
+          <text x="46.2" y="34" class="vp-paint-7">
+            Figure 3｜Linux: managed-process isolation and the WireGuard UDP
+            exit
+          </text>
+          <rect
+            x="49.5"
+            y="70"
+            width="2013.0"
+            height="680"
+            rx="12"
+            class="vp-paint-30"
+          ></rect>
+          <text x="79.2" y="100" class="vp-paint-31">
+            Host network namespace｜Existing network settings remain unchanged
+          </text>
+          <rect
+            x="660.0"
+            y="150"
+            width="1336.5"
+            height="450"
+            rx="12"
+            class="vp-paint-25"
+          ></rect>
+          <text x="689.7" y="180" class="vp-paint-26">
+            Instance isolation sandbox: only lo and TUN; no veth／Host NAT
+          </text>
+          <rect
+            x="107.25"
+            y="180"
+            width="470.25"
+            height="110"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="133.65" y="210" class="vp-paint-27">
+            Host loopback listener
+          </text>
+          <text x="133.65" y="239" class="vp-paint-10">
+            Gateway TCP／UDP forwarding
+          </text>
+          <text x="133.65" y="263" class="vp-paint-10">
+            Accepts only traffic from bound clients
+          </text>
+          <rect
+            x="734.25"
+            y="215"
+            width="495.0"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="760.65" y="245" class="vp-paint-9">Process sandbox</text>
+          <text x="760.65" y="274" class="vp-paint-10">
+            Designated managed App process tree
+          </text>
+          <text x="760.65" y="298" class="vp-paint-10">
+            Host IPC and inherited network FDs are prohibited
+          </text>
+          <rect
+            x="1361.25"
+            y="215"
+            width="561.0"
+            height="110"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1387.65" y="245" class="vp-paint-23">
+            Instance internal services
+          </text>
+          <text x="1387.65" y="274" class="vp-paint-10">
+            Gateway／DNS／port connections
+          </text>
+          <text x="1387.65" y="298" class="vp-paint-10">
+            Destination sockets are created in the isolated netns
+          </text>
+          <path
+            d="M 577.5 235.0 H 627.0 V 365.0 H 1633.5 V 327.0"
+            marker-end="url(#linux-06-linux-blue)"
+            class="vp-paint-16"
+          ></path>
+          <text x="635.25" y="391" class="vp-paint-12">
+            Delivery of pre-bound listening FDs
+          </text>
+          <rect
+            x="734.25"
+            y="440"
+            width="495.0"
+            height="100"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="760.65" y="470" class="vp-paint-9">
+            Linux kernel TCP/IP＋TUN
+          </text>
+          <text x="760.65" y="499" class="vp-paint-10">
+            Independent routes／DNS／firewall policy
+          </text>
+          <rect
+            x="1361.25"
+            y="440"
+            width="561.0"
+            height="100"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1387.65" y="470" class="vp-paint-23">GotaTun</text>
+          <text x="1387.65" y="499" class="vp-paint-10">
+            Each Instance owns an independent device
+          </text>
+          <path
+            d="M 981.75 325.0 V 438.0"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1641.75 325.0 V 405.0 H 1229.25 V 490.0"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <path
+            d="M 1229.25 490.0 H 1357.95"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="107.25"
+            y="440"
+            width="470.25"
+            height="100"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="133.65" y="470" class="vp-paint-27">Restricted UDP FD</text>
+          <text x="133.65" y="499" class="vp-paint-10">
+            Created in advance in the host netns
+          </text>
+          <text x="133.65" y="523" class="vp-paint-10">
+            Can send only to approved VPN peers
+          </text>
+          <path
+            d="M 1361.25 510.0 H 1295.25 V 570.0 H 346.5 V 542.0"
+            marker-end="url(#linux-06-linux-amber)"
+            class="vp-paint-32"
+          ></path>
+          <rect
+            x="107.25"
+            y="645"
+            width="470.25"
+            height="70"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="133.65" y="675" class="vp-paint-27">
+            Host NIC → VPN peer
+          </text>
+          <path
+            d="M 341.55 540.0 V 643.0"
+            marker-end="url(#linux-06-linux-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="734.25"
+            y="645"
+            width="1188.0"
+            height="70"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="760.65" y="675" class="vp-paint-21">
+            Platform management: process and network resource control
+          </text>
+          <text x="49.5" y="800" class="vp-paint-12">
+            When Worker／TUN fails, Apps still have no other external-network
+            exit. The sandbox lifecycle can span Worker generations.
+          </text>
+          <text x="49.5" y="830" class="vp-paint-12">
+            Create or remove only namespaces, cgroups, binds, and filtering
+            rules owned by this system.
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-linux">
+        <span class="vp-figlabel">Figure 3</span
+        ><span>Linux namespace isolation and the WireGuard UDP path</span
+        ><small
+          >The ordinary host network remains unchanged. Apps in the isolated
+          netns have no unauthorized plaintext host exit.<span
+            class="vp-mobile-pan"
+            >(scroll horizontally to inspect the full diagram)</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        The Linux approach is more direct.<br />I do not intend to change the
+        host's default route or move the physical NIC to another namespace.<br />Unmanaged
+        Apps continue using the original network as usual.
+      </p>
+      <p>
+        Platform Manager first creates a UDP socket in the host network
+        namespace that allows only the designated WireGuard peer.<br />It then
+        passes the restricted FD to the VPN worker in the isolated namespace.<br />That
+        namespace has only loopback and TUN. It provides no plaintext veth／NAT
+        exit to the host.
+      </p>
+      <p>
+        IP packets sent by an App first enter TUN, are encrypted by GotaTun, and
+        are then sent to the WireGuard peer through the UDP FD originally
+        created in the host namespace.<br />However, creating the socket on the
+        host is not enough.<br />Which IP／port it can connect to, who holds the
+        FD, and whether Platform policy is actually effective all need to be
+        checked.
+      </p>
+      <p>
+        What I care more about is that
+        <strong>the App has no ordinary host internet exit at all</strong
+        >.<br />If the worker crashes, disconnect first. There is no need to
+        find it a backup route.<br />I cannot accept an App finding its own way
+        back to the ISP exit after the VPN disconnects.
+      </p>
+      <p>
+        But <code>netns</code> is not a complete sandbox either.<br />An App may
+        inherit another process's FD, or find a bypass through Unix sockets,
+        D-Bus, or host IPC.
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="lifecycle">
+    <h2 id="lifecycle">
+      <span class="vp-sec-no">04</span>Instance startup and fault-recovery flow
+    </h2>
+    <figure id="fig-recovery" aria-labelledby="cap-recovery" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="Figure 5: scroll horizontally to view the complete diagram"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="2112.0"
+          height="950"
+          viewBox="0 0 2112.0 950"
+          role="img"
+          aria-label="Lifecycle, automatic recovery, and stop priority"
+        >
+          <title>Lifecycle, automatic recovery, and stop priority</title>
+          <desc>
+            Manual Stop and emergency stop take priority over recovery.
+            CommitResume is allowed only after the complete
+            Manager/intent/generation/sandbox tuple matches. Manager replacement
+            replaces workers and adopts only closed sandboxes.
+          </desc>
+          <defs>
+            <marker
+              id="recovery-05-recovery-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="recovery-05-recovery-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="2112.0" height="950" class="vp-paint-6"></rect>
+          <text x="46.2" y="34" class="vp-paint-7">
+            Figure 5｜Safe startup, automatic recovery, and manual-stop priority
+          </text>
+          <rect
+            x="49.5"
+            y="80"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="75.9" y="110" class="vp-paint-27">
+            Persist intent and reserve resources
+          </text>
+          <text x="75.9" y="139" class="vp-paint-10">
+            Desired state／manual stop／emergency stop
+          </text>
+          <text x="75.9" y="163" class="vp-paint-10">
+            Manager term／intent revision
+          </text>
+          <text x="75.9" y="187" class="vp-paint-10">
+            Worker generation／identity lease
+          </text>
+          <rect
+            x="767.25"
+            y="80"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="793.65" y="110" class="vp-paint-27">
+            Close the environment first, then start the process
+          </text>
+          <text x="793.65" y="139" class="vp-paint-10">
+            Sandbox generation is independent of Worker generation
+          </text>
+          <text x="793.65" y="163" class="vp-paint-10">
+            Unconfigured Worker／verified identity
+          </text>
+          <text x="793.65" y="187" class="vp-paint-10">
+            Store privately delivers a one-time secret
+          </text>
+          <rect
+            x="1485.0"
+            y="80"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1511.4" y="110" class="vp-paint-27">
+            Allow only health probes
+          </text>
+          <text x="1511.4" y="139" class="vp-paint-10">
+            Verify VPN tunnel／DNS／policy
+          </text>
+          <text x="1511.4" y="163" class="vp-paint-10">
+            Close App／Gateway／port forwarding
+          </text>
+          <text x="1511.4" y="187" class="vp-paint-10">
+            Independently verify health
+          </text>
+          <path
+            d="M 627.0 145.0 H 763.95"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1344.75 145.0 H 1481.7"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="1485.0"
+            y="360"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1511.4" y="390" class="vp-paint-23">
+            Commit opening（CommitResume）
+          </text>
+          <text x="1511.4" y="419" class="vp-paint-10">
+            Manager rechecks the latest intent
+          </text>
+          <text x="1511.4" y="443" class="vp-paint-10">
+            Platform consumes the single-use authorization
+          </text>
+          <text x="1511.4" y="467" class="vp-paint-10">
+            Only this step formally opens the traffic gates
+          </text>
+          <path
+            d="M 1773.75 210.0 V 358.0"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="767.25"
+            y="360"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="793.65" y="390" class="vp-paint-23">
+            Ready／VPN tunnel only
+          </text>
+          <text x="793.65" y="419" class="vp-paint-10">
+            Enable configured App／Gateway
+          </text>
+          <text x="793.65" y="443" class="vp-paint-10">
+            Allow only the current Worker generation
+          </text>
+          <text x="793.65" y="467" class="vp-paint-10">
+            Controller failure does not affect the manager
+          </text>
+          <path
+            d="M 1485.0 425.0 H 1348.05"
+            marker-end="url(#recovery-05-recovery-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="49.5"
+            y="360"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="75.9" y="390" class="vp-paint-27">
+            Failure → closed／sealed
+          </text>
+          <text x="75.9" y="419" class="vp-paint-10">
+            Immediately close related data entry points
+          </text>
+          <text x="75.9" y="443" class="vp-paint-10">
+            No direct exit when failure is detected
+          </text>
+          <text x="75.9" y="467" class="vp-paint-10">
+            Sealed generations cannot be reopened
+          </text>
+          <path
+            d="M 767.25 425.0 H 630.3"
+            marker-end="url(#recovery-05-recovery-red)"
+            class="vp-paint-34"
+          ></path>
+          <rect
+            x="49.5"
+            y="660"
+            width="577.5"
+            height="150"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="75.9" y="690" class="vp-paint-9">Automatic recovery</text>
+          <text x="75.9" y="719" class="vp-paint-10">
+            Only when persisted intent is desired=running
+          </text>
+          <text x="75.9" y="743" class="vp-paint-10">
+            Manual stop／emergency stop must be cleared
+          </text>
+          <text x="75.9" y="767" class="vp-paint-10">
+            Old Worker／FD must be conclusively invalidated
+          </text>
+          <text x="75.9" y="791" class="vp-paint-10">
+            Create a new generation; retain the Instance ID
+          </text>
+          <path
+            d="M 338.25 490.0 V 658.0"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 338.25 660.0 V 580.0 H 693.0 V 145.0 H 763.95"
+            marker-end="url(#recovery-05-recovery-blue)"
+            class="vp-paint-16"
+          ></path>
+          <rect
+            x="767.25"
+            y="660"
+            width="577.5"
+            height="150"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="793.65" y="690" class="vp-paint-27">
+            Manual stop／emergency stop
+          </text>
+          <text x="793.65" y="719" class="vp-paint-10">
+            Advance intent revision and revoke authorization
+          </text>
+          <text x="793.65" y="743" class="vp-paint-10">
+            Stale recovery processes cannot reopen traffic
+          </text>
+          <text x="793.65" y="767" class="vp-paint-10">
+            Clearing the emergency state still leaves it stopped
+          </text>
+          <text x="793.65" y="791" class="vp-paint-10">
+            The user must explicitly start it afterward
+          </text>
+          <path
+            d="M 1056.0 660.0 V 492.0"
+            marker-end="url(#recovery-05-recovery-red)"
+            class="vp-paint-35"
+          ></path>
+          <rect
+            x="1485.0"
+            y="660"
+            width="577.5"
+            height="150"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1511.4" y="690" class="vp-paint-27">
+            Manager or Platform restart
+          </text>
+          <text x="1511.4" y="719" class="vp-paint-10">
+            Seal old generations
+          </text>
+          <text x="1511.4" y="743" class="vp-paint-10">
+            Retain only sandbox leases proven closed
+          </text>
+          <text x="1511.4" y="767" class="vp-paint-10">
+            Replace running Workers
+          </text>
+          <text x="1511.4" y="791" class="vp-paint-10">
+            Stop intent cannot be proven → closed
+          </text>
+          <path
+            d="M 1773.75 660.0 V 580.0 H 693.0"
+            marker-end="url(#recovery-05-recovery-amber)"
+            class="vp-paint-18"
+          ></path>
+          <text x="49.5" y="880" class="vp-paint-12">
+            Only Instance Manager can approve CommitResume. ApplyPolicy alone
+            cannot reopen traffic.
+          </text>
+          <text x="49.5" y="910" class="vp-paint-12">
+            A CPU／Store／Metrics pause must not create an unauthorized
+            direct-host fallback.
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-recovery">
+        <span class="vp-figlabel">Figure 5</span
+        ><span>Instance startup and fault-recovery flow</span
+        ><small
+          >Resume in the diagram requires current intent, worker generation, and
+          Platform enforcement evidence.<span class="vp-mobile-pan"
+            >(scroll horizontally to inspect the full diagram)</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        A successful WireGuard handshake does not mean I can let Apps start
+        accessing the internet.
+      </p>
+      <p>
+        When starting an Instance, first build the isolated environment and keep
+        it closed by default.<br />After the worker starts, allow only the
+        WireGuard handshake, DNS, and health probes.<br />Open App and Gateway
+        traffic only after confirming that the current configuration, Platform
+        policy, and worker generation are all correct.
+      </p>
+      <p>
+        If any intermediate step fails, remain
+        <code>blocked</code>.<br />Rebuilding a worker must always use a new
+        <code>generation</code>. An old generation that has been
+        <code>Seal</code> cannot be reopened.<br />If the Manager is replaced,
+        the Platform epoch changes, or the user presses Start／Stop during this
+        period, previously issued commands must no longer take effect.
+      </p>
+      <p>
+        I split the Watchdog into two layers.<br />When the Watchdog inside an
+        Instance detects a problem, it closes its own ingress first and then
+        reports the fault.<br />The outer Instance Manager is responsible for
+        recording intent, reclaiming old resources, and rebuilding.<br />I do
+        not want both sides competing to restart the same Instance at the same
+        time.
+      </p>
+      <p>
+        Manual <code>Stop</code> and <code>EmergencyStop</code> must have the
+        highest priority.<br />Suppose the database fails just when Stop is
+        pressed, and it is unclear whether the latest stop intent was saved
+        successfully. The system must not automatically reopen using the old
+        <code>desired=running</code> .<br />At that point, I would rather enter
+        <code>recovery_required</code> and wait for a person to confirm.
+      </p>
+      <p>
+        As for whether the original TCP session can reconnect after a crash, I
+        am not trying to guarantee that.<br />Losing a connection is better than
+        using the wrong exit.
+      </p>
+      <h3 id="vp-heading-1890">
+        Connection state cannot be only Connected／Disconnected
+      </h3>
+      <p>
+        I do not want the UI to have only Connected／Disconnected states.<br />For
+        example, I set A to <code>desired_state=running</code>, but it is
+        currently <code>reconnecting</code>, and
+        <code>enforcement=blocked</code>.<br />These three things should be
+        displayed separately.<br />Wanting it to keep running and whether it can
+        currently send traffic out are different things.
+      </p>
+    </div>
+    <div id="start-sequence" class="vp-subsection">
+      <h3 id="vp-heading-1920">
+        Startup, fail-closed behavior, and automatic recovery: START／ACTIVATE
+        sequence diagram
+      </h3>
+      <div class="vp-prose">
+        <p>
+          The flow first writes <code>desired=running</code> to Store. Manager
+          then reserves the generation and identity lease and asks Platform to
+          execute <code>PrepareClosed</code>.<br />The worker initially starts
+          in <code>probe_only</code> mode.<br />Only after confirming that
+          tunnel, DNS, policy, and current authorization information all agree
+          does it execute <code>CommitResume</code> and <code>Activate</code>.
+        </p>
+      </div>
+      <figure
+        id="fig-start-seq"
+        aria-labelledby="cap-start-seq"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="Sequence diagram A: scroll horizontally to view the complete diagram"
+          class="vp-diagram-scroller vp-sequence"
+        >
+          <svg
+            viewBox="0 0 2343.0 1334"
+            width="2343.0"
+            height="1334"
+            role="img"
+            aria-label="START／ACTIVATE sequence diagram"
+          >
+            <title>START／ACTIVATE sequence diagram</title>
+            <desc>
+              All payload gates are closed by default. Only current Manager and
+              Platform evidence can authorize opening.
+            </desc>
+            <defs>
+              <marker
+                id="start-seq-arrow-flow"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="start-seq-arrow-back"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-2"></path>
+              </marker>
+            </defs>
+            <rect
+              width="2343.0"
+              height="1334"
+              rx="14"
+              class="vp-paint-36"
+            ></rect>
+            <text x="69.3" y="40" class="vp-paint-37">
+              START／ACTIVATE startup and opening sequence diagram
+            </text>
+            <text x="69.3" y="75" class="vp-paint-38">
+              Data gates are closed by default. Only verified evidence from the
+              current Manager and Platform can approve opening.
+            </text>
+            <rect
+              x="23.1"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="165.0" y="128" class="vp-paint-40">User interface</text>
+            <line
+              x1="165.0"
+              x2="165.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="425.7"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="567.6" y="128" class="vp-paint-40">VPN Core</text>
+            <line
+              x1="567.6"
+              x2="567.6"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="828.3"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="970.2" y="128" class="vp-paint-40">Store service</text>
+            <line
+              x1="970.2"
+              x2="970.2"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1230.9"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1372.8" y="128" class="vp-paint-40">Instance manager</text>
+            <line
+              x1="1372.8"
+              x2="1372.8"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1633.5"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1775.4" y="128" class="vp-paint-40">Platform service</text>
+            <line
+              x1="1775.4"
+              x2="1775.4"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="2036.1"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="2178.0" y="128" class="vp-paint-40">Instance Worker</text>
+            <line
+              x1="2178.0"
+              x2="2178.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="41.25"
+              y="144"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="165.0"
+              x2="551.1"
+              y1="187"
+              y2="187"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="366.3" y="173" class="vp-paint-44">
+              01 · Start＋version comparison
+            </text>
+            <line
+              x1="567.6"
+              x2="953.7"
+              y1="261"
+              y2="261"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="768.9" y="247" class="vp-paint-45">
+              02 · Persist desired=running with CAS
+            </text>
+            <rect
+              x="41.25"
+              y="292"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="567.6"
+              x2="1356.3"
+              y1="335"
+              y2="335"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="970.2" y="321" class="vp-paint-44">
+              03 · Issue start intent
+            </text>
+            <line
+              x1="1372.8"
+              x2="986.7"
+              y1="409"
+              y2="409"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1171.5" y="395" class="vp-paint-45">
+              04 · Reserve Worker generation and key lease
+            </text>
+            <rect
+              x="41.25"
+              y="440"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1372.8"
+              x2="1758.9"
+              y1="483"
+              y2="483"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1574.1" y="469" class="vp-paint-45">
+              05 · PrepareClosed: close first
+            </text>
+            <line
+              x1="1775.4"
+              x2="1389.3"
+              y1="557"
+              y2="557"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1574.1" y="543" class="vp-paint-45">
+              06 · Return sandbox／policy evidence
+            </text>
+            <rect
+              x="41.25"
+              y="588"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1372.8"
+              x2="1758.9"
+              y1="631"
+              y2="631"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1574.1" y="617" class="vp-paint-45">
+              07 · Create Worker and restricted FDs
+            </text>
+            <line
+              x1="1775.4"
+              x2="2161.5"
+              y1="705"
+              y2="705"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1976.7" y="691" class="vp-paint-45">
+              08 · Deliver restricted resources and start
+            </text>
+            <rect
+              x="41.25"
+              y="736"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="970.2"
+              x2="2161.5"
+              y1="779"
+              y2="779"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1574.1" y="765" class="vp-paint-44">
+              09 · Deliver single-use secret lease
+            </text>
+            <line
+              x1="1372.8"
+              x2="2161.5"
+              y1="853"
+              y2="853"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1775.4" y="839" class="vp-paint-44">
+              10 · Configure／Start: probes only
+            </text>
+            <rect
+              x="41.25"
+              y="884"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="2178.0"
+              x2="1389.3"
+              y1="927"
+              y2="927"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1775.4" y="913" class="vp-paint-44">
+              11 · VPN tunnel and DNS verification complete
+            </text>
+            <line
+              x1="1372.8"
+              x2="1758.9"
+              y1="1001"
+              y2="1001"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1574.1" y="987" class="vp-paint-45">
+              12 · CommitResume: approve opening
+            </text>
+            <rect
+              x="41.25"
+              y="1032"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1372.8"
+              x2="2161.5"
+              y1="1075"
+              y2="1075"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1775.4" y="1061" class="vp-paint-44">
+              13 · Activate: formally ready
+            </text>
+            <line
+              x1="1372.8"
+              x2="986.7"
+              y1="1149"
+              y2="1149"
+              marker-end="url(#start-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1171.5" y="1135" class="vp-paint-45">
+              14 · Operation successful
+            </text>
+            <rect
+              x="41.25"
+              y="1180"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="567.6"
+              x2="181.5"
+              y1="1223"
+              y2="1223"
+              marker-end="url(#start-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="366.3" y="1209" class="vp-paint-45">
+              15 · Return latest state through SSE
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-start-seq">
+          <span class="vp-figlabel">Sequence diagram A</span
+          ><span>START／ACTIVATE sequence diagram</span
+          ><small
+            >From persisted intent and a closed environment to probe-only, with
+            Activate authorized only at the end.<span class="vp-mobile-pan"
+              >(scroll horizontally to inspect the full diagram)</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="bootstrap">
+    <h2 id="bootstrap">
+      <span class="vp-sec-no">05</span>How is the first Provider created? This
+      is a bootstrap problem
+    </h2>
+    <figure id="fig-provider" aria-labelledby="cap-provider" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="Figure 6: scroll horizontally to view the complete diagram"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="2112.0"
+          height="1140"
+          viewBox="0 0 2112.0 1140"
+          role="img"
+          aria-label="Provider initial connection and per-access checks"
+        >
+          <title>Provider initial connection and per-access checks</title>
+          <desc>
+            The first Profile automatically creates an Instance. The latch is
+            sealed after revoking the original network. All Providers share a
+            manually selected exit, but each Adapter checks independently and
+            repeats preflight for every HTTP request.
+          </desc>
+          <defs>
+            <marker
+              id="provider-04-provider-egress-blue"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-green"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-2"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-amber"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-3"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-purple"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-4"></path>
+            </marker>
+            <marker
+              id="provider-04-provider-egress-red"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0L10 5L0 10Z" class="vp-paint-5"></path>
+            </marker>
+          </defs>
+          <rect width="2112.0" height="1140" class="vp-paint-6"></rect>
+          <text x="46.2" y="34" class="vp-paint-7">
+            Figure 6｜Provider first bootstrap, exit switching, and per-request
+            verification
+          </text>
+          <rect
+            x="49.5"
+            y="70"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="75.9" y="100" class="vp-paint-27">
+            Initial Provider creation job
+          </text>
+          <text x="75.9" y="129" class="vp-paint-10">
+            One account／only restricted host networking authorized
+          </text>
+          <text x="75.9" y="153" class="vp-paint-10">
+            10-minute authorization／one 60-second session
+          </text>
+          <text x="75.9" y="177" class="vp-paint-10">
+            Checks are still required for every API request
+          </text>
+          <rect
+            x="767.25"
+            y="70"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="793.65" y="100" class="vp-paint-9">
+            Obtain the first valid Profile
+          </text>
+          <text x="793.65" y="129" class="vp-paint-10">
+            Validator and persisted unique child operation
+          </text>
+          <text x="793.65" y="153" class="vp-paint-10">
+            Controller → Instance Manager
+          </text>
+          <text x="793.65" y="177" class="vp-paint-10">
+            Automatically create and start an Instance
+          </text>
+          <rect
+            x="1485.0"
+            y="70"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="1511.4" y="100" class="vp-paint-27">
+            New Instance passes preliminary probes
+          </text>
+          <text x="1511.4" y="129" class="vp-paint-10">
+            Independent tunnel／DNS／system restrictions
+          </text>
+          <text x="1511.4" y="153" class="vp-paint-10">
+            Candidate connection is for health probes only
+          </text>
+          <path
+            d="M 627.0 135.0 H 763.95"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1344.75 135.0 H 1481.7"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="1485.0"
+            y="300"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-15"
+          ></rect>
+          <text x="1511.4" y="330" class="vp-paint-9">
+            Close the original direct exit
+          </text>
+          <text x="1511.4" y="359" class="vp-paint-10">
+            1．Persist the closing intent
+          </text>
+          <text x="1511.4" y="383" class="vp-paint-10">
+            2．Revoke all direct sockets
+          </text>
+          <text x="1511.4" y="407" class="vp-paint-10">
+            3．Record permanent latch and exit binding
+          </text>
+          <path
+            d="M 1773.75 200.0 V 298.0"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="767.25"
+            y="300"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="793.65" y="330" class="vp-paint-27">
+            Globally selected Instance
+          </text>
+          <text x="793.65" y="359" class="vp-paint-10">
+            All Providers share the same exit
+          </text>
+          <text x="793.65" y="383" class="vp-paint-10">
+            Switch or disable only manually
+          </text>
+          <text x="793.65" y="407" class="vp-paint-10">
+            No automatic fallback to direct host access
+          </text>
+          <path
+            d="M 1485.0 365.0 H 1348.05"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="49.5"
+            y="300"
+            width="577.5"
+            height="130"
+            rx="8"
+            class="vp-paint-33"
+          ></rect>
+          <text x="75.9" y="330" class="vp-paint-23">Blocked／disabled</text>
+          <text x="75.9" y="359" class="vp-paint-10">
+            Still display the originally selected Instance
+          </text>
+          <text x="75.9" y="383" class="vp-paint-10">
+            Stale monitoring information must not count as healthy
+          </text>
+          <text x="75.9" y="407" class="vp-paint-10">
+            Recovery must not override a manual stop
+          </text>
+          <path
+            d="M 767.25 365.0 H 630.3"
+            marker-end="url(#provider-04-provider-egress-red)"
+            class="vp-paint-35"
+          ></path>
+          <rect
+            x="49.5"
+            y="510"
+            width="2013.0"
+            height="480"
+            rx="12"
+            class="vp-paint-47"
+          ></rect>
+          <text x="79.2" y="540" class="vp-paint-48">
+            Every actual Provider API request: including retries, pagination,
+            token refresh, and reconciliation
+          </text>
+          <rect
+            x="107.25"
+            y="570"
+            width="528.0"
+            height="125"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="133.65" y="600" class="vp-paint-27">
+            1．Plan and reserve quota
+          </text>
+          <text x="133.65" y="629" class="vp-paint-10">
+            Fix the IP family and immutable request
+          </text>
+          <text x="133.65" y="653" class="vp-paint-10">
+            Reserve IP-probe and API quotas
+          </text>
+          <text x="133.65" y="677" class="vp-paint-10">
+            Read the current connection identity
+          </text>
+          <rect
+            x="775.5"
+            y="570"
+            width="536.25"
+            height="125"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="801.9" y="600" class="vp-paint-27">
+            2．Provider exit IP check
+          </text>
+          <text x="801.9" y="629" class="vp-paint-10">
+            Use the same connection／IP family as the API
+          </text>
+          <text x="801.9" y="653" class="vp-paint-10">
+            Check IP, location, and provider ownership separately
+          </text>
+          <text x="801.9" y="677" class="vp-paint-10">
+            Probe requests carry no account credentials
+          </text>
+          <rect
+            x="1443.75"
+            y="570"
+            width="544.5"
+            height="125"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="1470.15" y="600" class="vp-paint-27">
+            3．Issue a single-use request permit
+          </text>
+          <text x="1470.15" y="629" class="vp-paint-10">
+            Bind request, route, and connection generation
+          </text>
+          <text x="1470.15" y="653" class="vp-paint-10">
+            Nonce＋2-second dispatch deadline
+          </text>
+          <text x="1470.15" y="677" class="vp-paint-10">
+            The checking flow does not call itself recursively
+          </text>
+          <path
+            d="M 635.25 633.0 H 772.2"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <path
+            d="M 1311.75 633.0 H 1440.45"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="1443.75"
+            y="810"
+            width="544.5"
+            height="120"
+            rx="8"
+            class="vp-paint-13"
+          ></rect>
+          <text x="1470.15" y="840" class="vp-paint-27">
+            4．Atomic verification before sending
+          </text>
+          <text x="1470.15" y="869" class="vp-paint-10">
+            Recheck generation, IP family, and deadline
+          </text>
+          <text x="1470.15" y="893" class="vp-paint-10">
+            Consume permit before the first API byte
+          </text>
+          <text x="1470.15" y="917" class="vp-paint-10">
+            No automatic redirects or hidden retries
+          </text>
+          <path
+            d="M 1716.0 695.0 V 808.0"
+            marker-end="url(#provider-04-provider-egress-blue)"
+            class="vp-paint-11"
+          ></path>
+          <rect
+            x="775.5"
+            y="810"
+            width="536.25"
+            height="120"
+            rx="8"
+            class="vp-paint-17"
+          ></rect>
+          <text x="801.9" y="840" class="vp-paint-27">
+            5．Execute Provider API
+          </text>
+          <text x="801.9" y="869" class="vp-paint-10">
+            Send only through the selected VPN tunnel
+          </text>
+          <text x="801.9" y="893" class="vp-paint-10">
+            Remote mutation result unclear → unknown
+          </text>
+          <text x="801.9" y="917" class="vp-paint-10">
+            Reconcile first, then decide whether to retry
+          </text>
+          <path
+            d="M 1443.75 868.0 H 1315.05"
+            marker-end="url(#provider-04-provider-egress-green)"
+            class="vp-paint-22"
+          ></path>
+          <rect
+            x="107.25"
+            y="810"
+            width="528.0"
+            height="120"
+            rx="8"
+            class="vp-paint-14"
+          ></rect>
+          <text x="133.65" y="840" class="vp-paint-27">
+            Provider management panel
+          </text>
+          <text x="133.65" y="869" class="vp-paint-10">
+            Keep selection even when Instance is offline
+          </text>
+          <text x="133.65" y="893" class="vp-paint-10">
+            Exit IP／country／city／time
+          </text>
+          <text x="133.65" y="917" class="vp-paint-10">
+            Provider ownership may be unconfirmed
+          </text>
+          <path
+            d="M 775.5 868.0 H 638.55"
+            marker-end="url(#provider-04-provider-egress-purple)"
+            class="vp-paint-19"
+          ></path>
+          <text x="49.5" y="1050" class="vp-paint-12">
+            IP observations cannot prove DNS, IPv6, QUIC, or all App paths.
+            Platform restrictions must enforce protection.
+          </text>
+          <text x="49.5" y="1080" class="vp-paint-12">
+            After switching: no host DNS, host HTTP, or automatic use of another
+            exit.
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-provider">
+        <span class="vp-figlabel">Figure 6</span
+        ><span
+          >Provider first bootstrap, exit switching, and preflight checks for
+          every request</span
+        ><small
+          >The restricted direct-access authorization for the first bootstrap is
+          revoked after switching to VPN. Automatic fallback is not
+          allowed.<span class="vp-mobile-pan"
+            >(scroll horizontally to inspect the full diagram)</span
+          ></small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        There is also a problem with Providers.<br />When VPN Manager is first
+        installed, there is no VPN Profile at all. I have to first obtain an
+        account, device, and WireGuard configuration from Mullvad or AIRVPN.<br />So
+        where should the first management request go?
+      </p>
+      <p>
+        My current idea is to allow conditional direct access only for the first
+        time.<br />The Provider worker receives a time-, account-,
+        HTTPS-origin-, DNS-, and traffic-budget-limited
+        <code>BootstrapGrant</code>.<br />Once the first valid Profile is
+        obtained, Controller asks Instance Manager to create and start the first
+        VPN.
+      </p>
+      <p>
+        After confirming that the tunnel can handle management requests, first
+        write the intent to close direct access into Store, then revoke the
+        original grant and sockets, and only finally mark
+        <code>bootstrap_consumed=true</code> and configure the global Provider
+        exit.<br />This order must not be mixed up. In particular, switching
+        must not be declared complete while direct access is still alive.
+      </p>
+      <p>
+        After that, all Provider APIs go through the VPN Instance selected by
+        the user.<br />If that Instance fails, display <code>blocked</code>.
+        Switching back to the host or automatically switching to another
+        Instance is prohibited.<br />If it really cannot be handled, the user
+        can manually select a new exit or explicitly authorize a one-time
+        <code>rebootstrap</code>.
+      </p>
+      <p>
+        I also want an IP preflight before every actual Provider HTTP request is
+        sent.<br />Including retry, pagination, and token refresh, the same
+        route tuple, IP family, and connector must be confirmed, and a
+        <code>ProviderRequestPermit</code> valid only for this request must be
+        obtained before sending.<br />For now, the tentative preflight deadline
+        is 3 seconds and the dispatch window is 2 seconds.<br />This will be
+        slower and use more checker quota, but at least it will not treat an IP
+        shown in the UI several minutes ago as evidence for current routing.
+      </p>
+      <p>
+        The UI needs to display several things separately: which Instance is
+        selected, whether this request actually passed through a controlled
+        tunnel, and whether the external IP is that Provider's exit.<br />For
+        example, selecting a Mullvad Instance to call AIRVPN's management API
+        can fully comply with my configuration.<br />An external IP that is not
+        AIRVPN does not imply a traffic leak.
+      </p>
+      <h3 id="vp-heading-2475">
+        What should the Provider Adapter be responsible for?
+      </h3>
+      <p>
+        I want provider integrations to follow the same flow as much as
+        possible.<br />Profile validation, Instance creation, and exit binding
+        are handled by shared control logic. Only Mullvad's and AIRVPN's
+        respective device, server, and port-forward APIs are assigned to their
+        Adapters.<br />When adding a Provider, I do not want every Adapter to
+        have permission to directly start or stop Instances or open host
+        sockets.
+      </p>
+      <p>
+        Provider APIs have another problem: a timeout after sending a request
+        does not mean the other side did not execute it.<br />For example, the
+        device may actually have been created successfully, but the response was
+        not received.<br />In that case, first record it as
+        <code>unknown</code> and use the operation journal to query the remote
+        state. It should not simply be sent again.
+      </p>
+    </div>
+    <div id="provider-sequence" class="vp-subsection">
+      <h3 id="vp-heading-2503">PROVIDER first-bootstrap sequence diagram</h3>
+      <div class="vp-prose">
+        <p>
+          To count the entire bootstrap as complete, we must confirm that the
+          new Instance can send management requests and that the original direct
+          authorization has actually been revoked. Only then do we
+          <code>CommitEgress</code>.<br />If a result during switching cannot be
+          confirmed, I would rather first stay <code>blocked</code> and
+          establish the state clearly.
+        </p>
+      </div>
+      <figure
+        id="fig-provider-seq"
+        aria-labelledby="cap-provider-seq"
+        class="vp-diagram"
+      >
+        <div
+          role="region"
+          tabindex="0"
+          aria-label="Sequence diagram B: scroll horizontally to view the complete diagram"
+          class="vp-diagram-scroller vp-sequence"
+        >
+          <svg
+            viewBox="0 0 2343.0 1334"
+            width="2343.0"
+            height="1334"
+            role="img"
+            aria-label="PROVIDER first-bootstrap sequence diagram"
+          >
+            <title>PROVIDER first-bootstrap sequence diagram</title>
+            <desc>
+              Initial restricted direct access → first Profile → automatic
+              Instance startup → seal/revoke → CommitEgress.
+            </desc>
+            <defs>
+              <marker
+                id="provider-seq-arrow-flow"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-1"></path>
+              </marker>
+              <marker
+                id="provider-seq-arrow-back"
+                markerWidth="7"
+                markerHeight="7"
+                refX="6.5"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M0 0 L7 3.5 L0 7Z" class="vp-paint-2"></path>
+              </marker>
+            </defs>
+            <rect
+              width="2343.0"
+              height="1334"
+              rx="14"
+              class="vp-paint-36"
+            ></rect>
+            <text x="69.3" y="40" class="vp-paint-37">
+              Provider first VPN creation sequence diagram
+            </text>
+            <text x="69.3" y="75" class="vp-paint-38">
+              Initial restricted direct access → first Profile → automatic
+              Instance creation → close direct access → bind VPN exit.
+            </text>
+            <rect
+              x="23.1"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="165.0" y="128" class="vp-paint-40">UI／VPN Core</text>
+            <line
+              x1="165.0"
+              x2="165.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="358.55"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="500.44" y="128" class="vp-paint-40">Store service</text>
+            <line
+              x1="500.44"
+              x2="500.44"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="694.15"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="836.05" y="128" class="vp-paint-40">Platform service</text>
+            <line
+              x1="836.05"
+              x2="836.05"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1029.6"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1171.5" y="128" class="vp-paint-40">
+              Provider worker process
+            </text>
+            <line
+              x1="1171.5"
+              x2="1171.5"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1365.04"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1506.94" y="128" class="vp-paint-40">Provider API</text>
+            <line
+              x1="1506.94"
+              x2="1506.94"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="1700.65"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="1842.56" y="128" class="vp-paint-40">
+              Instance Manager
+            </text>
+            <line
+              x1="1842.56"
+              x2="1842.56"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="2036.1"
+              y="99"
+              width="283.8"
+              height="46"
+              rx="7"
+              class="vp-paint-39"
+            ></rect>
+            <text x="2178.0" y="128" class="vp-paint-40">VPN Instance</text>
+            <line
+              x1="2178.0"
+              x2="2178.0"
+              y1="147"
+              y2="1302"
+              class="vp-paint-41"
+            ></line>
+            <rect
+              x="41.25"
+              y="144"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="165.0"
+              x2="483.94"
+              y1="187"
+              y2="187"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="332.8" y="173" class="vp-paint-45">
+              01 · Create bootstrap record
+            </text>
+            <line
+              x1="165.0"
+              x2="819.55"
+              y1="261"
+              y2="261"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="500.44" y="247" class="vp-paint-44">
+              02 · Prepare time-limited direct authorization
+            </text>
+            <rect
+              x="41.25"
+              y="292"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="836.05"
+              x2="1155.0"
+              y1="335"
+              y2="335"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1003.69" y="321" class="vp-paint-45">
+              03 · Deliver only the approved direct channel
+            </text>
+            <line
+              x1="1171.5"
+              x2="1490.44"
+              y1="409"
+              y2="409"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1339.31" y="395" class="vp-paint-45">
+              04 · Exit IP preflight＋obtain Profile
+            </text>
+            <rect
+              x="41.25"
+              y="440"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="1506.94"
+              x2="1188.0"
+              y1="483"
+              y2="483"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="1339.31" y="469" class="vp-paint-44">
+              05 · Return Profile
+            </text>
+            <line
+              x1="1171.5"
+              x2="516.94"
+              y1="557"
+              y2="557"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="836.05" y="543" class="vp-paint-44">
+              06 · Save Profile and unique child operation
+            </text>
+            <rect
+              x="41.25"
+              y="588"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="165.0"
+              x2="1826.06"
+              y1="631"
+              y2="631"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1003.69" y="617" class="vp-paint-44">
+              07 · Automatically create and start Instance
+            </text>
+            <line
+              x1="1842.56"
+              x2="852.56"
+              y1="705"
+              y2="705"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1339.31" y="691" class="vp-paint-44">
+              08 · Close environment and create Worker
+            </text>
+            <rect
+              x="41.25"
+              y="736"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="836.05"
+              x2="2161.5"
+              y1="779"
+              y2="779"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="1506.94" y="765" class="vp-paint-44">
+              09 · Deliver FDs and start Worker
+            </text>
+            <line
+              x1="2178.0"
+              x2="1859.06"
+              y1="853"
+              y2="853"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="2010.19" y="839" class="vp-paint-45">
+              10 · VPN／DNS／management channel ready
+            </text>
+            <rect
+              x="41.25"
+              y="884"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="165.0"
+              x2="483.94"
+              y1="927"
+              y2="927"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="332.8" y="913" class="vp-paint-45">
+              11 · Persist closing intent
+            </text>
+            <line
+              x1="165.0"
+              x2="819.55"
+              y1="1001"
+              y2="1001"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="500.44" y="987" class="vp-paint-44">
+              12 · Revoke direct authorization and sockets
+            </text>
+            <rect
+              x="41.25"
+              y="1032"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="836.05"
+              x2="181.5"
+              y1="1075"
+              y2="1075"
+              marker-end="url(#provider-seq-arrow-back)"
+              class="vp-paint-46"
+            ></line>
+            <text x="500.44" y="1061" class="vp-paint-44">
+              13 · Return evidence verifying revocation
+            </text>
+            <line
+              x1="165.0"
+              x2="483.94"
+              y1="1149"
+              y2="1149"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="332.8" y="1135" class="vp-paint-45">
+              14 · Confirm exit and permanent latch
+            </text>
+            <rect
+              x="41.25"
+              y="1180"
+              width="2260.5"
+              height="68"
+              rx="5"
+              class="vp-paint-42"
+            ></rect>
+            <line
+              x1="165.0"
+              x2="1155.0"
+              y1="1223"
+              y2="1223"
+              marker-end="url(#provider-seq-arrow-flow)"
+              class="vp-paint-43"
+            ></line>
+            <text x="668.25" y="1209" class="vp-paint-44">
+              15 · Use selected Instance thereafter
+            </text>
+          </svg>
+        </div>
+        <figcaption id="cap-provider-seq">
+          <span class="vp-figlabel">Sequence diagram B</span
+          ><span>PROVIDER first-bootstrap sequence diagram</span
+          ><small
+            >BootstrapGrant → first Profile → Instance → Seal/Revocation →
+            CommitEgress.<span class="vp-mobile-pan"
+              >(scroll horizontally to inspect the full diagram)</span
+            ></small
+          >
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="metrics">
+    <h2 id="metrics">
+      <span class="vp-sec-no">06</span>I want to see every VPN's traffic and
+      resource use clearly
+    </h2>
+    <div class="vp-prose">
+      <p>
+        I do not want VPN Manager to end up with just a few green lights telling
+        me the VPN is connected.<br />I want to know which Instance is consuming
+        traffic, how many active connections a Gateway has, whether DNS latency
+        has risen, and which process is occupying CPU, memory, and queues.
+      </p>
+      <p>
+        I will separate Metrics Service and Performance Manager.<br />Metrics
+        Service collects statistics such as Instance counters, Gateway payload
+        bytes, WireGuard UDP bytes, DNS successes and failures, active flows,
+        CPU, and RSS.<br />Performance Manager is responsible for analyzing
+        throughput, latency, and resource efficiency, or running benchmarks I
+        explicitly start.<br />It cannot change Instance state on its own just
+        to measure speed.
+      </p>
+    </div>
+    <figure id="fig-metrics" aria-labelledby="cap-metrics" class="vp-diagram">
+      <div
+        role="region"
+        tabindex="0"
+        aria-label="Figure 7: scroll horizontally to view the complete traffic-observation data path"
+        class="vp-diagram-scroller"
+      >
+        <svg
+          width="1848.0"
+          height="340"
+          viewBox="0 0 1848.0 340"
+          role="img"
+          aria-labelledby="svg-metrics-title svg-metrics-desc"
+        >
+          <title id="svg-metrics-title">
+            Traffic-observation and performance-analysis architecture
+          </title>
+          <desc id="svg-metrics-desc">
+            Instance local counters are passed to Metrics Collector without
+            blocking, then compressed and stored. UI and Performance Manager
+            query aggregated data. App payload does not pass through this chain.
+          </desc>
+          <defs>
+            <marker
+              id="metrics-arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0 0L8 4L0 8Z" class="vp-paint-1"></path>
+            </marker>
+            <marker
+              id="metrics-dash"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0 0L8 4L0 8Z" class="vp-paint-4"></path>
+            </marker>
+          </defs>
+          <rect width="1848.0" height="340" class="vp-paint-6"></rect>
+          <text x="49.5" y="35" class="vp-paint-49">
+            Figure 7｜Traffic-metrics collection and the non-blocking
+            observation chain
+          </text>
+          <g class="vp-paint-50">
+            <rect
+              x="46.2"
+              y="78"
+              width="338.25"
+              height="114"
+              rx="7"
+              class="vp-paint-51"
+            ></rect>
+            <rect x="475.2" y="78" width="338.25" height="114" rx="7"></rect>
+            <rect x="904.2" y="78" width="338.25" height="114" rx="7"></rect>
+            <rect x="1333.2" y="78" width="463.65" height="114" rx="7"></rect>
+            <rect
+              x="904.2"
+              y="236"
+              width="338.25"
+              height="70"
+              rx="7"
+              class="vp-paint-52"
+            ></rect>
+            <rect
+              x="1333.2"
+              y="236"
+              width="463.65"
+              height="70"
+              rx="7"
+              class="vp-paint-52"
+            ></rect>
+          </g>
+          <g class="vp-paint-53">
+            <text x="72.6" y="109">Instance Metrics</text>
+            <text x="501.6" y="109">Metrics collector</text>
+            <text x="930.6" y="109">Compression and aggregation</text>
+            <text x="1359.6" y="109">Store／metrics database</text>
+            <text x="930.6" y="262" class="vp-paint-54">
+              Performance manager
+            </text>
+            <text x="1359.6" y="262">React interface</text>
+          </g>
+          <g class="vp-paint-55">
+            <text x="72.6" y="139">Cumulative counters every second</text>
+            <text x="72.6" y="164">Does not forward packet contents</text>
+            <text x="501.6" y="139">
+              Sequence validation／deduplication／gap marking
+            </text>
+            <text x="501.6" y="164">Samples may be dropped under overload</text>
+            <text x="930.6" y="139">CBOR＋Zstd</text>
+            <text x="930.6" y="164">Time aggregation／retention period</text>
+            <text x="1359.6" y="139">
+              Separate control and metrics databases
+            </text>
+            <text x="1359.6" y="164">Bounded data queries</text>
+            <text x="930.6" y="288">Analysis／performance benchmarks</text>
+            <text x="1359.6" y="288">Rate／latency／data gaps</text>
+          </g>
+          <g marker-end="url(#metrics-arrow)" class="vp-paint-56">
+            <path d="M 384.45 136.0 H 471.9"></path>
+            <path d="M 813.45 136.0 H 900.9"></path>
+            <path d="M 1242.45 136.0 H 1329.9"></path>
+          </g>
+          <g marker-end="url(#metrics-dash)" class="vp-paint-57">
+            <path d="M 1542.75 192.0 V 219.0 H 1074.15 V 234.0"></path>
+            <path d="M 1242.45 271.0 H 1329.9"></path>
+          </g>
+          <text x="47.85" y="330" class="vp-paint-58">
+            The observation chain carries only statistics. Actual App／Gateway
+            traffic still passes through its own Instance.
+          </text>
+        </svg>
+      </div>
+      <figcaption id="cap-metrics">
+        <span class="vp-figlabel">Figure 7</span
+        ><span
+          >An independent observation chain for traffic data from Instance to
+          UI</span
+        ><small
+          >Saturated Metrics may reduce sampling completeness, but must not make
+          the data plane wait. Charts must mark gaps.</small
+        >
+      </figcaption>
+    </figure>
+    <div class="vp-prose">
+      <p>
+        Metrics should ideally not exert backpressure on the data plane.<br />Each
+        Instance sends one bounded snapshot per second. Collector validates
+        sequence and deduplicates, followed by CBOR／Zstd compression and
+        aggregation.<br />If the collector is congested, just drop a few samples
+        and mark a <code>gap</code> . Do not make packets wait for the database.
+      </p>
+      <p>
+        Traffic figures must not be calculated carelessly either.<br />Gateway
+        payload bytes and WireGuard UDP bytes are statistics from different
+        layers. They cannot be added together as total traffic.<br />On counter
+        reset or a data interruption, charts must show a gap or unknown, not
+        simply draw 0.<br />Goodput also requires receiver-side confirmation. It
+        cannot be calculated from sender counters alone.
+      </p>
+      <p>
+        Traffic monitoring does not need to record everything either.<br />Collecting
+        counters, histograms, and necessary error data by default is enough.<br />I
+        do not want to put every DNS query name, full URL, or packet payload
+        into Metrics.
+      </p>
+    </div>
+  </section>
+</div>

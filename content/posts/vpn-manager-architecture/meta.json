@@ -1,0 +1,50 @@
+{
+  "id": "vpn-manager-architecture",
+  "slug": "vpn-manager-architecture",
+  "author": null,
+  "bodyFormat": "static-html",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-11-01",
+  "updatedAt": "2026-11-01",
+  "topics": ["engineering", "systems"],
+  "contentType": "research-note",
+  "tagIds": ["architecture", "networking", "privacy", "security"],
+  "featured": false,
+  "discussionNumber": null,
+  "commentsEnabled": true,
+  "relatedPostIds": [],
+  "relatedProjectIds": [],
+  "source": {
+    "kind": "library-manuscript",
+    "filename": "vpn-manager-blog-zh-with-screenshots (1).html",
+    "libraryFileId": "libfile_3adfe16a96dc819181b3efea6af56781",
+    "version": 0,
+    "edition": 1
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "我想做的 VPN Manager：讓不同 App 各走自己的 VPN",
+      "summary": "我想開發 VPN Manager：為不同 App 與 Service 規劃獨立 VPN Instance、Linux 原生隔離、故障封閉、Provider 自舉，以及流量監控。",
+      "publication": "published",
+      "translationState": "original",
+      "sourceRevision": "library:libfile_3adfe16a96dc819181b3efea6af56781:v0:edition-1",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/docs/process/REVIEW-vpn-manager-2026-11-01.md"
+    },
+    "en": {
+      "title": "The VPN Manager I want to build: let different apps use their own VPNs",
+      "summary": "I want to develop VPN Manager: plan independent VPN Instances for different apps and services, native Linux isolation, fail-closed behavior, Provider bootstrapping and traffic monitoring.",
+      "publication": "published",
+      "translationState": "reviewed",
+      "sourceRevision": "library:libfile_3adfe16a96dc819181b3efea6af56781:v0:edition-1",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/docs/process/REVIEW-vpn-manager-2026-11-01.md"
+    },
+    "ja": {
+      "title": "私が作りたい VPN Manager：アプリごとに別々の VPN を使う",
+      "summary": "VPN Manager を開発したい。アプリやサービスごとに独立した VPN Instance、Linux ネイティブの隔離、障害時の遮断、Provider のブートストラップ、トラフィック監視を設計する。",
+      "publication": "published",
+      "translationState": "reviewed",
+      "sourceRevision": "library:libfile_3adfe16a96dc819181b3efea6af56781:v0:edition-1",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/docs/process/REVIEW-vpn-manager-2026-11-01.md"
+    }
+  }
+}

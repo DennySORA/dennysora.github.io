@@ -126,7 +126,15 @@ export const loadPosts = once((): LoadedPost[] => {
         ),
         'utf8',
       );
-      const revision = createHash('sha256').update(source).digest('hex');
+      if (
+        post.source.kind === 'library-manuscript' &&
+        source !== readFileSync(join(directory, 'reviewed-source.html'), 'utf8')
+      )
+        throw new Error('Library manuscript changed after its recorded review');
+      const revision =
+        post.source.kind === 'library-manuscript'
+          ? `library:${post.source.libraryFileId}:v${post.source.version}:edition-${post.source.edition}`
+          : createHash('sha256').update(source).digest('hex');
       const editions = locales.filter(
         (locale) => editionStatus(post, locale, revision) === 'published',
       );
@@ -174,6 +182,7 @@ export function renderPost(
     const body = {
       ...renderStaticArticle(
         readFileSync(join(directory, `${locale}.html`), 'utf8'),
+        { directory, urlPrefix: `/content-assets/posts/${id}/` },
       ),
       sections: null,
     };
