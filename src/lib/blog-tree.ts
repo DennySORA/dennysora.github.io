@@ -2,15 +2,6 @@ import type { Locale } from '../i18n/index.ts';
 
 /** Published article folders, independent of the topic/tag taxonomy. */
 export const blogFolders = {
-  opinions: {
-    title: { 'zh-hant': '觀點', en: 'Opinions', ja: '見解' },
-    description: {
-      'zh-hant': '關於科技與個人選擇的觀點。',
-      en: 'Personal opinions on technology and choice.',
-      ja: 'テクノロジーと個人の選択についての見解。',
-    },
-    slugs: ['we-have-choices'],
-  },
   network: {
     title: { 'zh-hant': '網路', en: 'Networking', ja: 'ネットワーク' },
     description: {

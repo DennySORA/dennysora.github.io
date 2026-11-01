@@ -25,9 +25,8 @@ describe('authorized trilingual publication', () => {
         listPosts(locale)
           .map((post) => post.id)
           .sort(),
-      ).toEqual([...articles, 'we-have-choices']);
+      ).toEqual(articles);
       expect(populatedBlogFolders(listPosts(locale))).toEqual([
-        'opinions',
         'network',
         'tools',
         'security',

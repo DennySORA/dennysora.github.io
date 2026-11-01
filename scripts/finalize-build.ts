@@ -200,6 +200,14 @@ const analgesicsFallback = readFileSync(
   );
 write('zh-hant/note/medical/analgesics/index.html', analgesicsFallback);
 for (const locale of locales) {
+  write(
+    `${locale}/blog/opinions/we-have-choices/index.html`,
+    movedPage(`/${locale}/thoughts/we-have-choices/`, true),
+  );
+  write(
+    `${locale}/blog/opinions/index.html`,
+    movedPage(`/${locale}/thoughts/`),
+  );
   // The profile is the locale home now; old About links keep their section anchor.
   write(`${locale}/about/index.html`, movedPage(`/${locale}/`, true));
 }

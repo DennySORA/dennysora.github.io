@@ -1,0 +1,28 @@
+{
+  "slug": "we-have-choices",
+  "publication": "published",
+  "publishedAt": "2026-11-01",
+  "updatedAt": "2026-11-01",
+  "locales": {
+    "zh-hant": {
+      "title": "我們有選擇",
+      "summary": "擁抱開源、自己能私人部署、將資料掌握在自己手中的 LLM 。"
+    },
+    "en": {
+      "title": "We have choices.",
+      "summary": "Embrace open source, LLMs that you can privately deploy yourself, and keep your data in your own hands."
+    },
+    "ja": {
+      "title": "私たちには選択肢がある",
+      "summary": "オープンソースを、自分でプライベートにデプロイできて、自分のデータを自分の手元に置いておける LLM を受け入れよう。"
+    }
+  },
+  "cover": {
+    "file": "cover.jpg",
+    "alt": {
+      "zh-hant": "個人電腦通往三條獨立路徑，象徵選擇與自行掌握資料。",
+      "en": "A personal computer connects to three independent paths, symbolizing choice and control over personal data.",
+      "ja": "個人のコンピューターから三つの独立した経路が伸び、選択とデータの自己管理を象徴する。"
+    }
+  }
+}

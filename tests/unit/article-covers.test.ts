@@ -21,8 +21,8 @@ const routes = publishedRoutes().filter((route) =>
 
 describe('published article covers', () => {
   it('covers all published articles and shares one image across all three editions', () => {
-    expect(routes).toHaveLength(39);
-    expect(registry.covers).toHaveLength(13);
+    expect(routes).toHaveLength(36);
+    expect(registry.covers).toHaveLength(12);
     const counts = new Map<string, number>();
     const images = new Map<string, Set<string>>();
     const alts = new Map<string, Set<string>>();
@@ -69,11 +69,9 @@ describe('published article covers', () => {
             asset.sha256,
           );
         else {
-          expect([
-            'fan-system-matching',
-            'vpn-manager-architecture',
-            'we-have-choices',
-          ]).toContain(cover.id);
+          expect(['fan-system-matching', 'vpn-manager-architecture']).toContain(
+            cover.id,
+          );
           expect(cover.source.provider).toBe(
             'Original code-native illustration',
           );

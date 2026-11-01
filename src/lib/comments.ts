@@ -33,7 +33,11 @@ export function commentTarget(
       if (!post) throw new Error('Article comments require a content ID');
       return { ...post, id: `article:${post.id}` };
     case 'thought':
-      id = `thought:${route.slug}`;
+      // Preserve the existing discussion when the owner moved this post to Thoughts.
+      id =
+        route.slug === 'we-have-choices'
+          ? 'article:we-have-choices'
+          : `thought:${route.slug}`;
       break;
     case 'thoughts':
       id = 'index:thoughts';
