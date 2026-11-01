@@ -327,6 +327,12 @@ export type ViewData = ReturnType<typeof loadView>;
 
 function availableLocales(route: RouteDescriptor): Locale[] {
   switch (route.kind) {
+    case 'blog-folder':
+      return locales.filter((locale) =>
+        listPosts(locale).some(
+          (post) => articleFolder(post.slug) === route.folder,
+        ),
+      );
     case 'project':
       return [...projectPages[route.projectId].editions];
     case 'article': {

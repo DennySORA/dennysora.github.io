@@ -38,6 +38,7 @@ export const editionSchema = z
     sourceRevision: z
       .union([
         hash,
+        z.string().regex(/^manuscript:[a-z0-9-]+:edition-[0-9]+$/),
         z.string().regex(/^library:libfile_[a-f0-9]+:v[0-9]+:edition-[0-9]+$/),
       ])
       .nullable(),
@@ -63,6 +64,14 @@ export const postSchema = z
     relatedPostIds: z.array(safeId),
     relatedProjectIds: z.array(safeId),
     source: z.union([
+      z
+        .object({
+          kind: z.literal('supplied-manuscript'),
+          sourceVersion: z
+            .string()
+            .regex(/^manuscript:[a-z0-9-]+:edition-[0-9]+$/),
+        })
+        .strict(),
       z
         .object({
           kind: z.literal('library-manuscript'),

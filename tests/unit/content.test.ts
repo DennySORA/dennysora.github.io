@@ -55,7 +55,8 @@ describe('publication boundaries', () => {
       expect(editionStatus(post, locale, post.revision)).toBe('published');
     if (
       post.source.kind === 'imported-manuscript' ||
-      post.source.kind === 'library-manuscript'
+      post.source.kind === 'library-manuscript' ||
+      post.source.kind === 'supplied-manuscript'
     )
       throw new Error('Expected repository source fixture');
     expect(post.source.commit).toMatch(/^[a-f0-9]{40}$/);
@@ -106,7 +107,10 @@ describe('publication boundaries', () => {
   });
   it('keeps content revisions tied to actual source bytes', () => {
     for (const value of loadPosts().filter(
-      (post) => post.source.kind !== 'library-manuscript',
+      (post) =>
+        !['library-manuscript', 'supplied-manuscript'].includes(
+          post.source.kind,
+        ),
     ))
       expect(value.locales.en?.sourceRevision).toBe(
         createHash('sha256')
@@ -177,6 +181,7 @@ describe('route manifest', () => {
       expect(paths).toContain(`/${locale}/projects/tools/dgxtop`);
       expect(tagsInLocale(locale).sort()).toEqual([
         'architecture',
+        ...(locale === 'ja' ? [] : ['cloud']),
         'networking',
         'p2p',
         'privacy',
@@ -186,7 +191,11 @@ describe('route manifest', () => {
         listPosts(locale)
           .map((post) => post.id)
           .sort(),
-      ).toEqual(publishedArticleIds);
+      ).toEqual(
+        locale === 'ja'
+          ? publishedArticleIds
+          : [...publishedArticleIds, 'we-have-choices'],
+      );
       for (const path of [
         'ai',
         'research',
@@ -239,13 +248,23 @@ describe('retained content and published blog', () => {
       expect(home.canonical).toBe(`https://dennysora.me/${locale}/`);
       expect(home.indexable).toBe(true);
       expect(home.view.profile.displayName).toBe('DennySORA');
-      expect(home.view.recent.map((post) => post.id).sort()).toEqual([
-        'browser-translation-architecture',
-        'p2p-downloader-architecture',
-        'vpn-manager-architecture',
-      ]);
+      expect(home.view.recent.map((post) => post.id).sort()).toEqual(
+        locale === 'ja'
+          ? [
+              'browser-translation-architecture',
+              'p2p-downloader-architecture',
+              'vpn-manager-architecture',
+            ]
+          : [
+              'browser-translation-architecture',
+              'vpn-manager-architecture',
+              'we-have-choices',
+            ],
+      );
       expect(home.workspace.posts.map((post) => post.slug).sort()).toEqual(
-        publishedArticleIds,
+        locale === 'ja'
+          ? publishedArticleIds
+          : [...publishedArticleIds, 'we-have-choices'],
       );
       expect(home.view.projects.map((project) => project.id)).toEqual([
         'dgxtop',
@@ -255,14 +274,21 @@ describe('retained content and published blog', () => {
       const blog = load(`/${locale}/blog/`);
       if (blog.view.kind !== 'library') throw new Error('Expected blog');
       expect(blog.view.posts.map((post) => post.id).sort()).toEqual(
-        publishedArticleIds,
+        locale === 'ja'
+          ? publishedArticleIds
+          : [...publishedArticleIds, 'we-have-choices'],
       );
       expect(blog.indexable).toBe(true);
       expect(isIndexable({ kind: 'library', locale })).toBe(true);
       expect(blog.view.available.topics).toEqual(['engineering', 'systems']);
-      expect(blog.view.available.types).toEqual(['research-note', 'tutorial']);
+      expect(blog.view.available.types).toEqual(
+        locale === 'ja'
+          ? ['research-note', 'tutorial']
+          : ['research-note', 'essay', 'tutorial'],
+      );
       expect([...blog.view.available.tags].sort()).toEqual([
         'architecture',
+        ...(locale === 'ja' ? [] : ['cloud']),
         'networking',
         'p2p',
         'privacy',
@@ -278,7 +304,8 @@ describe('retained content and published blog', () => {
         expect(
           related.every(
             (item) =>
-              publishedArticleIds.includes(item.id) && item.id !== post.id,
+              [...publishedArticleIds, 'we-have-choices'].includes(item.id) &&
+              item.id !== post.id,
           ),
         ).toBe(true);
       }
@@ -298,6 +325,7 @@ describe('retained content and published blog', () => {
       'password-manager-recommendations',
       'production-systems',
       'vpn-manager-architecture',
+      'we-have-choices',
     ]);
     const anchors = loadHeadingAnchors();
     expect(Object.keys(anchors).sort()).toEqual([

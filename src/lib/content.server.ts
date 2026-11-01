@@ -131,10 +131,28 @@ export const loadPosts = once((): LoadedPost[] => {
         source !== readFileSync(join(directory, 'reviewed-source.html'), 'utf8')
       )
         throw new Error('Library manuscript changed after its recorded review');
+      if (post.source.kind === 'supplied-manuscript') {
+        for (const locale of Object.keys(post.locales)) {
+          const body = readFileSync(join(directory, `${locale}.md`), 'utf8');
+          const reviewed = readFileSync(
+            join(directory, `reviewed-${locale}.txt`),
+            'utf8',
+          );
+          if (
+            body.trim().split(/\n+/).join('\n') !==
+            reviewed.trim().split(/\n+/).join('\n')
+          )
+            throw new Error(
+              'Supplied manuscript changed after its recorded review',
+            );
+        }
+      }
       const revision =
-        post.source.kind === 'library-manuscript'
-          ? `library:${post.source.libraryFileId}:v${post.source.version}:edition-${post.source.edition}`
-          : createHash('sha256').update(source).digest('hex');
+        post.source.kind === 'supplied-manuscript'
+          ? post.source.sourceVersion
+          : post.source.kind === 'library-manuscript'
+            ? `library:${post.source.libraryFileId}:v${post.source.version}:edition-${post.source.edition}`
+            : createHash('sha256').update(source).digest('hex');
       const editions = locales.filter(
         (locale) => editionStatus(post, locale, revision) === 'published',
       );

@@ -21,8 +21,8 @@ const routes = publishedRoutes().filter((route) =>
 
 describe('published article covers', () => {
   it('covers all published articles and shares one image across all three editions', () => {
-    expect(routes).toHaveLength(36);
-    expect(registry.covers).toHaveLength(12);
+    expect(routes).toHaveLength(38);
+    expect(registry.covers).toHaveLength(13);
     const counts = new Map<string, number>();
     const images = new Map<string, Set<string>>();
     const alts = new Map<string, Set<string>>();
@@ -41,9 +41,13 @@ describe('published article covers', () => {
       registry.covers.map(({ id }) => id).sort(),
     );
     for (const id of counts.keys()) {
-      expect(counts.get(id)).toBe(locales.length);
+      expect(counts.get(id)).toBe(
+        id === 'we-have-choices' ? 2 : locales.length,
+      );
       expect(images.get(id)?.size).toBe(1);
-      expect(alts.get(id)?.size).toBe(locales.length);
+      expect(alts.get(id)?.size).toBe(
+        id === 'we-have-choices' ? 2 : locales.length,
+      );
     }
     expect(
       articleCoverForRoute({ kind: 'home', locale: 'en' }, 'en'),
@@ -69,9 +73,11 @@ describe('published article covers', () => {
             asset.sha256,
           );
         else {
-          expect(['fan-system-matching', 'vpn-manager-architecture']).toContain(
-            cover.id,
-          );
+          expect([
+            'fan-system-matching',
+            'vpn-manager-architecture',
+            'we-have-choices',
+          ]).toContain(cover.id);
           expect(cover.source.provider).toBe(
             'Original code-native illustration',
           );

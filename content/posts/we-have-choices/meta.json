@@ -1,0 +1,39 @@
+{
+  "id": "we-have-choices",
+  "slug": "we-have-choices",
+  "author": null,
+  "bodyFormat": "markdown",
+  "sourceLocale": "zh-hant",
+  "publishedAt": "2026-11-01",
+  "updatedAt": "2026-11-01",
+  "topics": ["systems"],
+  "contentType": "essay",
+  "tagIds": ["privacy", "cloud"],
+  "featured": false,
+  "discussionNumber": null,
+  "commentsEnabled": true,
+  "relatedPostIds": [],
+  "relatedProjectIds": [],
+  "source": {
+    "kind": "supplied-manuscript",
+    "sourceVersion": "manuscript:we-have-choices:edition-1"
+  },
+  "locales": {
+    "zh-hant": {
+      "title": "我們有選擇",
+      "summary": "擁抱開源、自己能私人部署、將資料掌握在自己手中的 LLM 。",
+      "publication": "published",
+      "translationState": "original",
+      "sourceRevision": "manuscript:we-have-choices:edition-1",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/content/posts/we-have-choices/reviewed-zh-hant.txt"
+    },
+    "en": {
+      "title": "We have choices.",
+      "summary": "Embrace open source, LLMs that you can privately deploy yourself, and keep your data in your own hands.",
+      "publication": "published",
+      "translationState": "reviewed",
+      "sourceRevision": "manuscript:we-have-choices:edition-1",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/content/posts/we-have-choices/reviewed-en.txt"
+    }
+  }
+}
