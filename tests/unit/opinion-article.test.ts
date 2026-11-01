@@ -11,15 +11,15 @@ import { decodeEntities } from '../../src/lib/html.ts';
 import { editionStatus } from '../../src/lib/publication.ts';
 
 describe('owner supplied opinion', () => {
-  it('publishes exactly the two supplied editions with every original paragraph intact', () => {
+  it('publishes the supplied editions and requested Japanese translation with reviewed paragraphs intact', () => {
     const post = loadPosts().find((item) => item.id === 'we-have-choices');
     if (!post) throw new Error('Missing opinion');
-    expect(post.editions).toEqual(['zh-hant', 'en']);
+    expect(post.editions).toEqual(['zh-hant', 'en', 'ja']);
     expect(post.source).toEqual({
       kind: 'supplied-manuscript',
       sourceVersion: 'manuscript:we-have-choices:edition-1',
     });
-    for (const locale of ['zh-hant', 'en'] as const) {
+    for (const locale of ['zh-hant', 'en', 'ja'] as const) {
       const original = readFileSync(
         `content/posts/we-have-choices/reviewed-${locale}.txt`,
         'utf8',
@@ -43,8 +43,8 @@ describe('owner supplied opinion', () => {
       folder.languageLinks
         .filter((link) => link.href)
         .map((link) => link.locale),
-    ).toEqual(['zh-hant', 'en']);
+    ).toEqual(['zh-hant', 'en', 'ja']);
     expect(editionStatus(post, 'en', post.revision + '-changed')).toBe('stale');
-    expect(publishedPaths()).not.toContain('/ja/blog/opinions/we-have-choices');
+    expect(publishedPaths()).toContain('/ja/blog/opinions/we-have-choices');
   });
 });

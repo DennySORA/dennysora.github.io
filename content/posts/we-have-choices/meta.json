@@ -34,6 +34,14 @@
       "translationState": "reviewed",
       "sourceRevision": "manuscript:we-have-choices:edition-1",
       "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/content/posts/we-have-choices/reviewed-en.txt"
+    },
+    "ja": {
+      "title": "私たちには選択肢がある",
+      "summary": "オープンソースを、自分でプライベートにデプロイできて、自分のデータを自分の手元に置いておける LLM を受け入れよう。",
+      "publication": "published",
+      "translationState": "reviewed",
+      "sourceRevision": "manuscript:we-have-choices:edition-1",
+      "reviewEvidence": "https://github.com/DennySORA/dennysora.github.io/blob/main/content/posts/we-have-choices/reviewed-ja.txt"
     }
   }
 }

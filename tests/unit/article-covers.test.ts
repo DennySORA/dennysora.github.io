@@ -21,7 +21,7 @@ const routes = publishedRoutes().filter((route) =>
 
 describe('published article covers', () => {
   it('covers all published articles and shares one image across all three editions', () => {
-    expect(routes).toHaveLength(38);
+    expect(routes).toHaveLength(39);
     expect(registry.covers).toHaveLength(13);
     const counts = new Map<string, number>();
     const images = new Map<string, Set<string>>();
@@ -41,13 +41,9 @@ describe('published article covers', () => {
       registry.covers.map(({ id }) => id).sort(),
     );
     for (const id of counts.keys()) {
-      expect(counts.get(id)).toBe(
-        id === 'we-have-choices' ? 2 : locales.length,
-      );
+      expect(counts.get(id)).toBe(locales.length);
       expect(images.get(id)?.size).toBe(1);
-      expect(alts.get(id)?.size).toBe(
-        id === 'we-have-choices' ? 2 : locales.length,
-      );
+      expect(alts.get(id)?.size).toBe(locales.length);
     }
     expect(
       articleCoverForRoute({ kind: 'home', locale: 'en' }, 'en'),

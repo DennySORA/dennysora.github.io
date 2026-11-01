@@ -25,12 +25,13 @@ describe('authorized trilingual publication', () => {
         listPosts(locale)
           .map((post) => post.id)
           .sort(),
-      ).toEqual(locale === 'ja' ? articles : [...articles, 'we-have-choices']);
-      expect(populatedBlogFolders(listPosts(locale))).toEqual(
-        locale === 'ja'
-          ? ['network', 'tools', 'security']
-          : ['opinions', 'network', 'tools', 'security'],
-      );
+      ).toEqual([...articles, 'we-have-choices']);
+      expect(populatedBlogFolders(listPosts(locale))).toEqual([
+        'opinions',
+        'network',
+        'tools',
+        'security',
+      ]);
     }
     for (const post of loadPosts().filter((post) => articles.includes(post.id)))
       for (const locale of locales) {

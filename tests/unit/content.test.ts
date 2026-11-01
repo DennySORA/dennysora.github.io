@@ -181,7 +181,7 @@ describe('route manifest', () => {
       expect(paths).toContain(`/${locale}/projects/tools/dgxtop`);
       expect(tagsInLocale(locale).sort()).toEqual([
         'architecture',
-        ...(locale === 'ja' ? [] : ['cloud']),
+        'cloud',
         'networking',
         'p2p',
         'privacy',
@@ -191,11 +191,7 @@ describe('route manifest', () => {
         listPosts(locale)
           .map((post) => post.id)
           .sort(),
-      ).toEqual(
-        locale === 'ja'
-          ? publishedArticleIds
-          : [...publishedArticleIds, 'we-have-choices'],
-      );
+      ).toEqual([...publishedArticleIds, 'we-have-choices']);
       for (const path of [
         'ai',
         'research',
@@ -248,24 +244,15 @@ describe('retained content and published blog', () => {
       expect(home.canonical).toBe(`https://dennysora.me/${locale}/`);
       expect(home.indexable).toBe(true);
       expect(home.view.profile.displayName).toBe('DennySORA');
-      expect(home.view.recent.map((post) => post.id).sort()).toEqual(
-        locale === 'ja'
-          ? [
-              'browser-translation-architecture',
-              'p2p-downloader-architecture',
-              'vpn-manager-architecture',
-            ]
-          : [
-              'browser-translation-architecture',
-              'vpn-manager-architecture',
-              'we-have-choices',
-            ],
-      );
-      expect(home.workspace.posts.map((post) => post.slug).sort()).toEqual(
-        locale === 'ja'
-          ? publishedArticleIds
-          : [...publishedArticleIds, 'we-have-choices'],
-      );
+      expect(home.view.recent.map((post) => post.id).sort()).toEqual([
+        'browser-translation-architecture',
+        'vpn-manager-architecture',
+        'we-have-choices',
+      ]);
+      expect(home.workspace.posts.map((post) => post.slug).sort()).toEqual([
+        ...publishedArticleIds,
+        'we-have-choices',
+      ]);
       expect(home.view.projects.map((project) => project.id)).toEqual([
         'dgxtop',
         'httpulse',
@@ -273,22 +260,21 @@ describe('retained content and published blog', () => {
       expect(JSON.stringify(home)).not.toContain('provenance');
       const blog = load(`/${locale}/blog/`);
       if (blog.view.kind !== 'library') throw new Error('Expected blog');
-      expect(blog.view.posts.map((post) => post.id).sort()).toEqual(
-        locale === 'ja'
-          ? publishedArticleIds
-          : [...publishedArticleIds, 'we-have-choices'],
-      );
+      expect(blog.view.posts.map((post) => post.id).sort()).toEqual([
+        ...publishedArticleIds,
+        'we-have-choices',
+      ]);
       expect(blog.indexable).toBe(true);
       expect(isIndexable({ kind: 'library', locale })).toBe(true);
       expect(blog.view.available.topics).toEqual(['engineering', 'systems']);
-      expect(blog.view.available.types).toEqual(
-        locale === 'ja'
-          ? ['research-note', 'tutorial']
-          : ['research-note', 'essay', 'tutorial'],
-      );
+      expect(blog.view.available.types).toEqual([
+        'research-note',
+        'essay',
+        'tutorial',
+      ]);
       expect([...blog.view.available.tags].sort()).toEqual([
         'architecture',
-        ...(locale === 'ja' ? [] : ['cloud']),
+        'cloud',
         'networking',
         'p2p',
         'privacy',
