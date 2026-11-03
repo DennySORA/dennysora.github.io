@@ -6,10 +6,20 @@ Internal systems usually evolve more slowly than you imagine. Back then, once yo
 All sorts of P1s would get shoved in, while the original P1s became... still P1, lol XD
 Then it turned into: the people above say this is important today, so do this first; tomorrow, that is important, so do that first. Development became very fragmented.
 
-Honestly, I don't think AI's code is worse than code written by humans. If anything, the vast majority of people's code is worse than what Opus 5.5 writes today. They can't even use basic SOLID principles and patterns properly.
+I've been a software engineer for around five years and became a senior engineer.
+I'm lucky that I was already an engineer when AI arrived.
+I've always pursued simple, clear code and spent a lot of time and effort on refactoring.
+Pursuing code quality and efficiency, developing code that is easy to extend, highly available, and loosely coupled.
+That's why, even before AI, I was always reading excellent open-source code.
+
+But honestly, I don't think the code AI writes now is worse than code written by humans.
+If anything, the vast majority of people's code is worse than what Opus 5.5 writes today. They can't even use basic SOLID principles and patterns properly.
 They pursue OOP and end up with too much abstraction; they pursue ML and end up with a total mess.
 
 So if you ask me: do you worry about code produced by AI?
 I'd ask you in return: can you feel confident about the code your coworker writes?
 
 The underlying problem is the same. We might as well rely on strong E2E testing and AI-driven detection to deal with it.
+
+Also: a degree is optional in software engineering (though you need one for interviews). Software engineering is usually experience-based work. What matters more than what you know is what you can handle.
+That's pretty rough for people without experience, but engineering positions will probably become fewer and fewer, turning into elite roles that require a great deal of experience.
