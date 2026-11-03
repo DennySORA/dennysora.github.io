@@ -1,0 +1,20 @@
+{
+  "slug": "when-everything-is-p1",
+  "publication": "published",
+  "publishedAt": "2026-11-04",
+  "updatedAt": "2026-11-04",
+  "locales": {
+    "zh-hant": {
+      "title": "每個都是 P1，就沒有 P1",
+      "summary": "AI 出來的 Code 你會擔心嗎？你那同事寫出來的 Code 你能放心嗎？"
+    },
+    "en": {
+      "title": "When everything is P1, nothing is P1",
+      "summary": "Do you worry about code produced by AI? Can you feel confident about the code your coworker writes?"
+    },
+    "ja": {
+      "title": "全部が P1 なら、P1 はないのと同じ",
+      "summary": "AI が生成した Code は心配？あなたの同僚が書いた Code なら安心できる？"
+    }
+  }
+}
