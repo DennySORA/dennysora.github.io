@@ -1,0 +1,20 @@
+{
+  "slug": "what-should-we-learn-in-the-ai-era",
+  "publication": "published",
+  "publishedAt": "2026-11-09",
+  "updatedAt": "2026-11-09",
+  "locales": {
+    "zh-hant": {
+      "title": "AI 時代，我們到底應該學什麼？",
+      "summary": "從 AI 程式品質，到日文作文面對白紙的經驗：看懂了，不代表能自己構建、思考與輸出。"
+    },
+    "en": {
+      "title": "What should we learn in the AI era?",
+      "summary": "From AI code quality to facing a blank page in a Japanese exam: understanding what we read does not mean we can construct, think, and produce it ourselves."
+    },
+    "ja": {
+      "title": "AI 時代、私たちはいったい何を学べばいいのか？",
+      "summary": "AI のコード品質から、日本語の作文で白紙に向き合った経験まで。読んで理解できることと、自分で組み立て、考え、出力できることは同じではない。"
+    }
+  }
+}
